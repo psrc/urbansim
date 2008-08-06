@@ -40,11 +40,11 @@ class MSSQLServerManager(AbstractDatabaseEngineManager):
     
     def create_database(self, server, database_name):
         qry = 'CREATE DATABASE %s;'%database_name
-        server.engine.execute(qry)
+        server.execute(qry)
         
     def drop_database(self, server, database_name):
         qry = 'DROP DATABASE %s;'%database_name
-        server.engine.execute(qry)   
+        server.execute(qry)   
         
     def has_database(self, server, database_name):
         import pyodbc

@@ -74,9 +74,11 @@ class DatabaseServer(object):
                                                            get_base_db = get_base_db,
                                                            scrub = scrub)
 
-    def log_sql(self, sql_query, show_output=False):
-        if show_output == True:
-            logger.log_status("SQL: " + sql_query, tags=["database"], verbosity_level=3)            
+    def log_sql(self, sql_query):
+        logger.log_status("SQL: " + sql_query, tags=["database"], verbosity_level=3)            
+        
+    def execute(self, query):
+        return self.engine.execute(query)
         
     def DoQuery(self, query):
         """
@@ -86,10 +88,10 @@ class DatabaseServer(object):
             query = a SQL statement
         """
         from opus_core.database_management.opus_database import convert_to_mysql_datatype, _log_sql
-        engine = self.engine
         preprocessed_query = convert_to_mysql_datatype(query)
-        _log_sql(preprocessed_query, self.show_output)
-        engine.execute(preprocessed_query)
+        if self.show_output:
+            _log_sql(preprocessed_query)
+        self.execute(preprocessed_query)
         
     def create_database(self, database_name):
         """

@@ -23,7 +23,6 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.opus_database import _log_sql
 
 class CacheScenarioDatabase(Model):
     """Extract a flattened scenario database to the cache.

@@ -35,7 +35,7 @@ class FlattenScenarioDatabaseChain(object):
             elif 'parent_database_url' in scenario_information_table.c:
                 qry = scenario_information_table.update(values = {'parent_database_url':''})
             if qry is not None: 
-                new_database.engine.execute(qry)
+                new_database.execute(qry)
             
     def _create_db_from_chain_via_python(self, 
                                          db_server_config_from,

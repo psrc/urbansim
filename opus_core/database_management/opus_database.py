@@ -74,13 +74,22 @@ class OpusDatabase(object):
         
         self.reflect()
     
-    def reflect(self):
-        self.metadata.clear()
-        if self.protocol_manager.uses_schemas:
-            self.metadata.reflect(bind = self.engine, schema = self.database_name)
-        else:
-            self.metadata.reflect(bind = self.engine)
-        
+    def reflect(self, clear = True, recurse = True):
+        try:
+            if clear:
+                self.metadata.clear()
+            if self.protocol_manager.uses_schemas:
+                self.metadata.reflect(bind = self.engine, schema = self.database_name)
+            else:
+                self.metadata.reflect(bind = self.engine)
+        except:            
+            if recurse:
+                self.close()
+                self.open()
+                self.reflect(clear = False, recurse = False)
+            else:
+                raise
+            
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
         try:
@@ -89,7 +98,18 @@ class OpusDatabase(object):
             pass
         self.engine = None
         self.metadata = None
-        
+
+    def execute(self, query, recurse = True):
+        try:
+            return self.engine.execute(query)
+        except:
+            if recurse:
+                self.close()
+                self.open()
+                self.execute(query, recurse = False)
+            else:
+                raise
+            
     def DoQuery(self, query):
         """
         Executes an SQL statement that changes data in some way.
@@ -97,11 +117,11 @@ class OpusDatabase(object):
         Args;
             query = an SQL statement
         """
-        engine = self.engine
-        preprocessed_query = convert_to_mysql_datatype(query)
-        _log_sql(preprocessed_query, self.show_output)
-        engine.execute(preprocessed_query)
         self.reflect()
+        preprocessed_query = convert_to_mysql_datatype(query)
+        if self.show_output: _log_sql(preprocessed_query)
+        self.execute(preprocessed_query)
+        self.reflect(clear = False)
 
     def GetResultsFromQuery(self, query):
         """
@@ -111,11 +131,10 @@ class OpusDatabase(object):
             query = query to execute
         """
         self.reflect()
-        engine = self.engine
         preprocessed_query = convert_to_mysql_datatype(query)
-        _log_sql(preprocessed_query, self.show_output)
-        result = engine.execute(preprocessed_query)
-        self.reflect()
+        if self.show_output: _log_sql(preprocessed_query)
+        result = self.execute(preprocessed_query)
+        self.reflect(clear = False)
         
         results = result.fetchall()
         resultlist = [list(row) for row in results]
@@ -126,6 +145,7 @@ class OpusDatabase(object):
     def get_schema_from_table(self, table_name):
         """Returns this table's schema (a dictionary of field_name:field_type).
         """
+        self.reflect()
         t = self.get_table(table_name)
         schema = {}
         for col in t.columns:
@@ -155,7 +175,7 @@ class OpusDatabase(object):
         schema (a dictionary of field_name:field_type).
         Note that table constraints are not added.
         """
-
+        self.reflect()
         if self.table_exists(table_name): return
         
         kwargs = {}
@@ -170,7 +190,6 @@ class OpusDatabase(object):
         )
         
         new_table.create(checkfirst = True)
-        self.reflect()
         return new_table
 
     def drop_table(self, table_name):
@@ -178,7 +197,6 @@ class OpusDatabase(object):
             t = self.get_table(table_name)
             t.drop(bind = self.engine)
             self.metadata.remove(t)
-            self.reflect()
                 
     def table_exists(self, table_name):
         self.reflect()
@@ -196,9 +214,11 @@ class OpusDatabase(object):
 
     def get_tables_in_database(self):
         """Returns a list of the tables in this database chain."""
+        self.reflect()
         return self.metadata.tables.keys()
     
     def get_primary_keys_for_table(self, table):
+        self.reflect()
         primary_keys = []
         for col in table.c:
             if col.primary_key:
@@ -275,9 +295,8 @@ def _log(s) :
     sys.stdout.write("\n")
     sys.stdout.flush()
 
-def _log_sql(sql_query, show_output=False):
-    if show_output == True:
-        _log("SQL: " + sql_query)
+def _log_sql(sql_query):
+    _log("SQL: " + sql_query)
 
 
 

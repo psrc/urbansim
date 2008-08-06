@@ -97,7 +97,7 @@ class sql_storage(Storage):
             columns = selectable_columns
         )        
         
-        query_results = db.engine.execute(query)
+        query_results = db.execute(query)
         
         while True:
             row = query_results.fetchone()
@@ -326,7 +326,7 @@ else:
                                         
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
-                    results = db.engine.execute(s).fetchall()
+                    results = db.execute(s).fetchall()
         
                     self.assertEqual(expected_results, results)
                 except:
@@ -351,7 +351,7 @@ else:
                     # Verify the data through a DatabaseServer database connection        
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
-                    results = db.engine.execute(s).fetchall()
+                    results = db.execute(s).fetchall()
         
                     self.assertEqual(expected_results, results)
                 except:
@@ -422,7 +422,7 @@ else:
                     #Verify the data through a DatabaseServer database connection
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
-                    results = db.engine.execute(s).fetchall()
+                    results = db.execute(s).fetchall()
         
                     self.assertEqual(expected_results, results)
                 except:
@@ -496,11 +496,11 @@ else:
                             }
                         )
                     
-                    db.engine.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
+                    db.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
                     
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'foo':1, 'boo':1, 'fooboobar':1})
-                    db.engine.execute(i)
+                    db.execute(i)
                         
                     expected_table_names = ['bee', 'baz', 'foobeebaz']
                     actual_table_names = storage.get_column_names('foo')
@@ -521,11 +521,11 @@ else:
             for db, server, storage in self.dbs:
                 try:
 
-                    db.engine.execute('CREATE TABLE foo (a INT, b INT, c INT)')
+                    db.execute('CREATE TABLE foo (a INT, b INT, c INT)')
                                 
                     tbl = db.get_table('foo')        
                     i = tbl.insert(values = {'a':1, 'b':2, 'c':3})
-                    db.engine.execute(i)
+                    db.execute(i)
         
                     expected_data = {
                         'a': array([1], dtype='i'),
@@ -544,11 +544,11 @@ else:
             for db, server, storage in self.dbs:
                 try:
 
-                    db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+                    db.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
         
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
-                    db.engine.execute(i)
+                    db.execute(i)
                           
                     expected_data = {
                         'd': array([4], dtype='i'),
@@ -566,11 +566,11 @@ else:
         def test_load_table_returns_nothing_when_no_cols_specified(self):
             for db, server, storage in self.dbs:
                 try:
-                    db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+                    db.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
                     
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
-                    db.engine.execute(i)
+                    db.execute(i)
         
                     expected_data = {}
                     

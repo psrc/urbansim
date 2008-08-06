@@ -89,11 +89,11 @@ if does_database_server_exist_for_this_hostname(
             
             run_activity = runs_manager.services_db.get_table('run_activity')
             s = select([func.max(run_activity.c.run_id)])
-            run_id = runs_manager.services_db.engine.execute(s).fetchone()[0]
+            run_id = runs_manager.services_db.execute(s).fetchone()[0]
             
             s = select([run_activity.c.status],
                        whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
+            status = runs_manager.services_db.execute(s).fetchone()[0]
                                                                        
             expected = 'done'
             self.assertEqual(status, expected)
@@ -104,7 +104,7 @@ if does_database_server_exist_for_this_hostname(
             
             s = select([run_activity.c.status],
                        whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
+            status = runs_manager.services_db.execute(s).fetchone()[0]
                                                            
             expected = 'done'
             self.assertEqual(status, expected)
@@ -116,7 +116,7 @@ if does_database_server_exist_for_this_hostname(
                                      skip_urbansim=True)
             s = select([run_activity.c.status],
                        whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
+            status = runs_manager.services_db.execute(s).fetchone()[0]
                                                                        
             expected = 'done'
             self.assertEqual(status, expected)

@@ -83,17 +83,17 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
         u = self.db_chain_granddad.get_table('scenario_information').insert(
               values = {
                 self.db_chain_granddad.get_table('scenario_information').c.parent_database_url:''})   
-        self.db_chain_granddad.engine.execute(u)
+        self.db_chain_granddad.execute(u)
         
         u = self.db_chain_dad.get_table('scenario_information').insert(
               values = {
                 self.db_chain_dad.get_table('scenario_information').c.parent_database_url:'db_chain_granddad'})
 
-        self.db_chain_dad.engine.execute(u)
+        self.db_chain_dad.execute(u)
         u = self.db_chain_son.get_table('scenario_information').insert(
               values = {
                 self.db_chain_son.get_table('scenario_information').c.parent_database_url:'db_chain_dad'})   
-        self.db_chain_son.engine.execute(u)
+        self.db_chain_son.execute(u)
         
         granddad_vals = [
             {'integer_col': 0, 'clob_col': '0', 'smallinteger_col': 0, 'float_col': 0.0},                      
@@ -120,10 +120,10 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
             {'integer_col': 4, 'varchar_col': '4', 'boolean_col': False, 'numeric_col': 4.0}                                         
         ]
         
-        self.db_chain_granddad.engine.execute(self.granddad_schema.insert(), granddad_vals)
-        self.db_chain_granddad.engine.execute(self.granddad_schema2.insert(), granddad_vals2)        
-        self.db_chain_dad.engine.execute(self.dad_schema.insert(), dad_vals)
-        self.db_chain_son.engine.execute(self.son_schema2.insert(), son_vals2)
+        self.db_chain_granddad.execute(self.granddad_schema.insert(), granddad_vals)
+        self.db_chain_granddad.execute(self.granddad_schema2.insert(), granddad_vals2)        
+        self.db_chain_dad.execute(self.dad_schema.insert(), dad_vals)
+        self.db_chain_son.execute(self.son_schema2.insert(), son_vals2)
                      
     def tearDown(self):
         self.db_chain_granddad.close()

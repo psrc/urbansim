@@ -30,15 +30,15 @@ class MySQLServerManager(AbstractDatabaseEngineManager):
     
     def create_database(self, server, database_name):
         qry = 'CREATE DATABASE %s;'%database_name
-        server.engine.execute(qry)
+        server.execute(qry)
         
     def drop_database(self, server, database_name):
         qry = 'DROP DATABASE %s;'%database_name
-        server.engine.execute(qry)
+        server.execute(qry)
 
     def has_database(self, server, database_name):
         qry = 'SHOW DATABASES LIKE "%s"'%database_name
-        result = server.engine.execute(qry)
+        result = server.execute(qry)
         dbs = [db[0] for db in result.fetchall()]
 
         return database_name in dbs 

@@ -247,7 +247,7 @@ class RunManager(object):
             columns = [run_activity.c.resources],
             whereclause = whereclause)
         
-        run_resources = self.services_db.engine.execute(query).fetchone()
+        run_resources = self.services_db.execute(query).fetchone()
         
         if not run_resources:
             raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
@@ -281,7 +281,7 @@ class RunManager(object):
                         
         if resources:
             results = []
-            for run_id, run_name, processor_name, run_resources in self.services_db.engine.execute(query).fetchall():
+            for run_id, run_name, processor_name, run_resources in self.services_db.execute(query).fetchall():
                 try:
                     config = pickle.loads(str(run_resources))
                     results.append((run_id, run_name, processor_name,config))
@@ -291,7 +291,7 @@ class RunManager(object):
         else:
             results = [(run_id, run_name, processor_name) for \
                         run_id, run_name, processor_name in \
-                        self.services_db.engine.execute(query).fetchall() ]       
+                        self.services_db.execute(query).fetchall() ]       
 
         return results
     
@@ -303,7 +303,7 @@ class RunManager(object):
         map = {}
         run_activity_table = self.services_db.get_table('run_activity')
         s = select([run_activity_table.c.run_id, run_activity_table.c.status])
-        for run_id, status in self.services_db.engine.execute(s).fetchall():
+        for run_id, status in self.services_db.execute(s).fetchall():
             if run_ids is None or run_id in run_ids:
                 if status in map:
                     map[status].append(run_id)
@@ -320,7 +320,7 @@ class RunManager(object):
             columns = [func.max(run_activity.c.run_id),
                        func.count(run_activity.c.run_id)]
         )
-        last_id, cnt = self.services_db.engine.execute(query).fetchone()
+        last_id, cnt = self.services_db.execute(query).fetchone()
         
         if cnt > 0:
             run_id = last_id + 1
@@ -350,12 +350,12 @@ class RunManager(object):
         else:
             qry = run_activity_table.insert(values = values)
 
-        self.services_db.engine.execute(qry)
+        self.services_db.execute(qry)
 
     def has_run(self, run_id):
         run_activity_table = self.services_db.get_table('run_activity')
         qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
-        return self.services_db.engine.execute(qry).fetchone() is not None
+        return self.services_db.execute(qry).fetchone() is not None
         
     def create_storage(self, options):
 
@@ -428,7 +428,7 @@ class RunManager(object):
         run_activity_table = self.services_db.get_table('run_activity')
         
         query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
-        self.services_db.engine.execute(query)
+        self.services_db.execute(query)
            
 
         
@@ -462,7 +462,7 @@ class RunManager(object):
             values = values
         )
         
-        self.services_db.engine.execute(query)
+        self.services_db.execute(query)
                                          
     def _handle_deletion_errors(self, function, path, info):
         """try to close the file if it's a file """
@@ -562,7 +562,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
                     run_activity_table.c.status],
                     whereclause = run_activity_table.c.run_id == 1)
 
-        results = db.engine.execute(s).fetchall()
+        results = db.execute(s).fetchall()
         self.assertEqual(len(results), 1)
         
         run_name, status = results[0]

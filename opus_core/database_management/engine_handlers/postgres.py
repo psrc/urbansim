@@ -51,36 +51,36 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
         qry = 'CREATE DATABASE %s;'%db_name.lower()     
-        server.engine.execute(qry)
+        server.execute(qry)
         
     def create_database(self, server, database_name):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
         qry = 'CREATE SCHEMA %s;'%database_name.lower()     
-        server.engine.execute(qry)
+        server.execute(qry)
         
     def _drop_real_database(self, server, database_name):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
         qry = 'DROP DATABASE %s;'%database_name.lower()     
-        server.engine.execute(qry)
+        server.execute(qry)
 
     def drop_database(self, server, database_name):
         from psycopg2 import extensions
         server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
         qry = 'DROP SCHEMA %s CASCADE;'%database_name.lower()     
-        server.engine.execute(qry)
+        server.execute(qry)
 
     def has_database(self, server, database_name):
         qry = 'SELECT nspname FROM pg_namespace;'
-        result = server.engine.execute(qry)
+        result = server.execute(qry)
         dbs = [db[0].lower() for db in result.fetchall()]
 
         return database_name.lower() in dbs
             
     def _has_real_database(self, server, database_name):
         qry = 'SELECT datname FROM pg_database;'
-        result = server.engine.execute(qry)
+        result = server.execute(qry)
         dbs = [db[0].lower() for db in result.fetchall()]
 
         return database_name.lower() in dbs 

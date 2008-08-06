@@ -61,7 +61,7 @@ class ScenarioDatabaseManager(object):
                 raise 'Scenario information table contains no parent_database_url column'
             
             query = select(columns = [col])
-            next_database_name = database.engine.execute(query).fetchone()
+            next_database_name = database.execute(query).fetchone()
             if next_database_name == () or next_database_name[0] == '':
                 next_database_name = None
             else:
@@ -76,7 +76,7 @@ class ScenarioDatabaseManager(object):
                         u = scenario_info_table.update(values = {'PARENT_DATABASE_URL':next_database_name})
                     else:
                         u = scenario_info_table.update(values = {'parent_database_url':next_database_name})
-                    database.engine.execute(u)
+                    database.execute(u)
                 database.close()
                 table_mapping = self._get_table_mapping(next_database_name, table_mapping)
             else: database.close()
@@ -162,13 +162,13 @@ else:
             u = self.db_chain_son.get_table('scenario_information').update(
                   values = {
                     self.db_chain_son.get_table('scenario_information').c.parent_database_url:url})   
-            self.db_chain_son.engine.execute(u)       
+            self.db_chain_son.execute(u)       
                  
             sdm._get_table_mapping('db_chain_son', {})
             
             s = select(
                 columns=[self.db_chain_son.get_table('scenario_information').c.parent_database_url])
-            result = self.db_chain_son.engine.execute(s)
+            result = self.db_chain_son.execute(s)
             
             output_url = result.fetchone()[0]
             expected_url = 'db_chain_dad'

@@ -60,7 +60,7 @@ def create_view(database, table_to_link_name, dataset_name):
            '''%params)
 
     try:
-        database.engine.execute(qry)
+        database.execute(qry)
         print qry
     except:
         print 'Error, could not create view'
