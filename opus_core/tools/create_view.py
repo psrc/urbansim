@@ -20,7 +20,11 @@ from opus_core.datasets.dataset_factory import DatasetFactory
 def create_view(database, table_to_link_name, dataset_name):
     df = DatasetFactory()
     spatial_table_name = '%s_shp'%df._table_module_class_names_for_dataset(dataset_name)[0]
-    spatial_table = database.get_table(spatial_table_name)
+    try:
+        spatial_table = database.get_table(spatial_table_name)
+    except:
+        print 'Error, could not create view because spatial table %s could not be found'%spatial_table_name
+        return
     table_to_link = database.get_table(table_to_link_name)
         
     spatial_primary_keys = database.get_primary_keys_for_table(spatial_table)
