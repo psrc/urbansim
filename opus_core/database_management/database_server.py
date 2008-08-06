@@ -30,7 +30,7 @@ class DatabaseServer(object):
     Handles all non-transactional queries to the database server. 
     Will also return a connection to a specific database. 
     """
-    def __init__(self, database_server_configuration):
+    def __init__(self, database_server_configuration, creating_base_database = False):
         """
         Connects to this database server.
         """
@@ -50,23 +50,28 @@ class DatabaseServer(object):
         elif self.protocol == 'mssql':
             self.protocol_manager = MSSQLServerManager()
             
-        self.open()
+        self.open(creating_base_database)
         self.show_output = False
         self.open_databases = {}
         
         #print self.get_connection_string()
         
-    def open(self):
+    def open(self, creating_base_database = False):
 
-        self.protocol_manager.create_default_database_if_absent(self.config)
-        
-        self.engine = create_engine(self.get_connection_string(), connect_args={})
+        if not creating_base_database:
+            self.protocol_manager.create_default_database_if_absent(self.config)
+            connect_string = self.get_connection_string()
+        else:
+            connect_string = self.get_connection_string(get_base_db = True)
+            
+        self.engine = create_engine(connect_string, connect_args={})
         self.metadata = MetaData(
             bind = self.engine
         ) 
         
-    def get_connection_string(self, scrub = False):
+    def get_connection_string(self, get_base_db = False, scrub = False):
         return self.protocol_manager.get_connection_string(server_config = self.config,
+                                                           get_base_db = get_base_db,
                                                            scrub = scrub)
 
     def log_sql(self, sql_query, show_output=False):
@@ -93,7 +98,6 @@ class DatabaseServer(object):
         if not self.has_database(database_name):
             self.protocol_manager.create_database(server = self,
                                                   database_name = database_name)
-                       
 
     def drop_database(self, database_name):
         """
@@ -106,7 +110,6 @@ class DatabaseServer(object):
                     
             self.protocol_manager.drop_database(server = self,
                                                 database_name = database_name)
-
 
     def get_database(self, database_name):
         """

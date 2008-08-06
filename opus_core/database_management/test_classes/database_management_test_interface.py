@@ -69,15 +69,15 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
             self.server.create_database(db)
         
     def _create_tables(self):
-        self.db_chain_granddad.create_table('base_schema', base_schema)
-        self.db_chain_granddad.create_table('base_schema2', base_schema2)
-        self.db_chain_granddad.create_table('scenario_information', base_scenario_information_schema)
+        self.db_chain_granddad.create_table_from_schema('base_schema', base_schema)
+        self.db_chain_granddad.create_table_from_schema('base_schema2', base_schema2)
+        self.db_chain_granddad.create_table_from_schema('scenario_information', base_scenario_information_schema)
         
-        self.db_chain_dad.create_table('base_schema', base_schema)
-        self.db_chain_dad.create_table('scenario_information', base_scenario_information_schema)
+        self.db_chain_dad.create_table_from_schema('base_schema', base_schema)
+        self.db_chain_dad.create_table_from_schema('scenario_information', base_scenario_information_schema)
 
-        self.db_chain_son.create_table('base_schema2', base_schema2)
-        self.db_chain_son.create_table('scenario_information', base_scenario_information_schema)
+        self.db_chain_son.create_table_from_schema('base_schema2', base_schema2)
+        self.db_chain_son.create_table_from_schema('scenario_information', base_scenario_information_schema)
         
     def _seed_values(self):
         u = self.db_chain_granddad.get_table('scenario_information').insert(

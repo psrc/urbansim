@@ -25,6 +25,8 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
             self.os = os.uname[0]
         except:
             self.os = 'Windows'
+            
+        AbstractDatabaseEngineManager.__init__(self)
         
         
     def _get_default_database(self):
@@ -39,7 +41,7 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
         return os.path.join(self.schema_path, 
                             database_name + '.txt')
 
-    def get_connection_string(self, server_config, database_name = None, scrub = False):
+    def get_connection_string(self, server_config, database_name = None, get_base_db = False, scrub = False):
           
         if not database_name:
             connect_string = 'sqlite://'

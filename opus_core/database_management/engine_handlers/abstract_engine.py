@@ -14,6 +14,9 @@
 
 class AbstractDatabaseEngineManager(object):
     
+    def __init__(self):
+        self.uses_schemas = False
+        
     def get_connection_string(self, database_name = None, scrub = False):
         raise Exception('method not implemented')
     

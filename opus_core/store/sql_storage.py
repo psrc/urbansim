@@ -69,7 +69,7 @@ class sql_storage(Storage):
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         db = self._get_db()
         
-        table = Table(table_name, db.metadata, autoload=True)
+        table = db.get_table(table_name) #Table(table_name, db.metadata, autoload=True)
             
         available_column_names = self.get_column_names(table_name, lowercase)
         final_cols = self._select_columns(column_names, available_column_names) 
@@ -141,15 +141,16 @@ class sql_storage(Storage):
                 table_data[column_name] = [float(cell) for cell in column_data]
         
         if db.table_exists(table_name):
-            table = db.get_table(table_name)
-            table.drop(checkfirst = True)
-            db.metadata.remove(table)
-        table = Table(table_name, db.metadata, *columns)
+            db.drop_table(table_name)
+#            table = db.get_table(table_name)
+#            table.drop(checkfirst = True)
+#            db.metadata.remove(table)
+#        table = Table(table_name, db.metadata, *columns)
         
         connection = db.engine.connect()
         try:
             try:
-                table.create()
+                table = db.create_table(table_name, columns = columns)
             except Exception, e:
                 raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
 
@@ -177,10 +178,7 @@ class sql_storage(Storage):
 
     def get_column_names(self, table_name, lowercase=True):
         db = self._get_db()
-        if table_name not in db.metadata.tables:
-            raise
-        
-        table = db.metadata.tables[table_name]
+        table = db.get_table(table_name = table_name)
         
         if lowercase:
             col_names = [column.name.lower() for column in table.columns]
@@ -192,7 +190,7 @@ class sql_storage(Storage):
     
     def get_table_names(self):
         db = self._get_db()
-        tables = [table.name for table in db.metadata.table_iterator()]
+        tables = db.get_tables_in_database()
         self._dispose_db(db)
         
         # MSSQL hacking by Jesse
@@ -261,38 +259,50 @@ else:
 
     from opus_core.store.storage import TestStorageInterface
     from opus_core.database_management.database_server import DatabaseServer
-    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration, _get_installed_database_engines
     
     class SQLStorageTest(TestStorageInterface):
         """
         Uses MySQL and sqlite for these tests.
         """
         def setUp(self):
-            self.database_name = 'test_database'
-            self.protocol = 'mysql'
-            
-            config = DatabaseServerConfiguration(protocol = self.protocol)
-            self.username = config.user_name
-            self.hostname = config.host_name
-            self.password = config.password 
-            
-            self.db_server = DatabaseServer(config)
-            
-            self.db_server.drop_database(self.database_name)
-            self.db_server.create_database(self.database_name)
 
-            # Use MySQL to test this.
-            db = self.db_server.get_database(self.database_name)
-            self.storage = sql_storage(
-                storage_location = db
-                )
+            db_configs = []
+            for engine in _get_installed_database_engines():
+                if engine == 'mssql' or engine == 'postgres' or engine=='sqlite': continue
+                config = DatabaseServerConfiguration(protocol = engine,
+                                                     test = True)
+                db_configs.append(config)
+            
+            self.database_name = 'test_database'
+            self.dbs = []
+            for config in db_configs:
+                try:
+                    server = DatabaseServer(config)
+                    if server.has_database(self.database_name):
+                        server.drop_database(self.database_name)
+                    server.create_database(self.database_name)
+                    self.assertTrue(server.has_database(database_name = self.database_name))
+                    db = OpusDatabase(database_server_configuration = config, 
+                                       database_name = self.database_name)
+                    storage = sql_storage(
+                                    storage_location = db
+                                    )
+                    self.dbs.append((db,server,storage))
+                    self.storage = storage
+                except:
+                    import traceback
+                    traceback.print_exc()
+                    
+                    print 'WARNING: could not start server for protocol %s'%config.protocol
+            
             
         def tearDown(self):
-            del self.storage
-            self.db_server.drop_database(self.database_name)
+            for db, server, storage in self.dbs:
+                db.close()
+                server.drop_database(self.database_name)
+                server.close()
             
-            self.db_server.close()
-        
 #        def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_not_including_port(self):
 #                
 #            expected_url = '%s://%s:%s@%s/%s'%(self.protocol,self.username, self.password, self.hostname, self.database_name)
@@ -302,233 +312,274 @@ else:
 
        
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'my_id': array([1,2,3]),
-                    'a': array([4,5,6]),
-                    }
-                )
-                
-            expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
-            
-            db = self.db_server.get_database(self.database_name)
-            
-            tbl = db.get_table('test_write_table')
-            s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
-            results = db.engine.execute(s).fetchall()
-
-            self.assertEqual(expected_results, results)
+            for db, server, storage in self.dbs:
+                try:
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'my_id': array([1,2,3]),
+                            'a': array([4,5,6]),
+                            }
+                        )
+                        
+                    expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
+                                        
+                    tbl = db.get_table('test_write_table')
+                    s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
+                    results = db.engine.execute(s).fetchall()
         
+                    self.assertEqual(expected_results, results)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
+                    
         def test_write_table_creates_a_table_with_the_given_table_name_and_data_of_different_types(self):
-            
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'int_data': array([2,1]),
-                    'float_data': array([2.2,1.1]),
-                    'string_data': array(['foo', 'bar'])
-                    }
-                )
+            for db, server, storage in self.dbs:
+                try:
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'int_data': array([2,1]),
+                            'float_data': array([2.2,1.1]),
+                            'string_data': array(['foo', 'bar'])
+                            }
+                        )
+                        
+                                    
+                    expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
+                    
+                    # Verify the data through a DatabaseServer database connection        
+                    tbl = db.get_table('test_write_table')
+                    s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
+                    results = db.engine.execute(s).fetchall()
+        
+                    self.assertEqual(expected_results, results)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
                 
-                            
-            expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
-            
-            # Verify the data through a DatabaseServer database connection
-            db = self.db_server.get_database(self.database_name)
-
-            tbl = db.get_table('test_write_table')
-            s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
-            results = db.engine.execute(s).fetchall()
-
-            self.assertEqual(expected_results, results)
-
-        def test_write_table_properly_creates_primary_key(self):                   
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'my_id': array([1,2,3]),
-                    'a': array([4,5,6]),
-                    }
-                )
-            
-            db = self.db_server.get_database(self.database_name)
-            tbl = db.get_table('test_write_table')
-            self.assertTrue(tbl.c.my_id.primary_key)
-            
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'my_id': array([1,1,2,3]),
-                    'a': array([4,5,6,7]),
-                    }
-                )
-            
-            db = self.db_server.get_database(self.database_name)
-            tbl = db.get_table('test_write_table')
-            self.assertFalse(tbl.c.my_id.primary_key)
-
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'id': array([1,2,3]),
-                    'a': array([4,5,6]),
-                    }
-                )
-            
-            db = self.db_server.get_database(self.database_name)
-            tbl = db.get_table('test_write_table')
-            self.assertFalse(tbl.c.id.primary_key)
-
+        def test_write_table_properly_creates_primary_key(self):  
+            for db, server, storage in self.dbs:
+                try:
+                 
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'my_id': array([1,2,3]),
+                            'a': array([4,5,6]),
+                            }
+                        )
+                    
+                    tbl = db.get_table('test_write_table')
+                    self.assertTrue(tbl.c.my_id.primary_key)
+                                        
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'my_id': array([1,1,2,3]),
+                            'a': array([4,5,6,7]),
+                            }
+                        )
+                    
+                    tbl = db.get_table('test_write_table')
+                    self.assertFalse(tbl.c.my_id.primary_key)
+        
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'id': array([1,2,3]),
+                            'a': array([4,5,6]),
+                            }
+                        )
+                    
+                    tbl = db.get_table('test_write_table')
+                    self.assertFalse(tbl.c.id.primary_key)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
 
         def test_write_table_overwrite(self):
-                   
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'my_id': array([1,2,3]),
-                    'a': array([4,5,6]),
-                    }
-                )
+            for db, server, storage in self.dbs:
+                try:
 
-            self.storage.write_table(
-                table_name = 'test_write_table', 
-                table_data = {
-                    'my_id': array([1,2,3]),
-                    'a': array([4,5,6]),
-                    }
-                )                
-            expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
-            
-            #Verify the data through a DatabaseServer database connection
-            db = self.db_server.get_database(self.database_name)
-            
-            tbl = db.get_table('test_write_table')
-            s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
-            results = db.engine.execute(s).fetchall()
-
-            self.assertEqual(expected_results, results)
-                        
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'my_id': array([1,2,3]),
+                            'a': array([4,5,6]),
+                            }
+                        )
+        
+                    storage.write_table(
+                        table_name = 'test_write_table', 
+                        table_data = {
+                            'my_id': array([1,2,3]),
+                            'a': array([4,5,6]),
+                            }
+                        )                
+                    expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
+                    
+                    #Verify the data through a DatabaseServer database connection
+                    tbl = db.get_table('test_write_table')
+                    s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
+                    results = db.engine.execute(s).fetchall()
+        
+                    self.assertEqual(expected_results, results)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise                        
         def test_get_sql_alchemy_type_from_numpy_dtype(self):
-            expected_sql_alchemy_type = Integer
-            actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('i'))
-            self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
-            
-            expected_sql_alchemy_type = Float
-            actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('f'))
-            self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
-            
-            expected_sql_alchemy_type = Text
-            actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('S'))
-            self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
-            
+            for db, server, storage in self.dbs:
+                try:
+
+                    expected_sql_alchemy_type = Integer
+                    actual_sql_alchemy_type = storage._get_sql_alchemy_type_from_numpy_dtype(dtype('i'))
+                    self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
+                    
+                    expected_sql_alchemy_type = Float
+                    actual_sql_alchemy_type = storage._get_sql_alchemy_type_from_numpy_dtype(dtype('f'))
+                    self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
+                    
+                    expected_sql_alchemy_type = Text
+                    actual_sql_alchemy_type = storage._get_sql_alchemy_type_from_numpy_dtype(dtype('S'))
+                    self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
+                
         def test_get_numpy_dtype_from_sql_alchemy_type(self):
-            expected_numpy_type = dtype('i')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Integer())
-            self.assertEqual(expected_numpy_type, actual_numpy_type)
-            
-            expected_numpy_type = dtype('f')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Float())
-            self.assertEqual(expected_numpy_type, actual_numpy_type)
-            
-            expected_numpy_type = dtype('S')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Text())
-            self.assertEqual(expected_numpy_type, actual_numpy_type)
-            
+            for db, server, storage in self.dbs:
+                try:
+
+                    expected_numpy_type = dtype('i')
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Integer())
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    
+                    expected_numpy_type = dtype('f')
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Float())
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    
+                    expected_numpy_type = dtype('S')
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Text())
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise            
         
         def test_get_table_names_added_through_write_table(self):
-            self.storage.write_table('table1', {'a':array([1])})
-            self.storage.write_table('table2', {'a':array([1])})
-            self.storage.write_table('table3', {'a':array([1])})
-                
-            expected_table_names = ['table1', 'table2', 'table3']
-            actual_table_names = self.storage.get_table_names()
-                
-            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-            self.assertEqual(len(expected_table_names), len(actual_table_names))
+            for db, server, storage in self.dbs:
+                try:
+
+                    storage.write_table('table1', {'a':array([1])})
+                    storage.write_table('table2', {'a':array([1])})
+                    storage.write_table('table3', {'a':array([1])})
+                        
+                    expected_table_names = ['table1', 'table2', 'table3']
+                    actual_table_names = storage.get_table_names()
+                        
+                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(len(expected_table_names), len(actual_table_names))
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
             
         def test_get_column_names(self):
-            self.storage.write_table(
-                table_name = 'foo', 
-                table_data = {
-                    'bee': array([1]),
-                    'baz': array([1]),
-                    'foobeebaz': array([1])
-                    }
-                )
-            
-            db = self.db_server.get_database(self.database_name)
-            
-            db.engine.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
-            
-            tbl = db.get_table('bar')        
-            i = tbl.insert(values = {'foo':1, 'boo':1, 'fooboobar':1})
-            db.engine.execute(i)
-                
-            expected_table_names = ['bee', 'baz', 'foobeebaz']
-            actual_table_names = self.storage.get_column_names('foo')
-                
-            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-            self.assertEqual(len(expected_table_names), len(actual_table_names))
-            
-            expected_table_names = ['foo', 'boo', 'fooboobar']
-            actual_table_names = self.storage.get_column_names('bar')
-                
-            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-            self.assertEqual(len(expected_table_names), len(actual_table_names))
+            for db, server, storage in self.dbs:
+                try:
+
+                    storage.write_table(
+                        table_name = 'foo', 
+                        table_data = {
+                            'bee': array([1]),
+                            'baz': array([1]),
+                            'foobeebaz': array([1])
+                            }
+                        )
+                    
+                    db.engine.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
+                    
+                    tbl = db.get_table('bar')        
+                    i = tbl.insert(values = {'foo':1, 'boo':1, 'fooboobar':1})
+                    db.engine.execute(i)
+                        
+                    expected_table_names = ['bee', 'baz', 'foobeebaz']
+                    actual_table_names = storage.get_column_names('foo')
+                        
+                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(len(expected_table_names), len(actual_table_names))
+                    
+                    expected_table_names = ['foo', 'boo', 'fooboobar']
+                    actual_table_names = storage.get_column_names('bar')
+                        
+                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(len(expected_table_names), len(actual_table_names))
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
             
         def test_load_table_returns_a_table_with_the_given_table_name_and_data(self):
-            db = self.db_server.get_database(self.database_name)
-            
-            db.engine.execute('CREATE TABLE foo (a INT, b INT, c INT)')
-                        
-            tbl = db.get_table('foo')        
-            i = tbl.insert(values = {'a':1, 'b':2, 'c':3})
-            db.engine.execute(i)
+            for db, server, storage in self.dbs:
+                try:
 
-            expected_data = {
-                'a': array([1], dtype='i'),
-                'b': array([2], dtype='i'),
-                'c': array([3], dtype='i'),
-                }
-            
-            actual_data = self.storage.load_table('foo')
-            
-            self.assertDictsEqual(expected_data, actual_data)
+                    db.engine.execute('CREATE TABLE foo (a INT, b INT, c INT)')
+                                
+                    tbl = db.get_table('foo')        
+                    i = tbl.insert(values = {'a':1, 'b':2, 'c':3})
+                    db.engine.execute(i)
+        
+                    expected_data = {
+                        'a': array([1], dtype='i'),
+                        'b': array([2], dtype='i'),
+                        'c': array([3], dtype='i'),
+                        }
+                    
+                    actual_data = storage.load_table('foo')
+                    
+                    self.assertDictsEqual(expected_data, actual_data)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
             
         def test_load_table_returns_a_table_with_different_table_name_and_data(self):
-            db = self.db_server.get_database(self.database_name)
-            
-            db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+            for db, server, storage in self.dbs:
+                try:
 
-            tbl = db.get_table('bar')        
-            i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
-            db.engine.execute(i)
-                  
-            expected_data = {
-                'd': array([4], dtype='i'),
-                'e': array([5.5], dtype='f'),
-                'f': array(['6'], dtype='S'),
-                }
-            
-            actual_data = self.storage.load_table('bar')
-            
-            self.assertDictsEqual(expected_data, actual_data)
+                    db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+        
+                    tbl = db.get_table('bar')        
+                    i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+                    db.engine.execute(i)
+                          
+                    expected_data = {
+                        'd': array([4], dtype='i'),
+                        'e': array([5.5], dtype='f'),
+                        'f': array(['6'], dtype='S'),
+                        }
+                    
+                    actual_data = storage.load_table('bar')
+                    
+                    self.assertDictsEqual(expected_data, actual_data)
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
 
         def test_load_table_returns_nothing_when_no_cols_specified(self):
-            db = self.db_server.get_database(self.database_name)
-            
-            db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
-            
-            tbl = db.get_table('bar')        
-            i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
-            db.engine.execute(i)
-
-            expected_data = {}
-            
-            actual_data = self.storage.load_table('bar', column_names = [])
-            
-            self.assertDictsEqual(expected_data, actual_data)            
-    
+            for db, server, storage in self.dbs:
+                try:
+                    db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+                    
+                    tbl = db.get_table('bar')        
+                    i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+                    db.engine.execute(i)
+        
+                    expected_data = {}
+                    
+                    actual_data = storage.load_table('bar', column_names = [])
+                    
+                    self.assertDictsEqual(expected_data, actual_data)            
+                except:
+                    print 'ERROR: protocol %s'%server.config.protocol
+                    raise
+                    
     if __name__ == '__main__':
         opus_unittest.main()

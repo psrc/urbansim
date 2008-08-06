@@ -69,10 +69,17 @@ class OpusDatabase(object):
 
         self.engine = create_engine(self.get_connection_string())
         self.metadata = MetaData(
-            bind = self.engine,
-            reflect = True
+            bind = self.engine
         )  
         
+        self.reflect()
+    
+    def reflect(self):
+        self.metadata.clear()
+        if self.protocol_manager.uses_schemas:
+            self.metadata.reflect(bind = self.engine, schema = self.database_name)
+        else:
+            self.metadata.reflect(bind = self.engine)
         
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
@@ -94,7 +101,7 @@ class OpusDatabase(object):
         preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         engine.execute(preprocessed_query)
-        self.metadata.reflect()
+        self.reflect()
 
     def GetResultsFromQuery(self, query):
         """
@@ -103,11 +110,12 @@ class OpusDatabase(object):
         Args:
             query = query to execute
         """
+        self.reflect()
         engine = self.engine
         preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         result = engine.execute(preprocessed_query)
-        self.metadata.reflect()
+        self.reflect()
         
         results = result.fetchall()
         resultlist = [list(row) for row in results]
@@ -121,16 +129,28 @@ class OpusDatabase(object):
         t = self.get_table(table_name)
         schema = {}
         for col in t.columns:
-            schema[col.name] = inverse_type_mapper(col.type)
+            schema[str(col.name)] = inverse_type_mapper(col.type)
         
         return schema    
 
     def get_table(self, table_name):
-        if self.table_exists(table_name):
-            return self.metadata.tables[table_name]
-        raise 'Table %s not found in %s'%(table_name, self.database_name)
-    
-    def create_table(self, table_name, table_schema):
+        self.reflect()
+        if not self.protocol_manager.uses_schemas and self.engine.has_table(table_name = table_name):
+            t = self.metadata.tables[table_name]
+        elif self.protocol_manager.uses_schemas and self.engine.has_table(table_name = table_name, schema=self.database_name):
+            t = self.metadata.tables['%s.%s'%(self.database_name, table_name)]
+        else:
+            raise 'Table %s not found in %s'%(table_name, self.database_name)
+        return t
+            
+    def create_table_from_schema(self, table_name, table_schema):
+        columns = []
+        for col_name, type_val in table_schema.items():
+            col = Column(col_name, type_mapper(type_val))
+            columns.append(col)
+        self.create_table(table_name, columns)
+        
+    def create_table(self, table_name, columns):
         """Create a table called table_name in the set database with the given
         schema (a dictionary of field_name:field_type).
         Note that table constraints are not added.
@@ -138,31 +158,40 @@ class OpusDatabase(object):
 
         if self.table_exists(table_name): return
         
-        columns = []
-        for col_name, type_val in table_schema.items():
-            col = Column(col_name, type_mapper(type_val))
-            columns.append(col)
-            
+        kwargs = {}
+        if self.protocol_manager.uses_schemas:
+            kwargs = {'schema':self.database_name}
+        
         new_table = Table(
             table_name,
             self.metadata,
-            *columns                  
+            *columns,
+            **kwargs      
         )
         
         new_table.create(checkfirst = True)
-        self.metadata.reflect()
+        self.reflect()
+        return new_table
 
     def drop_table(self, table_name):
         if self.table_exists(table_name):
-            t = self.metadata.tables[table_name]
+            t = self.get_table(table_name)
             t.drop(bind = self.engine)
-            self.metadata.reflect()
+            self.metadata.remove(t)
+            self.reflect()
                 
     def table_exists(self, table_name):
-        self.metadata.reflect()
-        if not table_name in self.metadata.tables:
+        self.reflect()
+        
+        if not self.protocol_manager.uses_schemas and \
+           self.engine.has_table(table_name = table_name):
+            t = self.metadata.tables[table_name]
+        elif self.protocol_manager.uses_schemas and \
+             self.engine.has_table(table_name = table_name, schema=self.database_name):
+            t = self.metadata.tables['%s.%s'%(self.database_name, table_name)]
+        else:
             return False
-        t = self.metadata.tables[table_name]
+                
         return t.exists()
 
     def get_tables_in_database(self):
@@ -214,7 +243,7 @@ def inverse_type_mapper(type_class):
         elif isinstance(type_class, SmallInteger):
             my_type = "SHORT"
         elif isinstance(type_class, Float):
-            my_type = "FLOAT"
+            my_type = "DOUBLE"
         elif isinstance(type_class, DateTime):
             my_type = "DATETIME"
         elif isinstance(type_class, Numeric):
@@ -229,7 +258,7 @@ def inverse_type_mapper(type_class):
 def convert_to_mysql_datatype(query):
     filter_data = {"INTEGER" : "int(11)",
                    "SHORT" : "smallint(6)",
-                   "FLOAT" : "float",
+                   "FLOAT" : "double",
                    "DOUBLE" : "double",
                    "VARCHAR" : "varchar(255)",
                    "BOOLEAN" : "tinyint(4)",
@@ -265,6 +294,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
         
         db_configs = []
         for engine in _get_installed_database_engines():
+            if engine == 'mssql': continue
             config = DatabaseServerConfiguration(protocol = engine,
                                                  test = True)
             db_configs.append(config)
@@ -278,7 +308,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 if server.has_database(self.test_db):
                     server.drop_database(self.test_db)
                 server.create_database(self.test_db)
-            
+                self.assertTrue(server.has_database(database_name = self.test_db))
                 db = OpusDatabase(database_server_configuration = config, 
                                    database_name = self.test_db)
                 self.dbs.append((db,server))
@@ -305,7 +335,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
             try:
                 self.assertFalse(db.table_exists(test_table))
                 
-                db.create_table(test_table, test_table_schema)
+                db.create_table_from_schema(test_table, test_table_schema)
                 self.assertTrue(db.table_exists(test_table))
                 
                 db.drop_table(test_table)
@@ -313,6 +343,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
             except:
                 print 'ERROR: protocol %s'%server.config.protocol
                 raise
+
     def test_get_table(self):
         test_table_schema = {
             'col1':"INTEGER",
@@ -323,7 +354,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
         for db, server in self.dbs:
             try:
                 self.assertFalse(db.table_exists(test_table))
-                db.create_table(test_table, test_table_schema)
+                db.create_table_from_schema(test_table, test_table_schema)
                 t = db.get_table(test_table)
                 self.assertTrue(isinstance(t,Table))
                 self.assertTrue(t.name == test_table)
@@ -332,6 +363,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 raise
                         
     def test_get_schema_from_table(self):
+        import copy
         
         test_table_schema = {
             'col1':"INTEGER",
@@ -342,15 +374,17 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
             'col6':"MEDIUMTEXT",
             'col7':"SHORT"                    
         }
+        expected_schema = copy.copy(test_table_schema)  
+        expected_schema.update({'col2':'DOUBLE', 'col6':'VARCHAR', 'col7':'INTEGER'})      
         
         test_table = 'test_table'
         
         for db,server in self.dbs:
             try:
                 self.assertFalse(db.table_exists(test_table))
-                db.create_table(test_table, test_table_schema)
+                db.create_table_from_schema(test_table, test_table_schema)
                 new_schema = db.get_schema_from_table(test_table)
-                self.assertEqual(test_table_schema, new_schema)
+                self.assertEqual(new_schema, expected_schema)
             except:
                 print 'ERROR: protocol %s'%server.config.protocol
                 raise

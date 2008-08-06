@@ -22,7 +22,7 @@ class MSSQLServerManager(AbstractDatabaseEngineManager):
             raise Exception('To connect to a Microsoft SQL Server, a default database to connect to must be specified in the environment variables under MSSQLDEFAULTDB')
         self.base_database = os.environ['MSSQLDEFAULTDB']
     
-    def get_connection_string(self, server_config, database_name = None, scrub = False):
+    def get_connection_string(self, server_config, database_name = None, get_base_db = False, scrub = False):
         if scrub:
             password = '**********'
         else:

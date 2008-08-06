@@ -16,7 +16,7 @@ from opus_core.database_management.engine_handlers.abstract_engine import Abstra
 
 class MySQLServerManager(AbstractDatabaseEngineManager):
     
-    def get_connection_string(self, server_config, database_name = None, scrub = False):
+    def get_connection_string(self, server_config, database_name = None, get_base_db = False, scrub = False):
         if scrub:
             password = '**********'
         else:
