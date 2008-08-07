@@ -160,8 +160,6 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
         self.assertNotEqual(projectNodes.isEmpty(),True)
         projectNode = projectNodes.item(0)
 
-        # def getNodeText(qDomNode):
-
         # This should be the tool_path
         child = projectNode.firstChild().firstChild().firstChild()
         text = getNodeText(child)
@@ -176,8 +174,6 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
         projectNodes = qDomDocument.elementsByTagName(QString('opus_project'))
         self.assertNotEqual(projectNodes.isEmpty(),True)
         projectNode = projectNodes.item(0)
-
-        # def getElementText(qDomElement):
 
         # Try to get the text from a node
         elementList = getElementsByType(projectNode,QString('tool_name'),multiple=False,recursive=True)
@@ -197,8 +193,6 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
         self.assertNotEqual(projectNodes.isEmpty(),True)
         projectNode = projectNodes.item(0)
         
-        # def getElementsByType(qDomNode, eType, multiple=False, recursive=False):
-
         # Try to get first occurance of type 'default'
         elementList = getElementsByType(projectNode,QString('tool_name'),multiple=False,recursive=True)
         self.assertEqual(len(elementList),1)
@@ -211,8 +205,6 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
         projectNodes = qDomDocument.elementsByTagName(QString('opus_project'))
         self.assertNotEqual(projectNodes.isEmpty(),True)
         projectNode = projectNodes.item(0)
-
-        # def getElementsByTagname(qDomNode, eTag, multiple=False, recursive=False):
 
         # Try to get first occurance of 'default'
         elementList = getElementsByTagname(projectNode,QString('tool_path'),multiple=False,recursive=True)
