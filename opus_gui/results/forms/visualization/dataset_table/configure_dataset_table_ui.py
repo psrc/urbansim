@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configure_dataset_table_ui.ui'
 #
-# Created: Wed Jun 25 01:19:21 2008
+# Created: Thu Aug  7 15:01:51 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,7 +48,7 @@ class Ui_dlgDatasetTableDialog(object):
         self.pbnRemoveIndicator.setFont(font)
         self.pbnRemoveIndicator.setObjectName("pbnRemoveIndicator")
         self.twIndicatorsToVisualize = QtGui.QTableWidget(self.gbIndicators)
-        self.twIndicatorsToVisualize.setGeometry(QtCore.QRect(320, 40, 241, 341))
+        self.twIndicatorsToVisualize.setGeometry(QtCore.QRect(320, 30, 241, 311))
         self.twIndicatorsToVisualize.setWordWrap(True)
         self.twIndicatorsToVisualize.setObjectName("twIndicatorsToVisualize")
         self.twIndicatorsToVisualize.setColumnCount(2)
@@ -58,14 +58,14 @@ class Ui_dlgDatasetTableDialog(object):
         item = QtGui.QTableWidgetItem()
         self.twIndicatorsToVisualize.setHorizontalHeaderItem(1, item)
         self.twAvailableIndicators = QtGui.QTableWidget(self.gbIndicators)
-        self.twAvailableIndicators.setGeometry(QtCore.QRect(10, 40, 241, 341))
+        self.twAvailableIndicators.setGeometry(QtCore.QRect(10, 30, 241, 311))
         self.twAvailableIndicators.setObjectName("twAvailableIndicators")
         self.twAvailableIndicators.setColumnCount(1)
         self.twAvailableIndicators.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.twAvailableIndicators.setHorizontalHeaderItem(0, item)
         self.gbOutputOptions = QtGui.QGroupBox(dlgDatasetTableDialog)
-        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 291, 151))
+        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 291, 161))
         self.gbOutputOptions.setObjectName("gbOutputOptions")
         self.gridLayoutWidget_2 = QtGui.QWidget(self.gbOutputOptions)
         self.gridLayoutWidget_2.setGeometry(QtCore.QRect(10, 30, 191, 41))
