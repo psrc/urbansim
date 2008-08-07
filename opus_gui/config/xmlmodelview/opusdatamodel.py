@@ -21,7 +21,7 @@ from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, parentTree, document, mainwindow, configFile, xmlType, editable):
+    def __init__(self, parentTree, document, mainwindow, configFile, xmlType, editable, addIcons=True):
         QAbstractItemModel.__init__(self, mainwindow)
         self.parentTree = parentTree
         self.mainwindow = parentTree.mainwindow
@@ -56,56 +56,57 @@ class OpusDataModel(QAbstractItemModel):
             self._rootItemSub.initAsRootItem()
             self._rootItem.childItems.append(self._rootItemSub)
 
-        #Add some icons
-        self.folderIcon = QIcon()
-        self.bookmarkIcon = QIcon()
-
-        self.app = qApp
-
-        self.acceptIcon = QIcon(":/Images/Images/accept.png")
-        self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
-        self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-        self.carIcon = QIcon(":/Images/Images/car.png")
-        self.chartBarIcon = QIcon(":/Images/Images/chart_bar.png")
-        self.chartLineIcon = QIcon(":/Images/Images/chart_line.png")
-        self.chartOrgIcon = QIcon(":/Images/Images/chart_organisation.png")
-        self.cogIcon = QIcon(":/Images/Images/cog.png")
-        self.databaseLinkIcon = QIcon(":/Images/Images/database_link.png")
-        self.databaseIcon = QIcon(":/Images/Images/database.png")
-        self.databaseTableIcon = QIcon(":/Images/Images/database_table.png")
-        self.errorIcon = QIcon(":/Images/Images/error.png")
-        self.exclamationIcon = QIcon(":/Images/Images/exclamation.png")
-        self.fieldIcon = QIcon(":/Images/Images/field.png")
-        self.folderDatabaseIcon = QIcon(":/Images/Images/folder_database.png")
-        self.folderIcon = QIcon(":/Images/Images/folder.png")
-        self.layersIcon = QIcon(":/Images/Images/layers.png")
-        self.lockIcon = QIcon(":/Images/Images/lock.png")
-        self.mapGoIcon = QIcon(":/Images/Images/map_go.png")
-        self.mapIcon = QIcon(":/Images/Images/map.png")
-        self.pageWhiteIcon = QIcon(":/Images/Images/page_white.png")
-        self.pythonBatchIcon = QIcon(":/Images/Images/python_batch.png")
-        self.pythonScriptIcon = QIcon(":/Images/Images/python_script.png")
-        self.pythonTypeIcon = QIcon(":/Images/Images/python_type.png")
-        self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
-        self.tableLightningIcon = QIcon(":/Images/Images/table_lightning.png")
-        self.tableMultipleIcon = QIcon(":/Images/Images/table_multiple.png")
-        self.tableIcon = QIcon(":/Images/Images/table.png")
-        self.addIcon = QIcon(":/Images/Images/add.png")
-        self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
-        self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
-        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-        self.toolSetIcon = QIcon(":/Images/Images/folder_wrench.png")
-        self.toolConfigIcon = QIcon(":/Images/Images/wrench.png")
-        self.toolFileIcon = QIcon(":/Images/Images/wrench_orange.png")
-
-        self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
-        self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
-                                  QIcon.Normal, QIcon.Off)
-        self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirOpenIcon),
-                                  QIcon.Normal, QIcon.On)
-        self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
-
+        if addIcons:
+            # Add some icons
+            self.folderIcon = QIcon()
+            self.bookmarkIcon = QIcon()
+            
+            self.app = qApp
+            
+            self.acceptIcon = QIcon(":/Images/Images/accept.png")
+            self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+            self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
+            self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
+            self.carIcon = QIcon(":/Images/Images/car.png")
+            self.chartBarIcon = QIcon(":/Images/Images/chart_bar.png")
+            self.chartLineIcon = QIcon(":/Images/Images/chart_line.png")
+            self.chartOrgIcon = QIcon(":/Images/Images/chart_organisation.png")
+            self.cogIcon = QIcon(":/Images/Images/cog.png")
+            self.databaseLinkIcon = QIcon(":/Images/Images/database_link.png")
+            self.databaseIcon = QIcon(":/Images/Images/database.png")
+            self.databaseTableIcon = QIcon(":/Images/Images/database_table.png")
+            self.errorIcon = QIcon(":/Images/Images/error.png")
+            self.exclamationIcon = QIcon(":/Images/Images/exclamation.png")
+            self.fieldIcon = QIcon(":/Images/Images/field.png")
+            self.folderDatabaseIcon = QIcon(":/Images/Images/folder_database.png")
+            self.folderIcon = QIcon(":/Images/Images/folder.png")
+            self.layersIcon = QIcon(":/Images/Images/layers.png")
+            self.lockIcon = QIcon(":/Images/Images/lock.png")
+            self.mapGoIcon = QIcon(":/Images/Images/map_go.png")
+            self.mapIcon = QIcon(":/Images/Images/map.png")
+            self.pageWhiteIcon = QIcon(":/Images/Images/page_white.png")
+            self.pythonBatchIcon = QIcon(":/Images/Images/python_batch.png")
+            self.pythonScriptIcon = QIcon(":/Images/Images/python_script.png")
+            self.pythonTypeIcon = QIcon(":/Images/Images/python_type.png")
+            self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
+            self.tableLightningIcon = QIcon(":/Images/Images/table_lightning.png")
+            self.tableMultipleIcon = QIcon(":/Images/Images/table_multiple.png")
+            self.tableIcon = QIcon(":/Images/Images/table.png")
+            self.addIcon = QIcon(":/Images/Images/add.png")
+            self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
+            self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
+            self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
+            self.toolSetIcon = QIcon(":/Images/Images/folder_wrench.png")
+            self.toolConfigIcon = QIcon(":/Images/Images/wrench.png")
+            self.toolFileIcon = QIcon(":/Images/Images/wrench_orange.png")
+            
+            self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
+            self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
+                                      QIcon.Normal, QIcon.Off)
+            self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirOpenIcon),
+                                      QIcon.Normal, QIcon.On)
+            self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
+            
     def findXMLRoot(self,doc,tp):
         i = 0
         childNode = None
@@ -615,10 +616,68 @@ class OpusDataModel(QAbstractItemModel):
 from opus_core.tests import opus_unittest
 import os
 
+class FakeToolbox(object): pass
+
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
+        from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
         # find the opus gui directory
         opus_gui_dir = __import__('opus_gui').__path__[0]
+        
+        self.test_xml = """
+<opus_project>
+  <data_manager>
+    <Tool_Library type="tool_library" setexpanded="True" >
+      <tool_path flags="hidden" type="tool_path" >tools</tool_path>
+      <shapefile_to_postgis type="tool_file">
+        <name type="tool_name">shapefile_to_postgis</name>
+        <params type="param_template">
+          <dbname type="string">
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">1</default>
+	  </dbname>
+          <schema_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </schema_name>
+          <shapefile_path>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="file_path" type="string">file_path</type>
+	    <default type="file_path"></default>
+	  </shapefile_path>
+          <output_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </output_table_name>
+          <geometry_type>
+	    <required choices="Required|Optional" type="string">Optional</required>
+	    <type choices="string" type="string">string</type>
+	    <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON" type="string">NONE</default>
+	  </geometry_type>
+          <overwrite>
+	    <required choices="Required|Optional" type="string">Optional</required>
+	    <type choices="string" type="string">string</type>
+	    <default choices="YES|NO" type="string">NO</default>
+	  </overwrite>
+        </params>
+      </shapefile_to_postgis>
+    </Tool_Library>
+  </data_manager>
+</opus_project>"""
+        
+        self.qDomDocument = QDomDocument()
+        self.qDomDocument.setContent(QString(self.test_xml))
+        self.fakeToolbox = FakeToolbox()
+        self.fakeToolbox.mainwindow = None
+        self.fakeToolbox.configFile = None
+        self.fakeToolbox.doc = self.qDomDocument
+        self.testTree = OpusXMLTree(self.fakeToolbox,"general",None,addTree=False)
+        self.model = OpusDataModel(self.testTree, self.qDomDocument, None,
+                                   None, self.testTree.xmlType, True, addIcons=False)
+        
 
     def test_opusDataModelTest(self):
         self.assertEqual(0, 0)

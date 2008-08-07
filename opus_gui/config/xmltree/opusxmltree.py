@@ -23,12 +23,13 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
-    def __init__(self, toolboxbase, xmlType, parentWidget):
+    def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
         self.toolboxbase = toolboxbase
         self.mainwindow = toolboxbase.mainwindow
         self.xmlType = xmlType
         self.parentWidget = parentWidget
-        self.addTree()
+        if addTree:
+            self.addTree()
 
     def addTree(self):
         self.model = OpusDataModel(self,self.toolboxbase.doc, self.mainwindow,
