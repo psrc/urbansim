@@ -674,7 +674,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
         self.fakeToolbox.mainwindow = None
         self.fakeToolbox.configFile = None
         self.fakeToolbox.doc = self.qDomDocument
-        self.testTree = OpusXMLTree(self.fakeToolbox,"general",None,addTree=False)
+        self.testTree = OpusXMLTree(self.fakeToolbox,"data_manager",None,addTree=False)
         self.model = OpusDataModel(self.testTree, self.qDomDocument, None,
                                    None, self.testTree.xmlType, True, addIcons=False)
         
