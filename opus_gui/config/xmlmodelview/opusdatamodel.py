@@ -608,3 +608,21 @@ class OpusDataModel(QAbstractItemModel):
             if not grandParent.isNull():
                 self.stripAttributeUp(attribute,grandParent)
         return parent
+
+
+#################### Unit Tests for OpusDataModel ###########################
+
+from opus_core.tests import opus_unittest
+import os
+
+class OpusDataModelTests(opus_unittest.OpusTestCase):
+    def setUp(self):
+        # find the opus gui directory
+        opus_gui_dir = __import__('opus_gui').__path__[0]
+
+    def test_opusDataModelTest(self):
+        self.assertEqual(0, 0)
+
+if __name__ == '__main__':
+    opus_unittest.main()
+
