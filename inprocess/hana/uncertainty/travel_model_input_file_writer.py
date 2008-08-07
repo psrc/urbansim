@@ -230,11 +230,13 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                         'Not enough observations to sample from. Sampled from distribution of all zones of this category. (%s observations, %s samples)' % (
                                                                                 hhs_of_this_category_and_zone_idx.size, sim_number_of_households[izone]))
                     hhs_of_this_category_and_zone_idx = hhs_category_idx
+                    persons_considered = person_is_in_category
+                else:
+                    persons_considered = logical_and(person_is_in_category, persons_zone_ids == zone_ids[izone])
                 draw = sample_replace(hhs_of_this_category_and_zone_idx, sim_number_of_households[izone])
                 sim_number_of_nhb_workers[category] = current_number_of_nhb_workers[draw].sum()
                 if sim_number_of_nhb_workers[category] <= 0:
                     continue
-                persons_considered = logical_and(person_is_in_category, persons_zone_ids == zone_ids[izone])
                 job_distribution = array(ndimage.sum(persons_considered, labels=persons_job_zone_ids, index = zone_ids))
                 job_distribution = job_distribution / float(job_distribution.sum())
                 # place workers to jobs with the lottery alg.; the probability is proportional to number of nhb workers
