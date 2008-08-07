@@ -162,6 +162,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)
+            self.adjustSize()
         
     def toolTypeSelected(self):
         #print "Got a new selection"
