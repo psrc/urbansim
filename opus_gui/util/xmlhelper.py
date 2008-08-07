@@ -16,6 +16,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 
+#################### Basic XML Node/Element Helpers #######################
+
 ## Get node text
 def getNodeText(qDomNode):
     if not qDomNode or qDomNode.isNull():
@@ -97,6 +99,10 @@ def getChildElementsText(qDomNode, eTagList=[], first=False, recursive=False):
                 returnDict.update(getChildElementsText(childNode, eTagList, first, recursive))
         childNode = childNode.nextSibling()
     return returnDict
+
+
+#################### Opus XML Helpers #######################
+
 
 #################### Unit Tests for XML Helpers ###########################
 
