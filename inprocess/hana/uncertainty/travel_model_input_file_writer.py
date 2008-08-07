@@ -185,7 +185,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             #logger.log_status(self.simulated_values[var])
          
     def generate_workplaces(self, person_set):   
-        # assign workers to jobs separately for each income category
+        """ assign workers to jobs separately for each income category"""
         zone_set = self.dataset_pool.get_dataset("zone")
         zone_ids = zone_set.get_id_attribute()
         persons_job_zone_ids = person_set.get_attribute('job_zone_id')
@@ -209,18 +209,20 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                              'income_group_4': array([], dtype='int32')
                              }
         hhs_zone_ids = households.get_attribute('zone_id')
+        # iterate over income categories
         for category in range(1,5):
             logger.log_status('Income category %s' % category)
             is_hhs_category = households.get_attribute('is_income_group_%s' % category)
             hhs_category_idx = where(is_hhs_category)[0]
             person_is_in_category = logical_and(person_set.get_attribute("is_placed_non_home_based_worker_with_job"), 
                                                    person_set.get_attribute("income_group_%s" % category))
-            sim_number_of_households = zone_set.get_attribute(hh_categories[category])
+            sim_number_of_households = self.simulated_values[hh_categories[category]]
+            # iterate over zones
             for izone in arange(zone_set.size()):
                 if sim_number_of_households[izone] <= 0:
                     continue
                 logger.log_status('Zone %s' % zone_ids[izone])
-                # sample from the empirical distribution of the category and zone
+                # sample a number of nhb workers from the empirical distribution of the category and zone
                 hhs_of_this_category_and_zone_idx = where(logical_and(is_hhs_category, hhs_zone_ids == zone_ids[izone]))[0]
                 if (hhs_of_this_category_and_zone_idx.size <= 0) or (hhs_of_this_category_and_zone_idx.size < 10 and sim_number_of_households[izone] > 100):
                     # if there is not enough observations, sample from the empirical distribution of the whole category
@@ -235,6 +237,8 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                 persons_considered = logical_and(person_is_in_category, persons_zone_ids == zone_ids[izone])
                 job_distribution = array(ndimage.sum(persons_considered, labels=persons_job_zone_ids, index = zone_ids))
                 job_distribution = job_distribution / float(job_distribution.sum())
+                # place workers to jobs with the lottery alg.; the probability is proportional to number of nhb workers
+                # in each zone
                 zone_idx = self.place_workers(job_distribution, number_of_nhb_jobs, sim_number_of_nhb_workers[category])
                 valid_zone_idx = zone_idx[zone_idx >=0]
                 resulting_workers['zone_id'] = concatenate((resulting_workers['zone_id'], 
