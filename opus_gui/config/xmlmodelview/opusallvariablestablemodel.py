@@ -58,11 +58,18 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             return QVariant(self.arraydata[index.row()][index.column()])
         if role == Qt.CheckStateRole:
-            if index.column() == 0:
+            if index.column() == 0 and (not self.arraydata[index.row()][-3]):
                 if self.arraydata[index.row()][-2]:
                     return QVariant(Qt.Checked)
                 else:
                     return QVariant(Qt.Unchecked)
+            else:
+                return QVariant()
+        if role == Qt.BackgroundRole:
+            if self.arraydata[index.row()][-3]:
+                return QVariant(QColor(Qt.darkGray))
+            else:
+                return QVariant(QColor(Qt.lightGray))
         return QVariant()
 
     def headerData(self, col, orientation, role):

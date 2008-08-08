@@ -57,9 +57,13 @@ class OpusAllVariablesDelegate(QItemDelegate):
             editor.setCurrentIndex(currentIndex)
             return editor
         else:
-            editor = QItemDelegate.createEditor(self, parentView, option, index)
-            if type(editor) == QLineEdit:
-                editor.setText(index.model().data(index,Qt.DisplayRole).toString())
+            #editor = QItemDelegate.createEditor(self, parentView, option, index)
+            #if type(editor) == QLineEdit:
+            #    editor.setText(index.model().data(index,Qt.DisplayRole).toString())
+            editor = QTextEdit(parentView)
+            editor.setAcceptRichText(False)
+            editor.setWordWrapMode(QTextOption.WrapAnywhere)
+            editor.setText(index.model().data(index,Qt.DisplayRole).toString())
         return editor
 
     def setEditorData(self,editor,index):
@@ -68,12 +72,18 @@ class OpusAllVariablesDelegate(QItemDelegate):
     def setModelData(self,editor,model,index):
         if type(editor) == QComboBox:
             model.setData(index,QVariant(editor.currentText()),Qt.EditRole)
+        elif type(editor) == QTextEdit:
+            model.setData(index,QVariant(editor.toPlainText()),Qt.EditRole)
         else:
             QItemDelegate.setModelData(self,editor,model,index)
 
     def updateEditorGeometry(self, editor, option, index):
         if type(editor) == QComboBox:
             editor.setGeometry(option.rect)
+        elif type(editor) == QTextEdit:
+            newRect = option.rect
+            newRect.adjust(-5,-7,-5,7)
+            editor.setGeometry(newRect)
         else:
             QItemDelegate.updateEditorGeometry(self,editor,option,index)
         

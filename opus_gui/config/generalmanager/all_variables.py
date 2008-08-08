@@ -95,9 +95,15 @@ class AllVariablesGui(object):
         tv.setColumnWidth(0,25)
         #tv.selectColumn(1)
         tv.horizontalHeader().setStretchLastSection(True)
-        tv.setTextElideMode(Qt.ElideNone)
+        tv.setWordWrap(True)
+        #tv.setTextElideMode(Qt.ElideNone)
+        tv.resizeRowsToContents()
+        QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateLayout)
         self.gridlayout.addWidget(tv)
 
+    def updateLayout(self):
+        # print "Signal"
+        self.tv.resizeRowsToContents()
 
 class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
     def __init__(self, mainwindow, fl):
