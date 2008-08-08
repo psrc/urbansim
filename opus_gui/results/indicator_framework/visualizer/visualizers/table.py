@@ -287,9 +287,11 @@ class Table(Visualization):
         if self.output_type == 'sql':
             try:
                 from opus_core.tools.create_view import create_view
-                create_view(database = self.output_storage._get_db(),
-                table_to_link_name = table_name,
-                dataset_name = dataset_name)
+                db = self.output_storage._get_db()
+                if db.database_server_config.protocol != 'sqlite':
+                    create_view(database = db,
+                        table_to_link_name = table_name,
+                        dataset_name = dataset_name)
             except:
                 import traceback
                 traceback.print_exc()
