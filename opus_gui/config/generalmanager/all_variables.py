@@ -226,11 +226,11 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #print "cancel pressed"
         self.close()
 
-    def on_deleteRow_released(self):
+    def on_deleteVariables_released(self):
         #print "delete pressed"
         self.tm.deleteAllChecked()
 
-    def on_addNew_released(self):
+    def on_addNewVariable_released(self):
         #print "new pressed"
         self.tm.insertRow(0,["",
                              "New_Node","Dataset","Use","Source","Description",

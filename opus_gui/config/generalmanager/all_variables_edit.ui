@@ -45,22 +45,22 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="addNew" >
+       <widget class="QPushButton" name="addNewVariable" >
         <property name="enabled" >
          <bool>true</bool>
         </property>
         <property name="text" >
-         <string>Add New Row</string>
+         <string>Add New Variable</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="deleteRow" >
+       <widget class="QPushButton" name="deleteVariables" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
         <property name="text" >
-         <string>Delete Selected Rows</string>
+         <string>Delete Selected Variables</string>
         </property>
        </widget>
       </item>

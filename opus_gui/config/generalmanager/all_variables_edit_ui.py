@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_edit.ui'
 #
-# Created: Mon Jul 21 10:28:24 2008
+# Created: Fri Aug  8 11:37:26 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,15 +34,15 @@ class Ui_AllVariablesEditGui(object):
         spacerItem = QtGui.QSpacerItem(441,24,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
         self.hboxlayout.addItem(spacerItem)
 
-        self.addNew = QtGui.QPushButton(self.widget)
-        self.addNew.setEnabled(True)
-        self.addNew.setObjectName("addNew")
-        self.hboxlayout.addWidget(self.addNew)
+        self.addNewVariable = QtGui.QPushButton(self.widget)
+        self.addNewVariable.setEnabled(True)
+        self.addNewVariable.setObjectName("addNewVariable")
+        self.hboxlayout.addWidget(self.addNewVariable)
 
-        self.deleteRow = QtGui.QPushButton(self.widget)
-        self.deleteRow.setEnabled(False)
-        self.deleteRow.setObjectName("deleteRow")
-        self.hboxlayout.addWidget(self.deleteRow)
+        self.deleteVariables = QtGui.QPushButton(self.widget)
+        self.deleteVariables.setEnabled(False)
+        self.deleteVariables.setObjectName("deleteVariables")
+        self.hboxlayout.addWidget(self.deleteVariables)
 
         self.line = QtGui.QFrame(self.widget)
         self.line.setFrameShape(QtGui.QFrame.VLine)
@@ -66,8 +66,8 @@ class Ui_AllVariablesEditGui(object):
     def retranslateUi(self, AllVariablesEditGui):
         AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "all_variables", None, QtGui.QApplication.UnicodeUTF8))
-        self.addNew.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Row", None, QtGui.QApplication.UnicodeUTF8))
-        self.deleteRow.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Delete Selected Rows", None, QtGui.QApplication.UnicodeUTF8))
+        self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
+        self.deleteVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Delete Selected Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Save Changes", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
