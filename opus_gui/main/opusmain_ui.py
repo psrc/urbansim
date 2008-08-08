@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Thu Jul 17 16:14:06 2008
-#      by: PyQt4 UI code generator 4.4.2
+# Created: Fri Aug 08 08:57:58 2008
+#      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,279 +12,286 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(974,707)
+        MainWindow.resize(QtCore.QSize(QtCore.QRect(0,0,974,707).size()).expandedTo(MainWindow.minimumSizeHint()))
+
         font = QtGui.QFont()
         font.setPointSize(10)
         MainWindow.setFont(font)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/cog.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
+        MainWindow.setWindowIcon(QtGui.QIcon(":/Images/Images/cog.png"))
+
         self.centralwidget = QtGui.QWidget(MainWindow)
-        self.centralwidget.setGeometry(QtCore.QRect(0,21,974,667))
         self.centralwidget.setObjectName("centralwidget")
+
         self.gridlayout = QtGui.QGridLayout(self.centralwidget)
         self.gridlayout.setObjectName("gridlayout")
+
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
+
         self.toolBox = QtGui.QTabWidget(self.splitter)
         self.toolBox.setEnabled(True)
+
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
         self.toolBox.setSizePolicy(sizePolicy)
         self.toolBox.setBaseSize(QtCore.QSize(0,0))
+
         font = QtGui.QFont()
         font.setPointSize(12)
         self.toolBox.setFont(font)
         self.toolBox.setObjectName("toolBox")
+
         self.generalmanager_page = QtGui.QWidget()
-        self.generalmanager_page.setGeometry(QtCore.QRect(0,0,423,616))
         self.generalmanager_page.setObjectName("generalmanager_page")
+
         self.gridlayout1 = QtGui.QGridLayout(self.generalmanager_page)
         self.gridlayout1.setObjectName("gridlayout1")
         self.toolBox.addTab(self.generalmanager_page,"")
+
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,423,616))
         self.datamanager_page.setObjectName("datamanager_page")
+
         self.gridlayout2 = QtGui.QGridLayout(self.datamanager_page)
         self.gridlayout2.setObjectName("gridlayout2")
+
         self.dataManager_toolBox = QtGui.QTabWidget(self.datamanager_page)
+
         font = QtGui.QFont()
         font.setPointSize(11)
         self.dataManager_toolBox.setFont(font)
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
+
         self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,100,30))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
+
         self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
         self.gridlayout3.setObjectName("gridlayout3")
         self.dataManager_toolBox.addTab(self.datamanager_dbsconnections,"")
+
         self.datamanager_xmlconfig = QtGui.QWidget()
-        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,399,566))
         self.datamanager_xmlconfig.setObjectName("datamanager_xmlconfig")
+
         self.gridlayout4 = QtGui.QGridLayout(self.datamanager_xmlconfig)
         self.gridlayout4.setObjectName("gridlayout4")
         self.dataManager_toolBox.addTab(self.datamanager_xmlconfig,"")
+
         self.datamanager_dirview = QtGui.QWidget()
-        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,100,30))
         self.datamanager_dirview.setObjectName("datamanager_dirview")
+
         self.gridlayout5 = QtGui.QGridLayout(self.datamanager_dirview)
         self.gridlayout5.setObjectName("gridlayout5")
         self.dataManager_toolBox.addTab(self.datamanager_dirview,"")
         self.gridlayout2.addWidget(self.dataManager_toolBox,0,0,1,1)
         self.toolBox.addTab(self.datamanager_page,"")
+
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,423,616))
         self.modelmanager_page.setObjectName("modelmanager_page")
+
         self.gridlayout6 = QtGui.QGridLayout(self.modelmanager_page)
         self.gridlayout6.setObjectName("gridlayout6")
         self.toolBox.addTab(self.modelmanager_page,"")
+
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,423,616))
         self.runmanager_page.setObjectName("runmanager_page")
+
         self.gridlayout7 = QtGui.QGridLayout(self.runmanager_page)
         self.gridlayout7.setObjectName("gridlayout7")
         self.toolBox.addTab(self.runmanager_page,"")
+
         self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,423,616))
         self.resultsmanager_page.setObjectName("resultsmanager_page")
+
         self.gridlayout8 = QtGui.QGridLayout(self.resultsmanager_page)
         self.gridlayout8.setObjectName("gridlayout8")
         self.toolBox.addTab(self.resultsmanager_page,"")
+
         self.tabWidget = QtGui.QTabWidget(self.splitter)
+
         font = QtGui.QFont()
         font.setPointSize(12)
         self.tabWidget.setFont(font)
         self.tabWidget.setObjectName("tabWidget")
+
         self.tab_editorView = QtGui.QWidget()
-        self.tab_editorView.setGeometry(QtCore.QRect(0,0,516,616))
         self.tab_editorView.setObjectName("tab_editorView")
+
         self.gridlayout9 = QtGui.QGridLayout(self.tab_editorView)
         self.gridlayout9.setObjectName("gridlayout9")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/table_lightning.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.tab_editorView,icon,"")
+        self.tabWidget.addTab(self.tab_editorView,QtGui.QIcon(":/Images/Images/table_lightning.png"),"")
+
         self.tab_pythonView = QtGui.QWidget()
-        self.tab_pythonView.setGeometry(QtCore.QRect(0,0,516,616))
         self.tab_pythonView.setObjectName("tab_pythonView")
+
         self.gridlayout10 = QtGui.QGridLayout(self.tab_pythonView)
         self.gridlayout10.setObjectName("gridlayout10")
+
         self.pythonLineWidget = QtGui.QWidget(self.tab_pythonView)
+
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pythonLineWidget.sizePolicy().hasHeightForWidth())
         self.pythonLineWidget.setSizePolicy(sizePolicy)
         self.pythonLineWidget.setObjectName("pythonLineWidget")
+
         self.hboxlayout = QtGui.QHBoxLayout(self.pythonLineWidget)
         self.hboxlayout.setObjectName("hboxlayout")
+
         self.pythonLabel = QtGui.QLabel(self.pythonLineWidget)
         self.pythonLabel.setObjectName("pythonLabel")
         self.hboxlayout.addWidget(self.pythonLabel)
+
         self.pythonLineEdit = QtGui.QLineEdit(self.pythonLineWidget)
         self.pythonLineEdit.setObjectName("pythonLineEdit")
         self.hboxlayout.addWidget(self.pythonLineEdit)
         self.gridlayout10.addWidget(self.pythonLineWidget,1,0,1,1)
+
         self.pythonWidget = QtGui.QWidget(self.tab_pythonView)
         self.pythonWidget.setObjectName("pythonWidget")
         self.gridlayout10.addWidget(self.pythonWidget,0,0,1,1)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/python_type.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.tab_pythonView,icon,"")
+        self.tabWidget.addTab(self.tab_pythonView,QtGui.QIcon(":/Images/Images/python_type.png"),"")
+
         self.tab_logView = QtGui.QWidget()
-        self.tab_logView.setGeometry(QtCore.QRect(0,0,516,616))
         self.tab_logView.setObjectName("tab_logView")
+
         self.gridlayout11 = QtGui.QGridLayout(self.tab_logView)
         self.gridlayout11.setObjectName("gridlayout11")
+
         self.logViewTextBrowser = QtGui.QTextBrowser(self.tab_logView)
         self.logViewTextBrowser.setObjectName("logViewTextBrowser")
         self.gridlayout11.addWidget(self.logViewTextBrowser,0,0,1,1)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/table.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.tab_logView,icon,"")
+        self.tabWidget.addTab(self.tab_logView,QtGui.QIcon(":/Images/Images/table.png"),"")
         self.gridlayout.addWidget(self.splitter,0,0,1,1)
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0,0,974,21))
         self.menubar.setObjectName("menubar")
+
         self.menuProject = QtGui.QMenu(self.menubar)
         self.menuProject.setObjectName("menuProject")
+
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
+
         self.menuUtilities = QtGui.QMenu(self.menubar)
         self.menuUtilities.setObjectName("menuUtilities")
+
         self.menuModel_System = QtGui.QMenu(self.menubar)
         self.menuModel_System.setObjectName("menuModel_System")
+
         self.menuOpus = QtGui.QMenu(self.menubar)
         self.menuOpus.setObjectName("menuOpus")
         MainWindow.setMenuBar(self.menubar)
+
         self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setGeometry(QtCore.QRect(0,688,974,19))
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
         self.mpActionZoomOut = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/mActionZoomOut.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.mpActionZoomOut.setIcon(icon)
+        self.mpActionZoomOut.setIcon(QtGui.QIcon(":/Images/Images/mActionZoomOut.png"))
         self.mpActionZoomOut.setObjectName("mpActionZoomOut")
+
         self.mpActionPan = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/mActionPan.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.mpActionPan.setIcon(icon)
+        self.mpActionPan.setIcon(QtGui.QIcon(":/Images/Images/mActionPan.png"))
         self.mpActionPan.setObjectName("mpActionPan")
+
         self.mpActionAddRasterLayer = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/mActionAddRasterLayer.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.mpActionAddRasterLayer.setIcon(icon)
+        self.mpActionAddRasterLayer.setIcon(QtGui.QIcon(":/Images/Images/mActionAddRasterLayer.png"))
         self.mpActionAddRasterLayer.setObjectName("mpActionAddRasterLayer")
+
         self.mpActionZoomIn = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/mActionZoomIn.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.mpActionZoomIn.setIcon(icon)
+        self.mpActionZoomIn.setIcon(QtGui.QIcon(":/Images/Images/mActionZoomIn.png"))
         self.mpActionZoomIn.setObjectName("mpActionZoomIn")
+
         self.mpActionAddVectorLayer = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/mActionAddLayer.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.mpActionAddVectorLayer.setIcon(icon)
+        self.mpActionAddVectorLayer.setIcon(QtGui.QIcon(":/Images/Images/mActionAddLayer.png"))
         self.mpActionAddVectorLayer.setObjectName("mpActionAddVectorLayer")
+
         self.actionOpen_Project = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/folder.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionOpen_Project.setIcon(icon)
+        self.actionOpen_Project.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.actionOpen_Project.setObjectName("actionOpen_Project")
+
         self.actionSave_Project = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/script_save.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionSave_Project.setIcon(icon)
+        self.actionSave_Project.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project.setObjectName("actionSave_Project")
+
         self.actionSave_Project_As = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/script_save.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionSave_Project_As.setIcon(icon)
+        self.actionSave_Project_As.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project_As.setObjectName("actionSave_Project_As")
+
         self.actionOpen_Project_2 = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/folder.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionOpen_Project_2.setIcon(icon)
+        self.actionOpen_Project_2.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.actionOpen_Project_2.setObjectName("actionOpen_Project_2")
+
         self.actionExit = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/cross.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionExit.setIcon(icon)
+        self.actionExit.setIcon(QtGui.QIcon(":/Images/Images/cross.png"))
         self.actionExit.setObjectName("actionExit")
+
         self.actionSave_Project_2 = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/disk.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionSave_Project_2.setIcon(icon)
+        self.actionSave_Project_2.setIcon(QtGui.QIcon(":/Images/Images/disk.png"))
         self.actionSave_Project_2.setObjectName("actionSave_Project_2")
+
         self.actionSave_Project_As_2 = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/script_save.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionSave_Project_As_2.setIcon(icon)
+        self.actionSave_Project_As_2.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project_As_2.setObjectName("actionSave_Project_As_2")
+
         self.actionRun_Manager = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/cog.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionRun_Manager.setIcon(icon)
+        self.actionRun_Manager.setIcon(QtGui.QIcon(":/Images/Images/cog.png"))
         self.actionRun_Manager.setObjectName("actionRun_Manager")
+
         self.actionAbout = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/help.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon)
+        self.actionAbout.setIcon(QtGui.QIcon(":/Images/Images/help.png"))
         self.actionAbout.setObjectName("actionAbout")
+
         self.tabActionEditor = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/table.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabActionEditor.setIcon(icon)
+        self.tabActionEditor.setIcon(QtGui.QIcon(":/Images/Images/table.png"))
         self.tabActionEditor.setObjectName("tabActionEditor")
+
         self.tabActionMapView = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/map.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabActionMapView.setIcon(icon)
+        self.tabActionMapView.setIcon(QtGui.QIcon(":/Images/Images/map.png"))
         self.tabActionMapView.setObjectName("tabActionMapView")
+
         self.tabActionPythonConsole = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/python_type.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabActionPythonConsole.setIcon(icon)
+        self.tabActionPythonConsole.setIcon(QtGui.QIcon(":/Images/Images/python_type.png"))
         self.tabActionPythonConsole.setObjectName("tabActionPythonConsole")
+
         self.tabActionLogView = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/folder.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.tabActionLogView.setIcon(icon)
+        self.tabActionLogView.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.tabActionLogView.setObjectName("tabActionLogView")
+
         self.actionPython_View = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/python_type.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionPython_View.setIcon(icon)
+        self.actionPython_View.setIcon(QtGui.QIcon(":/Images/Images/python_type.png"))
         self.actionPython_View.setObjectName("actionPython_View")
+
         self.actionLog_View = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/table.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionLog_View.setIcon(icon)
+        self.actionLog_View.setIcon(QtGui.QIcon(":/Images/Images/table.png"))
         self.actionLog_View.setObjectName("actionLog_View")
+
         self.actionEditor_View = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/table_lightning.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionEditor_View.setIcon(icon)
+        self.actionEditor_View.setIcon(QtGui.QIcon(":/Images/Images/table_lightning.png"))
         self.actionEditor_View.setObjectName("actionEditor_View")
+
         self.actionMap_View = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/map.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionMap_View.setIcon(icon)
+        self.actionMap_View.setIcon(QtGui.QIcon(":/Images/Images/map.png"))
         self.actionMap_View.setObjectName("actionMap_View")
+
         self.actionIncreaseFontSize = QtGui.QAction(MainWindow)
         self.actionIncreaseFontSize.setObjectName("actionIncreaseFontSize")
+
         self.actionDecreaseFontSize = QtGui.QAction(MainWindow)
         self.actionDecreaseFontSize.setObjectName("actionDecreaseFontSize")
+
         self.actionClose_Project = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/folder.png"),QtGui.QIcon.Normal,QtGui.QIcon.Off)
-        self.actionClose_Project.setIcon(icon)
+        self.actionClose_Project.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.actionClose_Project.setObjectName("actionClose_Project")
+
         self.actionEdit_all_variables = QtGui.QAction(MainWindow)
         self.actionEdit_all_variables.setObjectName("actionEdit_all_variables")
+
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName("actionPreferences")
         self.menuProject.addSeparator()
@@ -301,11 +308,11 @@ class Ui_MainWindow(object):
         self.menuUtilities.addAction(self.actionEditor_View)
         self.menuModel_System.addAction(self.actionEdit_all_variables)
         self.menuOpus.addAction(self.actionPreferences)
-        self.menubar.addAction(self.menuOpus.menuAction())
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuModel_System.menuAction())
         self.menubar.addAction(self.menuUtilities.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.menubar.addAction(self.menuOpus.menuAction())
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
@@ -330,7 +337,7 @@ class Ui_MainWindow(object):
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuUtilities.setTitle(QtGui.QApplication.translate("MainWindow", "Utilities", None, QtGui.QApplication.UnicodeUTF8))
         self.menuModel_System.setTitle(QtGui.QApplication.translate("MainWindow", "Model System", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuOpus.setTitle(QtGui.QApplication.translate("MainWindow", "Opus", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuOpus.setTitle(QtGui.QApplication.translate("MainWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
