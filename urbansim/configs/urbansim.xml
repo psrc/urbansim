@@ -66,6 +66,46 @@
 	  </overwrite>
         </params>
       </shapefile_to_postgis>
+      <postgis_polygon_to_centroids type="tool_file">
+        <name type="tool_name">postgis_polygon_to_centroids</name>
+        <params type="param_template">
+          <database_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </database_name>
+          <drop_existing>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default choices="True|False" type="string">True</default>
+          </drop_existing>
+          <schema>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </schema>
+          <new_table_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </new_table_name>
+          <geometry_field_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </geometry_field_name>
+          <existing_table_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </existing_table_name>
+          <centroid_inside_polygon>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default choices="True|False" type="string">False</default>
+          </centroid_inside_polygon>
+        </params>
+      </postgis_polygon_to_centroids>
       <sql_data_to_opus_tool type="tool_file" >
         <name type="tool_name" >sql_data_to_opus</name>
         <params type="param_template" >
