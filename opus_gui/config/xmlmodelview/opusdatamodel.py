@@ -614,6 +614,7 @@ class OpusDataModel(QAbstractItemModel):
 #################### Unit Tests for OpusDataModel ###########################
 
 from opus_core.tests import opus_unittest
+from opus_gui.util.xmlhelper import *
 import os
 
 class FakeToolbox(object): pass
@@ -681,6 +682,16 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
 
     def test_opusDataModelTest(self):
         self.assertEqual(0, 0)
+
+    def test_findElementIndex(self):
+        projectIndex = self.model.index(0,0,QModelIndex())
+        projectNode = projectIndex.internalPointer().node()
+        projectElement = projectNode.toElement()
+        projectText = QString('')
+        if not projectElement.isNull():
+            projectText = projectElement.tagName()
+        print str(projectText)
+        self.assertEqual(projectText,QString('Tool_Library'))
 
 if __name__ == '__main__':
     opus_unittest.main()
