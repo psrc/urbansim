@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Fri Aug 08 08:57:58 2008
+# Created: Fri Aug 08 09:33:47 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -182,9 +182,6 @@ class Ui_MainWindow(object):
 
         self.menuModel_System = QtGui.QMenu(self.menubar)
         self.menuModel_System.setObjectName("menuModel_System")
-
-        self.menuOpus = QtGui.QMenu(self.menubar)
-        self.menuOpus.setObjectName("menuOpus")
         MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -306,13 +303,12 @@ class Ui_MainWindow(object):
         self.menuUtilities.addAction(self.actionPython_View)
         self.menuUtilities.addAction(self.actionLog_View)
         self.menuUtilities.addAction(self.actionEditor_View)
+        self.menuUtilities.addAction(self.actionPreferences)
         self.menuModel_System.addAction(self.actionEdit_all_variables)
-        self.menuOpus.addAction(self.actionPreferences)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuModel_System.menuAction())
         self.menubar.addAction(self.menuUtilities.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.menubar.addAction(self.menuOpus.menuAction())
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
@@ -335,9 +331,8 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_logView), QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProject.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuUtilities.setTitle(QtGui.QApplication.translate("MainWindow", "Utilities", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuUtilities.setTitle(QtGui.QApplication.translate("MainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.menuModel_System.setTitle(QtGui.QApplication.translate("MainWindow", "Model System", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuOpus.setTitle(QtGui.QApplication.translate("MainWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))

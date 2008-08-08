@@ -215,11 +215,12 @@
    </widget>
    <widget class="QMenu" name="menuUtilities" >
     <property name="title" >
-     <string>Utilities</string>
+     <string>Tools</string>
     </property>
     <addaction name="actionPython_View" />
     <addaction name="actionLog_View" />
     <addaction name="actionEditor_View" />
+    <addaction name="actionPreferences" />
    </widget>
    <widget class="QMenu" name="menuModel_System" >
     <property name="title" >
@@ -227,17 +228,10 @@
     </property>
     <addaction name="actionEdit_all_variables" />
    </widget>
-   <widget class="QMenu" name="menuOpus" >
-    <property name="title" >
-     <string>Preferences</string>
-    </property>
-    <addaction name="actionPreferences" />
-   </widget>
    <addaction name="menuProject" />
    <addaction name="menuModel_System" />
    <addaction name="menuUtilities" />
    <addaction name="menuHelp" />
-   <addaction name="menuOpus" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="mpActionZoomOut" >
