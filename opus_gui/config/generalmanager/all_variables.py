@@ -232,7 +232,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #print "cancel pressed"
         self.close()
 
-    def on_deleteVariables_released(self):
+    def on_deleteSelectedVariables_released(self):
         #print "delete pressed"
         self.tm.deleteAllChecked()
 
@@ -242,6 +242,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                              "New_Node","Dataset","Use","Source","Description",
                              0,0,0])
 
+    def on_checkSelectedVariables_released(self):
+        self.tm.checkSelectedVariables()
+
+    def on_checkAllVariables_released(self):
+        self.tm.checkAllVariables()
+        
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
     def __init__(self, mainwindow, fl, nodeToUpdate=None, callback=None):

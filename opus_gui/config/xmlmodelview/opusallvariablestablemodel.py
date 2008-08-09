@@ -17,6 +17,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from opus_core.variables.variable_name import VariableName
 import sys
 import operator
 
@@ -99,14 +100,16 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
     def checkStateOfCheckBoxes(self,newItemAdded):
         if newItemAdded and self.editable:
             # If we have a check then we enable delete
-            self.parentWidget.deleteVariables.setEnabled(True)
+            self.parentWidget.deleteSelectedVariables.setEnabled(True)
+            self.parentWidget.checkSelectedVariables.setEnabled(True)
         # Else now we loop through the items and see if that was the last one removed
         foundOne = False
         for testCase in self.arraydata:
             if testCase[-2]:
                 foundOne = True
         if (not foundOne) and self.editable:
-            self.parentWidget.deleteVariables.setEnabled(False)        
+            self.parentWidget.deleteSelectedVariables.setEnabled(False)        
+            self.parentWidget.checkSelectedVariables.setEnabled(False)        
         
     def initCheckBoxes(self,checkList):
         # Loop through the items and see if it needs a check mark
@@ -176,5 +179,36 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         for index in listIndexToRemove:
             self.removeRow(index)
         self.checkStateOfCheckBoxes(False)
-                
+        
+    def checkSelectedVariables(self):
+        # check the variables in the expression library that have check boxes checked
+        tocheck = []
+        for i,testCase in enumerate(self.arraydata):
+            if testCase[-2]:
+                tocheck.append(i)
+        self._checkVariables(tocheck, 'All expressions for selected variables parse correctly!')
+    
+    def checkAllVariables(self):
+        # check all the variables in the expression library
+        self._checkVariables(range(len(self.arraydata)), 'All expressions parse correctly!')
+    
+    def _checkVariables(self, tocheck, ok_msg):
+        # Helper method -- check the variables in the expression library as indexed by the list 'tocheck'.
+        # Right now the only check is that the expression parses correctly; later we'll want to try 
+        # evaluating it against the current cache.
+        errors = []
+        for i in tocheck:
+            expr = str(self.arraydata[i][5])
+            try:
+                VariableName(expr)
+            except (SyntaxError, ValueError), e:
+                var_name = str(self.arraydata[i][1])
+                dataset_name = str(self.arraydata[i][2])
+                errors.append("(%s, %s): %s" % (var_name, dataset_name, str(e)))
+        if len(errors)==0:
+            QMessageBox.information(self.parentWidget, 'Expression check results', ok_msg)
+        else:
+            errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self.parentWidget, 'Expression check results', errorString)
+
         

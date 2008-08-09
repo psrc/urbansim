@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_edit.ui'
 #
-# Created: Fri Aug  8 11:37:26 2008
+# Created: Fri Aug  8 18:59:13 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,16 +39,25 @@ class Ui_AllVariablesEditGui(object):
         self.addNewVariable.setObjectName("addNewVariable")
         self.hboxlayout.addWidget(self.addNewVariable)
 
-        self.deleteVariables = QtGui.QPushButton(self.widget)
-        self.deleteVariables.setEnabled(False)
-        self.deleteVariables.setObjectName("deleteVariables")
-        self.hboxlayout.addWidget(self.deleteVariables)
+        self.deleteSelectedVariables = QtGui.QPushButton(self.widget)
+        self.deleteSelectedVariables.setEnabled(False)
+        self.deleteSelectedVariables.setObjectName("deleteSelectedVariables")
+        self.hboxlayout.addWidget(self.deleteSelectedVariables)
 
         self.line = QtGui.QFrame(self.widget)
         self.line.setFrameShape(QtGui.QFrame.VLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName("line")
         self.hboxlayout.addWidget(self.line)
+
+        self.checkAllVariables = QtGui.QPushButton(self.widget)
+        self.checkAllVariables.setObjectName("checkAllVariables")
+        self.hboxlayout.addWidget(self.checkAllVariables)
+
+        self.checkSelectedVariables = QtGui.QPushButton(self.widget)
+        self.checkSelectedVariables.setEnabled(False)
+        self.checkSelectedVariables.setObjectName("checkSelectedVariables")
+        self.hboxlayout.addWidget(self.checkSelectedVariables)
 
         self.saveChanges = QtGui.QPushButton(self.widget)
         self.saveChanges.setEnabled(False)
@@ -67,7 +76,9 @@ class Ui_AllVariablesEditGui(object):
         AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "all_variables", None, QtGui.QApplication.UnicodeUTF8))
         self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
-        self.deleteVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Delete Selected Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.deleteSelectedVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Delete Selected Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkAllVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check All Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkSelectedVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check Selected Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Save Changes", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
