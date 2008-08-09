@@ -72,7 +72,7 @@ class OpusDatabase(object):
             bind = self.engine
         )  
         
-        self.reflect()
+        self.reflect(reflect = False)
     
     def reflect(self, clear = True, recurse = True):
         try:
