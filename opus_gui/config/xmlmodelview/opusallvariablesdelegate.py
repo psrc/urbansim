@@ -37,7 +37,7 @@ class OpusAllVariablesDelegate(QItemDelegate):
         elif index.column() == 3:
             # Column 3 is "Use" with options "model variable", "indicator", or "both"
             editor = QComboBox(parentView)
-            choices = ["model variable", "indicator", "both"]
+            choices = ["both", "model variable", "indicator"]
             currentIndex = 0
             for i,choice in enumerate(choices):
                 editor.addItem(choice)
