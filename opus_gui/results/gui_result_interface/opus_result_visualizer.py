@@ -84,8 +84,7 @@ class OpusResultVisualizer(object):
             if source_data_name not in source_data_objs:    
                 source_data = interface.get_source_data(
                                              source_data_name = source_data_name, 
-                                             years = list(years),
-                                             cache_directory = cache_directory)
+                                             years = list(years))
                 source_data_objs[source_data_name] = source_data
             else:
                 source_data = source_data_objs[source_data_name]
