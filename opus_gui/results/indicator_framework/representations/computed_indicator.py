@@ -73,11 +73,11 @@ class ComputedIndicator:
                 name = name.replace('DDDD', repr(year))
         return name
     
-    def export(self):
-        data_manager = IndicatorDataManager()
-        data_manager.export_indicator(
-           indicator = self, 
-           source_data = self.source_data)
+#    def export(self):
+#        data_manager = IndicatorDataManager()
+#        data_manager.export_indicator(
+#           indicator = self, 
+#           source_data = self.source_data)
         
             
 from opus_core.tests import opus_unittest
