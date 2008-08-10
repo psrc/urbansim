@@ -69,7 +69,7 @@ class SimulationTest(opus_unittest.OpusIntegrationTestCase):
         run_manager = RunManager(options)
         config = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
         insert_auto_generated_cache_directory_if_needed(config)
-        run_manager.setup_new_run(run_name = config['cache_directory'])
+        run_manager.setup_new_run(cache_directory = config['cache_directory'])
         run_manager.run_run(config)
        
 if __name__ == "__main__":

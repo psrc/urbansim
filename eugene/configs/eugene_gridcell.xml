@@ -210,8 +210,5 @@
     <Simulation_runs setexpanded="True" type="all_source_data">
 
     </Simulation_runs>
-    <Results setexpanded="True" type="selectable_list">
-
-    </Results>
   </results_manager>
 </opus_project>

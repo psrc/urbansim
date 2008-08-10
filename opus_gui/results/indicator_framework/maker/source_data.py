@@ -28,6 +28,7 @@ class SourceData(object):
                  dataset_pool_configuration,
                  cache_directory, 
                  name,
+                 run_id,
                  comparison_cache_directory = '',
                  years = [],
                  run_description = ''):
@@ -38,6 +39,7 @@ class SourceData(object):
         self.comparison_cache_directory = comparison_cache_directory
         self.run_description = run_description       
         self.name = name  
+        self.run_id = run_id
             
         self._check_integrity()
         

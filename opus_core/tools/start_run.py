@@ -91,5 +91,5 @@ if __name__ == "__main__":
     if options.profile_filename is not None:
         config["profile_filename"] = options.profile_filename
  
-    run_manager.setup_new_run(run_name = config['cache_directory'])
+    run_manager.setup_new_run(cache_directory = config['cache_directory'])
     run_manager.run_run(config, run_as_multiprocess = run_as_multiprocess)

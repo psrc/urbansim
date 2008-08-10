@@ -75,17 +75,11 @@ class OpusResultGenerator(object):
 
         self.computed_indicators = []
         
-        if self.cache_directory is not None:            
-            source_data = self.interface.get_source_data(
-                                         source_data_name = None,
-                                         cache_directory = self.cache_directory, 
-                                         years = self.years)
-        else:
-            source_data = self.interface.get_source_data(
-                                         source_data_name = self.source_data_name, 
-                                         years = self.years)
+        source_data = self.interface.get_source_data(
+                             source_data_name = self.source_data_name, 
+                             years = self.years)
 
-            self.cache_directory = source_data.cache_directory
+        self.cache_directory = source_data.cache_directory
 
         indicator = self.interface.get_indicator(
                                  indicator_name = self.indicator_name,
@@ -98,26 +92,10 @@ class OpusResultGenerator(object):
         except:
             pass
 
-        computed_indicator = maker.create(indicator = indicator, 
+        computed_indicator = maker.create(indicator = indicator,
                                           source_data = source_data)
         self.computed_indicators.append(computed_indicator)
-        name = '%s.%s.%s'%(self.indicator_name, 
-            self.dataset_name, 
-            self.source_data_name)
-#        try:
-#            import pydevd;pydevd.settrace()
-#        except:
-#            pass
-#        
-        if self.source_data_name is not None:
-            self.xml_helper.add_result_to_xml(result_name = name,
-                                              source_data_name = self.source_data_name, 
-                                              indicator_name = self.indicator_name, 
-                                              dataset_name = self.dataset_name, 
-                                              years = self.years)
-
-        self.last_added_indicator_result_name = name
-                
+#                        
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:

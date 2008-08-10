@@ -133,7 +133,7 @@ class RemoteRun:
         if run_manager:
             self._run_manager = run_manager
         
-    def prepare_for_run(self, configuration_path=None, config=None, run_id=None, prepare_cache=True):
+    def prepare_for_run(self, configuration_path=None, config=None, run_id=None, prepare_cache=True, run_name = None):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
     
         if run_id is not None:
@@ -157,7 +157,7 @@ class RemoteRun:
             if not self.skip_urbansim and prepare_cache:
                 self.prepare_cache_and_communication_path(config)
 
-            self.get_run_manager().add_row_to_history(self.run_id, config, "started")
+            self.get_run_manager().add_row_to_history(self.run_id, config, "started", run_name = None)
             
             #check that run_id must exist
             results = self.get_run_manager().services_db.GetResultsFromQuery(

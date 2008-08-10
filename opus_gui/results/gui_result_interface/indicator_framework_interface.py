@@ -18,11 +18,15 @@ from opus_gui.results.indicator_framework.representations.computed_indicator imp
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration    
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.services.run_server.run_manager import RunManager
+from sqlalchemy.sql import select
 
 class IndicatorFrameworkInterface:
     def __init__(self, toolboxStuff):
         self.toolboxStuff = toolboxStuff
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
+        self.run_manager = RunManager(GenericOptionGroup().parser.parse_args()[0])
         
     def _get_dataset_pool_configuration(self):
         _, package_order = self.xml_helper.get_element_attributes(
@@ -40,19 +44,23 @@ class IndicatorFrameworkInterface:
 
         return dataset_pool_configuration
                 
-    def get_source_data(self, source_data_name, years, cache_directory = None):    
+    def get_source_data(self, source_data_name, years): 
+        source_data_name = str(source_data_name)   
         dataset_pool_configuration = self._get_dataset_pool_configuration()
-        if cache_directory is None:
-            _, cache_directory = self.xml_helper.get_element_attributes(
-                                    node_name = source_data_name, 
-                                    node_type = 'source_data',
-                                    child_attributes = ['cache_directory'])
-            cache_directory = str(cache_directory['cache_directory'])
-                                  
+        run_tbl = self.run_manager.services_db.get_table('run_activity')
+        print self.run_manager.get_run_info()
+        
+        s = select([run_tbl.c.run_id, run_tbl.c.cache_directory],
+                   whereclause=run_tbl.c.run_name == source_data_name)
+        
+        print s
+        run_id, cache_directory = self.run_manager.services_db.execute(s).fetchone()
+
         source_data = SourceData(
                  dataset_pool_configuration = dataset_pool_configuration,
+                 run_id = run_id,
                  cache_directory = cache_directory, 
-                 name = '',
+                 name = source_data_name,
                  years = years)
         
         return source_data
@@ -75,8 +83,9 @@ class IndicatorFrameworkInterface:
         if attribute.find('=') == -1 and indicator['source'] == 'expression':
             attribute = str(indicator_name) + '='+ attribute
         
-        new_indicator = Indicator(dataset_name = dataset_name,
-                              attribute = attribute)
+        new_indicator = Indicator(name = indicator_name,
+                                  dataset_name = dataset_name,
+                                  attribute = attribute)
         return new_indicator
     
     def get_computed_indicator(self, indicator, source_data, dataset_name):

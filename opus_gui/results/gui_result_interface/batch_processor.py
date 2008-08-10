@@ -104,7 +104,7 @@ class BatchProcessor(object):
                                                 self.years,
                                                 cache_directory = self.cache_directory)
                         self.generator.run()
-                        indicator = {'indicator_name':indicator_name,#self.generator.last_added_indicator_result_name,
+                        indicator = {'indicator_name':indicator_name,
                                      'dataset_name':dataset_name,
                                      'source_data_name':self.source_data_name,
                                      'years':self.years}

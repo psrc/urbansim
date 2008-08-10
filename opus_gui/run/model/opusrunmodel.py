@@ -77,11 +77,7 @@ class RunModelThread(QThread):
         self.xml_helper.update_available_runs()
         
     def get_run_name(self):
-        if self.run_name is None:
-            cache_directory = self.modelguielement.model.config['cache_directory']
-            self.run_name = 'Run_%s'%os.path.basename(cache_directory)
-            
-        return self.run_name
+        return self.modelguielement.model.run_name
     
     def get_years(self):
         return self.modelguielement.model.config['years']
@@ -142,6 +138,13 @@ class OpusModel(object):
         self.paused = False
         self._write_command_file('stop')
 
+    def get_run_name(self, config):
+        if self.run_name is None:
+            cache_directory = config['cache_directory']
+            self.run_name = 'Run_%s'%os.path.basename(cache_directory)
+            
+        return self.run_name
+
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
@@ -158,8 +161,8 @@ class OpusModel(object):
                 #print fileNameAbsolute
                 #print self.modeltorun
                 config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
-                if self.run_name is not None:
-                    config['description'] = self.run_name
+                #if self.run_name is not None:
+                #    config['description'] = self.run_name
                     
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
@@ -167,7 +170,7 @@ class OpusModel(object):
                 server_config = GenericOptionGroup().parser.parse_args()[0]
                 run_manager = RunManager(server_config)
         
-                run_manager.setup_new_run(run_name = config['cache_directory'])
+                run_manager.setup_new_run(cache_directory = config['cache_directory'])
 
                 #statusdir = tempfile.mkdtemp()
                 statusdir = run_manager.get_current_cache_directory()
@@ -179,10 +182,12 @@ class OpusModel(object):
                 config['status_file_for_gui'] = self.statusfile
                 self.commandfile = os.path.join(statusdir, 'command.txt')
                 config['command_file_for_gui'] = self.commandfile
+                
+                run_name = self.get_run_name(config)
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 self.running = True
-                run_manager.run_run(config)
+                run_manager.run_run(config, run_name = run_name)
                 self.running = False
                 succeeded = True
                 run_manager.close()

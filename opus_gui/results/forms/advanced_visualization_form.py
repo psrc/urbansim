@@ -170,7 +170,8 @@ class AdvancedVisualizationForm(QWidget):
         results = self.xml_helper.get_available_results()
             
         for result in results:
-            self.co_results.addItem(QString(result['name']))
+            name = '%i.%s'%(result['run_id'],result['indicator_name'])
+            self.co_results.addItem(QString(name))
 
     def _setup_co_result_style(self):
         available_styles = [

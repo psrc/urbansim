@@ -22,17 +22,16 @@ from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
-from opus_core.database_management.table_type_schema import TableTypeSchema
+from opus_core.services.run_server.abstract_service import AbstractService
 
-class RunManager(object):
+class RunManager(AbstractService):
     """An abstraction representing a simulation manager that automatically logs
     runs (and their status) to a database (run_activity),
     creates resources for runs, and can run simulations.
     """
 
     def __init__(self, options):
-        self.services_db = self.create_storage(options)
-        self.server_config = options
+        AbstractService.__init__(self, options)
         self.run_id = None
         self.ready_to_run = False
 
@@ -43,10 +42,10 @@ class RunManager(object):
         else:
             CacheFltData().run(resources)
     
-    def setup_new_run(self, run_name):
+    def setup_new_run(self, cache_directory):
         self.run_id = self._get_new_run_id()
         #compose unique cache directory based on the history_id
-        head, tail = os.path.split(run_name)
+        head, tail = os.path.split(cache_directory)
         unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
         run_descr = self.run_id
                
@@ -66,7 +65,7 @@ class RunManager(object):
             self.services_db.close()
             self.services_db = self.create_storage(self.server_config)
         
-    def run_run(self, run_resources, run_as_multiprocess=True, run_in_background=False):
+    def run_run(self, run_resources, run_name = None, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running
            log it in to run_activity
            run simulation
@@ -80,7 +79,7 @@ class RunManager(object):
             run_resources['cache_directory'] = self.current_cache_directory
             #raise 'The configuration and the RunManager conflict on the proper cache_directory'
 
-        self.add_row_to_history(self.run_id, run_resources, "started")
+        self.add_row_to_history(self.run_id, run_resources, "started", run_name = run_name)
 
         try:
             # Test pre-conditions
@@ -130,11 +129,11 @@ class RunManager(object):
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
 
         except:
-            self.add_row_to_history(self.run_id, run_resources, "failed")
+            self.add_row_to_history(self.run_id, run_resources, "failed", run_name = run_name)
             self.ready_to_run = False
             raise # This re-raises the last exception
         else:
-            self.add_row_to_history(self.run_id, run_resources, "done")
+            self.add_row_to_history(self.run_id, run_resources, "done", run_name = run_name)
             
         self.ready_to_run = False
         
@@ -148,6 +147,10 @@ class RunManager(object):
         run_resources = self.create_run_resources_from_history(
            run_id=run_id,
            restart_year=restart_year)
+        
+        run_tbl = self.services_db.get_table('run_activity')
+        s = select([run_tbl.c.run_name], whereclause = run_tbl.c.run_id == run_id)
+        run_name = self.services_db.execute(s).fetchone()[0]
         
         self.update_environment_variables(run_resources)
         try:
@@ -181,7 +184,7 @@ class RunManager(object):
                             break
 
             run_resources["skip_urbansim"] = skip_urbansim
-            self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0])
+            self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0], run_name = run_name)
 
             exec('from %s import ModelSystem' % model_system)
 
@@ -195,10 +198,10 @@ class RunManager(object):
             
             model_system.run_multiprocess(run_resources)
 
-            self.add_row_to_history(run_id, run_resources, "done")
+            self.add_row_to_history(run_id, run_resources, "done", run_name = run_name)
 
         except:
-            self.add_row_to_history(run_id, run_resources, "failed")
+            self.add_row_to_history(run_id, run_resources, "failed", run_name = run_name)
             raise
 
     def create_run_resources_from_history(self,
@@ -259,6 +262,19 @@ class RunManager(object):
 
         return config
     
+    def get_run_id_from_name(self, run_name):
+        run_activity = self.services_db.get_table('run_activity')
+        
+        query = select([run_activity.c.run_id],
+                       whereclause = run_activity.c.run_name == run_name)
+        results = self.services_db.execute(query).fetchall()
+        if len(results) > 1:
+            raise Exception('Error: Multiple runs with the name %s'%run_name)
+        elif len(results) == 0:
+            raise Exception('Error: Cannot find a run with the name %s'%run_name)
+        else:
+            return results[0][0]
+        
     def get_run_info(self, run_ids = None, resources = False, status = None, soft_fail = True):
         """ returns the name of the server where this run was processed"""
 
@@ -267,6 +283,7 @@ class RunManager(object):
         
         cols = [run_activity.c.run_id,
                 run_activity.c.run_name, 
+                run_activity.c.run_description,
                 run_activity.c.processor_name]
         
         if resources:
@@ -281,17 +298,15 @@ class RunManager(object):
                         
         if resources:
             results = []
-            for run_id, run_name, processor_name, run_resources in self.services_db.execute(query).fetchall():
+            for run_id, run_name, run_description, processor_name, run_resources in self.services_db.execute(query).fetchall():
                 try:
                     config = pickle.loads(str(run_resources))
-                    results.append((run_id, run_name, processor_name,config))
+                    results.append((run_id, run_name, run_description, processor_name,config))
                 except:
                     if not soft_fail: raise   
 
         else:
-            results = [(run_id, run_name, processor_name) for \
-                        run_id, run_name, processor_name in \
-                        self.services_db.execute(query).fetchall() ]       
+            results = self.services_db.execute(query).fetchall()       
 
         return results
     
@@ -329,18 +344,23 @@ class RunManager(object):
 
         return run_id
 
-    def add_row_to_history(self, run_id, resources, status):
+    def add_row_to_history(self, run_id, resources, status, run_name = None):
         """update the run history table to indicate changes to the state of this run history trail."""
         
         resources['run_id'] = run_id
         pickled_resources = pickle.dumps(resources)
+        description = resources.get('description', 'No description')
+        if run_name is None:
+            run_name = description
         
-        values = {'run_id':run_id, 
-             'run_name':'%s' % resources.get('description', 'No description'),
+        values = {'run_id':run_id,
+             'run_name': run_name, 
+             'run_description':'%s' % description,
              'status':'%s' % status,
              'processor_name':'%s' % get_host_name(), 
              'date_time':strftime('%Y-%m-%d %H:%M:%S', localtime()),
              'resources':'%s' % pickled_resources,
+             'cache_directory': resources['cache_directory']
              }        
 
         run_activity_table = self.services_db.get_table('run_activity')
@@ -356,43 +376,7 @@ class RunManager(object):
         run_activity_table = self.services_db.get_table('run_activity')
         qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
         return self.services_db.execute(qry).fetchone() is not None
-        
-    def create_storage(self, options):
-
-        try:
-            database_name = options.database_name
-        except:
-            database_name = 'services'
-
-        config = DatabaseServerConfiguration(
-                     host_name = options.host_name,
-                     user_name = options.user_name,
-                     protocol = options.protocol,
-                     password = options.password)
-        try:
-            server = DatabaseServer(config)
-        except:
-            raise Exception('Cannot connect to the database server that the services database is hosted on')
-        
-        if not server.has_database(database_name):
-            server.create_database(database_name)
-
-        try:
-            services_db = server.get_database(database_name)
-        except:
-            raise Exception('Cannot connect to a services database on %s'%server.get_connection_string(scrub = True))
-        
-        if not services_db.table_exists('run_activity'):
-            tt_schema = TableTypeSchema()
-            try:
-                services_db.create_table_from_schema(
-                     'run_activity', 
-                     tt_schema.get_table_schema('run_activity'))
-            except:
-                raise Exception('Cannot create the run_activity table in the services database')
-        
-        return services_db
-            
+             
     def get_cache_directory(self, run_id):
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
         return resources['cache_directory']
@@ -408,7 +392,7 @@ class RunManager(object):
 ############## RUN REMOVAL ####################
 
     def clean_runs(self):
-        for run_id, run_name, processor_name, resources in self.get_run_info(resources = True):
+        for run_id, run_name, run_description, processor_name, resources in self.get_run_info(resources = True):
             if processor_name == get_host_name() and not os.path.exists(resources['cache_directory']):
                 self.delete_everything_for_this_run(run_id, cache_directory = resources['cache_directory'])
         
@@ -478,9 +462,6 @@ class RunManager(object):
         else:
             logger.log_warning('in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s' % (path,function.__name__,info[1]))
 
-    def close(self):
-        self.services_db.close()
-
 class SimulationRunError(Exception):
     """exception to be raised if the simulation fails at runtime"""
     pass
@@ -511,31 +492,12 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.db_server.drop_database(self.database_name)
         self.db_server.close()
         
-    def test_create_when_already_exists(self):
-        """Shouldn't do anything if the database already exists."""
-        self.db_server.create_database(self.database_name)
-        db = self.db_server.get_database(self.database_name)
-        self.assertFalse(db.table_exists('run_activity'))
-        
-        run_manager = RunManager(self.config)
-        run_manager.services_db.close()
-        self.assertTrue(db.table_exists('run_activity'))
-
-    def test_create(self):
-        """Should create run_activity table if the database doesn't exist."""
-        run_manager = RunManager(self.config)
-        run_manager.services_db.close()
-        
-        self.assertTrue(self.db_server.has_database(self.database_name))
-        db = self.db_server.get_database(self.database_name)
-        self.assertTrue(db.table_exists('run_activity'))  
-
     def test_setup_run(self):
         base_directory = tempfile.mkdtemp(prefix='opus_tmp')
         run_name = 'test_scenario_name'
         run_manager = RunManager(self.config)
         
-        run_manager.setup_new_run(run_name = os.path.join(base_directory, run_name))
+        run_manager.setup_new_run(cache_directory = os.path.join(base_directory, run_name))
         resulting_cache_directory = run_manager.get_current_cache_directory()
         self.assertTrue(resulting_cache_directory.find(run_name)>-1)
         self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
@@ -558,7 +520,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         db = self.db_server.get_database(self.database_name)
         run_activity_table = db.get_table('run_activity')
         
-        s = select([run_activity_table.c.run_name,
+        s = select([run_activity_table.c.run_description,
                     run_activity_table.c.status],
                     whereclause = run_activity_table.c.run_id == 1)
 

@@ -32,7 +32,7 @@ class TestSimulation(TestXMLConfigSetup):
         run_manager = RunManager(options)
         run_section = xml_config.get_run_configuration('Seattle_baseline')
         insert_auto_generated_cache_directory_if_needed(run_section)
-        run_manager.setup_new_run(run_name = run_section['cache_directory'])
+        run_manager.setup_new_run(cache_directory = run_section['cache_directory'])
         run_manager.run_run(run_section)
        
 if __name__ == "__main__":

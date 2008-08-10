@@ -16,6 +16,8 @@ from opus_core.services.run_server.generic_option_group import GenericOptionGrou
 from sqlalchemy.sql import select
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.run_manager import RunManager
+from opus_core.services.run_server.results_manager import ResultsManager
+
 import os
 
 def elementsByAttributeValue(domDocument,
@@ -109,9 +111,13 @@ class ResultsManagerXMLHelper:
                                     child_attributes = attributes)        
     
     def get_available_results(self, attributes = []):
-        return self._get_node_group(node_value = 'indicator_result', 
-                                    node_attribute = 'type', 
-                                    child_attributes = attributes)        
+        server_config = GenericOptionGroup().parser.parse_args()[0]
+        results_manager = ResultsManager(server_config)
+        results = results_manager.get_results()
+        return results
+#        return self._get_node_group(node_value = 'indicator_result', 
+#                                    node_attribute = 'type', 
+#                                    child_attributes = attributes)        
     
     def _get_node_group(self,
                         node_value, 
@@ -537,7 +543,7 @@ class ResultsManagerXMLHelper:
         project_name = str(vals['project_name'])
         return project_name
         
-        
+
     def update_available_runs(self):
         #get existing cache directories, use as primary key to check for duplicates
         available_runs = self.get_available_run_info(attributes = ['cache_directory'], update = False)
@@ -564,6 +570,9 @@ class ResultsManagerXMLHelper:
                 existing_cache_directories[cache_directory] = 1
 
         project_name = self.get_project_title()
+
+        server_config = GenericOptionGroup().parser.parse_args()[0]
+        run_manager = RunManager(server_config)
         
         # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
         # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
@@ -582,27 +591,30 @@ class ResultsManagerXMLHelper:
                     years.append(int(dir))
             start_year = min(years)
             end_year = max(years)
-            self.add_run_to_run_manager_xml( cache_directory = baseyear_directory,
-                                             scenario_name = project_name,
-                                             run_name = 'base_year_data',
-                                             start_year = start_year, 
-                                             end_year = end_year,
-                                             run_id = -1,
-                                             temporary = False)
+            run_name = 'base_year_data'
+            run_id = run_manager._get_new_run_id()
+            resources = {
+                 'cache_directory': baseyear_directory,
+                 'description': 'base year data',
+                 'years': (start_year, end_year)
+            }
+            run_manager.add_row_to_history(run_id = run_id, 
+                                           resources = resources, 
+                                           status = 'done', 
+                                           run_name = run_name)
             
         #get runs logged from this processor to the run activity table
-        server_config = GenericOptionGroup().parser.parse_args()[0]
-        run_manager = RunManager(server_config)
+
         runs = run_manager.get_run_info(resources = True, status = 'done')
         run_manager.close()
 
 
-        for run_id, run_name, processor_name, run_resources in runs:
+        for run_id, run_name, run_description, processor_name, run_resources in runs:
             cache_directory = run_resources['cache_directory']
             if cache_directory in existing_cache_directories or \
                not os.path.exists(cache_directory): continue
-            if run_name == 'No description':
-                run_name = os.path.basename(cache_directory)
+#            if run_description == 'No description':
+#                run_description = os.path.basename(cache_directory)
             start_year, end_year = run_resources['years']
             self.add_run_to_run_manager_xml( cache_directory = cache_directory,
                                              scenario_name = project_name,
@@ -633,4 +645,3 @@ class ResultsManagerXMLHelper:
 #                                                 start_year, end_year,
 #                                                 temporary = True)
 #            except: pass
-        

@@ -96,7 +96,7 @@ if __name__ == "__main__":
             run_in_background = False
         else:
             run_in_background = True
-        run_manager.setup_new_run(run_name = this_config['cache_directory'])
+        run_manager.setup_new_run(cache_directory = this_config['cache_directory'])
         run_manager.run_run(this_config, run_as_multiprocess=False,
                             run_in_background=run_in_background)
         if irun == 0:

@@ -641,6 +641,5 @@
         </my_indicators>
     </Indicator_libraries>
 -->
-    <Results setexpanded="True" type="selectable_list" />
   </results_manager>
 </opus_project>

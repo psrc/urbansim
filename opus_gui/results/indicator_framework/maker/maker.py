@@ -31,6 +31,10 @@ from time import strftime,localtime
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.storage import Storage
 
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.services.run_server.results_manager import ResultsManager
+from opus_core.services.run_server.run_manager import RunManager
+
 class Maker(object):
     def __init__(self):
         self.computed_indicators = {}
@@ -78,6 +82,8 @@ class Maker(object):
         computed_indicators = self._make_all_indicators(
             indicators = indicators,
             source_data = source_data)
+        
+        self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators)
         
         logger.log_status('%s END %s %s\n' 
             % ('='*11, strftime('%Y_%m_%d_%H_%M', localtime()), '='*11))
@@ -173,6 +179,22 @@ class Maker(object):
         del dataset
         collect()
 
+    def write_computed_indicators_to_db(self, computed_indicator_group):
+        options = GenericOptionGroup().parser.parse_args([])[0]
+        results_manager = ResultsManager(options)
+        #run_manager = RunManager(options)
+        
+        for name, indicator in computed_indicator_group.items():
+            print indicator
+            results_manager.add_computed_indicator(
+                    indicator_name = indicator.indicator.name, 
+                    dataset_name = indicator.dataset_name, 
+                    expression = indicator.indicator.attribute, 
+                    run_id = indicator.source_data.run_id, 
+                    data_path = indicator.get_file_path())                    
+        
+        results_manager.close()
+        
     def _check_integrity(self, indicators, source_data):        
         for name, indicator in indicators.items():
             attribute = indicator.attribute

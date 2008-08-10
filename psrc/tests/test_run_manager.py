@@ -53,7 +53,7 @@ def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
                          in_storage=AttributeCache())
     insert_auto_generated_cache_directory_if_needed(run_configuration)
     caller.resources = run_configuration
-    runs_manager.setup_new_run(run_name = run_configuration['cache_directory'])
+    runs_manager.setup_new_run(cache_directory = run_configuration['cache_directory'])
     runs_manager.run_run(run_configuration)
     
 
