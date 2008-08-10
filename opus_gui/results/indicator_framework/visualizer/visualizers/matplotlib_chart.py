@@ -227,7 +227,7 @@ else:
             self.assert_(os.path.exists(indicator_path))
             self.assert_(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
 
-        def test_create_indicator(self):
+        def skip_test_create_indicator2(self):
             
             # if the environment variable DISPLAY isn't defined, exit this test
             if 'DISPLAY' not in os.environ:
