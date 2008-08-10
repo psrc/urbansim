@@ -48,12 +48,10 @@ class IndicatorFrameworkInterface:
         source_data_name = str(source_data_name)   
         dataset_pool_configuration = self._get_dataset_pool_configuration()
         run_tbl = self.run_manager.services_db.get_table('run_activity')
-        print self.run_manager.get_run_info()
         
         s = select([run_tbl.c.run_id, run_tbl.c.cache_directory],
                    whereclause=run_tbl.c.run_name == source_data_name)
         
-        print s
         run_id, cache_directory = self.run_manager.services_db.execute(s).fetchone()
 
         source_data = SourceData(
