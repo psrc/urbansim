@@ -1,0 +1,99 @@
+<ui version="4.0" >
+ <class>Form</class>
+ <widget class="QWidget" name="Form" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>915</width>
+    <height>760</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>160</x>
+     <y>270</y>
+     <width>731</width>
+     <height>471</height>
+    </rect>
+   </property>
+   <property name="currentIndex" >
+    <number>1</number>
+   </property>
+   <widget class="QWidget" name="tabTable" >
+    <attribute name="title" >
+     <string>Table</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="tabMap" >
+    <attribute name="title" >
+     <string>Map</string>
+    </attribute>
+   </widget>
+  </widget>
+  <widget class="QWidget" native="1" name="widgetExpressions" >
+   <property name="geometry" >
+    <rect>
+     <x>280</x>
+     <y>10</y>
+     <width>601</width>
+     <height>251</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>258</width>
+     <height>261</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <item>
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Simulation Runs</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListView" name="listView" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>279</y>
+     <width>141</width>
+     <height>461</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <item>
+     <widget class="QLabel" name="label_4" >
+      <property name="text" >
+       <string>Years</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListView" name="listView_4" >
+      <property name="selectionRectVisible" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
