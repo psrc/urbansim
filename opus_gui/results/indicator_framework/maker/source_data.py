@@ -124,6 +124,7 @@ class TestSourceData(TestWithAttributeData):
         self.source_data = SourceData(
             cache_directory = self.temp_cache_path,
             years = [1980],
+            run_id = -1,
             name = 'test',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
@@ -151,6 +152,7 @@ class TestSourceData(TestWithAttributeData):
         try:
             source_data = SourceData(
                 cache_directory = self.temp_cache_path,
+                run_id = -1,
                 years = [1980],
                 name = 'test2',
                 dataset_pool_configuration = DatasetPoolConfiguration(
@@ -165,6 +167,7 @@ class TestSourceData(TestWithAttributeData):
         try:
             source_data = SourceData(
                 cache_directory = self.temp_cache_path,
+                run_id = -1,
                 years = [1970],
                 name = 'test3',
                 dataset_pool_configuration = DatasetPoolConfiguration(
@@ -181,6 +184,7 @@ class TestSourceData(TestWithAttributeData):
         try:
             source_data = SourceData(
                 cache_directory = 'null',
+                run_id = -1,
                 years = [1980],
                 name = 'test4',
                 dataset_pool_configuration = DatasetPoolConfiguration(
@@ -197,6 +201,7 @@ class TestSourceData(TestWithAttributeData):
         try:
             source_data = SourceData(
                 cache_directory = self.temp_cache_path,
+                run_id = -1,
                 comparison_cache_directory = 'null',
                 years = [1980],
                 name = 'test5',

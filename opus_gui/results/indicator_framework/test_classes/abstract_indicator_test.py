@@ -23,6 +23,7 @@ class AbstractIndicatorTest(TestWithAttributeData):
         
         self.cross_scenario_source_data = SourceData(
             cache_directory = self.temp_cache_path,
+            run_id = -1,
             comparison_cache_directory = self.temp_cache_path2,
             years = [1980],
             name = 'test_cross_scenario_source_data',
@@ -32,6 +33,7 @@ class AbstractIndicatorTest(TestWithAttributeData):
             )
         )
         self.source_data = SourceData(
+            run_id = -1,
             cache_directory = self.temp_cache_path,
             years = [1980],
             name= 'test_source_data',
