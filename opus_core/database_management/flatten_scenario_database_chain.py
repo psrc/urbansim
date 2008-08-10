@@ -26,7 +26,6 @@ class FlattenScenarioDatabaseChain(object):
         """Ensure that the scenario_information table doesn't point to any
         more databases.
         """
-        new_database.metadata.reflect()
         if new_database.table_exists('scenario_information'):
             qry = None
             scenario_information_table = new_database.get_table('scenario_information')
