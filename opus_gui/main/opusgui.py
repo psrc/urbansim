@@ -106,6 +106,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionSave_Project_As_2.setShortcut(QString('Ctrl+Shift+S'))
         self.actionClose_Project.setShortcut(QString('Ctrl+C'))
         self.actionEdit_all_variables.setShortcut(QString('Ctrl+V'))
+        self.actLaunchResultBrowser.setShortcut(QString('Ctrl+R'))
         
         # Play with the project and config load/save
         QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
@@ -122,6 +123,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
         self.actionEdit_all_variables.setEnabled(False)
+        self.actLaunchResultBrowser.setEnabled(False)
+
         self.all_variables = None
         
         # QGIS References are removed for the time being...
@@ -132,6 +135,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
         #Add python tab
         QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
+        #Add result browser tab
+        QObject.connect(self.actLaunchResultBrowser, SIGNAL("triggered()"), self.openResultBrowser)
         #Add log tab
         QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
 
@@ -149,6 +154,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.consoleStuff = ConsoleBase(self)
         self.runManagerStuff = RunManagerBase(self)
         self.runManagerStuff.setGui(self)
+        self.resultBrowser = None
 
         self.resultManagerStuff = ResultManagerBase(self)
         self.resultManagerStuff.setGui(self)
@@ -258,6 +264,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                      QIcon(":/Images/Images/python_type.png"),"Python Console")
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
+    def openResultBrowser(self):
+        if self.resultBrowser is None:
+            from opus_gui.results.forms.results_browser import ResultBrowser
+            self.resultBrowser = ResultBrowser(mainwindow = self,
+                                               gui_result_manager = self.resultManagerStuff)
+            
+        if self.tabWidget.indexOf(self.resultBrowser) == -1:
+            
+            self.changeFontSize()
+            self.tabWidget.insertTab(0,self.resultBrowser,
+                                     QIcon(":/Images/Images/table.png"),"Result Browser")
+            self.tabWidget.setCurrentWidget(self.resultBrowser)
+            self.resultBrowser.show()
 
     def openEditorTab(self):
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
@@ -299,8 +318,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         if config:
             self.toolboxStuff.openXMLTree(config)
-            # Add the project file's path to the title bar
-            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
+
         else:
             start_dir = ''
             opus_home = os.environ.get('OPUS_HOME')
@@ -321,14 +339,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Open the file and add to the Run tab...
             self.toolboxStuff.openXMLTree(fileName)
             # Add the project file's path to the title bar
-            
-            title = self.resultManagerStuff.xml_helper.get_project_title()
-            os.environ['OPUSPROJECTNAME'] = title
-            self.resultManagerStuff.scanForRuns()
-
-            #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
-            self.setWindowTitle(self.application_title + " - " + QString(title))
+                        
+        title = self.resultManagerStuff.xml_helper.get_project_title()
+        os.environ['OPUSPROJECTNAME'] = title
+        #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
+        self.setWindowTitle(self.application_title + " - " + QString(title))
+        self.resultManagerStuff.scanForRuns()    
+        if self.resultBrowser is not None:    
+            self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
+            self.resultBrowser.close()
+            self.resultBrowser = None
+        
         self.actionEdit_all_variables.setEnabled(True)
+        self.actLaunchResultBrowser.setEnabled(True)
         self.changeFontSize()
 
     def saveConfig(self):
@@ -446,7 +469,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.toolboxStuff.closeXMLTree()
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
+        self.actLaunchResultBrowser.setEnabled(False)
+
         os.environ['OPUSPROJECTNAME'] = 'misc'
+        if self.resultsBrowser is not None:
+            self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
+            self.resultBrowser.close()
+            self.resultBrowser = None
 
 
     def closeEvent(self, event):
