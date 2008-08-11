@@ -49,11 +49,18 @@ class IndicatorFrameworkInterface:
         dataset_pool_configuration = self._get_dataset_pool_configuration()
         run_tbl = self.run_manager.services_db.get_table('run_activity')
         
-        s = select([run_tbl.c.run_id, run_tbl.c.cache_directory],
-                   whereclause=run_tbl.c.run_name == source_data_name)
-        
-        run_id, cache_directory = self.run_manager.services_db.execute(s).fetchone()
-
+        if 'cache_directory' in run_tbl.c:
+            
+            s = select([run_tbl.c.run_id, run_tbl.c.cache_directory],
+                       whereclause=run_tbl.c.run_name == source_data_name)
+            
+            run_id, cache_directory = self.run_manager.services_db.execute(s).fetchone()
+        else:
+            s = select([run_tbl.c.run_id],
+                       whereclause=run_tbl.c.run_name == source_data_name)            
+            run_id = self.run_manager.services_db.execute(s).fetchone()[0]
+            cache_directory = self.run_manager.get_cache_directory(run_id = run_id)
+            
         source_data = SourceData(
                  dataset_pool_configuration = dataset_pool_configuration,
                  run_id = run_id,
