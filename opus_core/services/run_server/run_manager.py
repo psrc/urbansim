@@ -278,12 +278,16 @@ class RunManager(AbstractService):
     def get_run_info(self, run_ids = None, resources = False, status = None, soft_fail = True):
         """ returns the name of the server where this run was processed"""
 
-        #note: this method is never used in the codebase         
         run_activity = self.services_db.get_table('run_activity')
         
+        if 'run_description' in run_activity.c:
+            run_description_col = run_activity.c.run_description
+        else:
+            run_description_col = run_activity.c.run_name
+            
         cols = [run_activity.c.run_id,
                 run_activity.c.run_name, 
-                run_activity.c.run_description,
+                run_description_col,
                 run_activity.c.processor_name]
         
         if resources:
