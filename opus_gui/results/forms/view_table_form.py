@@ -66,13 +66,15 @@ class ViewTableForm(QWidget):
             self.tableWidget.setHorizontalHeaderItem(j,col)
             j += 1
             
-        for i in range(num_rows):
+        order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): v-v2)
+        
+        for i, (idx,v) in enumerate(order):
             row = QTableWidgetItem()
             self.tableWidget.setVerticalHeaderItem(i,row)
             j = 0
             for key in keys:
                 item = QTableWidgetItem()
-                item.setText(QString(repr(table_data[key][i])))
+                item.setText(QString(str(table_data[key][idx])))
                 self.tableWidget.setItem(i,j,item)
                 j += 1
         
