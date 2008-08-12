@@ -20,9 +20,12 @@ from PyQt4.QtGui import *
 from opus_core.variables.variable_name import VariableName
 import sys
 import operator
+from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
+from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
+from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
 
 class OpusAllVariablesTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parentWidget=None, editable=True, *args): 
+    def __init__(self, datain, headerdata, parentWidget, editable=True, *args): 
         QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
         self.headerdata = headerdata
@@ -186,11 +189,11 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         for i,testCase in enumerate(self.arraydata):
             if testCase[-2]:
                 tocheck.append(i)
-        self._checkVariables(tocheck, 'All expressions for selected variables parse correctly!')
+        self._checkVariables(tocheck, 'All expressions for selected variables parse correctly and can be executed on the baseyear data!')
     
     def checkAllVariables(self):
         # check all the variables in the expression library
-        self._checkVariables(range(len(self.arraydata)), 'All expressions parse correctly!')
+        self._checkVariables(range(len(self.arraydata)), 'All expressions parse correctly and can be executed on the baseyear data!')
     
     def _checkVariables(self, tocheck, ok_msg):
         # Helper method -- check the variables in the expression library as indexed by the list 'tocheck'.
@@ -199,16 +202,55 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         errors = []
         for i in tocheck:
             expr = str(self.arraydata[i][5])
+            var_name = str(self.arraydata[i][1])
+            dataset_name = str(self.arraydata[i][2])
+                 
             try:
                 VariableName(expr)
             except (SyntaxError, ValueError), e:
-                var_name = str(self.arraydata[i][1])
-                dataset_name = str(self.arraydata[i][2])
-                errors.append("(%s, %s): %s" % (var_name, dataset_name, str(e)))
+                errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
+        
         if len(errors)==0:
-            QMessageBox.information(self.parentWidget, 'Expression check results', ok_msg)
+            parsing_errors = False
         else:
+            parsing_errors = True
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
             QMessageBox.warning(self.parentWidget, 'Expression check results', errorString)
 
         
+        errors = []
+        for i in tocheck:
+            var_name = str(self.arraydata[i][1])
+            dataset_name = str(self.arraydata[i][2])
+            successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name)
+            if not successful:
+                errors.append("Expression %s could not be run on <br>dataset %s on the baseyear data.<br>Details:<br>%s"%(
+                                var_name, dataset_name, str(error) ))
+            
+            
+        if len(errors) == 0 and not parsing_errors:
+            QMessageBox.information(self.parentWidget, 'Expression check results', ok_msg)
+        elif not parsing_errors:
+            errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self.parentWidget, 'Expression check results', errorString)            
+        
+    def _test_generate_results(self, indicator_name, dataset_name):
+        
+        interface = IndicatorFrameworkInterface(self.parentWidget.mainwindow.toolboxStuff)
+        node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data', 
+                                                                 child_attributes = ['start_year'],
+                                                                 node_type = 'source_data')
+        years = [int(str(vals['start_year']))]
+
+        result_generator = OpusResultGenerator(self.parentWidget.mainwindow.toolboxStuff)
+        result_generator.set_data(
+               source_data_name = 'base_year_data',
+               indicator_name = indicator_name,
+               dataset_name = dataset_name,
+               years = years)
+        
+        try:
+            result_generator.run(raise_exception = True)
+            return True, None
+        except Exception, e:
+            return False, e
