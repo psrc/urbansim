@@ -32,6 +32,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
     def __init__(self, mainwindow, gui_result_manager):
         QWidget.__init__(self, mainwindow)
         self.setupUi(self)
+        #self.setFocusPolicy()
         
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
@@ -39,10 +40,11 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.toolboxStuff = self.gui_result_manager.mainwindow.toolboxStuff
 
         self.cbAutoGen.setToolTip(QString(
-            '''If checked, indicator results will automatically be
-            created for the currently selected simulation run,
-            indicator, and years. If unchecked, click
-            Generate results in order to make results available.'''))
+            ('If checked, indicator results will automatically be\n'
+            'created for the currently selected simulation run,\n'
+            'indicator, and years. If unchecked, click\n'
+            'Generate results in order to make results available.')
+            ))
 
         self.inGui = False
         self.logFileKey = 0
@@ -65,11 +67,20 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             
         self.batch_processor.guiElement = self
         
-
+        self.already_browsed = {}
+        
+        self.on_pbnGenerateResults_released()
+        
+    def focusInEvent(self):
+        self.setupAvailableIndicators()
+        self._setup_simulation_data()
+        
     def setupAvailableIndicators(self):
 
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
 
+        current_row = self.tableWidget.currentRow()
+        
         self.tableWidget.clear()
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(len(indicators))
@@ -103,15 +114,19 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             item.setText(indicator['value'])
             self.tableWidget.setItem(i,2,item)
             
+        if current_row is None or current_row == -1:
+            current_row = 0
         self.tableWidget.resizeColumnsToContents()
-        self.tableWidget.setCurrentCell(0,0)
+        self.tableWidget.setCurrentCell(current_row,0)
         self.on_tableWidget_itemSelectionChanged()
 
     def _setup_simulation_data(self):
+        current_row = self.lstAvailableRuns.currentRow()
         
         runs = self.xml_helper.get_available_run_info(
                    attributes = ['start_year', 'end_year'])
         
+        self.lstAvailableRuns.clear()
         idx = -1
         for i, run in enumerate(runs):
             run_name = str(run['name'])
@@ -122,15 +137,18 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             
             self.lstAvailableRuns.addItem(QString(run_name))
                         
-        if idx != -1:
-            self.lstAvailableRuns.setCurrentRow(idx)
-            self.on_lstAvailableRuns_currentRowChanged(idx)
+        if current_row is None or current_row == -1:
+            current_row = idx
+        if current_row != -1:
+            self.lstAvailableRuns.setCurrentRow(current_row)
+            self.on_lstAvailableRuns_currentRowChanged(current_row)
         
     def on_lstAvailableRuns_currentRowChanged(self, ind):
-        print 'runs changed'
-        current_run = str(self.lstAvailableRuns.currentItem().text())
-        if current_run == self.current_run and not self.setup: 
-            return
+        currentItem = self.lstAvailableRuns.currentItem()
+        if currentItem is None: return
+        
+        current_run = str(currentItem.text())
+        if current_run == self.current_run and not self.setup: return
         
         self.current_run = current_run
         
@@ -146,26 +164,38 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                 self.lstYears.setCurrentRow(0)
                 self.on_lstYears_currentRowChanged(0)
             self.setup = False
+
+        self.pbnGenerateResults.setEnabled(True)
+        self.pbnGenerateResults.setText(QString('Generate Results'))
             
         if not setup and self.cbAutoGen.isChecked():
             self.on_pbnGenerateResults_released()
             
             
     def on_lstYears_currentRowChanged(self, ind):
-        print 'years changed'
-        current_year = int(self.lstYears.currentItem().text())
+        currentItem = self.lstYears.currentItem()
+        if currentItem is None: return
+        
+        current_year = int(currentItem.text())
 
         if self.current_year == current_year and not self.setup: return 
         self.current_year = current_year
+        self.pbnGenerateResults.setEnabled(True)
+        self.pbnGenerateResults.setText(QString('Generate Results'))
+
         if not self.setup and self.cbAutoGen.isChecked(): 
             self.on_pbnGenerateResults_released()
         
     def on_tableWidget_itemSelectionChanged(self):
-        print 'changed item se'
-        indicator_name = str(self.tableWidget.item(self.tableWidget.currentRow(),0).text())
+        currentRow = self.tableWidget.currentRow()
+        if currentRow is None: return
+        
+        indicator_name = str(self.tableWidget.item(currentRow,0).text())
         if self.current_indicator == indicator_name and not self.setup: return
         
         self.current_indicator = indicator_name
+        self.pbnGenerateResults.setEnabled(True)
+        self.pbnGenerateResults.setText(QString('Generate Results'))
         if not self.setup and self.cbAutoGen.isChecked(): 
             self.on_pbnGenerateResults_released()
         
@@ -180,7 +210,16 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         if run_name is None or indicator_name is None or start_year is None: return
         
+        key = (run_name, indicator_name, start_year)
+
+        if key in self.already_browsed:
+            (tab_widget,map_widget) = self.already_browsed[key]
+            self.swap_visualizations(map_widget, tab_widget)
+            return
+        
         self.pbnGenerateResults.setEnabled(False)
+        self.pbnGenerateResults.setText(QString('Generating Results...'))      
+
         
         print 'Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year)
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
@@ -205,6 +244,10 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             ('matplotlib_map', dataset, map_params)
         ]
                 
+        self.running_year = start_year
+        self.running_indicator = indicator_name
+        self.running_run_name = run_name
+        
         self.batch_processor.set_data(
             visualizations = visualizations, 
             source_data_name = run_name,
@@ -223,6 +266,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         self.runThread.start()
 
+
     # Called when the model is finished... 
     def runFinishedFromThread(self,success):            
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():
@@ -234,6 +278,14 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                 viz = visualizations[0]
                 tab_widget = ViewTableForm(self.twVisualizations, viz)
                 
+        self.swap_visualizations(map_widget, tab_widget)
+        
+        key = (self.running_run_name, self.running_indicator, self.running_year)
+        self.already_browsed[key] = (tab_widget, map_widget)    
+                
+    def swap_visualizations(self, map_widget, tab_widget):
+        cur_index = self.twVisualizations.currentIndex()
+        
         self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabTable))
         self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabMap))
         self.tabMap = None
@@ -249,8 +301,11 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
         #self.tabMap.show()
         #self.tabTable.show()
-        self.twVisualizations.setCurrentIndex(0)        
-        self.pbnGenerateResults.setEnabled(True)
+        self.twVisualizations.setCurrentIndex(0)  
+        self.pbnGenerateResults.setText(QString('Results Generated'))      
+        
+        self.twVisualizations.setCurrentIndex(cur_index)
+    
 
 
     def runErrorFromThread(self,errorMessage):
