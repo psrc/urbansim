@@ -49,7 +49,7 @@ class OpusResultGenerator(object):
         self.years = years
         self.cache_directory = cache_directory
         
-    def run(self, args = {}):
+    def run(self, args = {}, raise_exception = False):
         
         if WithOpus:
             succeeded = False
@@ -66,6 +66,8 @@ class OpusResultGenerator(object):
                 errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
                 if self.errorCallback is not None:
                     self.errorCallback(errorinfo)
+                if raise_exception:
+                    raise e
             if self.finishedCallback is not None:
                 self.finishedCallback(succeeded)
         else:
