@@ -139,6 +139,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actLaunchResultBrowser, SIGNAL("triggered()"), self.openResultBrowser)
         #Add log tab
         QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
+        
+        QObject.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.tab_changed)
 
         self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
@@ -247,6 +249,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             pass
         # Do something with the widget if we need to...
 
+    def tab_changed(self, index):
+        tab = self.tabWidget.currentWidget()
+        if self.resultBrowser and tab == self.resultBrowser:
+            self.resultBrowser.focusInEvent()
+        
     def openMapTab(self):
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
