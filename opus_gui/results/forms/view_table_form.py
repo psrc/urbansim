@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, Qt
+from PyQt4.QtCore import QString, Qt, QSize
 from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, \
                         QTableWidget, QTableWidgetItem
 
@@ -68,6 +68,7 @@ class ViewTableForm(QWidget):
             
         order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): v-v2)
         
+
         for i, (idx,v) in enumerate(order):
             row = QTableWidgetItem()
             self.tableWidget.setVerticalHeaderItem(i,row)
@@ -79,3 +80,4 @@ class ViewTableForm(QWidget):
                 j += 1
         
         self.tableWidget.resizeColumnsToContents()
+        self.tableWidget.resizeRowsToContents()

@@ -117,6 +117,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if current_row is None or current_row == -1:
             current_row = 0
         self.tableWidget.resizeColumnsToContents()
+        self.tableWidget.resizeRowsToContents()
+        
         self.tableWidget.setCurrentCell(current_row,0)
         self.on_tableWidget_itemSelectionChanged()
 
