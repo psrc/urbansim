@@ -22,13 +22,15 @@ from opus_gui.config.datamanager.executetool_ui import Ui_ExecuteToolGui
 import random
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
-    def __init__(self, opusXMLAction_xxx, fl):
-        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
+    #def __init__(self, opusXMLAction_xxx, fl):
+    def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl):
+        QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
-        self.opusXMLAction_xxx = opusXMLAction_xxx
-        self.model = opusXMLAction_xxx.currentIndex.model()
+        #self.opusXMLAction_xxx = opusXMLAction_xxx
+        self.model = model
         # Grab the tool we are interested in...
-        self.currentElement = self.opusXMLAction_xxx.currentIndex.internalPointer().node().toElement()
+        self.currentElement = currentElement
+        self.execToolConfigGen = execToolConfigGen
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
@@ -45,7 +47,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.tooltypearray = []
         self.toolTypeSelected()
         #Jesse test:
-        self.tool_title = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection).data()
+        self.tool_title = self.model.domDocument.createTextNode(self.typeSelection).data()
 
     def on_execTool_released(self):
         print "create pressed"
@@ -61,12 +63,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         
         #toolname = self.test_line[0].text()
         # First is the connection node with the connection name
-        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("temp_config"))
+        newNode = self.model.domDocument.createElement(QString("temp_config"))
         newNode.setAttribute(QString("type"),QString("tool_config"))
         # Add the tool hook back in
-        newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("tool_hook"))
+        newChild = self.model.domDocument.createElement(QString("tool_hook"))
         newChild.setAttribute(QString("type"),QString("tool_library_ref"))
-        newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection)
+        newText = self.model.domDocument.createTextNode(self.typeSelection)
         newChild.appendChild(newText)
         newNode.appendChild(newChild)
         # for key,val in self.vars.iteritems():
@@ -77,12 +79,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
             #print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
-            newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
+            newChild = self.model.domDocument.createElement(key)
             newChild.setAttribute(QString("type"),typeVal)
-            newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(val)
+            newText = self.model.domDocument.createTextNode(val)
             newChild.appendChild(newText)
             newNode.appendChild(newChild)
-        self.opusXMLAction_xxx.execToolConfigGen(newNode)
+        self.execToolConfigGen(newNode)
         self.close()
 
     def on_cancelExec_released(self):

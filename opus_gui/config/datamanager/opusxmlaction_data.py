@@ -294,7 +294,9 @@ class OpusXMLAction_Data(object):
         #print "Exec Tool Pressed"
         # Open up a GUI element and populate with variable's
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = ExecuteToolGui(self,flags)
+        window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
+                                self.currentIndex.internalPointer().node().toElement(),
+                                self.execToolConfigGen,flags)
         tool_title = window.tool_title.replace('_', ' ')
         tool_title2 = str(tool_title).title()
         window.setWindowTitle(tool_title2)
