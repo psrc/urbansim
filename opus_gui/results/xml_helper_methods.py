@@ -625,23 +625,3 @@ class ResultsManagerXMLHelper:
                                              temporary = False)
             existing_cache_directories[cache_directory] = 1
             
-
-                                        
-#        for run_name in os.listdir(data_directory):
-#            try:
-#                cache_directory = os.path.join(data_directory,run_name)
-#                years = []
-#                if not os.path.isdir(cache_directory) or \
-#                    cache_directory in existing_cache_directories: continue
-#                for dir in os.listdir(cache_directory):
-#                    if len(dir) == 4 and dir.isdigit():
-#                        years.append(int(dir))
-#                start_year = min(years)
-#                end_year = max(years)
-#                self.add_run_to_run_manager_xml(
-#                                                 cache_directory,
-#                                                 scenario_name,
-#                                                 run_name,
-#                                                 start_year, end_year,
-#                                                 temporary = True)
-#            except: pass
