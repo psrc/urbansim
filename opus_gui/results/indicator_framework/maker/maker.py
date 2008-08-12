@@ -61,7 +61,7 @@ class Maker(object):
                                      'indicators',
                                      'indicators.log')
         logger.enable_file_logging(log_file_path, 'a')
-        logger.log_status('\n%s BEGIN %s %s' 
+        logger.log_status('\n%s Indicator Generation BEGIN %s %s' 
             % ('='*10, strftime('%Y_%m_%d_%H_%M', localtime()), '='*10))
                         
         self.dataset = None
@@ -85,7 +85,7 @@ class Maker(object):
         
         self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators)
         
-        logger.log_status('%s END %s %s\n' 
+        logger.log_status('%s Indicator Generation END %s %s\n' 
             % ('='*11, strftime('%Y_%m_%d_%H_%M', localtime()), '='*11))
         logger.disable_file_logging(log_file_path)
         
@@ -185,7 +185,6 @@ class Maker(object):
         #run_manager = RunManager(options)
         
         for name, indicator in computed_indicator_group.items():
-            print indicator
             results_manager.add_computed_indicator(
                     indicator_name = indicator.indicator.name, 
                     dataset_name = indicator.dataset_name, 
