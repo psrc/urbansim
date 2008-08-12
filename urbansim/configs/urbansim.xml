@@ -106,6 +106,36 @@
           </centroid_inside_polygon>
         </params>
       </postgis_polygon_to_centroids>
+      <postgis_create_spatial_index type="tool_file">
+        <name type="tool_name">postgis_create_spatial_index</name>
+        <params type="param_template">
+          <database_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </database_name>
+          <schema>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </schema>
+          <table_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </table_name>
+          <geometry_column_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </geometry_column_name>
+          <run_vacuum_analyze>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default choices="True|False" type="string">True</default>
+          </run_vacuum_analyze>
+        </params>
+      </postgis_create_spatial_index>
       <sql_data_to_opus_tool type="tool_file" >
         <name type="tool_name" >sql_data_to_opus</name>
         <params type="param_template" >
