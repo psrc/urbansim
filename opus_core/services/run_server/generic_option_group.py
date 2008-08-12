@@ -32,7 +32,7 @@ class GenericOptionGroup:
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
         self.parser.add_option("--protocol", dest="protocol", default=self._get_default_run_manager_database_engine(), 
-                               action="store", help="Name of database engine running the database management system hosting the services database.")
+                               action="store", help="Name of database engine running the database management system hosting the services database. Available engines are sqlite (default), mysql, postgres, and mssql (less well tested).")
         
     def _get_default_run_manager_database_engine(self):
         from opus_core.database_management.database_server_configuration import _get_installed_database_engines
