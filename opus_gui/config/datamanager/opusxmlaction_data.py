@@ -60,7 +60,7 @@ class OpusXMLAction_Data(object):
                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecToolConfig,
                         SIGNAL("triggered()"),
-                        self.execToolConfig)
+                        self.execToolFile)
 
         self.actAddToolFile = QAction(self.addIcon,
                                         "Add Tool to Library",
@@ -323,6 +323,7 @@ class OpusXMLAction_Data(object):
                 if children.item(x).isText():
                     toolPath = children.item(x).nodeValue()
         # Next if the tool_file has a tool_name we grab it
+        filePath = ""
         if tool_file.hasChildNodes():
             children = tool_file.childNodes()
             for x in xrange(0,children.count(),1):

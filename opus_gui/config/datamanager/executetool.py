@@ -18,15 +18,14 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from opus_gui.config.datamanager.executetool_ui import Ui_ExecuteToolGui
+from opus_gui.util.xmlhelper import *
 
 import random
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
-    #def __init__(self, opusXMLAction_xxx, fl):
     def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
-        #self.opusXMLAction_xxx = opusXMLAction_xxx
         self.model = model
         # Grab the tool we are interested in...
         self.currentElement = currentElement
@@ -43,9 +42,24 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.test_text_type = []
         self.test_line = []
 
-        self.typeSelection = self.currentElement.tagName()
+        # Decide if we have a tool_file or tool_config
+        # If we have a too_file, then we need to traverse the XML and create a temporary
+        # config to be used.
+        # If we have a config we just extract the params and create the GUI elements
         self.tooltypearray = []
-        self.toolTypeSelected()
+        if self.currentElement.hasAttribute(QString('type')) and \
+           self.currentElement.attribute(QString('type')) == QString('tool_file'):
+            self.typeSelection = self.currentElement.tagName()
+            self.presentToolFileGUI()
+        else:
+            # We assume config
+            typeSelections = getChildElementsText(self.currentElement,
+                                                  [QString('tool_hook')],
+                                                  True,False)
+            self.typeSelection = typeSelections[QString('tool_hook')]
+            #self.typeSelection = getElementText(self.currentElement.elementsByTagName(QString("tool_hook")).item(0))
+            self.presentToolConfigGUI()
+            
         #Jesse test:
         self.tool_title = self.model.domDocument.createTextNode(self.typeSelection).data()
 
@@ -91,7 +105,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         print "cancel pressed"
         self.close()
 
-    def fillInToolTypeArray(self,qDomNodeList):
+    def fillInToolTypeArrayFromToolFile(self,qDomNodeList):
         for xx in xrange(0,qDomNodeList.count(),1):
             if qDomNodeList.item(xx).isElement():
                 tool_file_child = qDomNodeList.item(xx).toElement()
@@ -128,7 +142,24 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                                                         if textSearch.item(xxxxx).isText():
                                                             nodeVal = textSearch.item(xxxxx).nodeValue()
                                 self.tooltypearray.append([tagName,typeName,nodeVal])
+
         
+    def fillInToolTypeArrayFromToolConfig(self,toolConfigElement):
+        # Loop through children and build up the params
+        if toolConfigElement and not toolConfigElement.isNull() and \
+               toolConfigElement.hasChildNodes():
+            children = toolConfigElement.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isElement() and \
+                       children.item(x).toElement().hasAttribute(QString('type')) and \
+                       children.item(x).toElement().attribute(QString('type')) != QString('tool_library_ref'):
+                    child = children.item(x).toElement()
+                    tagName = child.tagName()
+                    typeName = child.attribute(QString('type'))
+                    nodeVal = getElementText(child)
+                    self.tooltypearray.append([tagName,typeName,nodeVal])
+
+
     def createGUIElements(self):
         for i,param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])
@@ -166,7 +197,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             self.vboxlayout.addWidget(widgetTemp)
             self.adjustSize()
         
-    def toolTypeSelected(self):
+    def presentToolFileGUI(self):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
 
@@ -185,5 +216,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                             foundOurTool = True
                     if foundOurTool:
                         tool_file = library_child.childNodes()
-                        self.fillInToolTypeArray(tool_file)
+                        self.fillInToolTypeArrayFromToolFile(tool_file)
+        self.createGUIElements()
+
+    def presentToolConfigGUI(self):
+        #print "Got a new selection"
+
+        # First, fillInToolTypeArrayFromToolConfig
+        self.fillInToolTypeArrayFromToolConfig(self.currentElement)
         self.createGUIElements()
