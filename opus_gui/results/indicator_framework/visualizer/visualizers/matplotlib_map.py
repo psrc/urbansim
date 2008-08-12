@@ -179,7 +179,7 @@ class MatplotlibMap(Visualization):
                     file_path = os.path.join(self.storage_location,
                                          table_name+ '.' + self.get_file_extension())
                     
-                    dataset.add_attribute(name = computed_name, 
+                    dataset.add_attribute(name = str(computed_name), 
                                           data = table_data[computed_name])
                     
                     if not os.path.exists(file_path):
