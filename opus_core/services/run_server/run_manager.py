@@ -11,7 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
-import os, pickle, shutil
+import os, pickle, shutil, datetime
 from time import localtime, strftime
 
 from opus_core.logger import logger
@@ -362,7 +362,7 @@ class RunManager(AbstractService):
              'run_description':'%s' % description,
              'status':'%s' % status,
              'processor_name':'%s' % get_host_name(), 
-             'date_time':strftime('%Y-%m-%d %H:%M:%S', localtime()),
+             'date_time':datetime.datetime.now(),
              'resources':'%s' % pickled_resources,
              'cache_directory': resources['cache_directory']
              }        
@@ -473,12 +473,9 @@ class SimulationRunError(Exception):
 def insert_auto_generated_cache_directory_if_needed(config):
     """Auto-generate a cache directory based upon current date-time."""
     cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
-    cache_directory = os.path.join(cache_directory_root, get_date_time_string())
+    date_time_string = strftime('%Y_%m_%d_%H_%M', localtime())
+    cache_directory = os.path.join(cache_directory_root, date_time_string)
     config['cache_directory'] = cache_directory
-    
-def get_date_time_string():
-    return strftime('%Y_%m_%d_%H_%M', localtime())
-
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_configuration import DatabaseConfiguration
