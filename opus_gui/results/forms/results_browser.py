@@ -11,11 +11,11 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, Qt
+from PyQt4.QtCore import QString, QObject, SIGNAL, Qt 
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
-                        QTableWidget, QTableWidgetItem
+                        QTableWidget, QTableWidgetItem, QSizePolicy
 
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -50,9 +50,13 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.logFileKey = 0
         self.available_years_for_simulation_runs = {}
         
-        self.current_year = None
-        self.current_run = None
         self.current_indicator = None
+        self.current_run = None
+        self.current_year = None
+        
+        self.running_key = None
+        self.queued_results = None
+        
         self.setup = True
 
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
@@ -61,14 +65,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         self.setup = False
         
-
-        self.batch_processor = BatchProcessor(
-                                    toolboxStuff = self.toolboxStuff)
-            
-        self.batch_processor.guiElement = self
-        
         self.already_browsed = {}
         
+        self.generating_results = False
         self.on_pbnGenerateResults_released()
         
     def focusInEvent(self):
@@ -167,11 +166,11 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                 self.on_lstYears_currentRowChanged(0)
             self.setup = False
 
-        self.pbnGenerateResults.setEnabled(True)
-        self.pbnGenerateResults.setText(QString('Generate Results'))
-            
         if not setup and self.cbAutoGen.isChecked():
             self.on_pbnGenerateResults_released()
+        else:
+            self.pbnGenerateResults.setEnabled(True)
+            self.pbnGenerateResults.setText(QString('Generate Results'))
             
             
     def on_lstYears_currentRowChanged(self, ind):
@@ -182,11 +181,12 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         if self.current_year == current_year and not self.setup: return 
         self.current_year = current_year
-        self.pbnGenerateResults.setEnabled(True)
-        self.pbnGenerateResults.setText(QString('Generate Results'))
 
         if not self.setup and self.cbAutoGen.isChecked(): 
             self.on_pbnGenerateResults_released()
+        else:
+            self.pbnGenerateResults.setEnabled(True)
+            self.pbnGenerateResults.setText(QString('Generate Results'))
         
     def on_tableWidget_itemSelectionChanged(self):
         currentRow = self.tableWidget.currentRow()
@@ -196,10 +196,12 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if self.current_indicator == indicator_name and not self.setup: return
         
         self.current_indicator = indicator_name
-        self.pbnGenerateResults.setEnabled(True)
-        self.pbnGenerateResults.setText(QString('Generate Results'))
         if not self.setup and self.cbAutoGen.isChecked(): 
             self.on_pbnGenerateResults_released()
+        else:
+            self.pbnGenerateResults.setEnabled(True)
+            self.pbnGenerateResults.setText(QString('Generate Results'))
+
         
         
     def on_pbnGenerateResults_released(self):
@@ -215,15 +217,18 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         key = (run_name, indicator_name, start_year)
 
         if key in self.already_browsed:
-            (tab_widget,map_widget) = self.already_browsed[key]
-            self.swap_visualizations(map_widget, tab_widget)
+            if not self.generating_results:
+                (tab_widget,map_widget) = self.already_browsed[key]
+                self.swap_visualizations(map_widget, tab_widget)
+                self.pbnGenerateResults.setText(QString('Results Generated'))
+            else:
+                self.queued_results = ('swap', (map_widget, tab_widget))
+                
             return
         
         self.pbnGenerateResults.setEnabled(False)
         self.pbnGenerateResults.setText(QString('Generating Results...'))      
 
-        
-        print 'Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year)
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
         dataset = None
         for i in indicators:
@@ -246,44 +251,93 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             ('matplotlib_map', dataset, map_params)
         ]
                 
-        self.running_year = start_year
-        self.running_indicator = indicator_name
-        self.running_run_name = run_name
+        batch_processor = BatchProcessor(
+                            toolboxStuff = self.toolboxStuff)
+        batch_processor.guiElement = self
         
-        self.batch_processor.set_data(
+        
+        batch_processor.set_data(
             visualizations = visualizations, 
             source_data_name = run_name,
             years = range(start_year, end_year + 1))
-                        
-        self.runThread = OpusGuiThread(
-                              parentThread = self.mainwindow,
-                              parentGuiElement = self,
-                              thread_object = self.batch_processor)
         
-        # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
-                        self.runFinishedFromThread)
-        QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
-                        self.runErrorFromThread)
-        
-        self.runThread.start()
+        if not self.generating_results:
+            self.generating_results = True
+            print 'Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year)
+            self.running_key = key
+            self.batch_processor = batch_processor
+            runThread = OpusGuiThread(
+                                  parentThread = self.mainwindow,
+                                  parentGuiElement = self,
+                                  thread_object = self.batch_processor)
+            
+            # Use this signal from the thread if it is capable of producing its own status signal
+            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                            self.runFinishedFromThread)
+            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"),
+                            self.runErrorFromThread)
+            
+            runThread.start()
+        else:
+            self.queued_results = (key, batch_processor)
+            
 
 
     # Called when the model is finished... 
-    def runFinishedFromThread(self,success):            
+    def runFinishedFromThread(self,success):             
+        key = self.running_key
+        self.running_key = None
+                   
+        size = QSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding,)
+        self.twVisualizations.setSizePolicy(size)
+
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():
             if visualization_type == 'matplotlib_map':
                 viz = visualizations[0]
                 map_widget = ViewImageForm(self.twVisualizations, viz)
-                
+                map_widget.setSizePolicy(size)
             elif visualization_type == 'table_per_year':
                 viz = visualizations[0]
                 tab_widget = ViewTableForm(self.twVisualizations, viz)
-                
+                tab_widget.setSizePolicy(size)
         self.swap_visualizations(map_widget, tab_widget)
+        self.already_browsed[key] = (tab_widget, map_widget)  
         
-        key = (self.running_run_name, self.running_indicator, self.running_year)
-        self.already_browsed[key] = (tab_widget, map_widget)    
+        self.lblViewIndicator.setText(QString(key[1]))
+        self.lblViewRun.setText(QString(key[0]))
+        self.lblViewYear.setText(QString(repr(key[2])))
+          
+        swap = self.queued_results is not None and self.queued_results[0] == 'swap'
+        
+        if self.queued_results is not None and not swap:
+            self.running_key = self.queued_results[0]
+
+            print 'Generating queued results for %s on run %s for year %i'%self.running_key
+            self.batch_processor = self.queued_results[1]
+            self.queued_results = None
+            
+            runThread = OpusGuiThread(
+                                  parentThread = self.mainwindow,
+                                  parentGuiElement = self,
+                                  thread_object = self.batch_processor)
+            
+            # Use this signal from the thread if it is capable of producing its own status signal
+            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                            self.runFinishedFromThread)
+            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"),
+                            self.runErrorFromThread)
+            runThread.start()
+        else:
+            if swap:
+                (map_widget, tab_widget) = self.queued_results[1]
+                self.swap_visualizations(map_widget, tab_widget)
+            
+            self.queued_results = None
+                
+            self.generating_results = False
+            self.pbnGenerateResults.setText(QString('Results Generated'))
+        
+        
                 
     def swap_visualizations(self, map_widget, tab_widget):
         cur_index = self.twVisualizations.currentIndex()
@@ -303,12 +357,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
         #self.tabMap.show()
         #self.tabTable.show()
-        self.twVisualizations.setCurrentIndex(0)  
-        self.pbnGenerateResults.setText(QString('Results Generated'))      
+        self.twVisualizations.setCurrentIndex(0)        
         
         self.twVisualizations.setCurrentIndex(cur_index)
     
-
-
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.mainwindow, 'warning', errorMessage)
