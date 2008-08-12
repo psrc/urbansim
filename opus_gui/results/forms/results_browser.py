@@ -125,7 +125,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         current_row = self.lstAvailableRuns.currentRow()
         
         runs = self.xml_helper.get_available_run_info(
-                   attributes = ['start_year', 'end_year'])
+                   attributes = ['years'])
         
         self.lstAvailableRuns.clear()
         idx = -1
@@ -133,7 +133,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             run_name = str(run['name'])
             if run_name == 'base_year_data':
                 idx = i
-            years = (run['start_year'], run['end_year'])
+            
+            years = run['years']
             self.available_years_for_simulation_runs[run_name] = years
             
             self.lstAvailableRuns.addItem(QString(run_name))
@@ -155,15 +156,15 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         setup = self.setup
         if current_run in self.available_years_for_simulation_runs:
-            self.lstYears.clear()
-            (start, end) = self.available_years_for_simulation_runs[current_run]
-            (start, end) = (int(start), int(end))
             self.setup = True
-            for i in range(start, end + 1):
-                yr = QString(repr(i))
-                self.lstYears.addItem(yr)
-                self.lstYears.setCurrentRow(0)
-                self.on_lstYears_currentRowChanged(0)
+            self.lstYears.clear()
+            
+            years = self.available_years_for_simulation_runs[current_run]
+            for yr in sorted(years):
+                self.lstYears.addItem(QString(str(yr)))
+                
+            self.lstYears.setCurrentRow(0)
+            self.on_lstYears_currentRowChanged(0)
             self.setup = False
 
         if not setup and self.cbAutoGen.isChecked():

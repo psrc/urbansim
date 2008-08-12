@@ -106,9 +106,25 @@ class ResultsManagerXMLHelper:
     def get_available_run_info(self, attributes = [], update = True):
         if update:
             self.update_available_runs()
-        return self._get_node_group(node_value = 'source_data', 
+        
+        if 'years' in attributes:
+            years = True
+            attributes.remove('years')
+            attributes.append('cache_directory')
+        else:
+            years = False
+            
+        run_info = self._get_node_group(node_value = 'source_data', 
                                     node_attribute = 'type', 
                                     child_attributes = attributes)        
+    
+        if years:
+            for run in run_info:        
+                server_config = GenericOptionGroup().parser.parse_args()[0]
+                run_manager = RunManager(server_config)
+                run['years'] = run_manager.get_years_run(str(run['cache_directory']))
+        
+        return run_info
     
     def get_available_results(self, attributes = []):
         server_config = GenericOptionGroup().parser.parse_args()[0]
