@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Sat Aug  9 20:48:56 2008
+# Created: Tue Aug 12 00:14:56 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,13 +34,14 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
         self.toolBox.setSizePolicy(sizePolicy)
-        self.toolBox.setBaseSize(QtCore.QSize(0, 0))
+        self.toolBox.setMinimumSize(QtCore.QSize(100, 0))
+        self.toolBox.setBaseSize(QtCore.QSize(200, 0))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.toolBox.setFont(font)
         self.toolBox.setObjectName("toolBox")
         self.generalmanager_page = QtGui.QWidget()
-        self.generalmanager_page.setGeometry(QtCore.QRect(0, 0, 500, 612))
+        self.generalmanager_page.setGeometry(QtCore.QRect(0, 0, 337, 612))
         self.generalmanager_page.setObjectName("generalmanager_page")
         self.gridlayout1 = QtGui.QGridLayout(self.generalmanager_page)
         self.gridlayout1.setObjectName("gridlayout1")
@@ -94,12 +95,15 @@ class Ui_MainWindow(object):
         self.gridlayout8.setObjectName("gridlayout8")
         self.toolBox.addTab(self.resultsmanager_page, "")
         self.tabWidget = QtGui.QTabWidget(self.splitter)
+        self.tabWidget.setMinimumSize(QtCore.QSize(600, 0))
+        self.tabWidget.setSizeIncrement(QtCore.QSize(0, 0))
+        self.tabWidget.setBaseSize(QtCore.QSize(1000, 0))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.tabWidget.setFont(font)
         self.tabWidget.setObjectName("tabWidget")
         self.tab_editorView = QtGui.QWidget()
-        self.tab_editorView.setGeometry(QtCore.QRect(0, 0, 431, 612))
+        self.tab_editorView.setGeometry(QtCore.QRect(0, 0, 594, 612))
         self.tab_editorView.setObjectName("tab_editorView")
         self.gridlayout9 = QtGui.QGridLayout(self.tab_editorView)
         self.gridlayout9.setObjectName("gridlayout9")
@@ -272,8 +276,10 @@ class Ui_MainWindow(object):
         self.menuUtilities.addAction(self.actionPython_View)
         self.menuUtilities.addAction(self.actionLog_View)
         self.menuUtilities.addAction(self.actionEditor_View)
+        self.menuUtilities.addSeparator()
         self.menuUtilities.addAction(self.actionEdit_all_variables)
         self.menuUtilities.addAction(self.actLaunchResultBrowser)
+        self.menuUtilities.addSeparator()
         self.menuUtilities.addAction(self.actionPreferences)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuUtilities.menuAction())
