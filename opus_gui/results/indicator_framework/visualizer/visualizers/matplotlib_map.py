@@ -181,15 +181,17 @@ class MatplotlibMap(Visualization):
                     
                     dataset.add_attribute(name = computed_name, 
                                           data = table_data[computed_name])
-                    dataset.plot_map(
-                         name = computed_name,
-                         min_value = min_value, 
-                         max_value = max_value, 
-                         file = file_path, 
-                         my_title = indicator_name, 
-                         #filter = where(table_data[computed_name] != -1)
-                         #filter = 'urbansim.gridcell.is_fully_in_water'                                 
-                    )
+                    
+                    if not os.path.exists(file_path):
+                        dataset.plot_map(
+                             name = str(computed_name),
+                             min_value = min_value, 
+                             max_value = max_value, 
+                             file = str(file_path), 
+                             my_title = str(indicator_name), 
+                             #filter = where(table_data[computed_name] != -1)
+                             #filter = 'urbansim.gridcell.is_fully_in_water'                                 
+                        )
                     
 #                    self.plot_map(dataset = dataset, 
 #                                  attribute_data = table_data[computed_name], 
