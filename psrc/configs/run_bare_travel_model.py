@@ -12,12 +12,8 @@
 # other acknowledgments.
 #
 
-import os
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
-from urbansim.simulation.run_simulation import RunSimulation
-from urbansim.model_coordinators.model_system import ModelSystem
-from opus_core.misc import get_config_from_opus_path
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
