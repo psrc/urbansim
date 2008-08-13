@@ -56,7 +56,7 @@ class OpusXMLAction_Data(object):
                         self.execToolFile)
 
         self.actExecToolConfig = QAction(self.executeIcon,
-                                           "Execute Tool",
+                                           "Execute Tool...",
                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecToolConfig,
                         SIGNAL("triggered()"),

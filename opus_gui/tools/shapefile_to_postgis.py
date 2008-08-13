@@ -22,6 +22,10 @@ def opusRun(progressCB,logCB,params):
     for key, val in params.iteritems():
         param_dict[str(key)] = str(val)
     
+    # TODO - 
+    #    - add 'append' option
+    #    - add 'sql statement' option
+    
     # get parameter values
     host = os.environ['POSTGRESHOSTNAME']
     user = os.environ['POSTGRESUSERNAME']
