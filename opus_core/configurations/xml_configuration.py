@@ -791,13 +791,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_expression_library(self):
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
         lib = XMLConfiguration(f).get_expression_library()
-        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
+        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
+                     ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
+                     ('test_agent', 'income_less_than'): 'def income_less_than(i):\n    return test_agent.income<i',
+                     ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
         self.assertEqual(lib, should_be)
         # Now test that computing the value of this variable gives the correct answer.  This involves
         # setting the expression library in VariableFactory -- when actually estimating a model or running
         # a simulation, that gets done by a call in ModelSystem.run.
         VariableFactory().set_expression_library(lib)
-        expr = "opus_core.test_agent.income_times_10"
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
             table_name='test_agents',
@@ -807,13 +809,19 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                 }
             )
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
-        result = dataset.compute_variables([expr])
+        result1 = dataset.compute_variables(["opus_core.test_agent.income_times_10"])
+        result2 = dataset.compute_variables(["opus_core.test_agent.income_times_10_using_primary"])
         should_be = array([10, 50, 100])
-        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_fully_qualified_variable")
+        self.assert_(ma.allclose(result1, should_be, rtol=1e-6))
+        self.assert_(ma.allclose(result2, should_be, rtol=1e-6))
         
     def test_expression_library_in_config(self):
         # test that the expression library is set correctly for estimation and run configurations 
-        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
+        # note that the variable 'existing_units' is defined as a Python class, so doesn't go into the expression library
+        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2',
+                     ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
+                     ('test_agent', 'income_less_than'): 'def income_less_than(i):\n    return test_agent.income<i',
+                     ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
         config = XMLConfiguration(f)
         est = config.get_estimation_configuration()

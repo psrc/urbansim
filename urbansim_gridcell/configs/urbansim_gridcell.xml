@@ -4,6 +4,7 @@
     <project_name type="string" flags="hidden">urbansim_gridcell</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
+      <number_of_jobs type="variable_definition" dataset="zone" use="both" source="Python class">urbansim.zone.number_of_jobs</number_of_jobs>
       <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
       <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
     </expression_library>

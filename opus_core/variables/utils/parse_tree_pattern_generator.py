@@ -23,14 +23,20 @@ from symbol import sym_name
 from token import tok_name
 from pprint import pprint
 
-# pretty-prints a symbolic parse tree for expr
+# pretty-prints a symbolic parse tree for expr (as for use with 'eval')
 # the symbolic names will be strings, so to use this as a constant
 # in some code you'll need to replace the quotes with nothing
 # (except for the actual string constants ...)
-# for trees for statements rather than expressions, change 'expr' to 'suite'
-def print_symbolic_tree(expr):
+def print_eval_tree(expr):
     t = parser.ast2tuple(parser.expr(expr))
+#    t = parser.ast2tuple(parser.suite(expr))
     pprint(integer2symbolic(t))
+
+# same as print_eval_tree, except as for use with 'exec' (for definitions, statements, etc)
+def print_exec_tree(expr):
+    t = parser.ast2tuple(parser.suite(expr))
+    pprint(integer2symbolic(t))
+
 
 # take a parse tree represented as a tuple, and return a new tuple
 # where the integers representing internal nodes and terminal nodes are 
@@ -44,7 +50,14 @@ def integer2symbolic(fragment):
         return ('token.' + tok_name[head], ) + fragment[1:]
     raise ValueError("bad value in parsetree")
 
-# example of use:
-print_symbolic_tree("urbansim.gridcell.population**2")
+# examples of use:
+# print_eval_tree("urbansim.gridcell.population**2")
+# print_exec_tree("x = urbansim.gridcell.population**2")
 
+s = """def foo(x=5):
+    y = x+3
+    return y*2
+"""
+
+print_exec_tree(s)
 
