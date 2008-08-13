@@ -92,14 +92,14 @@ class ResultsManagerXMLHelper:
                                     node_attribute = 'type', 
                                     child_attributes = attributes)  
                 
-    def get_available_indicator_names(self, attributes = [],child_attributes = []):
+    def get_available_indicator_names(self, attributes = [],child_attributes = [], return_all = False):
         variables = self._get_node_group(node_value = 'variable_definition', 
                                     node_attribute = 'type', 
                                     child_attributes = child_attributes,
                                     attributes = attributes + ['use', 'source'])   
         indicators = []
         for var in variables:
-            if var['use'] != 'model variable':# and var['source'] == 'expression':
+            if return_all or var['use'] != 'model variable':# and var['source'] == 'expression':
                 indicators.append(var)
         return indicators      
     

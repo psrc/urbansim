@@ -78,7 +78,8 @@ class IndicatorFrameworkInterface:
     def get_indicator(self, indicator_name, dataset_name):
 
         indicators = self.xml_helper.get_available_indicator_names(
-                   attributes = ['dataset', 'source'])
+                   attributes = ['dataset', 'source'],
+                   return_all = True)
         expression = None
         for indicator in indicators:
             if dataset_name != indicator['dataset'] or \
