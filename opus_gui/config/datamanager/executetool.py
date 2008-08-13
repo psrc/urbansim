@@ -22,10 +22,28 @@ from opus_gui.util.xmlhelper import *
 
 import random
 
+class FileDialogSignal(QWidget):
+    def __init__(self, parent=None, param=None):
+        QWidget.__init__(self, parent)
+        self.o = QObject()
+        self.param = param
+        #print "FileDialogSignal created..."
+
+    def updateParam(self,param):
+        self.param = param
+
+    def relayButtonSignal(self):
+        #print "relayButtonSignal"
+        self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject)"),self.param)
+        
+
+
+
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
+        self.mainwindow = mainwindow
         self.model = model
         # Grab the tool we are interested in...
         self.currentElement = currentElement
@@ -41,6 +59,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.test_text = []
         self.test_text_type = []
         self.test_line = []
+        self.test_line_delegates = []
+        self.test_line_buttons = []
 
         # Decide if we have a tool_file or tool_config
         # If we have a too_file, then we need to traverse the XML and create a temporary
@@ -64,7 +84,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.tool_title = self.model.domDocument.createTextNode(self.typeSelection).data()
 
     def on_execTool_released(self):
-        print "create pressed"
+        #print "create pressed"
 
         # Need to create something that looks like this:
         #<opus_database_to_sql_config type="tool_config">
@@ -102,7 +122,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.close()
 
     def on_cancelExec_released(self):
-        print "cancel pressed"
+        #print "cancel pressed"
         self.close()
 
     def fillInToolTypeArrayFromToolFile(self,qDomNodeList):
@@ -194,9 +214,35 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_line.setObjectName(QString("test_line").append(QString(i)))
             test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
+            # If we have a dir_path or file_path add a select button
+            if paramName == QString('dir_path'):
+                pbnSelect = QPushButton(widgetTemp)
+                pbnSelect.setObjectName(QString('pbnSelect').append(QString(i)))
+                pbnSelect.setText(QString("Select..."))
+                pbnSelectDelegate = FileDialogSignal(param=test_line)
+                QObject.connect(pbnSelectDelegate.o, SIGNAL("buttonPressed(PyQt_PyObject)"),
+                                self.on_pbnSelect_released)
+                QObject.connect(pbnSelect, SIGNAL("released()"), pbnSelectDelegate.relayButtonSignal)
+                self.test_line_delegates.append(pbnSelectDelegate)
+                self.test_line_buttons.append(pbnSelect)
+                hlayout.addWidget(pbnSelect)
             self.vboxlayout.addWidget(widgetTemp)
             self.adjustSize()
         
+    def on_pbnSelect_released(self,line):
+        #print "on_pbnSelect_released recieved"
+        editor_file = QFileDialog()
+        filter_str = QString("*.*")
+        editor_file.setFilter(filter_str)
+        editor_file.setAcceptMode(QFileDialog.AcceptOpen)
+        fd = editor_file.getExistingDirectory(self.mainwindow,QString("Please select a directory..."),
+                                              line.text())                        
+        # Check for cancel
+        if len(fd) != 0:
+            fileName = QString(fd)
+            line.setText(fileName)
+
+    
     def presentToolFileGUI(self):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
