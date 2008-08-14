@@ -4,8 +4,7 @@
     <expression_library type="dictionary">
       <income_times_10 type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*opus_core.test_agent.income_times_2</income_times_10>
       <income_times_10_using_primary type="variable_definition" dataset="test_agent" use="model variable" source="expression">10*test_agent.income</income_times_10_using_primary>
-      <income_less_than type="variable_definition" dataset="test_agent" use="model variable" source="expression">def income_less_than(i):
-    return test_agent.income&lt;i</income_less_than>
+      <income_less_than type="variable_definition" dataset="test_agent" use="model variable" source="expression">def income_less_than(i): return test_agent.income&lt;i</income_less_than>
     </expression_library>
     <project_name type="string">test_project</project_name>
   </general>  <scenario_manager>
@@ -14,3 +13,6 @@
     </test_scenario>
   </scenario_manager>
 </opus_project>
+
+<!-- NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet
+     (so it can't be used yet for computing variables). -->

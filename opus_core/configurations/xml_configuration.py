@@ -791,9 +791,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_expression_library(self):
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
         lib = XMLConfiguration(f).get_expression_library()
+        # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
+        # (so it can't be used yet in computing variables).
         should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
                      ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
-                     ('test_agent', 'income_less_than'): 'def income_less_than(i):\n    return test_agent.income<i',
+                     ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
         self.assertEqual(lib, should_be)
         # Now test that computing the value of this variable gives the correct answer.  This involves
@@ -816,11 +818,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(result2, should_be, rtol=1e-6))
         
     def test_expression_library_in_config(self):
-        # test that the expression library is set correctly for estimation and run configurations 
-        # note that the variable 'existing_units' is defined as a Python class, so doesn't go into the expression library
+        # Test that the expression library is set correctly for estimation and run configurations.
+        # The variable 'existing_units' is defined as a Python class, so doesn't go into the expression library.
+        # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
+        # (so it can't be used yet in computing variables).
         should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2',
                      ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
-                     ('test_agent', 'income_less_than'): 'def income_less_than(i):\n    return test_agent.income<i',
+                     ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
         config = XMLConfiguration(f)
