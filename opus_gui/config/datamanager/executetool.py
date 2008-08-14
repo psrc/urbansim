@@ -250,10 +250,10 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
                 exec exec_stmt
                 help = QString(opusHelp())
-                self.toolhelpEdit.append(help)
+                self.toolhelpEdit.insertPlainText(help)
             except:
                 help = 'could not find opusHelp function in tool module'
-                self.toolhelpEdit.append(help)
+                self.toolhelpEdit.insertPlainText(help)
         
     def on_pbnSelect_released(self,line):
         #print "on_pbnSelect_released recieved"

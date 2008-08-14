@@ -74,3 +74,13 @@ def opusRun(progressCB,logCB,params):
     
     #close connection
     connection.close()
+    
+def opusHelp():
+    help = 'This tool will create a spatial index on the geometry column of a PostGIS table.\n' \
+           '\n' \
+           'database_name: the name of the PostGIS database\n' \
+           'schema: the name of the schema inside the PostGIS database that contains the table\n' \
+           'table_name: the name of the table to create the spatial index on\n' \
+           'geometry_column_name: the name of the geometry column to create the spatial index on\n' \
+           'run_vacuum_analyze: True or False, update statistics on the database after spatial index is created'
+    return help

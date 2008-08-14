@@ -31,6 +31,16 @@ def opusRun(progressCB,logCB,params):
     gp.buffer(input, output, buffer)
     print "Finised buffer"
 
-
+def opusHelp():
+    help = 'This is a very basic buffer tool using the ESRI geoprocessing framework.\n' \
+           '\n' \
+           'The input and output parameters will accept paths to shapefiles (c:\\test.shp), ' \
+           'personal or file geodatabase feature classes (c:\\test.gdb\\test_fc or c:\\test.mdb\\test_fc), ' \
+           'or SDE feature classes (Database Connections\\Your Database Connection.sde\\your feature class).\n' \
+           '\n' \
+           'input_shapefile: path to the input shapefile or feature class\n' \
+           'output_shapefile: path to the output shapefile or feature class\n' \
+           'buffer_size: buffer size in the units that the shapefile or feature class is in\n'
+    return help
 
 

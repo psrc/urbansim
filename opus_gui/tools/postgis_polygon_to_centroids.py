@@ -101,8 +101,14 @@ def get_primary_key(metadata, schema, existing_table_name):
             return primary_key_name
         
 def opusHelp():
-    help = '''blah blah blah
-            blah blah blah
-            blah blah blah'''
+    help = 'This tool takes a PostGIS polygon layer and converts the geometry to centroid points as a new layer.\n' \
+           '\n' \
+           'database_name: the working database name\n' \
+           'drop_existing: will attempt to delete the new_table_name if it already exists (True or False, default: False)\n' \
+           'schema: the working schema name\n' \
+           'new_table_name: the name of the new table to be created\n' \
+           'geometry_field_name: specify the name of the geometry field (optional, default: wkb_geometry)\n' \
+           'existing_table_name: name of existing table to be converted to centroids\n' \
+           'centroid_inside_polygon: force centroid inside polygon (True or False, default: False)\n'                      
     return help
     

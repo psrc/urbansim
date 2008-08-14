@@ -107,4 +107,16 @@ def drop_table(table_name, dbname, schema):
         print 'DROPPED TABLE %s' % table_name
     except:
         return
+
+def opusHelp():
+    help = 'This tool will export a shapefile to a PostGIS database using ogr2ogr.exe.  You must' \
+           'have ogr2ogr.exe in your system PATH for this tool to work.\n' \
+           '\n' \
+           'dbname: the name of the PostGIS database to export to\n' \
+           'shapefile_path: the full path to the shapefile to export (c:\\temp\\test.shp)\n' \
+           'schema_name: the name of the schema in the PostGIS database to export to\n' \
+           'overwrite: YES or NO, attempts to overwrite an existing table\n' \
+           'output_table_name: the name of the table to be created in the database\n' \
+           'geometry_type: the type of geometry to be created (NONE, GEOMETRY, POINT, LINESTRING, POLYGON, GEOMETRYCOLLECTION, MULTIPOINT, MULTILINE, MULTIPOLYGON, MULTILINESTRING)'
+    return help
     

@@ -61,3 +61,13 @@ def opusRun(progressCB,logCB,params):
                                        out_storage = output_storage,
                                        )
         print "Finished exporting table '%s'" % (opus_table_name)
+
+def opusHelp():
+    help = 'This tool will convert OPUS cached data to a compatible ESRI format.\n' \
+           '\n' \
+           'esri_data_path: folder path for shapefiles (c:\\temp), database path for personal and file geodatabases' \
+           '(c:\\test.gdb or c:\\test.mdb), or database connection path for SDE geodatabases (Database Connections\\your connection.sde)\n' \
+           'opus_table_name: the name of the OPUS cached table (parcels) or ALL for all tables\n' \
+           'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
+           'opus_data_year: the year from which the data should be exported (2000)'
+    return help

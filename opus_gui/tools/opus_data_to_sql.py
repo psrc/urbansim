@@ -66,3 +66,13 @@ def opusRun(progressCB,logCB,params):
             dataset_name = table_name,
             in_storage = input_storage,
             out_storage = output_storage)
+        
+def opusHelp():
+    help = 'This tool will export OPUS cached tables to a SQL database.\n' \
+           '\n' \
+           'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
+           'opus_data_year: the year from which the data should be exported (2000)\n' \
+           'sql_db_name: the name of the SQL database to export to\n' \
+           'table_name: the name of the OPUS table to export or ALL for all tables\n'
+    return help
+
