@@ -99,3 +99,10 @@ def get_primary_key(metadata, schema, existing_table_name):
         if i.primary_key:
             primary_key_name = i.name
             return primary_key_name
+        
+def opusHelp():
+    help = '''blah blah blah
+            blah blah blah
+            blah blah blah'''
+    return help
+    

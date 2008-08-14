@@ -70,6 +70,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         if self.currentElement.hasAttribute(QString('type')) and \
            self.currentElement.attribute(QString('type')) == QString('tool_file'):
             self.typeSelection = self.currentElement.tagName()
+            
+            #Jesse
+            #getting tool_name
+            child_nodes = self.currentElement.childNodes()
+            self.tool_name = getNodeText(child_nodes.item(0))
+            
             self.presentToolFileGUI()
         else:
             # We assume config
@@ -78,9 +84,17 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                                                   True,False)
             self.typeSelection = typeSelections[QString('tool_hook')]
             #self.typeSelection = getElementText(self.currentElement.elementsByTagName(QString("tool_hook")).item(0))
+            
+            #Jesse
+            #getting tool_name
+            tool_names = getElementsByType(self.model.domDocument, 'tool_name', True, True)
+            for i in tool_names:
+                if getNodeText(i) == self.typeSelection:
+                    self.tool_name = getNodeText(i)
+            
             self.presentToolConfigGUI()
             
-        #Jesse test:
+        #Setting tool title:
         self.tool_title = self.model.domDocument.createTextNode(self.typeSelection).data()
 
     def on_execTool_released(self):
@@ -228,6 +242,18 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 hlayout.addWidget(pbnSelect)
             self.vboxlayout.addWidget(widgetTemp)
             self.adjustSize()
+        # Jesse adding help text from opusHelp
+        tool_path_elements = getElementsByType(self.model.domDocument, 'tool_path', True, True)
+        for i in tool_path_elements:
+            try:
+                tool_path = getElementText(i)
+                exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
+                exec exec_stmt
+                help = QString(opusHelp())
+                self.toolhelpEdit.append(help)
+            except:
+                help = 'could not find opusHelp function in tool module'
+                self.toolhelpEdit.append(help)
         
     def on_pbnSelect_released(self,line):
         #print "on_pbnSelect_released recieved"
