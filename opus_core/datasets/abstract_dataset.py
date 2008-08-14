@@ -1222,7 +1222,7 @@ class AbstractDataset(object):
             that define the x and y axis, respectively.
         """
         import matplotlib
-        matplotlib.use('Qt4Agg') 
+        matplotlib.use('Agg') 
         
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
