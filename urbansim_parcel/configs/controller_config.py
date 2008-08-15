@@ -545,6 +545,33 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
 #                 }
 #             },
 
+        'modify_workers_jobs_after_hlcm_model': {
+            "import": {"opus_core.join_attribute_modification_model": "JoinAttributeModificationModel"},
+            "init": {"name": "JoinAttributeModificationModel"},
+            "run": {"arguments": {
+                          "dataset": "person",
+                          "secondary_dataset": "household",
+                          "index": "hrm_index", # this must be the same that goes into the HLCM argument 'agents_index'
+                          "attribute_to_be_modified": "'job_id'",
+                          "value": -1     
+                                  }
+                                                 },
+                            },
+                            
+        'modify_workers_jobs_after_elcm_model': {
+            "import": {"opus_core.join_attribute_modification_model": "JoinAttributeModificationModel"},
+            "init": {"name": "JoinAttributeModificationModel"},
+            "run": {"arguments": {
+                          "dataset": "person",
+                          "secondary_dataset": "job",
+                          "index": "erm_index", # this must be the same that goes into the ELCM argument 'agents_index'
+                          "attribute_to_be_modified": "'job_id'",
+                          "value": -1     
+                                  }
+                                                 },
+                            },
+                            
+
          'water_demand_model': {
             "import": {"psrc_parcel.models.water_demand_model":"WaterDemandModel"},
             "init": {
@@ -597,6 +624,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
         hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
+        hlcm_controller["init"]["arguments"]["simulation_weight_string"] = "'has_vacant_units=urbansim_parcel.building.vacant_residential_units>0'"
         hlcm_controller["init"]["arguments"]["capacity_string"] = "'urbansim_parcel.building.vacant_residential_units'"
         #hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'"
         #hlcm_controller["init"]["arguments"]["capacity_string"] = "'has_eg_1_units=building.residential_units>=1'"
