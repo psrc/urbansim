@@ -13,7 +13,38 @@
 # 
 
 from opus_core.database_management.engine_handlers.abstract_engine import AbstractDatabaseEngineManager
+from sqlalchemy import types as sqltypes
 import os
+
+try: 
+    from sqlalchemy.databases import postgres
+        
+    class PGGeometry(sqltypes.TypeEngine):
+        def get_col_spec(self):
+            return "geometry"
+            
+        def convert_bind_param(self, value, engine):
+            return value
+            
+        def convert_result_value(self, value, engine):
+            return value
+
+    postgres.ischema_names['geometry'] = PGGeometry
+   
+    class PGCascadeSchemaDropper(postgres.PGSchemaDropper):
+        def visit_table(self, table):
+            for column in table.columns:
+                if column.default is not None:
+                    self.traverse_single(column.default)
+            self.append("\nDROP TABLE " +
+                        self.preparer.format_table(table) +
+                        " CASCADE")
+            self.execute()
+    
+    postgres.dialect.schemadropper = PGCascadeSchemaDropper
+
+except:
+    pass
 
 class PostgresServerManager(AbstractDatabaseEngineManager):
     
