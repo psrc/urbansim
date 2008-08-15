@@ -44,7 +44,8 @@ class OpusSyntaxChecker(object):
                 logger.log_error("missing GPL in file %s" % py_file_name)
                 files_with_no_license.append(py_file_name)
             if lines_with_tabs:
-                logger.log_error("tab(s) in file %s" % py_file_name)
+                print ",".join(["%s" % x for x in lines_with_tabs])
+                logger.log_error("tab(s) in file %s, line(s) %s" % (py_file_name, ",".join(["%s" % x for x in lines_with_tabs])))
                 files_with_tab.append(py_file_name)
                 
         if files_with_no_license or files_with_tab:
@@ -58,7 +59,7 @@ class OpusSyntaxChecker(object):
         for line in f.readlines():
             line_counter += 1
             if '\t' in line:
-                lines_with_tabs.append(str(line_counter) + ': ' + line)
+                lines_with_tabs.append(line_counter)
         return lines_with_tabs
         
     gpl_text = "under the terms of the GNU General Public License"
