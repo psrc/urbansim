@@ -57,13 +57,20 @@ class CommuteTravelDataDataset(UrbansimNodeTravelDataDataset):
         """ Return attribute derived from the travel_data dataset, where values along the path given by 
         connection_mapping are subtracted.
         """
-        if (from_node not in self.connection_mapping.keys()) or (to_node not in self.connection_mapping.keys()):
+        if from_node not in self.connection_mapping.keys():
+            from_zone, path_to_from_zone = from_node, ()
+        else:
+            from_zone, path_to_from_zone = (self.connection_mapping[from_node]['zone'], self.connection_mapping[from_node]['path'])
+        if to_node not in self.connection_mapping.keys():
+            to_zone, path_to_to_zone = to_node, ()
+        else:
+            to_zone, path_to_to_zone = (self.connection_mapping[to_node]['zone'], self.connection_mapping[to_node]['path'])
+        try:                            
+            td_value = travel_data.get_attribute_by_id(name, [[from_zone, to_zone]])
+        except:
             logger.log_warning('Connection from %s to %s not found.' % (from_node, to_node))
             return return_value_if_not_found
-        from_zone, path_to_from_zone = (self.connection_mapping[from_node]['zone'], self.connection_mapping[from_node]['path'])
-        to_zone, path_to_to_zone = (self.connection_mapping[to_node]['zone'], self.connection_mapping[to_node]['path'])                                
-        td_value = travel_data.get_attribute_by_id(name, [[from_zone, to_zone]])
-        print "zones: (%s) %s (%s)" % (from_zone, td_value, to_zone)
+        #print "zones: (%s) %s (%s)" % (from_zone, td_value, to_zone)
         attr_from_node_to_zone = node_travel_data._get_attribute_sum_from_path(name, [from_node] + list(path_to_from_zone)) + node_travel_data._get_attribute_sum_from_path(name, [to_node] + list(path_to_to_zone))
-        print "from node to zone: %s" % attr_from_node_to_zone
+        #print "from node to zone: %s" % attr_from_node_to_zone
         return td_value - attr_from_node_to_zone
