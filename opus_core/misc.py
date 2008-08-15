@@ -304,6 +304,10 @@ def create_string_list(prefix, n):
         name_list.append(prefix + `i+1`)
     return name_list
 
+def list2string(l, sep=' '):
+    """Return a string created from the elements of the list 'l' separated by 'sep'."""
+    return sep.join(["%s" % x for x in l])
+
 def check_dimensions(array1, array2):
     """Return True if all dimensions of array1 correspond to all dimensions of array2, otherwise False.
     Both arrays hahve to be numpy arrays.
@@ -1081,6 +1085,10 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         location = os.path.join(opus_core.__path__[0], 'data', 'tab')
         dataset = get_dataset_from_tab_storage('test', directory=location)
         self.assertAlmostEqual(21, dataset.attribute_sum(attribute))
-
+        
+    def test_list2string(self):
+        self.assertEqual(list2string([42, 900.4, 20.333]), "42 900.4 20.333")
+        self.assertEqual(list2string(["aaa", 5, "xx", 6.8], sep=', '), "aaa, 5, xx, 6.8")
+        
 if __name__ == "__main__":
     opus_unittest.main()
