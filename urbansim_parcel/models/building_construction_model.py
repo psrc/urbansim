@@ -18,6 +18,7 @@ from opus_core.logger import logger
 from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
 
 from numpy import where, arange, resize, array, cumsum, concatenate, round_, any
 
@@ -202,8 +203,11 @@ class BuildingConstructionModel(Model):
         
         building_dataset.remove_elements(building_dataset.get_id_index(buildings_to_be_demolished))
         logger.log_status("%s buildings demolished." % buildings_to_be_demolished.size)
-        # remove occupants from demolished buildings
         buildings_id_name = building_dataset.get_id_name()[0]
+        modify_workers_jobs_model = JoinAttributeModificationModel()
+        persons = dataset_pool.get_dataset('person')
+        
+        # remove occupants from demolished buildings and make workers in those buildings unemployed
         for agent_name in ['household', 'job']:            
             agents = dataset_pool.get_dataset(agent_name)
             location_ids = agents.get_attribute(buildings_id_name)
@@ -212,6 +216,8 @@ class BuildingConstructionModel(Model):
                 idx = where(id_index_in_buildings < 0)[0]
                 agents.modify_attribute(name=buildings_id_name, data=idx.size*[-1], index = idx)
                 logger.log_status("%s %ss removed from demolished buildings." % (idx.size, agent_name))
+                modify_workers_jobs_model.run(persons, agents, index=idx, attribute_to_be_modified='job_id', value=-1)
+
                 
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
@@ -220,10 +226,19 @@ from numpy import arange, array, all
 
 class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
     def test_demolition(self):
+        demolish_buildings = array([10, 3, 180])
         household_data = {
             'household_id': arange(10)+1,
             'building_id': array([10, 3, 6, 150, 10, 10, -1, 5, 3, 3])
+            # demolished         [*   *           *   *  (*)    *  *]
             }
+        person_data = {
+            'person_id':arange(15)+1,
+            'household_id': array([1,1,2,3,3,5,4,4,4,6,7,8,9,10,10]),
+           # in demolished bldgs  [* * *     *       * *   *  *  *]
+            'job_id':       array([5,4,1,2,2,1,3,5,1,5,5,4,3, 3, 1])
+           # in demolished bldgs  [  * *     * *   *     * *  *  *]
+                       }
         job_data = {
             'job_id': arange(5)+1,
             'building_id': array([180, 145, 10, 180, 179])
@@ -235,9 +250,10 @@ class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'households', table_data = household_data)
         storage.write_table(table_name = 'buildings', table_data = building_data)
         storage.write_table(table_name = 'jobs', table_data = job_data)
+        storage.write_table(table_name = 'persons', table_data = person_data)
         dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim'])
         
-        demolish_buildings = array([10, 3, 180])
+        
         BCM = BuildingConstructionModel()
         BCM.demolish_buildings(demolish_buildings, dataset_pool.get_dataset('building'), dataset_pool)
         self.assertEqual(all(dataset_pool.get_dataset('household').get_attribute('building_id') ==
@@ -245,6 +261,9 @@ class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(all(dataset_pool.get_dataset('job').get_attribute('building_id') ==
                                   array([-1, 145, -1, -1, 179])), True)
         self.assertEqual(dataset_pool.get_dataset('building').size()==197, True)
+        self.assertEqual(all(dataset_pool.get_dataset('person').get_attribute('job_id') == 
+                             array([-1,-1,-1,2,2,-1,-1,5,-1,-1,-1,-1,-1,-1,-1])), True) 
+                             
         
 if __name__=="__main__":
     opus_unittest.main()
