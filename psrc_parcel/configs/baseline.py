@@ -35,7 +35,7 @@ class Baseline(UrbansimParcelConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel', 
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-               #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+               #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel/test',
                #cache_directory_root = r'/home/hana/urbansim_cache/psrc/parcel',
                cache_directory_root = r'/urbansim_cache/psrc_parcel/runs',
                #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
@@ -43,7 +43,8 @@ class Baseline(UrbansimParcelConfiguration):
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/runs/cache_source',
-                    ),
+					#existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                   ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     #'business',
@@ -112,9 +113,8 @@ class Baseline(UrbansimParcelConfiguration):
                 unroll_gridcells = False
                 ),
             'input_configuration': DatabaseConfiguration(
-                #database_name = 'psrc_2005_parcel_baseyear_change_20080422',
-                 database_name = 'psrc_2005_parcel_baseyear_change_lmwang',
-                #database_name = 'psrc_2005_parcel_baseyear_change_20070913',
+                database_name = 'psrc_2005_parcel_baseyear',
+                #database_name = 'psrc_2005_parcel_baseyear_change_20080804E',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
@@ -123,7 +123,7 @@ class Baseline(UrbansimParcelConfiguration):
 #            'models_configuration':models_configuration,
 
             'base_year':2000,
-            'years':(2001, 2002),
+            'years':(2001, 2005),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
                 "real_estate_price_model",
@@ -132,11 +132,17 @@ class Baseline(UrbansimParcelConfiguration):
                 "building_construction_model",
                 "household_transition_model",
                 "employment_transition_model",
+                'job_person_consistency_keeper',
                 "household_relocation_model",
                 "household_location_choice_model",
+                "modify_workers_jobs_after_hlcm_model",
                 "employment_relocation_model",
-                {"employment_location_choice_model":{'group_members': '_all_'}},
-                'distribute_unplaced_jobs_model'
+                #{"employment_location_choice_model":{'group_members': '_all_'}},
+                {"employment_location_choice_model":{'group_members': ['non_home_based']}},
+                'distribute_unplaced_jobs_model',
+                "modify_workers_jobs_after_elcm_model",
+                'work_at_home_choice_model',
+                'workplace_choice_model_for_resident'
                 ],
             'models_in_year': {2000: [ # This is not run anymore, since all jobs are located and only a few households are not.
                  "household_relocation_model_for_2000",
