@@ -14,7 +14,7 @@
 
 import os
 import gc
-from numpy import zeros, arange
+from numpy import zeros, arange, mean
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.misc import load_from_text_file, write_table_to_text_file, write_to_text_file
 from opus_core.plot_functions import plot_values_as_boxplot_r
@@ -23,6 +23,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
+from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
 
 class MultipleRuns:
@@ -122,9 +123,25 @@ class MultipleRuns:
         return result
             
     def set_values_from_mr(self, year, quantities_of_interest):
+        self.year_of_values_from_mr = year
         self.values_from_mr = {}
         for var in quantities_of_interest:
             self.values_from_mr[var] = self.compute_values_from_multiple_runs(year, var)
+            
+    def get_dataset_with_means(self, dataset_name, dataset=None):
+        """Return dataset where each element is the corresponding mean over the multiple runs. 
+        Attributes of this dataset are keys of self.values_from_mr. If dataset is given, the 
+        new attributes are appended to it.
+        """
+        if dataset is None:
+            ds = self.get_dataset_from_first_run(self.year_of_values_from_mr, dataset_name)
+        else:
+            ds=dataset
+        vars = self.values_from_mr.keys()
+        for var in vars:
+            values = mean(self.values_from_mr[var], axis=1)
+            ds.add_attribute(name=var, data=values, metadata=AttributeType.PRIMARY)
+        return ds
             
     def export_values_from_mr(self, directory, prefix=''):
         vars = self.values_from_mr.keys()
