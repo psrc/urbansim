@@ -55,8 +55,9 @@ Installing on Macintosh</td>
 
 <p>This following instructions are for installing Opus &amp;
 UrbanSim on Macintosh OS X.&nbsp; These installation directions have been
-tested with Macintosh OS X Tiger and Leopard with Intel processors,
-and Macintosh OS X Tiger with a PPC processor. </p>
+tested with Macintosh OS X Tiger and Leopard with Intel processors.  (We also
+tested them earlier on Macintosh OS X Tiger with a PPC processor, but
+parts may have gotten out of date for PPC.)</p>
 
 
 <ol>
@@ -155,11 +156,12 @@ written
 for Windows, but is straightforward to use for the Mac as well.</p>
 
 
-<h2>Step 3: <a name="libraries">Installing Python
-Libraries</a></h2>
+<h2>Step 3: <a name="libraries">Installing Python Libraries and Qt</a></h2>
 
-
-<p> Unfortunately, there is no download for the Mac that contains
+<p>Download the <a href="python_packages.html">required, recommended and
+optional Python packages</a> and install them.  This page gives additional
+Mac-specific directions for doing this.
+Unfortunately, there is no download for the Mac that contains
 all of the Python libraries needed by Opus and UrbanSim, so several steps are
 needed to install the Python libraries.  </p>
 
@@ -269,14 +271,62 @@ by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy
 <i><br>ImportError: dlcompat: dyld: /Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib  (No such file or directory, errno = 2)</i>
 <br>This may happen because the library it is looking for is in /usr/local/mysql/lib/, and not in a subfolder called mysql.  Moving the files or creating aliases should fix the problem.</p>
 
-<p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/pyqt/index.php">PyQt</a> and 
-<a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install Qt (version 4.3.3 or later), SIP and finally PyQt.  
+<p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/software/pyqt/download">PyQt</a> and 
+<a href="http://www.riverbankcomputing.co.uk/software/qscintilla/download">QScintilla</a>.  You need to install Qt (version 4.3.3 or later), SIP and finally PyQt.  
 For Leopard, currently you need to build Qt from source (don't use the dmg file), although presumably this will get fixed at some point.
 For Tiger, the dmg file will probably work.
 The page <a href="http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/">
 http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/</a> has detailed directions for how to do this on Mac OS 10.5/Leopard.  
 However, you should probably omit the parameter <tt>-q /usr/local/Trolltech/Qt-4.3.2/bin/qmake</tt> given in the directions for building PyQt (at least we did).
 To get PyQt to compile, you may also need to comment out all OpenGL components from the makefile.</p>
+
+<p>In case they move, here is an abbreviated version of the directions for building and installing Qt, sip, and PyQt 
+(adapted from the above link on phantic.hu).</p>
+
+<p>Download the source tarball for Qt, SIP, and PyQT, and let the built-in Archive Utility extract the tarballs to your Download
+directory:
+
+<ul>
+<li><a href="http://trolltech.com/developer/downloads/qt/mac">Qt Open Source Edition 4 source tarball</a> from Trolltech (latest is 4.4.1 as of this writing)</li>
+<li><a href="http://www.riverbankcomputing.co.uk/software/sip/download">SIP source tarball</a> from Riverbank (4.7.7)</a>
+<li><a href="http://www.riverbankcomputing.co.uk/software/pyqt/download">PyQt source tarball</a> from Riverbank (4.4.3)</a>
+</ul>
+
+<h3>Building Qt</h3>
+
+This is straightforward although it takes a long time:
+<pre>
+cd qt-mac-opensource-src-4.4.1/
+./configure
+make
+sudo make install
+</pre>
+
+
+<h3>Building SIP</h3>
+
+You need to tell setup script where to put the package files:
+
+<pre>
+cd sip-4.7.7/
+python configure.py -d /Library/Python/2.5/site-packages
+make
+sudo make install
+</pre>
+
+<tt>/Library/Python/2.5/site-packages</tt> is the path to your Python site-packages directory -- change this 
+if your site-packages are in a different location.
+
+<h3>Building PyQt</h3>
+
+Similarly, you need to provide the path to your Python site-packages directory.  This build also takes a long time.
+
+<pre>
+cd PyQt-mac-gpl-4.4.3/
+python configure.py -d /Library/Python/2.5/site-packages
+make
+sudo make install
+</pre>
 
 <p>The process is similar on Tiger/10.4, but seems to vary from user to user for reasons we haven't been able to pin down.  
 <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This page</a> has been useful to some users.</p>
@@ -409,6 +459,10 @@ Here is some sample contents of the file for defining these variables:</p>
 
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"<br>"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>&lt;plist version="1.0"&gt;<br> &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAMEFORTESTS&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;/dict&gt;<br>&lt;/plist&gt;</pre>
 
+<p>You need to reboot your machine after editing the <tt>environment.plist</tt> file for the new definitions to be seen.</p>
+
+<p>Unfortunately, the <tt>environment.plist</tt> technique for setting environment variables on the Mac doesn't seem to work
+on all machines.  If you have trouble, try putting the definition in a <tt>.bashrc</tt> file as well.</p>
 
 <h2>Step 6: <a name="test">Testing your installation</a></h2>
 
