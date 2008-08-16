@@ -13,7 +13,8 @@
 #
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+
 from opus_core.database_management.cross_database_operations import CrossDatabaseOperations
 from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager
  
@@ -37,23 +38,20 @@ class FlattenScenarioDatabaseChain(object):
                 new_database.execute(qry)
             
     def _create_db_from_chain_via_python(self, 
-                                         db_server_config_from,
-                                         from_database_name,
-                                         db_server_config_to,
-                                         to_database_name, 
-                                         tables_to_copy=[]
-                                        ):
+                                         from_database_configuration, 
+                                         to_database_configuration,
+                                         tables_to_copy):
                 
-        db_server_from = DatabaseServer(db_server_config_from)
-        db_server_to = DatabaseServer(db_server_config_to)
-        db_server_to.drop_database(to_database_name)
-        db_server_to.create_database(to_database_name)
+        db_server_from = DatabaseServer(from_database_configuration)
+        db_server_to = DatabaseServer(to_database_configuration)
+        db_server_to.drop_database(to_database_configuration.database_name)
+        db_server_to.create_database(to_database_configuration.database_name)
         
-        database_out = db_server_to.get_database(to_database_name)
+        database_out = db_server_to.get_database(to_database_configuration.database_name)
         
         scenario_db_manager = ScenarioDatabaseManager(
-            server_configuration = db_server_config_from, 
-            base_scenario_database_name = from_database_name)
+            server_configuration = from_database_configuration, 
+            base_scenario_database_name = from_database_configuration.database_name)
         table_mapping = scenario_db_manager.get_database_to_table_mapping()
     
         cross_db_operations = CrossDatabaseOperations()
@@ -87,26 +85,22 @@ class FlattenScenarioDatabaseChain(object):
         db_server_from.close()
         db_server_to.close()
 
-    def copy_scenario_database(self, db_server_config_from, from_database_name, 
-                                     db_server_config_to, to_database_name, 
-                                     tables_to_copy = []):
-        
-        db_server_config_to = config['db_server_config_to']                                                   
-        db_server_config_from = config['db_server_config_from'] 
+    def copy_scenario_database(self, 
+                               from_database_configuration, 
+                               to_database_configuration,
+                               tables_to_copy = []):
         
         logger.start_block("Copying tables from database chain starting at '%s' on '%s'\nto database '%s' on '%s'"
-                           % (from_database_name, 
-                              db_server_config_from.host_name, 
-                              to_database_name, 
-                             db_server_config_to.host_name))
+                           % (from_database_configuration.database_name, 
+                              from_database_configuration.host_name, 
+                              to_database_configuration.database_name, 
+                             to_database_configuration.host_name))
         
         try:
             self._create_db_from_chain_via_python(
-                 db_server_config_to = db_server_config_to,
-                 to_database_name=to_database_name,
-                 db_server_config_from = db_server_config_from,
-                 from_database_name=from_database_name,
-                 tables_to_copy=tables_to_copy)
+                 from_database_configuration = from_database_configuration, 
+                 to_database_configuration = to_database_configuration,
+                 tables_to_copy = tables_to_copy)
         finally:
             logger.end_block()
 
@@ -135,17 +129,19 @@ if __name__ == '__main__':
             
     (options, args) = parser.parse_args()
     
-    server_config = DatabaseServerConfiguration(
+    from_database_configuration = ScenarioDatabaseConfiguration(
         host_name = options.host_name,
         user_name = options.user_name,
-        password = options.password
+        password = options.password,
+        database_name = options.from_database_name
     )
-    
-    config = {
-        'db_server_config_from':server_config,
-        'from_database_name':options.from_database_name,
-        'db_server_config_to':server_config,
-        'to_database_name':options.to_database_name,
-        }
+    to_database_configuration = ScenarioDatabaseConfiguration(
+        host_name = options.host_name,
+        user_name = options.user_name,
+        password = options.password,
+        database_name = options.to_database_name
+    )    
+
     copier = FlattenScenarioDatabaseChain()
-    copier.copy_scenario_database(**config)
+    copier.copy_scenario_database(from_database_configuration = from_database_configuration, 
+                                  to_database_configuration = to_database_configuration)

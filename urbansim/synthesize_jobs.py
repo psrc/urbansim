@@ -14,8 +14,8 @@
 
 from opus_core.misc import sample
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
+from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 class SynthesizeJobs(object):
     def synthesize_employment_data(self, config):
@@ -46,23 +46,26 @@ class SynthesizeJobs(object):
             building_ids += [id]
             home_based += [home]
                     
-        db_server_config = DatabaseServerConfiguration(
-            host_name = config['db_config'].host_name,
-            user_name = config['db_config'].user_name,
-            password = config['db_config'].password
-        )           
-        db_server = DatabaseServer(db_server_config)
         
-        flatten_db_config = {
-            'tables_to_copy':[gridcells_table_name, jobs_table_name],
-            'db_server_config_from':db_server_config,
-            'from_database_name':input_db_name,
-            'db_server_config_to':db_server_config,
-            'to_database_name':output_db_name,
-            }
+        from_database_configuration = ScenarioDatabaseConfiguration(
+                                            database_name = input_db_name,
+                                            host_name = config['db_config'].host_name,
+                                            user_name = config['db_config'].user_name,
+                                            password = config['db_config'].password                                            
+                                        )
+        to_database_configuration = ScenarioDatabaseConfiguration(
+                                            database_name = output_db_name,
+                                            host_name = config['db_config'].host_name,
+                                            user_name = config['db_config'].user_name,
+                                            password = config['db_config'].password                                            
+                                        )
+
+        FlattenScenarioDatabaseChain().copy_scenario_database(
+                              from_database_configuration = from_database_configuration, 
+                              to_database_configuration = to_database_configuration,
+                              tables_to_copy = [gridcells_table_name, jobs_table_name])
         
-        FlattenScenarioDatabaseChain().copy_scenario_database(**flatten_db_config)
-                
+        db_server = DatabaseServer(to_database_configuration)       
         output_database = db_server.get_database(output_db_name)
                 
         sector_name = 0; sector_id = 1

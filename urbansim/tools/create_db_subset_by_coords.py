@@ -178,28 +178,29 @@ if __name__=='__main__':
                 )
             )
        
-    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
     from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
     from opus_core.database_management.database_server import DatabaseServer
-    
-    hostname = options.host
-    username = options.username
-    password = options.password
-    
-    db_server_config = DatabaseServerConfiguration(
-        host_name = hostname,
-        user_name = username,
-        password = password                                        
-    )
-    db_server = DatabaseServer(db_server_config)
-    flatten_db_config = {
-        'db_server_config_from':db_server_config,
-        'from_database_name':input_db_name,
-        'db_server_config_to':db_server_config,
-        'to_database_name':'temporary_flattened_scenario_database',
-        }
-    
-    FlattenScenarioDatabaseChain().copy_scenario_database(**flatten_db_config)
+    from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+
+    from_database_configuration = ScenarioDatabaseConfiguration(
+                                        database_name = input_db_name,
+                                        host_name = options.host,    
+                                        user_name = options.username,
+                                        password = options.password                                              
+                                    )
+    to_database_configuration = ScenarioDatabaseConfiguration(
+                                        database_name = 'temporary_flattened_scenario_database',
+                                        host_name = options.host,    
+                                        user_name = options.username,
+                                        password = options.password                                      
+                                    )
+
+    FlattenScenarioDatabaseChain().copy_scenario_database(
+                          from_database_configuration = from_database_configuration, 
+                          to_database_configuration = to_database_configuration,
+                          tables_to_copy = [])
+
+    db_server = DatabaseServer(to_database_configuration)   
 
     db = db_server.get_database('temporary_flattened_scenario_database')
 

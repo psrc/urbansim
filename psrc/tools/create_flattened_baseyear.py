@@ -15,8 +15,7 @@
 from psrc.configs.baseline import Baseline
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
-from opus_core.database_management.database_server_configuration \
-    import DatabaseServerConfiguration
+from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 """
 This utility creates a new flattened database containing the
@@ -24,15 +23,13 @@ necessary files from the scenario database chain pointed to by
 PSRC_2000_baseyear.
 """
 
-server_config = DatabaseServerConfiguration()
-
 run_configuration = Baseline()
-config = {
-    'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'db_server_config_from':server_config,
-    'from_database_name':'PSRC_2000_baseyear',
-    'db_server_config_to':server_config,
-    'to_database_name':'PSRC_2000_baseyear_flattened',
-    }
+
+from_database_configuration = ScenarioDatabaseConfiguration(database_name = 'PSRC_2000_baseyear')
+to_database_configuration = ScenarioDatabaseConfiguration(database_name = 'PSRC_2000_baseyear_flattened')
+tables_to_copy = run_configuration['creating_baseyear_cache_configuration'].tables_to_cache
+
 copier = FlattenScenarioDatabaseChain()
-copier.copy_scenario_database(**config)
+copier.copy_scenario_database(from_database_configuration = from_database_configuration, 
+                              to_database_configuration = to_database_configuration,
+                              tables_to_copy = tables_to_copy)

@@ -13,12 +13,11 @@
 #
 
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.misc import create_import_for_class
 from opus_core.misc import get_config_from_opus_path
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
-from opus_core.database_management.database_server_configuration \
-    import DatabaseServerConfiguration
+from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+
 
 class CreateFlattenedDatabaseOptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -47,15 +46,13 @@ if __name__ == "__main__":
         to_database_name = options.database_name
         if to_database_name is None:
             to_database_name = from_database_name + '_flattened'
-            
-        server_config = DatabaseServerConfiguration()
-        flatten_config = {
-        'tables_to_copy':config['creating_baseyear_cache_configuration'].tables_to_cache,
-        'db_server_config_from':server_config,
-        'from_database_name':from_database_name,
-        'db_server_config_to':server_config,
-        'to_database_name':to_database_name,
-          }
+        
+        from_database_configuration = ScenarioDatabaseConfiguration(database_name = from_database_name)
+        to_database_configuration = ScenarioDatabaseConfiguration(database_name = to_database_name)
+        tables_to_copy = config['creating_baseyear_cache_configuration'].tables_to_cache
+        
         copier = FlattenScenarioDatabaseChain()
-        copier.copy_scenario_database(**flatten_config)
+        copier.copy_scenario_database(from_database_configuration = from_database_configuration, 
+                                      to_database_configuration = to_database_configuration,
+                                      tables_to_copy = tables_to_copy)
     

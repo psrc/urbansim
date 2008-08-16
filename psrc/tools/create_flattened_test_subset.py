@@ -17,6 +17,7 @@ from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
 from opus_core.database_management.database_server_configuration \
     import DatabaseServerConfiguration
+from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 """
 This utility creates, on localhost, a flattened copy of the subset 
@@ -26,12 +27,12 @@ server_config_to = DatabaseServerConfiguration(host_name = 'localhost')
 server_config_from = DatabaseServerConfiguration()
 
 run_configuration = SubsetConfiguration()
-config = {
-    'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'db_server_config_from':server_config_from,
-    'from_database_name':run_configuration['input_configuration'].database_name,
-    'db_server_config_to':server_config_to,
-    'to_database_name':run_configuration['input_configuration'].database_name,
-    }
+
+from_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['input_configuration'].database_name)
+to_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['input_configuration'].database_name)
+tables_to_copy = run_configuration['creating_baseyear_cache_configuration'].tables_to_cache
+
 copier = FlattenScenarioDatabaseChain()
-copier.copy_scenario_database(**config)
+copier.copy_scenario_database(from_database_configuration = from_database_configuration, 
+                              to_database_configuration = to_database_configuration,
+                              tables_to_copy = tables_to_copy)
