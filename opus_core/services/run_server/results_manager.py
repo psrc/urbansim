@@ -69,7 +69,7 @@ class ResultsManager(AbstractService):
     
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
 class ResultsManagerTests(opus_unittest.OpusTestCase):
     def setUp(self):

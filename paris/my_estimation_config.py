@@ -13,7 +13,7 @@
 # 
 
 import os
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration

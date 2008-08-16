@@ -453,7 +453,7 @@ class ModelSystem(object):
             resources["profile_filename"] = profiler_name
         logger.log_status("Done running simulation for years %d thru %d" % (start_year, end_year))
 
-
+    #TODO: changing of configuration
     def _run_each_year_as_separate_process(self, start_year, end_year, seed_array, resources, log_file_name='run_multiprocess.log'):
         log_file = os.path.join(resources['cache_directory'], log_file_name)
         profiler_name = resources.get("profile_filename", None)

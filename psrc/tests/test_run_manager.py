@@ -22,7 +22,7 @@ from opus_core.tests import opus_unittest
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration

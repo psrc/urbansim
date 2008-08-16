@@ -15,7 +15,7 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 

@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from urbansim.configs.config_changes_for_estimation import ConfigChangesForEstimation
 from urbansim.configurations.land_price_model_configuration_creator import LandPriceModelConfigurationCreator
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator

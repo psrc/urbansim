@@ -106,7 +106,7 @@ print indicator_to_XML_writer(computed_indicators)
 #VISUALIZE the resulting computed indicators
 ############################################
 #from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-#from opus_core.database_management.database_configuration import DatabaseConfiguration
+#from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 #
 #visualizer = VisualizationFactory()
 #visualizations = []

@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
 from psrc.config.wlcm_config import run_configuration
 

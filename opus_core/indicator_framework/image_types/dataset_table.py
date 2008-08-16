@@ -18,7 +18,7 @@ from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
 class DatasetTable(AbstractIndicator):
 

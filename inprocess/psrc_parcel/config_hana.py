@@ -17,7 +17,7 @@ import os
 from numpy import array
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.estimation_base_config import run_configuration as config

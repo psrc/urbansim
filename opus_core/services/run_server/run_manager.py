@@ -31,6 +31,7 @@ class RunManager(AbstractService):
     """
 
     def __init__(self, options):
+        
         AbstractService.__init__(self, options)
         self.run_id = None
         self.ready_to_run = False
@@ -478,7 +479,7 @@ def insert_auto_generated_cache_directory_if_needed(config):
     config['cache_directory'] = cache_directory
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 import tempfile 
 
 class RunManagerTests(opus_unittest.OpusTestCase):

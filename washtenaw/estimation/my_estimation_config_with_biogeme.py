@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.hlcm_estimation_config import run_configuration as config

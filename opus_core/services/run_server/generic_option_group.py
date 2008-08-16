@@ -16,7 +16,7 @@ import os
 
 from optparse import OptionParser, OptionGroup
 
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):

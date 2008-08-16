@@ -26,6 +26,7 @@ class AbstractService(object):
     """
 
     def __init__(self, options):
+        
         self.services_db = self.create_storage(options)
         self.server_config = options
         
@@ -65,7 +66,7 @@ class AbstractService(object):
     
     
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 import tempfile 
 
 class AbstractServiceTests(opus_unittest.OpusTestCase):

@@ -14,7 +14,7 @@
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
