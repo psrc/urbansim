@@ -85,94 +85,82 @@ class ScenarioDatabaseManager(object):
             
         return table_mapping
     
-    
-try:
-    import sqlalchemy
-except:
-    pass
+from opus_core.tests import opus_unittest
+from opus_core.database_management.test_classes.database_management_test_interface \
+    import DatabaseManagementTestInterface 
 
-if sqlalchemy is None:
-    if __name__ == '__main__':
-        from opus_core.logger import logger 
-        logger.log_warning('Skipping scenario_database_manager unit tests -- could not import the sqlalchemy module.')
-    
-else:
-    from opus_core.tests import opus_unittest
-    from opus_core.database_management.test_classes.database_management_test_interface \
-        import DatabaseManagementTestInterface 
 
-    
-    class ScenarioDatabaseManagerTest(DatabaseManagementTestInterface):
+class ScenarioDatabaseManagerTest(DatabaseManagementTestInterface):
 
-        def test_table_mapping_no_chain(self):
-            sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
-            t_mapping = sdm._get_table_mapping('db_chain_granddad', {})
-            
-            expected = {
-                'base_schema': 'db_chain_granddad',
-                'base_schema2': 'db_chain_granddad',
-                'scenario_information': 'db_chain_granddad'
-            }
-            
-            self.assertEqual(t_mapping, expected)
+    def test_table_mapping_no_chain(self):
+        sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
+        t_mapping = sdm._get_table_mapping('db_chain_granddad', {})
         
-        def test_table_mapping_chain(self):
-            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
-            t_mapping = sdm._get_table_mapping('db_chain_son', {})
-            
-            expected = {
-                'base_schema': 'db_chain_dad',
-                'base_schema2': 'db_chain_son',
-                'scenario_information': 'db_chain_son'
-            }
-            
-            self.assertEqual(t_mapping, expected)
-                    
-        def test_database_to_table_mapping_no_chain(self):
-            sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
-            d_mapping = sdm.get_database_to_table_mapping()
-            
-            expected = {
-                'db_chain_granddad': ['base_schema', 'base_schema2', 'scenario_information']
-            }
-            self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
-            for k,v in d_mapping.items():
-                self.assertTrue(k in expected)
-                for table in v:
-                    self.assertTrue(table in expected[k])            
+        expected = {
+            'base_schema': 'db_chain_granddad',
+            'base_schema2': 'db_chain_granddad',
+            'scenario_information': 'db_chain_granddad'
+        }
         
-        def test_database_to_table_mapping_chain(self):
-            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
-            d_mapping = sdm.get_database_to_table_mapping()
-            
-            expected = {
-                'db_chain_son': ['base_schema2', 'scenario_information'],
-                'db_chain_dad': ['base_schema']
-            }
-            self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
-            for k,v in d_mapping.items():
-                self.assertTrue(k in expected)
-                for table in v:
-                    self.assertTrue(table in expected[k]) 
+        self.assertEqual(t_mapping, expected)
+    
+    def test_table_mapping_chain(self):
+        sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+        t_mapping = sdm._get_table_mapping('db_chain_son', {})
         
-        def test_jdbc_url_overwritten_properly(self):
-            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
-            
-            url = 'jdbc:mysql://name.host.domain/db_chain_dad'
-            u = self.db_chain_son.get_table('scenario_information').update(
-                  values = {
-                    self.db_chain_son.get_table('scenario_information').c.parent_database_url:url})   
-            self.db_chain_son.execute(u)       
-                 
-            sdm._get_table_mapping('db_chain_son', {})
-            
-            s = select(
-                columns=[self.db_chain_son.get_table('scenario_information').c.parent_database_url])
-            result = self.db_chain_son.execute(s)
-            
-            output_url = result.fetchone()[0]
-            expected_url = 'db_chain_dad'
-            self.assertEqual(output_url, expected_url)
+        expected = {
+            'base_schema': 'db_chain_dad',
+            'base_schema2': 'db_chain_son',
+            'scenario_information': 'db_chain_son'
+        }
+        
+        self.assertEqual(t_mapping, expected)
+                
+    def test_database_to_table_mapping_no_chain(self):
+        sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
+        d_mapping = sdm.get_database_to_table_mapping()
+        
+        expected = {
+            'db_chain_granddad': ['base_schema', 'base_schema2', 'scenario_information']
+        }
+        self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
+        for k,v in d_mapping.items():
+            self.assertTrue(k in expected)
+            for table in v:
+                self.assertTrue(table in expected[k])            
+    
+    def test_database_to_table_mapping_chain(self):
+        sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+        d_mapping = sdm.get_database_to_table_mapping()
+        
+        expected = {
+            'db_chain_son': ['base_schema2', 'scenario_information'],
+            'db_chain_dad': ['base_schema']
+        }
+        self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
+        for k,v in d_mapping.items():
+            self.assertTrue(k in expected)
+            for table in v:
+                self.assertTrue(table in expected[k]) 
+    
+    def test_jdbc_url_overwritten_properly(self):
+        sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+        
+        url = 'jdbc:mysql://name.host.domain/db_chain_dad'
+        u = self.db_chain_son.get_table('scenario_information').update(
+              values = {
+                self.db_chain_son.get_table('scenario_information').c.parent_database_url:url})   
+        self.db_chain_son.execute(u)       
+             
+        sdm._get_table_mapping('db_chain_son', {})
+        
+        s = select(
+            columns=[self.db_chain_son.get_table('scenario_information').c.parent_database_url])
+        result = self.db_chain_son.execute(s)
+        
+        output_url = result.fetchone()[0]
+        expected_url = 'db_chain_dad'
+        self.assertEqual(output_url, expected_url)
 
-    if __name__ == '__main__':
-        opus_unittest.main()
+if __name__ == '__main__':
+    opus_unittest.main()
