@@ -16,7 +16,7 @@ from opus_core.logger import logger
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
 from opus_core.database_management.database_server import DatabaseServer
 
