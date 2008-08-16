@@ -87,23 +87,26 @@ class FlattenScenarioDatabaseChain(object):
         db_server_from.close()
         db_server_to.close()
 
-    def copy_scenario_database(self, config):
+    def copy_scenario_database(self, db_server_config_from, from_database_name, 
+                                     db_server_config_to, to_database_name, 
+                                     tables_to_copy = []):
+        
         db_server_config_to = config['db_server_config_to']                                                   
         db_server_config_from = config['db_server_config_from'] 
         
         logger.start_block("Copying tables from database chain starting at '%s' on '%s'\nto database '%s' on '%s'"
-                           % (config['to_database_name'], 
+                           % (from_database_name, 
                               db_server_config_from.host_name, 
-                              config['to_database_name'], 
+                              to_database_name, 
                              db_server_config_to.host_name))
         
         try:
             self._create_db_from_chain_via_python(
                  db_server_config_to = db_server_config_to,
-                 to_database_name=config['to_database_name'],
+                 to_database_name=to_database_name,
                  db_server_config_from = db_server_config_from,
-                 from_database_name=config['from_database_name'],
-                 tables_to_copy=config.get('tables_to_copy', []))
+                 from_database_name=from_database_name,
+                 tables_to_copy=tables_to_copy)
         finally:
             logger.end_block()
 
@@ -117,7 +120,8 @@ if __name__ == '__main__':
     parser = OptionParser()
         
     parser.add_option("-o", "--host", dest="host_name", type="string",
-        help="The database host (default: 'localhost').")
+        help="The database host (default: from environment"
+            " variable, then nothing).")
     parser.add_option("-u", "--username", dest="user_name", type="string",
         help="The database connection password (default: from environment"
             " variable, then nothing).")
@@ -144,4 +148,4 @@ if __name__ == '__main__':
         'to_database_name':options.to_database_name,
         }
     copier = FlattenScenarioDatabaseChain()
-    copier.copy_scenario_database(config)
+    copier.copy_scenario_database(**config)

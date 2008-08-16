@@ -57,5 +57,5 @@ if __name__ == "__main__":
         'to_database_name':to_database_name,
           }
         copier = FlattenScenarioDatabaseChain()
-        copier.copy_scenario_database(flatten_config)
+        copier.copy_scenario_database(**flatten_config)
     

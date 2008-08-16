@@ -36,4 +36,4 @@ config = {
     }
 
 copier = FlattenScenarioDatabaseChain()
-copier.copy_scenario_database(config)
+copier.copy_scenario_database(**config)

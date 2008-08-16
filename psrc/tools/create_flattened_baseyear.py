@@ -35,4 +35,4 @@ config = {
     'to_database_name':'PSRC_2000_baseyear_flattened',
     }
 copier = FlattenScenarioDatabaseChain()
-copier.copy_scenario_database(config)
+copier.copy_scenario_database(**config)

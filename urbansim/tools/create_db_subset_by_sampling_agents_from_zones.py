@@ -102,7 +102,7 @@ if __name__=='__main__':
             'to_database_name':'temporary_flattened_scenario_database',
             }
         
-        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+        FlattenScenarioDatabaseChain().copy_scenario_database(**flatten_db_config)
     
         db = db_server.get_database('temporary_flattened_scenario_database')
     

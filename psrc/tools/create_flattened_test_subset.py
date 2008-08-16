@@ -17,7 +17,7 @@ from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
 from opus_core.database_management.database_server_configuration \
     import DatabaseServerConfiguration
-    
+
 """
 This utility creates, on localhost, a flattened copy of the subset 
 test database chain located on trondheim..
@@ -34,4 +34,4 @@ config = {
     'to_database_name':run_configuration['input_configuration'].database_name,
     }
 copier = FlattenScenarioDatabaseChain()
-copier.copy_scenario_database(config)
+copier.copy_scenario_database(**config)

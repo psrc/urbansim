@@ -61,7 +61,7 @@ class SynthesizeJobs(object):
             'to_database_name':output_db_name,
             }
         
-        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+        FlattenScenarioDatabaseChain().copy_scenario_database(**flatten_db_config)
                 
         output_database = db_server.get_database(output_db_name)
                 

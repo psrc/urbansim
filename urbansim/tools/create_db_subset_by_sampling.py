@@ -91,6 +91,7 @@ if __name__=='__main__':
         from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
         from opus_core.database_management.database_server import DatabaseServer
         
+        
         db_server_config = DatabaseServerConfiguration(
             host_name = hostname,                                  
         )
@@ -102,7 +103,7 @@ if __name__=='__main__':
             'to_database_name':'temporary_flattened_scenario_database',
             }
         
-        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+        FlattenScenarioDatabaseChain().copy_scenario_database(**flatten_db_config)
     
         db = db_server.get_database('temporary_flattened_scenario_database')
     
