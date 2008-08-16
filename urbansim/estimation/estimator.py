@@ -26,7 +26,7 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from urbansim.model_coordinators.model_system import ModelSystem
 

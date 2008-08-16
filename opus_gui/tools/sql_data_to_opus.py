@@ -20,7 +20,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 def opusRun(progressCB,logCB,params):
 

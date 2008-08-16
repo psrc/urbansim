@@ -16,9 +16,9 @@ from numpy import array, arange
 from opus_core.configuration import Configuration
 from psrc_parcel.configs.baseline import Baseline
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
 from opus_core.storage_factory import StorageFactory

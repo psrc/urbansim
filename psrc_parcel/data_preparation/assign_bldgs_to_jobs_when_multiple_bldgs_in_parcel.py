@@ -26,7 +26,7 @@ from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
 from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
 
 class DB_settings(object):

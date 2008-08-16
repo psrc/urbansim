@@ -18,7 +18,7 @@ from optparse import OptionParser
 from classes.convert_databases import ConvertDatabase
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 def main():

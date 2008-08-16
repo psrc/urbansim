@@ -19,7 +19,7 @@ from opus_core.fork_process import ForkProcess
 from opus_core.configuration import Configuration
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.abstract_service import AbstractService
@@ -479,7 +479,7 @@ def insert_auto_generated_cache_directory_if_needed(config):
     config['cache_directory'] = cache_directory
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 import tempfile 
 
 class RunManagerTests(opus_unittest.OpusTestCase):

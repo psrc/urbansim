@@ -19,7 +19,7 @@ from optparse import OptionParser
 
 from classes.combine_tables import CombineTables
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
     
 parser = OptionParser()

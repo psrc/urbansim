@@ -63,7 +63,7 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
 import os    
 from opus_core.tests import opus_unittest
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 class TestRenameBySwappingEmploymentAndCommercialOrIndustrialForElcm(opus_unittest.OpusTestCase):
     def setUp(self):

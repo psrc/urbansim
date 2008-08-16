@@ -89,7 +89,7 @@ if __name__=='__main__':
         
         from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
         from opus_core.database_management.database_server import DatabaseServer
-        from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+        from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 
         from_database_configuration = ScenarioDatabaseConfiguration(

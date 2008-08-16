@@ -15,7 +15,7 @@
 import os
 
 from opus_core.opus_package_info import package
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration

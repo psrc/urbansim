@@ -739,7 +739,7 @@ def try_transformation(data, transformation):
     return tdata
 
 def does_database_server_exist_for_this_hostname(module_name, hostname, protocol='mysql', log_on_failure=True):
-    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
     from opus_core.database_management.database_server import DatabaseServer
 
     if not 'MYSQLUSERNAME' in os.environ:

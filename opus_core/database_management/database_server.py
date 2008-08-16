@@ -162,7 +162,7 @@ class DatabaseServer(object):
         
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_server_configuration \
+from opus_core.database_management.configurations.database_server_configuration \
     import DatabaseServerConfiguration, _get_installed_database_engines
 
 class Tests(opus_unittest.OpusTestCase):

@@ -21,7 +21,7 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import module_path_from_opus_path, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger

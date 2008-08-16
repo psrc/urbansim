@@ -15,7 +15,7 @@
 import os
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 class ConvertDatabase(object):
     def convert_databases(self, db_config, config):
@@ -89,7 +89,7 @@ class ConvertDatabase(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 class TestConvertDatabases(opus_unittest.OpusTestCase):
     def setUp(self):

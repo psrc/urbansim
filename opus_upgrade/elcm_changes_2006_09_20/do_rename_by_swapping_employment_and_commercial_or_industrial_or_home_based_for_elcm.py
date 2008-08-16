@@ -20,7 +20,7 @@ from optparse import OptionParser
 from classes.rename_by_swapping_employment_and_commercial_or_industrial_or_home_based_for_elcm\
     import RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm
     
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
     
 parser = OptionParser()

@@ -14,7 +14,7 @@
 import os
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.services.services_tables import ResultsComputedIndicators, RunsRunActivity
 from elixir import setup_all, metadata, create_all
 
@@ -66,7 +66,7 @@ class AbstractService(object):
     
     
 from opus_core.tests import opus_unittest
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 import tempfile 
 
 class AbstractServiceTests(opus_unittest.OpusTestCase):

@@ -24,7 +24,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 from urbansim.model_coordinators.model_system import ModelSystem
 

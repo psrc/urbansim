@@ -13,7 +13,7 @@
 #
 
 #from urbansim.estimation.config import config
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from pag_parcel.configs.controller_config import models_configuration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration

@@ -77,7 +77,7 @@ def create_dataset_from_dict_storage():
     return test_dataset
 
 def create_dataset_from_sql_storage():
-    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
     from opus_core.database_management.database_server import DatabaseServer
     
     # make sure the environment variables are set, or replace it by approproate values 

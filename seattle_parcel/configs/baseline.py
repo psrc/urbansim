@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration

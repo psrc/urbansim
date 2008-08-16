@@ -20,7 +20,7 @@ from optparse import OptionParser
 from classes.db_sub_pattern import DBSubPattern
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 

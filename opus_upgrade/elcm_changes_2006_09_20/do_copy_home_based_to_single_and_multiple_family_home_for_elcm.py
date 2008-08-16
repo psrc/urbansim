@@ -19,7 +19,7 @@ from optparse import OptionParser
 
 from opus_core.database_management.cross_database_operations import CrossDatabaseOperations
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
     
 parser = OptionParser()

@@ -13,7 +13,7 @@
 #
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 from opus_core.database_management.cross_database_operations import CrossDatabaseOperations
 from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager

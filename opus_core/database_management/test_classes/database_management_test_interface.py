@@ -14,7 +14,7 @@
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 from sqlalchemy.schema import Table
 from sqlalchemy.types import Integer, SmallInteger, Float, Numeric, \

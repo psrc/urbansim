@@ -14,7 +14,7 @@
 
 import sys
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration 
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration 
 from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
 from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
 from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
@@ -307,7 +307,7 @@ from opus_core.logger import logger
 
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import _get_installed_database_engines
+from opus_core.database_management.configurations.database_server_configuration import _get_installed_database_engines
 class OpusDatabaseTest(opus_unittest.OpusTestCase):
     def setUp(self):
         

@@ -20,7 +20,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager
 from opus_core.database_management.database_server import DatabaseServer
 

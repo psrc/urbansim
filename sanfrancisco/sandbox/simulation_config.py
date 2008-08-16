@@ -15,7 +15,7 @@
 import os
 
 #from opus_core.misc import get_host_name
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.base_config_zone import tables_to_cache

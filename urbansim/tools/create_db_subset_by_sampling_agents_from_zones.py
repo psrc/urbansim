@@ -87,7 +87,7 @@ if __name__=='__main__':
         input_db_name = "PSRC_2000_baseyear"
         output_db_name = input_db_name + '_sampled_' + str(int(100*proportion)) + '_percent'
         
-        from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+        from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
         from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
         from opus_core.database_management.database_server import DatabaseServer
 

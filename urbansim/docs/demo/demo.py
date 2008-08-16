@@ -32,7 +32,7 @@ from urbansim.datasets.job_dataset import JobDataset
 from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 # Datasets

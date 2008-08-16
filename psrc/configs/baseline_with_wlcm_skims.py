@@ -15,13 +15,13 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 from psrc.config.wlcm_config import run_configuration as config
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 db_server = DatabaseServer(DatabaseServerConfiguration())
 db = db_server.get_database('PSRC_2000_baseyear')

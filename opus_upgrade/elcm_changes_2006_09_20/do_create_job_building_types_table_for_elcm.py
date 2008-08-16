@@ -19,7 +19,7 @@ from optparse import OptionParser
 
 from classes.create_job_building_types_table import CreateJobBuildingTypesTable
     
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
     
 parser = OptionParser()

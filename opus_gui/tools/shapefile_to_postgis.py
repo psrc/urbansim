@@ -14,7 +14,7 @@
 
 import os, sys, subprocess
 from opus_gui.exceptions.formatter import formatExceptionInfo
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
 
 def opusRun(progressCB,logCB,params):

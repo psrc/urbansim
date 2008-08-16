@@ -16,7 +16,7 @@ import os
 
 from optparse import OptionParser, OptionGroup
 
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):
@@ -35,7 +35,7 @@ class GenericOptionGroup:
                                action="store", help="Name of database engine running the database management system hosting the services database. Available engines are sqlite (default), mysql, postgres, and mssql (less well tested).")
         
     def _get_default_run_manager_database_engine(self):
-        from opus_core.database_management.database_server_configuration import _get_installed_database_engines
+        from opus_core.database_management.configurations.database_server_configuration import _get_installed_database_engines
         engines = _get_installed_database_engines()
         if 'sqlite' in engines:
             default = 'sqlite'

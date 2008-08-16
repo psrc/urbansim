@@ -14,7 +14,7 @@
 
 from opus_core.logger import logger
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 class TableCreator(object):

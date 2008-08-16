@@ -15,9 +15,9 @@
 from psrc.configs.subset_configuration import SubsetConfiguration
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
-from opus_core.database_management.database_server_configuration \
+from opus_core.database_management.configurations.database_server_configuration \
     import DatabaseServerConfiguration
-from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 """
 This utility creates, on localhost, a flattened copy of the subset 

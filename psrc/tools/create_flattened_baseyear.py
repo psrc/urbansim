@@ -15,7 +15,7 @@
 from psrc.configs.baseline import Baseline
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
-from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 """
 This utility creates a new flattened database containing the

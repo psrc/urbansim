@@ -23,7 +23,7 @@ from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
 
 class DB_settings(object):

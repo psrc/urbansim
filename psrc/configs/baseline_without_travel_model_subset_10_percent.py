@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from psrc.configs.baseline_without_travel_model import run_configuration as config
 
 run_configuration = config.copy()

@@ -15,7 +15,7 @@
 from opus_core.misc import sample
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
-from opus_core.database_management.database_configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 class SynthesizeJobs(object):
     def synthesize_employment_data(self, config):

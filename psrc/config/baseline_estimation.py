@@ -14,7 +14,7 @@
 
 
 from baseline import Baseline
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from psrc.configs.config_changes_for_estimation import ConfigChangesForEstimation
 

@@ -21,7 +21,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.tools.create_baseyear_cache import CreateBaseyearCache
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt

@@ -28,7 +28,7 @@ from opus_core.logger import logger
 from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
 from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
-from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 from numpy import array, subtract, concatenate
 

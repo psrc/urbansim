@@ -70,7 +70,7 @@ def create_view(database, table_to_link_name, dataset_name):
         
 #if __name__ == '__main__':
 #    from opus_core.database_management.database_server import DatabaseServer
-#    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+#    from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 #    
 #    config = DatabaseServerConfiguration(protocol='postgres')
 #    database_server = DatabaseServer(config)

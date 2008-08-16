@@ -8,7 +8,7 @@ from urbansim.datasets.neighborhood_dataset import NeighborhoodDataset
 from urbansim.datasets.job_dataset import JobDataset
 from paris.paris_settings import ParisSettings
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 #
 # Miscellaneous stuff for manually testing and for generating flt binary databases

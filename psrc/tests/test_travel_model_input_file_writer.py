@@ -20,7 +20,7 @@ from shutil import rmtree
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
 
