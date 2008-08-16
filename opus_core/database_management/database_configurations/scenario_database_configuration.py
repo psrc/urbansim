@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.database_management.database_configuration.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
 class ScenarioDatabaseConfiguration(DatabaseConfiguration):
     

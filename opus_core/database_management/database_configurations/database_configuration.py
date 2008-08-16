@@ -53,5 +53,3 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
                                    self.host_name, 
                                    self.database_name) 
         
-    def _configuration_prefix(self):
-        return ''   

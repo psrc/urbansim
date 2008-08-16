@@ -16,7 +16,7 @@ import os
 
 from opus_core.database_management.database_configurations.database_configuration import DatabaseConfiguration
 
-class IndicatorDatabaseConfiguration(DatabaseConfiguration):
+class TestDatabaseConfiguration(DatabaseConfiguration):
     
     def _configuration_prefix(self):
-        return 'Indicator_'   
+        return 'TEST_%s_'%(self.protocol.upper())   

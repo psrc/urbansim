@@ -114,6 +114,9 @@ class DatabaseServerConfiguration(object):
                 
     def __repr__(self):
         return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
+
+    def _configuration_prefix(self):
+        return 'DEFAULT_'   
     
 from opus_core.tests import opus_unittest
 class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
