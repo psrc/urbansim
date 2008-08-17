@@ -371,7 +371,7 @@ class OpusXMLAction_Results(object):
 #                       domElement.attribute(QString("append_to")) == QString("True"):
 #                    self.menu.addAction(self.actAddNewIndicator)
                 if selected_type == QString("source_data"):
-                    self.menu.addAction(self.actGenerateResults)
+#                    self.menu.addAction(self.actGenerateResults)
                     self.menu.addAction(self.actGetInfoSimulationRuns)
                     self.menu.addAction(self.actDeleteRun)
                 elif domElement.tagName() == QString("Indicator_batches"):
