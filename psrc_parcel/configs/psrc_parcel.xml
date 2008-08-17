@@ -138,7 +138,7 @@
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
         <output_configuration type="class">
           <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
+          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.database_configuration</Class_path>
           <database_name type="string">none</database_name>
         </output_configuration>
         <dataset_pool_configuration type="class">
@@ -345,7 +345,7 @@
         <advanced parser_action="category">
         <baseyear_database_configuration config_name="input_configuration" type="class">
           <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
+          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.database_configuration</Class_path>
           <database_connection type="db_connection_hook">urbansim_db1</database_connection>
           <database_name type="string">psrc_2000_parcel_baseyear_data</database_name>
         </baseyear_database_configuration>

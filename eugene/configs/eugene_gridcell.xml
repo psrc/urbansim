@@ -76,7 +76,7 @@
       </models_to_run>
       <baseyear_database_configuration config_name="input_configuration" type="class">
         <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
-        <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
+        <Class_path flags="hidden" type="string">opus_core.database_management.configurations.database_configuration</Class_path>
         <database_connection type="db_connection_hook">urbansim_db1</database_connection>
         <database_name type="string">eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
