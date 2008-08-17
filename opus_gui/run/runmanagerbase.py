@@ -143,9 +143,10 @@ class ModelGuiElement(QWidget):
         self.vboxlayout = QVBoxLayout(self.groupBox)
         self.vboxlayout.setObjectName("vboxlayout")
 
+        size = QSizePolicy(QSizePolicy.Preferred,QSizePolicy.Preferred)
+        self.groupBox.setSizePolicy(size)
+        
         self.modelControlWidget = QWidget(self.groupBox)
-        self.vboxlayout.addWidget(self.modelControlWidget)
-
         self.vboxlayout2 = QGridLayout(self.modelControlWidget)
         self.vboxlayout2.setObjectName("vboxlayout2")
 
@@ -173,13 +174,15 @@ class ModelGuiElement(QWidget):
         self.vboxlayout2.addWidget(self.startWidget, 0, 0)
 
         self.optionalFieldsWidget = QWidget(self.groupBox)
-        self.optionalFieldsGroupBox = QGroupBox(self.optionalFieldsWidget)
-        self.optionalFieldsGroupBox.setTitle(QString('Optional fields'))
-        self.optionalFieldsLayout = QGridLayout(self.optionalFieldsGroupBox)
+        self.optionalFieldsWidget.setSizePolicy(size)
+        #self.optionalFieldsGroupBox = QGroupBox(self.optionalFieldsWidget)
+        #self.optionalFieldsGroupBox.setTitle(QString('Optional fields'))
+        self.optionalFieldsLayout = QGridLayout(self.optionalFieldsWidget)
         self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
         
         self.vboxlayout2.addWidget(self.optionalFieldsWidget, 0, 1)
+        self.vboxlayout.addWidget(self.modelControlWidget)
 
         # Add a tab widget and layer in a tree view and log panel
         self.tabWidget = QTabWidget(self.groupBox)
