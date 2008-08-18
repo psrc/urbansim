@@ -395,23 +395,22 @@ class ModelGuiElement(QWidget):
             #the second value in the list determines if it is already added to the drop down
             self.yearItems.append([year, False]); 
 
-        #combo box for selecting indicators for diagnostic
-        self.diagnostic_indicator_name = QComboBox(self.mainwindow)
-        self.diagnostic_indicator_name.addItem(QString("(select indicator)"))
-
-        indicators = self.xml_helper.get_available_indicator_names()
-
-        for indicator in indicators:
-            self.diagnostic_indicator_name.addItem(indicator['name'])
-
         datasets = self.xml_helper.get_available_datasets()
         self.diagnostic_dataset_name = QComboBox(self.mainwindow)
+        
+        
         for dataset in datasets:
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
+        #combo box for selecting indicators for diagnostic
+        self.diagnostic_indicator_name = QComboBox(self.mainwindow)
+
+        self.setup_diagnostic_indicators()
+        
         self.indicatorResultsTab = QTabWidget(self.mainwindow)
 
         QObject.connect(self.diagnostic_go_button,SIGNAL("released()"),self.on_indicatorBox)
+        QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)       
 
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_go_button, 0, 0)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_type, 0, 1)
@@ -419,6 +418,19 @@ class ModelGuiElement(QWidget):
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,3)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,4)
         self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,5,5)
+        
+    def setup_diagnostic_indicators(self):
+        indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
+        dataset = self.diagnostic_dataset_name.currentText()
+        self.diagnostic_indicator_name.clear()
+        for indicator in indicators:
+            if indicator['dataset'] == dataset:
+                self.diagnostic_indicator_name.addItem(indicator['name'])
+
+    def on_diagnostic_dataset_name_currentIndexChanged(self, param):
+        if isinstance(param, int):
+            return #qt sends two signals for the same event; only process one
+        self.setup_diagnostic_indicators()
         
     def setup_indicator_batch_combobox(self):
         self.lblBatch = QLabel(self.optionalFieldsWidget)
@@ -448,16 +460,17 @@ class ModelGuiElement(QWidget):
             
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
-        if indicator_name == '(select indicator)':
-            raise Exception('need to select an indicator!!')
 
         dataset_name = self.diagnostic_dataset_name.currentText()
-        year = int(str(self.diagnostic_year.currentText()))
+        year = self.diagnostic_year.currentText()
+        if year is None: return
+        
+        year = int(str(year))
         cache_directory = self.model.config['cache_directory']
         indicator_type = str(self.diagnostic_indicator_type.currentText())
         
         if indicator_type == 'table':
-            indicator_type = 'table_per_attribute'
+            indicator_type = 'tab'
         else:
             indicator_type = 'matplotlib_map'
 
