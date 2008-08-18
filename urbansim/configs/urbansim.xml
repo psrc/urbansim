@@ -31,6 +31,31 @@
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>
+      <esri_data_to_opus_tool type="tool_file">
+        <name type="tool_name">esri_data_to_opus</name>
+        <params type="param_template">
+          <esri_data_path>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="dir_path" type="dir_path">dir_path</type>
+            <default type="string"></default>
+          </esri_data_path>
+          <esri_table_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">dir_path</type>
+            <default type="string"></default>
+          </esri_table_name>
+          <opus_data_directory>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="dir_path" type="string">dir_path</type>
+            <default type="dir_path"></default>
+          </opus_data_directory>
+          <opus_data_year>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string">ALL</default>
+          </opus_data_year>
+        </params>
+      </esri_data_to_opus_tool>
       <shapefile_to_postgis type="tool_file">
         <name type="tool_name">shapefile_to_postgis</name>
         <params type="param_template">
