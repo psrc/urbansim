@@ -12,7 +12,7 @@
 # 
 
 from PyQt4.QtCore import QString, Qt, QSize
-from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, \
+from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, \
                         QTableWidget, QTableWidgetItem
 
 
@@ -29,6 +29,8 @@ class ViewTableForm(QWidget):
         
         self.tableWidget = QTableWidget(self)
         self.tableWidget.setObjectName("tableWidget")
+        size = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.tableWidget.setSizePolicy(size)
         self.widgetLayout.addWidget(self.tableWidget)
         
         self.tabIcon = QIcon(":/Images/Images/map.png")
@@ -66,7 +68,7 @@ class ViewTableForm(QWidget):
             self.tableWidget.setHorizontalHeaderItem(j,col)
             j += 1
             
-        order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): v-v2)
+        order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): int(v*100)-int(v2*100))
         
 
         for i, (idx,v) in enumerate(order):
