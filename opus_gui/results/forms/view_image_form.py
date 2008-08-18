@@ -12,9 +12,9 @@
 # 
 
 
-from PyQt4.QtCore import QString, Qt
+from PyQt4.QtCore import QString
 from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, \
-                        QLabel, QImage, QPainter, QPixmap, QScrollArea
+                        QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
@@ -26,8 +26,10 @@ class ViewImageForm(QWidget):
         self.inGui = False
         self.visualization = visualization
         
+        size = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.widgetLayout = QGridLayout(self)
-
+        self.setSizePolicy(size)
+        
         self.scroll = QScrollArea()
         file_path = self.visualization.get_file_path()
 
