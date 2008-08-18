@@ -50,25 +50,26 @@ def add_runs_to_services_db_from_disk(projects = None):
             
             baseyear_directory = os.path.join(datapath, project_name, 'base_year_data')
             
-            years = []
             if os.path.exists(baseyear_directory):
-                for dir in os.listdir(baseyear_directory):
-                    if len(dir) == 4 and dir.isdigit():
-                        years.append(int(dir))
-                start_year = min(years)
-                end_year = max(years)
-                run_name = 'base_year_data'
-                run_id = run_manager._get_new_run_id()
-                resources = {
-                     'cache_directory': baseyear_directory,
-                     'description': 'base year data',
-                     'years': (start_year, end_year)
-                }
-                logger.log_status('Adding run %s of project %s to run_activity table'%(run_name, project_name))
-                run_manager.add_row_to_history(run_id = run_id, 
-                                               resources = resources, 
-                                               status = 'done', 
-                                               run_name = run_name)
+                years = []
+                if os.path.exists(baseyear_directory):
+                    for dir in os.listdir(baseyear_directory):
+                        if len(dir) == 4 and dir.isdigit():
+                            years.append(int(dir))
+                    start_year = min(years)
+                    end_year = max(years)
+                    run_name = 'base_year_data'
+                    run_id = run_manager._get_new_run_id()
+                    resources = {
+                         'cache_directory': baseyear_directory,
+                         'description': 'base year data',
+                         'years': (start_year, end_year)
+                    }
+                    logger.log_status('Adding run %s of project %s to run_activity table'%(run_name, project_name))
+                    run_manager.add_row_to_history(run_id = run_id, 
+                                                   resources = resources, 
+                                                   status = 'done', 
+                                                   run_name = run_name)
 
             data_directory = os.path.join(datapath, project_name, 'runs')
             if not os.path.exists(data_directory): continue
