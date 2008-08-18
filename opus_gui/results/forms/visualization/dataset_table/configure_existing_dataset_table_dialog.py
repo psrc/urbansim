@@ -19,6 +19,7 @@ from PyQt4.QtGui import QDialog, QVBoxLayout, QFrame, QWidget, QHBoxLayout, QLab
 
 from opus_gui.results.forms.visualization.dataset_table.abstract_configure_dataset_table_dialog import AbstractConfigureDatasetTableDialog
 from opus_gui.results.xml_helper_methods import get_child_values, ResultsManagerXMLHelper
+from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
 
 class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
     def __init__(self, resultManagerBase, selected_index):
@@ -37,11 +38,12 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         prev_dataset = str(cur_vals['dataset_name'])
         prev_indicators = self._process_xml_stored_list_of_strings(value = cur_vals['indicators'])
         prev_output_type = str(cur_vals['output_type'])
+
             
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
         self._setup_co_output_type(value = prev_output_type)
-
+        
         fixed_field_specification = None
         if prev_output_type == 'fixed_field':
             fixed_field_specification = cur_vals['fixed_field_specification']
@@ -55,6 +57,17 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         elif prev_output_type == 'sql':
             database_name = cur_vals['database_name']
             self.leOption1.setText(QString(database_name))
+        elif prev_output_type == 'tab':
+            try:
+                prev_output_style = int(str(cur_vals['output_style']))
+            except: pass
+            else:
+                if prev_output_style == Table.ALL:
+                    self.rbSingleTable.setChecked(True)
+                elif prev_output_style == Table.PER_ATTRIBUTE:
+                    self.rbTablePerIndicator.setChecked(True)
+                else:
+                    self.rbTablePerYear.setChecked(True)
 
             
     def _process_xml_stored_list_of_strings(self, value):

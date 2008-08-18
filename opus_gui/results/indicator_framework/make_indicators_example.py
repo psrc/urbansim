@@ -91,7 +91,7 @@ computed_indicators = maker.create_batch(
 #VISUALIZE the resulting computed indicators
 ############################################
 from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 visualizer = VisualizationFactory()
 visualizations = []

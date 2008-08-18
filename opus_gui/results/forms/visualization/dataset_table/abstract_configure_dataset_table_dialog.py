@@ -20,6 +20,7 @@ from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView, QFileDialog
 
 from opus_gui.results.forms.visualization.dataset_table.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
 
 class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
     def __init__(self, resultManagerBase):
@@ -32,37 +33,102 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
         self.viz_type = 'Table (per year, spans indicators)'
         self.leVizName.setText(QString('(enter a name for this visualization)'))
+        self.dataset_name = None
+#        self.twAvailableIndicators.verticalHeader().hide()
+#        self.twIndicatorsToVisualize.verticalHeader().hide()
+#        
+#        self.twAvailableIndicators.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+#        self.twIndicatorsToVisualize.horizontalHeader().setResizeMode(QHeaderView.Stretch)
         
-        self.twAvailableIndicators.verticalHeader().hide()
-        self.twIndicatorsToVisualize.verticalHeader().hide()
-        
-        self.twAvailableIndicators.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        self.twIndicatorsToVisualize.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+
         
         self.lblOption1.hide()
         self.leOption1.hide()
         self.pbn_set_storage_location.hide()
-        self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
+        #self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
                     
-    def _setup_indicators(self, existing_indicators = []):
-        indicators = self.xml_helper.get_available_indicator_names()
 
-        for indicator in indicators:
-            indicator_name = indicator['name']
-            item = QTableWidgetItem(indicator_name)
+    def _setup_indicators(self, existing_indicators = []):
+        if self.dataset_name is None: return
+        
+        indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
+
+        current_row = self.twAvailableIndicators.currentRow()
+        
+        self.twAvailableIndicators.clear()
+        self.twAvailableIndicators.setColumnCount(2)
+        self.twAvailableIndicators.horizontalHeader().setStretchLastSection(True) 
+        self.twIndicatorsToVisualize.horizontalHeader().setStretchLastSection(True)
+        
+        while self.twAvailableIndicators.rowCount() > 0:
+            self.twAvailableIndicators.removeRow(0)
             
-            if str(indicator_name) not in existing_indicators:
+        while self.twIndicatorsToVisualize.rowCount() > 0:
+            self.twIndicatorsToVisualize.removeRow(0)
+        
+#        self.twAvailableIndicators.setRowCount(len(indicators) - len(existing_indicators))
+        
+        col = QTableWidgetItem()
+        col.setText(QString('Name'))
+        self.twAvailableIndicators.setHorizontalHeaderItem(0,col)
+        
+        #col = QTableWidgetItem()
+        #col.setText(QString('Dataset'))
+        #self.twAvailableIndicators.setHorizontalHeaderItem(1,col)
+
+        col = QTableWidgetItem()
+        col.setText(QString('Definition'))
+        self.twAvailableIndicators.setHorizontalHeaderItem(1,col)
+                    
+        self.indicators = {}
+        
+        for indicator in indicators:
+            
+            name = indicator['name']
+            self.indicators[name] = indicator
+        
+            if name not in existing_indicators:
                 
-                #self.lstAvailableIndicators.addItem(indicator_name)
-                row = self.twAvailableIndicators.rowCount()
-                self.twAvailableIndicators.insertRow(row)
-                self.twAvailableIndicators.setItem(row, 0, item)
+                if self.dataset_name == indicator['dataset']:
+                    item = QTableWidgetItem()
+                    item.setText(indicator['name'])
+                    row = self.twAvailableIndicators.rowCount()
+                    self.twAvailableIndicators.insertRow(row)
+                    #self.twAvailableIndicators.setVerticalHeaderItem(row,QTableWidgetItem())
+    
+                    self.twAvailableIndicators.setItem(row,0,item)
+        
+                    #item = QTableWidgetItem()
+                    #item.setText(indicator['dataset'])
+                    #self.twAvailableIndicators.setItem(i,1,item)
+                
+                    item = QTableWidgetItem()
+                    item.setText(indicator['value'])
+                    self.twAvailableIndicators.setItem(row,1,item)
             else:
-                #self.lstIndicatorsToVisualize.addItem(indicator_name)   
+                if self.dataset_name != indicator['dataset']:
+                    print 'Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(indicator['name'])
+                    continue
+                item = QTableWidgetItem()
+                item.setText(indicator['name'])                
                 row = self.twIndicatorsToVisualize.rowCount()
                 self.twIndicatorsToVisualize.insertRow(row)
                 self.twIndicatorsToVisualize.setItem(row, 0, item)     
                 
+              
+                
+        if current_row is None or current_row == -1:
+            current_row = 0
+
+        self.twAvailableIndicators.setCurrentCell(current_row,0)
+
+#        self.twAvailableIndicators.resizeColumnsToContents()
+#        self.twAvailableIndicators.resizeRowsToContents()
+#        
+#        self.twIndicatorsToVisualize.resizeColumnsToContents()
+#        self.twIndicatorsToVisualize.resizeRowsToContents()
+        
+        
     def _set_column(self, column, values):
         row = 0
         for value in values:
@@ -73,45 +139,61 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
     def _setup_co_output_type(self, value = None):
 
         available_output_types = {
-            'Tab delimited':'tab',
+            'Tab delimited file (.tab)':'tab',
 #            'Comma separated':'csv',
-            'ESRI table':'esri',
-            'Database':'sql',
-            'Fixed field':'fixed_field' 
+            'ESRI database':'esri',
+            'Export to SQL database':'sql',
+            'Fixed field file (.dat)':'fixed_field' 
         }
         
         if value is None:
-            value = QString('Tab delimited')
+            value = 'tab'
         
-        for otype in sorted(available_output_types.keys()):
-            self.cboOutputType.addItem(QString(otype))
-            
         for k,v in available_output_types.items():
             if v == value:
-                idx = self.cboOutputType.findText(k)
+                idx = self.cboOutputType.findText(QString(k))
+                
                 if idx != -1:
-                    self.cboOutputType.setCurrentIndex(idx)        
-                break
+                    self.cboOutputType.setCurrentIndex(idx)  
+                    if idx == 0:
+                        self.on_cboOutputType_currentIndexChanged(QString(value))      
+                    break
         
     def _setup_co_dataset_name(self, value = None):
         available_datasets = self.xml_helper.get_available_datasets()
+
         for dataset in available_datasets:
             self.cboDataset.addItem(QString(dataset))
         
         if value is not None:
             idx = self.cboDataset.findText(value)
             if idx != -1:
-                self.cboDataset.setCurrentIndex(idx)
+                self.dataset_name = value
+                self.cboDataset.setCurrentIndex(idx)        
+        
+        if value is None or idx == -1:
+            self.dataset_name = QString(str(self.cboDataset.currentText()))
+
+    def on_cboDataset_currentIndexChanged(self, param):
+
+        if isinstance(param, int):
+            return #qt sends two signals for the same event; only process one
+        
+        dataset = param
+        if self.dataset_name != dataset:
+            self.dataset_name = QString(str(dataset))
+            self._setup_indicators()
+
                            
     def _get_viz_spec(self, convert_to_node_dictionary = True):
         translation = {
-            'Tab delimited':'tab',
-            'Comma separated':'csv',
-            'ESRI table':'esri',
-            'Fixed field':'fixed_field',
-            'Database':'sql'
+            'Tab delimited file (.tab)':'tab',
+#            'Comma separated':'csv',
+            'ESRI database':'esri',
+            'Export to SQL database':'sql',
+            'Fixed field file (.dat)':'fixed_field' 
         }
-        dataset_name = self.cboDataset.currentText()
+        dataset_name = self.dataset_name
         output_type = QString(translation[str(self.cboOutputType.currentText())])
         indicators = QString(str(self._get_column_values(column = 0)))
                         
@@ -129,6 +211,15 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             vals['database_name'] = self.leOption1.text()
         elif output_type == 'esri':
             vals['storage_location'] = self.leOption1.text()
+        elif output_type == 'tab':
+            if self.rbSingleTable.isChecked():
+                output_style = Table.ALL
+            elif self.rbTablePerIndicator.isChecked():
+                output_style = Table.PER_ATTRIBUTE
+            elif self.rbTablePerYear.isChecked():
+                output_style = Table.PER_YEAR
+                
+            vals['output_style'] = QString(str(output_style))
         
         if convert_to_node_dictionary:
             node_vals = []
@@ -150,34 +241,43 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
         
-        
         output_type = str(param)
 
-        if output_type in ['Fixed field', 'Database', 'ESRI table']:
+        if output_type in ['Fixed field file (.dat)', 'Export to SQL database', 'ESRI database']:
             self.lblOption1.show()
             self.leOption1.show()
+            self.leOption1.activateWindow()
+            self.rbSingleTable.hide()
+            self.rbTablePerIndicator.hide()
+            self.rbTablePerYear.hide()
+            
         else:
             self.lblOption1.hide()
             self.leOption1.hide()            
+            self.rbSingleTable.show()
+            self.rbTablePerIndicator.show()
+            self.rbTablePerYear.show()
             
-        if output_type == 'Fixed field':
+                        
+        if output_type == 'Fixed field file (.dat)':
             self.twIndicatorsToVisualize.horizontalHeader().showSection(1)            
+            self.twIndicatorsToVisualize.resizeColumnsToContents()
         else:
             self.twIndicatorsToVisualize.horizontalHeader().hideSection(1)
             
-        if output_type == 'ESRI table':
+        if output_type == 'ESRI database':
             self.pbn_set_storage_location.show()
         else:
             self.pbn_set_storage_location.hide()
 
-        if output_type == 'Fixed field':
+        if output_type == 'Fixed field file (.dat)':
             self.lblOption1.setText(QString('ID format:'))
             self.lblOption1.setToolTip(QString('The fixed format of all id \ncolumns of the indicator result'))
-        elif output_type == 'Database':
+        elif output_type == 'Export to SQL database':
             self.lblOption1.setText(QString('Database\nname:'))
             self.lblOption1.setToolTip(QString('The name of the SQL database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
-        elif output_type == 'ESRI table':
-            self.lblOption1.setText(QString('Database\npath'))
+        elif output_type == 'ESRI database':
+            self.lblOption1.setText(QString('Path:'))
             self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))    
         
     def on_buttonBox_accepted(self):
@@ -185,7 +285,6 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
 
     def on_buttonBox_rejected(self):
         self.close()
-        
 
     def on_pbn_set_storage_location_released(self):
         from opus_core.misc import directory_path_from_opus_path
@@ -203,21 +302,57 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.leOption1.setText(fileName)
 
     def on_pbnAddIndicator_released(self):
-        current_row = self.twAvailableIndicators.currentRow()
-        self.move_item(self.twAvailableIndicators, self.twIndicatorsToVisualize, current_row)
+        row = self.twAvailableIndicators.currentRow()
+        from_table_widget = self.twAvailableIndicators
+        to_table_widget = self.twIndicatorsToVisualize
         
-    def on_pbnRemoveIndicator_released(self):
-        current_row = self.twIndicatorsToVisualize.currentRow()
-        self.move_item(self.twIndicatorsToVisualize, self.twAvailableIndicators, current_row)
-            
-    def move_item(self, from_table_widget, to_table_widget, row):
-        value = QString(from_table_widget.item(row, 0).text())
-        item = QTableWidgetItem(value) #need to create new item because QT deletes object
-        if item is not None:
+        cur_value = from_table_widget.item(row, 0)
+        if cur_value is not None:
+            indicator_name = QString(cur_value.text())
+            dataset = self.indicators[indicator_name]['dataset']
+#            if self.dataset_name is None:
+#                self.dataset_name = dataset
+#            elif self.dataset_name != dataset:
+#                print 'Indicator cannot be added because it is of a different dataset than the others (%s vs. %s).'%(str(dataset), str(self.dataset_name))
+#                return
+                        
+            item = QTableWidgetItem(indicator_name) #need to create new item because QT deletes object
             last_row = to_table_widget.rowCount()
             to_table_widget.insertRow(last_row)
-            to_table_widget.setItem(last_row, 0, QTableWidgetItem(value))
+            to_table_widget.setItem(last_row, 0, QTableWidgetItem(indicator_name))
             if to_table_widget.columnCount() > 1:
                 to_table_widget.setItem(last_row, 1, QTableWidgetItem())
-        from_table_widget.removeRow(row)
+                
+        from_table_widget.removeRow(row)        
+                
+    def on_pbnRemoveIndicator_released(self):
+        row = self.twIndicatorsToVisualize.currentRow()
+        from_table_widget = self.twIndicatorsToVisualize
+        to_table_widget = self.twAvailableIndicators
         
+        cur_item = from_table_widget.item(row, 0)
+        if cur_item is not None:
+            value = QString(cur_item.text())
+            
+            item = QTableWidgetItem(value) #need to create new item because QT deletes object
+            last_row = to_table_widget.rowCount()
+            indicator = self.indicators[value]
+            new_row = QTableWidgetItem()
+            self.twAvailableIndicators.setRowCount(last_row + 1)
+            self.twAvailableIndicators.setVerticalHeaderItem(last_row,new_row)
+    
+            self.twAvailableIndicators.setItem(last_row,0,item)
+    
+            item = QTableWidgetItem()
+            item.setText(indicator['dataset'])
+            self.twAvailableIndicators.setItem(last_row,1,item)
+        
+            item = QTableWidgetItem()
+            item.setText(indicator['value'])
+            self.twAvailableIndicators.setItem(last_row,2,item)  
+                
+        from_table_widget.removeRow(row)      
+#        if self.twIndicatorsToVisualize.rowCount() == 0:
+#            self.dataset_name = None
+        
+

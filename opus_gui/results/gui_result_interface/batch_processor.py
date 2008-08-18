@@ -72,10 +72,13 @@ class BatchProcessor(object):
                 args['fixed_field_format'] = zip(indicators,spec)
                 args['fixed_field_format'].insert(0,('id',str(params['id_format'])))   
             elif output_type == 'sql':
-                from opus_core.database_management.database_configuration import DatabaseConfiguration
+                from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
                 args['storage_location'] = DatabaseConfiguration(protocol = 'postgres', database_name = str(params['database_name']))
             elif output_type == 'esri':
                 args['storage_location'] = str(params['storage_location'])
+            elif output_type == 'tab':
+                if 'output_style' in params:
+                    args['output_style'] = int(str(params['output_style']))
                 
         return args
             

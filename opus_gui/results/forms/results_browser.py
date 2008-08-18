@@ -289,7 +289,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         key = self.running_key
         self.running_key = None
                    
-        size = QSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding,)
+        size = QSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         self.twVisualizations.setSizePolicy(size)
 
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():

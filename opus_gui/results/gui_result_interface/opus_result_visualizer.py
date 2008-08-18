@@ -125,18 +125,26 @@ class OpusResultVisualizer(object):
             viz_type = self.indicator_type
         elif self.indicator_type == 'matplotlib_chart':
             viz_type = self.indicator_type
+        elif self.indicator_type == 'tab':
+            viz_type = 'table'
+            if 'output_style' not in viz_args:
+                viz_args['output_style'] = Table.ALL
+            viz_args['output_type'] = 'tab'
         elif self.indicator_type == 'table_esri':
             viz_type = 'table'
-            viz_args['output_style'] = Table.PER_ATTRIBUTE
+            if 'output_style' not in viz_args:
+                viz_args['output_style'] = Table.ALL
             viz_args['output_type'] = 'esri'
         elif self.indicator_type == 'table_per_year':
             viz_type = 'table'
-            viz_args['output_style'] = Table.PER_YEAR
-            viz_args['output_type'] = 'csv'
+            if 'output_style' not in viz_args:
+                viz_args['output_style'] = Table.PER_YEAR
+            viz_args['output_type'] = 'tab'
         elif self.indicator_type == 'table_per_attribute':
             viz_type = 'table'
-            viz_args['output_style'] = Table.PER_ATTRIBUTE          
-            viz_args['output_type'] = 'csv'
+            if 'output_style' not in viz_args:
+                viz_args['output_style'] = Table.PER_ATTRIBUTE          
+            viz_args['output_type'] = 'tab'
             
         viz_args.update(self.kwargs)
         viz_args.update(args)
