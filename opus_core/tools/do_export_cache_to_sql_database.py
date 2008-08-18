@@ -66,7 +66,7 @@ if __name__ == '__main__':
             password = password,
             )
         )
-    if (table_name is None) or (not db_server.has_database(database_name)): # if only one table should be exported,
+    if not db_server.has_database(database_name): # if only one table should be exported,
         db_server.create_database(database_name)                            # the database can exist
 
     db = db_server.get_database(database_name)
