@@ -54,6 +54,9 @@ class OptionGroup(GenericOptionGroup):
 #        self.parser.add_option("--skip-urbansim", dest="skip_urbansim", default=False, action="store_true", 
 #                               help="Urbansim will not be run.")
         
+        self.parser.set_default('protocol', 'mysql') 
+        #change default services database engine to 'mysql' even if sqlite3 is installed
+        
 
 class RemoteRun:
     """ 
@@ -143,7 +146,7 @@ class RemoteRun:
             self.get_run_manager().add_row_to_history(run_id, config, "started")
             
             #verify run_id has been added to services db
-            results = self.get_run_manager().storage.GetResultsFromQuery(
+            results = self.get_run_manager().services_db.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
@@ -212,7 +215,7 @@ class RemoteRun:
                                                                        'opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
+                cmd += ' --protocol=mysql --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
                 ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
@@ -233,7 +236,7 @@ class RemoteRun:
                       {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists'
+                cmd += ' --protocol=mysql --skip-cache-cleanup --create-baseyear-cache-if-not-exists'
                 logger.log_status("Call " + cmd)
                 os.system(cmd)
                 if not os.path.exists(os.path.join(cache_directory, str(this_end_year))):
@@ -253,7 +256,7 @@ class RemoteRun:
                                                                                'opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_run_%s.log' % run_id
+                        cmd += ' --protocol=mysql --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_run_%s.log' % run_id
                         ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file                        
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
@@ -269,7 +272,7 @@ class RemoteRun:
                               {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --skip-cache-cleanup --skip-urbansim'
+                        cmd += ' --protocol=mysql --skip-cache-cleanup --skip-urbansim'
                         logger.log_status("Call " + cmd)
                         os.system(cmd)
                     
@@ -311,7 +314,7 @@ class RemoteRun:
 
         
     def update_services_database(self, run_manager, run_id, config):
-        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
+        run_manager.services_db.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
         run_manager.add_row_to_history(run_id, config, "started")
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):
@@ -349,7 +352,7 @@ class RemoteRun:
         """in case the connection to services timeout, reconnect
         """
         try:
-            self._run_manager.storage.table_exists('run_activity')
+            self._run_manager.services_db.table_exists('run_activity')
         except:  #connection has gone away, re-create run_manager
             self._run_manager = RunManager( self.services_db_config )
         return self._run_manager
@@ -385,4 +388,4 @@ if __name__ == "__main__":
                     run_manager)
     run.run(configuration_path=options.configuration_path, run_id=options.run_id, 
             start_year=options.start_year, end_year=options.end_year)
-    del run
+    #del run

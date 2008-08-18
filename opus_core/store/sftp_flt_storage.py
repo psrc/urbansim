@@ -276,7 +276,14 @@ def get_stdout_for_ssh_cmd(ssh, cmdline):
     ssh is a SSHClient object from paramiko module
     """
     stdin, stdout, stderr = ssh.exec_command(cmdline)
-    results = stdout.readline().strip()
+    stderr_msg = stderr.readlines() 
+    if len(stderr_msg) > 0:
+        raise RuntimeError, "Error encountered executing cmd through ssh:" + error_msg
+
+    results = stdout.readlines()
+    if len(results)==1:
+        results=results[0].strip()
+        
     stdin.close(); stdout.close(); stderr.close()
     return results
 
