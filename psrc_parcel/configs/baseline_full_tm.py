@@ -15,13 +15,14 @@
 from baseline import Baseline
 
 class BaselineFullTm(Baseline):
+    tm_scenario = 'baseline_tm_no_hbw_v1.0a'
     multiple_runs=False
     def __init__(self):
         config = Baseline()
         config['number_of_runs'] = 1
         config['seed'] = 1
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_tm_no_hbw_v1.0a', 
+        travel_model_configuration = create_travel_model_configuration(self.tm_scenario, 
                                                                        emme2_batch_file='./model1-0.sh',
                                                                        mode='full', years_to_run={2005: '2006', 2010: '2010', 2015: '2010_2015', 2020: '2020'})
         config['travel_model_configuration'] = travel_model_configuration
