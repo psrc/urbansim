@@ -22,7 +22,7 @@ class ResultsComputedIndicators(Entity):
     indicator_name = Field(Text)
     dataset_name = Field(Text)
     expression = Field(Text)
-    run_id = ManyToOne('RunsRunActivity', colname = 'run_id')
+    run_id = Field(Integer)
     data_path = Field(Text)
     processor_name = Field(Text)
     date_time = Field(DateTime)
