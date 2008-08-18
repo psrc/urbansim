@@ -274,7 +274,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.lblOption1.setText(QString('ID format:'))
             self.lblOption1.setToolTip(QString('The fixed format of all id \ncolumns of the indicator result'))
         elif output_type == 'Export to SQL database':
-            self.lblOption1.setText(QString('Database\nname:'))
+            self.lblOption1.setText(QString('Database name:'))
             self.lblOption1.setToolTip(QString('The name of the SQL database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
         elif output_type == 'ESRI database':
             self.lblOption1.setText(QString('Path:'))
