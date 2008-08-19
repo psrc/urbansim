@@ -306,6 +306,26 @@
 	  </buffer_size>
         </params>
       </esri_buffer_tool>
+      <template_tool type="tool_file">
+        <name type="tool_name">template_tool</name>
+        <params type="param_template">
+          <param_1>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string">default value 1</default>
+          </param_1>
+          <param_2>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string">default value 2</default>
+          </param_2>
+          <param_3>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string">default value 3</default>
+          </param_3>
+        </params>
+      </template_tool>
     </Tool_Library>
     <Tool_Sets type="tool_sets" setexpanded="True">
       <sample_tool_set type="tool_set" />
