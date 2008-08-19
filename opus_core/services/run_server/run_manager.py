@@ -43,8 +43,11 @@ class RunManager(AbstractService):
         else:
             CacheFltData().run(resources)
     
-    def setup_new_run(self, cache_directory):
+    def setup_new_run(self, cache_directory, configuration):
         #compose unique cache directory based on the history_id
+        self.update_environment_variables(configuration)
+        self.run_id = self._get_new_run_id()
+
         head, tail = os.path.split(cache_directory)
         unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
         run_descr = self.run_id
@@ -71,8 +74,6 @@ class RunManager(AbstractService):
            run simulation
            mark run as done/failed
            """
-        self.update_environment_variables(run_resources)
-        self.run_id = self._get_new_run_id()
 
         if not self.ready_to_run:
             raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
@@ -502,7 +503,8 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         run_name = 'test_scenario_name'
         run_manager = RunManager(self.config)
         
-        run_manager.setup_new_run(cache_directory = os.path.join(base_directory, run_name))
+        run_manager.setup_new_run(cache_directory = os.path.join(base_directory, run_name),
+                                  configuration = {})
         resulting_cache_directory = run_manager.get_current_cache_directory()
         self.assertTrue(resulting_cache_directory.find(run_name)>-1)
         self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)

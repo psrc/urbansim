@@ -170,7 +170,8 @@ class OpusModel(object):
                 server_config = GenericOptionGroup().parser.parse_args()[0]
                 run_manager = RunManager(server_config)
         
-                run_manager.setup_new_run(cache_directory = config['cache_directory'])
+                run_manager.setup_new_run(cache_directory = config['cache_directory'],
+                                          configuration = config)
 
                 #statusdir = tempfile.mkdtemp()
                 statusdir = run_manager.get_current_cache_directory()
