@@ -160,7 +160,7 @@ class OpusDatabase(object):
         elif self.protocol_manager.uses_schemas and self.engine.has_table(table_name = table_name, schema=self.database_name):
             t = self.metadata.tables['%s.%s'%(self.database_name, table_name)]
         else:
-            raise 'Table %s not found in %s'%(table_name, self.database_name)
+            raise Exception('Table %s not found in %s'%(table_name, self.database_name))
         return t
             
     def create_table_from_schema(self, table_name, table_schema):
