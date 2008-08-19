@@ -554,7 +554,6 @@ class Tests(AbstractIndicatorTest):
             database_config = DatabaseConfiguration(
                  database_name = test_db_name,
                  test = True,
-                 use_environment_variables = True
             )
 
             server = DatabaseServer(database_config)
