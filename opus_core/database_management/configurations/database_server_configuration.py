@@ -44,59 +44,34 @@ def _get_installed_database_engines():
 
 class DatabaseServerConfiguration(object):
     """A DatabaseServerConfiguration provides the connection information 
-    for a sql database server.  If use_environment_variables is True, the
-    values for protocol, host_name, user_name, and password are found by looking in 
-    the appropriate environment variables; if use_environment_variables is
-    False, these values are set to the parameters to the __init__ method.  
-    For backwards compatibility, use_environment_variables can also be None.
-    In that case, the value of e.g. host_name is either the argument provided if
-    the argument is not None, or the environment variable if it is."""
+    for a sql database server."""
 
     def __init__(self, 
                  protocol = None, 
                  host_name = None, 
                  user_name = None, 
                  password = None,
-                 test = False,
-                 use_environment_variables = None):
-        if use_environment_variables is True:
+                 test = False):
+
+        if protocol is None:
             self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', self._get_default_database_engine()).lower()
-            if self.protocol is None:
-                
-                self.protocol = self._get_default_database_engine()
+        else:
+            self.protocol = protocol.lower() 
+        if host_name is None:
             if test:
                 self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
             else:
                 self.host_name = os.environ.get('%sHOSTNAME'%self.protocol.upper(),'localhost')
-            self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
-            self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'') 
-        elif use_environment_variables is False:
-            self.protocol = protocol.lower()
-            self.host_name = host_name
-            self.user_name = user_name
-            self.password = password
-        elif use_environment_variables is None:
-            if protocol is None:
-                self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', self._get_default_database_engine()).lower()
-            else:
-                self.protocol = protocol.lower() 
-            if host_name is None:
-                if test:
-                    self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
-                else:
-                    self.host_name = os.environ.get('%sHOSTNAME'%self.protocol.upper(),'localhost')
-            else:
-                self.host_name = host_name
-            if user_name is None:
-                self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
-            else:
-                self.user_name = user_name
-            if password is None:
-                self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'')
-            else:
-                self.password = password
         else:
-            raise ValueError, 'unexpected type for use_environment_variables'
+            self.host_name = host_name
+        if user_name is None:
+            self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
+        else:
+            self.user_name = user_name
+        if password is None:
+            self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'')
+        else:
+            self.password = password
 
             
     def _get_default_database_engine(self):

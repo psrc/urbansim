@@ -32,16 +32,14 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
                  user_name = None, 
                  password = None,
                  database_name = None,
-                 test = False,
-                 use_environment_variables = None):
+                 test = False):
   
         DatabaseServerConfiguration.__init__(self,
             protocol = protocol,
             host_name = host_name,
             user_name = user_name,
             password = password,
-            test = test,
-            use_environment_variables = use_environment_variables
+            test = test
             )      
 
         self.database_name = database_name
