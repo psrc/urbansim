@@ -16,6 +16,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os, shutil, sys, tempfile, time
+from opus_gui.exceptions.formatter import formatExceptionInfo
 
 class RunToolThread(QThread):
     def __init__(self, mainwindow,opusTool):
@@ -24,12 +25,16 @@ class RunToolThread(QThread):
         self.opusTool = opusTool
 
     def run(self):
+        self.opusTool.startingCallback = self.startingCallback
         self.opusTool.progressCallback = self.progressCallback
         self.opusTool.logCallback = self.logCallback
         self.opusTool.finishedCallback = self.finishedCallback
+        print "Thread Prio Start - %s" % (str(self.priority()))
+        self.setPriority(QThread.LowPriority)
+        print "Thread Prio Set - %s" % (str(self.priority()))
         self.opusTool.run()
 
-    def StartingCallback(self):
+    def startingCallback(self):
         self.emit(SIGNAL("toolStarting()"))
 
     def progressCallback(self,percent):
@@ -81,11 +86,18 @@ class OpusTool(object):
             self.params = self.buildparams()
             if self.startingCallback != None:
                 self.startingCallback()
-            success = opusRun(self.progressCallback,self.logCallback,
-                              self.toolVars)
+            success = opusRun(self.progressCallback,self.logCallback,self.toolVars)
             if self.finishedCallback != None:
                 self.finishedCallback(success)
         except ImportError:
             print "Error importing ",self.toolInclude
-            return
+            success = False
+            self.logCallback("Error importing %s" % (self.toolInclude))
+            self.finishedCallback(success)
+        except:
+            success = False
+            errorInfo = formatExceptionInfo(custom_message = 'Unexpected Error From Tool',plainText=True)
+            #self.logCallback("Unexpected Error From Tool %s" % (self.toolInclude))
+            self.logCallback(errorInfo)
+            self.finishedCallback(success)
 

@@ -303,7 +303,7 @@ class OpusXMLAction_Data(object):
         window.show()
         
 
-    def execToolConfigGen(self,configNode):
+    def execToolConfigGen(self,configNode,statusElement=None,progressElement=None):
         library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
         tool_name = QString("")
@@ -356,6 +356,9 @@ class OpusXMLAction_Data(object):
         y = RunToolThread(self.xmlTreeObject.mainwindow,x)
         y.run()
 
+    def toolFinished(self, success):
+        print "Tool Finished Signal Recieved - %s" % (success)
+    
     def execToolConfig(self):
         # First find the tool that this config refers to...
         configNode = self.currentIndex.internalPointer().node().toElement()

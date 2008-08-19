@@ -21,14 +21,33 @@
      </property>
      <widget class="QWidget" name="tab_3" >
       <attribute name="title" >
-       <string>Tool Variables</string>
+       <string>Tool Setup</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QGroupBox" name="variableBox" >
          <property name="title" >
-          <string/>
+          <string>Variables</string>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="executionBox" >
+         <property name="title" >
+          <string>Log/Status</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QProgressBar" name="progressBar" >
+            <property name="value" >
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="textEdit" />
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

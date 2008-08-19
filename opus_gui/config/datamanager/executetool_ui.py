@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'executetool.ui'
 #
-# Created: Thu Aug 14 10:01:46 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Mon Aug 18 12:37:28 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -29,17 +29,33 @@ class Ui_ExecuteToolGui(object):
         self.variableBox = QtGui.QGroupBox(self.tab_3)
         self.variableBox.setObjectName("variableBox")
         self.vboxlayout1.addWidget(self.variableBox)
+
+        self.executionBox = QtGui.QGroupBox(self.tab_3)
+        self.executionBox.setObjectName("executionBox")
+
+        self.vboxlayout2 = QtGui.QVBoxLayout(self.executionBox)
+        self.vboxlayout2.setObjectName("vboxlayout2")
+
+        self.progressBar = QtGui.QProgressBar(self.executionBox)
+        self.progressBar.setProperty("value",QtCore.QVariant(0))
+        self.progressBar.setObjectName("progressBar")
+        self.vboxlayout2.addWidget(self.progressBar)
+
+        self.textEdit = QtGui.QTextEdit(self.executionBox)
+        self.textEdit.setObjectName("textEdit")
+        self.vboxlayout2.addWidget(self.textEdit)
+        self.vboxlayout1.addWidget(self.executionBox)
         self.tabWidget.addTab(self.tab_3,"")
 
         self.tab_4 = QtGui.QWidget()
         self.tab_4.setObjectName("tab_4")
 
-        self.vboxlayout2 = QtGui.QVBoxLayout(self.tab_4)
-        self.vboxlayout2.setObjectName("vboxlayout2")
+        self.vboxlayout3 = QtGui.QVBoxLayout(self.tab_4)
+        self.vboxlayout3.setObjectName("vboxlayout3")
 
         self.toolhelpEdit = QtGui.QTextEdit(self.tab_4)
         self.toolhelpEdit.setObjectName("toolhelpEdit")
-        self.vboxlayout2.addWidget(self.toolhelpEdit)
+        self.vboxlayout3.addWidget(self.toolhelpEdit)
         self.tabWidget.addTab(self.tab_4,"")
         self.vboxlayout.addWidget(self.tabWidget)
 
@@ -68,7 +84,9 @@ class Ui_ExecuteToolGui(object):
 
     def retranslateUi(self, ExecuteToolGui):
         ExecuteToolGui.setWindowTitle(QtGui.QApplication.translate("ExecuteToolGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("ExecuteToolGui", "Tool Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("ExecuteToolGui", "Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.executionBox.setTitle(QtGui.QApplication.translate("ExecuteToolGui", "Log/Status", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("ExecuteToolGui", "Tool Setup", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("ExecuteToolGui", "Tool Help", None, QtGui.QApplication.UnicodeUTF8))
         self.execTool.setText(QtGui.QApplication.translate("ExecuteToolGui", "Execute Tool", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelExec.setText(QtGui.QApplication.translate("ExecuteToolGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

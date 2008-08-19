@@ -53,6 +53,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # required by Qt4 to initialize the UI
         self.setupUi(self)
 
+        self.thread().setPriority(QThread.HighestPriority)
+
         # This is the output for stdout
         self.output = OpusGui.Output(self.writeOutput)
         #sys.stdout, sys.stderr = self.output, self.output
