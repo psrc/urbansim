@@ -44,7 +44,6 @@ class RunManager(AbstractService):
             CacheFltData().run(resources)
     
     def setup_new_run(self, cache_directory):
-        self.run_id = self._get_new_run_id()
         #compose unique cache directory based on the history_id
         head, tail = os.path.split(cache_directory)
         unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
@@ -73,6 +72,8 @@ class RunManager(AbstractService):
            mark run as done/failed
            """
         self.update_environment_variables(run_resources)
+        self.run_id = self._get_new_run_id()
+
         if not self.ready_to_run:
             raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
         if run_resources['cache_directory'] != self.current_cache_directory:
