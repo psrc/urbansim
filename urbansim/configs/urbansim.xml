@@ -3,31 +3,6 @@
     <description type="string" >Base UrbanSim project</description>
     <project_name type="string" flags="hidden">urbansim</project_name>
   </general>
-  <data_manager_dbstree>
-    <database_templates type="db_templates" setexpanded="True" >
-      <ms_sql_server_template type="db_template" setexpanded="False" >
-        <host_name type="string" choices="Required|Optional" > Required </host_name>
-        <protocol type="string" choices="Required|Optional" > Required </protocol>
-        <user_name type="string" choices="Required|Optional" > Required </user_name>
-        <password type="password" choices="Required|Optional" > Required </password>
-        <use_environment_variables type="boolean" choices="Required|Optional" > Required
-   </use_environment_variables>
-      </ms_sql_server_template>
-      <esri_personal_geodb_template type="db_template" setexpanded="False" >
-        <database_path type="string" choices="Required|Optional" > Required </database_path>
-        <some_other_param type="string" choices="Required|Optional" > Optional </some_other_param>
-      </esri_personal_geodb_template>
-    </database_templates>
-    <database_library type="database_library" setexpanded="True" >
-      <urbansim_db1_example type="db_connection" setexpanded="True" >
-        <host_name type="string" />
-        <protocol type="string" />
-        <user_name type="string" />
-        <password type="password" />
-        <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
-      </urbansim_db1_example>
-    </database_library>
-  </data_manager_dbstree>
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>

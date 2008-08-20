@@ -359,7 +359,6 @@
           <host_name type="string" />
           <user_name type="string" />
           <password type="password" />
-          <use_environment_variables type="boolean" choices="True|False">True</use_environment_variables>
           <database_name type="string" />
         </baseyear_database>
         <cache_configuration parser_action="category" type="dictionary">
@@ -438,7 +437,6 @@
           <host_name type="string" />
           <user_name type="string" />
           <db_password type="password" />
-          <use_environment_variables type="boolean" choices="True|False">True</use_environment_variables>
           <database_name type="string">services</database_name>
         </services_configuration>
       </data>

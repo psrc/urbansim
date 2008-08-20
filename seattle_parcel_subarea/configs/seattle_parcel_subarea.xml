@@ -9,31 +9,6 @@
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
   </general>
-  <data_manager_dbstree>
-    <database_templates setexpanded="True" type="db_templates">
-      <ms_sql_server_template setexpanded="False" type="db_template">
-        <host_name choices="Required|Optional" type="string"> Required </host_name>
-        <protocol choices="Required|Optional" type="string"> Required </protocol>
-        <user_name choices="Required|Optional" type="string"> Required </user_name>
-        <password choices="Required|Optional" type="password"> Required </password>
-        <use_environment_variables choices="Required|Optional" type="boolean"> Required
-    </use_environment_variables>
-      </ms_sql_server_template>
-      <esri_personal_geodb_template setexpanded="False" type="db_template">
-        <database_path choices="Required|Optional" type="string"> Required </database_path>
-        <some_other_param choices="Required|Optional" type="string"> Optional </some_other_param>
-      </esri_personal_geodb_template>
-    </database_templates>
-    <database_library setexpanded="True" type="database_library">
-      <urbansim_db1_example setexpanded="True" type="db_connection">
-        <host_name type="string" />
-        <protocol type="string" />
-        <user_name type="string" />
-        <password type="password" />
-        <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
-      </urbansim_db1_example>
-    </database_library>
-  </data_manager_dbstree>
   <model_manager>
      <model_system type="dictionary">
       <development_proposal_choice_model type="dictionary">
