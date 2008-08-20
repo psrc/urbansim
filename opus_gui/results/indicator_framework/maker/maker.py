@@ -31,14 +31,15 @@ from time import strftime,localtime
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.storage import Storage
 
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.results_manager import ResultsManager
 from opus_core.services.run_server.run_manager import RunManager
 
 class Maker(object):
-    def __init__(self):
+    def __init__(self, test = False):
         self.computed_indicators = {}
-    
+        self.test = test
+        
     def create(self, indicator, source_data):
         computed_indicators = self.create_batch(
                                 indicators = {indicator.name:indicator}, 
@@ -83,7 +84,8 @@ class Maker(object):
             indicators = indicators,
             source_data = source_data)
         
-        self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators)
+        if not self.test:
+            self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators)
         
         logger.log_status('%s Indicator Generation END %s %s\n' 
             % ('='*11, strftime('%Y_%m_%d_%H_%M', localtime()), '='*11))
@@ -180,9 +182,8 @@ class Maker(object):
         collect()
 
     def write_computed_indicators_to_db(self, computed_indicator_group):
-        options = GenericOptionGroup().parser.parse_args([])[0]
+        options = ServicesDatabaseConfiguration()
         results_manager = ResultsManager(options)
-        #run_manager = RunManager(options)
         
         for name, indicator in computed_indicator_group.items():
             results_manager.add_computed_indicator(
@@ -215,7 +216,7 @@ class Tests(AbstractIndicatorTest):
                   dataset_name = 'test', 
                   attribute = 'opus_core.test.attribute')        
         
-        maker = Maker()
+        maker = Maker(test = True)
         maker.create(indicator = indicator, 
                      source_data = self.source_data)
         
@@ -245,7 +246,7 @@ class Tests(AbstractIndicatorTest):
             
 
     def test__indicator_expressions(self):
-        maker = Maker()
+        maker = Maker(test = True)
         indicator = Indicator(
             attribute = '2 * opus_core.test.attribute',
             dataset_name = 'test')
@@ -275,7 +276,7 @@ class Tests(AbstractIndicatorTest):
 
 
     def test__indicator_expressions_with_two_variables(self):
-        maker = Maker()
+        maker = Maker(test = True)
         indicator = Indicator(
             attribute = '2 * opus_core.test.attribute - opus_core.test.attribute2',
             dataset_name = 'test')
