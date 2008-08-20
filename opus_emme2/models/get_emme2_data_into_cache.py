@@ -187,16 +187,15 @@ if __name__ == "__main__":
                 ##"atrnst":"am_transit_person_trip_table",
                 #"au1cos":"single_vehicle_to_work_travel_cost",
                 #},
+            #'travel_model_base_directory':'baseline_travel_model(cra-10-8)',
             #2005:{
                 #'bank':[
-                    #'baseline_travel_model(cra-10-8)',
                     #'2000_05',
                     #'bank1',
                     #],
                 #},
             #2010:{
                 #'bank':[
-                    #'baseline_travel_model(cra-10-8)',
                     #'2000_10',
                     #'bank1',
                     #],

@@ -15,15 +15,16 @@
 import os 
 import shutil
 from opus_core.resources import Resources
+from abstract_emme2_travel_model import AbstractEmme2TravelModel
 
-class RestoreTripTables:
+class RestoreTripTables(AbstractEmme2TravelModel):
     """Copy original trip tables to the 'triptabs' directory of the travel model.
     """
     def run(self, config, source_directory, year):
-        dir = config['travel_model_configuration'][year]['bank'][0]
-        dst = os.path.join(os.environ['TRAVELMODELROOT'], dir, 'triptabs')
-        src = os.path.join(os.environ['TRAVELMODELROOT'], dir, source_directory)
-        backup = os.path.join(os.environ['TRAVELMODELROOT'], dir, 'triptabs.last')
+        base_dir = self.get_emme2_base_dir()
+        dst = os.path.join(base_dir, 'triptabs')
+        src = os.path.join(base_dir, source_directory)
+        backup = os.path.join(base_dir, 'triptabs.last')
         if os.path.exists(backup):
             shutil.rmtree(backup)
         if os.path.exists(dst):

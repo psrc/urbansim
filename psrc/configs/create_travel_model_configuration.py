@@ -160,11 +160,12 @@ def create_travel_model_configuration(travel_model_dir_name,
         'reports_to_copy': reports,
         'export_macros':export_macros,
         'locations_to_disaggregate': locations_to_disaggregate,
-        'travel_model_base_directory': travel_model_dir_name
+        'travel_model_base_directory': travel_model_dir_name,
+        'emme2_batch_file_name':emme2_batch_file,
         }
 
     _add_models(travel_model_configuration, mode)
-    _add_years(travel_model_configuration, travel_model_dir_name, years_to_run, emme2_batch_file)
+    _add_years(travel_model_configuration, years_to_run)
     return travel_model_configuration
 
 def _add_models(travel_model_configuration, mode):
@@ -199,7 +200,7 @@ def _add_models(travel_model_configuration, mode):
             ]
     travel_model_configuration['models'] = models
         
-def _add_years(travel_model_configuration, travel_model_dir_name, years_to_run, emme2_batch_file):
+def _add_years(travel_model_configuration, years_to_run):
     if years_to_run is None:
         years_to_run = {
             2000:'2000_06',
@@ -212,10 +213,6 @@ def _add_years(travel_model_configuration, travel_model_dir_name, years_to_run, 
             }
     for year, year_dir in years_to_run.iteritems():
         travel_model_configuration[year] = {
-            'bank':[
-                travel_model_dir_name,
-                year_dir,
-                ],
-            'emme2_batch_file_name':emme2_batch_file,
+            'bank':[ year_dir, ],
             }
         
