@@ -12,7 +12,7 @@
 # 
 
 from PyQt4.QtCore import QString, QModelIndex, SIGNAL
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from sqlalchemy.sql import select
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.run_manager import RunManager
@@ -120,14 +120,14 @@ class ResultsManagerXMLHelper:
     
         if years:
             for run in run_info:        
-                server_config = GenericOptionGroup().parser.parse_args()[0]
+                server_config = ServicesDatabaseConfiguration()
                 run_manager = RunManager(server_config)
                 run['years'] = run_manager.get_years_run(str(run['cache_directory']))
         
         return run_info
     
     def get_available_results(self, attributes = []):
-        server_config = GenericOptionGroup().parser.parse_args()[0]
+        server_config = ServicesDatabaseConfiguration()
         results_manager = ResultsManager(server_config)
         results = results_manager.get_results()
         return results
@@ -588,7 +588,7 @@ class ResultsManagerXMLHelper:
 
         project_name = self.get_project_title()
 
-        server_config = GenericOptionGroup().parser.parse_args()[0]
+        server_config = ServicesDatabaseConfiguration()
         run_manager = RunManager(server_config)
         
         # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable

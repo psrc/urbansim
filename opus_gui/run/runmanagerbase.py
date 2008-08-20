@@ -25,6 +25,7 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 
@@ -593,9 +594,8 @@ class ModelGuiElement(QWidget):
                                             run_name)
             
             if duplicate and run_id is not None:
-                from opus_core.services.run_server.generic_option_group import GenericOptionGroup
                 from opus_core.services.run_server.run_manager import RunManager as ServicesRunManager
-                run_manager = ServicesRunManager(GenericOptionGroup.parser.parse_args([]))[0]
+                run_manager = ServicesRunManager(ServicesDatabaseConfiguration())
                 run_manager.delete_everything_for_this_run(run_id = run_id)
                 run_manager.close()
                 

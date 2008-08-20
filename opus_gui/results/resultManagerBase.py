@@ -55,7 +55,7 @@ class AbstractManagerBase(object):
         self.gui = gui
     
 # Main Run manager class
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager
 
 class ResultManagerBase(AbstractManagerBase):  
@@ -73,7 +73,7 @@ class ResultManagerBase(AbstractManagerBase):
         self.xml_helper.update_available_runs()
                 
     def _get_run_manager(self):
-        config = GenericOptionGroup().parser.parse_args()[0]
+        config = ServicesDatabaseConfiguration()
         run_manager = RunManager(config)
         return run_manager
 

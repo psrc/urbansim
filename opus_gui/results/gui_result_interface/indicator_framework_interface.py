@@ -18,15 +18,16 @@ from opus_gui.results.indicator_framework.representations.computed_indicator imp
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration    
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager
+
 from sqlalchemy.sql import select
 
 class IndicatorFrameworkInterface:
     def __init__(self, toolboxStuff):
         self.toolboxStuff = toolboxStuff
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
-        self.run_manager = RunManager(GenericOptionGroup().parser.parse_args()[0])
+        self.run_manager = RunManager(ServicesDatabaseConfiguration())
         
     def _get_dataset_pool_configuration(self):
         _, package_order = self.xml_helper.get_element_attributes(
