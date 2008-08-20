@@ -701,45 +701,46 @@ class ModelGuiElement(QWidget):
                 f.close()
 
                 # use float for all numbers to help with percent computation
-                current_year = float(lines[0])
-                total_models = float(lines[1])
-                current_model = float(lines[2])
-                current_model_names = lines[3]
-                current_model_display_name = current_model_names#current_model_names[0]
-                total_pieces = float(lines[4])
-                current_piece = float(lines[5])
-                current_piece_name = lines[6].strip()
-                total_years = float(self.end_year - self.start_year + 1)
-                # For each year, we need to run all of the models.
-                # year_fraction_completed is the fraction completed (ignoring the currently running year)
-                # model_fraction_completed is the additional fraction completed for the current year
-
-                modelProgress = 100.0 * (current_piece / total_pieces)
-                yearProgress = modelProgress / total_models + 100.0 * (current_model / total_models)
-                totalProgress = yearProgress / total_years + 100.0 * ((current_year - self.start_year) / total_years)
-
-                currentYearString = "("+str(int((current_year - self.start_year))+1)+"/"+str(int(total_years))+") "+str(int(current_year))
-                self.summaryCurrentYearValue.setText(QString(currentYearString))
-
-                currentModelString = "("+str(int(current_model)+1)+"/"+str(int(total_models))+") "+current_model_display_name
-                self.summaryCurrentModelValue.setText(QString(currentModelString))
-
-                currentPieceString = "("+str(int(current_piece)+1)+"/"+str(int(total_pieces))+") "+current_piece_name
-                self.summaryCurrentPieceValue.setText(QString(currentPieceString))
-
-                boxTitle = current_model_display_name
-                
-                #detect if a year has been completed
-                for item in self.yearItems:
-                    if (int(item[0]) < int(current_year) and not item[1]) :
-                        self.diagnostic_year.addItem(QString(str(item[0])))
-                        item[1] = True 
-                        #hook into indicator group computation here
-
-                if (self.progressBarTotal.maximum() == 0):
-                    self.progressBarTotal.setRange(0,100)
-                    self.progressBarYear.setRange(0,100)
-                    self.progressBarModel.setRange(0,100)
+                if len(lines) > 0:
+                    current_year = float(lines[0])
+                    total_models = float(lines[1])
+                    current_model = float(lines[2])
+                    current_model_names = lines[3]
+                    current_model_display_name = current_model_names#current_model_names[0]
+                    total_pieces = float(lines[4])
+                    current_piece = float(lines[5])
+                    current_piece_name = lines[6].strip()
+                    total_years = float(self.end_year - self.start_year + 1)
+                    # For each year, we need to run all of the models.
+                    # year_fraction_completed is the fraction completed (ignoring the currently running year)
+                    # model_fraction_completed is the additional fraction completed for the current year
+    
+                    modelProgress = 100.0 * (current_piece / total_pieces)
+                    yearProgress = modelProgress / total_models + 100.0 * (current_model / total_models)
+                    totalProgress = yearProgress / total_years + 100.0 * ((current_year - self.start_year) / total_years)
+    
+                    currentYearString = "("+str(int((current_year - self.start_year))+1)+"/"+str(int(total_years))+") "+str(int(current_year))
+                    self.summaryCurrentYearValue.setText(QString(currentYearString))
+    
+                    currentModelString = "("+str(int(current_model)+1)+"/"+str(int(total_models))+") "+current_model_display_name
+                    self.summaryCurrentModelValue.setText(QString(currentModelString))
+    
+                    currentPieceString = "("+str(int(current_piece)+1)+"/"+str(int(total_pieces))+") "+current_piece_name
+                    self.summaryCurrentPieceValue.setText(QString(currentPieceString))
+    
+                    boxTitle = current_model_display_name
+                    
+                    #detect if a year has been completed
+                    for item in self.yearItems:
+                        if (int(item[0]) < int(current_year) and not item[1]) :
+                            self.diagnostic_year.addItem(QString(str(item[0])))
+                            item[1] = True 
+                            #hook into indicator group computation here
+    
+                    if (self.progressBarTotal.maximum() == 0):
+                        self.progressBarTotal.setRange(0,100)
+                        self.progressBarYear.setRange(0,100)
+                        self.progressBarModel.setRange(0,100)
 
             except IOError:
                 boxTitle = "Model is initializing..."
