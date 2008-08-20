@@ -13,15 +13,13 @@
 #
 
 #from urbansim.estimation.config import config
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from sanfrancisco.configs.controller_config import models_configuration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.resources import merge_resources_with_defaults
-from numpy import array
 import os
 
 class Baseline(GeneralConfiguration):
@@ -83,7 +81,7 @@ class Baseline(GeneralConfiguration):
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
                 ),           
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'sanfrancisco_baseyear_flattened',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(

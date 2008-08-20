@@ -29,7 +29,7 @@ class TestSimulation(TestXMLConfigSetup):
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
-        run_manager = RunManager(options)
+        run_manager = RunManager(option_group.get_services_database_configuration(options))
         run_section = xml_config.get_run_configuration('Seattle_baseline')
         insert_auto_generated_cache_directory_if_needed(run_section)
         run_manager.setup_new_run(cache_directory = run_section['cache_directory'],

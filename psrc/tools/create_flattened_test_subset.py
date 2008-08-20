@@ -15,21 +15,19 @@
 from psrc.configs.subset_configuration import SubsetConfiguration
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
-from opus_core.database_management.configurations.database_server_configuration \
-    import DatabaseServerConfiguration
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 """
 This utility creates, on localhost, a flattened copy of the subset 
 test database chain located on trondheim..
 """
-server_config_to = DatabaseServerConfiguration(host_name = 'localhost')
-server_config_from = DatabaseServerConfiguration()
+server_config_to = ScenarioDatabaseConfiguration()
+server_config_from = ScenarioDatabaseConfiguration()
 
 run_configuration = SubsetConfiguration()
 
-from_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['input_configuration'].database_name)
-to_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['input_configuration'].database_name)
+from_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['scenario_database_configuration'].database_name)
+to_database_configuration = ScenarioDatabaseConfiguration(database_name = run_configuration['scenario_database_configuration'].database_name)
 tables_to_copy = run_configuration['creating_baseyear_cache_configuration'].tables_to_cache
 
 copier = FlattenScenarioDatabaseChain()

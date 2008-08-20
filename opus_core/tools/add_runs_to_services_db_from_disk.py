@@ -17,13 +17,12 @@
 
 from opus_core.logger import logger
 import os
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.database_management.database_server import DatabaseServer
-
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 def add_runs_to_services_db_from_disk(projects = None):
         
-    server_config = GenericOptionGroup().parser.parse_args()[0]
+    server_config = ServicesDatabaseConfiguration()
     
     if server_config.protocol == 'sqlite':
         

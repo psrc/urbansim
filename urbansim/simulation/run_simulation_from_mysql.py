@@ -24,7 +24,6 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 from urbansim.model_coordinators.model_system import ModelSystem
 
@@ -47,19 +46,14 @@ class RunSimulationFromMysql:
         ForkProcess().fork_new_process(self.config['creating_baseyear_cache_configuration'].cache_scenario_database, self.config)
         
         # Create output database (normally done by run manager)
-        if 'output_configuration' in self.config:
-            config = DatabaseServerConfiguration(
-                host_name = self.config['output_configuration'].host_name,
-                user_name = self.config['output_configuration'].user_name,
-                password = self.config['output_configuration'].password
-            )
-            db_server = DatabaseServer(config)
-            db_server.drop_database(self.config['output_configuration'].database_name)
-            db_server.create_database(self.config['output_configuration'].database_name)
+        if 'estimation_database_configuration' in self.config:
+            db_server = DatabaseServer(self.config['estimation_database_configuration'])
+            db_server.drop_database(self.config['estimation_database_configuration'].database_name)
+            db_server.create_database(self.config['estimation_database_configuration'].database_name)
                    
     def run_simulation(self, simulation_instance=None):
         logger.start_block('Simulation on database %s' 
-            % self.config['input_configuration'].database_name)
+            % self.config['scenario_database_configuration'].database_name)
         try:
             if simulation_instance is None:
                 simulation_instance = ModelSystem()
@@ -78,14 +72,9 @@ class RunSimulationFromMysql:
         cache_dir = self.config['cache_directory']
         if os.path.exists(cache_dir):
             rmtree(cache_dir)
-        if remove_output_database and ('output_configuration' in self.config):
-            config = DatabaseServerConfiguration(
-                host_name = self.config['output_configuration'].host_name,
-                user_name = self.config['output_configuration'].user_name,
-                password = self.config['output_configuration'].password
-            )
-            db_server = DatabaseServer(config)
-            db_server.drop_database(self.config['output_configuration'].database_name)
+        if remove_output_database and ('estimation_database_configuration' in self.config):
+            db_server = DatabaseServer(self.config['estimation_database_configuration'])
+            db_server.drop_database(self.config['estimation_database_configuration'].database_name)
 
     def prepare_and_run(self, run_configuration, simulation_instance=None, remove_cache=True):
         self.prepare_for_simulation(run_configuration)

@@ -41,14 +41,19 @@ if __name__ == "__main__":
     else:
         opus_path = args[0]
         config = get_config_from_opus_path(opus_path)
+
+        from_database_configuration = config['scenario_database_configuration']
     
-        from_database_name = config['input_configuration'].database_name
         to_database_name = options.database_name
         if to_database_name is None:
-            to_database_name = from_database_name + '_flattened'
+            to_database_name = from_database_configuration.database_name + '_flattened'
         
-        from_database_configuration = ScenarioDatabaseConfiguration(database_name = from_database_name)
-        to_database_configuration = ScenarioDatabaseConfiguration(database_name = to_database_name)
+        to_database_configuration = ScenarioDatabaseConfiguration(
+                                        protocol = from_database_configuration.protocol,
+                                        host_name = from_database_configuration.host_name,
+                                        user_name = from_database_configuration.user_name,
+                                        password = from_database_configuration.password,
+                                        database_name = to_database_name)
         tables_to_copy = config['creating_baseyear_cache_configuration'].tables_to_cache
         
         copier = FlattenScenarioDatabaseChain()

@@ -17,6 +17,23 @@ import os
 from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
 class ServicesDatabaseConfiguration(DatabaseConfiguration):
+
+    def __init__(self, 
+                 protocol = None,
+                 host_name = None,
+                 user_name = None,
+                 password = None,
+                 database_name = 'services'):
+        DatabaseConfiguration.__init__(self,
+                              protocol = protocol,
+                              host_name = host_name,
+                              user_name = user_name,
+                              password = password,
+                              database_name = database_name)
+        
+    def _database_configuration_node(self):
+        return 'services_database_server'   
     
-    def _configuration_prefix(self):
-        return 'SERVICES_'   
+if __name__ == '__main__':
+    config = ServicesDatabaseConfiguration()
+    print config

@@ -17,15 +17,15 @@ import os
 from numpy import array
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 from urbansim.configs.estimation_base_config import run_configuration as config
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 
 config_changes = {
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'PSRC_2000_parcels',
         ),
     'cache_directory':'C:/tmp/urbansim_cache/psrc_parcel_hana/06_06_13_11_39_48',

@@ -77,15 +77,11 @@ def create_dataset_from_dict_storage():
     return test_dataset
 
 def create_dataset_from_sql_storage():
-    from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
     from opus_core.database_management.database_server import DatabaseServer
     
     # make sure the environment variables are set, or replace it by approproate values 
-    db_config = DatabaseServerConfiguration(
-            host_name = os.environ['MYSQLHOSTNAME'],
-            user_name = os.environ['MYSQLUSERNAME'],
-            password = os.environ['MYSQLPASSWORD']                                            
-        )
+    db_config = ServicesDatabaseConfiguration()
     db_server = DatabaseServer(db_config)
     database = db_server.get_database('services') # name of the database
         

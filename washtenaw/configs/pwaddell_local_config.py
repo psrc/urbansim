@@ -14,7 +14,7 @@
 
 import os
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from baseline import Baseline
 
@@ -31,7 +31,7 @@ my_cache_config = CreatingBaseyearCacheConfiguration(
     )
 
 my_configuration = {
-    'input_configuration': DatabaseConfiguration(
+    'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'semcog_baseyear',
                 ),
 #     'models': [

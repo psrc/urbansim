@@ -22,11 +22,9 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.misc import load_table_from_text_file, unique_values
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.datasets.dataset import Dataset
 from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from urbansim.model_coordinators.model_system import ModelSystem
 
@@ -275,15 +273,10 @@ class Estimator(object):
         out_storage_available = True
         if out_storage:
             pass
-        elif 'output_configuration' in self.config:
+        elif 'estimation_database_configuration' in self.config:
             try:
-                config = DatabaseServerConfiguration(
-                    host_name = self.config['output_configuration'].host_name,
-                    user_name = self.config['output_configuration'].user_name,
-                    password = self.config['output_configuration'].password
-                )
-                db_server = DatabaseServer(config)
-                database_name = self.config["output_configuration"].database_name
+                db_server = DatabaseServer(self.config['estimation_database_configuration'])
+                database_name = self.config["estimation_database_configuration"].database_name
     
                 if not db_server.has_database(database_name):
                     db_server.create_database(database_name)
@@ -293,10 +286,10 @@ class Estimator(object):
                     type='sql_storage',
                     storage_location=output_db)
             except:
-                logger.log_warning("Problem with connecting database given by 'output_configuration'.")
+                logger.log_warning("Problem with connecting database given by 'estimation_database_configuration'.")
                 out_storage_available = False
         else:
-            logger.log_warning("No output_configuration given.")
+            logger.log_warning("No estimation_database_configuration given.")
             out_storage_available = False
 
         # the original model name of development_project_lcm is too long as a mysql db table name, truncate it
@@ -305,7 +298,7 @@ class Estimator(object):
         specification_table = '%s_specification' % model_name
         coefficients_table = '%s_coefficients' % model_name
         if out_storage_available:
-            logger.start_block("Writing specification and coefficients into storage given by 'output_configuration'")
+            logger.start_block("Writing specification and coefficients into storage given by 'estimation_database_configuration'")
             self.specification.write(out_storage=out_storage, out_table_name=specification_table)
             self.coefficients.write(out_storage=out_storage, out_table_name=coefficients_table)
             logger.end_block()

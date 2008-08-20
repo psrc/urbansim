@@ -254,7 +254,7 @@ if __name__ == "__main__":
 
     #try: import wingdbstub
     #except: pass
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
     run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name,
                        options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)

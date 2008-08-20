@@ -19,8 +19,8 @@ from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.database_management.opus_database import OpusDatabase
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 def opusRun(progressCB,logCB,params):
 
@@ -34,8 +34,9 @@ def opusRun(progressCB,logCB,params):
     table_name = params_dict['table_name']
 
 
-    dbserverconfig = DatabaseServerConfiguration()
-    opusdb = OpusDatabase(dbserverconfig, sql_db_name)
+    dbserverconfig = EstimationDatabaseConfiguration(database_name = sql_db_name)
+    server = DatabaseServer(dbserverconfig)
+    opusdb = server.get_database(sql_db_name)
 
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
 

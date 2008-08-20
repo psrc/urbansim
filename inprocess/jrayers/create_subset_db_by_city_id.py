@@ -13,8 +13,8 @@
 #
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-dbconfig = DatabaseServerConfiguration()
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+dbconfig = ScenarioDatabaseConfiguration()
 dbserver = DatabaseServer(dbconfig)
 
 # city_id to subset database on (70=Seattle)

@@ -15,12 +15,10 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-
-from sanfrancisco.configs.baseline import Baseline
 
 
 class CachingConfiguration(Configuration):
@@ -66,7 +64,7 @@ class CachingConfiguration(Configuration):
             tables_to_cache = tables_to_cache,
             tables_to_copy_to_previous_years = {},                                          
             ),
-        'input_configuration': DatabaseConfiguration(
+        'scenario_database_configuration': ScenarioDatabaseConfiguration(
             database_name = 'sanfrancisco_baseyear',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(

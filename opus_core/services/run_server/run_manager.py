@@ -19,7 +19,6 @@ from opus_core.fork_process import ForkProcess
 from opus_core.configuration import Configuration
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.abstract_service import AbstractService
@@ -66,7 +65,7 @@ class RunManager(AbstractService):
         if 'project_name' in run_resources:
             os.environ['OPUSPROJECTNAME'] = run_resources['project_name']
             self.services_db.close()
-            self.services_db = self.create_storage(self.server_config)
+            self.services_db = self.create_storage()
         
     def run_run(self, run_resources, run_name = None, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running
@@ -100,21 +99,10 @@ class RunManager(AbstractService):
 #                CacheFltData().run(run_resources)
                 
             # Create brand-new output database (deletes any prior contents)
-            if 'output_configuration' in run_resources:
-                try:
-                    protocol = run_resources['output_configuration'].protocol
-                except:
-                    protocol = None
-                    
-                db_config = DatabaseServerConfiguration(
-                    protocol = protocol,
-                    host_name = run_resources['output_configuration'].host_name,
-                    user_name = run_resources['output_configuration'].user_name,
-                    password = run_resources['output_configuration'].password                                        
-                )
-                db_server = DatabaseServer(db_config)
-                db_server.drop_database(run_resources["output_configuration"].database_name)
-                db_server.create_database(run_resources["output_configuration"].database_name)                
+            if 'estimation_database_configuration' in run_resources:
+                db_server = DatabaseServer(run_resources['estimation_database_configuration'])
+                db_server.drop_database(run_resources['estimation_database_configuration'].database_name)
+                db_server.create_database(run_resources['estimation_database_configuration'].database_name)                
             
             # Run simulation
             exec('from %s import ModelSystem' % model_system_class_path)
@@ -483,15 +471,13 @@ def insert_auto_generated_cache_directory_if_needed(config):
     config['cache_directory'] = cache_directory
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 import tempfile 
 
 class RunManagerTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.database_name = 'test_services_database'
-        self.config = DatabaseConfiguration(protocol = 'sqlite',
-                                            test = True, 
-                                            database_name = self.database_name)
+        self.config = TestDatabaseConfiguration(database_name = self.database_name)
         self.db_server = DatabaseServer(self.config)
     
     def tearDown(self):

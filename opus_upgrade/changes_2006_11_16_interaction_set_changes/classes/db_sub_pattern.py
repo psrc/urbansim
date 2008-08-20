@@ -97,7 +97,7 @@ class DBSubPattern(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class TestDBSubPattern(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -158,7 +158,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
             'backup_postfix':'_old',
             }
             
-        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
+        self.db_server = DatabaseServer(TestDatabaseConfiguration(protocol = 'mysql'))
         
         self.dbs = []
         for db_name in self.test_db_names:
@@ -279,7 +279,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        DBSubPattern().convert_databases(DatabaseServerConfiguration(protocol='mysql'), 
+        DBSubPattern().convert_databases(TestDatabaseConfiguration(protocol='mysql'), 
             self.config['databases'], self.config['tables'], self.patterns)
         
         for db_name in self.config['databases']:

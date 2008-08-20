@@ -14,8 +14,8 @@
 import os
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-from opus_core.services.services_tables import ResultsComputedIndicators, RunsRunActivity
+from opus_core.services.services_tables import *
+
 from elixir import setup_all, metadata, create_all
 
 
@@ -25,33 +25,24 @@ class AbstractService(object):
     creates resources for runs, and can run simulations.
     """
 
-    def __init__(self, options):
+    def __init__(self, config):
         
-        self.services_db = self.create_storage(options)
-        self.server_config = options
+        self.server_config = config
+
+        self.services_db = self.create_storage()
         
-    def create_storage(self, options):
+    def create_storage(self):
 
         try:
-            database_name = options.database_name
-        except:
-            database_name = 'services'
-
-        config = DatabaseServerConfiguration(
-                     host_name = options.host_name,
-                     user_name = options.user_name,
-                     protocol = options.protocol,
-                     password = options.password)
-        try:
-            server = DatabaseServer(config)
+            server = DatabaseServer(self.server_config)
         except:
             raise Exception('Cannot connect to the database server that the services database is hosted on')
         
-        if not server.has_database(database_name):
-            server.create_database(database_name)
+        if not server.has_database(self.server_config.database_name):
+            server.create_database(self.server_config.database_name)
 
         try:
-            services_db = server.get_database(database_name)
+            services_db = server.get_database(self.server_config.database_name)
         except:
             raise Exception('Cannot connect to a services database on %s'%server.get_connection_string(scrub = True))
 
@@ -66,15 +57,12 @@ class AbstractService(object):
     
     
 from opus_core.tests import opus_unittest
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
-import tempfile 
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class AbstractServiceTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.database_name = 'test_services_database'
-        self.config = DatabaseConfiguration(protocol = 'sqlite',
-                                            test = True, 
-                                            database_name = self.database_name)
+        self.config = TestDatabaseConfiguration(database_name = self.database_name)
         self.db_server = DatabaseServer(self.config)
     
     def tearDown(self):
@@ -97,7 +85,6 @@ class AbstractServiceTests(opus_unittest.OpusTestCase):
         """Should create services tables if the database doesn't exist."""
         services = AbstractService(self.config)
         services.services_db.close()
-        
         self.assertTrue(self.db_server.has_database(self.database_name))
         db = self.db_server.get_database(self.database_name)
         self.assertTrue(db.table_exists('run_activity')) 

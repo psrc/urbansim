@@ -64,3 +64,16 @@ class MSSQLServerManager(AbstractDatabaseEngineManager):
     def create_default_database_if_absent(self, server_config):
         pass
     
+    def get_tables_in_database(self, metadata):
+        tables = AbstractDatabaseEngineManager.get_tables_in_database(self, metadata)
+        # MSSQL hacking by Jesse
+        # The three items in mssql_system_tables are tables (and views) created in
+        # every MSSQL database.  A user should never need to cache or otherwise
+        # work with these tables in OPUS (as far as I know), so I am filtering them 
+        # out here.
+        mssql_system_tables = [u'sysconstraints', u'dtproperties', u'syssegments']
+        for i in mssql_system_tables:
+            if i in tables:
+                tables.remove(i)        
+        return tables
+    

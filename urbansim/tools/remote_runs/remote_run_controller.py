@@ -22,16 +22,13 @@ import time
 from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import load_from_text_file, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.file_utilities import write_resources_to_file
-from opus_core.misc import module_path_from_opus_path
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
-from numpy import arange, where, logical_and
 from tempfile import mkdtemp
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
@@ -123,7 +120,7 @@ class RemoteRun:
         self.remote_communication_path = None
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
-        self.services_db_config = DatabaseConfiguration(
+        self.services_db_config = ServicesDatabaseConfiguration(
                                         host_name = services_hostname, 
                                         user_name = username, 
                                         password = password,

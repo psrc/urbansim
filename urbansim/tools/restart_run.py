@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
     
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
 
     if len(args) < 2:
         parser.print_help()

@@ -13,8 +13,9 @@
 #
 
 from baseline import Baseline
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from urbansim.configs.config_changes_for_estimation import ConfigChangesForEstimation
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 class BaselineEstimation(Baseline):
     def __init__(self):
@@ -22,12 +23,8 @@ class BaselineEstimation(Baseline):
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
         #'cache_directory':'/urbansim_cache/eugene', # change or leave out
         self['cache_directory'] = '/Users/hana/urbansim_cache/eugene/baseyear_cache_zone'
-        self['input_configuration'] = DatabaseConfiguration(
-                                                            database_name = 'eugene_1980_baseyear_zone',
-                                                            )
-        self['output_configuration'] = DatabaseConfiguration(
-                                                             database_name = 'eugene_1980_baseyear_zone',
-                                                             )
+        self['scenario_database_configuration'] = ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone')
+        self['estimation_database_configuration'] = EstimationDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone')
     
         self['datasets_to_cache_after_each_model' ] = []
         self['low_memory_mode'] = False

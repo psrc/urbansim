@@ -14,7 +14,6 @@
 
 import sys
 
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration 
 from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
 from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
 from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
@@ -29,7 +28,6 @@ from sqlalchemy.types import Integer, SmallInteger, \
                              Boolean, DateTime
 from sqlalchemy import create_engine
 
-### TODO: Add unit tests.
 class OpusDatabase(object):
     """Represents a connection a database, administered through sqlalchemy."""
 
@@ -215,7 +213,7 @@ class OpusDatabase(object):
     def get_tables_in_database(self):
         """Returns a list of the tables in this database chain."""
         self.reflect()
-        return self.metadata.tables.keys()
+        return self.protocol_manager.get_tables_in_database(metadata = self.metadata)
     
     def get_primary_keys_for_table(self, table):
         self.reflect()
@@ -301,25 +299,24 @@ def _log_sql(sql_query):
 
 
 import os
-from numpy import int32, int64
 from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 
 
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_server_configuration import _get_installed_database_engines
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
+
 class OpusDatabaseTest(opus_unittest.OpusTestCase):
-    def setUp(self):
-        
+    def setUp(self):        
         db_configs = []
         for engine in _get_installed_database_engines():
-            if engine == 'mssql': continue
-            config = DatabaseServerConfiguration(protocol = engine,
-                                                 test = True)
+            config = TestDatabaseConfiguration(protocol = engine)
             db_configs.append(config)
         
         self.test_db = 'OpusDatabaseTestDatabase'
-
+        test_table = 'test_table'
+        
         self.dbs = []
         for config in db_configs:
             try:
@@ -330,12 +327,13 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 self.assertTrue(server.has_database(database_name = self.test_db))
                 db = OpusDatabase(database_server_configuration = config, 
                                    database_name = self.test_db)
+                self.assertFalse(db.table_exists(test_table))
                 self.dbs.append((db,server))
             except:
                 import traceback
                 traceback.print_exc()
                 
-                print 'WARNING: could not start server for protocol %s'%config.protocol
+                logger.log_warning('Could not start server for protocol %s'%config.protocol)
                 
     def tearDown(self):
         for db, server in self.dbs:
@@ -360,7 +358,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 db.drop_table(test_table)
                 self.assertFalse(db.table_exists(test_table))
             except:
-                print 'ERROR: protocol %s'%server.config.protocol
+                logger.log_error('Protocol %s'%server.config.protocol)
                 raise
 
     def test_get_table(self):
@@ -378,7 +376,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 self.assertTrue(isinstance(t,Table))
                 self.assertTrue(t.name == test_table)
             except:
-                print 'ERROR: protocol %s'%server.config.protocol
+                logger.log_error('Protocol %s'%server.config.protocol)
                 raise
                         
     def test_get_schema_from_table(self):
@@ -405,7 +403,7 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
                 new_schema = db.get_schema_from_table(test_table)
                 self.assertEqual(new_schema, expected_schema)
             except:
-                print 'ERROR: protocol %s'%server.config.protocol
+                logger.log_error('Protocol %s'%server.config.protocol)
                 raise
             
     def skip_test_GetResultsFromQuery(self):
@@ -413,8 +411,6 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
     
     def skip_test_DoQuery(self):
         pass
-
-    
 
 
 if __name__ == '__main__':

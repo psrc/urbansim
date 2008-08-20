@@ -15,7 +15,8 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -76,16 +77,10 @@ class CacheConfiguration(Configuration):
 #                'urbansim_constants': 1995,
 #                },
             ),
-        'input_configuration': DatabaseConfiguration(
-            host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name     = os.environ.get('MYSQLUSERNAME',''),
-            password      = os.environ.get('MYSQLPASSWORD',''),
+        'scenario_database_configuration': ScenarioDatabaseConfiguration(
             database_name = "psrc_activity2006_ver2" # 2006 PSRC Activity Survey for households_for_estimation,
             ),
-        'output_configuration':DatabaseConfiguration(
-            host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name = os.environ.get('MYSQLUSERNAME',''),
-            password = os.environ.get('MYSQLPASSWORD',''),
+        'estimation_database_configuration':EstimationDatabaseConfiguration(
             database_name = 'PSRC_2000_parcels_estimation_output',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(

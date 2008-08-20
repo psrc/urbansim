@@ -20,7 +20,7 @@ from shutil import rmtree
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
 
@@ -31,9 +31,7 @@ if does_test_database_server_exist(module_name=__name__):
         def setUp(self):
             self.database_name = 'test_travel_model_input_file_writer'
             
-            self.dbconfig = DatabaseServerConfiguration(
-                 protocol = 'mysql',
-                 test = True)
+            self.dbconfig = TestDatabaseConfiguration()
             
             self.db_server = DatabaseServer(self.dbconfig)
             
@@ -55,14 +53,11 @@ if does_test_database_server_exist(module_name=__name__):
                 rmtree(self.tempdir_path)
     
         def test_create_tripgen_travel_model_input_file(self):
-            from urbansim.datasets.gridcell_dataset import GridcellDataset
-            from urbansim.datasets.job_dataset import JobDataset
-            from urbansim.datasets.household_dataset import HouseholdDataset
-            from urbansim.datasets.constant_taz_column_dataset import ConstantTazColumnDataset
             
             in_storage = StorageFactory().get_storage(
                   'sql_storage',
                   storage_location = self.database)
+
             sc = SessionConfiguration(new_instance=True,
                                  package_order = ['urbansim', 'psrc'],
                                  in_storage=in_storage)
@@ -77,17 +72,17 @@ if does_test_database_server_exist(module_name=__name__):
             logger.log_status('tazdata path: ', self.tempdir_path)
             # expected values - data format: {zone:{column_value:value}}
             expected_tazdata = {1:{101: 19.9, 
-                                   102: 2, 103: 0, 104:1, 105:0,
-                                   106: 3, 107:11, 109:1, 
-                                   110:0, 111:0, 112:0, 113:0, 114:0, 
-                                   115:0, 116:0, 117:0, 118:0, 119:0, 
-                                   120:2, 121:42, 122:0, 123:0, 124:11}, 
+                                   102: 2., 103: 0., 104:1., 105:0.,
+                                   106: 3., 107:11., 109:1., 
+                                   110:0., 111:0., 112:0., 113:0., 114:0., 
+                                   115:0., 116:0., 117:0., 118:0., 119:0., 
+                                   120:2., 121:42., 122:0., 123:0., 124:11.}, 
                                 2:{101: 29.9, 
-                                   102: 0, 103: 2, 104:1, 105:3,
-                                   106: 1, 107:3, 109:0, 
-                                   110:0, 111:0, 112:0, 113:3, 114:0, 
-                                   115:0, 116:0, 117:0, 118:1, 119:1, 
-                                   120:0, 121:241, 122:0, 123:0, 124:3}}
+                                   102: 0., 103: 2., 104:1., 105:3.,
+                                   106: 1., 107:3., 109:0., 
+                                   110:0., 111:0., 112:0., 113:3., 114:0., 
+                                   115:0., 116:0., 117:0., 118:1., 119:1., 
+                                   120:0., 121:241., 122:0., 123:0., 124:3.}}
             
             # get real data from file
             real_tazdata = {1:{},2:{}}
@@ -98,55 +93,114 @@ if does_test_database_server_exist(module_name=__name__):
                     zone_id = int(numbers[0])
                     column_var = int(numbers[1])
                     value = float(numbers[2])
-                    real_tazdata[zone_id][column_var] = value
+                    if value != -1:
+                        real_tazdata[zone_id][column_var] = value
     
             for zone in expected_tazdata.keys():
                 for col_var in expected_tazdata[zone].keys():
                     self.assertAlmostEqual(real_tazdata[zone][col_var], expected_tazdata[zone][col_var], 3,\
                                            "zone %d, column variable %d did not match up."%(zone, col_var))
-        
-
+                        
         def create_households_table(self, database):
-            database.DoQuery("drop table if exists households")
-            database.DoQuery("create table households (household_id int(11), zone_id int(11), income int(11), year int(11))")
-            database.DoQuery("insert into households values(1, 1, 10, 2000), (2, 1, 11, 2000), (3, 2, 12, 2000), (4, 2, 13, 2000), (5, 2, 14, 2000), (6, 1, 15, 2000), (7, 2, 16, 2000), (8, 2, 16, 2000), (9, 2, 17, 2000)")
+            database.drop_table("households")
+            schema = {
+                      'household_id': 'INTEGER',
+                      'zone_id': 'INTEGER',
+                      'income': 'INTEGER',
+                      'year': 'INTEGER',
+            }
+            database.create_table_from_schema('households', schema)
+            values = [{'household_id':a, 'zone_id':b, 'income':c, 'year':d} for a,b,c,d in \
+                         [(1, 1, 10, 2000), (2, 1, 11, 2000), (3, 2, 12, 2000), (4, 2, 13, 2000), (5, 2, 14, 2000), (6, 1, 15, 2000), (7, 2, 16, 2000), (8, 2, 16, 2000), (9, 2, 17, 2000)]]
+            households = database.get_table('households')
+            database.engine.execute(households.insert(), values) 
             # 9 houses total
             #incomes: 10, 11, 12, 13, 14, 15, 16, 16, 17
             # med=14, low_med=11.5, upper_med=16
             # in zone_1: 1,2,6
 
         def create_zones_table(self, database):
-            database.DoQuery("drop table if exists zones")
-            database.DoQuery("create table zones (zone_id int(11))")
-            database.DoQuery("insert into zones values (1), (2)")   
+            database.drop_table('zones')
+            schema = {
+                      'zone_id': 'INTEGER',
+            }
+            database.create_table_from_schema('zones', schema)
+            
+            zones = database.get_table('zones')
+            values = [{'zone_id':1}, {'zone_id':2}]
+            database.engine.execute(zones.insert(), values)
 
         def create_employment_sector_groups_table(self, database):
-            database.DoQuery("drop table if exists employment_sectors")
-            database.DoQuery("create table employment_sectors (sector_id int(11))")
-            database.DoQuery("insert into employment_sectors values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19)")
+            database.drop_table('employment_sectors')
+            schema = {
+                      'sector_id': 'INTEGER',
+            }
+            database.create_table_from_schema('employment_sectors', schema)
+            values = [{'sector_id':i} for i in range(1,20)]
+            employment_sectors = database.get_table('employment_sectors')
+            database.engine.execute(employment_sectors.insert(), values)            
             
-            
-            database.DoQuery("drop table if exists employment_adhoc_sector_groups")
-            database.DoQuery("create table employment_adhoc_sector_groups (group_id int(11), name varchar(16))")
-            database.DoQuery("insert into employment_adhoc_sector_groups values (2, 'retail'), (21, 'manu'), (22, 'wtcu'), (24, 'fires'), (25, 'gov'), (26, 'edu')")
+            database.drop_table('employment_adhoc_sector_groups')
+            schema = {
+                      'group_id': 'INTEGER',
+                      'name': 'TEXT'
+            }
+            database.create_table_from_schema('employment_adhoc_sector_groups', schema)
+            values = [{'group_id':a, 'name':b} for a,b in [(2, 'retail'), (21, 'manu'), (22, 'wtcu'), (24, 'fires'), (25, 'gov'), (26, 'edu')]]
+            employment_sectors = database.get_table('employment_adhoc_sector_groups')
+            database.engine.execute(employment_sectors.insert(), values)            
 
-            database.DoQuery("drop table if exists employment_adhoc_sector_group_definitions")
-            database.DoQuery("create table employment_adhoc_sector_group_definitions (sector_id int(11), group_id int(11))")
-            database.DoQuery("insert into employment_adhoc_sector_group_definitions values (7, 2), (14, 2), (3,21), (4,21), (5,21), (6,22), (8,22), (9,22), (10,22), (11,24), (12,24), (13,24), (16,24), (17,24), (18,25), (15,26), (19,26)")
-            
+            schema = {
+                      'sector_id': 'INTEGER',
+                      'group_id': 'INTEGER',
+            }            
+            database.drop_table('employment_adhoc_sector_group_definitions')
+            database.create_table_from_schema('employment_adhoc_sector_group_definitions', schema)
+            values = [{'sector_id':a, 'group_id':b} for a,b in [(7, 2), (14, 2), (3,21), (4,21), (5,21), (6,22), (8,22), (9,22), (10,22),  (11,24), (12,24), (13,24), (16,24), (17,24), (18,25), (15,26), (19,26)]]
+            employment_sectors = database.get_table('employment_adhoc_sector_group_definitions')
+            database.engine.execute(employment_sectors.insert(), values)            
+
+
         def create_jobs_table(self, database):
-            database.DoQuery("drop table if exists jobs")
-            database.DoQuery("create table jobs (job_id int(11), zone_id int(11), sector_id int(11), year int(11))")
-            database.DoQuery("insert into jobs values (1, 1, 1, 2000), (2, 1, 3, 2000), (3, 1, 4, 2000), (4, 1, 7, 2000), (5, 2, 9, 2000), " + \
-                             "(6, 2, 11, 2000), (7, 2, 15, 2000), (8, 2, 16, 2000), (9, 2, 17, 2000)")
+            database.drop_table('jobs')
+            schema = {
+                      'job_id': 'INTEGER',
+                      'zone_id': 'INTEGER',
+                      'sector_id': 'INTEGER',
+                      'year': 'INTEGER',
+            }
+            database.create_table_from_schema('jobs', schema)
+
+            values = [{'job_id':1, 'zone_id':1, 'sector_id':1, 'year':2000}, 
+                      {'job_id':2, 'zone_id':1, 'sector_id':3, 'year':2000}, 
+                      {'job_id':3, 'zone_id':1, 'sector_id':4, 'year':2000}, 
+                      {'job_id':4, 'zone_id':1, 'sector_id':7, 'year':2000}, 
+                      {'job_id':5, 'zone_id':2, 'sector_id':9, 'year':2000},
+                      {'job_id':6, 'zone_id':2, 'sector_id':11, 'year':2000}, 
+                      {'job_id':7, 'zone_id':2, 'sector_id':15, 'year':2000}, 
+                      {'job_id':8, 'zone_id':2, 'sector_id':16, 'year':2000}, 
+                      {'job_id':9, 'zone_id':2, 'sector_id':17, 'year':2000}]
+            jobs = database.get_table('jobs')
+            database.engine.execute(jobs.insert(), values)
     
         def create_constant_taz_columns_table(self, database):
-            database.DoQuery("drop table if exists constant_taz_columns")
-            database.DoQuery("create table constant_taz_columns (`TAZ` int(11), `PCTMF` double, `GQI` int(11), `GQN` int(11), " + \
-                             "`FTEUNIV` int(11), `DEN` int(11), `FAZ` int(11), `YEAR` int(11))")
-            database.DoQuery("insert into constant_taz_columns values " + \
-                             "(1, 19.9, 3, 11, 42, 1, 1, 2000), " + \
-                             "(2, 29.9, 1, 3, 241, 2, 2, 2000)")
+            database.drop_table('constant_taz_columns')
+            schema = {
+                      'TAZ': 'INTEGER',
+                      'PCTMF': 'FLOAT',
+                      'GQI': 'INTEGER',
+                      'GQN': 'INTEGER',
+                      'FTEUNIV': 'INTEGER',
+                      'DEN': 'INTEGER',
+                      'FAZ': 'INTEGER',
+                      'YEAR': 'INTEGER',
+            }
+            database.create_table_from_schema('constant_taz_columns', schema)
+            values = [{'TAZ':a, 'PCTMF':b, 'GQI':c, 'GQN':d, 'FTEUNIV':e, 'DEN':f, 'FAZ':g, 'YEAR':h} for a,b,c,d,e,f,g,h in \
+                        [(1, 19.9, 3, 11, 42, 1, 1, 2000),(2, 29.9, 1, 3, 241, 2, 2, 2000)]
+                      ]
+            constant_taz_columns = database.get_table('constant_taz_columns')
+            database.engine.execute(constant_taz_columns.insert(), values)
                                                                                        
 
 if __name__ == "__main__":

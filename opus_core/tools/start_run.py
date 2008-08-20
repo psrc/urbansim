@@ -50,8 +50,8 @@ if __name__ == "__main__":
     option_group = StartRunOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
-
-    run_manager = RunManager(options)
+    
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
     run_as_multiprocess = not options.run_as_single_process
     
     if options.pickled_resource_file is not None:

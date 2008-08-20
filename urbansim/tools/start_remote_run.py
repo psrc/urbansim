@@ -20,12 +20,9 @@ import socket
 from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import module_path_from_opus_path, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
-from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
-from numpy import arange, where, logical_and
 from nturl2path import pathname2url
 from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists, _makedirs
 import paramiko
@@ -105,7 +102,6 @@ class RemoteRun:
         
         self.urbansim_server_config = urbansim_server_config
         self.travelmodel_server_config = travelmodel_server_config
-        self.services_db_config = services_db_config
         
         self.ssh = {}
         if not self.is_localhost(self.urbansim_server_config['hostname']):
@@ -114,7 +110,7 @@ class RemoteRun:
         if not self.is_localhost(self.travelmodel_server_config['hostname']):
             self.ssh['travelmodel_server'] = self.get_ssh_client(None, self.travelmodel_server_config)
             
-        self.services_db_config = DatabaseConfiguration(
+        self.services_db_config = ServicesDatabaseConfiguration(
                                         host_name=services_db_config['hostname'], 
                                         user_name=services_db_config['username'],
                                         password=services_db_config['password'],
@@ -359,7 +355,6 @@ class RemoteRun:
         return self._run_manager
 
 if __name__ == "__main__":
-    from opus_core.services.run_server.run_manager import RunManager
 
     try: import wingdbstub
     except: pass

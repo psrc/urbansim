@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from urbansim.configs.config_changes_for_estimation import ConfigChangesForEstimation
 from urbansim.configurations.land_price_model_configuration_creator import LandPriceModelConfigurationCreator
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
@@ -24,7 +24,7 @@ class BaselineEstimation(Baseline):
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
         
         self['cache_directory'] = '/Users/hana/urbansim_cache/eugene/eugene_1980_baseyear_cache'
-        self['output_configuration'] = DatabaseConfiguration(
+        self['estimation_database_configuration'] = EstimationDatabaseConfiguration(
                                                              database_name = 'eugene_1980_baseyear_estimation_xxx',
                                                              )
     

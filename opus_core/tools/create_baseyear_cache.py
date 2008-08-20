@@ -39,7 +39,7 @@ class CreateBaseyearCache(object):
             'CacheScenarioDatabase'))
         
         CacheScenarioDatabase().run(config)
-        logger.log_status("Database %s cached to %s" % (config['input_configuration'].database_name,
+        logger.log_status("Database %s cached to %s" % (config['scenario_database_configuration'].database_name,
                            config['cache_directory']))
                            
         return config['cache_directory']

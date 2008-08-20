@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 from psrc.config.wlcm_config import run_configuration
 
@@ -52,15 +52,10 @@ config_changes = {
                     },
         },
 
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'GSPSRC_2000_baseyear_change_20060924_wlcm_init',
         ),
-#    'output_configuration':DatabaseConfiguration(
-#        host_name = "trondheim.cs.washington.edu", #os.environ['MYSQLHOSTNAME'],
-#        user_name = os.environ.get('MYSQLUSERNAME',''),
-#        password = os.environ.get('MYSQLPASSWORD',''),
-#        database_name = 'GSPSRC_2000_baseyear_change_20060924_wlcm_init',
-#        ),
+
     'datasets_to_cache_after_each_model':['person'],
     'low_memory_mode':True,
     'base_year': 2000,

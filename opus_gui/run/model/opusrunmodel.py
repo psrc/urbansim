@@ -19,7 +19,7 @@ import os, sys
 from opus_gui.exceptions.formatter import formatExceptionInfo
 
 try:
-    from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+    from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from opus_core.configurations.xml_configuration import XMLConfiguration
@@ -167,7 +167,7 @@ class OpusModel(object):
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
-                server_config = GenericOptionGroup().parser.parse_args()[0]
+                server_config = ServicesDatabaseConfiguration()
                 run_manager = RunManager(server_config)
         
                 run_manager.setup_new_run(cache_directory = config['cache_directory'],

@@ -89,7 +89,8 @@ class ConvertDatabase(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class TestConvertDatabases(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -152,7 +153,7 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
             }
             
             
-        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
+        self.db_server = DatabaseServer(TestDatabaseConfiguration(protocol = 'mysql'))
         
         self.dbs = []
         for db_name in self.test_db_names:
@@ -268,7 +269,7 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        ConvertDatabase().convert_databases(DatabaseServerConfiguration(protocol='mysql'), self.config)
+        ConvertDatabase().convert_databases(TestDatabaseConfiguration(protocol='mysql'), self.config)
         
         for db_name in self.config['databases']:
             db = self.db_server.get_database(db_name)

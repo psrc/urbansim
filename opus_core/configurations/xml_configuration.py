@@ -671,7 +671,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        db_config = config['input_configuration']
+        db_config = config['scenario_database_configuration']
         self.assertEqual(db_config.protocol, 'mysql')
         self.assertEqual(db_config.host_name, 'bigserver')
         self.assertEqual(db_config.user_name, 'fred')
@@ -682,7 +682,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # like test_class_element, but with an additional layer of categorization in the xml
         f = os.path.join(self.test_configs, 'database_configuration_with_categories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        db_config = config['input_configuration']
+        db_config = config['scenario_database_configuration']
         self.assertEqual(db_config.protocol, 'mysql')
         self.assertEqual(db_config.host_name, 'bigserver')
         self.assertEqual(db_config.user_name, 'fred')

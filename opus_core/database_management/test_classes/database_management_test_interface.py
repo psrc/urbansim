@@ -14,11 +14,8 @@
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-
-from sqlalchemy.schema import Table
-from sqlalchemy.types import Integer, SmallInteger, Float, Numeric, \
-    VARCHAR, Boolean, CLOB, DateTime
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
+from opus_core.database_management.configurations.database_server_configuration import get_default_database_engine
 
 
 base_schema = {
@@ -39,11 +36,12 @@ base_scenario_information_schema = {
     'parent_database_url':'VARCHAR'
 }
 
+
 class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
     def setUp(self):        
         self.databases = ['db_chain_son', 'db_chain_dad', 'db_chain_granddad']
         
-        self.config = DatabaseServerConfiguration(test = True)
+        self.config = TestDatabaseConfiguration(protocol = get_default_database_engine())
         self.server = DatabaseServer(self.config)
         self._create_databases()
         self.db_chain_granddad = self.server.get_database('db_chain_granddad')

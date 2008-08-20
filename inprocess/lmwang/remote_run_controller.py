@@ -18,12 +18,9 @@ import copy
 import getpass
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
-from opus_core.misc import module_path_from_opus_path
 from opus_core.fork_process import ForkProcess
-from numpy import arange, where, logical_and
 
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -78,7 +75,7 @@ if __name__ == "__main__":
     #this line will be executed in shell and return the absolute path for restart_run.py
     restart_run_py = r"`python -c \"from opus_core.misc import module_path_from_opus_path; print module_path_from_opus_path('urbansim.tools.restart_run')\"`"
 
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
 
     if options.run_id is not None:
         run_id = options.run_id

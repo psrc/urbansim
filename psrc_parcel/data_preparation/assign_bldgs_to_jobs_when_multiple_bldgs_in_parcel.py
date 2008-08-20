@@ -20,27 +20,17 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.datasets.dataset import Dataset
-from opus_core.misc import unique_values, create_combination_indices
+from opus_core.misc import unique_values
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
 from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
-
-class DB_settings(object):
-    db_host_name='trondheim.cs.washington.edu'
-    db_user_name=os.environ['MYSQLUSERNAME']
-    db_password =os.environ['MYSQLPASSWORD']
 
 class MysqlStorage:
     def get(self, database):
-        db_config = DatabaseServerConfiguration(
-            host_name = DB_settings.db_host_name,
-            user_name = DB_settings.db_user_name,
-            password = DB_settings.db_password                                              
-        )
+        db_config = ScenarioDatabaseConfiguration()
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(database)
         

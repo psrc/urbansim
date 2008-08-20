@@ -13,12 +13,11 @@
 # 
 
 from numpy import array, arange
-from opus_core.configuration import Configuration
 from psrc_parcel.configs.baseline import Baseline
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.simulation_state import SimulationState
 from opus_core.storage_factory import StorageFactory
@@ -31,15 +30,9 @@ class ExpandPersons(object):
     """This class creates a persons table from households by inserting 1 record for each worker in a household"""
     ## TODO: Is this class in use?
     def __init__(self, config):
-        if 'output_configuration' in config:
-#            config = Baseline()
-            db_config = DatabaseServerConfiguration(
-                host_name=config['output_configuration'].host_name,
-                user_name=config['output_configuration'].user_name,
-                password=config['output_configuration'].password                                                    
-            )
-            db_server = DatabaseServer(db_config)
-            db = db_server.get_database(config['output_configuration'].database_name)
+        if 'estimation_database_configuration' in config:
+            db_server = DatabaseServer(config['estimation_database_configuration'])
+            db = db_server.get_database(config['estimation_database_configuration'].database_name)
         
             out_storage = StorageFactory().build_storage_for_dataset(
                 type='sql_storage', storage_location=db)
@@ -100,10 +93,10 @@ class ExpandPersons(object):
 if __name__ == '__main__':
     config = Baseline()
     config.replace({
-        'input_configuration': DatabaseConfiguration(
+        'scenario_database_configuration': ScenarioDatabaseConfiguration(
             database_name = 'psrc_2005_parcel_baseyear',
             ),
-        'output_configuration': DatabaseConfiguration(
+        'estimation_database_configuration': EstimationDatabaseConfiguration(
             database_name = 'psrc_2005_parcel_baseyear_change_20080219',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
@@ -118,5 +111,5 @@ if __name__ == '__main__':
         },
     )
 
-#    del config['output_configuration']['db_output_database']
+#    del config['estimation_database_configuration']['db_output_database']
     ExpandPersons(config)

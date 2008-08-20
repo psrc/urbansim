@@ -352,9 +352,9 @@
   <scenario_manager>
     <default_scenario type="scenario">
       <data parser_action="category" type="dictionary" cloneable="True">
-        <baseyear_database config_name="input_configuration" type="class">
-          <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.database_configuration</Class_path>
+        <baseyear_database config_name="scenario_database_configuration" type="class">
+          <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
           <protocol type="string" />
           <host_name type="string" />
           <user_name type="string" />
@@ -431,14 +431,6 @@
             <tables_to_copy_to_previous_years type="dictionary" />
           </creating_baseyear_cache_configuration>
         </cache_configuration>
-        <services_configuration parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">ServicesConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.services_configuration_creator</Class_path>
-          <host_name type="string" />
-          <user_name type="string" />
-          <db_password type="password" />
-          <database_name type="string">services</database_name>
-        </services_configuration>
       </data>
       <model_system parser_action="category" type="dictionary">
         <models_to_run config_name="models" type="selectable_list">

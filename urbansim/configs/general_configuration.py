@@ -13,15 +13,12 @@
 #
 
 import os
-
-from numpy import array
-
 from opus_core.configuration import Configuration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 
-from urbansim.configurations.services_configuration_creator import ServicesConfigurationCreator
 from urbansim.configurations.land_price_model_configuration_creator import LandPriceModelConfigurationCreator
 from urbansim.configurations.events_coordinator_configuration_creator import EventsCoordinatorConfigurationCreator
 from urbansim.configurations.prescheduled_events_configuration_creator import PrescheduledEventsConfigurationCreator
@@ -220,11 +217,6 @@ class GeneralConfiguration(Configuration):
                     },
                 },
             'model_system':'urbansim.model_coordinators.model_system',
-            'services_configuration': ServicesConfigurationCreator(
-                host_name = os.environ.get('MYSQLHOSTNAME', 'localhost'),
-                user_name = os.environ.get('MYSQLUSERNAME', 'urbansim'),
-                database_name = 'services',
-                ).execute(),
             'models':[ # models are executed in the same order as in this list
                 "prescheduled_events",
                 "events_coordinator",
@@ -280,6 +272,7 @@ class GeneralConfiguration(Configuration):
                 package_order=['urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
+            'services_database_configuration':ServicesDatabaseConfiguration(),
             }
 
         return config
@@ -292,7 +285,8 @@ class Tests(opus_unittest.OpusTestCase):
     def test(self):
         config = GeneralConfiguration()
         self.assert_('models' in config)
-        self.assert_('input_configuration' not in config)
+        self.assert_('scenario_database_configuration' not in config)
+        self.assert_('estimation_database_configuration' not in config)
         
         
 if __name__ == '__main__':

@@ -15,7 +15,7 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
@@ -25,7 +25,7 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 class TestRunEstimationConfig(Configuration):
     def __init__(self):
         Configuration.__init__(self, data = {
-            'input_configuration':DatabaseConfiguration(
+            'scenario_database_configuration':ScenarioDatabaseConfiguration(
                 database_name = "washtenaw_class",
                 ),
             'datasets_to_cache_after_each_model':[],

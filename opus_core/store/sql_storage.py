@@ -135,10 +135,12 @@ class sql_storage(Storage):
                 col = Column(column_name,col_type)
                 columns.append(col)
                 
-            if column_data.dtype == 'i':
+            if column_data.dtype.kind == 'i':
                 table_data[column_name] = [int(cell) for cell in column_data]
-            elif column_data.dtype == 'f':
+            elif column_data.dtype.kind == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
+            elif column_data.dtype.kind == 'S':
+                table_data[column_name] = [str(cell) for cell in column_data]
         
         if db.table_exists(table_name):
             db.drop_table(table_name)
@@ -192,17 +194,6 @@ class sql_storage(Storage):
         db = self._get_db()
         tables = db.get_tables_in_database()
         self._dispose_db(db)
-        
-        # MSSQL hacking by Jesse
-        # The three items in mssql_system_tables are tables (and views) created in
-        # every MSSQL database.  A user should never need to cache or otherwise
-        # work with these tables in OPUS (as far as I know), so I am filtering them 
-        # out here.
-        if self.database_server_config.protocol == 'mssql':
-            mssql_system_tables = [u'sysconstraints', u'dtproperties', u'syssegments']
-            for i in mssql_system_tables:
-                if i in tables:
-                    tables.remove(i)
         
         return tables
     
@@ -259,7 +250,7 @@ else:
 
     from opus_core.store.storage import TestStorageInterface
     from opus_core.database_management.database_server import DatabaseServer
-    from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration, _get_installed_database_engines
+    from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration, get_testable_engines
     
     class SQLStorageTest(TestStorageInterface):
         """
@@ -268,10 +259,8 @@ else:
         def setUp(self):
 
             db_configs = []
-            for engine in _get_installed_database_engines():
-                if engine == 'mssql' or engine == 'postgres' or engine=='sqlite': continue
-                config = DatabaseServerConfiguration(protocol = engine,
-                                                     test = True)
+            for engine in get_testable_engines():
+                config = TestDatabaseConfiguration(protocol = engine)
                 db_configs.append(config)
             
             self.database_name = 'test_database'
@@ -330,6 +319,7 @@ else:
         
                     self.assertEqual(expected_results, results)
                 except:
+                    db.drop_table('test_write_table')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
                     
@@ -346,15 +336,21 @@ else:
                         )
                         
                                     
-                    expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
+                    if db.database_server_config.protocol == 'sqlite':
+                        from decimal import Decimal
+                        
+                        expected_results = [(1,Decimal(str(1.1)),'bar'), (2,Decimal(str(2.2)),'foo')]
+                    else:
+                        expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
                     
                     # Verify the data through a DatabaseServer database connection        
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
                     results = db.execute(s).fetchall()
-        
+                    
                     self.assertEqual(expected_results, results)
                 except:
+                    db.drop_table('test_write_table')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
                 
@@ -395,6 +391,7 @@ else:
                     tbl = db.get_table('test_write_table')
                     self.assertFalse(tbl.c.id.primary_key)
                 except:
+                    db.drop_table('test_write_table')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
 
@@ -426,6 +423,7 @@ else:
         
                     self.assertEqual(expected_results, results)
                 except:
+                    db.drop_table('test_write_table')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise                        
         def test_get_sql_alchemy_type_from_numpy_dtype(self):
@@ -473,13 +471,17 @@ else:
                     storage.write_table('table1', {'a':array([1])})
                     storage.write_table('table2', {'a':array([1])})
                     storage.write_table('table3', {'a':array([1])})
-                        
+                    
                     expected_table_names = ['table1', 'table2', 'table3']
+                    
                     actual_table_names = storage.get_table_names()
                         
                     self.assertEqual(Set(expected_table_names), Set(actual_table_names))
                     self.assertEqual(len(expected_table_names), len(actual_table_names))
                 except:
+                    db.drop_table('table1')
+                    db.drop_table('table2')
+                    db.drop_table('table3')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
             
@@ -496,8 +498,13 @@ else:
                             }
                         )
                     
-                    db.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
-                    
+                    schema = {
+                        'foo': 'INTEGER',
+                        'boo': 'INTEGER',
+                        'fooboobar': 'INTEGER'
+                    }
+                    db.create_table_from_schema(table_name = 'bar', table_schema = schema)
+                                        
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'foo':1, 'boo':1, 'fooboobar':1})
                     db.execute(i)
@@ -514,6 +521,8 @@ else:
                     self.assertEqual(Set(expected_table_names), Set(actual_table_names))
                     self.assertEqual(len(expected_table_names), len(actual_table_names))
                 except:
+                    db.drop_table('foo')
+                    db.drop_table('bar')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
             
@@ -521,8 +530,13 @@ else:
             for db, server, storage in self.dbs:
                 try:
 
-                    db.execute('CREATE TABLE foo (a INT, b INT, c INT)')
-                                
+                    schema = {
+                        'a': 'INTEGER',
+                        'b': 'INTEGER',
+                        'c': 'INTEGER'
+                    }
+                    db.create_table_from_schema(table_name = 'foo', table_schema = schema)
+                                                    
                     tbl = db.get_table('foo')        
                     i = tbl.insert(values = {'a':1, 'b':2, 'c':3})
                     db.execute(i)
@@ -537,6 +551,8 @@ else:
                     
                     self.assertDictsEqual(expected_data, actual_data)
                 except:
+                    db.drop_table('foo')
+
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
             
@@ -544,8 +560,13 @@ else:
             for db, server, storage in self.dbs:
                 try:
 
-                    db.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
-        
+                    schema = {
+                        'd': 'INTEGER',
+                        'e': 'FLOAT',
+                        'f': 'TEXT'
+                    }
+                    db.create_table_from_schema(table_name = 'bar', table_schema = schema)
+                            
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
                     db.execute(i)
@@ -560,14 +581,20 @@ else:
                     
                     self.assertDictsEqual(expected_data, actual_data)
                 except:
+                    db.drop_table('bar')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
 
         def test_load_table_returns_nothing_when_no_cols_specified(self):
             for db, server, storage in self.dbs:
                 try:
-                    db.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
-                    
+                    schema = {
+                        'd': 'INTEGER',
+                        'e': 'FLOAT',
+                        'f': 'TEXT'
+                    }
+                    db.create_table_from_schema(table_name = 'bar', table_schema = schema)
+                                        
                     tbl = db.get_table('bar')        
                     i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
                     db.execute(i)
@@ -578,6 +605,7 @@ else:
                     
                     self.assertDictsEqual(expected_data, actual_data)            
                 except:
+                    db.drop_table('bar')
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise
                     

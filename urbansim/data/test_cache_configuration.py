@@ -15,7 +15,8 @@
 import os
 
 from opus_core.opus_package_info import package
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
@@ -56,7 +57,7 @@ class TestCacheConfiguration(GeneralConfiguration):
                 {   'employment_location_choice_model': {   'group_members': '_all_'}},
                 'distribute_unplaced_jobs_model',
                 ],
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'eugene_1980_baseyear',
                 ),
             'cache_directory': cache_directory,

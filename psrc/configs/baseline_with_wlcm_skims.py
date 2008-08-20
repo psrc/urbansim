@@ -15,15 +15,15 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 from psrc.config.wlcm_config import run_configuration as config
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
-db_server = DatabaseServer(DatabaseServerConfiguration())
+db_server = DatabaseServer(ScenarioDatabaseConfiguration())
 db = db_server.get_database('PSRC_2000_baseyear')
         
 config_changes = {
@@ -104,7 +104,7 @@ config_changes = {
         tables_to_cache_nchunks = {'gridcells': 4},
         tables_to_copy_to_previous_years = {},
         ),
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'PSRC_2000_baseyear',
         ),
     'base_year':2000,

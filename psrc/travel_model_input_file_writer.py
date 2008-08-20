@@ -13,13 +13,10 @@
 #
 
 import os
-import string
-import sys
 import time
 from opus_core.logger import logger
 from numpy import logical_or, logical_and, logical_not, array, where, zeros, median
 from opus_core.datasets.dataset import DatasetSubset
-from opus_core.variables.variable_name import VariableName
 
 class TravelModelInputFileWriter(object):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
@@ -39,7 +36,7 @@ class TravelModelInputFileWriter(object):
             missing_dataset = 'household'
             household_set = dataset_pool.get_dataset("household")
         except:
-            raise "Dataset %s is missing from dataset_pool" % missing_dataset
+            raise Exception("Dataset %s is missing from dataset_pool" % missing_dataset)
         
         """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
         full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')

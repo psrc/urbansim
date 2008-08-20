@@ -20,7 +20,6 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager
 from opus_core.database_management.database_server import DatabaseServer
 
@@ -33,16 +32,11 @@ class CacheScenarioDatabase(Model):
         
         #import pydevd;pydevd.settrace()
         
-        server_configuration = DatabaseServerConfiguration(
-            host_name = config['input_configuration'].host_name,
-            user_name = config['input_configuration'].user_name,
-            password = config['input_configuration'].password
-        )
-        base_scenario_database_name = config['input_configuration'].database_name
+        server_configuration = config['scenario_database_configuration']
         
         scenario_database_manager = ScenarioDatabaseManager(
             server_configuration = server_configuration, 
-            base_scenario_database_name = base_scenario_database_name                                                         
+            base_scenario_database_name = server_configuration.database_name                                                         
         )
         
         self.database_server = DatabaseServer(server_configuration)

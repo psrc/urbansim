@@ -31,3 +31,6 @@ class AbstractDatabaseEngineManager(object):
     
     def create_default_database_if_absent(self, server_config):
         raise Exception('method not implemented')
+    
+    def get_tables_in_database(self, metadata):
+        return metadata.tables.keys()

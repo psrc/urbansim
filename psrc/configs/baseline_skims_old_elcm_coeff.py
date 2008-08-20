@@ -15,16 +15,16 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 config = AbstractUrbansimConfiguration()
-db_server = DatabaseServer(DatabaseServerConfiguration())
+db_server = DatabaseServer(ScenarioDatabaseConfiguration())
 db = db_server.get_database('PSRC_2000_baseyear_old_elcm_coeff')
 config_changes = {
     'description':'baseline with skims using old coefficients',
@@ -98,7 +98,7 @@ config_changes = {
         tables_to_cache_nchunks = {'gridcells': 1},
         tables_to_copy_to_previous_years = {},
         ),
-    'input_configuration': DatabaseConfiguration(
+    'scenario_database_configuration': ScenarioDatabaseConfiguration(
         database_name = 'PSRC_2000_baseyear_old_elcm_coeff',
         ),
     'base_year':2000,

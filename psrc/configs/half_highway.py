@@ -19,7 +19,7 @@ class HalfHighway(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['description'] = 'double-capacity highway with baseline travel model'
-        self['input_configuration'].database_name = 'PSRC_2000_baseyear'
+        self['scenario_database_configuration'].database_name = 'PSRC_2000_baseyear'
 
         travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_highway_x_half')
         self['travel_model_configuration'] = travel_model_configuration

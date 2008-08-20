@@ -19,7 +19,7 @@ class NoUgbOneAndHalfHighway(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['description'] = 'no ugb + 1.5 x baseline highway capacity'
-        self['input_configuration'].database_name = 'PSRC_2000_scenario_A_no_ugb'
+        self['scenario_database_configuration'].database_name = 'PSRC_2000_scenario_A_no_ugb'
 
         travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_highway_x_1.5')
         self['travel_model_configuration'] = travel_model_configuration

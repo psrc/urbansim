@@ -14,16 +14,13 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
-from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
-from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
     'cache_directory' : '/urbansim_cache/psrc_parcel/estimation/', # change or leave out
-    'output_configuration': DatabaseConfiguration(
+    'estimation_database_configuration': EstimationDatabaseConfiguration(
         database_name = 'psrc_2005_parcel_baseyear_change_20071011',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(

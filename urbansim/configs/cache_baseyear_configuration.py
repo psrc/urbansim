@@ -109,12 +109,6 @@ class CacheBaseyearConfiguration(Configuration):
                 tables_to_cache_nchunks = {'gridcells':1},
                 tables_to_copy_to_previous_years = {},
                 ),
-            'services_configuration': {
-                'host_name':os.environ.get('MYSQLHOSTNAME', None),
-                'user_name':os.environ.get('MYSQLUSERNAME', None),
-                'db_password':os.environ.get('MYSQLPASSWORD', None),
-                'database_name':'services',
-                },
             'debuglevel':4,
             #'chunk_specification':{ # Default value
                 #'nchunks':1,

@@ -31,7 +31,7 @@ class ConfigDataPreparation(PsrcParcelConfiguration):
         config = PsrcParcelConfiguration()
         config['creating_baseyear_cache_configuration'].cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/run'
         config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache_tmp'
-        config['input_configuration'].database_name = 'psrc_2005_parcel_baseyear_data_prep_start'
+        config['scenario_database_configuration'].database_name = 'psrc_2005_parcel_baseyear_data_prep_start'
         config_changes = {
             'description':'data preparation for PSRC parcel (buildings)',
             'flush_variables': False,

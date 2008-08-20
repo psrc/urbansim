@@ -13,9 +13,10 @@
 # 
 
 import os
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 from urbansim_zone.configs.controller_config import UrbansimZoneConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -41,9 +42,8 @@ class Baseline(UrbansimZoneConfiguration):
                 {   'employment_location_choice_model': {   'group_members': '_all_'}},
                 'distribute_unplaced_jobs_model',
                 ],
-            'input_configuration': DatabaseConfiguration(
-                database_name = 'eugene_1980_baseyear_zone',
-                ),
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone'),
+
             #'cache_directory':'c:/opusworkspace/eugene',
             'cache_directory':'/Users/hana/urbansim_cache/eugene/baseyear_cache_zone',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

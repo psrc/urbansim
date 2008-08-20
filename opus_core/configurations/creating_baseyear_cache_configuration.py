@@ -32,14 +32,14 @@ class CreatingBaseyearCacheConfiguration(object):
             tables_to_cache = [],
             tables_to_cache_nchunks = {},
             tables_to_copy_to_previous_years = {},
-            input_configuration = None,
+            scenario_database_configuration = None,
             ):
             
         if baseyear_cache is None and not cache_from_mysql:
             raise TypeError("Parameter 'baseyear_cache' must be specified if "
                 "parameter 'cache_from_mysql' is not True!")
         
-        self.input_configuration = input_configuration
+        self.scenario_database_configuration = scenario_database_configuration
         self.baseyear_cache = baseyear_cache
         self.cache_directory_root = cache_directory_root
         self.cache_from_mysql = cache_from_mysql

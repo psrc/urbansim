@@ -14,21 +14,13 @@
 
 import os
 from numpy import where, ones, logical_and, array, median, resize, abs
-from opus_core.misc import unique_values
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-from opus_core.datasets.dataset import Dataset
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.logger import logger
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 class MysqlStorage:
     def get(self, database):
-        db_config = DatabaseServerConfiguration(
-            host_name = os.environ['MYSQLHOSTNAME'],
-            user_name = os.environ['MYSQLUSERNAME'],
-            password = os.environ['MYSQLPASSWORD']                                              
-        )
+        db_config = ScenarioDatabaseConfiguration()
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(database)
 

@@ -49,7 +49,7 @@ class ToolboxBase(object):
         self.dataManagerDBSTree = None
         self.generalManagerTree = None
 
-        gui_directory = os.path.join(os.environ['OPUS_HOME'], 'gui')
+        gui_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         if not os.path.exists(gui_directory):
             os.mkdir(gui_directory)
         self.gui_configuration_file = os.path.join(gui_directory, 'gui_config.xml')

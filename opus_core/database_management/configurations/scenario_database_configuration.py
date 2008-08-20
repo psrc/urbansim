@@ -1,5 +1,5 @@
 #
-# UrbanSim software. Copyright (C) 2005-2008 University of Washington
+# UrbanSim software. Copyright (C) 2005-2008 University of Washingtond
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -18,5 +18,9 @@ from opus_core.database_management.configurations.database_configuration import 
 
 class ScenarioDatabaseConfiguration(DatabaseConfiguration):
     
-    def _configuration_prefix(self):
-        return 'SCENARIO_'   
+    def _database_configuration_node(self):
+        return 'scenario_database_server'   
+
+if __name__ == '__main__':
+    config = ScenarioDatabaseConfiguration()
+    print config

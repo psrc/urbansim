@@ -14,13 +14,13 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 
 
@@ -109,7 +109,7 @@ class Baseline(GeneralConfiguration):
                     'urbansim_constants': 1995,
                     },
                 ),
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'PSRC_2000_baseyear',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(

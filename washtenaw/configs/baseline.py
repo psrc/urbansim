@@ -15,8 +15,7 @@
 import os
 from getpass import getuser
 from opus_core.logger import logger
-from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -110,7 +109,7 @@ class Baseline(GeneralConfiguration):
         config_changes = {
             'project_name':'washtenaw',
             'description':'Region Pilot Baseline',
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'washtenaw_class',
                 ),
             'models': [

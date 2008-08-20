@@ -14,7 +14,8 @@
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
@@ -37,7 +38,7 @@ class ModelConfig(GeneralConfiguration):
                 tables_to_copy_to_previous_years = {},
                 ),
             'models':[],  # run no urbansim models
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'PSRC_2000_baseyear',
                 ),
             'base_year':year,

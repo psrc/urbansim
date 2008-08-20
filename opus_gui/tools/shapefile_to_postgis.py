@@ -14,7 +14,7 @@
 
 import os, sys, subprocess
 from opus_gui.exceptions.formatter import formatExceptionInfo
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.indicators_database_configuration import IndicatorsDatabaseConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
 
 def opusRun(progressCB,logCB,params):
@@ -99,7 +99,7 @@ def get_nlt_option(geometry_type):
     return nlt_option
 
 def drop_table(table_name, dbname, schema):
-    dbserverconfig = DatabaseServerConfiguration(protocol='postgres')
+    dbserverconfig = IndicatorsDatabaseConfiguration(protocol='postgres')
     db = OpusDatabase(dbserverconfig, dbname)
     query = 'DROP TABLE %s.%s' % (schema, table_name)
     try:

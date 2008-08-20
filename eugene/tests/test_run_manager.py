@@ -22,9 +22,8 @@ from opus_core.tests import opus_unittest
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
@@ -87,7 +86,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
     ###       _do_run_simple_test_run() is no longer dependent on psrc.
 
     def setUp(self):
-        self.config = DatabaseConfiguration(database_name = 'eugene_services_test')
+        self.config = TestDatabaseConfiguration(database_name = 'eugene_services_test')
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
 
     def tearDown(self):

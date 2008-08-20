@@ -32,7 +32,7 @@ from urbansim.datasets.job_dataset import JobDataset
 from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
 
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 
 
 # Datasets
@@ -126,10 +126,7 @@ agents_psrc.summary()
 
 dbcon = []
 
-config = DatabaseServerConfiguration(
-    host_name=os.environ['MYSQLHOSTNAME'],
-    user_name=os.environ['MYSQLUSERNAME'],
-    password=os.environ['MYSQLPASSWORD'])
+config = ScenarioDatabaseConfiguration()
 server = DatabaseServer(config)
 db = server.get_database('PSRC_2000_baseyear')
                    

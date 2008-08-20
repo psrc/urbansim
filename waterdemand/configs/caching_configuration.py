@@ -36,4 +36,4 @@ class CachingConfiguration(Baseline):
             package_order=['waterdemand', 'psrc', 'urbansim', 'opus_core'],
             package_order_exceptions={},
             )
-        self['input_configuration'].database_name = 'bellevue_consump_agg_month_year'
+        self['scenario_database_configuration'].database_name = 'bellevue_consump_agg_month_year'

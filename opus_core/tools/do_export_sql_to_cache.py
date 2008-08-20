@@ -24,7 +24,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 if __name__ == '__main__':
     parser = OptionParser()
@@ -39,6 +39,19 @@ if __name__ == '__main__':
             'written (required).')
     parser.add_option('-y', '--cache_year', dest='cache_year', type='string',
         help="The attribute cache year into which to write the output (required).")
+    parser.add_option('-p', '--protocol', dest='protocol', type='string', default = None,
+        help='The password for the server on which the output database will '
+            "be created (default: estimation_database_configuration setup '').")
+    parser.add_option('-o', '--host', dest='host_name', type='string', default = None,
+        help="The host name of the server one which the output database will "
+            "be created (default: estimation_database_configuration setup "
+            "'localhost').")
+    parser.add_option('-u', '--user', dest='user_name', type='string', default = None,
+        help='The user name for the server on which the output database will '
+            "be created (default: estimation_database_configuration setup '').")
+    parser.add_option('-p', '--password', dest='password', type='string', default = None,
+        help='The password for the server on which the output database will '
+            "be created (default: estimation_database_configuration setup '').")
 
     (options, args) = parser.parse_args()
 
@@ -56,8 +69,13 @@ if __name__ == '__main__':
 
     if table_name is None:
         table_name = 'ALL'
-
-    dbserverconfig = DatabaseServerConfiguration()
+    
+    dbserverconfig = EstimationDatabaseConfiguration(
+        host_name = options.host_name,
+        user_name = options.user_name,           
+        password = options.password,
+        protocol = options.protocol  
+    )
     opusdb = OpusDatabase(dbserverconfig, db_name)
 
     input_storage = sql_storage(storage_location = opusdb)

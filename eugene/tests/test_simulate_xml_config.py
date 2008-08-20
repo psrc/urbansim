@@ -66,7 +66,7 @@ class SimulationTest(opus_unittest.OpusIntegrationTestCase):
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
-        run_manager = RunManager(options)
+        run_manager = RunManager(option_group.get_services_database_configuration(options))
         config = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
         insert_auto_generated_cache_directory_if_needed(config)
         run_manager.setup_new_run(cache_directory = config['cache_directory'],

@@ -22,13 +22,12 @@ from opus_core.misc import does_database_server_exist_for_this_hostname
 
 from psrc.configs.subset_configuration import SubsetConfiguration
 from eugene.tests.test_run_manager import _do_run_simple_test_run
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
-        hostname = SubsetConfiguration()['input_configuration'].host_name):
+        hostname = SubsetConfiguration()['scenario_database_configuration'].host_name):
 
     class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         ### TODO: These tests can be moved into opus_core once 
@@ -40,13 +39,13 @@ if does_database_server_exist_for_this_hostname(
             os.system(cmd)
             
         def setUp(self):
-            self.config = DatabaseConfiguration(database_name='services_test')
+            self.config = ServicesDatabaseConfiguration(database_name='services_test')
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
             _do_run_simple_test_run(self, self.temp_dir, self.config, end_year=1984)
     
         def tearDown(self):
             rmtree(self.temp_dir)
-            server = DatabaseServer(DatabaseServerConfiguration())
+            server = DatabaseServer(self.config)
             server.drop_database('services_test')
             
         #def test_delete_all_years(self):

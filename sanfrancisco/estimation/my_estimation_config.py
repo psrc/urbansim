@@ -13,14 +13,13 @@
 # 
 
 import os
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
-from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
      'cache_directory':r'e:/urbansim_cache/sanfrancisco/cache_source', ### TODO: Set this cache_directory to something useful.
-    'input_configuration': DatabaseConfiguration(
+    'scenario_database_configuration': ScenarioDatabaseConfiguration(
         database_name = "sanfrancisco_baseyear",
         ),
 
@@ -28,7 +27,7 @@ my_configuration = {
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],
         package_order_exceptions={},
         ),                          
-    'output_configuration': DatabaseConfiguration(
+    'estimation_database_configuration': EstimationDatabaseConfiguration(
         database_name = "sanfrancisco_baseyear_change_20080125",
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(

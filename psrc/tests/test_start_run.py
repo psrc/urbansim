@@ -19,7 +19,6 @@ import shutil
 from opus_core.tests import opus_unittest
 import tempfile
 
-from opus_core.opus_package import OpusPackage
 from opus_core.fork_process import ForkProcess
 from psrc.configs.subset_configuration import SubsetConfiguration
 from opus_core.misc import does_database_server_exist_for_this_hostname
@@ -27,7 +26,7 @@ from opus_core.misc import does_database_server_exist_for_this_hostname
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
-        hostname = SubsetConfiguration()['input_configuration'].host_name):
+        hostname = SubsetConfiguration()['scenario_database_configuration'].host_name):
     
     class Test(opus_unittest.OpusIntegrationTestCase):   
         def setUp(self):

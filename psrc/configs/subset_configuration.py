@@ -12,16 +12,14 @@
 # other acknowledgments.
 # 
 
-from opus_core.misc import get_host_name
 
 from psrc.configs.baseline import Baseline
-from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 
 class SubsetConfiguration(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['description'] = 'subset baseline without travel model'
-        self['input_configuration'].database_name = 'PSRC_2000_baseyear_fircrest'
+        self['scenario_database_configuration'].database_name = 'PSRC_2000_baseyear_fircrest'
         self['creating_baseyear_cache_configuration'].cache_directory_root = 'c:/urbansim_cache'
         self['years'] = (2001, 2002)
 

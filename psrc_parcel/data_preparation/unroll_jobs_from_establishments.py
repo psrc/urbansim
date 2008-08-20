@@ -23,21 +23,12 @@ from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
-
-class DB_settings(object):
-    db_host_name='trondheim.cs.washington.edu'
-    db_user_name=os.environ['MYSQLUSERNAME']
-    db_password =os.environ['MYSQLPASSWORD']
 
 class MysqlStorage:
     def get(self, database):
-        db_config = DatabaseServerConfiguration(
-            host_name = DB_settings.db_host_name,
-            user_name = DB_settings.db_user_name,
-            password = DB_settings.db_password                                              
-        )
+        db_config = ScenarioDatabaseConfiguration()
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(database)
         

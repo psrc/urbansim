@@ -50,11 +50,11 @@ class CombineTables(object):
 
 import os    
 from opus_core.tests import opus_unittest
-
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class TestCombineTables(opus_unittest.OpusTestCase):
     def setUp(self):
-        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
+        self.db_server = DatabaseServer(TestDatabaseConfiguration(protocol = 'mysql'))
         self.db_name = 'test_combine_tables'
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -117,7 +117,7 @@ class TestCombineTables(opus_unittest.OpusTestCase):
         
     
     def test_create_table(self):
-        CombineTables().combine_tables(DatabaseServerConfiguration(protocol='mysql'), self.db_name, 
+        CombineTables().combine_tables(TestDatabaseConfiguration(protocol='mysql'), self.db_name, 
             [i[0] for i in self.from_tables], 
             self.to_table)
         
@@ -128,7 +128,7 @@ class TestCombineTables(opus_unittest.OpusTestCase):
         
     
     def test_combine_tables(self):
-        CombineTables().combine_tables(DatabaseServerConfiguration(protocol='mysql'), self.db_name, 
+        CombineTables().combine_tables(TestDatabaseConfiguration(protocol='mysql'), self.db_name, 
             [i[0] for i in self.from_tables], 
             self.to_table)
         

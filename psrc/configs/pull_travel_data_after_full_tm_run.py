@@ -15,7 +15,8 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
@@ -23,7 +24,6 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
 class PullTravelDataAfterFullTmRun(GeneralConfiguration):
@@ -31,7 +31,7 @@ class PullTravelDataAfterFullTmRun(GeneralConfiguration):
     """
     def __init__(self):
         config = AbstractUrbansimConfiguration()
-        db_server = DatabaseServer(DatabaseServerConfiguration())
+        db_server = DatabaseServer(ScenarioDatabaseConfiguration())
         db = db_server.get_database('PSRC_2000_baseyear')        
         config_changes = {
             'description':'baseline with travel model',
@@ -112,7 +112,7 @@ class PullTravelDataAfterFullTmRun(GeneralConfiguration):
                     },
                 ),
             'models':[],  # run no urbansim models
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'PSRC_2000_baseyear',
                 ),
             'base_year':2000,

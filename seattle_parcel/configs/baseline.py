@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -20,8 +20,6 @@ from urbansim.configurations.household_relocation_model_configuration_creator im
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.resources import merge_resources_with_defaults
-from numpy import array
 import os
 
 class Baseline(UrbansimParcelConfiguration):
@@ -87,7 +85,7 @@ class Baseline(UrbansimParcelConfiguration):
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
                 ),
-            'input_configuration': DatabaseConfiguration(
+            'scenario_database_configuration': ScenarioDatabaseConfiguration(
                 database_name = 'psrc_2005_parcel_baseyear_subset_seattle',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(

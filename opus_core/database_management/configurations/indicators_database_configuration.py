@@ -16,7 +16,11 @@ import os
 
 from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
 
-class IndicatorDatabaseConfiguration(DatabaseConfiguration):
+class IndicatorsDatabaseConfiguration(DatabaseConfiguration):
     
-    def _configuration_prefix(self):
-        return 'Indicator_'   
+    def _database_configuration_node(self):
+        return 'indicators_database_server'
+
+if __name__ == '__main__':
+    config = IndicatorsDatabaseConfiguration()
+    print config   

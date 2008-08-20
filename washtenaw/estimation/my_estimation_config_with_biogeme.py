@@ -14,7 +14,9 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
+
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.hlcm_estimation_config import run_configuration as config
@@ -22,10 +24,10 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 
 
 my_configuration_general = {
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'washtenaw_class',
         ),
-    'output_configuration':DatabaseConfiguration(
+    'estimation_database_configuration':EstimationDatabaseConfiguration(
         database_name = 'washtenaw_estimation_output',
         ),
     'datasets_to_cache_after_each_model':[],

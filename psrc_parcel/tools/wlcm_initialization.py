@@ -14,8 +14,8 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
-
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from psrc.config.wlcm_config import run_configuration
 
     
@@ -25,10 +25,10 @@ run_configuration["models"] = [
 
 #run_configuration["models_configuration"]['household_location_choice_model']['controller']['run']['arguments']['agents_index']=None
 config_changes = {
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'PSRC_2000_baseyear',
         ),
-    'output_configuration':DatabaseConfiguration(
+    'estimation_database_configuration':EstimationDatabaseConfiguration(
         database_name = 'GSPSRC_2000_baseyear_change_200609021',
         ),
     'datasets_to_cache_after_each_model':['person'],

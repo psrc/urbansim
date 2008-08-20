@@ -638,12 +638,11 @@
       </choice_model_with_equations_template>
       <estimation_config type="dictionary" >
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >fill in (relative to OPUS_DATA_PATH)</cache_directory>
-        <output_configuration type="class" >
-          <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string" >opus_core.database_management.configurations.database_configuration</Class_path>
-          <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
+        <estimation_database_configuration type="class" >
+          <Class_name flags="hidden" type="string" >EstimationDatabaseConfiguration</Class_name>
+          <Class_path flags="hidden" type="string" >opus_core.database_management.configurations.estimation_database_configuration</Class_path>
           <database_name type="string" />
-        </output_configuration>
+        </estimation_database_configuration>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list" >
           <my_dataset copyable="True" type="dataset" choices="Load|Skip" >Skip</my_dataset>
         </datasets_to_preload>

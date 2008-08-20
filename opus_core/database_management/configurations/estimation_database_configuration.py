@@ -18,5 +18,9 @@ from opus_core.database_management.configurations.database_configuration import 
 
 class EstimationDatabaseConfiguration(DatabaseConfiguration):
     
-    def _configuration_prefix(self):
-        return 'ESTIMATION_'   
+    def _database_configuration_node(self):
+        return 'estimation_database_server'   
+    
+if __name__ == '__main__':
+    config = EstimationDatabaseConfiguration()
+    print config

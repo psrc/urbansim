@@ -134,20 +134,6 @@ class DatabaseServer(object):
                                            database_name = database_name)
        
     
-    __type_name_to_string = {
-        'string':'text',
-        'integer':'int(11)',
-        'float':'float',
-        'double':'double',
-        'boolean':'int(1)',
-        }
-    
-    def type_string(self, type_name):
-        """
-        Returns the appropriate string for this type on this database server.
-        """
-        return self.__type_name_to_string[type_name.lower()]
-    
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
         for database_name, dbs in self.open_databases.items():
@@ -162,35 +148,29 @@ class DatabaseServer(object):
         
 
 from opus_core.tests import opus_unittest
-from opus_core.database_management.configurations.database_server_configuration \
-    import DatabaseServerConfiguration, _get_installed_database_engines
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration, get_testable_engines
 
 class Tests(opus_unittest.OpusTestCase):
         
     def get_mysql_server(self):
-        server_config = DatabaseServerConfiguration(
-            protocol = 'mysql',
-            test = True)
-        
+        server_config = TestDatabaseConfiguration(
+            protocol = 'mysql')
         return DatabaseServer(server_config) 
     
     def get_postgres_server(self):
-        server_config = DatabaseServerConfiguration(
-            protocol = 'postgres',
-            test = True)
+        server_config = TestDatabaseConfiguration(
+            protocol = 'postgres')
         return DatabaseServer(server_config) 
     
     def get_mssql_server(self):
-        server_config = DatabaseServerConfiguration(
-            protocol = 'mssql',
-            test = True)
+        server_config = TestDatabaseConfiguration(
+            protocol = 'mssql')
         s = DatabaseServer(server_config)     
         return s
 
     def get_sqlite_server(self):
-        server_config = DatabaseServerConfiguration(
-            protocol = 'sqlite',
-            test = True)
+        server_config = TestDatabaseConfiguration(
+            protocol = 'sqlite')
         s = DatabaseServer(server_config)     
         return s
             
@@ -206,19 +186,19 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertFalse(db_server.has_database(db_name))
                 
     def test_mysql_create_drop_and_has_database(self):
-        if 'mysql' in _get_installed_database_engines():
+        if 'mysql' in get_testable_engines():
             server = self.get_mysql_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
         
     def test_postgres_create_drop_and_has_database(self):
-        if 'postgres' in _get_installed_database_engines():
+        if 'postgres' in get_testable_engines():
             server = self.get_postgres_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
 
     def test_mssql_create_drop_and_has_database(self):
-        if 'mssql' in _get_installed_database_engines():
+        if 'mssql' in get_testable_engines():
             if not 'MSSQLDEFAULTDB' in os.environ:
                 logger.log_warning('MSSQLDEFAULTDB is not set in the environment variables. Skipping test_mssql_create_drop_and_has_database')
             else:
@@ -227,7 +207,7 @@ class Tests(opus_unittest.OpusTestCase):
                 server.close()
 
     def test_sqlite_create_drop_and_has_database(self):
-        if 'sqlite' in _get_installed_database_engines():
+        if 'sqlite' in get_testable_engines():
             server = self.get_sqlite_server()
             self.helper_create_drop_and_has_database(server)
             server.close()

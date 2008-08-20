@@ -32,7 +32,7 @@ from washtenaw.configs.baseline import Baseline
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
-        hostname = Baseline()['input_configuration'].host_name):
+        hostname = Baseline()['scenario_database_configuration'].host_name):
     
     class SimulationTest(opus_unittest.OpusTestCase):
         
@@ -42,7 +42,7 @@ if does_database_server_exist_for_this_hostname(
             run_configuration = Baseline()
             run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
             run_configuration['creating_baseyear_cache_configuration'].tables_to_cache = ["development_events"]
-            run_configuration['input_configuration'].database_name = "washtenaw_class"
+            run_configuration['scenario_database_configuration'].database_name = "washtenaw_class"
             run_configuration['seed'] = 1,#(1,1)  # always start with same random seed
             self.simulation.prepare_for_simulation(run_configuration)
             self.completed_without_error = False
@@ -59,7 +59,7 @@ if does_database_server_exist_for_this_hostname(
                     )
                 logger.log_warning(
                     'Problem during simulation. Not removing database: %s' % 
-                        self.simulation.config['output_configuration'].database_name
+                        self.simulation.config['estimation_database_configuration'].database_name
                     )
                 logger.log_warning(
                     'Problem during simulation. Not removing temporary '

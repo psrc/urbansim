@@ -52,12 +52,12 @@ class TableCreator(object):
 
 import os        
 from opus_core.tests import opus_unittest
-
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
+        self.db_server = DatabaseServer(TestDatabaseConfiguration(protocol = 'mysql'))
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -78,7 +78,7 @@ class Tests(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         creator = TableCreator()
-        db = creator._get_db(DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
+        db = creator._get_db(TestDatabaseConfiguration(protocol = 'mysql'), self.db_name)
         self.assert_(not db.table_exists('test_table'))
         self.assert_(not db.table_exists('test_table_bak'))
         

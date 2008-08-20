@@ -13,6 +13,7 @@
 #
 
 import os
+from xml.etree.cElementTree import ElementTree
 
 def _get_installed_database_engines():
     engines = []
@@ -42,6 +43,19 @@ def _get_installed_database_engines():
     
     return engines
 
+def get_default_database_engine():
+    installed_dbs = _get_installed_database_engines()
+    if 'sqlite' in installed_dbs:
+        return 'sqlite'
+    elif 'mysql' in installed_dbs:
+        return 'mysql'
+    elif 'postgres' in installed_dbs:
+        return 'postgres'
+    elif 'mssql' in installed_dbs:
+        return 'mssql'
+    else:
+        raise Exception('Cannot find an appropriate database management system to use')
+        
 class DatabaseServerConfiguration(object):
     """A DatabaseServerConfiguration provides the connection information 
     for a sql database server."""
@@ -51,83 +65,73 @@ class DatabaseServerConfiguration(object):
                  host_name = None, 
                  user_name = None, 
                  password = None,
-                 test = False):
+                 test = False,
+                 database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')):
 
-        if protocol is None:
-            self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', self._get_default_database_engine()).lower()
+        if (protocol is None or test) and host_name is None and user_name is None and password is None:
+            if not os.path.exists(database_server_configuration_file_path):
+                raise Exception('You do not have a file %s storing information about your database server configurations. Cannot load database.'%database_server_configuration_file_path)
+            database_configuration = ElementTree(file = database_server_configuration_file_path).getroot().find(self._database_configuration_node())
+            if database_configuration is None:
+                raise Exception('Could not find an entry in %s for %s. Cannot load database.'%(database_server_configuration_file_path, self._database_configuration_node()))
+            self.protocol = database_configuration.find('protocol').text
+            self.host_name = database_configuration.find('host_name').text
+            self.user_name = database_configuration.find('user_name').text
+            self.password = database_configuration.find('password').text
+    
         else:
-            self.protocol = protocol.lower() 
-        if host_name is None:
-            if test:
-                self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
+            if protocol is None:
+                self.protocol = get_default_database_engine()
             else:
-                self.host_name = os.environ.get('%sHOSTNAME'%self.protocol.upper(),'localhost')
-        else:
-            self.host_name = host_name
-        if user_name is None:
-            self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
-        else:
-            self.user_name = user_name
-        if password is None:
-            self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'')
-        else:
-            self.password = password
-
+                self.protocol = protocol.lower()
+                 
+            if host_name is None:
+                self.host_name = 'localhost'
+            else:
+                self.host_name = host_name
+    
+            if user_name is None:
+                self.user_name = ''
+            else:
+                self.user_name = user_name
+    
+            if password is None:
+                self.password = ''
+            else:
+                self.password = password
             
-    def _get_default_database_engine(self):
-        installed_dbs = _get_installed_database_engines()
-        if 'mysql' in installed_dbs:
-            return 'mysql'
-        elif 'sqlite' in installed_dbs:
-            return 'sqlite'
-        elif 'postgres' in installed_dbs:
-            return 'postgres'
-        elif 'mssql' in installed_dbs:
-            return 'mssql'
-        else:
-            raise Exception('Cannot find an appropriate database management system to use')
+
                 
     def __repr__(self):
         return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
 
-    def _configuration_prefix(self):
-        return 'DEFAULT_'   
+    def _database_configuration_node(self):
+        raise Exception('You need to provide real parameters to the server configuration object.')   
     
 from opus_core.tests import opus_unittest
 class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
 
     def test_attributes(self):
-        # Check that have the data to do this unit test.
-        for v in ['MYSQLUSERNAME', 'MYSQLHOSTNAME', 'MYSQLPASSWORD']:
-            if v not in os.environ :
-                print "Skipping tests in file '%s', since %s not defined in environment variables." % (__file__, v)
-                return
+        from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
         
-        c1 = DatabaseServerConfiguration(protocol='prot', host_name='h', user_name='fred', 
-            password='secret', test=True, use_environment_variables=False)
+        c1 = TestDatabaseConfiguration(protocol='prot', host_name='h', user_name='fred', 
+            password='secret')
         self.assertEqual(c1.protocol, 'prot')
         self.assertEqual(c1.host_name, 'h')
         self.assertEqual(c1.user_name, 'fred')
         self.assertEqual(c1.password, 'secret')
-        
-        c2 = DatabaseServerConfiguration(protocol='MYSQL', host_name='h', user_name='fred', 
-            password='secret', test=False, use_environment_variables=True)
-        self.assertEqual(c2.protocol, 'mysql')
-#        self.assertEqual(c2.host_name, os.environ['MYSQLHOSTNAME'])
-#        self.assertEqual(c2.user_name, os.environ['MYSQLUSERNAME'])
-#        self.assertEqual(c2.password, os.environ['MYSQLPASSWORD'])
-        
-        c3 = DatabaseServerConfiguration(protocol='MYSQL', user_name='fred')
+
+        c3 = TestDatabaseConfiguration(protocol = 'mysql', user_name = 'fred')
         self.assertEqual(c3.protocol, 'mysql')
-        self.assertEqual(c3.host_name, os.environ['MYSQLHOSTNAME'])
+        self.assertEqual(c3.host_name, 'localhost')
         self.assertEqual(c3.user_name, 'fred')
-        self.assertEqual(c3.password, os.environ['MYSQLPASSWORD'])
+        self.assertEqual(c3.password, '')
 
-        c4 = DatabaseServerConfiguration(protocol = 'mysql')
-        self.assertEqual(c4.protocol, 'mysql')
-        self.assertEqual(c4.host_name, os.environ['MYSQLHOSTNAME'])
-        self.assertEqual(c4.user_name, os.environ['MYSQLUSERNAME'])
-        self.assertEqual(c4.password, os.environ['MYSQLPASSWORD'])
 
+    def test_exceptions(self):
+        self.assertRaises(Exception, DatabaseServerConfiguration)        
+
+        
+        
 if __name__=='__main__':
     opus_unittest.main()

@@ -16,14 +16,12 @@ import os
 import sys
 import pickle
 
-from exceptions import ValueError
 from numpy.random import seed, randint
 
 from opus_core.logger import logger
 from opus_core.misc import write_to_text_file
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.services.run_server.run_manager import RunManager
 
@@ -52,7 +50,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
 
     if options.pickled_resource_file is not None:
         f = file(options.pickled_resource_file, 'r')

@@ -30,6 +30,7 @@ class DB_settings(object):
 class MysqlStorage:
     def get(self, database):
         db_config = DatabaseServerConfiguration(
+            protocol = 'mysql',
             host_name = DB_settings.db_host_name,
             user_name = DB_settings.db_user_name,
             password = DB_settings.db_password                                              

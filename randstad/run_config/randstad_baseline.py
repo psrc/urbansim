@@ -14,9 +14,7 @@
 
 import os
 
-from numpy import array
-
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -30,7 +28,7 @@ from randstad.run_config.controller_config import models_configuration
 run_configuration = AbstractUrbansimConfiguration()
 my_run_configuration = {    
     'models_configuration':models_configuration,
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'randstad_021105_estimation',
         ),
     #'cache_directory':'C:/urbansim_cache/randstad_source',

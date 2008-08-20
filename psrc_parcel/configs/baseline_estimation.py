@@ -13,7 +13,7 @@
 # 
 
 from baseline import Baseline
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from urbansim_parcel.configs.config_changes_for_estimation import ConfigChangesForEstimation
 
@@ -23,7 +23,7 @@ class BaselineEstimation(Baseline):
         Baseline.__init__(self)
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
         self['cache_directory'] = '/Users/hana/urbansim_cache/psrc/cache_source_parcel_est'
-        self['output_configuration'] = DatabaseConfiguration(
+        self['estimation_database_configuration'] = EstimationDatabaseConfiguration(
                                                              database_name = 'psrc_2005_parcel_baseyear_change_20080305',
                                                              )
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(

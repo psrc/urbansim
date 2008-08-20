@@ -14,16 +14,16 @@
 
 import os
 
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 
 my_configuration = {
     'cache_directory':None, ### TODO: Set this cache_directory to something useful.
-    'input_configuration':DatabaseConfiguration(
+    'scenario_database_configuration':ScenarioDatabaseConfiguration(
         database_name = 'randstad_021105_estimation',
         ),
-    'output_configuration':DatabaseConfiguration(
+    'estimation_database_configuration':EstimationDatabaseConfiguration(
         database_name = 'randstad_estimation_output',
         ),
     'datasets_to_cache_after_each_model':[],

@@ -124,4 +124,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
                                        database_name = base_db):
             self._create_real_database(server, db_name = base_db)
             
-    
+    def get_tables_in_database(self, metadata):
+        tables = AbstractDatabaseEngineManager.get_tables_in_database(self, metadata)
+        tables = [t[t.find('.')+1:] for t in tables]
+        return tables    

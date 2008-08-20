@@ -25,5 +25,5 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     (options, args) = parser.parse_args()
     resources = Resources(get_resources_from_file(options.resources_file_name))
-    RunManager(options).create_baseyear_cache(resources)
+    RunManager(option_group.get_services_database_configuration(options)).create_baseyear_cache(resources)
 

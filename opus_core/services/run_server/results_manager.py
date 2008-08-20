@@ -69,14 +69,12 @@ class ResultsManager(AbstractService):
     
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class ResultsManagerTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.database_name = 'test_services_database'
-        self.config = DatabaseConfiguration(protocol = 'sqlite',
-                                            test = True, 
-                                            database_name = self.database_name)
+        self.config = TestDatabaseConfiguration(database_name = self.database_name)
         self.db_server = DatabaseServer(self.config)
     
     def tearDown(self):

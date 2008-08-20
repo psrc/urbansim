@@ -21,7 +21,6 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.tools.create_baseyear_cache import CreateBaseyearCache
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt
@@ -42,14 +41,9 @@ class HouseholdSynthesizer(object):
         cacher = CreateBaseyearCache()
         cache_dir = cacher.run(config)
 
-        if 'output_configuration' in config:
-            db_config = DatabaseServerConfiguration(
-                   host_name=config['output_configuration'].host_name,
-                   user_name=config['output_configuration'].user_name,
-                   password=config['output_configuration'].password                                               
-            )
-            db_server = DatabaseServer(db_config)
-            db = db_server.get_database(config['output_configuration'].database_name)
+        if 'estimation_database_configuration' in config:
+            db_server = DatabaseServer(config['estimation_database_configuration'])
+            db = db_server.get_database(config['estimation_database_configuration'].database_name)
             out_storage = StorageFactory().get_storage(
                 'sql_storage', 
                 storage_location = db)
@@ -99,5 +93,5 @@ class HouseholdSynthesizer(object):
 if __name__ == '__main__':
     from synthesizer_configuration import SynthesizerConfiguration
     config = SynthesizerConfiguration()
-#    del config['output_configuration']['db_output_database']
+#    del config['estimation_database_configuration']['db_output_database']
     HouseholdSynthesizer(config)

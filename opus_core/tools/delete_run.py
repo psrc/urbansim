@@ -34,7 +34,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
 
     if options.run_id is None:
         parser.print_help()

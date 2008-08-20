@@ -14,7 +14,7 @@
 
 
 from baseline import Baseline
-from opus_core.database_management.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from psrc.configs.config_changes_for_estimation import ConfigChangesForEstimation
 
@@ -28,7 +28,7 @@ class BaselineEstimation(Baseline):
     def _get_estimation_changes(self):
         return {    
     'cache_directory' : 'C:/urbansim_cache/psrc/estimation', # change or leave out
-    'output_configuration': DatabaseConfiguration(
+    'estimation_database_configuration': EstimationDatabaseConfiguration(
         database_name = 'GSPSRC_2000_baseyear_change_20070102',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(

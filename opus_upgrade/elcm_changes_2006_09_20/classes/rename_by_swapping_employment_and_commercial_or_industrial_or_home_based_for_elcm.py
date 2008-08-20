@@ -63,13 +63,13 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
 import os    
 from opus_core.tests import opus_unittest
 
-from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 
 class TestRenameBySwappingEmploymentAndCommercialOrIndustrialForElcm(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_rename_commercial_and_industrial'
         
-        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
+        self.db_server = DatabaseServer(TestDatabaseConfiguration(protocol = 'mysql'))
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -120,7 +120,7 @@ class TestRenameBySwappingEmploymentAndCommercialOrIndustrialForElcm(opus_unitte
     def test_rename_tables(self):
         r = RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm()
         r.rename_by_swapping_employment_and_commercial_or_industrial_or_home_based_for_elcm(
-            DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
+            TestDatabaseConfiguration(protocol = 'mysql'), self.db_name)
         
         for table in self.output_tables + self.other_tables:
             if not self.db.table_exists(table):

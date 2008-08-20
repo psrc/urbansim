@@ -42,7 +42,8 @@ class AbstractUrbansimConfigurationTests(opus_unittest.OpusTestCase):
     def test(self):
         config = AbstractUrbansimConfiguration()
         self.assert_('models' in config)
-        self.assert_('input_configuration' not in config)
+        self.assert_('scenario_database_configuration' not in config)
+        self.assert_('estimation_database_configuration' not in config)
         self.assert_('creating_baseyear_cache_configuration' in config)
     
     
