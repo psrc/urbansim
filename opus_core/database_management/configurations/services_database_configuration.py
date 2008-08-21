@@ -23,7 +23,9 @@ class ServicesDatabaseConfiguration(DatabaseConfiguration):
                  host_name = None,
                  user_name = None,
                  password = None,
-                 database_name = 'services'):
+                 database_name = None):
+        if database_name is None:
+            database_name = 'services'
         DatabaseConfiguration.__init__(self,
                               protocol = protocol,
                               host_name = host_name,
