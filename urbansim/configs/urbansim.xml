@@ -6,304 +6,311 @@
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>
-      <esri_data_to_opus_tool type="tool_file">
-        <name type="tool_name">esri_data_to_opus</name>
-        <params type="param_template">
-          <esri_data_path>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="dir_path" type="dir_path">dir_path</type>
-            <default type="string"></default>
-          </esri_data_path>
-          <esri_table_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">dir_path</type>
-            <default type="string"></default>
-          </esri_table_name>
-          <opus_data_directory>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="dir_path" type="string">dir_path</type>
-            <default type="dir_path"></default>
-          </opus_data_directory>
-          <opus_data_year>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string">ALL</default>
-          </opus_data_year>
-        </params>
-      </esri_data_to_opus_tool>
-      <shapefile_to_postgis type="tool_file">
-        <name type="tool_name">shapefile_to_postgis</name>
-        <params type="param_template">
-          <dbname type="string">
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </dbname>
-          <schema_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </schema_name>
-          <shapefile_path>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="file_path" type="string">file_path</type>
-	    <default type="file_path"></default>
-	  </shapefile_path>
-          <output_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </output_table_name>
-          <geometry_type>
-	    <required choices="Required|Optional" type="string">Optional</required>
-	    <type choices="string" type="string">string</type>
-	    <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON|GEOMETRYCOLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON|MULTILINESTRING" type="string">NONE</default>
-	  </geometry_type>
-          <overwrite>
-	    <required choices="Required|Optional" type="string">Optional</required>
-	    <type choices="string" type="string">string</type>
-	    <default choices="YES|NO" type="string">NO</default>
-	  </overwrite>
-        </params>
-      </shapefile_to_postgis>
-      <postgis_polygon_to_centroids type="tool_file">
-        <name type="tool_name">postgis_polygon_to_centroids</name>
-        <params type="param_template">
-          <database_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </database_name>
-          <drop_existing>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default choices="True|False" type="string">True</default>
-          </drop_existing>
-          <schema>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </schema>
-          <new_table_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </new_table_name>
-          <geometry_field_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </geometry_field_name>
-          <existing_table_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </existing_table_name>
-          <centroid_inside_polygon>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default choices="True|False" type="string">False</default>
-          </centroid_inside_polygon>
-        </params>
-      </postgis_polygon_to_centroids>
-      <postgis_create_spatial_index type="tool_file">
-        <name type="tool_name">postgis_create_spatial_index</name>
-        <params type="param_template">
-          <database_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </database_name>
-          <schema>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </schema>
-          <table_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </table_name>
-          <geometry_column_name>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string"></default>
-          </geometry_column_name>
-          <run_vacuum_analyze>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default choices="True|False" type="string">True</default>
-          </run_vacuum_analyze>
-        </params>
-      </postgis_create_spatial_index>
-      <sql_data_to_opus_tool type="tool_file" >
-        <name type="tool_name" >sql_data_to_opus</name>
-        <params type="param_template" >
-          <sql_db_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </sql_db_name>
-          <table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </table_name>
-          <opus_data_directory>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </opus_data_directory>
-          <opus_data_year>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_data_year>
-        </params>
-      </sql_data_to_opus_tool>
-      <opus_database_to_sql_tool type="tool_file" >
-        <name type="tool_name" >opus_database_to_sql</name>
-        <params type="param_template" >
-          <sql_db_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </sql_db_name>
-          <opus_data_directory>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </opus_data_directory>
-          <opus_data_year>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_data_year>
-          <opus_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_table_name>
-        </params>
-      </opus_database_to_sql_tool>
-      <opus_database_to_esri_tool type="tool_file" >
-        <name type="tool_name" >opus_database_to_esri</name>
-        <params type="param_template" >
-          <esri_data_path>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </esri_data_path>
-          <opus_data_directory>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </opus_data_directory>
-          <opus_data_year>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_data_year>
-          <opus_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_table_name>
-        </params>
-      </opus_database_to_esri_tool>
-      <opus_dataset_to_sql_tool type="tool_file" >
-        <name type="tool_name" >opus_dataset_to_sql</name>
-        <params type="param_template" >
-          <sql_db_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </sql_db_name>
-          <opus_data_directory>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </opus_data_directory>
-          <opus_data_year>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_data_year>
-          <opus_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_table_name>
-        </params>
-      </opus_dataset_to_sql_tool>
-      <opus_dataset_to_esri_tool type="tool_file" >
-        <name type="tool_name" >opus_dataset_to_esri</name>
-        <params type="param_template" >
-          <esri_data_path>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </esri_data_path>
-          <opus_data_directory>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="dir_path" type="string">dir_path</type>
-	    <default type="dir_path"></default>
-	  </opus_data_directory>
-          <opus_data_year>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_data_year>
-          <opus_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">ALL</default>
-	  </opus_table_name>
-        </params>
-      </opus_dataset_to_esri_tool>
-      <esri_buffer_tool type="tool_file" >
-        <name type="tool_name" >esri_buffer</name>
-        <params type="param_template" >
-          <input_shapefile>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="file_path" type="string">file_path</type>
-	    <default type="file_path"></default>
-	  </input_shapefile>
-          <output_shapefile>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="file_path" type="string">file_path</type>
-	    <default type="file_path"></default>
-	  </output_shapefile>
-          <buffer_size>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">10</default>
-	  </buffer_size>
-        </params>
-      </esri_buffer_tool>
-      <template_tool type="tool_file">
-        <name type="tool_name">template_tool</name>
-        <params type="param_template">
-          <param_1>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string">default value 1</default>
-          </param_1>
-          <param_2>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string">default value 2</default>
-          </param_2>
-          <param_3>
-            <required choices="Required|Optional" type="string">Required</required>
-            <type choices="string" type="string">string</type>
-            <default type="string">default value 3</default>
-          </param_3>
-        </params>
-      </template_tool>
+      <data_conversion_tools type="tool_group" setexpanded="True">
+	<sql_data_to_opus_tool type="tool_file" >
+          <name type="tool_name" >sql_data_to_opus</name>
+          <params type="param_template" >
+            <sql_db_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </sql_db_name>
+            <table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </table_name>
+            <opus_data_directory>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </opus_data_directory>
+            <opus_data_year>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_data_year>
+          </params>
+	</sql_data_to_opus_tool>
+	<opus_database_to_sql_tool type="tool_file" >
+          <name type="tool_name" >opus_database_to_sql</name>
+          <params type="param_template" >
+            <sql_db_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </sql_db_name>
+            <opus_data_directory>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </opus_data_directory>
+            <opus_data_year>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_data_year>
+            <opus_table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_table_name>
+          </params>
+	</opus_database_to_sql_tool>
+	<opus_database_to_esri_tool type="tool_file" >
+          <name type="tool_name" >opus_database_to_esri</name>
+          <params type="param_template" >
+            <esri_data_path>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </esri_data_path>
+            <opus_data_directory>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </opus_data_directory>
+            <opus_data_year>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_data_year>
+            <opus_table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_table_name>
+          </params>
+	</opus_database_to_esri_tool>
+	<opus_dataset_to_sql_tool type="tool_file" >
+          <name type="tool_name" >opus_dataset_to_sql</name>
+          <params type="param_template" >
+            <sql_db_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </sql_db_name>
+            <opus_data_directory>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </opus_data_directory>
+            <opus_data_year>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_data_year>
+            <opus_table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_table_name>
+          </params>
+	</opus_dataset_to_sql_tool>
+	<opus_dataset_to_esri_tool type="tool_file" >
+          <name type="tool_name" >opus_dataset_to_esri</name>
+          <params type="param_template" >
+            <esri_data_path>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </esri_data_path>
+            <opus_data_directory>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="dir_path" type="string">dir_path</type>
+	      <default type="dir_path"></default>
+	    </opus_data_directory>
+            <opus_data_year>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_data_year>
+            <opus_table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">ALL</default>
+	    </opus_table_name>
+          </params>
+	</opus_dataset_to_esri_tool>
+	<esri_data_to_opus_tool type="tool_file">
+          <name type="tool_name">esri_data_to_opus</name>
+          <params type="param_template">
+            <esri_data_path>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="dir_path" type="dir_path">dir_path</type>
+              <default type="string"></default>
+            </esri_data_path>
+            <esri_table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">dir_path</type>
+              <default type="string"></default>
+            </esri_table_name>
+            <opus_data_directory>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="dir_path" type="string">dir_path</type>
+              <default type="dir_path"></default>
+            </opus_data_directory>
+            <opus_data_year>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string">ALL</default>
+            </opus_data_year>
+          </params>
+	</esri_data_to_opus_tool>
+	<shapefile_to_postgis type="tool_file">
+          <name type="tool_name">shapefile_to_postgis</name>
+          <params type="param_template">
+            <dbname type="string">
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </dbname>
+            <schema_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </schema_name>
+            <shapefile_path>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="file_path" type="string">file_path</type>
+	      <default type="file_path"></default>
+	    </shapefile_path>
+            <output_table_name>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string"></default>
+	    </output_table_name>
+            <geometry_type>
+	      <required choices="Required|Optional" type="string">Optional</required>
+	      <type choices="string" type="string">string</type>
+	      <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON|GEOMETRYCOLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON|MULTILINESTRING" type="string">NONE</default>
+	    </geometry_type>
+            <overwrite>
+	      <required choices="Required|Optional" type="string">Optional</required>
+	      <type choices="string" type="string">string</type>
+	      <default choices="YES|NO" type="string">NO</default>
+	    </overwrite>
+          </params>
+	</shapefile_to_postgis>
+      </data_conversion_tools>
+      <spatial_database_tools type="tool_group" setexpanded="True">
+	<postgis_polygon_to_centroids type="tool_file">
+          <name type="tool_name">postgis_polygon_to_centroids</name>
+          <params type="param_template">
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </database_name>
+            <drop_existing>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default choices="True|False" type="string">True</default>
+            </drop_existing>
+            <schema>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </schema>
+            <new_table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </new_table_name>
+            <geometry_field_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </geometry_field_name>
+            <existing_table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </existing_table_name>
+            <centroid_inside_polygon>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default choices="True|False" type="string">False</default>
+            </centroid_inside_polygon>
+          </params>
+	</postgis_polygon_to_centroids>
+	<postgis_create_spatial_index type="tool_file">
+          <name type="tool_name">postgis_create_spatial_index</name>
+          <params type="param_template">
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </database_name>
+            <schema>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </schema>
+            <table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </table_name>
+            <geometry_column_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </geometry_column_name>
+            <run_vacuum_analyze>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default choices="True|False" type="string">True</default>
+            </run_vacuum_analyze>
+          </params>
+	</postgis_create_spatial_index>
+      </spatial_database_tools>
+      <esri_data_tools type="tool_group" setexpanded="True">
+	<esri_buffer_tool type="tool_file" >
+          <name type="tool_name" >esri_buffer</name>
+          <params type="param_template" >
+            <input_shapefile>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="file_path" type="string">file_path</type>
+	      <default type="file_path"></default>
+	    </input_shapefile>
+            <output_shapefile>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="file_path" type="string">file_path</type>
+	      <default type="file_path"></default>
+	    </output_shapefile>
+            <buffer_size>
+	      <required choices="Required|Optional" type="string">Required</required>
+	      <type choices="string" type="string">string</type>
+	      <default type="string">10</default>
+	    </buffer_size>
+          </params>
+	</esri_buffer_tool>
+      </esri_data_tools>
+      <template_tools type="tool_group" setexpanded="True">
+	<template_tool1 type="tool_file">
+          <name type="tool_name">template_tool</name>
+          <params type="param_template">
+            <param_1>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string">default value 1</default>
+            </param_1>
+            <param_2>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string">default value 2</default>
+            </param_2>
+            <param_3>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string">default value 3</default>
+            </param_3>
+          </params>
+	</template_tool1>
+      </template_tools>
     </Tool_Library>
     <Tool_Sets type="tool_sets" setexpanded="True">
-      <sample_tool_set type="tool_set" />
       <opus_database_to_sql type="tool_set" setexpanded="False" >
         <classification flags="hidden" type="classification" >database</classification>
         <opus_database_to_sql_config type="tool_config" >
@@ -344,6 +351,20 @@
           <opus_table_name type="integer" ></opus_table_name>
         </opus_dataset_to_esri_config>
       </opus_dataset_to_esri>
+      <sample_tool_set type="tool_set">
+        <template_tool_config1 type="tool_config" >
+          <tool_hook flags="hidden" type="tool_library_ref" >template_tool1</tool_hook>
+          <param1 type="string" >Template Config 1 - Param1</param1>
+          <param2 type="string" >Template Config 1 - Param2</param2>
+          <param3 type="string" >Template Config 1 - Param3</param3>
+        </template_tool_config1>
+        <template_tool_config2 type="tool_config" >
+          <tool_hook flags="hidden" type="tool_library_ref" >template_tool1</tool_hook>
+          <param1 type="string" >Template Config 2 - Param1</param1>
+          <param2 type="string" >Template Config 2 - Param2</param2>
+          <param3 type="string" >Template Config 2 - Param3</param3>
+        </template_tool_config2>
+      </sample_tool_set>
     </Tool_Sets>
   </data_manager>
   <model_manager>
