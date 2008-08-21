@@ -353,14 +353,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         os.environ['OPUSPROJECTNAME'] = title
         #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
         self.setWindowTitle(self.application_title + " - " + QString(title))
-        self.actionEdit_all_variables.setEnabled(True)
-        self.resultManagerStuff.scanForRuns()    
+        if config is not None:
+            self.resultManagerStuff.scanForRuns()    
+            self.actLaunchResultBrowser.setEnabled(True)
+            self.actionEdit_all_variables.setEnabled(True)
         if self.resultBrowser is not None:    
             self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
             self.resultBrowser.close()
             self.resultBrowser = None
         
-        self.actLaunchResultBrowser.setEnabled(True)
         self.changeFontSize()
 
     def saveConfig(self):
