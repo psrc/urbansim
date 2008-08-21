@@ -579,7 +579,7 @@ class OpusXMLAction_Data(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("type")) == QString("tool_library"):
+                elif domElement.attribute(QString("type")) == QString("tool_group"):
                     self.menu.addAction(self.actAddToolFile)
                 elif domElement.attribute(QString("type")) == QString("param_template"):
                     self.menu.addAction(self.actAddRequiredStringParam)

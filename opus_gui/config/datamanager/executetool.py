@@ -282,18 +282,25 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         # First we start at the Tool_Library
         templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         if templates_root and templates_root.hasChildNodes():
-            library = templates_root.childNodes()
-            for x in xrange(0,library.count(),1):
-                if library.item(x).isElement():
-                    library_child = library.item(x).toElement()
-                    foundOurTool = False
-                    if library_child.hasAttribute(QString("type")) and \
-                           (library_child.attribute(QString("type")) == QString("tool_file")):
-                        if library_child.tagName() == self.typeSelection:
-                            foundOurTool = True
-                    if foundOurTool:
-                        tool_file = library_child.childNodes()
-                        self.fillInToolTypeArrayFromToolFile(tool_file)
+            # These are tool groups
+            groups = templates_root.childNodes()
+            for x in xrange(0,groups.count(),1):
+                if groups.item(x).isElement():
+                    group = groups.item(x).toElement()
+                    if group and group.hasChildNodes():
+                        # These are tools within a group
+                        tools = group.childNodes()
+                        for x in xrange(0,tools.count(),1):
+                            if tools.item(x).isElement():
+                                tool = tools.item(x).toElement()
+                                foundOurTool = False
+                                if tool.hasAttribute(QString("type")) and \
+                                       (tool.attribute(QString("type")) == QString("tool_file")):
+                                    if tool.tagName() == self.typeSelection:
+                                        foundOurTool = True
+                                if foundOurTool:
+                                    tool_file = tool.childNodes()
+                                    self.fillInToolTypeArrayFromToolFile(tool_file)
         self.createGUIElements()
 
     def presentToolConfigGUI(self):

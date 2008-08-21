@@ -41,11 +41,20 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         # First find the available database connection templates to fill in types
         templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         if templates_root.hasChildNodes():
-            children = templates_root.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).toElement().attribute(QString("type")) == QString("tool_file"):
-                    # We have a template... add it to the list
-                    self.comboBox.addItem(children.item(x).toElement().tagName())
+            # These are tool groups
+            groups = templates_root.childNodes()
+            for x in xrange(0,groups.count(),1):
+                if groups.item(x).isElement():
+                    group = groups.item(x).toElement()
+                    if group and group.hasChildNodes():
+                        # These are tools within a group
+                        tools = group.childNodes()
+                        for x in xrange(0,tools.count(),1):
+                            if tools.item(x).isElement():
+                                tool = tools.item(x).toElement()
+                                if tool.attribute(QString("type")) == QString("tool_file"):
+                                    # We have a template... add it to the list
+                                    self.comboBox.addItem(tool.tagName())
         # Now we hook up to the user selecting the type desired
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
                         self.toolTypeSelected)
@@ -117,64 +126,61 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         # First we start at the Tool_Library
         templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         if templates_root and templates_root.hasChildNodes():
-            library = templates_root.childNodes()
-            for x in xrange(0,library.count(),1):
-                if library.item(x).isElement():
-                    library_child = library.item(x).toElement()
-                    foundOurTool = False
-                    if library_child.hasAttribute(QString("type")) and \
-                           (library_child.attribute(QString("type")) == QString("tool_file")):
-                        if library_child.tagName() == self.comboBox.itemText(index):
-                            foundOurTool = True
-                    if foundOurTool:
-                        tool_file = library_child.childNodes()
-                        for xx in xrange(0,tool_file.count(),1):
-                            if tool_file.item(xx).isElement():
-                                tool_file_child = tool_file.item(xx).toElement()
-                                # Find the name element and compare
-                                if tool_file_child.hasAttribute(QString("type")) and \
-                                       (tool_file_child.attribute(QString("type")) == QString("param_template")):
-                                    if tool_file_child.hasChildNodes():
-                                        params = tool_file_child.childNodes()
-                                        # Here we loop through the params
-                                        for xxx in xrange(0,params.count(),1):
-                                            if params.item(xxx).isElement():
-                                                param = params.item(xxx).toElement()
-
-                                                tagName = param.tagName()
-                                                typeName = QString('')
-                                                nodeVal = QString('')
-                                                # Now we look inside to find the discriptions of the params
-                                                if param.hasChildNodes():
-                                                    desc = param.childNodes()
-                                                    # Here we loop through the desc's
-                                                    for xxxx in xrange(0,desc.count(),1):
-                                                        if desc.item(xxxx).isElement():
-                                                            desc_el = desc.item(xxxx).toElement()
-                                                            if desc_el.tagName() == QString('type'):
-                                                                # We have a type
-                                                                if desc_el.hasChildNodes():
-                                                                    textSearch = desc_el.childNodes()
-                                                                    for xxxxx in xrange(0,textSearch.count(),1):
-                                                                        if textSearch.item(xxxxx).isText():
-                                                                            typeName = textSearch.item(xxxxx).nodeValue()
-                                                            if desc_el.tagName() == QString('default'):
-                                                                if desc_el.hasChildNodes():
-                                                                    textSearch = desc_el.childNodes()
-                                                                    for xxxxx in xrange(0,textSearch.count(),1):
-                                                                        if textSearch.item(xxxxx).isText():
-                                                                            nodeVal = textSearch.item(xxxxx).nodeValue()
-                                                self.tooltypearray.append([tagName,typeName,nodeVal])
-                                                #tagName = param.tagName()
-                                                #typeName = QString('')
-                                                #typeName = param.attribute(QString("type"))
-                                                #nodeVal = QString('')
-                                                #if param.hasChildNodes():
-                                                #    textSearch = param.childNodes()
-                                                #    for xxxx in xrange(0,textSearch.count(),1):
-                                                #        if textSearch.item(xxxx).isText():
-                                                #            nodeVal = textSearch.item(xxxx).nodeValue()
-                                                #            self.tooltypearray.append([tagName,typeName,nodeVal])
+            # These are tool groups
+            groups = templates_root.childNodes()
+            for x in xrange(0,groups.count(),1):
+                if groups.item(x).isElement():
+                    group = groups.item(x).toElement()
+                    if group and group.hasChildNodes():
+                        # These are tools within a group
+                        tools = group.childNodes()
+                        for x in xrange(0,tools.count(),1):
+                            if tools.item(x).isElement():
+                                tool = tools.item(x).toElement()
+                                foundOurTool = False
+                                if tool.hasAttribute(QString("type")) and \
+                                       (tool.attribute(QString("type")) == QString("tool_file")):
+                                    if tool.tagName() == self.comboBox.itemText(index):
+                                        foundOurTool = True
+                                if foundOurTool:
+                                    tool_file = tool.childNodes()
+                                    for xx in xrange(0,tool_file.count(),1):
+                                        if tool_file.item(xx).isElement():
+                                            tool_file_child = tool_file.item(xx).toElement()
+                                            # Find the name element and compare
+                                            if tool_file_child.hasAttribute(QString("type")) and \
+                                                   (tool_file_child.attribute(QString("type")) == QString("param_template")):
+                                                if tool_file_child.hasChildNodes():
+                                                    params = tool_file_child.childNodes()
+                                                    # Here we loop through the params
+                                                    for xxx in xrange(0,params.count(),1):
+                                                        if params.item(xxx).isElement():
+                                                            param = params.item(xxx).toElement()
+            
+                                                            tagName = param.tagName()
+                                                            typeName = QString('')
+                                                            nodeVal = QString('')
+                                                            # Now we look inside to find the discriptions of the params
+                                                            if param.hasChildNodes():
+                                                                desc = param.childNodes()
+                                                                # Here we loop through the desc's
+                                                                for xxxx in xrange(0,desc.count(),1):
+                                                                    if desc.item(xxxx).isElement():
+                                                                        desc_el = desc.item(xxxx).toElement()
+                                                                        if desc_el.tagName() == QString('type'):
+                                                                            # We have a type
+                                                                            if desc_el.hasChildNodes():
+                                                                                textSearch = desc_el.childNodes()
+                                                                                for xxxxx in xrange(0,textSearch.count(),1):
+                                                                                    if textSearch.item(xxxxx).isText():
+                                                                                        typeName = textSearch.item(xxxxx).nodeValue()
+                                                                        if desc_el.tagName() == QString('default'):
+                                                                            if desc_el.hasChildNodes():
+                                                                                textSearch = desc_el.childNodes()
+                                                                                for xxxxx in xrange(0,textSearch.count(),1):
+                                                                                    if textSearch.item(xxxxx).isText():
+                                                                                        nodeVal = textSearch.item(xxxxx).nodeValue()
+                                                            self.tooltypearray.append([tagName,typeName,nodeVal])
         for i,param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])
             if (i==0):
