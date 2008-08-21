@@ -23,4 +23,4 @@ class EstimationDatabaseConfiguration(DatabaseConfiguration):
     
 if __name__ == '__main__':
     config = EstimationDatabaseConfiguration()
-    print config
+#    print config

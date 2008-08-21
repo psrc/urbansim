@@ -38,4 +38,4 @@ class ServicesDatabaseConfiguration(DatabaseConfiguration):
     
 if __name__ == '__main__':
     config = ServicesDatabaseConfiguration()
-    print config
+#   print config

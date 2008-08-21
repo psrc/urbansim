@@ -23,4 +23,4 @@ class IndicatorsDatabaseConfiguration(DatabaseConfiguration):
 
 if __name__ == '__main__':
     config = IndicatorsDatabaseConfiguration()
-    print config   
+#    print config   

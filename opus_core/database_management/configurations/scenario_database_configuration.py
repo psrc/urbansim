@@ -23,4 +23,4 @@ class ScenarioDatabaseConfiguration(DatabaseConfiguration):
 
 if __name__ == '__main__':
     config = ScenarioDatabaseConfiguration()
-    print config
+#    print config

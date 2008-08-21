@@ -331,7 +331,7 @@ class RunManager(AbstractService):
                        func.count(run_activity.c.run_id)]
         )
         
-        print self.services_db.get_connection_string()
+        #print self.services_db.get_connection_string()
         last_id, cnt = self.services_db.execute(query).fetchone()
         
         if cnt > 0:
