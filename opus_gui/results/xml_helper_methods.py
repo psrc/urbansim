@@ -301,7 +301,7 @@ class ResultsManagerXMLHelper:
         }        
         child_defs = [run_id_def, scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
         
-        self._add_new_xml_tree(head_node_name = run_name, 
+        self._add_new_xml_tree(head_node_name = run_name.replace(' ', '_'), 
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Simulation_runs',
@@ -377,7 +377,7 @@ class ResultsManagerXMLHelper:
         head_node_args = {'type':'indicator_batch',
                           'value':''}
                 
-        self._add_new_xml_tree(head_node_name = batch_name, 
+        self._add_new_xml_tree(head_node_name = batch_name.replace(' ','_'), 
                                head_node_args = head_node_args, 
                                parent_name = 'Indicator_batches')
 
