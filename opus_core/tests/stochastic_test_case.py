@@ -126,6 +126,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
             'LRTS':LRTS,
             }
         config = DatabaseServerConfiguration(
+            protocol = 'mysql',
             host_name = os.environ['MYSQLSTOCHASTICTESTLOGGER'],
             user_name = os.environ['MYSQLUSERNAME'],
             password = os.environ['MYSQLPASSWORD'],
