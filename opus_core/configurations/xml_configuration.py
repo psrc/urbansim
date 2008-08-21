@@ -16,7 +16,6 @@ import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
-from opus_core.variables.variable_name import VariableName
 
 class XMLConfiguration(object):
     """
@@ -100,14 +99,23 @@ class XMLConfiguration(object):
         """Extract the run configuration named 'name' from this xml project and return it.
         Note that one run configuration can inherit from another (in addition to the usual
         project-wide inheritance).  If merge_controllers is True, merge in the controller
-        section into the run configuration.  If the configuration has an expression library, add
-        that to the configuration under the key 'expression_library' """
+        section into the run configuration.  If the configuration has a travel model configuration,
+        insert that under 'travel_model_configuration'.  The travel model configuration is formed
+        by merging the information from the travel model configuration sections in the model_manager
+        and in the scenario.  If the configuration has an expression library, add that to the 
+        configuration under the key 'expression_library' """
         general_section = self.get_section('general')
         project_name = general_section['project_name']
         config = self.get_section('scenario_manager/%s' % name)
         if config is None:
             raise ValueError, "didn't find a scenario named %s" % name
         self._insert_expression_library(config)
+        # Merge the information from the travel model configuration sections in the model_manager
+        model_manager_tm_config = self.get_section('model_manager/travel_model_configuration')
+        if model_manager_tm_config is not None:
+            s = config.get('travel_model_configuration', None)
+            model_manager_tm_config.merge(s)
+            config['travel_model_configuration'] = model_manager_tm_config
         if merge_controllers:
             # merge in the controllers in the model_manager/model_system portion of the project (if any)
             self._merge_controllers(config)
@@ -338,9 +346,11 @@ class XMLConfiguration(object):
         # otherwise add an entry to the dict with the item name as the key.
         action = node.get('parser_action', '')
         if action=='category':
-            # todo: check that type=dictionary
-            for child in node:
-                self._add_to_dict(child, result_dict)
+            type_name = node.get('type')
+            if type_name!='dictionary' and type_name!='dictionary_with_special_keys':
+                raise ValueError, 'parser_action="category" with a non-dictionary node type'
+            d = self._convert_node_to_data(node)
+            result_dict.update(d)
         elif action=='include':
             included = self._find_node(node.text)
             for child in included:
@@ -393,6 +403,8 @@ class XMLConfiguration(object):
             return array(eval(node.text))
         elif type_name=='dictionary' or type_name=='submodel':
             return self._convert_dictionary_to_data(node)
+        elif type_name=='dictionary_with_special_keys':
+            return self._convert_dictionary_with_special_keys_to_data(node)
         elif type_name=='class':
             return self._convert_class_to_data(node)
         elif type_name=='database_library':
@@ -474,6 +486,22 @@ class XMLConfiguration(object):
             self._add_to_dict(child, result_dict)
         return result_dict
         
+    def _convert_dictionary_with_special_keys_to_data(self, node):
+        # Node should be converted to a dictionary of dictionaries, typically with keys in the top-level dictionary 
+        # that are integers.  Since in xml tags can't be integers, this is handled with this special type.  The 
+        # elements under the node are parsed into dictionaries (their tags don't matter).  The node must have an 
+        # attribute 'key_name'.  The key name is used to find the key for each element in the top-level dictionary,
+        # and is deleted from the second-level dictionary.  
+        # See the unit tests for an example - that may make it clearer what this does.
+        key_name = node.get('key_name')
+        result = {}
+        for child in node:
+            d = self._convert_node_to_data(child)
+            k = d[key_name]
+            del d[key_name]
+            result[k] = d
+        return result
+    
     def _convert_class_to_data(self, node):
         items = {}
         for child in node:
@@ -765,6 +793,17 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           }}}}}
         self.assertEqual(config, should_be)
         
+    def test_travel_model_config(self):
+        # test whether the travel model section of a run configuration is being set correctly
+        # this also tests the 'dictionary_with_special_keys' type
+        f = os.path.join(self.test_configs, 'travel_model.xml')
+        config = XMLConfiguration(f).get_run_configuration('child_scenario')
+        should_be = {'project_name': 'test_project', 'travel_model_configuration': 
+            {'travel_model_base_directory': 'base3',
+             'emme2_batch_file_name': 'QUICKRUN.bat',
+              2000: {'bank': ['2000_06'], 'emme2_batch_file_name': None}}}
+        self.assertEqual(config, should_be)
+            
     def test_get_estimation_specification(self):
         # test getting the estimation specification.  This also tests the expression library, which contains an expression
         # for ln_cost and a variable defined as a Python class 
