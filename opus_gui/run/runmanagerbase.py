@@ -25,7 +25,6 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
-from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 
@@ -486,7 +485,7 @@ class ModelGuiElement(QWidget):
              
         self.batch_processor.set_data(
             visualizations = visualizations, 
-            source_data_name = None,
+            source_data_name = self.model.run_name,
             years = [year, year],
             cache_directory = cache_directory)
 

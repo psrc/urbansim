@@ -122,6 +122,7 @@ class OpusModel(object):
         self.start_year = None
         self.currentLogfileYear = None
         self.currentLogfileKey = None
+        self.run_name = None
         # simulate 0 command line arguments by passing in []
 
         
@@ -188,6 +189,7 @@ class OpusModel(object):
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 self.running = True
+                self.run_name = run_name
                 run_manager.run_run(config, run_name = run_name)
                 self.running = False
                 succeeded = True
