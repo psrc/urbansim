@@ -347,8 +347,8 @@ class XMLConfiguration(object):
         action = node.get('parser_action', '')
         if action=='category':
             type_name = node.get('type')
-            if type_name!='dictionary' and type_name!='dictionary_with_special_keys':
-                raise ValueError, 'parser_action="category" with a non-dictionary node type'
+            if type_name!='dictionary' and type_name!='dictionary_with_special_keys' and type_name:
+                raise ValueError, 'parser_action="category" with a non-dictionary node type (%s)'%type_name
             d = self._convert_node_to_data(node)
             result_dict.update(d)
         elif action=='include':
