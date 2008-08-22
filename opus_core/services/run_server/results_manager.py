@@ -11,7 +11,8 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
-from time import localtime, strftime
+#from time import localtime, strftime
+import datetime
 from sqlalchemy.sql import select
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.abstract_service import AbstractService
@@ -35,7 +36,7 @@ class ResultsManager(AbstractService):
              'expression':expression, 
              'data_path':data_path,
              'processor_name':get_host_name(),
-             'date_time':strftime('%Y-%m-%d %H:%M:%S', localtime())
+             'date_time':datetime.datetime.now()
              }        
 
         computed_indicators_table = self.services_db.get_table('computed_indicators')
