@@ -3,7 +3,7 @@
     <description type="string">PSRC Parcel Project</description>    
     <project_name type="string" flags="hidden">psrc_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
-    <advanced type="dictionary" parser_action='category'>
+    <advanced type="category">
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
@@ -248,7 +248,7 @@
 		<opus_emme2.models.run_export_macros type="string" choices="Run|Skip">Run</opus_emme2.models.run_export_macros>
 		<opus_emme2.models.get_emme2_data_into_cache type="string" choices="Run|Skip">Run</opus_emme2.models.get_emme2_data_into_cache>
 	</models>
-	<years_to_run type="dictionary_with_special_keys" parser_action="category" key_name="year">
+	<years_to_run type="category_with_special_keys" key_name="year">
 		<run_description type="dictionary">
 			<year type="integer">2000</year>
 		        <bank type="list">['2000_06']</bank>
@@ -370,7 +370,7 @@
           </tables_to_cache_nchunks>
         </advanced>       
       </creating_baseyear_cache_configuration>
-      <advanced type="dictionary" parser_action="category">
+      <advanced type="category">
         <dataset_pool_configuration type="class">
           <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>

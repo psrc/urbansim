@@ -351,7 +351,7 @@
   </model_manager>
   <scenario_manager>
     <default_scenario type="scenario">
-      <data parser_action="category" type="dictionary" cloneable="True">
+      <data type="category" cloneable="True">
         <baseyear_database config_name="scenario_database_configuration" type="class">
           <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
@@ -361,7 +361,7 @@
           <password type="password" />
           <database_name type="string" />
         </baseyear_database>
-        <cache_configuration parser_action="category" type="dictionary">
+        <cache_configuration type="category">
           <cache_directory type="string" />
           <creating_baseyear_cache_configuration type="class">
             <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
@@ -432,7 +432,7 @@
           </creating_baseyear_cache_configuration>
         </cache_configuration>
       </data>
-      <model_system parser_action="category" type="dictionary">
+      <model_system type="category">
         <models_to_run config_name="models" type="selectable_list">
           <prescheduled_events type="model" choices="Run|Skip">Run</prescheduled_events>
           <events_coordinator type="model" choices="Run|Skip">Run</events_coordinator>
@@ -454,7 +454,7 @@
           </employment_location_choice_model>
           <distribute_unplaced_jobs_model type="model" choices="Run|Skip">Run</distribute_unplaced_jobs_model>
         </models_to_run>
-        <others parser_action="category" type="dictionary">
+        <others type="category">
           <base_year type="integer">1980</base_year>
           <years_to_run config_name="years" type="tuple">
             <startyear type="integer">1981</startyear>
@@ -465,7 +465,7 @@
       <model_configurations config_name="models_configuration" type="dictionary">
         <configurations parser_action="include" type="path">model_manager/default_model_configurations</configurations>
       </model_configurations>
-      <advanced parser_action="category" type="dictionary">
+      <advanced type="category">
         <datasets_to_cache_after_each_model type="selectable_list">
           <gridcell type="dataset" choices="Cache|Skip">Cache</gridcell>
           <household type="dataset" choices="Cache|Skip">Cache</household>

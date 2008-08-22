@@ -7,7 +7,7 @@
     <test_scenario type="scenario">
       <description type="string">category test</description>
       <gui_name config_name="real_name" type="string">config name test</gui_name>
-      <advanced parser_action="category" type="dictionary">
+      <advanced type="category">
         <precache type="boolean" choices="True|False">True</precache>
         <chunksize type="integer">12</chunksize>
       </advanced>
@@ -15,9 +15,9 @@
         <startyear type="integer">1980</startyear>
         <endyear type="integer">1981</endyear>
       </years>
-      <nested_advanced parser_action="category" type="dictionary">
+      <nested_advanced type="category">
         <bool2 type="boolean" choices="True|False">False</bool2>
-        <inner_advanced parser_action="category" type="dictionary">
+        <inner_advanced type="category">
           <int2 type="integer">13</int2>
         </inner_advanced>
       </nested_advanced>

@@ -339,31 +339,29 @@ class XMLConfiguration(object):
         return config
     
     def _add_to_dict(self, node, result_dict):
-        # 'node' should be an element node representing a key-value pair to be added to 
-        # the dictionary 'result_dict'.
-        # If this is a dictionary node that's just a category, add the children to result_dict;
-        # if it's an 'include', find the referenced node and add its children to result_dict;
-        # otherwise add an entry to the dict with the item name as the key.
+        # Add the information in 'node' to 'result_dict'.  The way this is done depends on the node type and the
+        # parser_action (if present).  The normal case is that 'node' is an element node representing a key-value pair 
+        # to be added to 'result_dict'.  But there are a couple of special cases.
+        # If the type is 'category' or 'category_with_special_keys' add the children to result_dict.
+        # (See the comment for _convert_dictionary_with_special_keys_to_data for details on how that type is handled.)
+        # If it's an 'include', find the referenced node and add its children to result_dict.
         action = node.get('parser_action', '')
-        if action=='category':
-            type_name = node.get('type')
-            if type_name!='dictionary' and type_name!='dictionary_with_special_keys' and type_name is not None:
-                raise ValueError, 'parser_action="category" with a non-dictionary node type (%s)'%type_name
-            d = self._convert_node_to_data(node)
-            result_dict.update(d)
-        elif action=='include':
+        if action=='include':
             included = self._find_node(node.text)
             for child in included:
                 self._add_to_dict(child, result_dict)
         elif action=='only_for_includes':
             pass
         else:
-            if 'config_name' in node.attrib:
-                key = node.get('config_name')
+            data = self._convert_node_to_data(node)
+            type_name = node.get('type')
+            if type_name=='category' or type_name=='category_with_special_keys':
+                result_dict.update(data)
+            elif 'config_name' in node.attrib:
+                result_dict[node.get('config_name')] = data
             else:
-                key = node.tag
-            result_dict[key] = self._convert_node_to_data(node)
-            
+                result_dict[node.tag] = data
+    
     def _convert_node_to_data(self, node):
         # convert the information under node into the appropriate Python datatype.
         # To do this, branch on the node's type attribute.  For some kinds of data,
@@ -401,9 +399,9 @@ class XMLConfiguration(object):
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
-        elif type_name=='dictionary' or type_name=='submodel' or type_name is None:
+        elif type_name=='dictionary' or type_name=='category' or type_name=='submodel':
             return self._convert_dictionary_to_data(node)
-        elif type_name=='dictionary_with_special_keys':
+        elif type_name=='category_with_special_keys':
             return self._convert_dictionary_with_special_keys_to_data(node)
         elif type_name=='class':
             return self._convert_class_to_data(node)
@@ -795,7 +793,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         
     def test_travel_model_config(self):
         # test whether the travel model section of a run configuration is being set correctly
-        # this also tests the 'dictionary_with_special_keys' type
+        # this also tests the 'category_with_special_keys' type
         f = os.path.join(self.test_configs, 'travel_model.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
         should_be = {'project_name': 'test_project', 'travel_model_configuration': 

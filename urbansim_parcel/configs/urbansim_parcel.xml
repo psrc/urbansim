@@ -37,7 +37,7 @@
       <existing_units dataset="parcel" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.existing_units</existing_units>
       <units_occupied dataset="parcel" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.units_occupied</units_occupied>
     </expression_library>
-    <advanced parser_action="category">
+    <advanced type="category">
       <dataset_pool_configuration flags="hidden" type="class">
         <Class_name type="string">DatasetPoolConfiguration</Class_name>
         <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>

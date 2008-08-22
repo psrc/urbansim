@@ -455,7 +455,7 @@
           <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</existing_cache_to_copy>
         </baseyear_cache>
         <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
-        <advanced parser_action="category">
+        <advanced type="category">
         <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
           <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
@@ -510,7 +510,7 @@
           </tables_to_cache_nchunks>
         </advanced>       
       </creating_baseyear_cache_configuration>
-      <advanced parser_action="category">
+      <advanced type="category">
         <dataset_pool_configuration type="class">
           <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>

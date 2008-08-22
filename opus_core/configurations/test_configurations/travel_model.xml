@@ -5,7 +5,7 @@
   <model_manager>
     <travel_model_configuration type="dictionary">
       <travel_model_base_directory type="string">base1</travel_model_base_directory>
-      <years_to_run type="dictionary_with_special_keys" parser_action="category" key_name="year">
+      <years_to_run type="category_with_special_keys" key_name="year">
         <run_description type="dictionary">
 		  <year type="integer">2000</year>
 		  <bank type="list">['2000_06']</bank>
