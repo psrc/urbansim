@@ -25,6 +25,7 @@ from opus_gui.results.gui_result_interface.batch_processor import BatchProcessor
 from opus_gui.results.forms.results_browser_ui import Ui_ResultsBrowser
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
+from opus_core.logger import logger
 
 from copy import copy
 
@@ -70,6 +71,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.generating_results = False
         if self.cbAutoGen.isChecked():
             self.on_pbnGenerateResults_released()
+        self.pbnExportResults.setEnabled(False)
         
     def focusInEvent(self):
         self.setupAvailableIndicators()
@@ -247,7 +249,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             'indicators' : [indicator_name],
         }
         map_params = {'name':None,
-                      'indicator':indicator_name}
+                      'indicators':[indicator_name]}
         
         visualizations = [
             ('table_per_year', dataset, table_params),
@@ -266,7 +268,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         if not self.generating_results:
             self.generating_results = True
-            print 'Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year)
+            logger.log_note('Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year))
             self.running_key = key
             self.batch_processor = batch_processor
             runThread = OpusGuiThread(
@@ -320,7 +322,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if self.queued_results is not None and not swap:
             self.running_key = self.queued_results[0]
 
-            print 'Generating queued results for %s on run %s for year %i'%self.running_key
+            logger.log_note('Generating queued results for %s on run %s for year %i'%self.running_key)
             self.batch_processor = self.queued_results[1]
             self.queued_results = None
             
