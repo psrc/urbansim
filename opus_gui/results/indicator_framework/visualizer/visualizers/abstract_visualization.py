@@ -16,6 +16,7 @@ import os
 from opus_gui.results.indicator_framework.representations.visualization import Visualization as VisualizationRepresentation
 from numpy import array, where
 from opus_core.storage_factory import StorageFactory
+from opus_core.logger import logger
 
 class Visualization(object):
 
@@ -199,7 +200,10 @@ class Visualization(object):
             for col in cols: 
                 col_name = self._get_year_replaced_attribute(attribute = col, 
                                                       year = year)
-                data_subset[col_name] = table_data[col]
+                if col in table_data:
+                    data_subset[col_name] = table_data[col]
+                else:
+                    logger.log_warning('No indicator %s loaded!'%col)
             for key in primary_keys:
                 data_subset[key] = table_data[key]
 

@@ -160,50 +160,55 @@ class MatplotlibMap(Visualization):
                     dataset.compute_variables(names = dataset.get_coordinate_system())
                 
                 for indicator_name, computed_name in attributes:
+                        
                     indicator = computed_indicators[indicator_name]
                     
                     table_data = self.input_stores[year].load_table(
                         table_name = dataset_name,
                         column_names = [computed_name])
 
-                    table_name = self.get_name(
-                        dataset_name = dataset_name,
-                        years = [year],
-                        attribute_names = [indicator_name])
-                    
-                    if self.scale: 
-                        min_value, max_value = self.scale
-                    else:
-                        min_value, max_value = (None, None)
-                    
-                    file_path = os.path.join(self.storage_location,
-                                         table_name+ '.' + self.get_file_extension())
-                    
-                    dataset.add_attribute(name = str(computed_name), 
-                                          data = table_data[computed_name])
-                    
-                    if not os.path.exists(file_path):
-                        dataset.plot_map(
-                             name = str(computed_name),
-                             min_value = min_value, 
-                             max_value = max_value, 
-                             file = str(file_path), 
-                             my_title = str(indicator_name), 
-                             #filter = where(table_data[computed_name] != -1)
-                             #filter = 'urbansim.gridcell.is_fully_in_water'                                 
-                        )
-                    
-#                    self.plot_map(dataset = dataset, 
-#                                  attribute_data = table_data[computed_name], 
-#                                  min_value = min_value, 
-#                                  max_value = max_value, 
-#                                  file = file_path, 
-#                                  my_title = indicator_name, 
-#                                  filter = where(table_data[computed_name] != -1))
+                    if computed_name in table_data:
 
-                    metadata = ([indicator_name], table_name, [year])
-                    viz_metadata.append(metadata)
-                    
+                        table_name = self.get_name(
+                            dataset_name = dataset_name,
+                            years = [year],
+                            attribute_names = [indicator_name])
+                        
+                        if self.scale: 
+                            min_value, max_value = self.scale
+                        else:
+                            min_value, max_value = (None, None)
+                        
+                        file_path = os.path.join(self.storage_location,
+                                             table_name+ '.' + self.get_file_extension())
+                        
+                        dataset.add_attribute(name = str(computed_name), 
+                                              data = table_data[computed_name])
+                        
+                        if not os.path.exists(file_path):
+                            dataset.plot_map(
+                                 name = str(computed_name),
+                                 min_value = min_value, 
+                                 max_value = max_value, 
+                                 file = str(file_path), 
+                                 my_title = str(indicator_name), 
+                                 #filter = where(table_data[computed_name] != -1)
+                                 #filter = 'urbansim.gridcell.is_fully_in_water'                                 
+                            )
+                        
+        #                    self.plot_map(dataset = dataset, 
+        #                                  attribute_data = table_data[computed_name], 
+        #                                  min_value = min_value, 
+        #                                  max_value = max_value, 
+        #                                  file = file_path, 
+        #                                  my_title = indicator_name, 
+        #                                  filter = where(table_data[computed_name] != -1))
+        
+                        metadata = ([indicator_name], table_name, [year])
+                        viz_metadata.append(metadata)
+                    else:
+                        logger.log_warning('There is no computed indicator %s'%computed_name)
+                
         visualization_representations = []
         for indicator_names, table_name, years in viz_metadata:
             visualization_representations.append(
