@@ -68,7 +68,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.already_browsed = {}
         
         self.generating_results = False
-        self.on_pbnGenerateResults_released()
+        if self.cbAutoGen.isChecked():
+            self.on_pbnGenerateResults_released()
         
     def focusInEvent(self):
         self.setupAvailableIndicators()
@@ -197,6 +198,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if self.current_indicator == indicator_name and not self.setup: return
         
         self.current_indicator = indicator_name
+
         if not self.setup and self.cbAutoGen.isChecked(): 
             self.on_pbnGenerateResults_released()
         else:

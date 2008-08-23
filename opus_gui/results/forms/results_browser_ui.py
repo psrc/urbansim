@@ -224,7 +224,7 @@ class Ui_ResultsBrowser(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbAutoGen.sizePolicy().hasHeightForWidth())
         self.cbAutoGen.setSizePolicy(sizePolicy)
-        self.cbAutoGen.setChecked(True)
+        self.cbAutoGen.setChecked(False)
         self.cbAutoGen.setTristate(False)
         self.cbAutoGen.setObjectName("cbAutoGen")
         self.gridLayout_2.addWidget(self.cbAutoGen, 0, 1, 1, 1)
