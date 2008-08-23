@@ -11,21 +11,13 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString, Qt
-
-
-from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
-from opus_gui.results.forms.generate_results_form import GenerateResultsForm
 from opus_gui.results.forms.indicator_batch_run_form import IndicatorBatchRunForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
-from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
-from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
-from opus_gui.results.forms.edit_indicator_dialog import EditIndicatorDialog
-from opus_gui.results.forms.visualization.dataset_table.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
-from opus_gui.results.forms.visualization.dataset_table.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
+from opus_gui.results.forms.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
+from opus_gui.results.forms.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
 
 # General system includes
 import os
@@ -81,17 +73,6 @@ class ResultManagerBase(AbstractManagerBase):
         run_manager = self._get_run_manager()
         run_manager.delete_everything_for_this_run(run_id, cache_directory = cache_directory)
         run_manager.close()
-
-    def addAdvancedVisualizationForm(self):
-        new_form = AdvancedVisualizationForm(mainwindow = self.mainwindow,
-                                             result_manager = self)
-        
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements() 
-        
-    def editIndicator(self, selected_index):
-        window = EditIndicatorDialog(self, selected_index)
-        window.show()
         
     def configureExistingIndicatorBatchVisualization(self, selected_index):
         viz_name = selected_index.internalPointer().node().toElement().tagName()
@@ -100,23 +81,12 @@ class ResultManagerBase(AbstractManagerBase):
                                                node_type = 'batch_visualization')
         visualization_type = params['visualization_type']
 
-        if visualization_type == 'table_per_year':
-            window = ConfigureExistingDatasetTableDialog(self, selected_index)
-            window.show()
+        window = ConfigureExistingDatasetTableDialog(self, selected_index)
+        window.show()
                     
-    def configureNewIndicatorBatchVisualization(self, visualization_type, batch_name):
-        if visualization_type == 'Table (per year, spans indicators)':
-            window = ConfigureNewDatasetTableDialog(self, batch_name)
-            window.show()
-        
-            
-    def addGenerateIndicatorForm(self, selected_item):
-
-        new_form = GenerateResultsForm(mainwindow = self.mainwindow,
-                                       result_manager = self,
-                                       selected_item = selected_item)
-        
-        new_form.show()
+    def configureNewIndicatorBatchVisualization(self, batch_name):
+        window = ConfigureNewDatasetTableDialog(self, batch_name)
+        window.show()
 
     def addRunIndicatorBatchForm(self, batch_name, simulation_run):
         new_form = IndicatorBatchRunForm(mainwindow = self.mainwindow,
@@ -125,47 +95,6 @@ class ResultManagerBase(AbstractManagerBase):
                                          simulation_run = simulation_run)
         new_form.show()
         
-    def addIndicatorForm(self, indicator_type, indicator_names, kwargs = None):
-        #build visualizations
-
-        indicator_info = [self.xml_helper.get_indicator_result_info(indicator_name)
-                            for indicator_name in indicator_names]
-        
-        self.indicator_type = indicator_type
-        self.visualizer = OpusResultVisualizer(
-                                toolboxStuff = self.toolboxStuff,
-                                indicator_type = indicator_type,
-                                indicators = indicator_info,
-                                kwargs = kwargs)
-        
-        self.visualization_thread = OpusGuiThread(parentThread = self.mainwindow,
-                                                  parentGuiElement = self,
-                                                  thread_object = self.visualizer)
-        self.visualization_thread.start()
-
-        # Use this signal from the thread if it is capable of producing its own status signal
-        QObject.connect(self.visualization_thread, SIGNAL("runFinished(PyQt_PyObject)"),
-                        self.visualizationsCreated)
-        
-    def visualizationsCreated(self, success):
-
-        form_generator = None
-        visualizations = self.visualizer.get_visualizations()
-        if self.indicator_type == 'matplotlib_map' or \
-           self.indicator_type == 'matplotlib_chart':
-            form_generator = self.addViewImageIndicator
-        elif self.indicator_type == 'table_per_year' or \
-             self.indicator_type == 'table_per_attribute':
-            form_generator = self.addViewTableIndicator            
-        
-        if form_generator is not None:    
-            for visualization in visualizations:
-                form_generator(visualization = visualization,
-                               indicator_type = self.indicator_type)
-        
-        self.visualization_thread.wait()
-        self.visualization_thread = None
-        self.visualizer = None
 
     def addViewImageIndicator(self, visualization, indicator_type = None):
         new_form = ViewImageForm(mainwindow = self.mainwindow,

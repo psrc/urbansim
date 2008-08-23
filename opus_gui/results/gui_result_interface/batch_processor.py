@@ -51,18 +51,20 @@ class BatchProcessor(object):
         
     def _get_indicators(self, visualization_type, params):
         
-        if visualization_type in ['table_per_year']:
-            list_str = str(params['indicators'])[1:-1]
-            indicators = [i.strip()[1:-1] for i in list_str.split(',')]
-        else:
-            indicators = [str(params['indicator'])]
+#        if visualization_type in ['table_per_year']:
+        list_str = str(params['indicators'])[1:-1]
+        indicators = [i.strip()[1:-1] for i in list_str.split(',')]
+#        else:
+#            indicators = [str(params['indicator'])]
 
         return indicators
         
     def _get_viz_args(self, visualization_type, params, indicators):
         args = {}
+        
+        print visualization_type, str(visualization_type)
             
-        if visualization_type in ['table_per_year', 'table_per_attribute']:
+        if visualization_type == 'tab':
             output_type = str(params['output_type'])
             args['output_type'] = output_type
             args['name'] = params['name']
@@ -98,6 +100,7 @@ class BatchProcessor(object):
             self.visualizations = []
             for (visualization_type, dataset_name, params) in self.visualization_configurations:
                 indicator_results = []
+                print visualization_type, params
                 indicators = self._get_indicators(visualization_type, params)
                 for indicator_name in indicators:
                     try:

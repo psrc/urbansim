@@ -14,10 +14,9 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, QObject, SIGNAL, QRegExp, QSize, Qt, QVariant
-from PyQt4.QtGui import QDialog, QVBoxLayout, QFrame, QWidget, QHBoxLayout, QLabel, QPalette, QLineEdit
+from PyQt4.QtCore import QString
 
-from opus_gui.results.forms.visualization.dataset_table.abstract_configure_dataset_table_dialog import AbstractConfigureDatasetTableDialog
+from opus_gui.results.forms.abstract_configure_dataset_table_dialog import AbstractConfigureDatasetTableDialog
 from opus_gui.results.xml_helper_methods import get_child_values, ResultsManagerXMLHelper
 from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
 
@@ -31,18 +30,25 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         cur_vals = get_child_values(
                         parent = base_node,
                         all = True)
-#                        child_names = ['dataset_name','indicators', 'output_type'])
         
         self.leVizName.setText(base_node.nodeName())
         
         prev_dataset = str(cur_vals['dataset_name'])
         prev_indicators = self._process_xml_stored_list_of_strings(value = cur_vals['indicators'])
         prev_output_type = str(cur_vals['output_type'])
-
+        if 'visualization_type' in cur_vals:
+            viz_type = str(cur_vals['visualization_type'])
+            if viz_type not in ['Map']:
+                viz_type = self._get_inverse_type_mapper()[viz_type]
+            prev_viz_type = viz_type
+        else:
+            prev_viz_type = QString('Table')
             
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
+        self._setup_co_viz_type(value = prev_viz_type)
         self._setup_co_output_type(value = prev_output_type)
+    
         
         fixed_field_specification = None
         if prev_output_type == 'fixed_field':

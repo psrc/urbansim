@@ -17,8 +17,7 @@
 from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView, QFileDialog
 
-
-from opus_gui.results.forms.visualization.dataset_table.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
+from opus_gui.results.forms.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
 
@@ -31,7 +30,6 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         self.resultManagerBase = resultManagerBase
         self.model = resultManagerBase.toolboxStuff.resultsManagerTree.model
         self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
-        self.viz_type = 'Table (per year, spans indicators)'
         self.leVizName.setText(QString('(enter a name for this visualization)'))
         self.dataset_name = None
 #        self.twAvailableIndicators.verticalHeader().hide()
@@ -39,9 +37,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
 #        
 #        self.twAvailableIndicators.horizontalHeader().setResizeMode(QHeaderView.Stretch)
 #        self.twIndicatorsToVisualize.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        
 
-        
         self.lblOption1.hide()
         self.leOption1.hide()
         self.pbn_set_storage_location.hide()
@@ -52,7 +48,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         if self.dataset_name is None: return
         
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
-
+        
         current_row = self.twAvailableIndicators.currentRow()
         
         self.twAvailableIndicators.clear()
@@ -85,10 +81,10 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         for indicator in indicators:
             
             name = indicator['name']
+            
             self.indicators[name] = indicator
         
             if name not in existing_indicators:
-                
                 if self.dataset_name == indicator['dataset']:
                     item = QTableWidgetItem()
                     item.setText(indicator['name'])
@@ -136,28 +132,44 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.twIndicatorsToVisualize.setItem(row, column, item)       
             row += 1      
                         
+    def _get_output_types(self, viz_type):
+        if str(viz_type) == 'Table':
+            available_output_types = {
+                'Tab delimited file (.tab)':'tab',
+    #            'Comma separated':'csv',
+                'ESRI database':'esri',
+                'Export to SQL database':'sql',
+                'Fixed field file (.dat)':'fixed_field' 
+            }       
+        elif str(viz_type) == 'Map':
+            available_output_types = {
+                'Matplotlib map (.png)':'matplotlib_map',
+            }            
+        else:
+            available_output_types = {}
+            
+        return available_output_types
+            
+                      
     def _setup_co_output_type(self, value = None):
-
-        available_output_types = {
-            'Tab delimited file (.tab)':'tab',
-#            'Comma separated':'csv',
-            'ESRI database':'esri',
-            'Export to SQL database':'sql',
-            'Fixed field file (.dat)':'fixed_field' 
-        }
+        viz_type = self.cboVizType.currentText()
+        available_output_types = self._get_output_types(viz_type = viz_type)
         
         if value is None:
             value = 'tab'
-        
-        for k,v in available_output_types.items():
+ 
+        loc = -1
+        self.cboOutputType.clear()
+        for idx,(k,v) in enumerate(available_output_types.items()):
+            self.cboOutputType.addItem(QString(k))
+
             if v == value:
-                idx = self.cboOutputType.findText(QString(k))
+                loc = idx
                 
-                if idx != -1:
-                    self.cboOutputType.setCurrentIndex(idx)  
-                    if idx == 0:
-                        self.on_cboOutputType_currentIndexChanged(QString(value))      
-                    break
+        if loc != -1:
+            self.cboOutputType.setCurrentIndex(loc)  
+            if loc == 0:
+                self.on_cboOutputType_currentIndexChanged(QString(value))      
         
     def _setup_co_dataset_name(self, value = None):
         available_datasets = self.xml_helper.get_available_datasets()
@@ -174,6 +186,19 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         if value is None or idx == -1:
             self.dataset_name = QString(str(self.cboDataset.currentText()))
 
+    def _setup_co_viz_type(self, value = None):
+        
+        if value is not None:
+            idx = self.cboVizType.findText(value)
+            if idx != -1:
+                self.cboVizType.setCurrentIndex(idx)        
+            
+    def on_cboVizType_currentIndexChanged(self, param):
+        if isinstance(param, int):
+            return #qt sends two signals for the same event; only process one
+        
+        self._setup_co_output_type()
+             
     def on_cboDataset_currentIndexChanged(self, param):
 
         if isinstance(param, int):
@@ -185,14 +210,20 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self._setup_indicators()
 
                            
-    def _get_viz_spec(self, convert_to_node_dictionary = True):
-        translation = {
-            'Tab delimited file (.tab)':'tab',
-#            'Comma separated':'csv',
-            'ESRI database':'esri',
-            'Export to SQL database':'sql',
-            'Fixed field file (.dat)':'fixed_field' 
+    def _get_type_mapper(self):
+        return {
+            'Table': 'tab',
+            'Map': 'matplotlib_map'
         }
+    def _get_inverse_type_mapper(self):
+        mapper = self._get_type_mapper()
+        inv = dict([(v,k) for k,v in mapper.items()])
+        
+        return inv
+        
+    def _get_viz_spec(self, convert_to_node_dictionary = True):
+        viz_type = self.cboVizType.currentText()
+        translation = self._get_output_types(viz_type)
         dataset_name = self.dataset_name
         output_type = QString(translation[str(self.cboOutputType.currentText())])
         indicators = QString(str(self._get_column_values(column = 0)))
@@ -200,7 +231,8 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         vals = {
                 'indicators': indicators,
                 'output_type': output_type,
-                'dataset_name': dataset_name
+                'dataset_name': dataset_name,
+                'visualization_type': QString(self._get_type_mapper()[str(viz_type)])
         }
         
         if output_type == 'fixed_field':
@@ -250,13 +282,17 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.rbSingleTable.hide()
             self.rbTablePerIndicator.hide()
             self.rbTablePerYear.hide()
-            
         else:
             self.lblOption1.hide()
-            self.leOption1.hide()            
-            self.rbSingleTable.show()
-            self.rbTablePerIndicator.show()
-            self.rbTablePerYear.show()
+            self.leOption1.hide()     
+            if output_type == 'Tab delimited file (.tab)':       
+                self.rbSingleTable.show()
+                self.rbTablePerIndicator.show()
+                self.rbTablePerYear.show()
+            else:
+                self.rbSingleTable.hide()
+                self.rbTablePerIndicator.hide()
+                self.rbTablePerYear.hide()                
             
                         
         if output_type == 'Fixed field file (.dat)':

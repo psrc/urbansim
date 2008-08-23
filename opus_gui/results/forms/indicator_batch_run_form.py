@@ -186,8 +186,7 @@ class IndicatorBatchRunForm(QDialog):
             if indicator_type == 'matplotlib_map' or \
                indicator_type == 'matplotlib_chart':
                 form_generator = self.result_manager.addViewImageIndicator
-            elif indicator_type == 'table_per_year' or \
-                 indicator_type == 'table_per_attribute':
+            elif indicator_type == 'tab':
                 form_generator = self.result_manager.addViewTableIndicator            
         
             if form_generator is not None:    

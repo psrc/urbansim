@@ -124,16 +124,7 @@ class ResultsManagerXMLHelper:
                 run_manager = RunManager(server_config)
                 run['years'] = run_manager.get_years_run(str(run['cache_directory']))
         
-        return run_info
-    
-    def get_available_results(self, attributes = []):
-        server_config = ServicesDatabaseConfiguration()
-        results_manager = ResultsManager(server_config)
-        results = results_manager.get_results()
-        return results
-#        return self._get_node_group(node_value = 'indicator_result', 
-#                                    node_attribute = 'type', 
-#                                    child_attributes = attributes)        
+        return run_info        
     
     def _get_node_group(self,
                         node_value, 
@@ -165,15 +156,6 @@ class ResultsManagerXMLHelper:
 
         return group
     
-    def get_visualization_options(self):
-        viz_map = {
-#            'Map (per indicator per year)':'matplotlib_map',
-#            'Chart (per indicator, spans years)':'matplotlib_chart',
-#            'Table (per indicator, spans years)':'table_per_attribute',
-            'Table (per year, spans indicators)':'table_per_year',
-#            'ESRI table (for loading in ArcGIS)':'table_esri'
-        }
-        return viz_map
         
     def get_batch_configuration(self, batch_name):
         visualizations = []
@@ -188,6 +170,9 @@ class ResultsManagerXMLHelper:
                                     all = True)
             
             visualization_type = str(vals['visualization_type'])
+            if visualization_type in ['table_per_year', 'table_per_attribute']:
+                visualization_type = 'tab'
+                
             dataset_name = str(vals['dataset_name'])
 
             vals['name'] = str(node.nodeName())
@@ -196,24 +181,6 @@ class ResultsManagerXMLHelper:
             node = node.nextSibling()
             
         return visualizations 
-
-
-
-    def get_indicator_result_info(self, indicator_name):
-        _, info = self.get_element_attributes(
-                    node_name = indicator_name, 
-                    child_attributes = ['source_data',
-                                        'indicator_name',
-                                        'dataset_name',
-                                        'available_years'], 
-                    node_type = 'indicator_result')
-
-        indicator = {}
-        indicator['source_data_name'] = str(info['source_data'])
-        indicator['indicator_name'] = str(info['indicator_name'])
-        indicator['dataset_name'] = str(info['dataset_name'])
-        indicator['years'] = [int(y) for y in str(info['available_years']).split(', ')]        
-        return indicator
     
     def get_element_attributes(self, node_name, child_attributes = [], all = False, node_type = None):
         if not isinstance(node_name, QString):
@@ -249,10 +216,6 @@ class ResultsManagerXMLHelper:
                                  all = all)
         return matching_element, child_attributes        
         
-        
-    #####################################################
-    ##############    XML REMOVAL    ####################
-    #####################################################
     
     #####################################################
     #####################################################
@@ -307,71 +270,6 @@ class ResultsManagerXMLHelper:
                                parent_name = 'Simulation_runs',
                                temporary = temporary,
                                children_hidden = True)
-
-    def add_result_to_xml(self, 
-                          result_name,
-                          source_data_name,
-                          indicator_name,
-                          dataset_name,
-                          years):
-        
-        head_node_args = {'type':'indicator_result',
-                          'value':''}
-        
-        source_data_def = {
-            'name':'source_data',
-            'type':'string',
-            'value':source_data_name
-        }
-        indicator_def = {
-            'name':'indicator_name',
-            'type':'string',
-            'value':indicator_name
-        }
-        dataset_def = {
-            'name':'dataset_name',
-            'type':'string',
-            'value':dataset_name
-        }
-        year_def = {
-            'name':'available_years',
-            'type':'string',
-            'value':', '.join([repr(year) for year in years])
-        }
-                
-        child_defs = [source_data_def, indicator_def, dataset_def, year_def]
-        
-        self._add_new_xml_tree(head_node_name = result_name, 
-                               head_node_args = head_node_args, 
-                               child_node_definitions = child_defs, 
-                               parent_name = 'Results',
-                               children_hidden = True)
-
-    def addNewIndicator(self, 
-                        indicator_name,
-                        package_name,
-                        expression):
-
-        head_node_args = {'type':'indicator',
-                          'value':''}
-        
-        package_def = {
-            'name':'package',
-            'type':'string',
-            'value':package_name,
-        }
-        expression_def = {
-            'name':'expression',
-            'type':'string',
-            'value':expression
-        }
-        child_defs = [package_def, expression_def]
-        
-        self._add_new_xml_tree(head_node_name = indicator_name, 
-                               head_node_args = head_node_args, 
-                               child_node_definitions = child_defs, 
-                               parent_name = 'my_indicators',
-                               children_hidden = True)
           
     def addNewIndicatorBatch(self, batch_name):
         head_node_args = {'type':'indicator_batch',
@@ -385,7 +283,7 @@ class ResultsManagerXMLHelper:
         head_node_args = {'type':'batch_visualization',
                           'value':''}
 
-        viz_params.append({'value':self.get_visualization_options()[viz_type],
+        viz_params.append({'value':viz_type,
                            'name':'visualization_type'})
             
         for param in viz_params:
