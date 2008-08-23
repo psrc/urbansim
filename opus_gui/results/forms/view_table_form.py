@@ -17,7 +17,6 @@ from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, \
 
 
 from opus_core.storage_factory import StorageFactory
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 class ViewTableForm(QWidget):
     def __init__(self, mainwindow, visualization):
@@ -39,7 +38,7 @@ class ViewTableForm(QWidget):
 
         self.load_table(visualization = visualization)
     
-    def load_table(self, visualization):
+    def load_table(self, visualization, limit = 10000):
             
         storage = StorageFactory().get_storage(
                        type = '%s_storage'%visualization.output_type,
@@ -80,6 +79,8 @@ class ViewTableForm(QWidget):
                 item.setText(QString(str(table_data[key][idx])))
                 self.tableWidget.setItem(i,j,item)
                 j += 1
+            if i > limit:
+                break
         
         self.tableWidget.resizeColumnsToContents()
         self.tableWidget.resizeRowsToContents()
