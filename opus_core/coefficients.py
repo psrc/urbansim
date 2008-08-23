@@ -354,7 +354,8 @@ class Coefficients(object):
             for value in values:
                 # if the number is 0, big enough to not need sci notation, or a number like .001,
                 # then just write out in x.xxxx format
-                if  (0 == value) or (abs(value) >= .1) or len(string.split("%s"%value,".")[1]) < 5:
+                split_value = string.split("%s"%value,".")
+                if  (0 == value) or (abs(value) >= .1) or (len(split_value)>1 and len(split_value[1]) < 5):
                     tex_file.write("& $ %.4f $" % value)
                 # otherwise, write out in sci notation
                 else:
