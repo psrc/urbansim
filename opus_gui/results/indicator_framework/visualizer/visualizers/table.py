@@ -44,8 +44,7 @@ class Table(Visualization):
                not isinstance(storage_location,str):
             raise Exception("If Table output_type is %s, storage_location must be a path to the output directory"%output_type)
         elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri', 'fixed_field']:
-            print output_type
-            raise Exception("Table output_type must be either dbf, csv, tab, sql, esri, fixed_field")
+            raise Exception("Table output_type must be either dbf, csv, tab, sql, esri, fixed_field, not %s"%output_type)
 
         if output_type == "fixed_field" and not fixed_field_format:
             raise ValueError("If Table output_type is 'fixed_field', an XML format string must be passed as fixed_field_format.")
@@ -114,7 +113,6 @@ class Table(Visualization):
             if name not in indicators_to_visualize: continue
 
             if computed_indicator.source_data != source_data:
-                print source_data, computed_indicator.source_data
                 raise Exception('result templates in indicator batch must all be the same.')
             dataset_name = computed_indicator.indicator.dataset_name
             if dataset_name not in dataset_to_attribute_map:

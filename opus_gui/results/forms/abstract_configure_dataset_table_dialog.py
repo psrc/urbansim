@@ -20,6 +20,7 @@ from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView, QFileDialog
 from opus_gui.results.forms.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
+from opus_core.logger import logger
 
 class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
     def __init__(self, resultManagerBase):
@@ -103,7 +104,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
                     self.twAvailableIndicators.setItem(row,1,item)
             else:
                 if self.dataset_name != indicator['dataset']:
-                    print 'Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(indicator['name'])
+                    logger.log_warning('Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(indicator['name']))
                     continue
                 item = QTableWidgetItem()
                 item.setText(indicator['name'])                
@@ -345,14 +346,6 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         cur_value = from_table_widget.item(row, 0)
         if cur_value is not None:
             indicator_name = QString(cur_value.text())
-            dataset = self.indicators[indicator_name]['dataset']
-#            if self.dataset_name is None:
-#                self.dataset_name = dataset
-#            elif self.dataset_name != dataset:
-#                print 'Indicator cannot be added because it is of a different dataset than the others (%s vs. %s).'%(str(dataset), str(self.dataset_name))
-#                return
-                        
-            item = QTableWidgetItem(indicator_name) #need to create new item because QT deletes object
             last_row = to_table_widget.rowCount()
             to_table_widget.insertRow(last_row)
             to_table_widget.setItem(last_row, 0, QTableWidgetItem(indicator_name))

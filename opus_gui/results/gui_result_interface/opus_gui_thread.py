@@ -17,6 +17,8 @@ from PyQt4.QtGui import *
 
 import os, sys
 
+from opus_core.logger import logger
+
 
 class OpusGuiThread(QThread):
 
@@ -46,14 +48,13 @@ class OpusGuiThread(QThread):
         self.thread_object.run(args)
         
     def progressCallback(self,percent):
-        print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
 
     def finishedCallback(self,success):
         if success:
-            print "Success returned from Model"
+            logger.log_note("Success returned from results")
         else:
-            print "Error returned from Model"
+            logger.log_warning("Error returned from results")
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
     def errorCallback(self,errorMessage):

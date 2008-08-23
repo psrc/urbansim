@@ -261,6 +261,6 @@ if __name__ == '__main__':
     try: 
         import matplotlib
     except:
-        print 'could not import matplotlib'
+        logger.log_warning('could not import matplotlib')
     else:
         opus_unittest.main()

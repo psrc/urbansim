@@ -184,13 +184,11 @@ class OpusXMLAction_Results(object):
 
 
     def removeNode(self):
-        #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneNode(self):
-        #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()

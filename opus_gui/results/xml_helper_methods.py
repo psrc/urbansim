@@ -13,10 +13,7 @@
 
 from PyQt4.QtCore import QString, QModelIndex, SIGNAL
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
-from sqlalchemy.sql import select
-from opus_core.misc import get_host_name
 from opus_core.services.run_server.run_manager import RunManager
-from opus_core.services.run_server.results_manager import ResultsManager
 
 import os
 

@@ -57,11 +57,6 @@ class IndicatorFrameworkInterface:
             
             run_id, cache_directory = self.run_manager.services_db.execute(s).fetchone()
         else:
-            print source_data_name
-            s = select([run_tbl.c.run_id, run_tbl.c.run_name])
-            for run_id, run_name in self.run_manager.execute(s).fetchall():
-                print run_id, run_name            
-
             s = select([run_tbl.c.run_id],
                        whereclause=run_tbl.c.run_name == source_data_name)            
             run_id = self.run_manager.services_db.execute(s).fetchone()[0]

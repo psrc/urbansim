@@ -13,15 +13,10 @@
 
 import os
 
-try:
-    WithOpus = True
-    from opus_gui.results.indicator_framework.maker.maker import Maker
-    from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui.exceptions.formatter import formatExceptionInfo
-    from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
-except ImportError:
-    WithOpus = False
-    print "Unable to import opus core libs for opus result generator"
+from opus_gui.results.indicator_framework.maker.maker import Maker
+from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
+from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 
 class OpusResultGenerator(object):
@@ -51,27 +46,24 @@ class OpusResultGenerator(object):
         
     def run(self, args = {}, raise_exception = False):
         
-        if WithOpus:
-            succeeded = False
-            try:
+        succeeded = False
+        try:
 #                try:
 #                    import pydevd;pydevd.settrace()
 #                except:
 #                    pass
-                
-                self._generate_results()
-                succeeded = True
-            except Exception, e:
-                succeeded = False
-                errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
-                if self.errorCallback is not None:
-                    self.errorCallback(errorinfo)
-                if raise_exception:
-                    raise e
-            if self.finishedCallback is not None:
-                self.finishedCallback(succeeded)
-        else:
-            pass
+            
+            self._generate_results()
+            succeeded = True
+        except Exception, e:
+            succeeded = False
+            errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
+            if self.errorCallback is not None:
+                self.errorCallback(errorinfo)
+            if raise_exception:
+                raise e
+        if self.finishedCallback is not None:
+            self.finishedCallback(succeeded)
 
     def _generate_results(self):
 
@@ -100,33 +92,32 @@ class OpusResultGenerator(object):
 #                        
     def _get_current_log(self, key):
         newKey = key
-        if WithOpus:
-            # We attempt to keep up on the current progress of the model run.  We pass into this
-            # function an initial "key" value of 0 and expect to get back a new "key" after the
-            # function returns.  It is up to us in this function to use this key to determine
-            # what has happened since last time this function was called.
-            # In this example we use the key to indicate where in a logfile we last stopped reading
-            # and seek into that file point and read to the end of the file and append to the
-            # log text edit field in the GUI.
-            if self.cache_directory is not None:
-                try:
-                    log_file = os.path.join(self.cache_directory,
-                                          'indicators',
-                                          'indicators.log')
-                    
-                    f = open(log_file)
-                    f.seek(key)
-                    lines = f.read()
-                    newKey = f.tell()
-                    if newKey != key:
-                        self.guiElement.logText.append(lines)
-                    f.close()
-                except IOError:
-                    if self.firstRead == True:
-                        self.guiElement.logText.append("No logfile yet")
-                        self.firstRead = False
-                    else:
-                        from PyQt4.QtCore import QString
-                        self.guiElement.logText.insertPlainText(QString("."))
-                #self.guiElement.logText.append("ping")
+        # We attempt to keep up on the current progress of the model run.  We pass into this
+        # function an initial "key" value of 0 and expect to get back a new "key" after the
+        # function returns.  It is up to us in this function to use this key to determine
+        # what has happened since last time this function was called.
+        # In this example we use the key to indicate where in a logfile we last stopped reading
+        # and seek into that file point and read to the end of the file and append to the
+        # log text edit field in the GUI.
+        if self.cache_directory is not None:
+            try:
+                log_file = os.path.join(self.cache_directory,
+                                      'indicators',
+                                      'indicators.log')
+                
+                f = open(log_file)
+                f.seek(key)
+                lines = f.read()
+                newKey = f.tell()
+                if newKey != key:
+                    self.guiElement.logText.append(lines)
+                f.close()
+            except IOError:
+                if self.firstRead == True:
+                    self.guiElement.logText.append("No logfile yet")
+                    self.firstRead = False
+                else:
+                    from PyQt4.QtCore import QString
+                    self.guiElement.logText.insertPlainText(QString("."))
+            #self.guiElement.logText.append("ping")
         return newKey

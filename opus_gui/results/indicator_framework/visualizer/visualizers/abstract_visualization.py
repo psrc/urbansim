@@ -45,7 +45,6 @@ class Visualization(object):
                            indicators_to_visualize,
                            table_name,
                            years):
-        #print indicators_to_visualize
         try:
             additional_metadata = self.get_additional_metadata()
             viz = VisualizationRepresentation(

@@ -178,9 +178,7 @@ class IndicatorBatchRunForm(QDialog):
         self.runThread.start()
 
     # Called when the model is finished... 
-    def runFinishedFromThread(self,success):
-        print "Results generated met with success = ", success
-            
+    def runFinishedFromThread(self,success):            
         all_visualizations = self.batch_processor.get_visualizations()
         for indicator_type, visualizations in all_visualizations:
             if indicator_type == 'matplotlib_map' or \

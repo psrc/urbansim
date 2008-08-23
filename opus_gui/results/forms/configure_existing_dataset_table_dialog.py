@@ -38,7 +38,10 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         prev_output_type = str(cur_vals['output_type'])
         if 'visualization_type' in cur_vals:
             viz_type = str(cur_vals['visualization_type'])
-            if viz_type not in ['Map']:
+
+            if viz_type in ['table_per_year', 'table_per_attribute']:
+                viz_type = 'tab'           
+            elif viz_type not in ['Map']:
                 viz_type = self._get_inverse_type_mapper()[viz_type]
             prev_viz_type = viz_type
         else:
