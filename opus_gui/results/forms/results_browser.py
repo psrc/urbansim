@@ -305,7 +305,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                     tab_widget = ViewTableForm(self.twVisualizations, viz)
                     tab_widget.setSizePolicy(size)
             else:
-                return
+                map_widget = self.tabMap
+                tab_widget = self.tabTable
             
         self.swap_visualizations(map_widget, tab_widget)
         self.already_browsed[key] = (tab_widget, map_widget)  
