@@ -295,14 +295,18 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.twVisualizations.setSizePolicy(size)
 
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():
-            if visualization_type == 'matplotlib_map':
-                viz = visualizations[0]
-                map_widget = ViewImageForm(self.twVisualizations, viz)
-                map_widget.setSizePolicy(size)
-            elif visualization_type == 'table_per_year':
-                viz = visualizations[0]
-                tab_widget = ViewTableForm(self.twVisualizations, viz)
-                tab_widget.setSizePolicy(size)
+            if len(visualizations) > 0:
+                if visualization_type == 'matplotlib_map':
+                    viz = visualizations[0]
+                    map_widget = ViewImageForm(self.twVisualizations, viz)
+                    map_widget.setSizePolicy(size)
+                elif visualization_type == 'table_per_year':
+                    viz = visualizations[0]
+                    tab_widget = ViewTableForm(self.twVisualizations, viz)
+                    tab_widget.setSizePolicy(size)
+            else:
+                return
+            
         self.swap_visualizations(map_widget, tab_widget)
         self.already_browsed[key] = (tab_widget, map_widget)  
         
