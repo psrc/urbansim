@@ -36,10 +36,11 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if index.column() == 0:
-            if (not self.arraydata[index.row()][-3]) or (not self.editable):
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
-            else:
-                return Qt.ItemIsEnabled
+            #if (not self.arraydata[index.row()][-3]) or (not self.editable):
+            #    return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+            #else:
+            #    return Qt.ItemIsEnabled
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         elif self.editable:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
         else:
@@ -62,19 +63,22 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             return QVariant(self.arraydata[index.row()][index.column()])
         if role == Qt.CheckStateRole:
-            if index.column() == 0 and (not self.arraydata[index.row()][-3]):
+            if index.column() == 0: # and (not self.arraydata[index.row()][-3]):
                 if self.arraydata[index.row()][-2]:
                     return QVariant(Qt.Checked)
                 else:
                     return QVariant(Qt.Unchecked)
-            else:
-                return QVariant()
+            #else:
+            #    return QVariant()
         if role == Qt.BackgroundRole:
             if self.arraydata[index.row()][-3]:
                 return QVariant(QColor(Qt.darkGray))
             else:
                 return QVariant(QColor(Qt.lightGray))
         return QVariant()
+
+    def isInherited(self, index):
+        return self.arraydata[index.row()][-3]
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -103,7 +107,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
     def checkStateOfCheckBoxes(self,newItemAdded):
         if newItemAdded and self.editable:
             # If we have a check then we enable delete
-            self.parentWidget.deleteSelectedVariables.setEnabled(True)
+            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(True)
             self.parentWidget.checkSelectedVariables.setEnabled(True)
         # Else now we loop through the items and see if that was the last one removed
         foundOne = False
@@ -111,7 +115,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             if testCase[-2]:
                 foundOne = True
         if (not foundOne) and self.editable:
-            self.parentWidget.deleteSelectedVariables.setEnabled(False)        
+            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(False)        
             self.parentWidget.checkSelectedVariables.setEnabled(False)        
         
     def initCheckBoxes(self,checkList):

@@ -55,16 +55,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="deleteSelectedVariables" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>Delete Selected Variables</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="Line" name="line" >
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
@@ -94,14 +84,14 @@
          <bool>false</bool>
         </property>
         <property name="text" >
-         <string>Save Changes</string>
+         <string>Accept Changes</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="cancelWindow" >
         <property name="text" >
-         <string>Cancel</string>
+         <string>Close</string>
         </property>
        </widget>
       </item>

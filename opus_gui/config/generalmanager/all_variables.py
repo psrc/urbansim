@@ -94,19 +94,28 @@ class AllVariablesGui(object):
         tv.setModel(tm)
         tv.setColumnWidth(0,25)
         #tv.selectColumn(1)
-        tv.horizontalHeader().setStretchLastSection(True)
-        tv.setWordWrap(True)
-        #tv.setTextElideMode(Qt.ElideNone)
-        tv.resizeRowsToContents()
-        tv.resizeColumnsToContents()
-        QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateLayout)
+        tv.setWordWrap(False)
+        tv.setTextElideMode(Qt.ElideNone)
+        #tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateVertLayout)
+        QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateHorLayout)
+        QObject.connect(tm, SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"), self.updateHorLayout)
         self.gridlayout.addWidget(tv)
+        #tv.resizeRowsToContents()
+        #tv.resizeColumnsToContents()
+        #tv.horizontalHeader().setStretchLastSection(True)
+        QTimer.singleShot(100, self.updateVertLayout)
+        QTimer.singleShot(200, self.updateHorLayout)
 
-    def updateLayout(self):
-        # print "Signal"
+    def updateVertLayout(self):
+        #print "Ping1"
         self.tv.resizeRowsToContents()
+
+    def updateHorLayout(self):
+        #print "Ping2"
         self.tv.resizeColumnsToContents()
-        
+        #if self.tv.columnWidth(self.tm.index(0,0,QModelIndex()).columnCount()) 
+
 class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
     def __init__(self, mainwindow, fl):
         QDialog.__init__(self, mainwindow, fl)
@@ -117,6 +126,39 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
         # For now, disable the save button until we implement the write in the model...
         self.saveChanges.setEnabled(False)
+
+        self.removeIcon = QIcon(":/Images/Images/delete.png")
+
+        self.actRemoveRow = QAction(self.removeIcon,
+                                    "Remove Row",
+                                    mainwindow)
+        QObject.connect(self.actRemoveRow,
+                        SIGNAL("triggered()"),
+                        self.removeRow)
+
+        self.tv.setContextMenuPolicy(Qt.CustomContextMenu)
+        QObject.connect(self.tv,SIGNAL("customContextMenuRequested(const QPoint &)"),
+                        self.processCustomMenu)
+
+    def removeRow(self):
+        #print "Remove Row Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.row())
+        self.currentIndex.model().checkStateOfCheckBoxes(False)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+
+    def processCustomMenu(self, position):
+        #print "Custom Menu"
+        if self.tv.indexAt(position).isValid():
+            self.currentColumn = self.tv.indexAt(position).column()
+            self.currentIndex = self.tv.indexAt(position)
+            if not self.tm.isInherited(self.currentIndex):
+                self.menu = QMenu(self.mainwindow)
+                if self.menu:
+                    # Tack on a remove row item
+                    self.menu.addAction(self.actRemoveRow)
+                    if not self.menu.isEmpty():
+                        self.menu.exec_(QCursor.pos())
 
     def findOriginalNode(self,list):
         for tsindex in self.tsindexlist:
@@ -227,11 +269,22 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                                               self.tree.model.parent(testCaseIndex[0]))
                     self.tree.model.emit(SIGNAL("layoutChanged()"))
         else:
-            print "Dont need to save"
-        self.close()
+            #print "Dont need to save"
+            pass
+        # Now disable the accept changes button
+        self.saveChanges.setEnabled(False)
+        self.dirty = False
+        #self.close()
 
     def on_cancelWindow_released(self):
         #print "cancel pressed"
+        saveBeforeClose = QMessageBox.Save
+        if self.dirty:
+            saveBeforeClose = QMessageBox.question(self,"Warning",
+                                                   "Current expressions contain changes... \nShould we accept or discard these changes?",
+                                                   QMessageBox.Discard,QMessageBox.Save)
+        if saveBeforeClose == QMessageBox.Save:
+            self.on_saveChanges_released()
         self.close()
 
     def on_deleteSelectedVariables_released(self):
@@ -241,14 +294,28 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
     def on_addNewVariable_released(self):
         #print "new pressed"
         self.tm.insertRow(0,["",
-                             "New_Node","Dataset","Use","Source","Description",
+                             "New_Node","Dataset","model variable","primary attribute","Description",
                              0,0,0])
 
     def on_checkSelectedVariables_released(self):
-        self.tm.checkSelectedVariables()
+        saveBeforeCheck = QMessageBox.Yes
+        if self.dirty:
+            saveBeforeCheck = QMessageBox.question(self,"Warning",
+                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
+                                                   QMessageBox.No,QMessageBox.Yes)
+        if saveBeforeCheck == QMessageBox.Yes:
+            self.on_saveChanges_released()
+            self.tm.checkSelectedVariables()
 
     def on_checkAllVariables_released(self):
-        self.tm.checkAllVariables()
+        saveBeforeCheck = QMessageBox.Yes
+        if self.dirty:
+            saveBeforeCheck = QMessageBox.question(self,"Warning",
+                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
+                                                   QMessageBox.No,QMessageBox.Yes)
+        if saveBeforeCheck == QMessageBox.Yes:
+            self.on_saveChanges_released()
+            self.tm.checkAllVariables()
         
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):

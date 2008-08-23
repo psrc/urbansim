@@ -44,6 +44,8 @@ class OpusAllVariablesDelegate(QItemDelegate):
                 if index.model().data(index,Qt.DisplayRole).toString() == choice:
                     currentIndex = i
             editor.setCurrentIndex(currentIndex)
+            #editor.setMinimumContentsLength(20)
+            #editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
             return editor
         elif index.column() == 4:
             # Column 4 is "Source" with options "primary attribute", "expression", "python module"
@@ -55,6 +57,8 @@ class OpusAllVariablesDelegate(QItemDelegate):
                 if index.model().data(index,Qt.DisplayRole).toString() == choice:
                     currentIndex = i
             editor.setCurrentIndex(currentIndex)
+            #editor.setMinimumContentsLength(20)
+            #editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
             return editor
         else:
             #editor = QItemDelegate.createEditor(self, parentView, option, index)
@@ -79,7 +83,9 @@ class OpusAllVariablesDelegate(QItemDelegate):
 
     def updateEditorGeometry(self, editor, option, index):
         if type(editor) == QComboBox:
-            editor.setGeometry(option.rect)
+            newRect = option.rect
+            newRect.adjust(-30,0,30,0)
+            editor.setGeometry(newRect)
         elif type(editor) == QTextEdit:
             newRect = option.rect
             newRect.adjust(-5,-7,-5,7)
