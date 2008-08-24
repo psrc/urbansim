@@ -35,6 +35,13 @@ class OpusXMLAction_General(object):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
+        self.actEditAllVariables = QAction(self.applicationIcon,
+                                           "Edit Expression Library",
+                                           self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actEditAllVariables,
+                        SIGNAL("triggered()"),
+                        self.editAllVariables)
+
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
                                      self.xmlTreeObject.mainwindow)
@@ -55,6 +62,9 @@ class OpusXMLAction_General(object):
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
+
+    def editAllVariables(self):
+        self.mainwindow.editAllVariables()
 
     def removeNode(self):
         #print "Remove Node Pressed"
@@ -100,8 +110,10 @@ class OpusXMLAction_General(object):
 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
 
-                #if domElement.tagName() == QString("placeholder"):
-                #    self.menu.addAction(self.placeholderAction)
+                
+                if (domElement.attribute(QString("type")) == QString("variable_definition")) or \
+                       (domElement.tagName() == QString("expression_library")):
+                    self.menu.addAction(self.actEditAllVariables)
                 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
