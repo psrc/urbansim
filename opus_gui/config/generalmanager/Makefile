@@ -15,10 +15,10 @@
 RM = rm -f
 #RM = del
 
-all: all_variables_edit_ui.py all_variables_select_ui.py
+all: all_variables_edit_ui.py all_variables_select_ui.py all_variables_new_ui.py
 
 clean:
-	$(RM) all_variables_edit_ui.py all_variables_select_ui.py
+	$(RM) all_variables_edit_ui.py all_variables_select_ui.py all_variables_new_ui.py
 	$(RM) *.pyc
 	$(RM) *~
 
@@ -28,4 +28,6 @@ all_variables_edit_ui.py: all_variables_edit.ui
 all_variables_select_ui.py: all_variables_select.ui
 	pyuic4 -o all_variables_select_ui.py all_variables_select.ui
 
+all_variables_new_ui.py: all_variables_new.ui
+	pyuic4 -o all_variables_new_ui.py all_variables_new.ui
 

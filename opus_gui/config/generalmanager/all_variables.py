@@ -21,8 +21,34 @@ from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVaria
 from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariablesDelegate
 from opus_gui.config.generalmanager.all_variables_edit_ui import Ui_AllVariablesEditGui
 from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariablesSelectGui
+from opus_gui.config.generalmanager.all_variables_new_ui import Ui_AllVariablesNewGui
 
 import random,pprint,string
+
+class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
+    def __init__(self, mainwindow, fl, allVariablesGui):
+        QDialog.__init__(self, mainwindow, fl)
+        self.setupUi(self)
+        self.allVariablesGui = allVariablesGui
+        
+    def on_saveChanges_released(self):
+        #print "save pressed"
+        #self.allVariablesGui.tm.insertRow(0,["",
+        #                                     "New_Node","Dataset","model variable","primary attribute","Description",
+        #                                     0,0,0])
+        self.allVariablesGui.tm.insertRow(0,["",
+                                             self.lineEdit.text(),
+                                             self.lineEdit_2.text(),
+                                             self.comboBox.currentText(),
+                                             self.comboBox_2.currentText(),
+                                             self.textEdit.toPlainText(),
+                                             0,0,0])
+        self.allVariablesGui.tm.checkStateOfCheckBoxes(False)
+        self.allVariablesGui.tm.emit(SIGNAL("layoutChanged()"))
+        self.close()
+
+    def on_cancelWindow_released(self):
+        self.close()
 
 class AllVariablesGui(object):
     def __init__(self, mainwindow, fl, editable):
@@ -108,13 +134,24 @@ class AllVariablesGui(object):
         QTimer.singleShot(200, self.updateHorLayout)
 
     def updateVertLayout(self):
-        #print "Ping1"
         self.tv.resizeRowsToContents()
 
     def updateHorLayout(self):
-        #print "Ping2"
         self.tv.resizeColumnsToContents()
-        #if self.tv.columnWidth(self.tm.index(0,0,QModelIndex()).columnCount()) 
+        # HACK - Loop through and check if all columns widths add up to less than the container width,
+        # and if so we expand the last column to span the space.  This is to make up for a issue
+        # with the expression descriptions being one really long word and word wrap in the
+        # text edit not wrapping correctly.
+        realWidth = 0
+        for x in xrange(0,6,1):
+            realWidth = realWidth + self.tv.columnWidth(x)
+            # print "%d %d" % (x, self.tv.columnWidth(x))
+        if realWidth < self.variableBox.width():
+            # print "We need to stretch last element %d %d" % (realWidth, self.variableBox.width())
+            self.tv.setColumnWidth(5,(self.variableBox.width() - 30) - realWidth + self.tv.columnWidth(5))
+        else:
+            # print "We dont need to stretch last element"
+            pass
 
 class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
     def __init__(self, mainwindow, fl):
@@ -293,9 +330,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
     def on_addNewVariable_released(self):
         #print "new pressed"
-        self.tm.insertRow(0,["",
-                             "New_Node","Dataset","model variable","primary attribute","Description",
-                             0,0,0])
+        #self.tm.insertRow(0,["",
+        #                     "New_Node","Dataset","model variable","primary attribute","Description",
+        #                     0,0,0])
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = AllVariablesNewGui(self.mainwindow,flags,self)
+        window.show()
 
     def on_checkSelectedVariables_released(self):
         saveBeforeCheck = QMessageBox.Yes
