@@ -115,7 +115,7 @@ def directory_path_from_opus_path(opus_path):
 
 def opus_path_for_variable_from_module_path(file_path):
     """Given the os path to a variable's module, return the opus path for that variable"""
-    parts = file_path.rsplit(os.sep, 3)
+    parts = os.path.abspath(file_path).rsplit(os.sep, 3)
     package_name = parts[-3]
     dataset_name = parts[-2]
     module_name = parts[-1]
