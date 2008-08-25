@@ -115,19 +115,14 @@ def directory_path_from_opus_path(opus_path):
 
 def opus_path_for_variable_from_module_path(file_path):
     """Given the os path to a variable's module, return the opus path for that variable"""
-    parts = os.path.abspath(file_path).rsplit(os.sep, 3)
-    package_name = parts[-3]
-    dataset_name = parts[-2]
-    module_name = parts[-1]
-    # only remove the extension
-    variable_name = module_name.rsplit('.', 1)[0]
+    # abspath will be the absolute path to the variable (throwing away the .py extension -- that's the _ part in the pair)
+    (abspath, _) = os.path.splitext(os.path.abspath(file_path))
+    # the last 3 things in the path will be the package name, dataset name, and variable name
+    (a, variable_name) = os.path.split(abspath)
+    (b, dataset_name) = os.path.split(a)
+    (_, package_name) = os.path.split(b)
     # return opus_path
     return '.'.join((package_name, dataset_name, variable_name))
-
-def get_temp_file_name():
-    temp_fd, temp_file_name = tempfile.mkstemp()
-    os.close(temp_fd)
-    return temp_file_name
 
 def write_to_file(filename, data, byteorder=DEFAULT_BYTEORDER):
     """Writes float data to a file."""

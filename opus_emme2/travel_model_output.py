@@ -15,11 +15,10 @@
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from urbansim.datasets.node_travel_data_dataset import NodeTravelDataDataset
-from opus_core.misc import get_temp_file_name
 from numpy import zeros, float32, indices, round_, concatenate
 from opus_core.storage_factory import StorageFactory
 from os.path import join
-import os, shutil, sys
+import os, shutil, sys, tempfile
 
 class TravelModelOutput(object):
     """
@@ -89,7 +88,8 @@ class TravelModelOutput(object):
         Get from the emme/2 data bank, this matrix's data for zones
         1 .. max_zone_id.
         """
-        temp_macro_file_name = get_temp_file_name()
+        # generate a random file name
+        temp_macro_file_name = tempfile.NamedTemporaryFile().name
         macro = self._create_emme2_macro_to_extract_this_matrix(matrix_name, max_zone_id, file_name)
         try:
             f = open(temp_macro_file_name, "w")
@@ -106,7 +106,8 @@ class TravelModelOutput(object):
         """
         logger.start_block('Running emme2 macro %s in bank at %s' %
                            (macro_path, bank_path))
-        temp_macro_file_name = get_temp_file_name()
+        # generate a random file name
+        temp_macro_file_name = tempfile.NamedTemporaryFile().name
         prior_cwd = os.getcwd()
         if output_file is None:
             out = ""
@@ -246,8 +247,6 @@ q
 # Some of these tests can only be run on a machine that has an actual emme/2 
 # data bank.
 #================================================================================
-import tempfile
-import shutil
 from opus_core.tests import opus_unittest
 from numpy import array, ones
 from opus_core.misc import write_to_text_file, write_table_to_text_file

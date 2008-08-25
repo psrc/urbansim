@@ -93,7 +93,6 @@ import re
 from opus_core.tests import opus_unittest
 import tempfile
 from shutil import rmtree
-from opus_core.misc import get_temp_file_name
 
 class LatexTests(opus_unittest.OpusTestCase):
     """Some of the test methods in this class have names that follow
@@ -101,8 +100,7 @@ class LatexTests(opus_unittest.OpusTestCase):
     """
     def setUp(self):
         self.tempdir = tempfile.mkdtemp(prefix='opus_tmp')
-        self.filename = get_temp_file_name()
-        self.output_file = os.path.join(self.tempdir, self.filename)
+        self.output_file = os.path.join(self.tempdir, 'test_output')
         logger.enable_hidden_error_and_warning_words()
     
     def tearDown(self):
