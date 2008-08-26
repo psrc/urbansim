@@ -23,13 +23,13 @@ def opusRun(progressCB,logCB,params):
     for key, val in params.iteritems():
         my_dict[str(key)] = str(val)
 
-    input = my_dict['input_shapefile']
-    output = my_dict['output_shapefile']
-    buffer = my_dict['buffer_size']
+    input = my_dict['in_features']
+    output = my_dict['out_features']
 
-    logCB("Executing buffer")
-    gp.Buffer_analysis(input, output, buffer)
-    logCB("Finised buffer")
+
+    logCB("Executing feature to point")
+    gp.FeatureToPoint_management (input, output)
+    logCB("Finised feature to point")
 
 def opusHelp():
     help = 'This is a very basic buffer tool using the ESRI geoprocessing framework.\n' \
