@@ -15,5 +15,5 @@
 from baseline_multiple_travel_models_2020 import BaselineMultipleTravelModels2020
 
 class NoViaductMultipleTravelModels2020(BaselineMultipleTravelModels2020):
-    tm_scenario = 'no_viaduct_travel_model_psrc_2008'
+    tm_scenario = 'no_viaduct_no_hbw_v1.0a'
     
