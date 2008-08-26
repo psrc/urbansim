@@ -207,8 +207,10 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         for i in tocheck:
             expr = str(self.arraydata[i][5])
             var_name = str(self.arraydata[i][1])
-            dataset_name = str(self.arraydata[i][2])
-                 
+            # special case -- the 'constant' expression always passes
+            if expr.strip()=='constant' and var_name=='constant':
+                continue
+            dataset_name = str(self.arraydata[i][2])  
             try:
                 VariableName(expr)
             except (SyntaxError, ValueError), e:
@@ -225,6 +227,8 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         errors = []
         for i in tocheck:
             var_name = str(self.arraydata[i][1])
+            if var_name=='constant':
+                continue
             dataset_name = str(self.arraydata[i][2])
             successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name)
             if not successful:
