@@ -14,9 +14,9 @@
 
 import os
 import shutil
+from time import localtime, strftime
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.services.run_server.run_manager import get_date_time_string
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
 from numpy.random import seed, randint
@@ -53,7 +53,7 @@ class RunTravelModel:
         logger.log_status("All seeds: %s", seed_array)
         for tmrun in range(1, number_of_runs+1):
             logger.log_status("Travel model run %s, seed %s" % (tmrun, seed_array[tmrun-1]))
-            subdir = 'emme_run_%s_%s' % (tmrun, get_date_time_string())
+            subdir = 'emme_run_%s_%s' % (tmrun, strftime('%Y_%m_%d_%H_%M', localtime()))
             tmdir = os.path.join(cache_directory, subdir)
             config['seed']= (seed_array[tmrun-1],)
             logger.disable_file_logging(log_file)
