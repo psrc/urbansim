@@ -167,7 +167,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.removeIcon = QIcon(":/Images/Images/delete.png")
 
         self.actRemoveRow = QAction(self.removeIcon,
-                                    "Remove Row",
+                                    "Remove Variable",
                                     mainwindow)
         QObject.connect(self.actRemoveRow,
                         SIGNAL("triggered()"),
