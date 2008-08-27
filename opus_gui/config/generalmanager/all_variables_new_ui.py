@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_new.ui'
 #
-# Created: Sun Aug 24 13:49:11 2008
+# Created: Wed Aug 27 12:34:12 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -152,6 +152,6 @@ class Ui_AllVariablesNewGui(object):
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "expression", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "python module", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Definition - ", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Accept", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 
