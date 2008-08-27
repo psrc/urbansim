@@ -70,11 +70,11 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
                     return QVariant(Qt.Unchecked)
             #else:
             #    return QVariant()
-        if role == Qt.BackgroundRole:
+        if role == Qt.ForegroundRole:
             if self.arraydata[index.row()][-3]:
-                return QVariant(QColor(Qt.darkGray))
+                return QVariant(QColor(Qt.blue))
             else:
-                return QVariant(QColor(Qt.lightGray))
+                return QVariant(QColor(Qt.black))
         return QVariant()
 
     def isInherited(self, index):
