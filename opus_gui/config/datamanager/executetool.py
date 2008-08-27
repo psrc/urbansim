@@ -24,18 +24,22 @@ from opus_gui.run.tool.opusruntool import *
 import random,time
 
 class FileDialogSignal(QWidget):
-    def __init__(self, parent=None, param=None):
+    def __init__(self, parent=None, typeName=None, param=None):
         QWidget.__init__(self, parent)
         self.o = QObject()
         self.param = param
+        self.type = typeName
         #print "FileDialogSignal created..."
 
     def updateParam(self,param):
         self.param = param
 
+    def updateParam(self,typeName):
+        self.type = typeName
+
     def relayButtonSignal(self):
         #print "relayButtonSignal"
-        self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject)"),self.param)
+        self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
         
 
 
@@ -234,12 +238,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
             # If we have a dir_path or file_path add a select button
-            if paramName == QString('dir_path'):
+            if (paramName == QString('dir_path')) or (paramName == QString('file_path')):
                 pbnSelect = QPushButton(widgetTemp)
                 pbnSelect.setObjectName(QString('pbnSelect').append(QString(i)))
                 pbnSelect.setText(QString("Select..."))
-                pbnSelectDelegate = FileDialogSignal(param=test_line)
-                QObject.connect(pbnSelectDelegate.o, SIGNAL("buttonPressed(PyQt_PyObject)"),
+                pbnSelectDelegate = FileDialogSignal(typeName=paramName,param=test_line)
+                QObject.connect(pbnSelectDelegate.o, SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),
                                 self.on_pbnSelect_released)
                 QObject.connect(pbnSelect, SIGNAL("released()"), pbnSelectDelegate.relayButtonSignal)
                 self.test_line_delegates.append(pbnSelectDelegate)
@@ -260,14 +264,18 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 help = 'could not find opusHelp function in tool module'
                 self.toolhelpEdit.insertPlainText(help)
         
-    def on_pbnSelect_released(self,line):
+    def on_pbnSelect_released(self,typeName,line):
         #print "on_pbnSelect_released recieved"
         editor_file = QFileDialog()
         filter_str = QString("*.*")
         editor_file.setFilter(filter_str)
         editor_file.setAcceptMode(QFileDialog.AcceptOpen)
-        fd = editor_file.getExistingDirectory(self.mainwindow,QString("Please select a directory..."),
-                                              line.text())                        
+        if typeName == QString("file_path"):
+            fd = editor_file.getOpenFileName(self.mainwindow,QString("Please select a file..."),
+                                             line.text())
+        else:
+            fd = editor_file.getExistingDirectory(self.mainwindow,QString("Please select a directory..."),
+                                                  line.text())
         # Check for cancel
         if len(fd) != 0:
             fileName = QString(fd)
