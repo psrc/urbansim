@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_edit.ui'
 #
-# Created: Fri Aug 22 23:40:57 2008
+# Created: Wed Aug 27 12:47:14 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -69,7 +69,7 @@ class Ui_AllVariablesEditGui(object):
 
     def retranslateUi(self, AllVariablesEditGui):
         AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "all_variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Expression Library", None, QtGui.QApplication.UnicodeUTF8))
         self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check All Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.checkSelectedVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check Selected Variables", None, QtGui.QApplication.UnicodeUTF8))

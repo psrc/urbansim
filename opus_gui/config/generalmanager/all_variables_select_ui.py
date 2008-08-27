@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_select.ui'
 #
-# Created: Mon Jul 21 10:28:24 2008
+# Created: Wed Aug 27 12:47:14 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,7 +55,7 @@ class Ui_AllVariablesSelectGui(object):
 
     def retranslateUi(self, AllVariablesSelectGui):
         AllVariablesSelectGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "all_variables", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveSelections.setText(QtGui.QApplication.translate("AllVariablesSelectGui", "Save Selections", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "Expression Library", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveSelections.setText(QtGui.QApplication.translate("AllVariablesSelectGui", "Accept Selections", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesSelectGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

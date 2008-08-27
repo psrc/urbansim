@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="variableBox" >
      <property name="title" >
-      <string>all_variables</string>
+      <string>Expression Library</string>
      </property>
      <layout class="QGridLayout" />
     </widget>

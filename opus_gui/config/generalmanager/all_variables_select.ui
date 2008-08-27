@@ -16,7 +16,7 @@
    <item>
     <widget class="QGroupBox" name="variableBox" >
      <property name="title" >
-      <string>all_variables</string>
+      <string>Expression Library</string>
      </property>
      <layout class="QGridLayout" />
     </widget>
@@ -56,7 +56,7 @@
          <bool>true</bool>
         </property>
         <property name="text" >
-         <string>Save Selections</string>
+         <string>Accept Selections</string>
         </property>
        </widget>
       </item>
