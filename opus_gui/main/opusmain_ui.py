@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Tue Aug 26 15:22:27 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Wed Aug 27 12:29:34 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -165,7 +165,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,974,21))
+        self.menubar.setGeometry(QtCore.QRect(0,0,974,24))
         self.menubar.setObjectName("menubar")
 
         self.menuProject = QtGui.QMenu(self.menubar)
@@ -309,7 +309,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(1)
+        self.toolBox.setCurrentIndex(0)
         self.dataManager_toolBox.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
