@@ -12,50 +12,56 @@
 # other acknowledgments.
 #
 
-from math import exp, log
-from numpy import array
 from opus_core.configuration import Configuration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
+from urbansim.configurations.real_estate_price_model_configuration_creator import RealEstatePriceModelConfigurationCreator
 from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
 from urbansim.configurations.household_transition_model_configuration_creator import HouseholdTransitionModelConfigurationCreator
+from urbansim.configurations.household_relocation_model_configuration_creator import HouseholdRelocationModelConfigurationCreator
 from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
-import os, copy
 
-
-UNIT_PRICE_RANGE = (exp(3), exp(7))
-class UrbansimZoneConfiguration(AbstractUrbansimConfiguration):
+class UrbansimZoneConfiguration(Configuration):
     def __init__(self):
-        AbstractUrbansimConfiguration.__init__(self)
-        models_configuration = self['models_configuration']
-        
-        ## employment_location_choice_model is defined for gridcells at urbansim package 
-        if "home_based_employment_location_choice_model" in models_configuration:
-            del models_configuration["home_based_employment_location_choice_model"]
-        if "non_home_based_employment_location_choice_model" in models_configuration:
-            del models_configuration["non_home_based_employment_location_choice_model"]
+        Configuration.__init__(self)
 
         my_controller_configuration = {
+        'real_estate_price_model': RealEstatePriceModelConfigurationCreator(
+            dataset='zone', 
+            outcome_attribute = 'ln_unit_price=ln(pseudo_building.land_value_per_unit)',
+            submodel_string = None,
+            filter_variable = None                                                   
+            ).execute(),
         'employment_transition_model': 
                   EmploymentTransitionModelConfigurationCreator(
-            location_id_name="zone_id"
+            location_id_name="pseudo_building_id"
             ).execute(),
         'household_transition_model': 
                   HouseholdTransitionModelConfigurationCreator(
-            location_id_name="zone_id"
+            location_id_name="pseudo_building_id"
             ).execute(),
  
         'employment_relocation_model': 
                   EmploymentRelocationModelConfigurationCreator(
-                               location_id_name = 'zone_id',
+                               location_id_name = 'pseudo_building_id',
                                output_index = 'erm_index').execute(),
-                                       
+                               
+        'household_relocation_model': HouseholdRelocationModelConfigurationCreator(
+                        location_id_name = 'pseudo_building_id',
+                        output_index = 'hrm_index',
+                        ).execute(),
+        'household_location_choice_model': {
+                    'controller': HouseholdLocationChoiceModelConfigurationCreator(
+                        location_set = "pseudo_building",                                                           
+                        input_index = 'hrm_index',
+                        ).execute(),
+                    },
          'employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
-                                location_set = "zone",
+                                location_set = "pseudo_building",
                                 input_index = 'erm_index',
                                 agents_for_estimation_table = "jobs_for_estimation",
                                 estimation_weight_string = None,
@@ -67,7 +73,7 @@ class UrbansimZoneConfiguration(AbstractUrbansimConfiguration):
                                        
             'home_based_employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
-                                location_set = "zone",
+                                location_set = "pseudo_building",
                                 input_index = 'erm_index',
                                 estimation_weight_string = "vacant_home_based_job_space",
                                 agents_for_estimation_table = None, # will take standard jobs table 
@@ -80,58 +86,19 @@ class UrbansimZoneConfiguration(AbstractUrbansimConfiguration):
             'governmental_employment_location_choice_model': 
                    GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
                         input_index = 'erm_index',
-                        location_set = 'zone'
+                        location_set = 'pseudo_building'
                         ).execute(),      
             'distribute_unplaced_jobs_model':  DistributeUnplacedJobsModelConfigurationCreator(
-                                    location_set = 'zone'
+                                    location_set = 'pseudo_building'
                                             ).execute(),
                  
-            "household_relocation_model" : {
-                    "import": {"urbansim.models.household_relocation_model_creator":
-                                    "HouseholdRelocationModelCreator"
-                              },
-                    "init": {
-                        "name": "HouseholdRelocationModelCreator().get_model",
-                        "arguments": {
-                                      "debuglevel": 'debuglevel',
-                                      "location_id_name": "'zone_id'",
-                                      },
-                        },
-                     "prepare_for_run": {
-                         "name": "prepare_for_run",
-                         "arguments": {"what": "'households'",  "rate_storage": "base_cache_storage",
-                                           "rate_table": "'annual_relocation_rates_for_households'"},
-                         "output": "hrm_resources"
-                        },
-                    "run": {
-                        "arguments": {"agent_set": "household", "resources": "hrm_resources"},
-                        "output": "hrm_index"
-                        }
-                    }
-            }
-                    
-            
-
+        }
+        self['models_configuration'] = {}
         for model in my_controller_configuration.keys():
             if model not in self["models_configuration"].keys():
                 self["models_configuration"][model] = {}
             self['models_configuration'][model]['controller'] = my_controller_configuration[model]
-        
-        #settings for the HLCM
-        hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
-        hlcm_controller["init"]["arguments"]["location_set"] = "zone"
-        hlcm_controller["init"]["arguments"]["location_id_string"] = "'zone_id'"
-        hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim.zone.vacant_residential_units'"
-        hlcm_controller["init"]["arguments"]["capacity_string"] = "'vacant_residential_units'"
-        hlcm_controller["init"]["arguments"]['sample_size_locations']=30
-        hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-        hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim'"
-        hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
-        hlcm_controller["run"]["arguments"]["chunk_specification"] ="{'records_per_chunk':50000}"
-        hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
-        hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
-        
-        models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
+
                 
         self["datasets_to_preload"] = {
                 'zone':{},
@@ -140,7 +107,5 @@ class UrbansimZoneConfiguration(AbstractUrbansimConfiguration):
                 #'travel_data':{},
                 'job_building_type':{}
                 }
-        models_configuration['distribute_unplaced_jobs_model']['controller']['import'] =  {
-           'urbansim_parcel.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'}
 
-config = UrbansimZoneConfiguration()
+
