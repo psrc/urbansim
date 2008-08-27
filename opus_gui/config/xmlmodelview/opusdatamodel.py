@@ -189,6 +189,11 @@ class OpusDataModel(QAbstractItemModel):
                         return QVariant(QColor(Qt.cyan))
                     else:
                         return QVariant(QColor(Qt.white))
+                elif role == Qt.ForegroundRole:
+                    if domElement.hasAttribute(QString("inherited")):
+                        return QVariant(QColor(Qt.blue))
+                    else:
+                        return QVariant(QColor(Qt.black))
                 else:
                     return QVariant()
             #elif index.column() == 1:
@@ -210,6 +215,11 @@ class OpusDataModel(QAbstractItemModel):
                         return QVariant()
                     else:
                         return QVariant()
+                elif role == Qt.ForegroundRole:
+                    if domElement.hasAttribute(QString("inherited")):
+                        return QVariant(QColor(Qt.blue))
+                    else:
+                        return QVariant(QColor(Qt.black))
                 else:
                     return QVariant()
             else:
