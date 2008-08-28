@@ -51,7 +51,7 @@ class OptionGroup(GenericOptionGroup):
 #        self.parser.add_option("--skip-urbansim", dest="skip_urbansim", default=False, action="store_true", 
 #                               help="Urbansim will not be run.")
         
-        self.parser.set_default('protocol', 'mysql') 
+        #self.parser.set_default('protocol', 'mysql') 
         #change default services database engine to 'mysql' even if sqlite3 is installed
         
 
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_manager = RunManager(options)
+    run_manager = RunManager(option_group.get_services_database_configuration(options))
     if not run_manager.services_db:
         raise RuntimeError, "services database must exist; use --hostname argument to specify the database server containing services database."
     
