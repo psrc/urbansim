@@ -65,7 +65,14 @@ class OpusDataItem:
         return None
 
     def row(self):
-        return self.parentOpusDataItem.childItems.index(self)
+        if self.parentOpusDataItem:
+            try:
+                index = self.parentOpusDataItem.childItems.index(self)
+            except:
+                index = 0
+            return index
+        else:
+            return 0
 
     def numChildren(self):
         return len(self.childItems)

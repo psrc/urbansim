@@ -47,7 +47,7 @@ class OpusDataModel(QAbstractItemModel):
             return
         #print "Found ", self.xmlRoot.nodeName()
         #self._rootItem = OpusDataItem(document,document.documentElement(), 0, self)
-        self._rootItem = OpusDataItem(document,self.xmlRoot, 0, self)
+        self._rootItem = OpusDataItem(document,self.xmlRoot, 0, None)
         # Loop through the first level children and inti them as a root item
         # and append to the tree...
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
@@ -280,14 +280,14 @@ class OpusDataModel(QAbstractItemModel):
             return QModelIndex()
         childItem = child.internalPointer()
         parentItem = childItem.parent()
-        if not parentItem or parentItem == self._rootItem:
+        if (not parentItem) or (parentItem == self._rootItem):
             return QModelIndex()
         #if parentItem == self._rootItem:
         #    return self.createIndex(0,0,parentItem)
         return self.createIndex(parentItem.row(),0,parentItem)
 
     def rowCount(self, parent):
-        if parent.column() > 0:
+        if parent.isValid() and parent.column() > 0:
             return 0
         parentItem = None
         if not parent.isValid():
@@ -323,7 +323,7 @@ class OpusDataModel(QAbstractItemModel):
         return False
         
     def checkIfInheritedAndAddBackToTree(self,nodePath,parentIndex):
-        #print "Checking if inherited: %s" % (nodePath) 
+        # print "Checking if inherited: %s" % (nodePath) 
         opusXMLTree = self.parentTree.toolboxbase.opusXMLTree
         indentSize = 2
         opusXMLTree.update(str(self.domDocument.toString(indentSize)))
@@ -434,7 +434,7 @@ class OpusDataModel(QAbstractItemModel):
                    nodeElement.attribute(QString("flags")) != QString("hidden"):
                 item = OpusDataItem(self.domDocument,node,row,parentItem)
                 item.initAsRootItem()
-                #print "len=%d row=%d" % (len(parentItem.childItems),row)
+                # print "len=%d row=%d" % (len(parentItem.childItems),row)
                 parentItem.childItems.insert(row,item)
         self.endInsertRows()
         if editable:
