@@ -33,7 +33,8 @@ class Baseline(UrbansimZoneConfiguration):
             'description':'Eugene zone baseline',
             'base_year':1980,
             'years':(1981, 1982),
-            'models': [   
+            'models': [
+                'real_estate_price_model',
                 'household_transition_model',
                 'employment_transition_model',
                 'household_relocation_model',
@@ -62,6 +63,7 @@ class Baseline(UrbansimZoneConfiguration):
                     'jobs',
                     'travel_data',
                     'zones',
+                    'pseudo_buildings',
                     'counties',
                     'commercial_development_location_choice_model_coefficients',
                     'commercial_development_location_choice_model_specification',
