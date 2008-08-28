@@ -455,13 +455,13 @@ class OpusDataModel(QAbstractItemModel):
         domNodePath = self.domNodePath(nodeToRemove)
         parentItem.domNode.removeChild(nodeToRemove)
         parentItem.childItems.pop(row)
+        self.endRemoveRows()
         if not self.isTemporary(nodeToRemove):
             self.markAsDirty()
             # Now check if it was inherited and the original should
             # be added back in
             if checkInherited:
                 self.checkIfInheritedAndAddBackToTree(domNodePath, parent)
-        self.endRemoveRows()
         return returnval
 
     def moveUp(self,item,howmany=1):
