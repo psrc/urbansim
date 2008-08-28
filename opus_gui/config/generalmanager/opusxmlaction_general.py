@@ -29,13 +29,14 @@ class OpusXMLAction_General(object):
         self.currentColumn = None
         self.currentIndex = None
 
+        self.editExpressionLibIcon = QIcon(":/Images/Images/book_edit.png")
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
-        self.actEditAllVariables = QAction(self.applicationIcon,
+        self.actEditAllVariables = QAction(self.editExpressionLibIcon,
                                            "Edit Expression Library",
                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actEditAllVariables,
