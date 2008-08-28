@@ -443,6 +443,9 @@
    </property>
   </action>
   <action name="actionEdit_all_variables" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/book_edit.png</iconset>
+   </property>
    <property name="text" >
     <string>View/Edit Expression Library</string>
    </property>
@@ -453,6 +456,9 @@
    </property>
   </action>
   <action name="actLaunchResultBrowser" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/layout.png</iconset>
+   </property>
    <property name="text" >
     <string>Launch Result Browser</string>
    </property>

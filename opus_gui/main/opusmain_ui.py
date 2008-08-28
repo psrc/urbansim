@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Wed Aug 27 12:29:34 2008
+# Created: Wed Aug 27 20:30:53 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -281,12 +281,14 @@ class Ui_MainWindow(object):
         self.actionClose_Project.setObjectName("actionClose_Project")
 
         self.actionEdit_all_variables = QtGui.QAction(MainWindow)
+        self.actionEdit_all_variables.setIcon(QtGui.QIcon(":/Images/Images/book_edit.png"))
         self.actionEdit_all_variables.setObjectName("actionEdit_all_variables")
 
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName("actionPreferences")
 
         self.actLaunchResultBrowser = QtGui.QAction(MainWindow)
+        self.actLaunchResultBrowser.setIcon(QtGui.QIcon(":/Images/Images/layout.png"))
         self.actLaunchResultBrowser.setObjectName("actLaunchResultBrowser")
         self.menuProject.addAction(self.actionOpen_Project_2)
         self.menuProject.addSeparator()
