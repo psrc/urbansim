@@ -48,7 +48,7 @@ class EditorBase(QsciScintilla):
         ## Edge Mode shows a red vetical bar at 80 chars
         self.setEdgeMode(QsciScintilla.EdgeLine)
         self.setEdgeColumn(80)
-        self.setEdgeColor(QColor("#FF0000"))
+        self.setEdgeColor(QColor("#CCCCCC"))
         
         ## Folding visual : we will use boxes
         self.setFolding(QsciScintilla.BoxedTreeFoldStyle)
@@ -57,8 +57,8 @@ class EditorBase(QsciScintilla):
         self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
         
         ## Editing line color
-        self.setCaretLineVisible(True)
-        self.setCaretLineBackgroundColor(QColor("#CDA869"))
+        #self.setCaretLineVisible(True)
+        #self.setCaretLineBackgroundColor(QColor("#CDA869"))
         
         ## Margins colors
         # line numbers margin
@@ -66,7 +66,8 @@ class EditorBase(QsciScintilla):
         self.setMarginsForegroundColor(QColor("#CCCCCC"))
         
         # folding margin colors (foreground,background)
-        self.setFoldMarginColors(QColor("#99CC66"),QColor("#333300"))
+        #self.setFoldMarginColors(QColor("#99CC66"),QColor("#333300"))
+        self.setFoldMarginColors(QColor("#CCCCCC"),QColor("#CCCCCC"))
         
         ## Choose a lexer
         lexer = QsciLexerPython()
