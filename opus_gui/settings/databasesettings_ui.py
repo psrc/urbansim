@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'databasesettings.ui'
 #
-# Created: Wed Aug 13 15:06:52 2008
+# Created: Thu Aug 14 16:08:06 2008
 #      by: PyQt4 UI code generator 4.4.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,7 @@ class Ui_databaseConfigEditor(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
+        
 
         self.retranslateUi(databaseConfigEditor)
         QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),databaseConfigEditor.accept)
