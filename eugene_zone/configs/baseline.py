@@ -106,7 +106,7 @@ class Baseline(UrbansimZoneConfiguration):
                 unroll_gridcells = False
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
-                package_order=['eugene_zone', 'eugene', 'urbansim', 'opus_core'],
+                package_order=['eugene_zone', 'eugene', 'urbansim_zone', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
             }
