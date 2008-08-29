@@ -16,6 +16,7 @@ import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
+from opus_core.variables.variable_name import VariableName
 
 class XMLConfiguration(object):
     """
@@ -83,16 +84,27 @@ class XMLConfiguration(object):
         
     def get_expression_library(self):
         """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
-        dictionary are pairs (dataset_name, variable_name) and the values are the corresponding expressions."""
+        dictionary are pairs (dataset_name, variable_name) or triples (package_name, dataset_name, variable_name),
+        and the values are the corresponding expressions.  The pairs are for looking up variables identified just by 
+        dataset and name, and triples are for looking up fully qualified variables."""
         result = {}
         node = self._find_node('general/expression_library')
         if node is not None:
             for v in node:
-                # if the variable is defined as an expression, add it to the dictionary.  Otherwise it's a Python class - skip it
+                # Add the variable to the dictionary, indexed both by the pair (dataset,name) and by the triple (package,dataset,name)
+                name = v.tag
+                dataset = v.get('dataset')
+                # If the variable is defined as an expression, the package name is the name of the xml configuration in
+                # which it is defined; if it is defined as a Python class, the package name is the package for that class.
                 if v.get('source')=='expression':
-                    name = v.tag
-                    dataset = v.get('dataset')
-                    result[(dataset,name)] = v.text
+                    package = v.get('inherited', self.name)
+                elif v.get('source')=='Python class':
+                    package = VariableName(v.text).get_package_name()
+                else:
+                    package = None
+                result[(dataset,name)] = v.text
+                if package is not None:
+                    result[(package,dataset,name)] = v.text
         return result
 
     def get_run_configuration(self, name, merge_controllers=True):
@@ -825,17 +837,26 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
         
-    def test_get_expression_library(self):
+    def test_expression_library(self):
+        # Test that get_expression_library is functioning correctly; that computing variables defined in the library
+        # give the correct answers; and that the expression library is set correctly  for estimation and run configurations. 
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
-        lib = XMLConfiguration(f).get_expression_library()
+        config = XMLConfiguration(f)
+        lib = config.get_expression_library()
         # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
         # (so it can't be used yet in computing variables).
-        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
+        lib_should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
                      ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
                      ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
-                     ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
-        self.assertEqual(lib, should_be)
-        # Now test that computing the value of this variable gives the correct answer.  This involves
+                     ('expression_library_test', 'test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
+                     ('expression_library_test', 'test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
+                     ('expression_library_test', 'test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
+                     ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
+                     ('estimate', 'parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
+                     ('parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units',
+                     ('urbansim_parcel', 'parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units'}
+        self.assertEqual(lib, lib_should_be)
+        # Test that computing the value of this variable gives the correct answer.  This involves
         # setting the expression library in VariableFactory -- when actually estimating a model or running
         # a simulation, that gets done by a call in ModelSystem.run.
         VariableFactory().set_expression_library(lib)
@@ -848,27 +869,21 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                 }
             )
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
+        # test with and without package name in variable, and also for variables defined as expressions and as Python class
         result1 = dataset.compute_variables(["opus_core.test_agent.income_times_10"])
         result2 = dataset.compute_variables(["opus_core.test_agent.income_times_10_using_primary"])
-        should_be = array([10, 50, 100])
-        self.assert_(ma.allclose(result1, should_be, rtol=1e-6))
-        self.assert_(ma.allclose(result2, should_be, rtol=1e-6))
-        
-    def test_expression_library_in_config(self):
+        result3 = dataset.compute_variables(["test_agent.income_times_10"])
+        result4 = dataset.compute_variables(["test_agent.income_times_10_using_primary"])
+        result_should_be = array([10, 50, 100])
+        self.assert_(ma.allclose(result1, result_should_be, rtol=1e-6))
+        self.assert_(ma.allclose(result2, result_should_be, rtol=1e-6))
+        self.assert_(ma.allclose(result3, result_should_be, rtol=1e-6))
+        self.assert_(ma.allclose(result4, result_should_be, rtol=1e-6))
         # Test that the expression library is set correctly for estimation and run configurations.
-        # The variable 'existing_units' is defined as a Python class, so doesn't go into the expression library.
-        # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
-        # (so it can't be used yet in computing variables).
-        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2',
-                     ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
-                     ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
-                     ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
-        f = os.path.join(self.test_configs, 'expression_library_test.xml')
-        config = XMLConfiguration(f)
         est = config.get_estimation_configuration()
-        self.assertEqual(est['expression_library'], should_be)
+        self.assertEqual(est['expression_library'], lib_should_be)
         run = config.get_run_configuration('test_scenario')
-        self.assertEqual(run['expression_library'], should_be)
+        self.assertEqual(run['expression_library'], lib_should_be)
 
     def test_save_as(self):
         # test saving as a new file name - this should also test save()

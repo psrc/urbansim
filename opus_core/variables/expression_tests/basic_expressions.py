@@ -53,6 +53,22 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(autogen().dependencies(), ['opus_core.tests.a_test_variable'], 
                          msg="dependencies are incorrect")
         
+    def skip_test_dataset_qualified_name(self):
+        # this tests expressions with a dataset-qualified name
+        expr = "sqrt(tests.a_test_variable)"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='tests',
+            table_data={
+                "a_dependent_variable":array([1,5,10]),
+                "id":array([1,3,4])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
+        result = dataset.compute_variables([expr])
+        should_be = array([3.16227766, 7.0710678, 10])
+        self.assertEqual(ma.allclose(result, should_be, rtol=1e-5), True)
+        
     def test_attr_power(self):
         # Attributes and fully-qualified names to a power require separate parse tree patterns,
         # which are tested in the following two tests.

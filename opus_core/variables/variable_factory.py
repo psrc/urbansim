@@ -54,14 +54,17 @@ class VariableFactory(object):
             variable_subclass = variable_name.get_autogen_class()
             substrings = ()
         else:
-            # either find the variable name in an appropriate 'aliases' file, or 
-            # load our variable class as 'variable_subclass' using an import statement
+            # either find the variable name in the expression library (if present), in an appropriate 'aliases' file, 
+            # or load our variable class as 'variable_subclass' using an import statement
             short_name = variable_name.get_short_name()
             dataset_name = variable_name.get_dataset_name()
             package_name = variable_name.get_package_name()
             
             # first look in the expression library
-            e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
+            if package_name is None:
+                e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
+            else:
+                e = VariableFactory._expression_library.get( (package_name,dataset_name,short_name), None)
             if e is not None:
                 v = VariableName(e)
                 return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
