@@ -46,7 +46,7 @@ class RefinementModel(Model):
     model_short_name = "RM"
 
     def run(self, refinement_dataset=None, current_year=None, 
-            action_order=['subtract', 'modify', 'add', 'target'],
+            action_order=['subtract', 'set_value', 'add', 'target'],
             dataset_pool=None):
         
         """'refinement_dataset' is a RefineDataset object.  see unittest for its columns
@@ -64,38 +64,50 @@ class RefinementModel(Model):
         transactions = refinements_this_year.get_attribute('transaction_id')
         actions = refinements_this_year.get_attribute('action')
         for this_transaction in sort( unique(transactions) ):
+            #transaction_list = [] # list of each action in this transaction
             agents_pool = []  # index to agents to keep track agent within 1 transaction
-            agent_expressions = refinements_this_year.get_attribute_by_index('agent_expression', transactions==this_transaction)
-            agent_expressions = [ e for e in unique( agent_expressions ) if len(e) > 0]
-            location_expressions = refinements_this_year.get_attribute_by_index('location_expression', transactions==this_transaction)
-            location_expressions = [ e for e in unique( location_expressions ) if len(e) > 0]
-            agent_dataset = dataset_pool.get_dataset( VariableName( agent_expressions[0] ).get_dataset_name() )
-            location_dataset = dataset_pool.get_dataset( VariableName( location_expressions[0] ).get_dataset_name() )
-            logger.start_block("Refinement transaction %s:" % this_transaction)
+            logger.start_block("Refinement transaction %s" % this_transaction)
             for action_type in action_order:
                 action_function = getattr(self, '_' + action_type)
                 for refinement_index in where( logical_and(transactions==this_transaction, actions == action_type))[0]:
                     this_refinement = refinements_this_year.get_data_element(refinement_index)
+                    ## get agent_dataset and location_dataset if specified
+                    if not hasattr(this_refinement, 'agent_dataset') or len(this_refinement.agent_dataset)==0:
+                        agent_dataset_name = VariableName( this_refinement.location_expression ).get_dataset_name()
+                    else:
+                        agent_dataset_name = this_refinement.agent_dataset
+                    agent_dataset = dataset_pool.get_dataset( agent_dataset_name )
+                    location_dataset = None
+                    if len(this_refinement.location_expression)>0:
+                        location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
                     logger.log_status("Action: %s %s agents satisfying %s and %s " % \
                                       (action_type, this_refinement.amount,
                                        this_refinement.agent_expression, 
                                        this_refinement.location_expression
                                    ) )
                     action_function( agents_pool, this_refinement.amount, 
-                                     agent_dataset, this_refinement.agent_expression, 
-                                     location_dataset, this_refinement.location_expression, 
+                                     agent_dataset, 
+                                     this_refinement.agent_expression, 
+                                     location_dataset,
+                                     this_refinement.location_expression, 
                                      this_refinement.location_capacity_attribute,
                                      dataset_pool )
                     
+            
+            #self.commit_transaction(transaction_list)
             ## delete agents still in agents_pool at the end of the transaction
-            agent_dataset.remove_elements( array(agents_pool) )
+            #agent_dataset.remove_elements( array(agents_pool) )
             logger.end_block()
             
-    def _subtract(self, agents_pool, amount,
-                  agent_dataset, agent_expression, 
-                  location_dataset, location_expression, 
-                  location_capacity_attribute,
-                  dataset_pool):
+    def commit_transaction(self, transaction_list):
+        for action in transaction_list:
+            f = getattr(action['dataset'], action['function'])
+            f(**action['arguments'])
+
+    def get_fit_agents_index(self, agent_dataset, 
+                             agent_expression, 
+                             location_expression,
+                             dataset_pool):
         if agent_expression is not None and len(agent_expression) > 0:
             agents_indicator = agent_dataset.compute_variables(agent_expression, 
                                                                dataset_pool=dataset_pool)
@@ -112,6 +124,22 @@ class RefinementModel(Model):
             location_indicator = ones( agent_dataset.size(), dtype='bool' )
         
         fit_index = where ( agents_indicator * location_indicator )[0]
+        return fit_index
+    
+    ## methods handling "action" in refinement_dataset
+    def _subtract(self, agents_pool, amount,
+                  agent_dataset, 
+                  agent_expression, 
+                  location_dataset,
+                  location_expression, 
+                  location_capacity_attribute,
+                  dataset_pool):
+        
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              agent_expression, 
+                                              location_expression,
+                                              dataset_pool)
+        
         if amount < fit_index.size:
             logger.log_warning("Refinement requests to subtract %s agents,  but there are %s agents in total satisfying %s and %s;" \
                                "subtract %s agents instead" % (fit_index.size, agent_expression, 
@@ -123,6 +151,8 @@ class RefinementModel(Model):
         agents_pool += movers_index.tolist()
         ## modify location capacity attribute if specified
         if location_capacity_attribute is not None and len(location_capacity_attribute) > 0:
+            location_dataset = dataset_pool.get_dataset( VariableName( location_expression ).get_dataset_name() )
+
             movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
             movers_location_index = location_dataset.get_id_index( movers_location_id )
             num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()) )[0]
@@ -133,8 +163,9 @@ class RefinementModel(Model):
             
             shrink_factor = safe_array_divide( (num_of_agents_by_location - num_of_movers_by_location ).astype('float32'),
                                                 num_of_agents_by_location, return_value_if_denominator_is_zero = 1.0  )
+            new_values = round_( shrink_factor * location_dataset.get_attribute(location_capacity_attribute) )
             location_dataset.modify_attribute( location_capacity_attribute, 
-                                               round_( shrink_factor * location_dataset.get_attribute(location_capacity_attribute) )
+                                               new_values
                                            )
             
         agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
@@ -143,27 +174,18 @@ class RefinementModel(Model):
                                        )
         
     def _add(self, agents_pool, amount,
-             agent_dataset, agent_expression, 
-             location_dataset, location_expression, 
-             location_capacity_attribute,
-             dataset_pool):
+                  agent_dataset, 
+                  agent_expression, 
+                  location_dataset,
+                  location_expression, 
+                  location_capacity_attribute,
+                  dataset_pool):
         
-        if agent_expression is not None and len(agent_expression) > 0:
-            agents_indicator = agent_dataset.compute_variables(agent_expression, 
-                                                               dataset_pool=dataset_pool)
-        else:
-            agents_indicator = ones( agent_dataset.size(), dtype='bool' )
-        
-        if location_expression is not None and len(location_expression) > 0:
-            location_indicator = agent_dataset.compute_variables( "%s.disaggregate(%s)"  % 
-                                                                 ( agent_dataset.dataset_name, 
-                                                                   location_expression ),
-                                                                 dataset_pool=dataset_pool
-                                                             )
-        else:
-            location_indicator = ones( agent_dataset.size(), dtype='bool' )
-        
-        fit_index = where ( agents_indicator * location_indicator )[0]
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              agent_expression, 
+                                              location_expression,
+                                              dataset_pool)
+
         movers_index = array([],dtype="int32")
         amount_from_agents_pool = min( amount, len(agents_pool) )
         if amount_from_agents_pool > 0:
@@ -208,45 +230,62 @@ class RefinementModel(Model):
             
             expand_factor = safe_array_divide( (num_of_agents_by_location + num_of_movers_by_location ).astype('float32'),
                                                 num_of_agents_by_location, return_value_if_denominator_is_zero = 1.0 )
+            new_values = round_( expand_factor * location_dataset.get_attribute(location_capacity_attribute) )
+            #transaction_list.append({'dataset': location_dataset,
+                                     #'function': 'modify_attribute',
+                                     #'arguments': {'name': location_capacity_attribute, 'data': new_values}
+                                     #})            
             location_dataset.modify_attribute( location_capacity_attribute, 
-                                               round_( expand_factor * location_dataset.get_attribute(location_capacity_attribute) )
+                                               new_values
                                            )
-        if amount_from_agents_pool > 0:            
+        if amount_from_agents_pool > 0:
+            #transaction_list.append({'dataset': agent_dataset,
+                                     #'function': 'modify_attribute',
+                                     #'arguments': {'name': location_dataset.get_id_name()[0], 
+                                                   #'data': location_id_for_agents_pool, 
+                                                   #'index': agents_index_from_agents_pool}
+                                     #})
             agent_dataset.modify_attribute( location_dataset.get_id_name()[0],
                                             location_id_for_agents_pool,
                                             agents_index_from_agents_pool
                                             )
         if amount > amount_from_agents_pool:
+            #transaction_list.append({'dataset': agent_dataset,
+                                     #'function': 'duplicate_rows',
+                                     #'arguments': {'index': agents_index_to_clone}
+                                     #})
             agent_dataset.duplicate_rows(agents_index_to_clone)
         
-    def _modify(self, agents_pool, amount,
-                  agent_dataset, agent_expression, 
-                  location_dataset, location_expression, 
+    def _set_value(self, agents_pool, amount,
+                  agent_dataset, 
+                  agent_expression, 
+                  location_dataset,
+                  location_expression, 
                   location_capacity_attribute,
                   dataset_pool):
-        pass
+        
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              agent_expression, 
+                                              location_expression,
+                                              dataset_pool)
+        
+        agent_dataset.modify_attribute( agent_expression,
+                                        amount,
+                                        fit_index
+                                        )
             
     def _target(self, agents_pool, amount,
-                  agent_dataset, agent_expression, 
-                  location_dataset, location_expression, 
+                  agent_dataset, 
+                  agent_expression, 
+                  location_dataset,
+                  location_expression, 
                   location_capacity_attribute,
                   dataset_pool):
-        if agent_expression is not None and len(agent_expression) > 0:
-            agents_indicator = agent_dataset.compute_variables(agent_expression, 
-                                                               dataset_pool=dataset_pool)
-        else:
-            agents_indicator = ones( agent_dataset.size(), dtype='bool' )
         
-        
-        if location_expression is not None and len(location_expression) > 0:
-            location_indicator = agent_dataset.compute_variables( "%s.disaggregate(%s)"  % 
-                                                                 ( agent_dataset.dataset_name, 
-                                                                   location_expression ),
-                                                                 dataset_pool=dataset_pool)
-        else:
-            location_indicator = ones( agent_dataset.size(), dtype='bool' )
-        
-        fit_index = where ( agents_indicator * location_indicator )[0]
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              agent_expression, 
+                                              location_expression,
+                                              dataset_pool)
         if fit_index.size > amount:
             self._subtract( agents_pool, fit_index.size - amount,
                             agent_dataset, agent_expression, 
@@ -259,6 +298,22 @@ class RefinementModel(Model):
                        location_dataset, location_expression, 
                        location_capacity_attribute,
                        dataset_pool)
+            
+    def _synchronize(self, agents_pool, amount,
+                     agent_dataset, 
+                     agent_expression, 
+                     location_dataset,
+                     location_expression, 
+                     location_capacity_attribute,
+                     dataset_pool):
+        
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              agent_expression, 
+                                              location_expression,
+                                              dataset_pool)
+        
+        
+        pass
 
     def prepare_for_run(self, refinement_dataset_name=None, 
                         refinement_storage=None, 
@@ -275,6 +330,10 @@ class RefinementModel(Model):
                                                       'in_table_name':refinement_table_name}
                                        )
         return refinement
+    
+class RefinementTransaction(dict):
+    pass
+
             
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
@@ -314,14 +373,20 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
             'transaction_id':array([1,      1,   1,   2,    3]),
             'action':        array(['subtract', 'subtract', 'add', 'target', 'add']),
             'amount':        array([2,      1,   4,   7,    1]),
+            'agent_dataset': array(['job',
+                                    'job',
+                                    'job',
+                                    'household',
+                                    'household'
+                                      ]),
             'agent_expression': array(['job.sector_id==13',
-                                       'numpy.logical_and(job.sector_id==13, job.disaggregate(building.raz_id)==4)',
+                                       'job.sector_id==13',
                                        '',
                                        'household.household_id>0',
                                        'household.persons>5'
                                       ]),
             'location_expression': array(['building.raz_id==3',
-                                          '',
+                                          'building.raz_id==4',
                                           '(building.raz_id==5) * (building.disaggregate(parcel.generic_land_use_type_id)==4)',
                                           'building.raz_id==6',
                                           'building.raz_id==6'
