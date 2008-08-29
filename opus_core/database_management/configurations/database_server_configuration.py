@@ -129,7 +129,7 @@ class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(c3.protocol, 'mysql')
         self.assertEqual(c3.host_name, 'localhost')
         self.assertEqual(c3.user_name, 'fred')
-        self.assertEqual(c3.password, '')
+        self.assertEqual(c3.password, os.environ.get('SQLPASSWORD', ''))
 
 
     def test_exceptions(self):
