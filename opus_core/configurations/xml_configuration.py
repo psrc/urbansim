@@ -86,7 +86,8 @@ class XMLConfiguration(object):
         """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
         dictionary are pairs (dataset_name, variable_name) or triples (package_name, dataset_name, variable_name),
         and the values are the corresponding expressions.  The pairs are for looking up variables identified just by 
-        dataset and name, and triples are for looking up fully qualified variables."""
+        dataset and name, and triples are for looking up fully qualified variables.  Only include variables defined
+        as expressions, not built-in or defined as Python classes."""
         result = {}
         node = self._find_node('general/expression_library')
         if node is not None:
@@ -98,12 +99,7 @@ class XMLConfiguration(object):
                 # which it is defined; if it is defined as a Python class, the package name is the package for that class.
                 if v.get('source')=='expression':
                     package = v.get('inherited', self.name)
-                elif v.get('source')=='Python class':
-                    package = VariableName(v.text).get_package_name()
-                else:
-                    package = None
-                result[(dataset,name)] = v.text
-                if package is not None:
+                    result[(dataset,name)] = v.text
                     result[(package,dataset,name)] = v.text
         return result
 
@@ -852,9 +848,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                      ('expression_library_test', 'test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
                      ('expression_library_test', 'test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
-                     ('estimate', 'parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
-                     ('parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units',
-                     ('urbansim_parcel', 'parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units'}
+                     ('estimate', 'parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
         self.assertEqual(lib, lib_should_be)
         # Test that computing the value of this variable gives the correct answer.  This involves
         # setting the expression library in VariableFactory -- when actually estimating a model or running
