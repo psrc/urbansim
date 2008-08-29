@@ -278,7 +278,7 @@ def get_stdout_for_ssh_cmd(ssh, cmdline):
     stdin, stdout, stderr = ssh.exec_command(cmdline)
     stderr_msg = stderr.readlines() 
     if len(stderr_msg) > 0:
-        raise RuntimeError, "Error encountered executing cmd through ssh:" + error_msg
+        raise RuntimeError, "Error encountered executing cmd through ssh:" + stderr_msg
 
     results = stdout.readlines()
     if len(results)==1:
