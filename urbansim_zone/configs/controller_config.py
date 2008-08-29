@@ -30,9 +30,9 @@ class UrbansimZoneConfiguration(Configuration):
 
         my_controller_configuration = {
         'real_estate_price_model': RealEstatePriceModelConfigurationCreator(
-            dataset='zone', 
-            outcome_attribute = 'ln_unit_price=ln(pseudo_building.land_value_per_unit)',
-            submodel_string = None,
+            dataset='pseudo_building', 
+            outcome_attribute = 'ln_unit_price=ln(pseudo_building.avg_value)',
+            submodel_string = 'building_type_id',
             filter_variable = None                                                   
             ).execute(),
         'employment_transition_model': 
@@ -101,6 +101,7 @@ class UrbansimZoneConfiguration(Configuration):
 
                 
         self["datasets_to_preload"] = {
+                'pseudo_building':{},
                 'zone':{},
                 'household':{},
                 'job': {},
