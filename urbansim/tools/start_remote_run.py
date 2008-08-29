@@ -207,12 +207,12 @@ class RemoteRun:
             if not self.is_localhost(self.urbansim_server_config['hostname']):
                 logger.start_block("Start UrbanSim Simulation on %s from %s to %s" % (self.urbansim_server_config['hostname'],
                                                                                       this_start_year, this_end_year) )
-                cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
+                cmd = 'python %(module)s %(run_id)s %(start_year)s ' % \
                       {'module':self.remote_module_path_from_opus_path(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config),
                                                                        'opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --protocol=mysql --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
+                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
                 ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
@@ -229,11 +229,11 @@ class RemoteRun:
                     raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
                                         (this_end_year, cache_directory)
             else:
-                cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
+                cmd = 'python %(module)s %(run_id)s %(start_year)s ' % \
                       {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --protocol=mysql --skip-cache-cleanup --create-baseyear-cache-if-not-exists'
+                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists'
                 logger.log_status("Call " + cmd)
                 os.system(cmd)
                 if not os.path.exists(os.path.join(cache_directory, str(this_end_year))):
@@ -248,12 +248,12 @@ class RemoteRun:
                     if not self.is_localhost(self.travelmodel_server_config['hostname']):
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
                                                                                        this_start_year, this_end_year) )
-                        cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
+                        cmd = 'python %(module)s %(run_id)s %(start_year)s ' % \
                               {'module':self.remote_module_path_from_opus_path(self.get_ssh_client(self.ssh['travelmodel_server'], self.travelmodel_server_config),
                                                                                'opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --protocol=mysql --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_run_%s.log' % run_id
+                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_run_%s.log' % run_id
                         ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file                        
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
@@ -265,11 +265,11 @@ class RemoteRun:
                         self.wait_until_run_done_or_failed(run_id, std=std)
                         logger.end_block()
                     else:
-                        cmd = 'python %(module)s %(run_id)s %(start_year)s  --hostname=%(services_hostname)s' % \
+                        cmd = 'python %(module)s %(run_id)s %(start_year)s  ' % \
                               {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --protocol=mysql --skip-cache-cleanup --skip-urbansim'
+                        cmd += ' --skip-cache-cleanup --skip-urbansim'
                         logger.log_status("Call " + cmd)
                         os.system(cmd)
                     
