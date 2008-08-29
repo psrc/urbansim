@@ -13,18 +13,9 @@
 # 
 
 from opus_core.configuration import Configuration
+from opus_core.misc import get_string_or_None
 
-
-class RealEstatePriceModelConfigurationCreator(object):
-    debuglevel = 'debuglevel'
-    nchunks = 1
-    dataset = 'building'
-    outcome_attribute = 'ln_unit_price=ln(urbansim.building.avg_val_per_unit)'
-    submodel_string = 'building_type_id'
-    filter_variable = 'building.avg_val_per_unit'
-    coefficients_table = 'real_estate_price_model_coefficients'
-    specification_table = 'real_estate_price_model_specification'
-    
+class RealEstatePriceModelConfigurationCreator(object):    
     _model_name = 'real_estate_price_model'
 
     def __init__(self,
@@ -58,6 +49,7 @@ class RealEstatePriceModelConfigurationCreator(object):
                 'arguments': {
                     'data_objects': 'datasets',
                     'dataset': self.dataset,
+                    'outcome_attribute': "'%s'" % self.outcome_attribute,
                     'debuglevel': self.debuglevel,
                     'index': _index,
                     'specification': _specification,
@@ -73,14 +65,14 @@ class RealEstatePriceModelConfigurationCreator(object):
                     'debuglevel': self.debuglevel,
                     'filter_attribute': None,
                     'outcome_attribute': "'%s'" % self.outcome_attribute,
-                    'submodel_string': "'%s'" % self.submodel_string
+                    'submodel_string': get_string_or_None(self.submodel_string)
                     },
                 'name': 'RealEstatePriceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {
                     'dataset': self.dataset,
-                    'filter_variable': "'%s'" % self.filter_variable,
+                    'filter_variable': get_string_or_None(self.filter_variable),
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
                     },
@@ -128,6 +120,7 @@ class TestRealEstatePriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                 'arguments': {
                     'data_objects': 'datasets',
                     'dataset': 'building',
+                    'outcome_attribute': "'ln_unit_price=ln(urbansim.building.avg_val_per_unit)'",
                     'debuglevel': 'debuglevel',
                     'index': 'repm_index',
                     'specification': 'specification'
@@ -199,6 +192,7 @@ class TestRealEstatePriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                 'arguments': {
                     'data_objects': 'datasets',
                     'dataset': 'dataset',
+                    'outcome_attribute': "'package.dataset.outcome_attribute'",
                     'debuglevel': 9999,
                     'index': 'repm_index',
                     'specification': 'specification'
