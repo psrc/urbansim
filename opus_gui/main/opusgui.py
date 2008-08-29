@@ -20,7 +20,8 @@ from PyQt4.QtGui import *
 # UI specific includes
 from opus_gui.main.opusmain_ui import Ui_MainWindow
 from opus_gui.main.opusabout import UrbansimAboutGui
-from opus_gui.main.opuspreferences import UrbansimPreferencesGui
+from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
+from opus_gui.settings.databasesettings import UrbansimDatabaseSettingsGUI
 
 from opus_gui.util.consolebase import *
 from opus_gui.config.toolboxbase import *
@@ -121,6 +122,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
         # Preferences
         QObject.connect(self.actionPreferences, SIGNAL("triggered()"), self.openPreferences)
+        # Database Settings
+        QObject.connect(self.actionDatabaseSettings, SIGNAL("triggered()"), self.openDatabaseSettings)
         
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
@@ -317,8 +320,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd = UrbansimPreferencesGui(self, flags)
         wnd.show()
         self.changeFontSize()
-        
-
+    
+    def openDatabaseSettings(self):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        wnd = UrbansimDatabaseSettingsGUI(self, flags)
+        wnd.show()
+        self.changeFontSize()
+    
     def openConfig(self, config=None):
         # config should be a path to an .xml config file
 
@@ -655,9 +663,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                             textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
                         
             node = node.nextSibling()
-            try:
-                self.toolboxStuff.save_gui_configuration_file()
-            except:
-                print "Unexpected error:", sys.exc_info()[0]
+        try:
+            self.toolboxStuff.save_gui_configuration_file()
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
                 
             
