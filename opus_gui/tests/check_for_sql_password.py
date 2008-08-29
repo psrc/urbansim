@@ -12,9 +12,9 @@
 # other acknowledgments.
 # 
 from opus_core.tests import opus_unittest
-from opus_core.tests.check_for_mysql_password import TestForMySQLPassword_abstract
-class TestForMySQLPassword(TestForMySQLPassword_abstract):
-    modul = "seattle_parcel_subarea"
+from opus_core.tests.check_for_sql_password import TestForSQLPassword_abstract
+class TestForSQLPassword(TestForSQLPassword_abstract):
+    modul = "opus_gui"
             
 if __name__ == "__main__":
     opus_unittest.main()

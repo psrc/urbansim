@@ -16,11 +16,11 @@ from os import environ
 from os.path import join
 from opus_core.tests import opus_unittest
 
-class TestForMySQLPassword_abstract(opus_unittest.OpusTestCase):
+class TestForSQLPassword_abstract(opus_unittest.OpusTestCase):
     modul = None
-    def test_no_mysql_password_in_files(self):
-        if self.modul is not None:
-            password = environ['MYSQLPASSWORD']
+    def test_no_sql_password_in_files(self):
+        if self.modul is not None and 'SQLPASSWORD' in environ:
+            password = environ['SQLPASSWORD']
             files = []
             for root, unused_dirs, file_names in walk(__import__(self.modul).__path__[0]):
                 files.extend([join(root, name) for name in file_names])
@@ -30,9 +30,9 @@ class TestForMySQLPassword_abstract(opus_unittest.OpusTestCase):
                     cat = file(file_name, "r").read()
                 except:
                     pass
-                self.assert_(cat.find(password) < 0, "found mysql password in %s" % file_name)
+                self.assert_(cat.find(password) < 0, "found sql password in %s" % file_name)
                 
-class TestForMySQLPassword(TestForMySQLPassword_abstract):
+class TestForSQLPassword(TestForSQLPassword_abstract):
     modul = "opus_core"
             
 if __name__ == "__main__":

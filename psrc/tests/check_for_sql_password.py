@@ -11,12 +11,10 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-raise "Please chance the name of the package in tests.all_tests" #remove this line after changing the package name
-
 from opus_core.tests import opus_unittest
-from opus_core.tests.check_for_mysql_password import TestForMySQLPassword_abstract
-class TestForMySQLPassword(TestForMySQLPassword_abstract):
-    modul = "z_template_project"
+from opus_core.tests.check_for_sql_password import TestForSQLPassword_abstract
+class TestForSQLPassword(TestForSQLPassword_abstract):
+    modul = "psrc"
             
 if __name__ == "__main__":
     opus_unittest.main()
