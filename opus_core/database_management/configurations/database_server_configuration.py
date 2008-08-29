@@ -99,7 +99,11 @@ class DatabaseServerConfiguration(object):
                 self.password = ''
             else:
                 self.password = password
-            
+                
+        # If the password is the empty string or None, check if it is defined in the environment variable
+        # SQLPASSWORD - if so, use that.
+        if (self.password is None or self.password=='') and 'SQLPASSWORD' in os.environ:
+            self.password = os.environ['SQLPASSWORD']
 
                 
     def __repr__(self):
