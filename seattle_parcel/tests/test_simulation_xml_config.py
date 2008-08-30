@@ -14,17 +14,21 @@
 
 # Test that the Seattle parcel simulation runs without crashing for 2 years using an xml configuration
 
+import os
 from opus_core.tests import opus_unittest
 from opus_core.tools.start_run import StartRunOptionGroup
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
-from seattle_parcel.tests.test_xml_config_setup import TestXMLConfigSetup
 from opus_core.services.run_server.run_manager import RunManager
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
-class TestSimulation(TestXMLConfigSetup):
+
+class TestSimulation(opus_unittest.OpusIntegrationTestCase):
            
     def test_simulation(self):
         # check that the simulation proceeds without crashing
-        xml_config = self.get_xml_config()
+        # open the configuration for seattle_parcel.xml
+        seattle_parcel_dir = __import__('seattle_parcel').__path__[0]
+        xml_config = XMLConfiguration(os.path.join(seattle_parcel_dir, 'configs', 'seattle_parcel.xml'))
         option_group = StartRunOptionGroup()
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []

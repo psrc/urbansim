@@ -14,14 +14,17 @@
 
 # Test that the Seattle parcel simulation runs without crashing for 2 years using an xml configuration
 
+import os
 from opus_core.tests import opus_unittest
+from opus_core.configurations.xml_configuration import XMLConfiguration
 from urbansim.estimation.estimation_runner import EstimationRunner
-from seattle_parcel.tests.test_xml_config_setup import TestXMLConfigSetup
 
-class TestEstimation(TestXMLConfigSetup):
+class TestEstimation(opus_unittest.OpusIntegrationTestCase):
     
     def test_estimation(self):
-        xml_config = self.get_xml_config()
+        # open the configuration for seattle_parcel.xml
+        seattle_parcel_dir = __import__('seattle_parcel').__path__[0]
+        xml_config = XMLConfiguration(os.path.join(seattle_parcel_dir, 'configs', 'seattle_parcel.xml'))
         estimation_section = xml_config.get_section('model_manager/estimation')
         estimation_config = estimation_section['estimation_config']
         for model_name in estimation_config['models_to_estimate']:
