@@ -13,7 +13,6 @@
 #
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
 
 class number_of_businesses_of_sector_DDD(Variable):
     """Number of businesses of sector DDD in a given building"""
@@ -25,8 +24,8 @@ class number_of_businesses_of_sector_DDD(Variable):
         
     def dependencies(self):
         return [
-                "is_of_sector_%s = sanfrancisco.business.is_of_sector_%s" % (self.sector, self.sector),
-                "_number_of_businesses_of_sector_%s = building.aggregate(business.is_of_sector_%s)" % (self.sector, self.sector)
+                "sanfrancisco.business.is_of_sector_%s" % self.sector,
+                "_number_of_businesses_of_sector_%s = building.aggregate(sanfrancisco.business.is_of_sector_%s)" % (self.sector, self.sector)
                 ]
 
     def compute(self,  dataset_pool):
@@ -37,8 +36,6 @@ class number_of_businesses_of_sector_DDD(Variable):
         self.do_check("x >= 0 and x <= " + str(size), values)
 
 from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
