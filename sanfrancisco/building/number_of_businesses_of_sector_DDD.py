@@ -24,7 +24,6 @@ class number_of_businesses_of_sector_DDD(Variable):
         
     def dependencies(self):
         return [
-                "sanfrancisco.business.is_of_sector_%s" % self.sector,
                 "_number_of_businesses_of_sector_%s = building.aggregate(sanfrancisco.business.is_of_sector_%s)" % (self.sector, self.sector)
                 ]
 
