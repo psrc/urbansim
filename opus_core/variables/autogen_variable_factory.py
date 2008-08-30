@@ -12,6 +12,8 @@
 # other acknowledgments.
 # 
 
+# Note: even if PyDev complains that some of these imports are unused, generally they ARE
+# in fact used when executing the generated code.
 from sets import Set
 import parser
 from types import TupleType
@@ -93,16 +95,22 @@ class AutogenVariableFactory(object):
         """return a tuple (package_name, dataset_name, short_name, alias, autogen_class)
         corresponding to my expression."""
         self._parse_expr()
-        # first check if expr is a fully-qualified variable, dataset-qualified variable, or an attribute
-        same, vars = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, self._expr_parsetree)
-        if same:
-            return (vars['package'], vars['dataset'], vars['shortname'], self._alias, None)
-        same, vars = match(EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE, self._expr_parsetree)
-        if same:
-            return (None, vars['dataset'], vars['shortname'], self._alias, None)
-        same, vars = match(EXPRESSION_IS_ATTRIBUTE, self._expr_parsetree)
-        if same:
-            return (None, None, vars['shortname'], self._alias, None)
+        # Hack: always generate a new variable class if there is an alias.  (In theory we shouldn't
+        # need a new class if we are just providing an alias for fully-qualified variable, 
+        # dataset-qualified variable, or an attribute; but fixing this would require that datasets
+        # keep a dictionary of additional aliases, since the alias is used as the name of the attribute.
+        # This change should be made sometime when there is a rewrite of Dataset.)
+        if self._alias is None:
+            # first check if expr is a fully-qualified variable, dataset-qualified variable, or an attribute
+            same, vars = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, self._expr_parsetree)
+            if same:
+                return (vars['package'], vars['dataset'], vars['shortname'], self._alias, None)
+            same, vars = match(EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE, self._expr_parsetree)
+            if same:
+                return (None, vars['dataset'], vars['shortname'], self._alias, None)
+            same, vars = match(EXPRESSION_IS_ATTRIBUTE, self._expr_parsetree)
+            if same:
+                return (None, None, vars['shortname'], self._alias, None)
         # it's a more complex expression -- need to generate a new variable class
         (short_name, autogen_class) = self._generate_new_variable()
         return (None, self._owner_dataset_name, short_name, self._alias, autogen_class)

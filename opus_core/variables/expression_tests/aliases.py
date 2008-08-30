@@ -39,9 +39,9 @@ class Tests(opus_unittest.OpusTestCase):
         name = VariableName(expr)
         self.assertEqual(name.get_package_name(), None, msg="bad value for package")
         self.assertEqual(name.get_dataset_name(), None, msg="bad value for dataset")
-        self.assertEqual(name.get_short_name(), 'persons', msg="bad value for shortname")
+        self.assert_(name.get_short_name().startswith('autogen'), msg="bad value for shortname")
         self.assertEqual(name.get_alias(), 'p', msg="bad value for alias")
-        self.assertEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
+        self.assertNotEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
         
     def test_alias_attribute_with_modification(self):
         # this tests an expression consisting of an alias for a primary attribute that is modified
@@ -97,11 +97,11 @@ class Tests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_alias_fully_qualified_variable")
         # check that the new var has x as an alias
         v = VariableName(expr)
-        self.assertEqual(v.get_package_name(), 'opus_core', msg="bad value for package_name")
+        self.assertEqual(v.get_package_name(), None, msg="bad value for package_name")
         self.assertEqual(v.get_dataset_name(), 'tests', msg="bad value for dataset_name")
-        self.assertEqual(v.get_short_name(), 'a_test_variable', msg="bad value for short_name")
+        self.assert_(v.get_short_name().startswith('autogen'), msg="bad value for shortname")
         self.assertEqual(v.get_alias(), 'x', msg="bad value for alias")
-        self.assertEqual(v.get_autogen_class(), None, msg="bad value for autoge_class")
+        self.assertNotEqual(v.get_autogen_class(), None, msg="bad value for autogen_class")
         # check that the alias has the correct value
         result2 = dataset.compute_variables(['x'])
         self.assert_(ma.allclose(result2, should_be, rtol=1e-6), "Error in accessing a_test_variable")
