@@ -13,7 +13,7 @@
 #
 
 from baseline import Baseline
-from urbansim.configs.config_changes_for_estimation import ConfigChangesForEstimation
+from urbansim_zone.configs.config_changes_for_estimation import ConfigChangesForEstimation
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
