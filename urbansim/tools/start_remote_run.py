@@ -121,29 +121,31 @@ class RemoteRun:
             self._run_manager = run_manager
 
     def __del__(self):
-        for key, value in self.ssh.iteritems():
-            value.close()
+        pass
+        #for key, value in self.ssh.iteritems():
+            #value.close()
     
     def prepare_for_run(self, configuration_path=None, config=None, run_id=None):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
     
+        run_manager = self.get_run_manager()
         if run_id is not None:
-            config = self.get_run_manager().get_resources_for_run_id_from_history(run_id=run_id)
+            config = run_manager.get_resources_for_run_id_from_history(run_id=run_id)
         else:
             if configuration_path is not None:
                 config = get_config_from_opus_path(configuration_path)
             elif config is None:
                     raise StandardError, "Either configuration_path, config or run_id must be given."
             insert_auto_generated_cache_directory_if_needed(config)
-            self.get_run_manager().setup_new_run(cache_directory = config['cache_directory'],
+            run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                                  configuration = config)
-            run_id = self.get_run_manager()._get_new_run_id()            
-            config['cache_directory'] = pathname2url(self.get_run_manager().get_current_cache_directory())
+            run_id = run_manager.run_id
+            config['cache_directory'] = pathname2url(run_manager.get_current_cache_directory())
             ## pathname2url converts '\' or '\\' to '/'; it is necessary when this script is invoked from a nt os
-            self.get_run_manager().add_row_to_history(run_id, config, "started")
+            run_manager.add_row_to_history(run_id, config, "started")
             
             #verify run_id has been added to services db
-            results = self.get_run_manager().services_db.GetResultsFromQuery(
+            results = run_manager.services_db.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
@@ -361,8 +363,8 @@ if __name__ == "__main__":
     option_group = OptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
-
-    run_manager = RunManager(option_group.get_services_database_configuration(options))
+    services_db = option_group.get_services_database_configuration(options)
+    run_manager = RunManager(services_db)
     if not run_manager.services_db:
         raise RuntimeError, "services database must exist; use --hostname argument to specify the database server containing services database."
     
@@ -379,9 +381,11 @@ if __name__ == "__main__":
 
     run = RemoteRun({'hostname':urbansim_server, 'username':urbansim_user, 'password':urbansim_password}, 
                     {'hostname':travelmodel_server, 'username':travelmodel_user, 'password':travelmodel_password}, 
-                    {'hostname':options.host_name, 'username':options.user_name, 'password':options.password, 
-                     'database_name':options.database_name},
+                    {'hostname':services_db.host_name, 'username':services_db.user_name, 'password':services_db.password, 
+                     'database_name':services_db.database_name},
                     run_manager)
     run.run(configuration_path=options.configuration_path, run_id=options.run_id, 
             start_year=options.start_year, end_year=options.end_year)
+    for ssh_client in run.ssh.values():
+        ssh_client.close()
     #del run
