@@ -1,5 +1,4 @@
-#
-# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# UrbanSim software. Copyright (C) 1998-2008 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -12,24 +11,17 @@
 # other acknowledgments.
 # 
 
-# Modify for win
+# Modify to RM = del for win
 RM = rm -f
 #RM = del
 
-all:
-	$(MAKE) -C main
-	$(MAKE) -C util
-	$(MAKE) -C config
-	$(MAKE) -C run
-	$(MAKE) -C map
-	$(MAKE) -C settings
+all: databasesettingsedit_ui.py
 
 clean:
+	$(RM) databasesettingsedit_ui.py
 	$(RM) *.pyc
 	$(RM) *~
-	$(MAKE) -C main clean
-	$(MAKE) -C util clean
-	$(MAKE) -C config clean
-	$(MAKE) -C run clean
-	$(MAKE) -C map clean
-	$(MAKE) -C settings clean
+
+databasesettingsedit_ui.py: databasesettingsedit.ui
+	pyuic4 -o databasesettingsedit_ui.py databasesettingsedit.ui
+

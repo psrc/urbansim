@@ -29,9 +29,10 @@ class OpusXMLAction(object):
         self.mainwindow = xmlTreeObject.mainwindow
 
         self.actionObject = self.getXMLActionObjectByType(self.xmlTreeObject.xmlType)
-        QObject.connect(self.xmlTreeObject.view,
-                        SIGNAL("customContextMenuRequested(const QPoint &)"),
-                        self.actionObject.processCustomMenu)
+        if self.actionObject:
+            QObject.connect(self.xmlTreeObject.view,
+                            SIGNAL("customContextMenuRequested(const QPoint &)"),
+                            self.actionObject.processCustomMenu)
 
     def getXMLActionObjectByType(self,xmlType):
         if xmlType == "results_manager":
@@ -48,4 +49,4 @@ class OpusXMLAction(object):
             return OpusXMLAction_General(self)
         else:
             #error out
-            pass
+            return None

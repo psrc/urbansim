@@ -52,9 +52,10 @@ class OpusDataModel(QAbstractItemModel):
         # and append to the tree...
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
             current = self.xmlRoot.childNodes().item(x)
-            self._rootItemSub = OpusDataItem(document,current, x, self._rootItem)
-            self._rootItemSub.initAsRootItem()
-            self._rootItem.childItems.append(self._rootItemSub)
+            if current.nodeType() == QDomNode.ElementNode:
+                self._rootItemSub = OpusDataItem(document,current, x, self._rootItem)
+                self._rootItemSub.initAsRootItem()
+                self._rootItem.childItems.append(self._rootItemSub)
 
         if addIcons:
             # Add some icons

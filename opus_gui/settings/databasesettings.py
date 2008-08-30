@@ -27,6 +27,43 @@ import StringIO
 from databasesettings_ui import Ui_databaseConfigEditor
 from opus_gui.settings.databasesettingsview import *
 
+
+
+############ APR Added 082908 as example of using OpusXMLTree for database XML editing
+from databasesettingsedit_ui import Ui_DatabaseSettingsEditGui
+from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
+
+class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
+    def __init__(self, mainwindow, fl):
+        QDialog.__init__(self, mainwindow, fl)
+        self.setupUi(self)
+        self.mainwindow = mainwindow
+
+        settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
+        self.database_server_configuration_file = os.path.join(settings_directory, 'database_server_configurations.xml')
+        self.configFile = QFile(self.database_server_configuration_file)
+        self.doc = QDomDocument()
+        self.doc.setContent(self.configFile)
+        self.databaseSettingsEditTree = OpusXMLTree(self,"database_server_configurations",
+                                                    self.gridlayout)
+
+    def on_saveChanges_released(self):
+        #print "save pressed"
+        indentSize = 2
+        self.configFile.close()
+        self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+        out = QTextStream(self.configFile)
+        self.doc.save(out, indentSize)
+        self.close()
+
+    def on_cancelWindow_released(self):
+        #print "cancel pressed"
+        self.configFile.close()
+        self.close()
+############ APR Added 082908 as example of using OpusXMLTree for database XML editing
+
+
+
 class UrbansimDatabaseSettingsGUI(QDialog, Ui_databaseConfigEditor):
     def __init__(self, mainwindow, fl):
         QDialog.__init__(self, mainwindow, fl)

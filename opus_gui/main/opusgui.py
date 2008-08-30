@@ -21,7 +21,7 @@ from PyQt4.QtGui import *
 from opus_gui.main.opusmain_ui import Ui_MainWindow
 from opus_gui.main.opusabout import UrbansimAboutGui
 from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
-from opus_gui.settings.databasesettings import UrbansimDatabaseSettingsGUI
+from opus_gui.settings.databasesettings import UrbansimDatabaseSettingsGUI,DatabaseSettingsEditGui
 
 from opus_gui.util.consolebase import *
 from opus_gui.config.toolboxbase import *
@@ -323,7 +323,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     
     def openDatabaseSettings(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        wnd = UrbansimDatabaseSettingsGUI(self, flags)
+        #wnd = UrbansimDatabaseSettingsGUI(self, flags)
+        # Commented out the previous line and added the following line
+        # to test out the APR added database connection editing GUI (082908)
+        wnd = DatabaseSettingsEditGui(self, flags)
         wnd.show()
         self.changeFontSize()
     
