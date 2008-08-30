@@ -334,7 +334,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #                     "New_Node","Dataset","model variable","primary attribute","Description",
         #                     0,0,0])
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = AllVariablesNewGui(self.mainwindow,flags,self)
+        window = AllVariablesNewGui(self,flags,self)
         window.show()
 
     def on_checkSelectedVariables_released(self):
