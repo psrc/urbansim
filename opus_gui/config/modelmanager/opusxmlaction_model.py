@@ -84,10 +84,21 @@ class OpusXMLAction_Model(object):
                                                    nodeToUpdate=thisNode)
         self.all_variables.show()
 
+    def checkIsDirty(self):
+        if (self.xmlTreeObject.toolboxbase.resultsManagerTree and self.xmlTreeObject.toolboxbase.resultsManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.modelManagerTree and self.xmlTreeObject.toolboxbase.modelManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.runManagerTree and self.xmlTreeObject.toolboxbase.runManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.dataManagerTree and self.xmlTreeObject.toolboxbase.dataManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.dataManagerDBSTree and self.xmlTreeObject.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.generalManagerTree and self.xmlTreeObject.toolboxbase.generalManagerTree.model.isDirty()):
+            return True
+        else:
+            return False
+
     def runEstimationAction(self):
         # First confirm that the project file needs to be saved
         # before running the estimation...
-        if not self.xmlTreeObject.model.isDirty():
+        if not self.checkIsDirty():
             newEstimation = OpusEstimation(self.xmlTreeObject,
                                            self.xmlTreeObject.toolboxbase.xml_file)
             self.xmlTreeObject.mainwindow.runManagerStuff.addNewEstimationRun(newEstimation)

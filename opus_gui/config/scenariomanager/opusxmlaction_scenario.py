@@ -88,9 +88,20 @@ class OpusXMLAction_Scenario(object):
                         self.cloneNode)
 
 
+    def checkIsDirty(self):
+        if (self.xmlTreeObject.toolboxbase.resultsManagerTree and self.xmlTreeObject.toolboxbase.resultsManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.modelManagerTree and self.xmlTreeObject.toolboxbase.modelManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.runManagerTree and self.xmlTreeObject.toolboxbase.runManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.dataManagerTree and self.xmlTreeObject.toolboxbase.dataManagerTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.dataManagerDBSTree and self.xmlTreeObject.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
+               (self.xmlTreeObject.toolboxbase.generalManagerTree and self.xmlTreeObject.toolboxbase.generalManagerTree.model.isDirty()):
+            return True
+        else:
+            return False
+
     def runModel(self):
         # If the XML is not dirty we can go ahead and run... else prompt for saving
-        if not self.xmlTreeObject.model.isDirty():
+        if not self.checkIsDirty():
             modelToRun = self.currentIndex.internalPointer().node().nodeName()
             # Add the model to the run Q
             newModel = OpusModel(self.xmlTreeObject,
