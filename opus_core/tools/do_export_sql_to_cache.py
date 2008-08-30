@@ -39,7 +39,7 @@ if __name__ == '__main__':
             'written (required).')
     parser.add_option('-y', '--cache_year', dest='cache_year', type='string',
         help="The attribute cache year into which to write the output (required).")
-    parser.add_option('-p', '--protocol', dest='protocol', type='string', default = None,
+    parser.add_option('--protocol', dest='protocol', type='string', default = None,
         help='The password for the server on which the output database will '
             "be created (default: estimation_database_configuration setup '').")
     parser.add_option('-o', '--host', dest='host_name', type='string', default = None,

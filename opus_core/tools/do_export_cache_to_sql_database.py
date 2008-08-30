@@ -32,9 +32,9 @@ if __name__ == '__main__':
     parser.add_option('-d', '--database_name', dest='database_name',
         type='string', help='The name of the database to which output will be '
             'written (required).')
-    parser.add_option('-p', '--protocol', dest='protocol', type='string', default = None,
-        help='The password for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
+    parser.add_option('--protocol', dest='protocol', type='string', default = None,
+        help='The protocol for the sql engine on which the output database will '
+            "be created (default: estimation_database_configuration setup).")
     parser.add_option('-o', '--host', dest='host_name', type='string', default = None,
         help="The host name of the server one which the output database will "
             "be created (default: estimation_database_configuration setup "
