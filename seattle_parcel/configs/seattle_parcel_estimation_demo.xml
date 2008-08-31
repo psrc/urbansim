@@ -6,7 +6,7 @@
     <expression_library type="dictionary">
       <ln_price_per_unit dataset="building" source="expression" type="variable_definition" use="model variable">ln_bounded(urbansim_parcel.building.unit_price * building.sqft_per_unit)</ln_price_per_unit>
       <year_built dataset="building" source="primary attribute" type="variable_definition" use="model variable">building.year_built</year_built>
-      <age_masked dataset="building" source="python module" type="variable_definition" use="both">urbansim_parcel.building.age_masked</age_masked>
+      <age_masked dataset="building" source="Python class" type="variable_definition" use="both">urbansim_parcel.building.age_masked</age_masked>
       <bhwy600 dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell&lt;600)</bhwy600>
       <bart600 dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell&lt;600)</bart600>
     </expression_library>

@@ -2,7 +2,11 @@
   <general>
     <parent type="file">estimate.xml</parent>
     <expression_library type="dictionary">
+      <income type="variable_definition" dataset="test_agent" use="model variable" source="primary attribute">income</income>
+      <income_times_2 type="variable_definition" dataset="test_agent" use="model variable" source="Python class">opus_core.test_agent.income_times_2</income_times_2>
+      <i2 type="variable_definition" dataset="test_agent" use="model variable" source="Python class">opus_core.test_agent.income_times_2</i2>
       <income_times_10 type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*opus_core.test_agent.income_times_2</income_times_10>
+      <income_times_10_ds_qualified type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*test_agent.income_times_2</income_times_10_ds_qualified>
       <income_times_10_using_primary type="variable_definition" dataset="test_agent" use="model variable" source="expression">10*test_agent.income</income_times_10_using_primary>
       <income_less_than type="variable_definition" dataset="test_agent" use="model variable" source="expression">def income_less_than(i): return test_agent.income&lt;i</income_less_than>
     </expression_library>

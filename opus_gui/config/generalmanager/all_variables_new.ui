@@ -156,7 +156,7 @@
            </item>
            <item>
             <property name="text" >
-             <string>python module</string>
+             <string>Python class</string>
             </property>
            </item>
           </widget>

@@ -16,7 +16,6 @@ import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
-from opus_core.variables.variable_name import VariableName
 
 class XMLConfiguration(object):
     """
@@ -84,23 +83,15 @@ class XMLConfiguration(object):
         
     def get_expression_library(self):
         """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
-        dictionary are pairs (dataset_name, variable_name) or triples (package_name, dataset_name, variable_name),
-        and the values are the corresponding expressions.  The pairs are for looking up variables identified just by 
-        dataset and name, and triples are for looking up fully qualified variables.  Only include variables defined
-        as expressions, not built-in or defined as Python classes."""
+        dictionary are pairs (dataset_name, variable_name) and the values are the corresponding expressions."""
         result = {}
         node = self._find_node('general/expression_library')
         if node is not None:
             for v in node:
-                # Add the variable to the dictionary, indexed both by the pair (dataset,name) and by the triple (package,dataset,name)
+                # Add the variable to the dictionary, indexed by the pair (dataset,name)
                 name = v.tag
                 dataset = v.get('dataset')
-                # If the variable is defined as an expression, the package name is the name of the xml configuration in
-                # which it is defined; if it is defined as a Python class, the package name is the package for that class.
-                if v.get('source')=='expression':
-                    package = v.get('inherited', self.name)
-                    result[(dataset,name)] = v.text
-                    result[(package,dataset,name)] = v.text
+                result[(dataset,name)] = v.text
         return result
 
     def get_run_configuration(self, name, merge_controllers=True):
@@ -841,38 +832,39 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         lib = config.get_expression_library()
         # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
         # (so it can't be used yet in computing variables).
-        lib_should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
-                     ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
+        lib_should_be = {('test_agent', 'income'): 'income',
+                     ('test_agent', 'income_times_2'): 'opus_core.test_agent.income_times_2',
+                     ('test_agent', 'i2'): 'opus_core.test_agent.income_times_2',
+                     ('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2',
+                     ('test_agent', 'income_times_10_ds_qualified'): '5*test_agent.income_times_2',
+                     ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
                      ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
-                     ('expression_library_test', 'test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', 
-                     ('expression_library_test', 'test_agent', 'income_times_10_using_primary'): '10*test_agent.income', 
-                     ('expression_library_test', 'test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
-                     ('estimate', 'parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
+                     ('parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units'}
         self.assertEqual(lib, lib_should_be)
         # Test that computing the value of this variable gives the correct answer.  This involves
         # setting the expression library in VariableFactory -- when actually estimating a model or running
         # a simulation, that gets done by a call in ModelSystem.run.
         VariableFactory().set_expression_library(lib)
         storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(
-            table_name='test_agents',
-            table_data={
-                "income":array([1,5,10]),
-                "id":array([1,3,4])
-                }
-            )
+        storage.write_table(table_name='test_agents', table_data={"income":array([1,5,10]), "id":array([1,3,4])})
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
-        # test with and without package name in variable, and also for variables defined as expressions and as Python class
-        result1 = dataset.compute_variables(["opus_core.test_agent.income_times_10"])
-        result2 = dataset.compute_variables(["opus_core.test_agent.income_times_10_using_primary"])
-        result3 = dataset.compute_variables(["test_agent.income_times_10"])
-        result4 = dataset.compute_variables(["test_agent.income_times_10_using_primary"])
-        result_should_be = array([10, 50, 100])
-        self.assert_(ma.allclose(result1, result_should_be, rtol=1e-6))
-        self.assert_(ma.allclose(result2, result_should_be, rtol=1e-6))
-        self.assert_(ma.allclose(result3, result_should_be, rtol=1e-6))
-        self.assert_(ma.allclose(result4, result_should_be, rtol=1e-6))
+        # test getting a primary attribute
+        result1 = dataset.compute_variables(["test_agent.income"])
+        self.assert_(ma.allclose(result1, array([1, 5, 10]), rtol=1e-6))
+        # test with and without package name for a variable defined as a Python class
+        result2 = dataset.compute_variables(["test_agent.income_times_2"])
+        result3 = dataset.compute_variables(["test_agent.i2"])
+        result4 = dataset.compute_variables(["opus_core.test_agent.income_times_2"])
+        self.assert_(ma.allclose(result2, array([2, 10, 20]), rtol=1e-6))
+        self.assert_(ma.allclose(result3, array([2, 10, 20]), rtol=1e-6))
+        self.assert_(ma.allclose(result4, array([2, 10, 20]), rtol=1e-6))
+        result5 = dataset.compute_variables(["test_agent.income_times_10"])
+        result6 = dataset.compute_variables(["test_agent.income_times_10_ds_qualified"])
+        result7 = dataset.compute_variables(["test_agent.income_times_10_using_primary"])
+        self.assert_(ma.allclose(result5, array([10, 50, 100]), rtol=1e-6))
+        self.assert_(ma.allclose(result6, array([10, 50, 100]), rtol=1e-6))
+        self.assert_(ma.allclose(result7, array([10, 50, 100]), rtol=1e-6))
         # Test that the expression library is set correctly for estimation and run configurations.
         est = config.get_estimation_configuration()
         self.assertEqual(est['expression_library'], lib_should_be)

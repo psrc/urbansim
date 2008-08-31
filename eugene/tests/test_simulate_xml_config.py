@@ -12,66 +12,31 @@
 # other acknowledgments.
 #
 
-# Test that the Eugene simulation runs without crashing for 2 years using an xml configuration
+# Test that the Eugene gridcell simulation runs without crashing using an xml configuration
 
 import os
 from opus_core.tests import opus_unittest
-import tempfile
-from shutil import rmtree
 from opus_core.tools.start_run import StartRunOptionGroup
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
-from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.services.run_server.run_manager import RunManager
-
-# This is a template for an xml configuration for running the test -- it runs for 2 years 
-# instead of the default of 1 year, and there is a bit in it where we will substitute the 
-# temp directory into which to write the results.
-config_template = """<opus_project>
-  <general>
-    <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
-    </general>
-  <scenario_manager>
-    <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
-      <years_to_run config_name="years" type="tuple">
-        <endyear type="integer">1982</endyear>
-      </years_to_run>
-      <creating_baseyear_cache_configuration type="class">
-        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">%s/runs</cache_directory_root>
-        </creating_baseyear_cache_configuration>
-      </Eugene_baseline>
-  </scenario_manager>
-</opus_project>
-"""
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
 
-class SimulationTest(opus_unittest.OpusIntegrationTestCase):
-    
-    def setUp(self):
-        # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it gets removed even if
-        # the test_simulation method itself gets an exception.
-        # Note that mkdtemp returns an absolute directory path.
-        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-
-    def tearDown(self):
-        rmtree(self.temp_dir)
+class TestSimulation(opus_unittest.OpusIntegrationTestCase):
            
     def test_simulation(self):
-        # check that the simulation proceeds without crashing
-        # generate an xml configuration to run the test (we want to write the results into the temp directory).
-        config_path = os.path.join(self.temp_dir, 'testconfig.xml')
-        f = open(config_path, 'w')
-        f.write(config_template % self.temp_dir)
-        f.close()
+        eugene_dir = __import__('eugene').__path__[0]
+        xml_config = XMLConfiguration(os.path.join(eugene_dir, 'configs', 'eugene_gridcell.xml'))
         option_group = StartRunOptionGroup()
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
         run_manager = RunManager(option_group.get_services_database_configuration(options))
-        config = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
-        insert_auto_generated_cache_directory_if_needed(config)
-        run_manager.setup_new_run(cache_directory = config['cache_directory'],
-                                  configuration = config)
-        run_manager.run_run(config)
+        run_section = xml_config.get_run_configuration('Eugene_baseline')
+        insert_auto_generated_cache_directory_if_needed(run_section)
+        run_manager.setup_new_run(cache_directory = run_section['cache_directory'],
+                                  configuration = run_section)
+        run_manager.run_run(run_section)
        
 if __name__ == "__main__":
     opus_unittest.main()

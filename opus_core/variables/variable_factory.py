@@ -59,14 +59,13 @@ class VariableFactory(object):
             short_name = variable_name.get_short_name()
             dataset_name = variable_name.get_dataset_name()
             package_name = variable_name.get_package_name()
-            
-            # first look in the expression library
-            e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
-            if e is not None:
-                v = VariableName(e)
-                return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
-            
-            # next look in the appropriate 'aliases' file, if one is present
+            # if there isn't a package name, first look in the expression library (if there is a package name, look elsewhere)
+            if package_name is None:
+                e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
+                if e is not None:
+                    v = VariableName(e)
+                    return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
+            # not in the expression library - next look in the appropriate 'aliases' file, if one is present
             try:
                 stmt = 'from %s.%s.aliases import aliases' % (package_name, dataset_name)
                 exec(stmt)

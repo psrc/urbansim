@@ -48,9 +48,9 @@ class OpusAllVariablesDelegate(QItemDelegate):
             #editor.setSizeAdjustPolicy(QComboBox.AdjustToContents)
             return editor
         elif index.column() == 4:
-            # Column 4 is "Source" with options "primary attribute", "expression", "python module"
+            # Column 4 is "Source" with options "primary attribute", "expression", "Python class"
             editor = QComboBox(parentView)
-            choices = ["primary attribute","expression","python module"]
+            choices = ["primary attribute","expression","Python class"]
             currentIndex = 0
             for i,choice in enumerate(choices):
                 editor.addItem(choice)

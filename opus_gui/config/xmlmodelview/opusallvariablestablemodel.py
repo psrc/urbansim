@@ -98,7 +98,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             # Reverse loop through and order based on columns
             for col in reversed(orderList):
                 self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
-            # Flip if accending vs decending...
+            # Flip if ascending vs descending...
             if order == Qt.DescendingOrder:
                 self.arraydata.reverse()
             self.emit(SIGNAL("layoutChanged()"))
@@ -200,9 +200,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         self._checkVariables(range(len(self.arraydata)), 'All expressions parse correctly and can be executed on the baseyear data!')
     
     def _checkVariables(self, tocheck, ok_msg):
-        # Helper method -- check the variables in the expression library as indexed by the list 'tocheck'.
-        # Right now the only check is that the expression parses correctly; later we'll want to try 
-        # evaluating it against the current cache.
+        # check the variables in the expression library as indexed by the list 'tocheck'.
         errors = []
         for i in tocheck:
             expr = str(self.arraydata[i][5])
@@ -212,7 +210,33 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
                 continue
             dataset_name = str(self.arraydata[i][2])  
             try:
-                VariableName(expr)
+                n = VariableName(expr)
+                # check that the expression is of the correct form given the source
+                source = str(self.arraydata[i][4]) 
+                # TODO: what if it's a constant?
+                if source=='primary attribute':
+                    if n.get_autogen_class() is not None:
+                        errors.append("Error - this is parsing as an expression rather than as a primary attribute: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif n.get_dataset_name() is None:
+                        errors.append("Error in primary attribute - missing dataset name: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif dataset_name!=n.get_dataset_name():
+                        errors.append("Error in primary attribute - dataset name mismatch: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif n.get_package_name() is not None:
+                        errors.append("Error in primary attribute - shouldn't have package name: (%s, %s): %s" % (var_name, dataset_name, expr))
+                elif source=='expression':
+                    if n.get_autogen_class() is None:
+                        errors.append("Error - this doesn't seem to be an expression.  Maybe it should be a Python class or primary attribute?: (%s, %s): %s" % (var_name, dataset_name, expr))
+                elif source=='Python class':
+                    if n.get_autogen_class() is not None:
+                        errors.append("Error - this is parsing as an expression rather than as a Python class reference: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif n.get_package_name() is None:
+                        errors.append("Error - missing package name in Python class reference: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif n.get_dataset_name() is None:
+                        errors.append("Error - missing dataset name in Python class reference: (%s, %s): %s" % (var_name, dataset_name, expr))
+                    elif dataset_name!=n.get_dataset_name():
+                        errors.append("Error - dataset name  mismatch in Python class reference: (%s, %s): %s" % (var_name, dataset_name, expr))
+                else:
+                    errors.append("Unknown source type %s: (%s, %s): %s" % (source, var_name, dataset_name, expr))
             except (SyntaxError, ValueError), e:
                 errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
         

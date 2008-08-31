@@ -150,7 +150,7 @@ class Ui_AllVariablesNewGui(object):
         self.label_4.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Source - ", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "primary attribute", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "expression", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "python module", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "Python class", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Definition - ", None, QtGui.QApplication.UnicodeUTF8))
         self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Accept", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
