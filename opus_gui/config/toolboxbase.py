@@ -38,7 +38,8 @@ class ToolboxBase(object):
         self.doc = None
         self.configFile = None
         self.configFileTemp = None
-
+        self.opusXMLTree = None
+        
         # These are the trees that are displayed for each toolbox
         self.view = None
         self.modelManagerTree = None
@@ -59,6 +60,12 @@ class ToolboxBase(object):
         self.gui_configuration_doc = QDomDocument()
         self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
 
+    def updateOpusXMLTree(self):
+        if self.opusXMLTree and self.doc:
+            # print "updateOpusXMLTree"
+            indentSize = 2
+            self.opusXMLTree.update(str(self.doc.toString(indentSize)))
+    
     def openXMLTree(self, xml_file):
         saveBeforeOpen = QMessageBox.Discard
         # Check if the current model(s) is(are) dirty first...

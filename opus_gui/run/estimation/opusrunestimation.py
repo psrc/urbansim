@@ -106,7 +106,7 @@ class OpusEstimation(object):
             try:
                 fileNameInfo = QFileInfo(self.xml_path)
                 filename = fileNameInfo.absoluteFilePath().trimmed()
-                xml_config = XMLConfiguration(str(filename))
+                xml_config = self.xmltreeobject.toolboxbase.opusXMLTree
                 estimation_section = xml_config.get_section('model_manager/estimation')
                 estimation_config = estimation_section['estimation_config']
                 self.config = estimation_config

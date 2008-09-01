@@ -172,11 +172,7 @@ class OpusModel(object):
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                #print fileNameAbsolute
-                #print self.modeltorun
-                config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
-                #if self.run_name is not None:
-                #    config['description'] = self.run_name
+                config = self.xmltreeobject.toolboxbase.opusXMLTree.get_run_configuration(str(self.modeltorun))
                     
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
@@ -187,10 +183,8 @@ class OpusModel(object):
                 run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                           configuration = config)
 
-                #statusdir = tempfile.mkdtemp()
                 statusdir = run_manager.get_current_cache_directory()
                 self.statusfile = os.path.join(statusdir, 'status.txt')
-                #print self.statusfile
                 self.currentLogfileYear = self.start_year
                 self.currentLogfileKey = 0
                 self.config = config

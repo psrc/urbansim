@@ -100,19 +100,14 @@ class OpusXMLAction_Scenario(object):
             return False
 
     def runModel(self):
-        # If the XML is not dirty we can go ahead and run... else prompt for saving
-        if not self.checkIsDirty():
-            modelToRun = self.currentIndex.internalPointer().node().nodeName()
-            # Add the model to the run Q
-            newModel = OpusModel(self.xmlTreeObject,
-                                 self.xmlTreeObject.toolboxbase.xml_file,
-                                 modelToRun)
-            self.xmlTreeObject.mainwindow.runManagerStuff.addNewModelRun(newModel)
-        else:
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project before running model")
+        # Update the XMLConfiguration copy of the XML tree before running the model
+        self.xmlTreeObject.toolboxbase.updateOpusXMLTree()
+        modelToRun = self.currentIndex.internalPointer().node().nodeName()
+        # Add the model to the run Q
+        newModel = OpusModel(self.xmlTreeObject,
+                             self.xmlTreeObject.toolboxbase.xml_file,
+                             modelToRun)
+        self.xmlTreeObject.mainwindow.runManagerStuff.addNewModelRun(newModel)
 
     def openXMLFile(self):
         filePath = ""

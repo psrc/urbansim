@@ -96,17 +96,10 @@ class OpusXMLAction_Model(object):
             return False
 
     def runEstimationAction(self):
-        # First confirm that the project file needs to be saved
-        # before running the estimation...
-        if not self.checkIsDirty():
-            newEstimation = OpusEstimation(self.xmlTreeObject,
-                                           self.xmlTreeObject.toolboxbase.xml_file)
-            self.xmlTreeObject.mainwindow.runManagerStuff.addNewEstimationRun(newEstimation)
-        else:
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Save changes to project before running estimation")
+        self.xmlTreeObject.toolboxbase.updateOpusXMLTree()
+        newEstimation = OpusEstimation(self.xmlTreeObject,
+                                       self.xmlTreeObject.toolboxbase.xml_file)
+        self.xmlTreeObject.mainwindow.runManagerStuff.addNewEstimationRun(newEstimation)
 
     def removeNode(self):
         #print "Remove Node Pressed"

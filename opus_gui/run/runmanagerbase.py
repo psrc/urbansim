@@ -28,6 +28,8 @@ from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 
+import tempfile
+
 # Main Run manager class
 class RunManagerBase(object):
     def __init__(self, mainwindow):
@@ -113,6 +115,7 @@ class ModelGuiElement(QWidget):
         self.paused = False
         self.timer = None
         self.runThread = None
+        self.config = None
         
         self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxStuff)
         self.toolboxStuff = self.mainwindow.toolboxStuff
@@ -123,7 +126,8 @@ class ModelGuiElement(QWidget):
         # Bring up the XML file and grab the start year and end year
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
 
@@ -342,23 +346,6 @@ class ModelGuiElement(QWidget):
 
         # End Progress Simulation Display
 
-        self.configFile = QFile(self.xml_path)
-        if self.configFile.open(QIODevice.ReadOnly):
-            self.doc = QDomDocument()
-            self.doc.setContent(self.configFile)
-            self.dataModel = OpusDataModel(self, self.doc, self.mainwindow, self.configFile,
-                                           "scenario_manager", False)
-            self.view = OpusDataView(self.mainwindow)
-            self.delegate = OpusDataDelegate(self.view)
-            self.view.setItemDelegate(self.delegate)
-            self.view.setModel(self.dataModel)
-            self.view.expandAll()
-            self.view.setAnimated(True)
-            self.view.setColumnWidth(0,200)
-            self.view.setColumnWidth(1,50)
-            self.view.setMinimumHeight(200)
-            self.tabWidget.addTab(self.view,"Tree View")
-
         # Log panel
         self.logText = QTextEdit(self.groupBox)
         self.logText.setReadOnly(True)
@@ -370,6 +357,13 @@ class ModelGuiElement(QWidget):
 
         self.setupDiagnosticIndicatorTab()
         
+    def updateConfigAndGuiForRun(self):
+        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        self.config = config
+        insert_auto_generated_cache_directory_if_needed(config)
+        (self.start_year, self.end_year) = config['years']
+        self.summaryYearRangeLabel.setText(QString("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
+
     def setupDiagnosticIndicatorTab(self):
         # start indicator tab 
 
@@ -387,8 +381,8 @@ class ModelGuiElement(QWidget):
         self.diagnostic_year = QComboBox(self.mainwindow)
         self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
 
-        config = XMLConfiguration(str(self.xml_path)).get_run_configuration(str(self.model.modeltorun))
-        #    QComboBox.addItem(self.diagnostic_year, QString("<Select Year>"), QVariant())
+        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []
         for year in years:
@@ -563,6 +557,10 @@ class ModelGuiElement(QWidget):
             self.runThread.resume()
             self.pbnStartModel.setText(QString("Pause Model..."))
         elif self.running == False:
+            # Update the XML
+            self.toolboxStuff.updateOpusXMLTree()
+            self.updateConfigAndGuiForRun()
+
             # Fire up a new thread and run the model
             self.pbnStartModel.setText(QString("Pause Model..."))
             # References to the GUI elements for status for this run...
@@ -782,6 +780,7 @@ class EstimationGuiElement(QWidget):
 
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
+        self.toolboxStuff = self.mainwindow.toolboxStuff
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = fileNameInfo.fileName()
@@ -846,23 +845,6 @@ class EstimationGuiElement(QWidget):
         # Add a tab widget and layer in a tree view and log panel
         self.tabWidget = QTabWidget(self.groupBox)
 
-        self.configFile = QFile(self.xml_path)
-        if self.configFile.open(QIODevice.ReadOnly):
-            self.doc = QDomDocument()
-            self.doc.setContent(self.configFile)
-            self.dataModel = OpusDataModel(self, self.doc, self.mainwindow, self.configFile,
-                                           "model_manager", False)
-            self.view = OpusDataView(self.mainwindow)
-            self.delegate = OpusDataDelegate(self.view)
-            self.view.setItemDelegate(self.delegate)
-            self.view.setModel(self.dataModel)
-            self.view.expandAll()
-            self.view.setAnimated(True)
-            self.view.setColumnWidth(0,200)
-            self.view.setColumnWidth(1,50)
-            self.view.setMinimumHeight(200)
-            self.tabWidget.addTab(self.view,"Tree View")
-
         # Log panel
         self.logText = QTextEdit(self.groupBox)
         self.logText.setReadOnly(True)
@@ -896,6 +878,8 @@ class EstimationGuiElement(QWidget):
             self.runThread.resume()
             self.pbnStartModel.setText(QString("Pause Estimation..."))
         elif self.running == False:
+            # Update the XML
+            self.toolboxStuff.updateOpusXMLTree()
             # Fire up a new thread and run the estimation
             # References to the GUI elements for status for this run...
             self.progressBar = self.runProgressBar

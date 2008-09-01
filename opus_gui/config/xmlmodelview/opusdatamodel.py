@@ -382,6 +382,7 @@ class OpusDataModel(QAbstractItemModel):
                         domElement.setTagName(value.toString())
                         if not self.isTemporary(domElement):
                             self.markAsDirty()
+                            self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
                             # Now check if it was inherited and the original should
                             # be added back in
                             self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
@@ -396,6 +397,7 @@ class OpusDataModel(QAbstractItemModel):
                             children.item(x).setNodeValue(QString(value.toString()))
                             if not self.isTemporary(children.item(x)):
                                 self.markAsDirty()
+                                self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
             else:
                 #print "New text node to be added"
                 # We need to add a text node since it was blank
@@ -404,6 +406,7 @@ class OpusDataModel(QAbstractItemModel):
                     domNode.appendChild(newText)
                     if not self.isTemporary(newText):
                         self.markAsDirty()
+                        self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
         return True
 
     def makeEditable(self,node):
