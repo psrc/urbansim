@@ -508,7 +508,8 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         cache_directory = tempfile.mkdtemp(prefix='opus_tmp')
         resources = {'cache_directory':cache_directory,
                      'description':'test_run',
-                     'base_year':2000}
+                     'base_year':2000,
+                     'project_name': 'test'}
         
         run_manager.add_row_to_history(run_id = 1, 
                                        resources = resources, 
