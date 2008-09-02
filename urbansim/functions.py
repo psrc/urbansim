@@ -18,9 +18,10 @@ from numpy import ma
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed
 
-def attribute_label(dataset_name, attribute_name):
-#    return (package().get_package_name(), dataset_name, attribute_name)
-    return package().get_package_name() + '.' + dataset_name + '.' + attribute_name
+def attribute_label(dataset_name, attribute_name, pkg=None):
+    if pkg is None:
+        pkg = package().get_package_name()
+    return pkg + '.' + dataset_name + '.' + attribute_name
 
 def create_dependency_name_with_number(name, dataset_name, numbers):
     result = []
