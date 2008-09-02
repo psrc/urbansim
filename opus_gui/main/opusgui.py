@@ -21,7 +21,7 @@ from PyQt4.QtGui import *
 from opus_gui.main.opusmain_ui import Ui_MainWindow
 from opus_gui.main.opusabout import UrbansimAboutGui
 from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
-from opus_gui.settings.databasesettings import UrbansimDatabaseSettingsGUI,DatabaseSettingsEditGui
+from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
 
 from opus_gui.util.consolebase import *
 from opus_gui.config.toolboxbase import *
