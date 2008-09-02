@@ -35,7 +35,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.results_manager import ResultsManager
 
 class Maker(object):
-    def __init__(self, test = False, project_name = project_name):
+    def __init__(self, project_name, test = False):
         self.computed_indicators = {}
         self.test = test
         self.project_name = project_name
