@@ -349,7 +349,7 @@ class RunManager(AbstractService):
         description = resources.get('description', 'No description')
         if run_name is None:
             run_name = description
-        
+                
         values = {'run_id':run_id,
              'run_name': run_name, 
              'run_description':'%s' % description,
@@ -357,10 +357,14 @@ class RunManager(AbstractService):
              'processor_name':'%s' % get_host_name(), 
              'date_time':datetime.datetime.now(),
              'resources':'%s' % pickled_resources,
-             'cache_directory': resources['cache_directory']
+             'cache_directory': resources['cache_directory'],
+             'project_name': resources['project_name']
              }        
 
         run_activity_table = self.services_db.get_table('run_activity')
+        if not 'project_name' in run_activity_table.c:
+            del values['project_name']
+            
         if self.has_run(run_id):
             qry = run_activity_table.update(values = values,
                                             whereclause = run_activity_table.c.run_id == run_id)

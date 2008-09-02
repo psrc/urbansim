@@ -26,7 +26,7 @@ class ResultsManager(AbstractService):
     def __init__(self, options):
         AbstractService.__init__(self, options)
     
-    def add_computed_indicator(self, indicator_name, dataset_name, expression, run_id, data_path):
+    def add_computed_indicator(self, indicator_name, dataset_name, expression, run_id, data_path, project_name):
         """update the run history table to indicate changes to the state of this run history trail."""
                 
         values = {
@@ -36,10 +36,13 @@ class ResultsManager(AbstractService):
              'expression':expression, 
              'data_path':data_path,
              'processor_name':get_host_name(),
-             'date_time':datetime.datetime.now()
+             'date_time':datetime.datetime.now(),
+             'project_name': project_name
              }        
 
         computed_indicators_table = self.services_db.get_table('computed_indicators')
+        if not 'project_name' in computed_indicators_table.c:
+            del values['project_name']
         qry = computed_indicators_table.insert(values = values)
         self.services_db.execute(qry)
 
@@ -91,7 +94,7 @@ class ResultsManagerTests(opus_unittest.OpusTestCase):
         run_id = None
         data_path = '/home'        
         
-        result_manager.add_computed_indicator(indicator_name, dataset_name, expression, run_id, data_path)
+        result_manager.add_computed_indicator(indicator_name, dataset_name, expression, run_id, data_path, project_name = 'test')
         
         db = self.db_server.get_database(self.database_name)
         computed_indicators_table = db.get_table('computed_indicators')
