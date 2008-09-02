@@ -13,14 +13,14 @@
 # 
 
 all_variables = [   
-    ('lsfi = ln(zone.industrial_sqft)', 'BLSFI'),
-    ('lsfc = ln(zone.commercial_sqft)', 'BLSFC'),
-    ('ldu = ln(zone.residential_units)', 'BLDU'),
+    ('lsfi = ln(urbansim_zone.zone.industrial_sqft)', 'BLSFI'),
+    ('lsfc = ln(urbansim_zone.zone.commercial_sqft)', 'BLSFC'),
+    ('ldu = ln(urbansim_zone.zone.residential_units)', 'BLDU'),
     ('lavinc = ln(urbansim.zone.average_income)','BLAVINC'),
     ('ljobs = ln(urbansim.zone.number_of_jobs)', 'BLJOBS'), 
-    ('lindjobs = ln(urbansim.zone.number_of_industrial_jobs)', 'BLIJOBS'), 
+    ('lindjobs = ln(urbansim_zone.zone.number_of_industrial_jobs)', 'BLIJOBS'), 
     ('lcbd = ln(zone.travel_time_to_cbd)','BCBD'),
-    ('lcomjobs = ln(urbansim.zone.number_of_commercial_jobs)', 'BLCJOBS'),
+    ('lcomjobs = ln(urbansim_zone.zone.number_of_commercial_jobs)', 'BLCJOBS'),
     ('lemp30 = ln(eugene.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone)', 'BLEMP30'),
     ('lpop = ln(zone.aggregate(household.persons))', 'BLPOP')
                  ]

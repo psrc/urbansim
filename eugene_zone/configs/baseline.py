@@ -103,7 +103,6 @@ class Baseline(UrbansimZoneConfiguration):
                     'households_for_estimation',
                     #'development_events_exogenous',
                     ],
-                unroll_gridcells = False
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['eugene_zone', 'eugene', 'urbansim_zone', 'urbansim', 'opus_core'],
