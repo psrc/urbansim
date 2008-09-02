@@ -14,14 +14,14 @@
 #
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QString, SIGNAL, SLOT
+from PyQt4.QtGui import QApplication
 
 # General system includes
 import sys
 
 # Urbansim Tools
-from opus_gui.main.opusgui import *
+from opus_gui.main.opusgui import OpusGui
 
 # Main entry to program.  Set up the main app and create a new window.
 def main(argv):
