@@ -91,8 +91,7 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
     def on_pbn_set_run_directory_released(self):
         start_dir = os.path.join(os.environ['OPUS_HOME'], 'runs', os.environ['OPUSPROJECTNAME'])
         
-        configDialog = QFileDialog()
-        fd = configDialog.getExistingDirectory(self,
+        fd = QFileDialog.getExistingDirectory(self,
                     QString("Please select a run directory..."), #, *.sde, *.mdb)..."),
                     QString(start_dir), QFileDialog.ShowDirsOnly)
         if len(fd) != 0:
