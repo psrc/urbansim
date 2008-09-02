@@ -345,7 +345,7 @@ class Tests(AbstractIndicatorTest):
                   attribute = 'opus_core.test.attribute2'
         )
 
-        maker = Maker()
+        maker = Maker(project_name = 'test', test = True)
         computed_indicators = maker.create_batch(
             indicators = {'attr1':indicator,
                           'attr2':indicator2},
@@ -569,7 +569,7 @@ class Tests(AbstractIndicatorTest):
                   attribute = 'opus_core.test.attribute'
         )
 
-        maker = Maker()
+        maker = Maker(project_name = 'test', test = True)
         computed_indicators = maker.create_batch(
             indicators = {'attr1':indicator},
             source_data = self.source_data)

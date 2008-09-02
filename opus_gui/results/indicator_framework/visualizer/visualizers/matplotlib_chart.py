@@ -204,7 +204,6 @@ else:
         
 
     from opus_core.tests import opus_unittest    
-    from opus_gui.results.indicator_framework.maker.source_data import SourceData
     from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
     from opus_gui.results.indicator_framework.maker.maker import Maker
     from opus_gui.results.indicator_framework.representations.indicator import Indicator
@@ -247,7 +246,7 @@ else:
                       attribute = 'opus_core.test.attribute2'
             )
                     
-            maker = Maker()
+            maker = Maker(project_name = 'test', test = True)
             computed_indicators = maker.create_batch(
                 indicators = {'attr1':indicator, 
                               'attr2':indicator2}, 

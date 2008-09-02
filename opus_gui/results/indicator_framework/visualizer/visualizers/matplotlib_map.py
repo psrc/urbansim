@@ -236,7 +236,7 @@ class Tests(AbstractIndicatorTest):
                   attribute = 'urbansim.gridcell.population'
         )
                 
-        maker = Maker()
+        maker = Maker(project_name = 'test', test = True)
         computed_indicators = maker.create_batch(
             indicators = {'population':indicator}, 
             source_data = self.source_data)

@@ -33,12 +33,12 @@ from opus_core.store.storage import Storage
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.results_manager import ResultsManager
-from opus_core.services.run_server.run_manager import RunManager
 
 class Maker(object):
-    def __init__(self, test = False):
+    def __init__(self, test = False, project_name = project_name):
         self.computed_indicators = {}
         self.test = test
+        self.project_name = project_name
         
     def create(self, indicator, source_data):
         computed_indicators = self.create_batch(
@@ -85,7 +85,8 @@ class Maker(object):
             source_data = source_data)
         
         if not self.test:
-            self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators)
+            self.write_computed_indicators_to_db(computed_indicator_group = computed_indicators,
+                                                 project_name = self.project_name)
         
         logger.log_status('%s Indicator Generation END %s %s\n' 
             % ('='*11, strftime('%Y_%m_%d_%H_%M', localtime()), '='*11))
@@ -181,7 +182,7 @@ class Maker(object):
         del dataset
         collect()
 
-    def write_computed_indicators_to_db(self, computed_indicator_group):
+    def write_computed_indicators_to_db(self, computed_indicator_group, project_name):
         options = ServicesDatabaseConfiguration()
         results_manager = ResultsManager(options)
         
@@ -191,7 +192,8 @@ class Maker(object):
                     dataset_name = indicator.dataset_name, 
                     expression = indicator.indicator.attribute, 
                     run_id = indicator.source_data.run_id, 
-                    data_path = indicator.get_file_path())                    
+                    data_path = indicator.get_file_path(),
+                    project_name = project_name)                    
         
         results_manager.close()
         
@@ -216,7 +218,7 @@ class Tests(AbstractIndicatorTest):
                   dataset_name = 'test', 
                   attribute = 'opus_core.test.attribute')        
         
-        maker = Maker(test = True)
+        maker = Maker(project_name = 'test', test = True)
         maker.create(indicator = indicator, 
                      source_data = self.source_data)
         
@@ -246,7 +248,7 @@ class Tests(AbstractIndicatorTest):
             
 
     def test__indicator_expressions(self):
-        maker = Maker(test = True)
+        maker = Maker(project_name = 'test', test = True)
         indicator = Indicator(
             attribute = '2 * opus_core.test.attribute',
             dataset_name = 'test')
@@ -276,7 +278,7 @@ class Tests(AbstractIndicatorTest):
 
 
     def test__indicator_expressions_with_two_variables(self):
-        maker = Maker(test = True)
+        maker = Maker(project_name = 'test', test = True)
         indicator = Indicator(
             attribute = '2 * opus_core.test.attribute - opus_core.test.attribute2',
             dataset_name = 'test')
@@ -327,7 +329,7 @@ class Tests(AbstractIndicatorTest):
         pass
                         
     def test__integrity_checker(self):
-        maker = Maker()
+        maker = Maker(project_name = 'test', test = True)
 
         '''package does not exist'''
         indicator = Indicator(

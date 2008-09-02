@@ -79,7 +79,7 @@ class OpusResultGenerator(object):
                                  indicator_name = self.indicator_name,
                                  dataset_name = self.dataset_name)
         
-        maker = Maker()
+        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'])
 
         try:
             import pydevd;pydevd.settrace()
