@@ -18,10 +18,7 @@ from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results.forms.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
 from opus_gui.results.forms.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
-
-# General system includes
-import os
-
+from opus_gui.results.forms.import_run_dialog import ImportRunDialog
 
 class AbstractManagerBase(object):
     #mainwindow is an OpusGui object
@@ -73,13 +70,16 @@ class ResultManagerBase(AbstractManagerBase):
         run_manager = self._get_run_manager()
         run_manager.delete_everything_for_this_run(run_id, cache_directory = cache_directory)
         run_manager.close()
+    
+    def importRun(self):
+        dlg = ImportRunDialog(self)
+        dlg.show()
         
     def configureExistingIndicatorBatchVisualization(self, selected_index):
         viz_name = selected_index.internalPointer().node().toElement().tagName()
         _, params = self.xml_helper.get_element_attributes(node_name = viz_name,
                                                child_attributes = ['visualization_type'],
                                                node_type = 'batch_visualization')
-        visualization_type = params['visualization_type']
 
         window = ConfigureExistingDatasetTableDialog(self, selected_index)
         window.show()

@@ -62,6 +62,11 @@ class OpusXMLAction_Results(object):
                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actDeleteRun, SIGNAL("triggered()"), self.deleteRun)          
 
+        self.actImportRun = QAction(self.acceptIcon, 
+                                          "Import run from disk",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actImportRun, SIGNAL("triggered()"), self.importRun) 
+    
 
         self.actConfigureExistingBatchIndicatorVisualization = QAction(self.acceptIcon,
                                                                        "Configure visualization",
@@ -152,6 +157,9 @@ class OpusXMLAction_Results(object):
                     run_id = int(run_id), cache_directory = cache_directory)    
             
             self.removeNode()   
+            
+    def importRun(self):
+        self.xmlTreeObject.mainwindow.resultManagerStuff.importRun()  
           
     def beforeRunIndicatorBatchShown(self):
         domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
@@ -233,6 +241,9 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actDeleteRun)
                 elif domElement.tagName() == QString("Indicator_batches"):
                     self.menu.addAction(self.actAddNewIndicatorBatch)
+                    
+                elif domElement.tagName() == QString("Simulation_runs"):
+                    self.menu.addAction(self.actImportRun)
                     
                 elif selected_type == QString("indicator_batch"):
 #                    self._build_indicator_batch_menu()

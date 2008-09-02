@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView, QFileDialog
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_gui.results.forms.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
