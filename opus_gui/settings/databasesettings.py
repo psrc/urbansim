@@ -33,7 +33,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         self.configFile = QFile(self.database_server_configuration_file)
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
-        self.databaseSettingsEditTree = OpusXMLTree(self,"database_configurations",
+        self.databaseSettingsEditTree = OpusXMLTree(self,"database_server_configurations",
                                                     self.gridlayout)
 
     def on_saveChanges_released(self):
