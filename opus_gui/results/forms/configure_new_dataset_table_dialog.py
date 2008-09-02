@@ -37,7 +37,7 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         self.xml_helper.addNewVisualizationToBatch(
                             viz_name = viz_name,
                             batch_name = self.batch_name,
-                            viz_type = self._get_type_mapper(viz_type),
+                            viz_type = self._get_type_mapper()[viz_type],
                             viz_params = viz_params)
         
         self.close()
