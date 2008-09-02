@@ -74,12 +74,14 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
                     run_manager.add_row_to_history(run_id = run_id, 
                                                    resources = resources, 
                                                    status = 'done', 
-                                                   run_name = run_name)      
+                                                   run_name = run_name)  
+                    self.xml_helper.update_available_runs()    
                     logger.log_status('Added run %s of project %s to run_activity table'%(run_name, project_name))
                 except:
                     errorInfo = formatExceptionInfo(custom_message = 'Could not add run %s of project %s to run_activity table'%(run_name, project_name))
                     logger.log_error(errorInfo)
                     QMessageBox.warning(self.mainwindow, 'Warning', QString(errorInfo))
+            
                     
         self.close()
 
@@ -87,7 +89,7 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
         self.close()
 
     def on_pbn_set_run_directory_released(self):
-        start_dir = os.environ['OPUS_HOME']
+        start_dir = os.path.join(os.environ['OPUS_HOME'], 'runs', os.environ['OPUSPROJECTNAME'])
         
         configDialog = QFileDialog()
         fd = configDialog.getExistingDirectory(self,
