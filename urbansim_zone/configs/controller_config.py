@@ -27,7 +27,17 @@ from urbansim.configurations.household_location_choice_model_configuration_creat
 class UrbansimZoneConfiguration(Configuration):
     def __init__(self):
         Configuration.__init__(self)
-
+        self['models'] = [
+                'real_estate_price_model',
+                'household_transition_model',
+                'employment_transition_model',
+                'household_relocation_model',
+                'household_location_choice_model',
+                'employment_relocation_model',
+                {   'employment_location_choice_model': {   'group_members': '_all_'}},
+                'distribute_unplaced_jobs_model',
+                ]
+        self['model_system'] = 'urbansim.model_coordinators.model_system'
         my_controller_configuration = {
         'real_estate_price_model': RealEstatePriceModelConfigurationCreator(
             dataset='pseudo_building', 
@@ -37,61 +47,61 @@ class UrbansimZoneConfiguration(Configuration):
             ).execute(),
         'employment_transition_model': 
                   EmploymentTransitionModelConfigurationCreator(
-            location_id_name="pseudo_building_id"
+            location_id_name="zone_id"
             ).execute(),
         'household_transition_model': 
                   HouseholdTransitionModelConfigurationCreator(
-            location_id_name="pseudo_building_id"
+            location_id_name="zone_id"
             ).execute(),
  
         'employment_relocation_model': 
                   EmploymentRelocationModelConfigurationCreator(
-                               location_id_name = 'pseudo_building_id',
+                               location_id_name = 'zone_id',
                                output_index = 'erm_index').execute(),
                                
         'household_relocation_model': HouseholdRelocationModelConfigurationCreator(
-                        location_id_name = 'pseudo_building_id',
+                        location_id_name = 'zone_id',
                         output_index = 'hrm_index',
                         ).execute(),
-        'household_location_choice_model': {
-                    'controller': HouseholdLocationChoiceModelConfigurationCreator(
-                        location_set = "pseudo_building",                                                           
+        'household_location_choice_model': HouseholdLocationChoiceModelConfigurationCreator(
+                        location_set = "zone",
+                        capacity_string = 'urbansim_zone.zone.vacant_residential_units',
+                        estimation_weight_string = 'urbansim_zone.zone.vacant_residential_units',
+                        portion_to_unplace = 1/3.0,
+                        nchunks = 3,
+                        number_of_units_string = None,                       
                         input_index = 'hrm_index',
                         ).execute(),
-                    },
          'employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
-                                location_set = "pseudo_building",
+                                location_set = "zone",
                                 input_index = 'erm_index',
                                 agents_for_estimation_table = "jobs_for_estimation",
                                 estimation_weight_string = None,
                                 number_of_units_string = None,
                                 portion_to_unplace = 0,
-                                capacity_string = "vacant_SSS_job_space",
-                                variable_package = "urbansim"
+                                capacity_string = "urbansim_zone.zone.vacant_SSS_job_space",
                                 ).execute(),
                                        
             'home_based_employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
-                                location_set = "pseudo_building",
+                                location_set = "zone",
                                 input_index = 'erm_index',
-                                estimation_weight_string = "vacant_home_based_job_space",
+                                estimation_weight_string = "urbansim.zone.number_of_households",
                                 agents_for_estimation_table = None, # will take standard jobs table 
-                                estimation_size_agents = 0.4,
+                                estimation_size_agents = 0.5,
                                 number_of_units_string = None,
                                 portion_to_unplace = 0,
-                                capacity_string = "vacant_home_based_job_space",
-                                variable_package = "urbansim",
+                                capacity_string = "urbansim.zone.number_of_households",
                                 ).execute(),
             'governmental_employment_location_choice_model': 
                    GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
                         input_index = 'erm_index',
-                        location_set = 'pseudo_building'
+                        location_set = 'zone'
                         ).execute(),      
             'distribute_unplaced_jobs_model':  DistributeUnplacedJobsModelConfigurationCreator(
-                                    location_set = 'pseudo_building'
-                                            ).execute(),
-                 
+                                    location_set = 'zone'
+                                            ).execute(),   
         }
         self['models_configuration'] = {}
         for model in my_controller_configuration.keys():
