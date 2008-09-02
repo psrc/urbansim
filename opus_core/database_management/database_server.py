@@ -12,7 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.opus_error import OpusError
 from opus_core.logger import logger
 from sqlalchemy.schema import MetaData
 from sqlalchemy import create_engine
