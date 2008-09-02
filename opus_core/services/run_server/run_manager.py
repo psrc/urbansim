@@ -358,7 +358,8 @@ class RunManager(AbstractService):
              'date_time':datetime.datetime.now(),
              'resources':'%s' % pickled_resources,
              'cache_directory': resources['cache_directory'],
-             'project_name': resources['project_name']
+             'project_name': resources.get('project_name', None)
+
              }        
 
         run_activity_table = self.services_db.get_table('run_activity')
