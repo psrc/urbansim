@@ -26,6 +26,7 @@ class ResultsComputedIndicators(Entity):
     data_path = Field(Text)
     processor_name = Field(Text)
     date_time = Field(DateTime)
+    project_name = Field(Text)
         
 class RunsRunActivity(Entity):
     using_options(tablename='run_activity')
@@ -38,6 +39,7 @@ class RunsRunActivity(Entity):
     date_time = Field(DateTime)
     status = Field(Text)
     resources = Field(BLOB)
+    project_name = Field(Text)
 
 
 #class ResultsVisualizations(Entity):
