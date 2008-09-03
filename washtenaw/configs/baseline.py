@@ -137,7 +137,7 @@ class Baseline(GeneralConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = "/urbansim_cache/washtenaw",
-                cache_from_mysql = True,
+                cache_from_database = True,
                  baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = "/urbansim_cache/washtenaw/cache_source",
                     ),

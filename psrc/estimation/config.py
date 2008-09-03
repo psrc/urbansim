@@ -17,7 +17,6 @@ import os
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
 from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
-from opus_core.misc import does_database_server_exist_for_this_hostname
 
 from urbansim.configs.estimation_base_config import run_configuration as config
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration

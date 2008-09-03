@@ -36,7 +36,7 @@ class Baseline(UrbansimParcelConfiguration):
                #cache_directory_root = r'/home/hana/urbansim_cache/psrc/parcel',
                cache_directory_root = r'/urbansim_cache/psrc_parcel/runs',
                #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/runs/cache_source',

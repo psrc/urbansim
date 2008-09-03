@@ -29,7 +29,7 @@ run_configuration["models"] = [
 #run_configuration["models_configuration"]['household_location_choice_model']['controller']['run']['arguments']['agents_index']=None
 config_changes = {                   
     'creating_baseyear_cache_configuration':{
-        'cache_from_mysql': False,
+        'cache_from_database': False,
         'cache_directory_root':r'/projects/urbansim7/urbansim_cache/psrc', #'/projects/urbansim7/urbansim_cache/psrc',
         'baseyear_cache':{
             'existing_cache_to_copy':r'/projects/urbansim7/urbansim_cache/psrc/wlcm_initialization_source',

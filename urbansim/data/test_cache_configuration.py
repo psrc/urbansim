@@ -63,7 +63,7 @@ class TestCacheConfiguration(GeneralConfiguration):
             'cache_directory': cache_directory,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = 'c:/urbansim_cache',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = cache_directory,
                     ),

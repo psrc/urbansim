@@ -20,7 +20,7 @@ from baseline import Baseline
 
 my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_directory_root = '/Users/hana/urbansim_cache/washtenaw/runs',
-        cache_from_mysql = False,
+        cache_from_database = False,
         unroll_gridcells = False,
         baseyear_cache = BaseyearCacheConfiguration(
             existing_cache_to_copy = '/Users/hana/urbansim_cache/washtenaw/cache_source',

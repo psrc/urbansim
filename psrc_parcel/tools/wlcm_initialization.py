@@ -35,7 +35,7 @@ config_changes = {
     'low_memory_mode':True,
     'creating_baseyear_from_cache':{
         'cache_directory':'/projects/urbansim7/urbansim_cache/psrc',
-        'cache_from_mysql':True,
+        'cache_from_database':True,
         'tables_to_cache':[
             'gridcells',
             'households',

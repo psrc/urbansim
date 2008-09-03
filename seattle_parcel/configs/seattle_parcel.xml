@@ -219,7 +219,7 @@
           <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
           <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
         </baseyear_database_configuration>
-          <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
+          <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
           <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
           <tables_to_cache type="selectable_list">
             <households choices="Cache|Skip" type="table">Cache</households>

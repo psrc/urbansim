@@ -32,7 +32,7 @@ class TestRunEstimationConfig(Configuration):
             'low_memory_mode':False,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 unroll_gridcells = True,
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = '/urbansim_cache/workshop/cache_source',
                     #years_to_cache  = range(1996,2001)

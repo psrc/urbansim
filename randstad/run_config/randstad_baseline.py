@@ -37,7 +37,7 @@ my_run_configuration = {
         cache_directory_root = 'C:/urbansim_cache/randstad',
         cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
         unroll_gridcells = False,
-        cache_from_mysql = False,
+        cache_from_database = False,
         # location of existing baseyear cache to use
         baseyear_cache = BaseyearCacheConfiguration( 
             existing_cache_to_copy = r'C:\urbansim_cache\randstad\run_618.2006_07_16_18_06',

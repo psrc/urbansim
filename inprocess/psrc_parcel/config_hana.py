@@ -32,7 +32,7 @@ config_changes = {
     'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
         #cache_directory_root = 'C:/tmp/urbansim_cache/psrc_parcel_hana',        
         unroll_gridcells = False,
-        cache_from_mysql = False,
+        cache_from_database = False,
         baseyear_cache = BaseyearCacheConfiguration(
             existing_cache_to_copy = 'C:/tmp/urbansim_cache/psrc_parcel_hana',
             ),

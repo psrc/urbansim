@@ -24,7 +24,6 @@ from opus_core.services.run_server.run_manager import insert_auto_generated_cach
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration
 
 from sqlalchemy.sql import select, func
@@ -58,71 +57,67 @@ def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     runs_manager.run_run(run_configuration)
     
 
-if does_database_server_exist_for_this_hostname(
-        module_name = __name__, 
-        hostname = SubsetConfiguration()['scenario_database_configuration'].host_name):
-    
-    class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
-        ### TODO: These unit tests can be moved back to core once 
-        ###       _do_run_simple_test_run() is no longer dependent on psrc.
-    
-        def setUp(self):
-            self.config = TestDatabaseConfiguration(database_name = 'services_test')
-            self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-    
-        def tearDown(self):
-            # Turn off the logger, so we can delete the cache directory.
-            logger.disable_all_file_logging()
-            db_server = DatabaseServer(self.config)
-            db_server.drop_database('services_test')
-            db_server.close()
+class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
+    ### TODO: These unit tests can be moved back to core once 
+    ###       _do_run_simple_test_run() is no longer dependent on psrc.
 
-        def cleanup_test_run(self):
-            cache_dir = self.resources['cache_directory']
-            if os.path.exists(cache_dir):
-                rmtree(cache_dir)
-            if os.path.exists(self.temp_dir):
-                rmtree(self.temp_dir)
-            
-        def test_restart_simple_run(self):
-            _do_run_simple_test_run(self, self.temp_dir, self.config)
-            runs_manager = RunManager(self.config)
-            
-            run_activity = runs_manager.services_db.get_table('run_activity')
-            s = select([func.max(run_activity.c.run_id)])
-            run_id = runs_manager.services_db.execute(s).fetchone()[0]
-            
-            s = select([run_activity.c.status],
-                       whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.execute(s).fetchone()[0]
-                                                                       
-            expected = 'done'
-            self.assertEqual(status, expected)
-                            
-            runs_manager.restart_run(run_id,
-                                     restart_year=2001,
-                                     skip_urbansim=False)
-            
-            s = select([run_activity.c.status],
-                       whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.execute(s).fetchone()[0]
-                                                           
-            expected = 'done'
-            self.assertEqual(status, expected)
-               
-            # Restaring without running urbansim should not re-run that year.
-            # TODO: test that no models are run this time.
-            runs_manager.restart_run(run_id,
-                                     restart_year=2002,
-                                     skip_urbansim=True)
-            s = select([run_activity.c.status],
-                       whereclause = run_activity.c.run_id == run_id)
-            status = runs_manager.services_db.execute(s).fetchone()[0]
-                                                                       
-            expected = 'done'
-            self.assertEqual(status, expected)
+    def setUp(self):
+        self.config = TestDatabaseConfiguration(database_name = 'services_test')
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+
+    def tearDown(self):
+        # Turn off the logger, so we can delete the cache directory.
+        logger.disable_all_file_logging()
+        db_server = DatabaseServer(self.config)
+        db_server.drop_database('services_test')
+        db_server.close()
+
+    def cleanup_test_run(self):
+        cache_dir = self.resources['cache_directory']
+        if os.path.exists(cache_dir):
+            rmtree(cache_dir)
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir)
+        
+    def test_restart_simple_run(self):
+        _do_run_simple_test_run(self, self.temp_dir, self.config)
+        runs_manager = RunManager(self.config)
+        
+        run_activity = runs_manager.services_db.get_table('run_activity')
+        s = select([func.max(run_activity.c.run_id)])
+        run_id = runs_manager.services_db.execute(s).fetchone()[0]
+        
+        s = select([run_activity.c.status],
+                   whereclause = run_activity.c.run_id == run_id)
+        status = runs_manager.services_db.execute(s).fetchone()[0]
+                                                                   
+        expected = 'done'
+        self.assertEqual(status, expected)
                         
-            self.cleanup_test_run()
+        runs_manager.restart_run(run_id,
+                                 restart_year=2001,
+                                 skip_urbansim=False)
+        
+        s = select([run_activity.c.status],
+                   whereclause = run_activity.c.run_id == run_id)
+        status = runs_manager.services_db.execute(s).fetchone()[0]
+                                                       
+        expected = 'done'
+        self.assertEqual(status, expected)
+           
+        # Restaring without running urbansim should not re-run that year.
+        # TODO: test that no models are run this time.
+        runs_manager.restart_run(run_id,
+                                 restart_year=2002,
+                                 skip_urbansim=True)
+        s = select([run_activity.c.status],
+                   whereclause = run_activity.c.run_id == run_id)
+        status = runs_manager.services_db.execute(s).fetchone()[0]
+                                                                   
+        expected = 'done'
+        self.assertEqual(status, expected)
+                    
+        self.cleanup_test_run()
 
 if __name__ == "__main__":
     opus_unittest.main()

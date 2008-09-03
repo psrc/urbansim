@@ -23,7 +23,7 @@ class TravelModelOnly(Baseline):
         self['description']='Washtenaw + travel model'
         self['models']= []
         self['years'] = (2001, 2002)
-        #self['creating_baseyear_cache_configuration']['cache_from_mysql'] = False
+        #self['creating_baseyear_cache_configuration']['cache_from_database'] = False
         #self['creating_baseyear_cache_configuration']['cache_directory_root']=r'C:\urbansim_cache\washtenaw'
         #self['creating_baseyear_cache_configuration']['baseyear_cache']['directory_to_cache'] = r'C:\urbansim_cache\washtenaw\cache_source20070129'
 

@@ -36,7 +36,7 @@ class RunManager(AbstractService):
         self.ready_to_run = False
 
     def create_baseyear_cache(self, resources):
-        if resources['creating_baseyear_cache_configuration'].cache_from_mysql:
+        if resources['creating_baseyear_cache_configuration'].cache_from_database:
             ForkProcess().fork_new_process(
                 resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
         else:
@@ -92,7 +92,7 @@ class RunManager(AbstractService):
             
             # Create baseyear cache
             self.create_baseyear_cache(run_resources)
-#            if run_resources['creating_baseyear_cache_configuration'].cache_from_mysql:
+#            if run_resources['creating_baseyear_cache_configuration'].cache_from_database:
 #                ForkProcess().fork_new_process(
 #                    run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
 #            else:

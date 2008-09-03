@@ -74,7 +74,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if options.existing_cache_to_copy is not None:
-        config['creating_baseyear_cache_configuration'].cache_from_mysql = False
+        config['creating_baseyear_cache_configuration'].cache_from_database = False
         config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = options.existing_cache_to_copy
         if options.years_to_cache is not None:
             config['creating_baseyear_cache_configuration'].baseyear_cache.years_to_cache = eval(options.years_to_cache)

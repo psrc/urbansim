@@ -487,7 +487,7 @@
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
         <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_subarea/runs</cache_directory_root>
-        <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
+        <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
         <baseyear_cache type="class">
           <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>

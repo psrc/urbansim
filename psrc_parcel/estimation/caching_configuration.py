@@ -90,7 +90,7 @@ class CachingConfiguration(Configuration):
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
-            cache_from_mysql = True,
+            cache_from_database = True,
             baseyear_cache = BaseyearCacheConfiguration(
                 existing_cache_to_copy = r'/urbansim_cache/psrc_parcel_2005/cache_source',
                 ),

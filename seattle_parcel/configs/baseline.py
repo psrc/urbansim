@@ -34,7 +34,7 @@ class Baseline(UrbansimParcelConfiguration):
             'cache_directory':  os.path.join(opus_home, 'data/seattle_parcel/base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
             cache_directory_root = os.path.join(opus_home, 'data/seattle_parcel/runs'),
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     existing_cache_to_copy = r'/Users/borning/opus_home/data/seattle_parcel/base_year_data',

@@ -49,7 +49,7 @@ class Baseline(UrbansimZoneConfiguration):
             'cache_directory':'/Users/hana/urbansim_cache/eugene/baseyear_cache_zone',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = '/Users/hana/urbansim_cache/eugene/zone',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = '/Users/hana/urbansim_cache/eugene/baseyear_cache_zone'
                     #existing_cache_to_copy = 'c:/urbansim_cache/eugene_1980_baseyear_cache',

@@ -57,7 +57,7 @@ class Baseline(AbstractUrbansimConfiguration):
             'cache_directory':'c:/opusworkspace/eugene',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = 'c:/urbansim_cache',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = 'c:/urbansim_cache/eugene_1980_baseyear_cache',
                     ),

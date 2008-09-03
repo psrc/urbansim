@@ -86,7 +86,7 @@ if __name__ == '__main__':
     
     base_year = config['base_year']
     
-    config['creating_baseyear_cache_configuration'].cache_from_mysql = False
+    config['creating_baseyear_cache_configuration'].cache_from_database = False
     config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = cache_dir
     config['cache_directory'] = output_dir
     config['years'] = (base_year+1, base_year+years_to_run)

@@ -32,7 +32,7 @@ class Baseline(GeneralConfiguration):
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
             #cache_directory_root = r'/workspace/urbansim_cache/pag_parcel',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
            #existing_cache_to_copy = r'/workspace/urbansim_cache/pag_parcel/estimation',

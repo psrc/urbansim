@@ -43,7 +43,7 @@ class RunSimulation(object):
                              package_order_exceptions=self.config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         
-        if config['creating_baseyear_cache_configuration'].cache_from_mysql:
+        if config['creating_baseyear_cache_configuration'].cache_from_database:
             ForkProcess().fork_new_process(self.config['creating_baseyear_cache_configuration'].cache_scenario_database, self.config)
         else:
             CacheFltData().run(self.config)

@@ -22,5 +22,5 @@ class ConfigForSimulation(Configuration):
     def __init__(self):
         Configuration.__init__(self, config)
         self.merge(my_configuration)
-        if not my_configuration['creating_baseyear_cache_configuration'].cache_from_mysql:
+        if not my_configuration['creating_baseyear_cache_configuration'].cache_from_database:
             del self["input_configuration"] # don't bother with the database if everything is in cache

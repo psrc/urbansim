@@ -32,7 +32,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/stepII',
                 #cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/home/lmwang/urbansim_cache/psrc_parcel',
-                cache_from_mysql = False,
+                cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache',
                     #existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',

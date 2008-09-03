@@ -41,7 +41,7 @@ class PullTravelDataAfterFullTmRun(GeneralConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = 'd:/urbansim_cache',
-                cache_from_mysql = True,
+                cache_from_database = True,
                 baseyear_cache = BaseyearCacheConfiguration(
                                  r'D:\urbansim_cache\run_1417.2006_12_08_01_50'),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
