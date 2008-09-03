@@ -127,12 +127,14 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
 
     def setData(self,index,value,role):
         # print "Set Data Pressed with %s" % (value.toString())
+        # when setting the appropriate element of arraydata, trim off whitespace at the end 
+        # (this handles the common case of typing a cr after entering some data)
         if not index.isValid():
             return False
         if role == Qt.EditRole:
             if self.arraydata[index.row()][index.column()] != value.toString():
                 # Only update if we change something
-                self.arraydata[index.row()][index.column()] = value.toString()
+                self.arraydata[index.row()][index.column()] = value.toString().trimmed()
                 self.emit(SIGNAL('dataChanged(const QModelIndex &, '
                                  'const QModelIndex &)'), index, index)
                 # Mark that the data for this row is dirty
