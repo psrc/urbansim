@@ -128,13 +128,14 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
     def setData(self,index,value,role):
         # print "Set Data Pressed with %s" % (value.toString())
         # when setting the appropriate element of arraydata, trim off whitespace at the end 
-        # (this handles the common case of typing a cr after entering some data)
+        # (this handles the common case of typing a cr after editing some data)
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            if self.arraydata[index.row()][index.column()] != value.toString():
+            trimmed_value = value.toString().trimmed()
+            if self.arraydata[index.row()][index.column()] != trimmed_value:
                 # Only update if we change something
-                self.arraydata[index.row()][index.column()] = value.toString().trimmed()
+                self.arraydata[index.row()][index.column()] = trimmed_value
                 self.emit(SIGNAL('dataChanged(const QModelIndex &, '
                                  'const QModelIndex &)'), index, index)
                 # Mark that the data for this row is dirty
@@ -152,11 +153,18 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         return False
 
     def insertRow(self, row, listToInsert, parent = QModelIndex()):
+        # trim the QStrings in the new row if need be to remove whitespace at the end or beginning
+        trimmedlist = []
+        trimmedlist.append(listToInsert[0])
+        for i in range(1,6):
+            trimmedlist.append(listToInsert[i].trimmed())
+        for i in range(6,len(listToInsert)):
+            trimmedlist.append(listToInsert[i])
         returnval = QAbstractTableModel.insertRow(self,row,parent)
         self.beginInsertRows(parent,row,row)
         # Add the element
         if parent == QModelIndex():
-            self.arraydata.insert(row,listToInsert)
+            self.arraydata.insert(row,trimmedlist)
         self.endInsertRows()
         if self.parentWidget:
             self.parentWidget.dirty = True
