@@ -35,6 +35,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         self.doc.setContent(self.configFile)
         self.databaseSettingsEditTree = OpusXMLTree(self,"database_server_configurations",
                                                     self.gridlayout)
+        print self.doc.documentElement().tagName()
 
     def on_saveChanges_released(self):
         #print "save pressed"
