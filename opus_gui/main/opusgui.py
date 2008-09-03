@@ -234,6 +234,23 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.changeFontSize()
         self.setFocus()
         
+    def getDbConnectionNames(self):
+        '''
+        Returns a list of the names of database connections available in the
+        database_server_configurations.xml document
+        '''
+        settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
+        database_server_configuration_file = os.path.join(settings_directory, 'database_server_configurations.xml')
+        configFile = QFile(database_server_configuration_file)
+        doc = QDomDocument()
+        doc.setContent(configFile)
+
+        list_of_db_connections = []
+        for i in range(0, doc.documentElement().childNodes().length()):
+            db_connection_name = doc.documentElement().childNodes().item(i).nodeName()
+            if db_connection_name != '#comment':
+                list_of_db_connections.append(str(db_connection_name))
+        return list_of_db_connections
 
     def writeOutput(self,result):
         if result == "":
