@@ -45,13 +45,14 @@ class FileDialogSignal(QWidget):
 
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
-    def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl):
+    def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl,optional_params = None):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.mainwindow = mainwindow
         self.model = model
         # Grab the tool we are interested in...
         self.currentElement = currentElement
+        self.optional_params = optional_params
         #self.execToolConfigGen = execToolConfigGen
         self.vars = {}
         # To test... add some dummy vars
@@ -205,6 +206,10 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
     def createGUIElements(self):
         for i,param in enumerate(self.tooltypearray):
+            #Swap in the passed params if they exist... loop through each passed
+            #param and see if it matches... if so swap it in
+            if self.optional_params and self.optional_params.has_key(param[0]):
+                param[2] = QString(self.optional_params[param[0]])
             # print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))

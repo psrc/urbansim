@@ -422,7 +422,15 @@ class OpusXMLAction_Data(object):
                 thisElement = thisNode.toElement()
                 if thisElement.hasAttribute(QString("type")) and \
                        (thisElement.attribute(QString("type")) == QString("tool_config")):
-                    self.execToolConfigGen(thisElement)
+                    #self.execToolConfigGen(thisElement)
+                    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+                    window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
+                                            thisElement,
+                                            self.execToolConfigGen,flags)
+                    tool_title = window.tool_title.replace('_', ' ')
+                    tool_title2 = str(tool_title).title()
+                    window.setWindowTitle(tool_title2)
+                    window.show()
 
     def cloneNode(self):
         #print "cloneNode Pressed"

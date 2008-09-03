@@ -21,6 +21,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
+from opus_gui.config.datamanager.executetool import ExecuteToolGui
 from StringIO import StringIO
 import sys
 
@@ -234,80 +235,40 @@ class OpusFileAction(object):
                 # print len(configindexlist)
                 for configindex in configindexlist:
                     if configindex.isValid():
-                        # Now for each config index we need to run the tools
-                        # Now find the tool that this config refers to...
-                        configNode = configindex.internalPointer().node().toElement()
-                        tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
-                        tool_name = QString("")
-                        if tool_hook.hasChildNodes():
-                            children = tool_hook.childNodes()
-                            for x in xrange(0,children.count(),1):
-                                if children.item(x).isText():
-                                    tool_name = children.item(x).nodeValue()
-                        # This will be in the Tool Library
-                        library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-                        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
-                        tool_file = library.toElement().elementsByTagName(tool_name).item(0)
-                        
-                        # First find the tool path text...
-                        if tool_path.hasChildNodes():
-                            children = tool_path.childNodes()
-                            for x in xrange(0,children.count(),1):
-                                if children.item(x).isText():
-                                    toolPath = children.item(x).nodeValue()
-                        # Next if the tool_file has a tool_name we grab it
-                        if tool_file.hasChildNodes():
-                            children = tool_file.childNodes()
-                            for x in xrange(0,children.count(),1):
-                                if children.item(x).isElement():
-                                    thisElement = children.item(x).toElement()
-                                    if thisElement.hasAttribute(QString("type")) and \
-                                           (thisElement.attribute(QString("type")) == QString("tool_name")):
-                                        if thisElement.hasChildNodes():
-                                            children2 = thisElement.childNodes()
-                                            for x2 in xrange(0,children2.count(),1):
-                                                if children2.item(x2).isText():
-                                                    filePath = children2.item(x2).nodeValue()
-                        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-                        print "New import ", importPath
-
-                        # Now loop and build up the parameters...
                         params = {}
-                        childNodes = configNode.childNodes()
-                        for x in xrange(0,childNodes.count(),1):
-                            thisElement = childNodes.item(x)
-                            thisElementText = QString("")
-                            if thisElement.hasChildNodes():
-                                children = thisElement.childNodes()
-                                for x in xrange(0,children.count(),1):
-                                    if children.item(x).isText():
-                                        thisElementText = children.item(x).nodeValue()
-                            if thisElement.toElement().tagName() == QString("opus_data_directory"):
-                                if self.classification == "database":
-                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
-                                elif self.classification == "dataset":
-                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
-                                elif self.classification == "array":
-                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
-                            if thisElement.toElement().tagName() == QString("opus_data_year"):
-                                if self.classification == "database":
-                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
-                                elif self.classification == "dataset":
-                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
-                                elif self.classification == "array":
-                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
-                            if thisElement.toElement().tagName() == QString("opus_table_name"):
-                                if self.classification == "database":
-                                    thisElementText = "ALL"
-                                elif self.classification == "dataset":
-                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
-                                elif self.classification == "array":
-                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
-                            if thisElement.toElement().tagName() != QString("tool_hook"):
-                                params[thisElement.toElement().tagName()] = thisElementText
-                        x = OpusTool(self.xmlFileObject.mainwindow,importPath,params)
-                        y = RunToolThread(self.xmlFileObject.mainwindow,x)
-                        y.run()
+                        thisElement = QString("opus_data_directory")
+                        if self.classification == "database":
+                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+                        elif self.classification == "dataset":
+                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
+                        elif self.classification == "array":
+                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
+                        params[thisElement] = thisElementText
+                        thisElement2 = QString("opus_data_year")
+                        if self.classification == "database":
+                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex)
+                        elif self.classification == "dataset":
+                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                        elif self.classification == "array":
+                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
+                        params[thisElement2] = thisElementText2
+                        thisElement3 = QString("opus_table_name")
+                        if self.classification == "database":
+                            thisElementText3 = "ALL"
+                        elif self.classification == "dataset":
+                            thisElementText3 = self.xmlFileObject.model.fileName(self.currentIndex)
+                        elif self.classification == "array":
+                            thisElementText3 = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                        params[thisElement3] = thisElementText3
+
+                        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+                        window = ExecuteToolGui(self.xmlFileObject.mainwindow,tree.model,
+                                                configindex.internalPointer().node().toElement(),
+                                                None,flags,optional_params = params)
+                        tool_title = window.tool_title.replace('_', ' ')
+                        tool_title2 = str(tool_title).title()
+                        window.setWindowTitle(tool_title2)
+                        window.show()
         return
 
 
