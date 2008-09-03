@@ -30,14 +30,15 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
                                
     def on_buttonBox_accepted(self):
         viz_params = self._get_viz_spec()
-        viz_name = str(self.leVizName.text()).replace(' ','_')
-        
-        viz_type = str(self.cboVizType.currentText())
-        
-        self.xml_helper.addNewVisualizationToBatch(
-                            viz_name = viz_name,
-                            batch_name = self.batch_name,
-                            viz_type = self._get_type_mapper()[viz_type],
-                            viz_params = viz_params)
-        
+        if viz_params is not None:
+            viz_name = str(self.leVizName.text()).replace(' ','_')
+            
+            viz_type = str(self.cboVizType.currentText())
+            
+            self.xml_helper.addNewVisualizationToBatch(
+                                viz_name = viz_name,
+                                batch_name = self.batch_name,
+                                viz_type = self._get_type_mapper()[viz_type],
+                                viz_params = viz_params)
+            
         self.close()

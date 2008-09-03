@@ -15,11 +15,12 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
 
 from opus_gui.results.forms.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
+from opus_gui.exceptions.formatter import formatExceptionInfo
 from opus_core.logger import logger
 
 class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
@@ -237,7 +238,14 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         }
         
         if output_type == 'fixed_field':
-            fixed_field_params = QString(str(self._get_column_values(column = 1)))
+            try:
+                fixed_field_params = QString(str(self._get_column_values(column = 1)))
+            except:
+                errorInfo = formatExceptionInfo(custom_message = 'Could not get fixed field parameters for all columns')
+                logger.log_error(errorInfo)
+                QMessageBox.warning(self.mainwindow, 'Warning', QString(errorInfo))
+                return None
+                
             vals['fixed_field_specification'] = fixed_field_params
             vals['id_format'] = self.leOption1.text()
         elif output_type == 'sql':
