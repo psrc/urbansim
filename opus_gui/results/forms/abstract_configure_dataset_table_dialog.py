@@ -158,14 +158,14 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         available_output_types = self._get_output_types(viz_type = viz_type)
         
         if value is None:
-            value = 'tab'
+            value = 'Tab delimited file (.tab)'
  
         loc = -1
         self.cboOutputType.clear()
         for idx,(k,v) in enumerate(available_output_types.items()):
             self.cboOutputType.addItem(QString(k))
 
-            if v == value:
+            if k == value:
                 loc = idx
                 
         if loc != -1:

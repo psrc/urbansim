@@ -50,7 +50,9 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
         self._setup_co_viz_type(value = prev_viz_type)
-        self._setup_co_output_type(value = prev_output_type)
+        
+        inv_map = dict([(v,k) for k,v in self._get_output_types(prev_viz_type).items()])
+        self._setup_co_output_type(value = inv_map[str(prev_output_type)])
     
         
         fixed_field_specification = None
