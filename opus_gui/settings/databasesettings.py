@@ -15,7 +15,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
-from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
+from opus_gui.settings.databaseconfigxmltree import DatabaseConfigXMLTree
 import os
 
 ############ APR Added 082908 as example of using OpusXMLTree for database XML editing
@@ -33,7 +33,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         self.configFile = QFile(self.database_server_configuration_file)
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
-        self.databaseSettingsEditTree = OpusXMLTree(self,"database_server_configurations",
+        self.databaseSettingsEditTree = DatabaseConfigXMLTree(self,"database_server_configurations",
                                                     self.gridlayout)
         print self.doc.documentElement().tagName()
 
@@ -50,4 +50,4 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         #print "cancel pressed"
         self.configFile.close()
         self.close()
-############ APR Added 082908 as example of using OpusXMLTree for database XML editing
+
