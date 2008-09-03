@@ -66,7 +66,6 @@ class GenerateDBSubsetBySampling(object):
         (select count(*) from households) / (select count(*) from households))""" % \
                             {"output_database_name":output_db_name, 
                              "input_database_name":db.database_name, 
-                             "db_host_name":db.host_name,
                              "number_of_gridcells": number_of_gridcells}
         
         commands_to_execute = commands_to_execute.replace('\n', ' ')

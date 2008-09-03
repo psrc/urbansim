@@ -32,19 +32,10 @@ if __name__ == '__main__':
     parser.add_option('-d', '--database_name', dest='database_name',
         type='string', help='The name of the database to which output will be '
             'written (required).')
-    parser.add_option('--protocol', dest='protocol', type='string', default = None,
-        help='The protocol for the sql engine on which the output database will '
-            "be created (default: estimation_database_configuration setup).")
-    parser.add_option('-o', '--host', dest='host_name', type='string', default = None,
-        help="The host name of the server one which the output database will "
-            "be created (default: estimation_database_configuration setup "
-            "'localhost').")
-    parser.add_option('-u', '--user', dest='user_name', type='string', default = None,
-        help='The user name for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
-    parser.add_option('-p', '--password', dest='password', type='string', default = None,
-        help='The password for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
+
+    parser.add_option("--database_configuration", dest="database_configuration", default = "estimation_database_server",
+                       action="store", help="Name of the database server configuration in database_server_configurations.xml where the output database is to be created. Defaults to 'estimation_database_server'.")
+    
     parser.add_option('-t', '--table_name', dest='table_name', type='string', 
         help='Name of table to be exported (optional). Used if only one table should be exported.')
 
@@ -55,20 +46,13 @@ if __name__ == '__main__':
     if database_name is None or cache_path is None:
         parser.print_help()
         sys.exit(1)
-            
-    host_name = options.host_name
-    user_name = options.user_name            
-    password = options.password
-    protocol = options.protocol
     
     table_name = options.table_name
     
     logger.log_status('Initializing database...')
     db_server = DatabaseServer(EstimationDatabaseConfiguration(
-            protocol = protocol,
-            host_name = host_name,
-            user_name = user_name,
-            password = password,
+            database_name = database_name,
+            database_configuration = options.database_configuration
             )
         )
     if not db_server.has_database(database_name): # if only one table should be exported,

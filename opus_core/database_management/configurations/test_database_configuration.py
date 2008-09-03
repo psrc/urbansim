@@ -35,7 +35,8 @@ class TestDatabaseConfiguration(DatabaseConfiguration):
                  host_name = None,
                  user_name = None,
                  password = None,
-                 database_name = None):
+                 database_name = None,
+                 database_configuration = None):
         self.protocol = protocol
         DatabaseConfiguration.__init__(self,
                               protocol = protocol,
@@ -43,6 +44,7 @@ class TestDatabaseConfiguration(DatabaseConfiguration):
                               user_name = user_name,
                               password = password,
                               database_name = database_name,
+                              database_configuration = database_configuration,
                               test = True)
         
     def _database_configuration_node(self):

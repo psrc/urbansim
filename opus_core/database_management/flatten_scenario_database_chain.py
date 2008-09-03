@@ -113,15 +113,9 @@ if __name__ == '__main__':
         
     parser = OptionParser()
         
-    parser.add_option("-o", "--host", dest="host_name", type="string",
-        help="The database host (default: from environment"
-            " variable, then nothing).")
-    parser.add_option("-u", "--username", dest="user_name", type="string",
-        help="The database connection password (default: from environment"
-            " variable, then nothing).")
-    parser.add_option("-p", "--password", dest="password", type="string",
-        help="The database connection password (default: from environment"
-            " variable, then nothing).")
+    parser.add_option("--database_configuration", dest="database_configuration", default = "scenario_database_server",
+                      action="store", help="Name of the database server configuration in database_server_configurations.xml where the scenario database is located. Defaults to 'scenario_database_server'.") 
+    
     parser.add_option("-f", "--from_database", dest="from_database_name", 
         type="string", help="The database to flatten. (REQUIRED)")
     parser.add_option("-t", "--to_database", dest="to_database_name", 
@@ -130,16 +124,12 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     
     from_database_configuration = ScenarioDatabaseConfiguration(
-        host_name = options.host_name,
-        user_name = options.user_name,
-        password = options.password,
-        database_name = options.from_database_name
+        database_name = options.from_database_name,
+        database_configuration = options.database_configuration
     )
     to_database_configuration = ScenarioDatabaseConfiguration(
-        host_name = options.host_name,
-        user_name = options.user_name,
-        password = options.password,
-        database_name = options.to_database_name
+        database_name = options.to_database_name,
+        database_configuration = options.database_configuration
     )    
 
     copier = FlattenScenarioDatabaseChain()

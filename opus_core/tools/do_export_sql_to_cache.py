@@ -39,19 +39,9 @@ if __name__ == '__main__':
             'written (required).')
     parser.add_option('-y', '--cache_year', dest='cache_year', type='string',
         help="The attribute cache year into which to write the output (required).")
-    parser.add_option('--protocol', dest='protocol', type='string', default = None,
-        help='The password for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
-    parser.add_option('-o', '--host', dest='host_name', type='string', default = None,
-        help="The host name of the server one which the output database will "
-            "be created (default: estimation_database_configuration setup "
-            "'localhost').")
-    parser.add_option('-u', '--user', dest='user_name', type='string', default = None,
-        help='The user name for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
-    parser.add_option('-p', '--password', dest='password', type='string', default = None,
-        help='The password for the server on which the output database will '
-            "be created (default: estimation_database_configuration setup '').")
+    
+    parser.add_option("--database_configuration", dest="database_configuration", default = "estimation_database_server",
+                       action="store", help="Name of the database server configuration in database_server_configurations.xml where the output database is to be created. Defaults to 'estimation_database_server'.")
 
     (options, args) = parser.parse_args()
 
@@ -71,10 +61,7 @@ if __name__ == '__main__':
         table_name = 'ALL'
     
     dbserverconfig = EstimationDatabaseConfiguration(
-        host_name = options.host_name,
-        user_name = options.user_name,           
-        password = options.password,
-        protocol = options.protocol  
+        database_configuration = options.database_configuration 
     )
     opusdb = OpusDatabase(dbserverconfig, db_name)
 

@@ -32,6 +32,7 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
                  user_name = None, 
                  password = None,
                  database_name = None,
+                 database_configuration = None,
                  test = False):
   
         DatabaseServerConfiguration.__init__(self,
@@ -39,6 +40,7 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
             host_name = host_name,
             user_name = user_name,
             password = password,
+            database_configuration = database_configuration,
             test = test
             )      
 

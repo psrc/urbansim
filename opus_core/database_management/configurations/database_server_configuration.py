@@ -65,15 +65,20 @@ class DatabaseServerConfiguration(object):
                  host_name = None, 
                  user_name = None, 
                  password = None,
+                 database_configuration = None,
                  test = False,
                  database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')):
 
         if (protocol is None or test) and host_name is None and user_name is None and password is None:
             if not os.path.exists(database_server_configuration_file_path):
                 raise Exception('You do not have a file %s storing information about your database server configurations. Cannot load database.'%database_server_configuration_file_path)
-            database_configuration = ElementTree(file = database_server_configuration_file_path).getroot().find(self._database_configuration_node())
             if database_configuration is None:
-                raise Exception('Could not find an entry in %s for %s. Cannot load database.'%(database_server_configuration_file_path, self._database_configuration_node()))
+                db_node = self._database_configuration_node()
+            else:
+                db_node = database_configuration
+            database_configuration = ElementTree(file = database_server_configuration_file_path).getroot().find(db_node)
+            if database_configuration is None:
+                raise Exception('Could not find an entry in %s for %s. Cannot load database.'%(database_server_configuration_file_path, db_node))
             self.protocol = database_configuration.find('protocol').text
             self.host_name = database_configuration.find('host_name').text
             self.user_name = database_configuration.find('user_name').text

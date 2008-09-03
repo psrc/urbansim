@@ -80,8 +80,7 @@ update annual_household_control_totals set total_number_of_households = total_nu
                 'high_x': high_point.x, 
                 'high_y': high_point.y,
                 "output_database_name":output_db_name, 
-                "input_database_name":db.database_name, 
-                "db_host_name":db.host_name,
+                "input_database_name":db.database_name
                 }
             )
          
@@ -133,15 +132,9 @@ if __name__=='__main__':
         type='string', help="The name of the output database (default:"
             " the name of the input database plus "
             "'_subset_[given coords]')")
-    parser.add_option('-s', '--host', dest='host', type='string',
-        help="The mysql host (default: MYSQLHOSTNAME environment variable, then"
-            " 'localhost').")
-    parser.add_option('-u', '--username', dest='username', type='string',
-        help='The mysql connection username (default: MYSQLUSERNAME environment'
-            ' variable, then nothing).')
-    parser.add_option('-p', '--password', dest='password', type='string',
-        help='The mysql connection password (default: MYSQLPASSWORD environment'
-            ' variable, then nothing).')
+    
+    parser.add_option("--database_configuration", dest="database_configuration", default = "scenario_database_server",
+                       action="store", help="Name of the database server configuration in database_server_configurations.xml where the scenario database is located. Defaults to 'scenario_database_server'.")
     
     parser.add_option('-1', '--point1', dest='point1', type='coord',
         help='The X and Y components of the first point. Comma delimited, with'
@@ -184,15 +177,11 @@ if __name__=='__main__':
 
     from_database_configuration = ScenarioDatabaseConfiguration(
                                         database_name = input_db_name,
-                                        host_name = options.host,    
-                                        user_name = options.username,
-                                        password = options.password                                              
+                                        database_configuration = options.database_configuration                                            
                                     )
     to_database_configuration = ScenarioDatabaseConfiguration(
                                         database_name = 'temporary_flattened_scenario_database',
-                                        host_name = options.host,    
-                                        user_name = options.username,
-                                        password = options.password                                      
+                                        database_configuration = options.database_configuration                                    
                                     )
 
     FlattenScenarioDatabaseChain().copy_scenario_database(

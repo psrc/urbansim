@@ -113,8 +113,7 @@ class GenerateDBSubsetByCityOrCounty(object):
                             {"output_database_name":output_db_name, 
                              "id":str(id),  
                              "id_name":id_name, 
-                             "input_database_name":db.database_name, 
-                             "db_host_name":db.host_name}
+                             "input_database_name":db.database_name}
         
         commands_to_execute = commands_to_execute.replace('\n', ' ')
         command_list = str.split(commands_to_execute, ';')

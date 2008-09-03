@@ -22,25 +22,14 @@ class GenericOptionGroup(object):
     def __init__(self, usage="python %prog [options]", description=""):
             
         self.parser = OptionParser(usage=usage, description=description)                     
-                     
-        self.parser.add_option("--hostname", dest="host_name", default = None,
-                               action="store", help="Name of host running services database server")
-        self.parser.add_option("--username", dest="user_name", default = None,
-                               action="store", help="Username for host running services database server")
-        self.parser.add_option("--password", dest="password", default = None, 
-                               action="store", help="Name of host running services database server")
-        self.parser.add_option("--database", dest="database_name", default='services', 
-                               action="store", help="Name of services database")
-        self.parser.add_option("--protocol", dest="protocol", default=None, 
-                               action="store", help="Name of database engine running the database management system hosting the services database. Available engines are sqlite (default), mysql, postgres, and mssql (less well tested).")
         
+        self.parser.add_option("--database_configuration", dest="database_configuration", default = "services_database_server",
+                               action="store", help="Name of the database server configuration in database_server_configurations.xml that is to be used to connect to the services database. Defaults to 'services_database_server'.")
+                     
     def get_services_database_configuration(self, options):
         return ServicesDatabaseConfiguration(
-                 protocol = options.protocol,
-                 user_name = options.user_name,
-                 password = options.password,
-                 host_name = options.host_name,
-                 database_name = options.database_name                                             
+                 database_name = options.database_name,                         
+                 database_configuration = options.database_configuration                    
             )
         
         
