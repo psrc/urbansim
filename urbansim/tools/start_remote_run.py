@@ -176,10 +176,14 @@ class RemoteRun:
             elif not self.is_localhost(self.travelmodel_server_config['hostname']):
             ## urbansim runs on localhost, and travel model runs on travelmodel_server
             ## set sftp_flt_storage to the hostname of localhost
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                try:s.connect(('google.com', 0))
-                except:pass
-                urbansim_server = s.getsockname()[0]    #this is to replace socket.gethostname(), which won't work in some case
+                try:
+                    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    s.connect(('www.google.com', 80))
+                    urbansim_server = s.getsockname()[0]
+                    s.close()
+                except:
+                    urbansim_server=socket.gethostbyname(socket.gethostname())
+                
                 urbansim_user = self.urbansim_server_config.get('username', getuser())
                 travel_model_resources['cache_directory'] = "sftp://%s@%s%s" % (urbansim_user, 
                                                                                urbansim_server, 
