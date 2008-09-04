@@ -260,7 +260,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "prepare_for_run": {
                 "name": "prepare_for_run",
                 "arguments": {"parcel_filter_for_new_development":"'has_vacant_land=urbansim_parcel.parcel.vacant_land_area > 0'",
-                              "parcel_filter_for_redevelopment":"'low_improvement_ratio_of_parcels_with_bldg=numpy.logical_and(parcel.number_of_agents(building)>0, urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1)'",
+                              "parcel_filter_for_redevelopment":"'low_improvement_ratio_of_parcels_with_bldg=(parcel.number_of_agents(building)>0)*(urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1)*(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean)>30)'",
                               "template_filter":"'development_template.is_active > 0'",
                               "specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
