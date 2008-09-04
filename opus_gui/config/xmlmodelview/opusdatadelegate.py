@@ -88,6 +88,18 @@ class OpusDataDelegate(QItemDelegate):
                     if type(editor) == QLineEdit:
                         editor.setText(fileName)
                     return editor
+                elif domElement.attribute(QString("type")) == QString("password"):
+                    editor = QLineEdit(parentView)
+                    editor.setEchoMode(QLineEdit.PasswordEchoOnEdit)
+                    valueToDisplay = QString("")
+                    if domElement.hasChildNodes():
+                        children = domElement.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                valueToDisplay = children.item(x).nodeValue()
+                                break
+                    editor.setText(valueToDisplay)
+                    return editor
                 else:
                     editor = QItemDelegate.createEditor(self, parentView, option, index)
                     if type(editor) == QLineEdit:

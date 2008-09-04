@@ -210,7 +210,10 @@ class OpusDataModel(QAbstractItemModel):
                 if role == Qt.DecorationRole:
                     return QVariant()
                 elif role == Qt.DisplayRole:
-                    if domNode.hasChildNodes():
+                    if domElement.hasAttribute(QString("type")) and \
+                           domElement.attribute(QString("type")) == QString("password"):
+                        return QVariant(QString("*********"))
+                    elif domNode.hasChildNodes():
                         children = domNode.childNodes()
                         for x in xrange(0,children.count(),1):
                             if children.item(x).isText():
