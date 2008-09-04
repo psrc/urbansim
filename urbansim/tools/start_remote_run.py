@@ -182,6 +182,7 @@ class RemoteRun:
                     urbansim_server = s.getsockname()[0]
                     s.close()
                 except:
+                    ## this won't work when the hostname cannot be converted to ip address
                     urbansim_server=socket.gethostbyname(socket.gethostname())
                 
                 urbansim_user = self.urbansim_server_config.get('username')
