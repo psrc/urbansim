@@ -19,7 +19,6 @@ from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 from opus_core.misc import module_path_from_opus_path
 
-from psrc.configs.subset_configuration import SubsetConfiguration
 from eugene.tests.test_run_manager import _do_run_simple_test_run
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.database_management.database_server import DatabaseServer
@@ -107,7 +106,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         self.assert_(not os.path.exists(os.path.join(cache_dir, '1984')))
         
         # Now try to delete the rest of the years of data
-        python_cmd = '%(executable)s %(path)s --protocol=%(protocol)s --run-id=%(run_id)d --database=services_test --hostname=%(host_name)s' % {
+        python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test' % {
             'executable':sys.executable,
             'path':path,
             'run_id':self.resources['run_id']}
