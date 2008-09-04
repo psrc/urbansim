@@ -24,6 +24,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 from opus_core.logger import logger
 from nturl2path import pathname2url
+from getpass import getuser
 from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists, _makedirs
 import paramiko
 
@@ -176,9 +177,11 @@ class RemoteRun:
             ## urbansim runs on localhost, and travel model runs on travelmodel_server
             ## set sftp_flt_storage to the hostname of localhost
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.connect(('google.com', 0))
+                try:s.connect(('google.com', 0))
+                except:pass
                 urbansim_server = s.getsockname()[0]    #this is to replace socket.gethostname(), which won't work in some case
-                travel_model_resources['cache_directory'] = "sftp://%s@%s%s" % (self.urbansim_server_config['username'], 
+                urbansim_user = self.urbansim_server_config.get('username', getuser())
+                travel_model_resources['cache_directory'] = "sftp://%s@%s%s" % (urbansim_user, 
                                                                                urbansim_server, 
                                                                                cache_directory)
             #only keep sorted travel model years falls into years range                
@@ -317,7 +320,7 @@ class RemoteRun:
         run_manager.add_row_to_history(run_id, config, "started")
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):
-        cmdline = 'python -c "import %s; print %s.__file__"' % (opus_path, opus_path)
+        cmdline = 'python -c "import %s; print %s.__file__.encode(\'string-escape\')"' % (opus_path, opus_path)
         module_path = get_stdout_for_ssh_cmd(ssh, cmdline)
         return module_path
 
@@ -341,7 +344,8 @@ class RemoteRun:
         client.connect(hostname=ssh_server_config['hostname'], 
                        username=ssh_server_config['username'],
                        password=ssh_server_config['password'],
-                       pkey=load_key_if_exists())
+                       pkey=load_key_if_exists()
+                      )
         #client._transport.set_keepalive(60)
         ssh_client = client
         
