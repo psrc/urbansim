@@ -184,7 +184,9 @@ class RemoteRun:
                 except:
                     urbansim_server=socket.gethostbyname(socket.gethostname())
                 
-                urbansim_user = self.urbansim_server_config.get('username', getuser())
+                urbansim_user = self.urbansim_server_config.get('username')
+                if urbansim_user is None or len(urbansim_user)==0:
+                    urbansim_user = getuser()
                 travel_model_resources['cache_directory'] = "sftp://%s@%s%s" % (urbansim_user, 
                                                                                urbansim_server, 
                                                                                cache_directory)
