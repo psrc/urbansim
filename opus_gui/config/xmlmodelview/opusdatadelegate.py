@@ -51,21 +51,12 @@ class OpusDataDelegate(QItemDelegate):
                     return editor
                 elif domElement.attribute(QString("type")) == QString("db_connection_hook"):
                     editor = QComboBox(parentView)
-                    # Now find the options from the database section of the XML
-                    dbxml = self.parentView.mainwindow.toolboxStuff.dataManagerDBSTree.model.index(0,0,QModelIndex()).parent()
-                    dbindexlist = self.parentView.mainwindow.toolboxStuff.dataManagerDBSTree.model.findElementIndexByType("db_connection",dbxml,True)
-                    choices = []
-                    for dbindex in dbindexlist:
-                        if dbindex.isValid():
-                            indexElement = dbindex.internalPointer()
-                            choices.append(indexElement.domNode.toElement().tagName())
-                    currentIndex = 0
-                    for i,choice in enumerate(choices):
-                        editor.addItem(choice)
-                        if index.model().data(index,Qt.DisplayRole).toString() == choice:
-                            currentIndex = i
-                    editor.setCurrentIndex(currentIndex)
-                    return editor                    
+                    # Get the choices from the database_server_connections.xml
+                    choices = self.parentView.mainwindow.getDbConnectionNames()
+                    # Populate the editor with the choices
+                    for i in choices:
+                        editor.addItem(i)
+                    return editor
                 elif domElement.attribute(QString("type")) == QString("file_path") or \
                          domElement.attribute(QString("type")) == QString("dir_path"):
                     # We have a file path we need to fill in...
