@@ -60,15 +60,13 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         self.assert_(os.path.exists(os.path.join(cache_dir, '2000')))
         path = module_path_from_opus_path('opus_core.tools.delete_run')
         
-        cmd_template = sys.executable + ' %(path)s --protocol=%(protocol)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test --hostname=%(host_name)s'
+        cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test'
         
         # First just delete 2 years of data.
         python_cmd = cmd_template % {
             'path':path,
             'run_id':self.resources['run_id'],
-            'years_to_delete':'[2001,2002]',
-            'host_name':self.config.host_name,
-            'protocol':self.config.protocol}
+            'years_to_delete':'[2001,2002]'}
         
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
@@ -84,9 +82,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         python_cmd = cmd_template % {
             'path':path,
             'run_id':self.resources['run_id'],
-            'years_to_delete':'2003',
-            'host_name':self.config.host_name,
-            'protocol':self.config.protocol}
+            'years_to_delete':'2003'}
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
@@ -101,9 +97,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         python_cmd = cmd_template % {
             'path':path,
             'run_id':self.resources['run_id'],
-            'years_to_delete':'1997',
-            'host_name':self.config.host_name,
-            'protocol':self.config.protocol}
+            'years_to_delete':'1997'}
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
@@ -115,12 +109,10 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         self.assert_(os.path.exists(os.path.join(cache_dir, '2004')))
         
         # Now try to delete the rest of the years of data
-        python_cmd = '%(executable)s %(path)s --protocol=%(protocol)s --run-id=%(run_id)d --database=services_test --hostname=%(host_name)s' % {
+        python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test' % {
             'executable':sys.executable,
             'path':path,
-            'run_id':self.resources['run_id'],
-            'host_name':self.config.host_name,
-            'protocol':self.config.protocol}
+            'run_id':self.resources['run_id']}
         # Close all log files so we can delete the cache.
         logger.disable_all_file_logging()
         self.do_cmd(python_cmd)
