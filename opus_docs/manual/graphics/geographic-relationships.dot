@@ -1,0 +1,16 @@
+digraph untitled
+	{
+		household -> building;
+		person -> household;
+		person -> job;
+		job -> building;
+		building -> parcel;
+		parcel -> block;
+		parcel -> zone;
+		parcel -> faz;
+		parcel -> city;
+		parcel -> county;
+		parcel -> zipcode;
+		parcel -> ugb;
+
+	}
