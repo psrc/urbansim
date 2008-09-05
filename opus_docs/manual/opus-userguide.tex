@@ -18,7 +18,7 @@
 
 \documentclass{manual}
 \usepackage{amsmath, graphics, graphicx, rotating, html, upquote, makeidx}
-
+\usepackage{color, fancyhdr, longtable, epsfig,lscape, booktabs,multirow, boxit, listings}
 % this package causes the font encodings to include an _ (underscore)
 % character -- this is useful because then searching the pdf document
 % finds names with underscores in them.  (Otherwise the underscore is
@@ -29,30 +29,48 @@
 
 \sloppy
 \newcommand{\tight}{\itemsep 0pt}
+\newcommand{\squishlist}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}      \setlength{\parsep}{3pt}
+      \setlength{\topsep}{3pt}       \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{1.5em} \setlength{\labelwidth}{1em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishlisttwo}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}    \setlength{\parsep}{0pt}
+      \setlength{\topsep}{0pt}     \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{2em} \setlength{\labelwidth}{1.5em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishend}{
+    \end{list}  }
 
 \input{indexcommands}
 
 \title{Opus: The Open Platform for \\
 Urban Simulation \\
-{\em and} \\
-UrbanSim Version 4 \\
+{\em and} UrbanSim \\
+~\\
+Version 4.2 \\
 ~\\
 Reference Manual and Users Guide}
 
-\author{The UrbanSim Project}
+\author{}
 
 \authoraddress{Center for Urban Simulation and Policy Analysis \\
 Daniel J. Evans School of Public Affairs \\
 University of Washington \\
 Box 353055 \\
 Seattle, Washington 98195 \\
-USA \\
+
 % Put the real email address only in the pdf version (to avoid including
 % a spam magnet in the html version).  A mangled version of the address
 % (using "info (at) urbansim.org") is included in the html version by
 % a parameter to the latex2html command
 %begin{latexonly}
-Email: \email{info@urbansim.org}
+Email: \email{info@urbansim.org} \\
+Web: \url{http://www.urbansim.org}
 %end{latexonly}
 }
 
@@ -98,18 +116,21 @@ Email: \email{info@urbansim.org}
 \setcounter{page}{6}
 \part{Overview of Opus and UrbanSim}\label{part-overview}
 \input{introduction}
-\input{models}
+\input{urbansim-overview}
+\input{opus-overview}
 
 \part{Opus and UrbanSim User Guide}\label{part-user-guide}
 \input{installation}
-\input{using-urbansim}
-\input{indicators}
+\input{python-numpy-expressions}
+\input{creating-models}
+%\input{using-urbansim}
+%\input{indicators}
 
 \part{Opus and UrbanSim Reference Guide}\label{part-reference-guide}
-\input{urbansim-package-tutorial}
+%\input{urbansim-package-tutorial}
 \input{opus-core}
 \input{urbansim-package}
-\input{urbansim-database-tables}
+%\input{urbansim-database-tables}
 
 \part{Information for Software Developers}\label{part-developers}
 \input{programming}
