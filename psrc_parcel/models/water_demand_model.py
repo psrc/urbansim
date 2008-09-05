@@ -61,7 +61,7 @@ class WaterDemandModel(RegressionModel):
                                                dataset_pool=self.dataset_pool, resources=res)
         
         current_year = SimulationState().get_current_time()
-        current_month = int( re.search('\d$', outcome_attribute_short).group() )
+        current_month = int( re.search('\d+$', outcome_attribute_short).group() )
         # date in YYYYMM format, matching to the id_name field of weather dataset
         date = int( "%d%02d" % (current_year, current_month) )
         date = array([date] * dataset.size())
@@ -83,7 +83,7 @@ class WaterDemandModel(RegressionModel):
         if re.search("^ln_", outcome_attribute_short): 
             # if the outcome attr. name starts with 'ln_' the results will be exponentiated.
             outcome_attribute_name = outcome_attribute_short[3:len(outcome_attribute_short)]
-            outcome = exp(outcome)
+            water_demand = exp(water_demand)
         else:
             outcome_attribute_name = outcome_attribute_short
 
