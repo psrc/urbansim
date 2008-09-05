@@ -36,13 +36,9 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if index.column() == 0:
-            #if (not self.arraydata[index.row()][-3]) or (not self.editable):
-            #    return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
-            #else:
-            #    return Qt.ItemIsEnabled
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
         elif self.editable:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+            return Qt.ItemIsEnabled
         else:
             return Qt.ItemIsEnabled
 
@@ -76,6 +72,9 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             else:
                 return QVariant(QColor(Qt.black))
         return QVariant()
+
+    def getRowDataList(self,index):
+        return self.arraydata[index.row()][1:-3]
 
     def isInherited(self, index):
         return self.arraydata[index.row()][-3]

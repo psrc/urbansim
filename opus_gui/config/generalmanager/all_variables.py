@@ -26,25 +26,52 @@ from opus_gui.config.generalmanager.all_variables_new_ui import Ui_AllVariablesN
 import random,pprint,string
 
 class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
-    def __init__(self, mainwindow, fl, allVariablesGui):
+    def __init__(self, mainwindow, fl, allVariablesGui, row = 0, initialParams = None):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.allVariablesGui = allVariablesGui
+        self.initialParams = initialParams
+        self.row = row
+        if self.initialParams:
+            self.lineEdit.setText(self.initialParams[0])
+            self.lineEdit_2.setText(self.initialParams[1])
+            self.comboBox.setCurrentIndex(self.comboBox.findText(self.initialParams[2]))
+            self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
+            self.textEdit.setPlainText(self.initialParams[4])
+        
+    def editsMade(self):
+        # If we dont have seed params, then this is a new variable
+        if self.initialParams == None:
+            return True
+        # Else we are looking to see if any of the params have actually changed
+        elif (self.lineEdit.text() != self.initialParams[0]) or \
+                 (self.lineEdit_2.text() != self.initialParams[1]) or \
+                 (self.comboBox.currentText() != self.initialParams[2]) or \
+                 (self.comboBox_2.currentText() != self.initialParams[3]) or \
+                 (self.textEdit.toPlainText() != self.initialParams[4]):
+            return True
+        else:
+            return False
         
     def on_saveChanges_released(self):
         #print "save pressed"
-        #self.allVariablesGui.tm.insertRow(0,["",
-        #                                     "New_Node","Dataset","model variable","primary attribute","Description",
-        #                                     0,0,0])
-        self.allVariablesGui.tm.insertRow(0,["",
-                                             self.lineEdit.text(),
-                                             self.lineEdit_2.text(),
-                                             self.comboBox.currentText(),
-                                             self.comboBox_2.currentText(),
-                                             self.textEdit.toPlainText(),
-                                             0,0,0])
-        self.allVariablesGui.tm.checkStateOfCheckBoxes(False)
-        self.allVariablesGui.tm.emit(SIGNAL("layoutChanged()"))
+        if self.editsMade():
+            dirty = 0
+            # If we have made edits then we check to see if this is a new
+            # variable or editing an existing.  If editing an existing then
+            # we remove the old row and mark the newly inserted row with dirty.
+            if self.initialParams:
+                self.allVariablesGui.tm.removeRow(self.row)
+                dirty = 1
+            self.allVariablesGui.tm.insertRow(self.row,["",
+                                                        self.lineEdit.text(),
+                                                        self.lineEdit_2.text(),
+                                                        self.comboBox.currentText(),
+                                                        self.comboBox_2.currentText(),
+                                                        self.textEdit.toPlainText(),
+                                                        0,0,dirty])
+            self.allVariablesGui.tm.checkStateOfCheckBoxes(False)
+            self.allVariablesGui.tm.emit(SIGNAL("layoutChanged()"))
         self.close()
 
     def on_cancelWindow_released(self):
@@ -121,17 +148,14 @@ class AllVariablesGui(object):
         tv.setColumnWidth(0,25)
         #tv.selectColumn(1)
         tv.setWordWrap(False)
-        tv.setTextElideMode(Qt.ElideNone)
-        #tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        tv.setTextElideMode(Qt.ElideRight)
         QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateVertLayout)
-        QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateHorLayout)
-        QObject.connect(tm, SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"), self.updateHorLayout)
+        #QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateHorLayout)
+        #QObject.connect(tm, SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"), self.updateHorLayout)
         self.gridlayout.addWidget(tv)
-        #tv.resizeRowsToContents()
-        #tv.resizeColumnsToContents()
-        #tv.horizontalHeader().setStretchLastSection(True)
+        tv.horizontalHeader().setStretchLastSection(True)
         QTimer.singleShot(100, self.updateVertLayout)
-        QTimer.singleShot(200, self.updateHorLayout)
+        #QTimer.singleShot(200, self.updateHorLayout)
 
     def updateVertLayout(self):
         self.tv.resizeRowsToContents()
@@ -165,6 +189,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.saveChanges.setEnabled(False)
 
         self.removeIcon = QIcon(":/Images/Images/delete.png")
+        self.editIcon = QIcon(":/Images/Images/application_edit.png")
 
         self.actRemoveRow = QAction(self.removeIcon,
                                     "Remove Variable",
@@ -172,6 +197,13 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         QObject.connect(self.actRemoveRow,
                         SIGNAL("triggered()"),
                         self.removeRow)
+
+        self.actEditRow = QAction(self.editIcon,
+                                  "Edit Variable",
+                                  mainwindow)
+        QObject.connect(self.actEditRow,
+                        SIGNAL("triggered()"),
+                        self.editRow)
 
         self.tv.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.tv,SIGNAL("customContextMenuRequested(const QPoint &)"),
@@ -183,19 +215,27 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.currentIndex.model().checkStateOfCheckBoxes(False)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
+    def editRow(self):
+        #print "Remove Row Pressed"
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        row = self.currentIndex.row()
+        initialParams = self.currentIndex.model().getRowDataList(self.currentIndex)
+        window = AllVariablesNewGui(self,flags,self,row,initialParams)
+        window.show()
 
     def processCustomMenu(self, position):
         #print "Custom Menu"
         if self.tv.indexAt(position).isValid():
             self.currentColumn = self.tv.indexAt(position).column()
             self.currentIndex = self.tv.indexAt(position)
-            if not self.tm.isInherited(self.currentIndex):
-                self.menu = QMenu(self.mainwindow)
-                if self.menu:
-                    # Tack on a remove row item
+            self.menu = QMenu(self.mainwindow)
+            if self.menu:
+                # Tack on a remove row item
+                self.menu.addAction(self.actEditRow)
+                if not self.tm.isInherited(self.currentIndex):
                     self.menu.addAction(self.actRemoveRow)
-                    if not self.menu.isEmpty():
-                        self.menu.exec_(QCursor.pos())
+                if not self.menu.isEmpty():
+                    self.menu.exec_(QCursor.pos())
 
     def findOriginalNode(self,list):
         for tsindex in self.tsindexlist:
