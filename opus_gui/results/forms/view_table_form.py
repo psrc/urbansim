@@ -83,4 +83,4 @@ class ViewTableForm(QWidget):
                 break
         
         self.tableWidget.resizeColumnsToContents()
-        self.tableWidget.resizeRowsToContents()
+        #self.tableWidget.resizeRowsToContents()

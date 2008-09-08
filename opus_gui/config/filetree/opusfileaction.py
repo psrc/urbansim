@@ -86,6 +86,7 @@ class OpusFileAction(object):
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
         summaryGroupBox.setTitle(QString("Summary"))
+        summaryGroupBox.setFlat(True)
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Grab the summary data
         buffer = StringIO()
@@ -100,6 +101,7 @@ class OpusFileAction(object):
         
         tableGroupBox = QGroupBox(container)
         tableGroupBox.setTitle(QString("Table View"))
+        tableGroupBox.setFlat(True)
         tableGroupBoxLayout = QVBoxLayout(tableGroupBox)
         tv = QTableView()
         header = columns
@@ -117,6 +119,8 @@ class OpusFileAction(object):
             tv.setModel(tm)
             tv.setSortingEnabled(True)
             tableGroupBoxLayout.addWidget(tv)
+            tv.resizeColumnsToContents()
+            #tv.resizeRowsToContents()
 
         widgetLayout.addWidget(tableGroupBox)
 
