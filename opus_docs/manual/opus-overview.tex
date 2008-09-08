@@ -1,21 +1,35 @@
 \chapter{The Open Platform for Urban Simulation}
 
 \section{OPUS Design Objectives}
+In 2005, the Center for Urban Simulation and Policy Analysis at the University of Washington 
+began a project to re-engineer UrbanSim as a more general software platform to support
+integrated modeling, and has launched an international collaboration to use and further 
+develop the Open Platform for Urban Simulation (Opus).  The broad vision for the effort is 
+to develop a robust, modular and extensible open source framework and process for 
+developing and using model components and integrated model systems, and to facilitate 
+increased collaboration among developers and users in the evolution of the platform and 
+its applications.  
 
-Research in transportation modelling and planning has made significant advances over the past decade along four axes of innovation, within a unifying theme of modelling land use and transportation choices at the individual level. The first of these axes is in integrated land use and transportation modelling, motivated by the need to assess major transportation investments and their effects on urban development and on the environment.  Over the past decade, several research projects have been developing new platforms for integrated land use and transportation modelling, including ALBATROSS (Arenze and Timmermans, 2000), ILUTE (Miller and Salvini, 2003), and UrbanSim (Waddell, 2002; Waddell et al. 2003).  
-The second axis of innovation is in the development of activity-based travel modelling, motivated by shortcomings in the design of traditional four-step travel models and the need to improve the behavioural realism of travel demand models.  Within this body of work, several activity-based travel demand model systems have been developed, including CEMDAP (Bhat et al. 2003), and FAMOS (Pendyala et al, 2004).  
-The third axis of innovation is in dynamic traffic assignment models, using both mesosopic and microscopic approaches to better reflect dynamic traffic conditions.  Recently developed dynamic assignment platforms exemplifying these innovations include MATSIM (MATSIM, 2005) and METROPOLIS (de Palma et al., 1997).  
-Finally, the fourth axis of innovation is in the development of increasingly sophisticated discrete choice models and the tools with which to estimate them with.  Advances in choice modelling include numerous generalizations of the multinomial logit model and the development of simulation-assisted estimation methods (Train,2003), and the generalization of discrete choice models to incorporate more explicitly the generation of the choice set, the integration of revealed and stated-preference information, and the use of latent constructs in choice model formulation.  New software packages such as Biogeme (Bierlaire et al., 2004) that implement these advances and make them accessible to modelers have been emerging, and commercial econometric software have been rapidly incorporating these methods.
+Opus is motivated by lessons learned from the UrbanSim project, and by a desire to collaborate 
+on a single platform so that projects can more easily leverage each other's work and focus on 
+experimenting with and applying models, instead of spending their resources creating and 
+maintaining model infrastructures.  
+A similar project that provides inspiration for the Opus project is the R project (www.r-project.org).  
+R (Ihaka and Gentleman 1996) is an Open Source software system that supports the statistical 
+computing community.  It provides a language, basic system shell, and many core and 
+user-contributed packages to estimate, analyze and visualize an extremely broad range of statistical 
+models.  Much of the cause for the rapidly growing success of this system, and its extensive and 
+actively-contributing user community, is due to the excellent design of its core architecture and 
+language.  It provides a very small core, a minimal interactive shell that can be bypassed completely 
+if a user wants to run a batch script, and a set of well-tested and documented core packages.  Equally 
+importantly, it provides a very standard and easy way to share user-contributed components.  Much 
+of the Opus architecture is based upon the R architecture.
 
-Given the rapid pace of innovation in these four areas, it is no surprise that few standards have emerged.  Due to a combination of absence of common standards and architectures for efficient interoperation, creating complete systems for use in research and planning applications by coupling models together is often a very difficult and inefficient process.  Yet researchers and users of these models need to do precisely this in order to pursue their respective research and planning agendas.  Some of the inefficiency is due to the need to couple models loosely, by inefficient data exchange methods. Other inefficiencies arise due to incompatibilities of software languages, data formats, or to proprietary restrictions on access to the internal data structures and algorithms of coupled components. 
+The design of the core Opus architecture draws heavily on the experience of the UrbanSim project in 
+software engineering and management of complex open source software development projects, and 
+in the usability of these systems by stakeholders ranging from software developers, to modelers, to 
+end-users.   
 
-In 2005, the Center for Urban Simulation and Policy Analysis at the University of Washington began a project to re-engineer UrbanSim as a more general software platform to support
-integrated modeling, and has launched an international collaboration to use and further develop the Open Platform for Urban Simulation (Opus).  The broad vision for the effort is to develop a robust, modular and extensible open source framework and process for developing and using model components and integrated model systems, and to facilitate increased collaboration among developers and users in the evolution of the platform and its applications.  
-
-Opus is motivated by lessons learned from urban simulation projects, in particular from the ILUTE, UrbanSim and MATSIM projects, and by a desire to collaborate on a single platform so that projects can more easily leverage each other's work and focus on experimenting with and applying models, instead of spending their resources creating and maintaining model infrastructures.  
-A similar project that provides inspiration for the Opus project is the R project (www.r-project.org).  R (Ihaka and Gentleman 1996) is an Open Source software system that supports the statistical computing community.  It provides a language, basic system shell, and many core and user-contributed packages to estimate, analyze and visualize an extremely broad range of statistical models.  Much of the cause for the rapidly growing success of this system, and its extensive and actively-contributing user community, is due to the excellent design of its core architecture and language.  It provides a very small core, a minimal interactive shell that can be bypassed completely if a user wants to run a batch script, and a set of well-tested and documented core packages.  Equally importantly, it provides a very standard and easy way to share user-contributed components.  Much of the Opus architecture is based upon the R architecture.
-
-The design of the core Opus architecture draws heavily on the experience of the UrbanSim project in software engineering and management of complex open source software development projects, and in the usability of these systems by stakeholders ranging from software developers, to modelers, to end-users.   
 The high-level design goals for Opus are to create a system that is very:
 
 \squishlist
