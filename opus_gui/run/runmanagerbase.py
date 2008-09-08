@@ -143,6 +143,7 @@ class ModelGuiElement(QWidget):
 
         stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
         self.groupBox.setTitle(QString(stringToUse))
+        self.groupBox.setFlat(True)
 
         self.vboxlayout = QVBoxLayout(self.groupBox)
         self.vboxlayout.setObjectName("vboxlayout")
@@ -469,7 +470,7 @@ class ModelGuiElement(QWidget):
             indicator_type = 'matplotlib_map'
 
         visualizations = [
-            (indicator_type, str(dataset_name), {'indicator':indicator_name})
+            (indicator_type, str(dataset_name), {'indicators':[indicator_name]})
         ]
 
         self.batch_processor = BatchProcessor(
