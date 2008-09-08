@@ -110,6 +110,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionClose_Project.setShortcut(QString('Ctrl+C'))
         self.actionEdit_all_variables.setShortcut(QString('Ctrl+V'))
         self.actLaunchResultBrowser.setShortcut(QString('Ctrl+R'))
+        self.actionDatabaseSettings.setShortcut(QString('Ctrl+D'))
+        self.actionPreferences.setShortcut(QString('Ctrl+P'))
         
         # Play with the project and config load/save
         QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
@@ -260,6 +262,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def editAllVariables(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
+        self.all_variables.setWindowTitle('Expression Library')
         self.all_variables.show()
             
     def closeCurrentTab(self):
@@ -344,6 +347,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Commented out the previous line and added the following line
         # to test out the APR added database connection editing GUI (082908)
         wnd = DatabaseSettingsEditGui(self, flags)
+        wnd.setWindowTitle('Database Server Connections')
         wnd.show()
         self.changeFontSize()
     
