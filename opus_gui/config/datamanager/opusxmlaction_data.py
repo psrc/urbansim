@@ -306,6 +306,7 @@ class OpusXMLAction_Data(object):
         #print "newConfig Pressed"
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = ConfigureToolGui(self,flags)
+        window.setModal(True)
         window.show()
         # Connect to a signal when the GUI collects the vars to add the element
 
@@ -439,6 +440,7 @@ class OpusXMLAction_Data(object):
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = CloneNodeGui(self,flags,clone,parentIndex,model)
+        window.setModal(True)
         window.show()
 
     def removeNode(self):

@@ -80,6 +80,7 @@ class OpusXMLAction_General(object):
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = CloneNodeGui(self,flags,clone,parentIndex,model)
+        window.setModal(True)
         window.show()
 
     def makeEditableAction(self):

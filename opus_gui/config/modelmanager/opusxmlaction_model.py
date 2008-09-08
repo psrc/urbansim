@@ -82,6 +82,7 @@ class OpusXMLAction_Model(object):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesSelectGui(self.mainwindow,flags,callback=self.selectVariablesCallback,
                                                    nodeToUpdate=thisNode)
+        self.all_variables.setModal(True)
         self.all_variables.show()
 
     def checkIsDirty(self):
@@ -114,6 +115,7 @@ class OpusXMLAction_Model(object):
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = CloneNodeGui(self,flags,clone,parentIndex,model)
+        window.setModal(True)
         window.show()
 
     def makeEditableAction(self):

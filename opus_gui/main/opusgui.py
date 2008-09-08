@@ -262,6 +262,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def editAllVariables(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
+        self.all_variables.setModal(True)
         self.all_variables.setWindowTitle('Expression Library')
         self.all_variables.show()
             
@@ -332,12 +333,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openAbout(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimAboutGui(self,flags)
+        wnd.setModal(True)
         wnd.show()
         self.changeFontSize()
 
     def openPreferences(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimPreferencesGui(self, flags)
+        wnd.setModal(True)
         wnd.show()
         self.changeFontSize()
     
@@ -347,6 +350,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Commented out the previous line and added the following line
         # to test out the APR added database connection editing GUI (082908)
         wnd = DatabaseSettingsEditGui(self, flags)
+        wnd.setModal(True)
         wnd.setWindowTitle('Database Server Connections')
         wnd.show()
         self.changeFontSize()

@@ -221,6 +221,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         row = self.currentIndex.row()
         initialParams = self.currentIndex.model().getRowDataList(self.currentIndex)
         window = AllVariablesNewGui(self,flags,self,row,initialParams)
+        window.setModal(True)
         window.show()
 
     def processCustomMenu(self, position):
@@ -375,6 +376,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #                     0,0,0])
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = AllVariablesNewGui(self,flags,self)
+        window.setModal(True)
         window.show()
 
     def on_checkSelectedVariables_released(self):
