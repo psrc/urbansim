@@ -66,6 +66,7 @@ def opusRun(progressCB,logCB,params):
     #close connection
     logCB("Closing database connection\n")
     connection.close()
+    logCB('Finished creating spatial index on %s\n' % table_name)
     
 def opusHelp():
     help = 'This tool will create a spatial index on the geometry column of a PostGIS table.\n' \

@@ -18,22 +18,23 @@ from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.opus_database import OpusDatabase
 
 def opusRun(progressCB,logCB,params):
     params_dict = {}
     for key, val in params.iteritems():
         params_dict[str(key)] = str(val)
 
-    sql_db_name = params_dict['sql_db_name']
+    database_name = params_dict['database_name']
     opus_data_directory = params_dict['opus_data_directory']
     opus_data_year = params_dict['opus_data_year']
     opus_table_name = params_dict['opus_table_name']
+    
+    database_server_connection = params_dict['database_server_connection']
 
-    dbserverconfig = EstimationDatabaseConfiguration(database_name = sql_db_name)
-    server = DatabaseServer(dbserverconfig)
-    opusdb = server.get_database(sql_db_name)
+    dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
+    opusdb = OpusDatabase(database_server_configuration=dbs_config, database_name=database_name)
 
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
     attribute_cache_years = attribute_cache._get_sorted_list_of_years()
@@ -63,3 +64,13 @@ def opusRun(progressCB,logCB,params):
                 in_storage = input_storage,
                 out_storage = output_storage,
                 )
+
+def opusHelp():
+    help = 'This tool will get a table from an Opus Cache and export it to a SQL database.\n' \
+           '\n' \
+           'database_server_connection: the database server connection configured in the database server connection settings \n' \
+           'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
+           'opus_data_year: the year to which the data should be exported (2000)\n' \
+           'database_name: the name of the database (or PostgreSQL schema) that contains the table\n' \
+           'table_name: the name of the table to be exported\n'
+    return help

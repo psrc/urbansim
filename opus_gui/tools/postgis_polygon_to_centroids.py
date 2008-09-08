@@ -36,6 +36,7 @@ def opusRun(progressCB,logCB,params):
     geometry_field_name = param_dict['geometry_field_name']
     existing_table_name = param_dict['existing_table_name']
     centroid_inside_polygon = param_dict['centroid_inside_polygon']
+    database_server_connection = param_dict['database_server_connection']
     
     # create engine and connection
     logCB("Openeing database connection\n")
@@ -44,6 +45,10 @@ def opusRun(progressCB,logCB,params):
     engine = create_engine(connection_string)
     connection = engine.connect()
     
+    metadata = MetaData()
+    metadata.bind = engine
+    metadata.reflect(schema=schema)    
+
     # get primary key
     primary_key_name = get_primary_key(metadata, schema, existing_table_name)  
     
@@ -74,6 +79,7 @@ def opusRun(progressCB,logCB,params):
     logCB(query + '\n')
     connection.execute(query)
     connection.close()
+    logCB('Finished creating %s\n' % new_table_name)
     
 def drop_table(new_table_name, schema, connection):
     query = 'DROP TABLE IF EXISTS %s.%s;' % (schema, new_table_name)

@@ -16,6 +16,7 @@ import os, sys, subprocess
 from opus_gui.exceptions.formatter import formatExceptionInfo
 from opus_core.database_management.configurations.indicators_database_configuration import IndicatorsDatabaseConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
@@ -27,15 +28,17 @@ def opusRun(progressCB,logCB,params):
     #    - add 'sql statement' option
     
     # get parameter values
-    host = os.environ['POSTGRESHOSTNAME']
-    user = os.environ['POSTGRESUSERNAME']
-    password = os.environ['POSTGRESPASSWORD']
     dbname = param_dict['dbname']
     shapefile = param_dict['shapefile_path']
     schema = param_dict['schema_name']
     overwrite = param_dict['overwrite']
     table_name = param_dict['output_table_name']
     geometry_type = param_dict['geometry_type']
+    database_server_connection = param_dict['database_server_connection']
+    dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
+    host = dbs_config.host_name
+    user = dbs_config.user_name
+    password = dbs_config.password
     
     # check for presence of ogr2ogr
     try:
@@ -81,6 +84,8 @@ def opusRun(progressCB,logCB,params):
     if stderr_text:
         logCB('stderr from ogr2ogr: \n')
         logCB(stderr_text + '\n')
+    
+    logCB('Finished exporting shapefile to %s.%s' % (dbname, schema))
 
 def get_lco_options():
     precision = ' PRECISION=NO'

@@ -10,11 +10,16 @@
 	<sql_data_to_opus_tool type="tool_file" >
           <name type="tool_name" >sql_data_to_opus</name>
           <params type="param_template" >
-            <sql_db_name>
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+            <database_name>
 	      <required choices="Required|Optional" type="string">Required</required>
 	      <type choices="string" type="string">string</type>
 	      <default type="string"></default>
-	    </sql_db_name>
+	    </database_name>
             <table_name>
 	      <required choices="Required|Optional" type="string">Required</required>
 	      <type choices="string" type="string">string</type>
@@ -35,11 +40,16 @@
 	<opus_database_to_sql_tool type="tool_file" >
           <name type="tool_name" >opus_database_to_sql</name>
           <params type="param_template" >
-            <sql_db_name>
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+            <database_name>
 	      <required choices="Required|Optional" type="string">Required</required>
 	      <type choices="string" type="string">string</type>
 	      <default type="string"></default>
-	    </sql_db_name>
+	    </database_name>
             <opus_data_directory>
 	      <required choices="Required|Optional" type="string">Required</required>
 	      <type choices="dir_path" type="string">dir_path</type>
@@ -160,6 +170,11 @@
 	<shapefile_to_postgis type="tool_file">
           <name type="tool_name">shapefile_to_postgis</name>
           <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
             <dbname type="string">
 	      <required choices="Required|Optional" type="string">Required</required>
 	      <type choices="string" type="string">string</type>
@@ -197,21 +212,26 @@
 	<postgis_polygon_to_centroids type="tool_file">
           <name type="tool_name">postgis_polygon_to_centroids</name>
           <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
             <database_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
               <default type="string"></default>
             </database_name>
-            <drop_existing>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type choices="string" type="string">string</type>
-              <default choices="True|False" type="string">True</default>
-            </drop_existing>
             <schema>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
               <default type="string"></default>
             </schema>
+            <drop_existing>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default choices="True|False" type="string">True</default>
+            </drop_existing>
             <new_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
@@ -237,6 +257,11 @@
 	<postgis_create_spatial_index type="tool_file">
           <name type="tool_name">postgis_create_spatial_index</name>
           <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
             <database_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
@@ -303,7 +328,7 @@
 	</esri_feature_to_point_tool>
       </esri_data_tools>
       <template_tools type="tool_group" setexpanded="True">
-	<template_tool1 type="tool_file">
+	<template_tool type="tool_file">
           <name type="tool_name">template_tool</name>
           <params type="param_template">
             <param_1>
@@ -322,15 +347,17 @@
               <default type="string">default value 3</default>
             </param_3>
           </params>
-	</template_tool1>
+	</template_tool>
       </template_tools>
     </Tool_Library>
     <Tool_Sets type="tool_sets" setexpanded="True">
+
       <opus_database_to_sql type="tool_set" setexpanded="False" >
         <classification flags="hidden" type="classification" >database</classification>
         <opus_database_to_sql_config type="tool_config" >
           <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_sql_tool</tool_hook>
-          <sql_db_name type="string" >mytestdb</sql_db_name>
+          <database_server_connection type="db_connection_hook"></database_server_connection>
+          <database_name type="string" >mytestdb</database_name>
           <opus_data_directory type="dir_path" />
           <opus_data_year type="string" >ALL</opus_data_year>
           <opus_table_name type="string" >ALL</opus_table_name>
@@ -366,19 +393,14 @@
           <opus_table_name type="integer" ></opus_table_name>
         </opus_dataset_to_esri_config>
       </opus_dataset_to_esri>
+
       <sample_tool_set type="tool_set">
-        <template_tool_config1 type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >template_tool1</tool_hook>
+        <template_tool_config type="tool_config" >
+          <tool_hook flags="hidden" type="tool_library_ref" >template_tool</tool_hook>
           <param1 type="string" >Template Config 1 - Param1</param1>
           <param2 type="string" >Template Config 1 - Param2</param2>
           <param3 type="string" >Template Config 1 - Param3</param3>
-        </template_tool_config1>
-        <template_tool_config2 type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >template_tool1</tool_hook>
-          <param1 type="string" >Template Config 2 - Param1</param1>
-          <param2 type="string" >Template Config 2 - Param2</param2>
-          <param3 type="string" >Template Config 2 - Param3</param3>
-        </template_tool_config2>
+        </template_tool_config>
       </sample_tool_set>
     </Tool_Sets>
   </data_manager>
