@@ -13,7 +13,6 @@
 #
 
 import os, sys
-from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
@@ -23,11 +22,9 @@ from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.estimation_database_configuration import EstimationDatabaseConfiguration
 
 def opusRun(progressCB,logCB,params):
-    print "opus_database_to_sql.py called...."
     params_dict = {}
     for key, val in params.iteritems():
         params_dict[str(key)] = str(val)
-        print "Key=%s Val=%s" % (key, val)
 
     sql_db_name = params_dict['sql_db_name']
     opus_data_directory = params_dict['opus_data_directory']
@@ -60,7 +57,7 @@ def opusRun(progressCB,logCB,params):
             opus_table_name_list = input_storage.get_table_names()
 
         for i in opus_table_name_list:
-            print "Exporting %s, %s, %s" % (i,year,opus_data_directory)
+            logCB("Exporting %s, %s, %s\n" % (i,year,opus_data_directory))
             ExportStorage().export_dataset(
                 dataset_name = i,
                 in_storage = input_storage,

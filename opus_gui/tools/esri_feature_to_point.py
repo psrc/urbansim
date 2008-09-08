@@ -29,9 +29,9 @@ def opusRun(progressCB,logCB,params):
     output = my_dict['out_features']
 
 
-    logCB("Executing feature to point")
+    logCB("Executing feature to point\n")
     gp.FeatureToPoint_management (input, output)
-    logCB("Finised feature to point")
+    logCB("Finised feature to point\n")
 
 def opusHelp():
     help = 'This is a very basic buffer tool using the ESRI geoprocessing framework.\n' \

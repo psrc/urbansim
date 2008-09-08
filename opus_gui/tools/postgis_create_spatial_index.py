@@ -14,6 +14,7 @@
 
 import os, sys
 from sqlalchemy import create_engine, MetaData
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
@@ -25,32 +26,20 @@ def opusRun(progressCB,logCB,params):
     #    - more error checking and messages
     
     # get parameter values
-    username = os.environ['POSTGRESUSERNAME']
-    password = os.environ['POSTGRESPASSWORD']
-    hostname = os.environ['POSTGRESHOSTNAME']
     database_name = param_dict['database_name']
     schema = param_dict['schema']
     table_name = param_dict['table_name']
     geometry_column_name = param_dict['geometry_column_name']
     run_vacuum_analyze = param_dict['run_vacuum_analyze']
-    
     index_name = table_name + '_geom_indx'
+    database_server_connection = param_dict['database_server_connection']
 
-
-    # build connection string
-    connection_string = 'postgres://%s:%s@%s/%s' % (
-            username,
-            password,
-            hostname,
-            database_name
-            )
-       
     # create engine and connection
+    logCB("Openeing database connection\n")
+    dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
+    connection_string = str(dbs_config) + '/%s' % (database_name) 
     engine = create_engine(connection_string)
     connection = engine.connect()
-    metadata = MetaData()
-    metadata.bind = engine
-    metadata.reflect(schema=schema)
     
     # set up queries
     # drop index if exists
@@ -62,17 +51,20 @@ def opusRun(progressCB,logCB,params):
     
     # execute queries
     for query in queries:
+        logCB("Running query:\n")
+        logCB("%s\n" % query)
         connection.execute(query)
     
     # update database statistics
     if run_vacuum_analyze == 'True':
-        print "running vacuum"
+        logCB("Running vacuum\n")
         import psycopg2.extensions
         connection.connection.connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         query = '''VACUUM ANALYZE;'''
         connection.execute(query)
     
     #close connection
+    logCB("Closing database connection\n")
     connection.close()
     
 def opusHelp():

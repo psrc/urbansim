@@ -44,7 +44,7 @@ def opusRun(progressCB,logCB,params):
                          in_storage=AttributeCache())
 
     if opus_table_name == 'ALL':
-        print "Sending all tables to ESRI storage..."
+        logCB("Sending all tables to ESRI storage...\n")
         lst = input_storage.get_table_names()
         for i in lst:
             ExportStorage().export_dataset(
@@ -54,13 +54,13 @@ def opusRun(progressCB,logCB,params):
             )
 
     else:
-        print "Exporting table '%s' to ESRI storage located at %s..." % (opus_table_name, opus_data_directory)
+        logCB("Exporting table '%s' to ESRI storage located at %s...\n" % (opus_table_name, opus_data_directory))
         ExportStorage().export_dataset(
                                        dataset_name = opus_table_name,
                                        in_storage = input_storage,
                                        out_storage = output_storage,
                                        )
-        print "Finished exporting table '%s'" % (opus_table_name)
+        logCB("Finished exporting table '%s'\n" % (opus_table_name))
 
 def opusHelp():
     help = 'This tool will convert OPUS cached data to a compatible ESRI format.\n' \

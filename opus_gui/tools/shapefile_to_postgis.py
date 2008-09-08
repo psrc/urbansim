@@ -42,12 +42,12 @@ def opusRun(progressCB,logCB,params):
         p = subprocess.Popen('ogr2ogr', stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout_text, stderr_text = p.communicate()
     except WindowsError:
-        print 'ogr2ogr is not properly installed or configured'
+        logCB('ogr2ogr is not properly installed or configured\n')
         return
 
     # check to see if shapefile exists
     if not os.path.isfile(shapefile):
-        print 'shapefile does not exist'
+        logCB('shapefile does not exist\n')
         return
     
     # set proper table name and schema
@@ -66,9 +66,9 @@ def opusRun(progressCB,logCB,params):
     # add switches to base command
     ogr2ogr_cmd = base_cmd + get_lco_options() + get_nln_option(schema, table_name) + get_nlt_option(geometry_type) #+ ' -a_srs EPSG:32148' 
    
-    print '------------'                
-    print ogr2ogr_cmd
-    print '------------'
+    logCB('Running ogr2ogr using: \n')          
+    logCB(ogr2ogr_cmd + '\n')
+
     
     # execute full command
     p = subprocess.Popen((ogr2ogr_cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -76,11 +76,11 @@ def opusRun(progressCB,logCB,params):
     
     # print messages from ogr2ogr
     if stdout_text:
-        print 'stdout from ogr2ogr:'
-        print stdout_text
+        logCB('stdout from ogr2ogr: \n') 
+        logCB(stdout_text + '\n')
     if stderr_text:
-        print 'stderr from ogr2ogr:'
-        print stderr_text
+        logCB('stderr from ogr2ogr: \n')
+        logCB(stderr_text + '\n')
 
 def get_lco_options():
     precision = ' PRECISION=NO'
@@ -104,7 +104,7 @@ def drop_table(table_name, dbname, schema):
     query = 'DROP TABLE %s.%s' % (schema, table_name)
     try:
         db.DoQuery(query)
-        print 'DROPPED TABLE %s' % table_name
+        logCB('DROPPED TABLE %s \n' % table_name)
     except:
         return
 

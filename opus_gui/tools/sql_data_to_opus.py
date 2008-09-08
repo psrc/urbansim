@@ -13,7 +13,6 @@
 #
 
 import os, sys
-from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
@@ -48,7 +47,7 @@ def opusRun(progressCB,logCB,params):
                          in_storage=AttributeCache())
 
     if table_name == 'ALL':
-        print 'caching all tables...'
+        logCB('caching all tables...\n')
         lst = input_storage.get_table_names()
         for i in lst:
             ExportStorage().export_dataset(
@@ -57,7 +56,7 @@ def opusRun(progressCB,logCB,params):
                 out_storage = output_storage,
             )
     else:
-        logger.start_block("Exporting table '%s' to year %s of cache located at %s..." %
+        logCB("Exporting table '%s' to year %s of cache located at %s...\n" %
                    (table_name, opus_data_year, opus_data_directory))
         ExportStorage().export_dataset(
             dataset_name = table_name,

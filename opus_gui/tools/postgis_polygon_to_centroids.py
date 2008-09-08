@@ -14,6 +14,7 @@
 
 import os, sys, subprocess
 from sqlalchemy import create_engine, MetaData
+from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
 def opusRun(progressCB,logCB,params):
     param_dict = {}
@@ -27,10 +28,8 @@ def opusRun(progressCB,logCB,params):
     #    - set constraint on new primary_key column instead of just naming it oid
     
     # get parameter values
-    username = os.environ['POSTGRESUSERNAME']
-    password = os.environ['POSTGRESPASSWORD']
-    hostname = os.environ['POSTGRESHOSTNAME']
-    database_name = 'jesse_test_spatial_db'
+
+    database_name = param_dict['database_name']
     drop_existing = param_dict['drop_existing']
     schema = param_dict['schema']
     new_table_name = param_dict['new_table_name']
@@ -38,27 +37,18 @@ def opusRun(progressCB,logCB,params):
     existing_table_name = param_dict['existing_table_name']
     centroid_inside_polygon = param_dict['centroid_inside_polygon']
     
-    # build connection string
-    connection_string = 'postgres://%s:%s@%s/%s' % (
-            username,
-            password,
-            hostname,
-            database_name
-            )
-       
     # create engine and connection
+    logCB("Openeing database connection\n")
+    dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
+    connection_string = str(dbs_config) + '/%s' % (database_name) 
     engine = create_engine(connection_string)
     connection = engine.connect()
-    metadata = MetaData()
-    metadata.bind = engine
-    metadata.reflect(schema=schema)
     
     # get primary key
     primary_key_name = get_primary_key(metadata, schema, existing_table_name)  
     
     # drop existing table
     if drop_existing == 'True':
-        print 'ATTEMPTING TO DROP TABLE'
         drop_table(new_table_name, schema, connection)
             
     # force centroid inside polygon
@@ -81,7 +71,7 @@ def opusRun(progressCB,logCB,params):
                    )
 
     # execute query
-    print query
+    logCB(query + '\n')
     connection.execute(query)
     connection.close()
     
@@ -89,7 +79,7 @@ def drop_table(new_table_name, schema, connection):
     query = 'DROP TABLE IF EXISTS %s.%s;' % (schema, new_table_name)
     try:
         connection.execute(query)
-        print 'DROPPED TABLE %s' % new_table_name
+        logCB('DROPPED TABLE %s\n' % new_table_name)
     except:
         return
 
