@@ -80,8 +80,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.application_title = application_title_dict['application_title']
         self.setWindowTitle(self.application_title)
 
-        # Loading font size adjustment from gui configuration xml file
+        # Loading settings from gui configuration xml file regarding font sizes
         try:
+            #font settings
             font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
             
             self.menu_font_size = int(get_child_values(parent = font_settings_node,
@@ -91,7 +92,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.general_text_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['general_text_font_size'])['general_text_font_size'])
             
+            
         except:
+            #font settings
             self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
             font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
             
@@ -101,7 +104,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                               child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
             self.general_text_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['general_text_font_size'])['general_text_font_size'])
-
+        
+        #loading settings from gui xml regarding previous project   
+        try:
+            prev_proj_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
+            self.latest_project_file_name = QString(get_child_values(parent = prev_proj_node,
+                                              child_names = ['previous_project'])['previous_project'])
+        except:
+            self.latest_project_file_name = ' '
+            self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
+            self.updateFontSettingsNode()
+            self.saveGuiConfig()
+            
+            
         self.splitter.setSizes([400,500])
 
         self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
@@ -235,6 +250,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         self.changeFontSize()
         self.setFocus()
+        
+        if os.path.exists(self.latest_project_file_name):
+            self.openConfig(self.latest_project_file_name)
+        
         
     def getDbConnectionNames(self):
         '''
@@ -384,6 +403,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Open the file and add to the Run tab...
             self.toolboxStuff.openXMLTree(fileName)
             # Add the project file's path to the title bar
+            self.latest_project_file_name = fileName
+            self.updateProjectHistoryNode()
+            self.saveGuiConfig()
                         
         title = self.resultManagerStuff.xml_helper.get_project_title()
         os.environ['OPUSPROJECTNAME'] = title
@@ -668,7 +690,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def setGeneralTextFontSize(self, pointSize):
         self.general_text_font_size = pointSize
 
-    def saveGuiConfig(self):
+    def updateFontSettingsNode(self):
         #get the font settings node from xml
         font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
         nodesToSave = {"menu_font_size":self.menu_font_size,
@@ -691,9 +713,35 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                             textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
                         
             node = node.nextSibling()
+            
+    def updateProjectHistoryNode(self):
+        #get the project history node from xml
+        proj_hist_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
+        nodesToSave = {"previous_project":str(self.latest_project_file_name)}
+        #go through the children of the project history node and set the value accordingly
+        node = proj_hist_node.firstChild()
+        while not node.isNull():
+            if node.isElement() and str(node.nodeName()) in nodesToSave:
+                element = node.toElement()
+                hasTextNode = False
+                if element.hasChildNodes():
+                    child = element.firstChild()
+                    while not child.isNull():
+                        if child.isText():
+                            hasTextNode = True
+                            textNode = child.toText()
+                            # Finally set the text node value
+                            textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
+                        child = child.nextSibling()
+                if hasTextNode == False:
+                    newText = self.toolboxStuff.gui_configuration_doc.createTextNode(\
+                                    QString(str(nodesToSave[str(node.nodeName())])))
+                    element.appendChild(newText)
+            node = node.nextSibling()
+
+    def saveGuiConfig(self):
         try:
             self.toolboxStuff.save_gui_configuration_file()
         except:
             print "Unexpected error:", sys.exc_info()[0]
-                
-            
+  

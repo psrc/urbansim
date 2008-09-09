@@ -47,10 +47,8 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.mainwindow.setMainTabsFontSize(self.mainTabsFontSizeSpinBox.value())
         self.mainwindow.setGeneralTextFontSize(self.generalTextFontSizeSpinBox.value())
         self.mainwindow.changeFontSize()
-        
+        self.mainwindow.updateFontSettingsNode()
         self.mainwindow.saveGuiConfig()
-        
-        
 
 
     def okay(self):
@@ -59,25 +57,3 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
 
     def cancel(self):
         self.close()
-#
-#    def changeFontSize(self, amt):
-#        #get all QWidget Children of the main window
-#        widgetChildren = self.findChildren(QWidget)
-#        
-#        #local function to be mapped across all the widget children of the main window
-#        def _changeChildFont(widgekid):
-#            #if the font size isn't measured in points and the font won't be too small...
-#            if widgekid.font().pointSize() == -1 and widgekid.font().pixelSize() + amt > 0:
-#                widgekid.font().setPixelSize(widgekid.font().pixelSize() + amt)
-#                
-#            #if the font size isn't measured in pixels and the font won't be too small...
-#            elif widgekid.font().pixelSize() == -1 and widgekid.font().pointSize() + amt > 0:
-#                widgekid.font().setPointSize(widgekid.font().pointSize() + amt)   
-#            
-#            #pixel or point size is too small, will not update it
-#            else:
-#                return
-#            widgekid.updateGeometry()
-#            widgekid.update()
-#        
-#        map(_changeChildFont, widgetChildren)

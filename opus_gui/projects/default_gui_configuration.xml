@@ -10,4 +10,7 @@
     	<main_tabs_font_size>12</main_tabs_font_size>
     	<general_text_font_size>11</general_text_font_size>
   	</font_settings>
+  	<project_history>
+  		<previous_project> </previous_project>
+  	</project_history>
 </gui_configuration>
