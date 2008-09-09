@@ -85,16 +85,17 @@ class OpusFileAction(object):
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
-        summaryGroupBox.setTitle(QString("Summary"))
+        summaryGroupBox.setTitle(QString("Summary statistics for dataset %s"%table_name))
         summaryGroupBox.setFlat(True)
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Grab the summary data
         buffer = StringIO()
         data.summary(output=buffer)
-        strng = QString(buffer.getvalue())
+        strng = buffer.getvalue()
         buffer.close()
         textBrowser = QTextBrowser()
-        textBrowser.insertPlainText(strng)
+#        textBrowser.insertPlainText(strng)
+        textBrowser.insertHtml(self.parse_dataset_summary(strng))
         summaryGroupBoxLayout.addWidget(textBrowser)
         
         widgetLayout.addWidget(summaryGroupBox)
@@ -113,15 +114,13 @@ class OpusFileAction(object):
         tabledata = map(None,*tabledata_tmp)
 
         # If the table data is not empty then we display it
-        if tabledata:
-            #print tabledata
+        if tabledata:            
+            #tv.resizeColumnsToContents()
             tm = OpusDatasetTableModel(tabledata, header, container) 
             tv.setModel(tm)
             tv.setSortingEnabled(True)
             tableGroupBoxLayout.addWidget(tv)
-            tv.resizeColumnsToContents()
-            #tv.resizeRowsToContents()
-
+            
         widgetLayout.addWidget(tableGroupBox)
 
         tabIcon = QIcon(":/Images/Images/cog.png")
@@ -129,7 +128,68 @@ class OpusFileAction(object):
         tabs.insertTab(0,container,tabIcon,tabLabel)
         tabs.setCurrentIndex(0)
 
+    def parse_dataset_summary(self, summary):
+        html = ['''<style type="text/css">
 
+            table.prettytable {
+              background: white;
+            }
+            table.prettytable th {
+              border: 1px black solid;
+              padding: 0.2em;
+              background: gainsboro;
+              text-align: left;
+                border-width: thin thin thin thin;
+                padding: 2px 2px 2px 2px;
+                border-style: inset inset inset inset;
+                border-color: gray gray gray gray;
+            }
+            table.prettytable td {
+              border: 1px black solid;
+              padding: 0.2em;
+            }
+    
+            table.prettytable caption {
+              margin-left: inherit;
+              margin-right: inherit;
+            }
+            #text a {
+                color: #000000;
+                position: relative;
+                text-decoration: underline;
+            }
+            </style>''',
+            '<body>',
+            '<div id="text">',
+            '<table class="prettytable">'
+            ]
+            
+        summary_lines = summary.split('\n')
+        for i, line in enumerate(summary_lines):
+            if i == 1: continue
+            html.append('<tr>')
+            if i == 0:                                
+                header = line.split()[1:]
+                html.append(''.join(['<th>%s</th>'%col for col in header]))
+            else:
+                
+                row = line.split()
+                if len(row) == 0: continue
+                if row[0] == 'Size:': 
+                    start_end = i
+                    break
+                html.append(''.join(['<td>%s</td>'%col for col in row]))                
+        
+            html.append('</tr>')
+        html.append('</table>')
+        try:
+            html.append('<br><br>' + '<br>'.join(summary_lines[start_end:]))
+        except:
+            pass
+        html.append('</div></body>')
+        return QString('\n'.join(html))
+        
+        
     def refreshAction(self):
         #print "refreshAction"
         self.xmlFileObject.model.refresh(self.xmlFileObject.treeview.rootIndex())
