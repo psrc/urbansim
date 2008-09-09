@@ -35,7 +35,7 @@ class RegressionModel(ChunkModel):
 
     def __init__(self, model_configuration=None, regression_procedure="opus_core.linear_regression",
                   submodel_string=None,
-                  run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None):
+                  run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None, filter = None):
         dl = debuglevel
         if debuglevel is None and model_configuration is not None and 'debuglevel' in model_configuration:
             dl = self.model_configuration["debuglevel"] # which attribute determines submodels
@@ -76,7 +76,7 @@ class RegressionModel(ChunkModel):
         self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
-            data_objects=None, run_config=None, initial_values=None, procedure=None, debuglevel=0):
+            data_objects=None, run_config=None, initial_values=None, procedure=None, n_simulated_years = None, debuglevel=0):
         """'specification' is of type EquationSpecification,
             'coefficients' is of type Coefficients,
             'dataset' is of type Dataset,
