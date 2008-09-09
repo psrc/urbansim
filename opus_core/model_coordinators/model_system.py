@@ -309,9 +309,9 @@ class ModelSystem(object):
         init_config = parent_state['controller_config']["init"]
         group_member = parent_state['group_member']
         if group_member is None: # No model group
-            model = eval("%s(%s)" %
-                         (init_config["name"],
-                          self.construct_arguments_from_config(init_config)))
+            cmd = "%s(%s)" % (init_config["name"],
+                          self.construct_arguments_from_config(init_config))
+            model = eval(cmd)
         else: # Model belongs to a group
             model = eval("%s(group_member, %s)" %
                          (init_config["name"],
