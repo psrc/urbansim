@@ -24,7 +24,7 @@ specification = {
             ('urbansim.household_x_zone.is_1_persons_x_percent_size_1_persons','B1x1'),
             ('ln(urbansim.household_x_zone.income_times_zone_average_income)','BLNINxAVI'),
             ('urbansim.zone.population', 'BPOP'), 
-            ('lsfc = ln(urbansim_zone.zone.commercial_sqft)', 'BLSFC'),
+            ('lsfc = ln(urbansim_zone.zone.total_commercial_job_space)', 'BLSFC'),
             ('ldu = ln(urbansim_zone.zone.residential_units)', 'BLDU'),
             ('lemp20 = ln(eugene.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone)', 'BLEMP20'),
             ]

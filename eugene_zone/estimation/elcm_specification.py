@@ -13,8 +13,8 @@
 # 
 
 all_variables = [   
-    ('lsfi = ln(urbansim_zone.zone.industrial_sqft)', 'BLSFI'),
-    ('lsfc = ln(urbansim_zone.zone.commercial_sqft)', 'BLSFC'),
+    ('lsfi = ln(urbansim_zone.zone.total_commercial_job_space)', 'BLSFI'),
+    ('lsfc = ln(urbansim_zone.zone.total_industrial_job_space)', 'BLSFC'),
     ('ldu = ln(urbansim_zone.zone.residential_units)', 'BLDU'),
     ('lavinc = ln(urbansim.zone.average_income)','BLAVINC'),
     ('ljobs = ln(urbansim.zone.number_of_jobs)', 'BLJOBS'), 
