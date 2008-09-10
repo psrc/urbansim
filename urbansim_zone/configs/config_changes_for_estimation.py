@@ -69,35 +69,33 @@ class ConfigChangesForEstimation(Configuration):
                                                 },
                                      },
                         },
-            "development_project_location_choice_model": {
-                    'industrial': {
+            "industrial_development_project_location_choice_model": {
                             'models': [
-                                "land_price_model",
                                 {"industrial_development_project_location_choice_model": ["estimate"]}
                                     ],
                             "datasets_to_preload": {
-                                'gridcell':{}
+                                'pseudo_building':{},
+                                'zone':{},
+                                'urbansim_constant': {}
                                 },   
                                    },
-                    'commercial': {
+            'commercial_development_project_location_choice_model': {
                             'models': [
-                                "land_price_model",
                                 {"commercial_development_project_location_choice_model": ["estimate"]}
                                     ],
                             "datasets_to_preload": {
-                                'gridcell':{}
+                                'pseudo_building':{},
+                                'zone':{}
                                 },   },
-                    'residential': {
+            'residential_development_project_location_choice_model': {
                             'models': [
-                                "land_price_model",
                                 {"residential_development_project_location_choice_model": ["estimate"]}
                                     ],
                             "datasets_to_preload": {
-                                'gridcell':{}
+                                'pseudo_building':{},
+                                'zone':{}
                                 },   
                                     }
-                        
-                            },
                                              
                   }
         return config

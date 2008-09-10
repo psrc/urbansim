@@ -15,6 +15,7 @@
 from opus_core.configuration import Configuration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.real_estate_price_model_configuration_creator import RealEstatePriceModelConfigurationCreator
+from urbansim_zone.configs.development_project_location_choice_model_configuration_creator import DevelopmentProjectLocationChoiceModelConfigurationCreator
 from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
@@ -45,6 +46,21 @@ class UrbansimZoneConfiguration(Configuration):
             submodel_string = 'building_type_id',
             filter_variable = None                                                   
             ).execute(),
+        'residential_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
+                        project_type = 'residential',
+                        coefficients_table = 'residential_development_location_choice_model_coefficients',
+                        specification_table = 'residential_development_location_choice_model_specification',
+                        ).execute(),
+        'commercial_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
+                        project_type = 'commercial',
+                        coefficients_table = 'commercial_development_location_choice_model_coefficients',
+                        specification_table = 'commercial_development_location_choice_model_specification',
+                        ).execute(),
+        'industrial_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
+                        project_type = 'industrial',
+                        coefficients_table = 'industrial_development_location_choice_model_coefficients',
+                        specification_table = 'industrial_development_location_choice_model_specification',
+                        ).execute(),
         'employment_transition_model': 
                   EmploymentTransitionModelConfigurationCreator(
             location_id_name="zone_id"
@@ -80,7 +96,7 @@ class UrbansimZoneConfiguration(Configuration):
                                 estimation_weight_string = None,
                                 number_of_units_string = None,
                                 portion_to_unplace = 0,
-                                capacity_string = "urbansim_zone.zone.vacant_SSS_job_space",
+                                capacity_string = "urbansim_zone.zone.number_of_vacant_SSS_jobs",
                                 ).execute(),
                                        
             'home_based_employment_location_choice_model': 
