@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'all_variables_new.ui'
 #
-# Created: Wed Sep 10 12:37:52 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Wed Sep 10 15:37:42 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,135 +12,99 @@ from PyQt4 import QtCore, QtGui
 class Ui_AllVariablesNewGui(object):
     def setupUi(self, AllVariablesNewGui):
         AllVariablesNewGui.setObjectName("AllVariablesNewGui")
-        AllVariablesNewGui.resize(QtCore.QSize(QtCore.QRect(0,0,657,499).size()).expandedTo(AllVariablesNewGui.minimumSizeHint()))
-
+        AllVariablesNewGui.resize(657, 499)
         self.vboxlayout = QtGui.QVBoxLayout(AllVariablesNewGui)
         self.vboxlayout.setObjectName("vboxlayout")
-
         self.variableBox = QtGui.QGroupBox(AllVariablesNewGui)
         self.variableBox.setObjectName("variableBox")
-
         self.vboxlayout1 = QtGui.QVBoxLayout(self.variableBox)
         self.vboxlayout1.setObjectName("vboxlayout1")
-
         self.nameWidget = QtGui.QWidget(self.variableBox)
         self.nameWidget.setObjectName("nameWidget")
-
         self.hboxlayout = QtGui.QHBoxLayout(self.nameWidget)
         self.hboxlayout.setObjectName("hboxlayout")
-
         self.label = QtGui.QLabel(self.nameWidget)
-        self.label.setMinimumSize(QtCore.QSize(100,0))
-        self.label.setMaximumSize(QtCore.QSize(100,16777215))
+        self.label.setMinimumSize(QtCore.QSize(100, 0))
+        self.label.setMaximumSize(QtCore.QSize(100, 16777215))
         self.label.setObjectName("label")
         self.hboxlayout.addWidget(self.label)
-
         self.lineEdit = QtGui.QLineEdit(self.nameWidget)
         self.lineEdit.setObjectName("lineEdit")
         self.hboxlayout.addWidget(self.lineEdit)
         self.vboxlayout1.addWidget(self.nameWidget)
-
         self.datasetWidget = QtGui.QWidget(self.variableBox)
         self.datasetWidget.setObjectName("datasetWidget")
-
         self.hboxlayout1 = QtGui.QHBoxLayout(self.datasetWidget)
         self.hboxlayout1.setObjectName("hboxlayout1")
-
         self.label_2 = QtGui.QLabel(self.datasetWidget)
-        self.label_2.setMinimumSize(QtCore.QSize(100,0))
-        self.label_2.setMaximumSize(QtCore.QSize(100,16777215))
+        self.label_2.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_2.setMaximumSize(QtCore.QSize(100, 16777215))
         self.label_2.setObjectName("label_2")
         self.hboxlayout1.addWidget(self.label_2)
-
         self.cbo_dataset_name = QtGui.QComboBox(self.datasetWidget)
         self.cbo_dataset_name.setObjectName("cbo_dataset_name")
         self.hboxlayout1.addWidget(self.cbo_dataset_name)
         self.vboxlayout1.addWidget(self.datasetWidget)
-
-        self.useWidget = QtGui.QWidget(self.variableBox)
-        self.useWidget.setObjectName("useWidget")
-
-        self.hboxlayout2 = QtGui.QHBoxLayout(self.useWidget)
-        self.hboxlayout2.setObjectName("hboxlayout2")
-
-        self.label_3 = QtGui.QLabel(self.useWidget)
-        self.label_3.setMinimumSize(QtCore.QSize(100,0))
-        self.label_3.setMaximumSize(QtCore.QSize(100,16777215))
-        self.label_3.setObjectName("label_3")
-        self.hboxlayout2.addWidget(self.label_3)
-
-        self.comboBox = QtGui.QComboBox(self.useWidget)
-        self.comboBox.setObjectName("comboBox")
-        self.hboxlayout2.addWidget(self.comboBox)
-        self.vboxlayout1.addWidget(self.useWidget)
-
         self.sourceWidget = QtGui.QWidget(self.variableBox)
         self.sourceWidget.setObjectName("sourceWidget")
-
-        self.hboxlayout3 = QtGui.QHBoxLayout(self.sourceWidget)
-        self.hboxlayout3.setObjectName("hboxlayout3")
-
+        self.hboxlayout2 = QtGui.QHBoxLayout(self.sourceWidget)
+        self.hboxlayout2.setObjectName("hboxlayout2")
         self.label_4 = QtGui.QLabel(self.sourceWidget)
-        self.label_4.setMinimumSize(QtCore.QSize(100,0))
-        self.label_4.setMaximumSize(QtCore.QSize(100,16777215))
+        self.label_4.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_4.setMaximumSize(QtCore.QSize(100, 16777215))
         self.label_4.setObjectName("label_4")
-        self.hboxlayout3.addWidget(self.label_4)
-
+        self.hboxlayout2.addWidget(self.label_4)
         self.comboBox_2 = QtGui.QComboBox(self.sourceWidget)
         self.comboBox_2.setObjectName("comboBox_2")
-        self.hboxlayout3.addWidget(self.comboBox_2)
+        self.hboxlayout2.addWidget(self.comboBox_2)
         self.vboxlayout1.addWidget(self.sourceWidget)
-
+        self.cbIndicatorUse = QtGui.QCheckBox(self.variableBox)
+        self.cbIndicatorUse.setChecked(True)
+        self.cbIndicatorUse.setObjectName("cbIndicatorUse")
+        self.vboxlayout1.addWidget(self.cbIndicatorUse)
+        self.cbModelUse = QtGui.QCheckBox(self.variableBox)
+        self.cbModelUse.setChecked(True)
+        self.cbModelUse.setObjectName("cbModelUse")
+        self.vboxlayout1.addWidget(self.cbModelUse)
         self.definitionWidget = QtGui.QWidget(self.variableBox)
         self.definitionWidget.setObjectName("definitionWidget")
-
-        self.hboxlayout4 = QtGui.QHBoxLayout(self.definitionWidget)
-        self.hboxlayout4.setObjectName("hboxlayout4")
-
+        self.hboxlayout3 = QtGui.QHBoxLayout(self.definitionWidget)
+        self.hboxlayout3.setObjectName("hboxlayout3")
         self.label_5 = QtGui.QLabel(self.definitionWidget)
-        self.label_5.setMinimumSize(QtCore.QSize(100,0))
-        self.label_5.setMaximumSize(QtCore.QSize(100,16777215))
+        self.label_5.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_5.setMaximumSize(QtCore.QSize(100, 16777215))
         self.label_5.setObjectName("label_5")
-        self.hboxlayout4.addWidget(self.label_5)
-
+        self.hboxlayout3.addWidget(self.label_5)
         self.textEdit = QtGui.QTextEdit(self.definitionWidget)
         self.textEdit.setObjectName("textEdit")
-        self.hboxlayout4.addWidget(self.textEdit)
+        self.hboxlayout3.addWidget(self.textEdit)
         self.vboxlayout1.addWidget(self.definitionWidget)
         self.vboxlayout.addWidget(self.variableBox)
-
         self.widget = QtGui.QWidget(AllVariablesNewGui)
-        self.widget.setMaximumSize(QtCore.QSize(16777215,45))
+        self.widget.setMaximumSize(QtCore.QSize(16777215, 45))
         self.widget.setObjectName("widget")
-
-        self.hboxlayout5 = QtGui.QHBoxLayout(self.widget)
-        self.hboxlayout5.setObjectName("hboxlayout5")
-
+        self.hboxlayout4 = QtGui.QHBoxLayout(self.widget)
+        self.hboxlayout4.setObjectName("hboxlayout4")
         self.cboCheckSyntax = QtGui.QPushButton(self.widget)
         self.cboCheckSyntax.setObjectName("cboCheckSyntax")
-        self.hboxlayout5.addWidget(self.cboCheckSyntax)
-
+        self.hboxlayout4.addWidget(self.cboCheckSyntax)
         self.cboCheckData = QtGui.QPushButton(self.widget)
         self.cboCheckData.setObjectName("cboCheckData")
-        self.hboxlayout5.addWidget(self.cboCheckData)
-
-        spacerItem = QtGui.QSpacerItem(441,24,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
-        self.hboxlayout5.addItem(spacerItem)
-
+        self.hboxlayout4.addWidget(self.cboCheckData)
+        spacerItem = QtGui.QSpacerItem(441, 24, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.hboxlayout4.addItem(spacerItem)
         self.line = QtGui.QFrame(self.widget)
         self.line.setFrameShape(QtGui.QFrame.VLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.hboxlayout5.addWidget(self.line)
-
+        self.hboxlayout4.addWidget(self.line)
         self.saveChanges = QtGui.QPushButton(self.widget)
         self.saveChanges.setEnabled(True)
         self.saveChanges.setObjectName("saveChanges")
-        self.hboxlayout5.addWidget(self.saveChanges)
-
+        self.hboxlayout4.addWidget(self.saveChanges)
         self.cancelWindow = QtGui.QPushButton(self.widget)
         self.cancelWindow.setObjectName("cancelWindow")
-        self.hboxlayout5.addWidget(self.cancelWindow)
+        self.hboxlayout4.addWidget(self.cancelWindow)
         self.vboxlayout.addWidget(self.widget)
 
         self.retranslateUi(AllVariablesNewGui)
@@ -149,19 +113,29 @@ class Ui_AllVariablesNewGui(object):
     def retranslateUi(self, AllVariablesNewGui):
         AllVariablesNewGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesNewGui", "Variable editor", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesNewGui", "Variable definition", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "A name for this variable. Use only alphanumeric characters", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "The dataset of the resulting indicator. ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Dataset:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Use:", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "both", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "model variable", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "indicator", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "Where the variable definition derives from. \n"
+"An \"expression\" uses the Tekoa domain-specific language, \n"
+"\"python class\" is a path to a variable defined in a python module (e.g. urbansim.gridcell.population), \n"
+"and \"primary attribute\" refers to a primary attribute of the given dataset. ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Source:", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "expression", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "primary attribute", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_2.addItem(QtGui.QApplication.translate("AllVariablesNewGui", "Python class", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbIndicatorUse.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "If checked, this variable will be available to compute over simulation runs as an indicator.", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbIndicatorUse.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Will this variable be used as an indicator?", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbModelUse.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "If checked, this variable will be available to include in model specifications.", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbModelUse.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Will this variable be used in a model?", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Definition:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboCheckSyntax.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "Verify that the syntax of variable definition parses correctly.", None, QtGui.QApplication.UnicodeUTF8))
         self.cboCheckSyntax.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Check syntax", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboCheckData.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "Verify that the variable can be computed against the baseyear data for this project.", None, QtGui.QApplication.UnicodeUTF8))
         self.cboCheckData.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Check against data", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveChanges.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "Accept the new variable and return to the Variable Library.", None, QtGui.QApplication.UnicodeUTF8))
         self.saveChanges.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Accept", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelWindow.setToolTip(QtGui.QApplication.translate("AllVariablesNewGui", "Return to the Variable Library without saving.", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesNewGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

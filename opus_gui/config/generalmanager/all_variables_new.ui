@@ -37,6 +37,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip" >
+            <string>A name for this variable. Use only alphanumeric characters</string>
+           </property>
            <property name="text" >
             <string>Name:</string>
            </property>
@@ -65,6 +68,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip" >
+            <string>The dataset of the resulting indicator. </string>
+           </property>
            <property name="text" >
             <string>Dataset:</string>
            </property>
@@ -72,50 +78,6 @@
          </item>
          <item>
           <widget class="QComboBox" name="cbo_dataset_name" />
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" native="1" name="useWidget" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="QLabel" name="label_3" >
-           <property name="minimumSize" >
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string>Use:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBox" >
-           <item>
-            <property name="text" >
-             <string>both</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>model variable</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>indicator</string>
-            </property>
-           </item>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -136,6 +98,12 @@
              <width>100</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="toolTip" >
+            <string>Where the variable definition derives from. 
+An "expression" uses the Tekoa domain-specific language, 
+"python class" is a path to a variable defined in a python module (e.g. urbansim.gridcell.population), 
+and "primary attribute" refers to a primary attribute of the given dataset. </string>
            </property>
            <property name="text" >
             <string>Source:</string>
@@ -162,6 +130,32 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbIndicatorUse" >
+        <property name="toolTip" >
+         <string>If checked, this variable will be available to compute over simulation runs as an indicator.</string>
+        </property>
+        <property name="text" >
+         <string>Will this variable be used as an indicator?</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbModelUse" >
+        <property name="toolTip" >
+         <string>If checked, this variable will be available to include in model specifications.</string>
+        </property>
+        <property name="text" >
+         <string>Will this variable be used in a model?</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -206,6 +200,9 @@
      <layout class="QHBoxLayout" >
       <item>
        <widget class="QPushButton" name="cboCheckSyntax" >
+        <property name="toolTip" >
+         <string>Verify that the syntax of variable definition parses correctly.</string>
+        </property>
         <property name="text" >
          <string>Check syntax</string>
         </property>
@@ -213,6 +210,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="cboCheckData" >
+        <property name="toolTip" >
+         <string>Verify that the variable can be computed against the baseyear data for this project.</string>
+        </property>
         <property name="text" >
          <string>Check against data</string>
         </property>
@@ -243,6 +243,9 @@
         <property name="enabled" >
          <bool>true</bool>
         </property>
+        <property name="toolTip" >
+         <string>Accept the new variable and return to the Variable Library.</string>
+        </property>
         <property name="text" >
          <string>Accept</string>
         </property>
@@ -250,6 +253,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="cancelWindow" >
+        <property name="toolTip" >
+         <string>Return to the Variable Library without saving.</string>
+        </property>
         <property name="text" >
          <string>Cancel</string>
         </property>

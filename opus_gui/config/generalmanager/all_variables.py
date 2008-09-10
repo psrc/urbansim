@@ -64,11 +64,13 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         if self.initialParams == None:
             return True
         # Else we are looking to see if any of the params have actually changed
-        elif (self.lineEdit.text() != self.initialParams[0]) or \
-                 (self.cbo_dataset_name.currentText() != self.initialParams[1]) or \
-                 (self.comboBox.currentText() != self.initialParams[2]) or \
-                 (self.comboBox_2.currentText() != self.initialParams[3]) or \
-                 (self.textEdit.toPlainText() != self.initialParams[4]):
+        
+        vals = [QString(v) for v in self._get_variable_definition()]
+        if (vals[0] != self.initialParams[0]) or \
+                 (vals[1] != self.initialParams[1]) or \
+                 (vals[2] != self.initialParams[2]) or \
+                 (vals[3] != self.initialParams[3]) or \
+                 (vals[4] != self.initialParams[4]):
             return True
         else:
             return False
@@ -83,12 +85,14 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             if self.initialParams:
                 self.allVariablesGui.tm.removeRow(self.row)
                 dirty = 1
+                
+            (variable_name, dataset_name, use, source, definition) = self._get_variable_definition()
             self.allVariablesGui.tm.insertRow(self.row,["",
-                                                        self.lineEdit.text(),
-                                                        self.cbo_dataset_name.currentText(),
-                                                        self.comboBox.currentText(),
-                                                        self.comboBox_2.currentText(),
-                                                        self.textEdit.toPlainText(),
+                                                        QString(variable_name),
+                                                        QString(dataset_name),
+                                                        QString(use),
+                                                        QString(source),
+                                                        QString(definition),
                                                         0,0,dirty])
             self.allVariablesGui.tm.checkStateOfCheckBoxes(False)
             self.allVariablesGui.tm.emit(SIGNAL("layoutChanged()"))
@@ -118,7 +122,16 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
     def _get_variable_definition(self):
         variable_name = str(self.lineEdit.text())
         dataset_name = str(self.cbo_dataset_name.currentText())
-        use = str(self.comboBox.currentText())
+        if self.cbIndicatorUse.isChecked():
+            if self.cbModelUse.isChecked():
+                use = 'both'
+            else:
+                use = 'indicator'
+        elif self.cbModelUse.isChecked():
+            use = 'model variable'
+        else:
+            QMessageBox.warning(self, 'Variable specification', 'The variable must have a use (Indicator and/or Model variable) specified!')
+            return None
         source = str(self.comboBox_2.currentText())
         definition = str(self.textEdit.toPlainText())
         return (variable_name, dataset_name, use, source, definition)
