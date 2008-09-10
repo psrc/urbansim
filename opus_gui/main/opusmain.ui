@@ -448,7 +448,7 @@
     <iconset resource="opusmain.qrc" >:/Images/Images/book_edit.png</iconset>
    </property>
    <property name="text" >
-    <string>View/Edit Variable Library</string>
+    <string>Variable Library</string>
    </property>
   </action>
   <action name="actionPreferences" >
@@ -464,7 +464,7 @@
     <iconset resource="opusmain.qrc" >:/Images/Images/layout.png</iconset>
    </property>
    <property name="text" >
-    <string>Launch Result Browser</string>
+    <string>Result Browser</string>
    </property>
   </action>
   <action name="actionDatabaseSettings" >

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Wed Sep 10 08:39:36 2008
+# Created: Wed Sep 03 09:55:18 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -362,9 +362,9 @@ class Ui_MainWindow(object):
         self.actionIncreaseFontSize.setText(QtGui.QApplication.translate("MainWindow", "Increase Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDecreaseFontSize.setText(QtGui.QApplication.translate("MainWindow", "Decrease Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose_Project.setText(QtGui.QApplication.translate("MainWindow", "Close Project", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionEdit_all_variables.setText(QtGui.QApplication.translate("MainWindow", "View/Edit Variable Library", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEdit_all_variables.setText(QtGui.QApplication.translate("MainWindow", "Variable Library", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPreferences.setText(QtGui.QApplication.translate("MainWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
-        self.actLaunchResultBrowser.setText(QtGui.QApplication.translate("MainWindow", "Launch Result Browser", None, QtGui.QApplication.UnicodeUTF8))
+        self.actLaunchResultBrowser.setText(QtGui.QApplication.translate("MainWindow", "Result Browser", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDatabaseSettings.setText(QtGui.QApplication.translate("MainWindow", "Database Connection Settings", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusmain_rc
