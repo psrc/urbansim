@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'all_variables_new.ui'
 #
-# Created: Tue Sep  9 22:03:33 2008
-#      by: PyQt4 UI code generator 4.3.3
+# Created: Wed Sep 10 12:37:52 2008
+#      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,101 +12,132 @@ from PyQt4 import QtCore, QtGui
 class Ui_AllVariablesNewGui(object):
     def setupUi(self, AllVariablesNewGui):
         AllVariablesNewGui.setObjectName("AllVariablesNewGui")
-        AllVariablesNewGui.resize(657, 499)
+        AllVariablesNewGui.resize(QtCore.QSize(QtCore.QRect(0,0,657,499).size()).expandedTo(AllVariablesNewGui.minimumSizeHint()))
+
         self.vboxlayout = QtGui.QVBoxLayout(AllVariablesNewGui)
         self.vboxlayout.setObjectName("vboxlayout")
+
         self.variableBox = QtGui.QGroupBox(AllVariablesNewGui)
         self.variableBox.setObjectName("variableBox")
+
         self.vboxlayout1 = QtGui.QVBoxLayout(self.variableBox)
         self.vboxlayout1.setObjectName("vboxlayout1")
+
         self.nameWidget = QtGui.QWidget(self.variableBox)
         self.nameWidget.setObjectName("nameWidget")
+
         self.hboxlayout = QtGui.QHBoxLayout(self.nameWidget)
         self.hboxlayout.setObjectName("hboxlayout")
+
         self.label = QtGui.QLabel(self.nameWidget)
-        self.label.setMinimumSize(QtCore.QSize(100, 0))
-        self.label.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label.setMinimumSize(QtCore.QSize(100,0))
+        self.label.setMaximumSize(QtCore.QSize(100,16777215))
         self.label.setObjectName("label")
         self.hboxlayout.addWidget(self.label)
+
         self.lineEdit = QtGui.QLineEdit(self.nameWidget)
         self.lineEdit.setObjectName("lineEdit")
         self.hboxlayout.addWidget(self.lineEdit)
         self.vboxlayout1.addWidget(self.nameWidget)
+
         self.datasetWidget = QtGui.QWidget(self.variableBox)
         self.datasetWidget.setObjectName("datasetWidget")
+
         self.hboxlayout1 = QtGui.QHBoxLayout(self.datasetWidget)
         self.hboxlayout1.setObjectName("hboxlayout1")
+
         self.label_2 = QtGui.QLabel(self.datasetWidget)
-        self.label_2.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_2.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label_2.setMinimumSize(QtCore.QSize(100,0))
+        self.label_2.setMaximumSize(QtCore.QSize(100,16777215))
         self.label_2.setObjectName("label_2")
         self.hboxlayout1.addWidget(self.label_2)
+
         self.cbo_dataset_name = QtGui.QComboBox(self.datasetWidget)
         self.cbo_dataset_name.setObjectName("cbo_dataset_name")
         self.hboxlayout1.addWidget(self.cbo_dataset_name)
         self.vboxlayout1.addWidget(self.datasetWidget)
+
         self.useWidget = QtGui.QWidget(self.variableBox)
         self.useWidget.setObjectName("useWidget")
+
         self.hboxlayout2 = QtGui.QHBoxLayout(self.useWidget)
         self.hboxlayout2.setObjectName("hboxlayout2")
+
         self.label_3 = QtGui.QLabel(self.useWidget)
-        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_3.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label_3.setMinimumSize(QtCore.QSize(100,0))
+        self.label_3.setMaximumSize(QtCore.QSize(100,16777215))
         self.label_3.setObjectName("label_3")
         self.hboxlayout2.addWidget(self.label_3)
+
         self.comboBox = QtGui.QComboBox(self.useWidget)
         self.comboBox.setObjectName("comboBox")
         self.hboxlayout2.addWidget(self.comboBox)
         self.vboxlayout1.addWidget(self.useWidget)
+
         self.sourceWidget = QtGui.QWidget(self.variableBox)
         self.sourceWidget.setObjectName("sourceWidget")
+
         self.hboxlayout3 = QtGui.QHBoxLayout(self.sourceWidget)
         self.hboxlayout3.setObjectName("hboxlayout3")
+
         self.label_4 = QtGui.QLabel(self.sourceWidget)
-        self.label_4.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_4.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label_4.setMinimumSize(QtCore.QSize(100,0))
+        self.label_4.setMaximumSize(QtCore.QSize(100,16777215))
         self.label_4.setObjectName("label_4")
         self.hboxlayout3.addWidget(self.label_4)
+
         self.comboBox_2 = QtGui.QComboBox(self.sourceWidget)
         self.comboBox_2.setObjectName("comboBox_2")
         self.hboxlayout3.addWidget(self.comboBox_2)
         self.vboxlayout1.addWidget(self.sourceWidget)
+
         self.definitionWidget = QtGui.QWidget(self.variableBox)
         self.definitionWidget.setObjectName("definitionWidget")
+
         self.hboxlayout4 = QtGui.QHBoxLayout(self.definitionWidget)
         self.hboxlayout4.setObjectName("hboxlayout4")
+
         self.label_5 = QtGui.QLabel(self.definitionWidget)
-        self.label_5.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_5.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.label_5.setMinimumSize(QtCore.QSize(100,0))
+        self.label_5.setMaximumSize(QtCore.QSize(100,16777215))
         self.label_5.setObjectName("label_5")
         self.hboxlayout4.addWidget(self.label_5)
+
         self.textEdit = QtGui.QTextEdit(self.definitionWidget)
         self.textEdit.setObjectName("textEdit")
         self.hboxlayout4.addWidget(self.textEdit)
         self.vboxlayout1.addWidget(self.definitionWidget)
         self.vboxlayout.addWidget(self.variableBox)
+
         self.widget = QtGui.QWidget(AllVariablesNewGui)
-        self.widget.setMaximumSize(QtCore.QSize(16777215, 45))
+        self.widget.setMaximumSize(QtCore.QSize(16777215,45))
         self.widget.setObjectName("widget")
+
         self.hboxlayout5 = QtGui.QHBoxLayout(self.widget)
         self.hboxlayout5.setObjectName("hboxlayout5")
+
         self.cboCheckSyntax = QtGui.QPushButton(self.widget)
         self.cboCheckSyntax.setObjectName("cboCheckSyntax")
         self.hboxlayout5.addWidget(self.cboCheckSyntax)
+
         self.cboCheckData = QtGui.QPushButton(self.widget)
         self.cboCheckData.setObjectName("cboCheckData")
         self.hboxlayout5.addWidget(self.cboCheckData)
-        spacerItem = QtGui.QSpacerItem(441, 24, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+
+        spacerItem = QtGui.QSpacerItem(441,24,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
         self.hboxlayout5.addItem(spacerItem)
+
         self.line = QtGui.QFrame(self.widget)
         self.line.setFrameShape(QtGui.QFrame.VLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName("line")
         self.hboxlayout5.addWidget(self.line)
+
         self.saveChanges = QtGui.QPushButton(self.widget)
         self.saveChanges.setEnabled(True)
         self.saveChanges.setObjectName("saveChanges")
         self.hboxlayout5.addWidget(self.saveChanges)
+
         self.cancelWindow = QtGui.QPushButton(self.widget)
         self.cancelWindow.setObjectName("cancelWindow")
         self.hboxlayout5.addWidget(self.cancelWindow)

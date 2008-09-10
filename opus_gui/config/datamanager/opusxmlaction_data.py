@@ -347,6 +347,7 @@ class OpusXMLAction_Data(object):
         tool_title = window.tool_title.replace('_', ' ')
         tool_title2 = str(tool_title).title()
         window.setWindowTitle(tool_title2)
+        window.setModal(True)
         window.show()
         
 
@@ -431,6 +432,7 @@ class OpusXMLAction_Data(object):
                     tool_title = window.tool_title.replace('_', ' ')
                     tool_title2 = str(tool_title).title()
                     window.setWindowTitle(tool_title2)
+                    window.setModal(True)
                     window.show()
 
     def cloneNode(self):
