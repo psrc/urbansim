@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Variable editor</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
     <widget class="QGroupBox" name="variableBox" >
      <property name="title" >
-      <string>New Expression</string>
+      <string>Variable definition</string>
      </property>
      <layout class="QVBoxLayout" >
       <item>
@@ -38,7 +38,7 @@
             </size>
            </property>
            <property name="text" >
-            <string>Name - </string>
+            <string>Name:</string>
            </property>
           </widget>
          </item>
@@ -66,12 +66,12 @@
             </size>
            </property>
            <property name="text" >
-            <string>Dataset - </string>
+            <string>Dataset:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_2" />
+          <widget class="QComboBox" name="cbo_dataset_name" />
          </item>
         </layout>
        </widget>
@@ -94,7 +94,7 @@
             </size>
            </property>
            <property name="text" >
-            <string>Use -</string>
+            <string>Use:</string>
            </property>
           </widget>
          </item>
@@ -138,7 +138,7 @@
             </size>
            </property>
            <property name="text" >
-            <string>Source - </string>
+            <string>Source:</string>
            </property>
           </widget>
          </item>
@@ -146,12 +146,12 @@
           <widget class="QComboBox" name="comboBox_2" >
            <item>
             <property name="text" >
-             <string>primary attribute</string>
+             <string>expression</string>
             </property>
            </item>
            <item>
             <property name="text" >
-             <string>expression</string>
+             <string>primary attribute</string>
             </property>
            </item>
            <item>
@@ -182,7 +182,7 @@
             </size>
            </property>
            <property name="text" >
-            <string>Definition - </string>
+            <string>Definition:</string>
            </property>
           </widget>
          </item>
@@ -205,11 +205,25 @@
      </property>
      <layout class="QHBoxLayout" >
       <item>
+       <widget class="QPushButton" name="cboCheckSyntax" >
+        <property name="text" >
+         <string>Check syntax</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cboCheckData" >
+        <property name="text" >
+         <string>Check against data</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>441</width>
           <height>24</height>

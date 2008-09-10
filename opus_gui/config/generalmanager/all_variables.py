@@ -40,6 +40,8 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             self.comboBox.setCurrentIndex(self.comboBox.findText(self.initialParams[2]))
             self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
             self.textEdit.setPlainText(self.initialParams[4])
+        else:
+            self._setup_co_dataset_name()
 
     def _setup_co_dataset_name(self, value = None):
         from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
