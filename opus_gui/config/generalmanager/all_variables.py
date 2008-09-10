@@ -22,6 +22,7 @@ from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariabl
 from opus_gui.config.generalmanager.all_variables_edit_ui import Ui_AllVariablesEditGui
 from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariablesSelectGui
 from opus_gui.config.generalmanager.all_variables_new_ui import Ui_AllVariablesNewGui
+from opus_gui.config.generalmanager.variable_validator import VariableValidator
 
 import random,pprint,string
 
@@ -32,20 +33,36 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.allVariablesGui = allVariablesGui
         self.initialParams = initialParams
         self.row = row
+        self.mainwindow = mainwindow.mainwindow
         if self.initialParams:
             self.lineEdit.setText(self.initialParams[0])
-            self.lineEdit_2.setText(self.initialParams[1])
+            self._setup_co_dataset_name(value = self.initialParams[1])
             self.comboBox.setCurrentIndex(self.comboBox.findText(self.initialParams[2]))
             self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
             self.textEdit.setPlainText(self.initialParams[4])
+
+    def _setup_co_dataset_name(self, value = None):
+        from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+        xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxStuff)
+
+        available_datasets = xml_helper.get_available_datasets()
+
+        for dataset in available_datasets:
+            self.cbo_dataset_name.addItem(QString(dataset))
         
+        if value is not None:
+            idx = self.cbo_dataset_name.findText(value)
+            if idx != -1:
+                self.dataset_name = value
+                self.cbo_dataset_name.setCurrentIndex(idx)        
+                            
     def editsMade(self):
         # If we dont have seed params, then this is a new variable
         if self.initialParams == None:
             return True
         # Else we are looking to see if any of the params have actually changed
         elif (self.lineEdit.text() != self.initialParams[0]) or \
-                 (self.lineEdit_2.text() != self.initialParams[1]) or \
+                 (self.cbo_dataset_name.currentText() != self.initialParams[1]) or \
                  (self.comboBox.currentText() != self.initialParams[2]) or \
                  (self.comboBox_2.currentText() != self.initialParams[3]) or \
                  (self.textEdit.toPlainText() != self.initialParams[4]):
@@ -65,7 +82,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
                 dirty = 1
             self.allVariablesGui.tm.insertRow(self.row,["",
                                                         self.lineEdit.text(),
-                                                        self.lineEdit_2.text(),
+                                                        self.cbo_dataset_name.currentText(),
                                                         self.comboBox.currentText(),
                                                         self.comboBox_2.currentText(),
                                                         self.textEdit.toPlainText(),
@@ -76,7 +93,34 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
     def on_cancelWindow_released(self):
         self.close()
+                
+    def on_cboCheckSyntax_released(self):
+        success, errors = VariableValidator(parentWidget=self).check_parse_errors(variables = [self._get_variable_definition()])
 
+        if success:
+            QMessageBox.information(self, 'Variable check results', 'Variable syntax check successful!')
+        else:
+            errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self, 'Variable check results', errorString)
+            
+    def on_cboCheckData_released(self):
+        success, errors = VariableValidator(parentWidget=self).check_data_errors(variables = [self._get_variable_definition()])
+        if success:
+            QMessageBox.information(self, 'Variable data check results', 'Variable checked successfully against baseyear data!')
+        else:
+            errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self, 'Variable check results', errorString)
+                
+        
+    def _get_variable_definition(self):
+        variable_name = str(self.lineEdit.text())
+        dataset_name = str(self.cbo_dataset_name.currentText())
+        use = str(self.comboBox.currentText())
+        source = str(self.comboBox_2.currentText())
+        definition = str(self.textEdit.toPlainText())
+        return (variable_name, dataset_name, use, source, definition)
+
+        
 class AllVariablesGui(object):
     def __init__(self, mainwindow, fl, editable):
         #if edit_select:
@@ -94,6 +138,7 @@ class AllVariablesGui(object):
         delegate = OpusAllVariablesDelegate(tv)
         tv.setItemDelegate(delegate)
         tv.setSortingEnabled(True)
+#        tv.setSelectionBehavior(QTableView.SelectRows)
         
         # So we have a data structure to define the headers for the table...
         # The first element is empty string because it is over the check box
@@ -184,6 +229,8 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
         AllVariablesGui.__init__(self, mainwindow, fl, True)
+        
+        self.mainwindow = mainwindow
 
         # For now, disable the save button until we implement the write in the model...
         self.saveChanges.setEnabled(False)
