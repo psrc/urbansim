@@ -18,7 +18,8 @@ from urbansim.functions import attribute_label
 
 class is_building_type_SSS(Variable):
     """ Is this a job of a building type SSS."""
-
+    
+    _return_type='bool8'
     type = "building_type"
 
     def __init__(self, building_type_name):

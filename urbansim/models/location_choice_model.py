@@ -220,11 +220,14 @@ class LocationChoiceModel(ChoiceModel):
         """Return a tuple where the first element is as array of weights and the second is an index of locations which
         the weight array corresponds to. The array of weights can be a 2D array (if weights are agent specific).
         Weights can be determined by a variable name given in 'weights_for_simulation_string' in run_config. 
-        If it is not given, it is assumed that weights are proportional to the capacity. 
+        If it is not given, it is assumed that weights are proportional to the capacity. If it is the equal sign (i.e. '='),
+        all weights are equal.
         """
         weight_string = self.run_config.get("weights_for_simulation_string", None)
         if weight_string is None:
             return (self.capacity, None)
+        if weight_string == '=':
+            return (ones(self.choice_set.size()), None)
         self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
         weight_name = VariableName(weight_string)
         return (self.choice_set.get_attribute(weight_name.get_alias()), None)

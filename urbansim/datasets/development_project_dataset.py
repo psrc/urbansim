@@ -72,7 +72,8 @@ class DevelopmentProjectDataset(Dataset):
         return self.attribute_name
         
     def add_submodel_categories(self):
-        self.compute_variables([self.category_variable_name])
+        if self.category_variable_name is not None:
+            self.compute_variables([self.category_variable_name])
 
 class DevelopmentProjectCreator(object):
     id_name_default = 'project_id'

@@ -16,31 +16,6 @@ from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
 class EmploymentLocationChoiceModelConfigurationCreator(object):
-    agent_set = 'job'
-    sample_size_locations = 30
-    debuglevel = 'debuglevel'
-    sampler = 'opus_core.samplers.weighted_sampler'
-    choices = 'urbansim.lottery_choices'
-    location_set = 'gridcell'
-    portion_to_unplace = 1/12.0
-    records_per_chunk = 50000
-    attribute_to_group_by = 'job_building_type.name'
-    agents_for_estimation_table = 'jobs_for_estimation'
-    filter_for_estimation = None
-    filter = None
-    capacity_string = 'vacant_SSS_job_space'
-    compute_capacity_flag = True
-    estimation_weight_string = 'total_number_of_possible_SSS_jobs'
-    estimation_size_agents = 1.0
-    agent_units_string = None
-    number_of_units_string = 'total_number_of_possible_SSS_jobs'
-    lottery_max_iterations = 3
-    variable_package = "urbansim"
-    maximum_runs = 3
-    input_index = 'erm_index'
-    estimation_procedure = 'opus_core.bhhh_mnl_estimation'
-    coefficients_table = 'employment_location_choice_model_coefficients'
-    specification_table = 'employment_location_choice_model_specification'
     
     _model_name = 'employment_location_choice_model'
     
