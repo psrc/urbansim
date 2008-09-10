@@ -34,6 +34,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.initialParams = initialParams
         self.row = row
         self.mainwindow = mainwindow.mainwindow
+        self.parent = mainwindow
         if self.initialParams:
             self.lineEdit.setText(self.initialParams[0])
             self._setup_co_dataset_name(value = self.initialParams[1])
@@ -429,24 +430,24 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         window.show()
 
     def on_checkSelectedVariables_released(self):
-        saveBeforeCheck = QMessageBox.Yes
-        if self.dirty:
-            saveBeforeCheck = QMessageBox.question(self,"Warning",
-                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
-                                                   QMessageBox.No,QMessageBox.Yes)
-        if saveBeforeCheck == QMessageBox.Yes:
-            self.on_saveChanges_released()
-            self.tm.checkSelectedVariables()
+#        saveBeforeCheck = QMessageBox.Yes
+#        if self.dirty:
+#            saveBeforeCheck = QMessageBox.question(self,"Warning",
+#                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
+#                                                   QMessageBox.No,QMessageBox.Yes)
+#        if saveBeforeCheck == QMessageBox.Yes:
+#            self.on_saveChanges_released()
+        self.tm.checkSelectedVariables()
 
     def on_checkAllVariables_released(self):
-        saveBeforeCheck = QMessageBox.Yes
-        if self.dirty:
-            saveBeforeCheck = QMessageBox.question(self,"Warning",
-                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
-                                                   QMessageBox.No,QMessageBox.Yes)
-        if saveBeforeCheck == QMessageBox.Yes:
-            self.on_saveChanges_released()
-            self.tm.checkAllVariables()
+#        saveBeforeCheck = QMessageBox.Yes
+#        if self.dirty:
+#            saveBeforeCheck = QMessageBox.question(self,"Warning",
+#                                                   "Current expressions contain changes... \nShould we accept these changes before checking variables?",
+#                                                   QMessageBox.No,QMessageBox.Yes)
+#        if saveBeforeCheck == QMessageBox.Yes:
+#            self.on_saveChanges_released()
+        self.tm.checkAllVariables()
         
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):

@@ -71,23 +71,28 @@ class IndicatorFrameworkInterface:
         
         return source_data
         
-    def get_indicator(self, indicator_name, dataset_name):
+    def get_indicator(self, indicator_name, dataset_name, indicator_definition = None):
 
-        indicators = self.xml_helper.get_available_indicator_names(
-                   attributes = ['dataset', 'source'],
-                   return_all = True)
-        expression = None
-        for indicator in indicators:
-            if dataset_name != indicator['dataset'] or \
-                indicator['name'] != indicator_name:
-                continue
-            expression = indicator['value']
+        if indicator_definition is None:
+            indicators = self.xml_helper.get_available_indicator_names(
+                       attributes = ['dataset', 'source'],
+                       return_all = True)
+            expression = None
+            for indicator in indicators:
+                if dataset_name != indicator['dataset'] or \
+                    indicator['name'] != indicator_name:
+                    continue
+                expression = indicator['value']
+            
+            if expression is None:
+                raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
         
-        if expression is None:
-            raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
-        
-        attribute = str(expression)
-        if attribute.find('=') == -1 and indicator['source'] == 'expression':
+            attribute = str(expression)
+            source = indicator['source']
+        else:
+            attribute, source = indicator_definition
+            
+        if attribute.find('=') == -1 and source == 'expression':
             attribute = str(indicator_name) + '='+ attribute
         
         new_indicator = Indicator(name = indicator_name,

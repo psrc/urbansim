@@ -84,14 +84,14 @@ class VariableValidator(object):
         for (var_name, dataset_name, use, source, expr) in variables:
             if var_name=='constant':
                 continue
-            successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name)
+            successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name, expression = expr, source = source)
             if not successful:
                 errors.append("Expression %s could not be run on <br>dataset %s on the baseyear data.<br>Details:<br>%s"%(
                                 var_name, dataset_name, str(error) ))
                     
         return len(errors) == 0, errors
         
-    def _test_generate_results(self, indicator_name, dataset_name):
+    def _test_generate_results(self, indicator_name, dataset_name, expression, source):
         
         interface = IndicatorFrameworkInterface(self.parentWidget.mainwindow.toolboxStuff)
         node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data', 
@@ -104,7 +104,8 @@ class VariableValidator(object):
                source_data_name = 'base_year_data',
                indicator_name = indicator_name,
                dataset_name = dataset_name,
-               years = years)
+               years = years,
+               indicator_definition = (expression, source))
         
         try:
             result_generator.run(raise_exception = True)

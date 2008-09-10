@@ -37,12 +37,14 @@ class OpusResultGenerator(object):
                  indicator_name,
                  dataset_name,
                  years,
-                 cache_directory = None):
+                 cache_directory = None,
+                 indicator_definition = None):
         self.source_data_name = source_data_name
         self.indicator_name = indicator_name
         self.dataset_name = dataset_name
         self.years = years
         self.cache_directory = cache_directory
+        self.indicator_definition = indicator_definition
         
     def run(self, args = {}, raise_exception = False):
         
@@ -77,7 +79,8 @@ class OpusResultGenerator(object):
 
         indicator = self.interface.get_indicator(
                                  indicator_name = self.indicator_name,
-                                 dataset_name = self.dataset_name)
+                                 dataset_name = self.dataset_name,
+                                 indicator_definition = self.indicator_definition)
         
         maker = Maker(project_name = os.environ['OPUSPROJECTNAME'])
 
