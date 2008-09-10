@@ -282,7 +282,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
         self.all_variables.setModal(True)
-        self.all_variables.setWindowTitle('Expression Library')
+        self.all_variables.setWindowTitle('Variable Library')
         self.all_variables.show()
             
     def closeCurrentTab(self):

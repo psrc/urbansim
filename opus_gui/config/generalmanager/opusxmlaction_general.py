@@ -37,7 +37,7 @@ class OpusXMLAction_General(object):
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
         self.actEditAllVariables = QAction(self.editExpressionLibIcon,
-                                           "Edit Expression Library",
+                                           "Edit Variable Library",
                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actEditAllVariables,
                         SIGNAL("triggered()"),

@@ -448,7 +448,7 @@
     <iconset resource="opusmain.qrc" >:/Images/Images/book_edit.png</iconset>
    </property>
    <property name="text" >
-    <string>View/Edit Expression Library</string>
+    <string>View/Edit Variable Library</string>
    </property>
   </action>
   <action name="actionPreferences" >

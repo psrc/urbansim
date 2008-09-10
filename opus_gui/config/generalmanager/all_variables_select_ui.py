@@ -55,7 +55,7 @@ class Ui_AllVariablesSelectGui(object):
 
     def retranslateUi(self, AllVariablesSelectGui):
         AllVariablesSelectGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "Expression Library", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesSelectGui", "Variable Library", None, QtGui.QApplication.UnicodeUTF8))
         self.saveSelections.setText(QtGui.QApplication.translate("AllVariablesSelectGui", "Accept Selections", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelWindow.setText(QtGui.QApplication.translate("AllVariablesSelectGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

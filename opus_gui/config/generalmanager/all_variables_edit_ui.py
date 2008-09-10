@@ -69,7 +69,7 @@ class Ui_AllVariablesEditGui(object):
 
     def retranslateUi(self, AllVariablesEditGui):
         AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Expression Library", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Variable Library", None, QtGui.QApplication.UnicodeUTF8))
         self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check All Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.checkSelectedVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Check Selected Variables", None, QtGui.QApplication.UnicodeUTF8))
