@@ -1670,8 +1670,7 @@ class AbstractDataset(object):
         """
         short_name = variable_name.get_alias()
         if short_name in self.get_primary_attribute_names():
-            return self.is_version(short_name, version)
-
+            return True
         dataset_name = variable_name.get_dataset_name()
 
         if dataset_name != self.get_dataset_name():
@@ -1681,8 +1680,8 @@ class AbstractDataset(object):
             return False
         variable = attribute_box.get_variable_instance()
         if variable is None:
-            return self.is_version(short_name, version) # if a computed attribute doesn't have a variable instance, it was created 
-                                                        # some other way, e.g. by add_attribute or by join, and doesn't have dependent variables.
+            return True # if a computed attribute doesn't have a variable instance, it was created 
+                        # some other way, e.g. by add_attribute or by join, and doesn't have dependent variables.
         res = variable.are_dependent_variables_up_to_date(version)
         return not(False in res)
 
