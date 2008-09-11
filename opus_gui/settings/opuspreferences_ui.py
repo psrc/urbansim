@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opuspreferences.ui'
 #
-# Created: Thu Jul 24 14:32:59 2008
+# Created: Wed Sep 10 18:19:09 2008
 #      by: PyQt4 UI code generator 4.4.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
-        PreferencesDialog.resize(475,278)
+        PreferencesDialog.resize(422,292)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed,QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,10 +63,27 @@ class Ui_PreferencesDialog(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label,2,0,1,1)
         self.generalTextFontSizeSpinBox = QtGui.QSpinBox(self.fontGroupBox)
+        self.generalTextFontSizeSpinBox.setMaximumSize(QtCore.QSize(42,16777215))
         self.generalTextFontSizeSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.generalTextFontSizeSpinBox.setObjectName("generalTextFontSizeSpinBox")
         self.gridLayout.addWidget(self.generalTextFontSizeSpinBox,2,1,1,1)
         self.verticalLayout.addWidget(self.fontGroupBox)
+        self.prevProjPrefGroupBox = QtGui.QGroupBox(PreferencesDialog)
+        self.prevProjPrefGroupBox.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.prevProjPrefGroupBox.setFlat(False)
+        self.prevProjPrefGroupBox.setCheckable(False)
+        self.prevProjPrefGroupBox.setObjectName("prevProjPrefGroupBox")
+        self.gridLayout_3 = QtGui.QGridLayout(self.prevProjPrefGroupBox)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.prevProjPrefRadioButton = QtGui.QRadioButton(self.prevProjPrefGroupBox)
+        self.prevProjPrefRadioButton.setMaximumSize(QtCore.QSize(42,16777215))
+        self.prevProjPrefRadioButton.setObjectName("prevProjPrefRadioButton")
+        self.gridLayout_3.addWidget(self.prevProjPrefRadioButton,0,1,1,1)
+        self.prevProjPrefLabel = QtGui.QLabel(self.prevProjPrefGroupBox)
+        self.prevProjPrefLabel.setMaximumSize(QtCore.QSize(200,16777215))
+        self.prevProjPrefLabel.setObjectName("prevProjPrefLabel")
+        self.gridLayout_3.addWidget(self.prevProjPrefLabel,0,0,1,1)
+        self.verticalLayout.addWidget(self.prevProjPrefGroupBox)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
@@ -93,6 +110,8 @@ class Ui_PreferencesDialog(object):
         self.menuFontSizeLabel.setText(QtGui.QApplication.translate("PreferencesDialog", "Menu Bar Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.mainTabsFontSizeLabel.setText(QtGui.QApplication.translate("PreferencesDialog", "Main Tab Font Size", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("PreferencesDialog", "General Text Font Size", None, QtGui.QApplication.UnicodeUTF8))
+        self.prevProjPrefGroupBox.setTitle(QtGui.QApplication.translate("PreferencesDialog", "Previous Project Preferences", None, QtGui.QApplication.UnicodeUTF8))
+        self.prevProjPrefLabel.setText(QtGui.QApplication.translate("PreferencesDialog", "Open previous project on startup", None, QtGui.QApplication.UnicodeUTF8))
         self.applyButton.setText(QtGui.QApplication.translate("PreferencesDialog", "Apply", None, QtGui.QApplication.UnicodeUTF8))
         self.okButton.setText(QtGui.QApplication.translate("PreferencesDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("PreferencesDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

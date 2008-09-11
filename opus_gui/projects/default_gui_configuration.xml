@@ -11,6 +11,7 @@
     	<general_text_font_size>11</general_text_font_size>
   	</font_settings>
   	<project_history>
+  		<open_latest_project_on_start>False</open_latest_project_on_start>
   		<previous_project> </previous_project>
   	</project_history>
 </gui_configuration>

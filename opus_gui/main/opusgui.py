@@ -110,12 +110,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             prev_proj_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
             self.latest_project_file_name = QString(get_child_values(parent = prev_proj_node,
                                               child_names = ['previous_project'])['previous_project'])
+            self.open_latest_project = "True" == str(get_child_values(parent = prev_proj_node,
+                                              child_names = ['open_latest_project_on_start'])['open_latest_project_on_start'])
         except:
             self.latest_project_file_name = ' '
+            self.open_latest_project = False
             self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
             self.updateFontSettingsNode()
             self.saveGuiConfig()
-            
             
         self.splitter.setSizes([400,500])
 
@@ -251,7 +253,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.changeFontSize()
         self.setFocus()
         
-        if os.path.exists(self.latest_project_file_name):
+        if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
         
         
@@ -689,6 +691,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def setGeneralTextFontSize(self, pointSize):
         self.general_text_font_size = pointSize
+    
+    def getOpenLatestProject(self):
+        return self.open_latest_project
+
+    def setOpenLatestProject(self, open_latest_project):
+        self.open_latest_project = open_latest_project
+        
 
     def updateFontSettingsNode(self):
         #get the font settings node from xml
@@ -717,7 +726,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def updateProjectHistoryNode(self):
         #get the project history node from xml
         proj_hist_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
-        nodesToSave = {"previous_project":str(self.latest_project_file_name)}
+        nodesToSave = {"previous_project":str(self.latest_project_file_name),
+                       "open_latest_project_on_start":str(self.open_latest_project)}
         #go through the children of the project history node and set the value accordingly
         node = proj_hist_node.firstChild()
         while not node.isNull():

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>475</width>
-    <height>278</height>
+    <width>422</width>
+    <height>292</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -113,12 +113,67 @@
       </item>
       <item row="2" column="1" >
        <widget class="QSpinBox" name="generalTextFontSizeSpinBox" >
+        <property name="maximumSize" >
+         <size>
+          <width>42</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="prevProjPrefGroupBox" >
+     <property name="title" >
+      <string>Previous Project Preferences</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="flat" >
+      <bool>false</bool>
+     </property>
+     <property name="checkable" >
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3" >
+      <item row="0" column="1" >
+       <widget class="QRadioButton" name="prevProjPrefRadioButton" >
+        <property name="maximumSize" >
+         <size>
+          <width>42</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="prevProjPrefLabel" >
+        <property name="maximumSize" >
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>Open previous project on startup</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>checkBox</zorder>
+     <zorder>gridLayoutWidget</zorder>
+     <zorder>prevProjPrefRadioButton</zorder>
+     <zorder>prevProjPrefLabel</zorder>
+     <zorder>fontGroupBox</zorder>
     </widget>
    </item>
    <item>

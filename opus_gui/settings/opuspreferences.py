@@ -24,6 +24,7 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.setupUi(self)
         self.mainwindow = mainwindow
         self._initSpinBoxes()
+        self._initRadioButtions()
         
         #hook up the buttons
         QObject.connect(self.okButton, SIGNAL("released()"), self.okay)
@@ -40,14 +41,19 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.mainTabsFontSizeSpinBox.setValue(self.mainwindow.getMainTabsFontSize())
         self.generalTextFontSizeSpinBox.setValue(self.mainwindow.getGeneralTextFontSize())
 
+    def _initRadioButtions(self):
+        self.prevProjPrefRadioButton.setChecked(self.mainwindow.getOpenLatestProject())
+    
     
     def apply(self):
         #apply font change
         self.mainwindow.setMenuFontSize(self.menuFontSizeSpinBox.value())
         self.mainwindow.setMainTabsFontSize(self.mainTabsFontSizeSpinBox.value())
         self.mainwindow.setGeneralTextFontSize(self.generalTextFontSizeSpinBox.value())
+        self.mainwindow.setOpenLatestProject(self.prevProjPrefRadioButton.isChecked())
         self.mainwindow.changeFontSize()
         self.mainwindow.updateFontSettingsNode()
+        self.mainwindow.updateProjectHistoryNode()
         self.mainwindow.saveGuiConfig()
 
 
