@@ -132,6 +132,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 estimation_weight_string = "vacant_SSS_job_space",
                                 #agents_for_estimation_table = None, # will take standard jobs table 
                                 agents_for_estimation_table = "jobs_for_estimation",
+                                join_datasets = False,
                                 #estimation_size_agents = 0.3,
                                 number_of_units_string = "total_SSS_job_space",
                                 filter = "building.non_residential_sqft",

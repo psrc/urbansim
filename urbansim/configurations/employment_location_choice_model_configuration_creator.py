@@ -30,6 +30,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(object):
                 records_per_chunk = 50000,
                 attribute_to_group_by = 'job_building_type.name',
                 agents_for_estimation_table = 'jobs_for_estimation',
+                join_datasets = False,
                 filter_for_estimation = None,
                 filter = None,
                 capacity_string = 'vacant_SSS_job_space',
@@ -56,6 +57,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(object):
         self.records_per_chunk = records_per_chunk
         self.attribute_to_group_by = attribute_to_group_by
         self.agents_for_estimation_table = agents_for_estimation_table
+        self.join_datasets = join_datasets
         self.filter_for_estimation = filter_for_estimation
         self.filter = filter
         self.capacity_string = capacity_string
@@ -129,6 +131,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(object):
                     'agent_set': self.agent_set,
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': get_string_or_None(self.agents_for_estimation_table),
+                    'join_datasets':self.join_datasets,
                     'data_objects': 'datasets',
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
@@ -217,6 +220,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'agent_set': 'job',
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': "'jobs_for_estimation'",
+                    'join_datasets': False,
                     'data_objects': 'datasets',
                     'portion_to_unplace': 1/12.,
                     'specification_storage': 'base_cache_storage',
@@ -314,6 +318,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'agent_set': 'agent_set',
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': "'agents_for_estimation_table'",
+                    'join_datasets': False,
                     'data_objects': 'datasets',
                     'portion_to_unplace': 7777.7,
                     'specification_storage': 'base_cache_storage',
