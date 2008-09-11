@@ -38,7 +38,16 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         if self.initialParams:
             self.lineEdit.setText(self.initialParams[0])
             self._setup_co_dataset_name(value = self.initialParams[1])
-            self.comboBox.setCurrentIndex(self.comboBox.findText(self.initialParams[2]))
+            if str(self.initialParams[2]) == "both":
+                self.cbIndicatorUse.setChecked(True) 
+                self.cbModelUse.setChecked(True)
+            elif str(self.initialParams[2]) == 'indicator':
+                self.cbIndicatorUse.setChecked(True)
+                self.cbModelUse.setChecked(False)
+            else:
+                self.cbModelUse.setChecked(True)
+                self.cbIndicatorUse.setChecked(False)
+                
             self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
             self.textEdit.setPlainText(self.initialParams[4])
         else:

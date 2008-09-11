@@ -398,7 +398,7 @@ class XMLConfiguration(object):
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
-        elif type_name=='dictionary' or type_name=='category' or type_name=='submodel':
+        elif type_name=='dictionary' or type_name=='category' or type_name=='submodel' or type_name=='model_estimation':
             return self._convert_dictionary_to_data(node)
         elif type_name=='category_with_special_keys':
             return self._convert_dictionary_with_special_keys_to_data(node)
@@ -438,14 +438,17 @@ class XMLConfiguration(object):
         return inst
     
     def _convert_string_to_data(self, node, func):
+        blank_to_None = node.get('parser_action', '')=='blank_to_None'
         if node.text is None:
-            if node.get('parser_action', '')=='blank_to_None':
+            if blank_to_None:
                 return None
             elif func==str:
                 return ''
             else:
                 raise ValueError, "found empty string in xml node but no parser action to convert it to None"
         else:
+            if blank_to_None and node.text == 'None':
+                return None
             return func(node.text)
         
     def _convert_list_to_data(self, node):

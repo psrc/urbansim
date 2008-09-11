@@ -19,9 +19,6 @@ from PyQt4.QtXml import *
 
 from opus_gui.run.model.opusrunmodel import *
 from opus_gui.run.estimation.opusrunestimation import *
-from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
-from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
-from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
@@ -770,7 +767,7 @@ class EstimationGuiElement(QWidget):
         self.estimation = estimation
         self.estimation.guiElement = self
         self.inGui = False
-        self.logFileKey = 0
+        
         self.running = False
         self.paused = False
         self.timer = None
@@ -784,7 +781,7 @@ class EstimationGuiElement(QWidget):
         self.toolboxStuff = self.mainwindow.toolboxStuff
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = fileNameInfo.fileName()
+        self.tabLabel = QString('%s estimation'%estimation.model_name)
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
         self.widgetLayout = QVBoxLayout(self)
@@ -793,8 +790,9 @@ class EstimationGuiElement(QWidget):
         self.widgetLayout.addWidget(self.groupBox)
 
         stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
+        stringToUse = ''
         self.groupBox.setTitle(QString(stringToUse))
-
+        self.groupBox.setFlat(True)
         self.vboxlayout = QVBoxLayout(self.groupBox)
         self.vboxlayout.setObjectName("vboxlayout")
 
@@ -835,12 +833,12 @@ class EstimationGuiElement(QWidget):
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
         self.startVBoxLayout.addWidget(self.pbnStartModel)
-        self.pbnRemoveModel = QPushButton(self.startWidget)
-        self.pbnRemoveModel.setObjectName("pbnRemoveModel")
-        self.pbnRemoveModel.setText(QString("Cancel/Remove From Queue"))
-        QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
-                        self.on_pbnRemoveModel_released)        
-        self.startVBoxLayout.addWidget(self.pbnRemoveModel)
+#        self.pbnRemoveModel = QPushButton(self.startWidget)
+#        self.pbnRemoveModel.setObjectName("pbnRemoveModel")
+#        self.pbnRemoveModel.setText(QString("Stop estimating"))
+#        QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
+#                        self.on_pbnRemoveModel_released)        
+#        self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.vboxlayout2.addWidget(self.startWidget)
 
         # Add a tab widget and layer in a tree view and log panel
@@ -850,7 +848,7 @@ class EstimationGuiElement(QWidget):
         self.logText = QTextEdit(self.groupBox)
         self.logText.setReadOnly(True)
         self.logText.setLineWidth(0)
-        self.tabWidget.addTab(self.logText,"Log")
+        self.tabWidget.addTab(self.logText,"Estimation result log")
 
         # Finally add the tab to the model page
         self.vboxlayout.addWidget(self.tabWidget)
@@ -866,6 +864,7 @@ class EstimationGuiElement(QWidget):
         self.runManager.updateEstimationElements()
 
     def on_pbnStartModel_released(self):
+        
         if self.running == True and self.paused == False:
             # Take care of pausing a run
             self.paused = True
@@ -879,6 +878,7 @@ class EstimationGuiElement(QWidget):
             self.runThread.resume()
             self.pbnStartModel.setText(QString("Pause Estimation..."))
         elif self.running == False:
+            self.logFileKey = 0
             # Update the XML
             self.toolboxStuff.updateOpusXMLTree()
             # Fire up a new thread and run the estimation
@@ -916,7 +916,10 @@ class EstimationGuiElement(QWidget):
     def runFinishedFromThread(self,success):
         print "Estimation Finished with sucess = ", success
         self.progressBar.setValue(100)
-        self.statusLabel.setText(QString("Estimation finished with status = %s" % (success)))
+        if success:
+            self.statusLabel.setText(QString("Estimation finished successfully"))
+        else:
+            self.statusLabel.setText(QString("Estimation failed"))
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)

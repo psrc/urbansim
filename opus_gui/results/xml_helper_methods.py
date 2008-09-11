@@ -99,6 +99,17 @@ class ResultsManagerXMLHelper:
             if return_all or var['use'] != 'model variable':# and var['source'] == 'expression':
                 indicators.append(var)
         return indicators      
+
+    def get_available_model_variables(self, attributes = [],child_attributes = [], return_all = False):
+        variables = self._get_node_group(node_value = 'variable_definition', 
+                                    node_attribute = 'type', 
+                                    child_attributes = child_attributes,
+                                    attributes = attributes + ['use', 'source'])   
+        indicators = []
+        for var in variables:
+            if return_all or var['use'] != 'indicator':# and var['source'] == 'expression':
+                indicators.append(var)
+        return indicators      
     
     def get_available_run_info(self, attributes = [], update = True):
         if update:

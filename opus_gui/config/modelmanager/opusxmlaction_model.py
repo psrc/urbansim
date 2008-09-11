@@ -23,6 +23,7 @@ from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 from opus_gui.config.generalmanager.all_variables import AllVariablesSelectGui
+from opus_gui.config.modelmanager.create_model_from_template import CreateModelFromTemplateDialog
 
 class OpusXMLAction_Model(object):
     def __init__(self, opusXMLAction):
@@ -67,6 +68,13 @@ class OpusXMLAction_Model(object):
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
+        self.actCreateModelFromTemplate = QAction(self.cloneIcon,
+                                    "Create model from template",
+                                    self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actCreateModelFromTemplate,
+                        SIGNAL("triggered()"),
+                        self.createModelFromTemplate)
+        
         self.actSelectVariables = QAction(self.applicationIcon,
                                           "Select Variables",
                                           self.xmlTreeObject.mainwindow)
@@ -97,9 +105,12 @@ class OpusXMLAction_Model(object):
             return False
 
     def runEstimationAction(self):
+        thisNode = self.currentIndex.internalPointer().node()
+        model_name = str(thisNode.toElement().tagName())
         self.xmlTreeObject.toolboxbase.updateOpusXMLTree()
         newEstimation = OpusEstimation(self.xmlTreeObject,
-                                       self.xmlTreeObject.toolboxbase.xml_file)
+                                       self.xmlTreeObject.toolboxbase.xml_file,
+                                       model_name = model_name)
         self.xmlTreeObject.mainwindow.runManagerStuff.addNewEstimationRun(newEstimation)
 
     def removeNode(self):
@@ -118,6 +129,16 @@ class OpusXMLAction_Model(object):
         window.setModal(True)
         window.show()
 
+    def createModelFromTemplate(self):
+        #print "cloneNode Pressed"
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        parentIndex = self.currentIndex.model().parent(self.currentIndex)
+        model = self.currentIndex.model()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CreateModelFromTemplateDialog(self,flags,clone,parentIndex,model)
+        window.setModal(True)
+        window.show()        
+        
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
         self.currentIndex.model().makeEditable(thisNode)
@@ -145,8 +166,13 @@ class OpusXMLAction_Model(object):
                     return
 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
-                if domElement.tagName() == QString("models_to_estimate"):
+#                if domElement.tagName() == QString("models_to_estimate"):
+#                    self.menu.addAction(self.actRunEstimation)
+                if domElement.attribute(QString("type")) == QString("model_estimation"):
                     self.menu.addAction(self.actRunEstimation)
+                
+                if domElement.tagName() == QString('regression_model_template'):
+                    self.menu.addAction(self.actCreateModelFromTemplate)
 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
@@ -168,6 +194,7 @@ class OpusXMLAction_Model(object):
                                domElement.hasAttribute(QString("type")) and \
                                ((domElement.attribute(QString("type")) == QString("dictionary")) or \
                                 (domElement.attribute(QString("type")) == QString("selectable_list")) or \
+                                (domElement.attribute(QString("type")) == QString("model_estimation")) or \
                                 (domElement.attribute(QString("type")) == QString("list"))):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
