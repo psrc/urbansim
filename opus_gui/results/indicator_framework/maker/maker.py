@@ -30,15 +30,17 @@ from opus_core.logger import logger
 from time import strftime,localtime
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.storage import Storage
+from opus_core.variables.variable_factory import VariableFactory
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.results_manager import ResultsManager
 
 class Maker(object):
-    def __init__(self, project_name, test = False):
+    def __init__(self, project_name, test = False, expression_library = None):
         self.computed_indicators = {}
         self.test = test
         self.project_name = project_name
+        self.expression_library = expression_library
         
     def create(self, indicator, source_data):
         computed_indicators = self.create_batch(
@@ -161,7 +163,8 @@ class Maker(object):
                                              for name,ind in indicators_in_dataset
                                              if computed_indicators[name].get_computed_dataset_column_name() 
                                                  not in already_computed_attributes]
-        
+        if self.expression_library is not None:
+            VariableFactory().set_expression_library(self.expression_library)
         dataset.compute_variables(names = attributes)
         
         cols = copy(dataset.get_id_name())
