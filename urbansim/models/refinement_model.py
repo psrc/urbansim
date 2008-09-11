@@ -49,7 +49,7 @@ class RefinementModel(Model):
             action_order=['subtract', 'add', 'target', 'set_value'],
             dataset_pool=None):
         
-        """'refinement_dataset' is a RefineDataset object.  see unittest for its columns
+        """'refinement_dataset' is a RefinementDataset object.  see unittest for its columns
         """
         
         if refinement_dataset is None:
@@ -61,7 +61,7 @@ class RefinementModel(Model):
         #refinements_this_year = copy.deepcopy(refinement_dataset)
         refinements_this_year = refinement_dataset
         this_year_index = where(refinement_dataset.get_attribute('year')==current_year)[0]
-        refinements_this_year.subset_by_index(this_year_index)
+        refinements_this_year.subset_by_index(this_year_index, flush_attributes_if_not_loaded=False)
         
         transactions = refinements_this_year.get_attribute('transaction_id')
         actions = refinements_this_year.get_attribute('action')
@@ -327,9 +327,6 @@ class RefinementModel(Model):
                                        )
         return refinement
     
-class RefinementTransaction(dict):
-    pass
-
             
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
