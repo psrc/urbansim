@@ -24,7 +24,7 @@ from shutil import copytree
 import os
 
 class RefinementOptionGroup:
-    def __init__(self, usage="python %prog <-c /cache/directory> <-s start_year | --refinements-directory > [-e end_year] [--backup-before-refinement]", description=""):
+    def __init__(self, usage="python %prog <-c /cache/directory> <-s start_year | --refinements-directory > [-e end_year] [--package-order='urbansim,opus_core'] [--backup-before-refinement] [--help]", description=""):
             
         self.parser = OptionParser(usage=usage, description=description)
         self.parser.add_option("-c", "--cache-directory", dest="cache_directory", default = None,
@@ -38,7 +38,7 @@ class RefinementOptionGroup:
         self.parser.add_option("--backup-before-refinement", dest="backup", default=False, action="store_true", 
                                help="Whether backup year cache before doing refinement; not backup by default")
         self.parser.add_option("--package-order", dest="package_order", default="urbansim,opus_core", action="store", type="string",
-                               help="The package order for SessionConfiguration, need to be specified if there are datasets in refinements that are defined in packages other than urbansim and opus_core")
+                               help="The package order for SessionConfiguration, needs to be specified if there are datasets in refinements that are defined in packages other than 'urbansim, opus_core'")
         
         
         
@@ -49,9 +49,11 @@ if __name__ == '__main__':
     parser = option_group.parser
     (options, args) = parser.parse_args()
     if options.cache_directory is None:
+        parser.print_usage()
         raise StandardError, "cache directory argument is required (-c or --cache-directory)"
 
     if (options.start_year is None) and (options.refinements_directory is None):
+        parser.print_usage()
         raise StandardError, "Either start year (argument -s or --start-year) or refinements directory (argument --refinements-directory) must be given."
 
     
