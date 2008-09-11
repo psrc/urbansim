@@ -85,6 +85,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'agent_set': 'job',
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': "'jobs_for_estimation'",
+                    'join_datasets': False,
                     'data_objects': 'datasets',
                     'portion_to_unplace': 1/12.,
                     'specification_storage': 'base_cache_storage',
