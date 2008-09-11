@@ -28,6 +28,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
 
         QDialog.__init__(self, resultManagerBase.mainwindow, flags)
+        self.setModal(True)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase
         self.model = resultManagerBase.toolboxStuff.resultsManagerTree.model
