@@ -7,6 +7,36 @@
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>
       <data_conversion_tools type="tool_group" setexpanded="True">
+    <csv_to_sql_tool type="tool_file">
+      <name type="tool_name">csv_to_sql</name>
+      <params type="param_template">
+        <database_server_connection>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type type="db_connection_hook">db_connection_hook</type>
+          <default></default>
+        </database_server_connection>
+        <database_name>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type choices="string" type="string">string</type>
+          <default type="string"></default>
+        </database_name>
+        <csv_file_path>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type choices="file_path" type="string">file_path</type>
+          <default type="file_path"></default>
+        </csv_file_path>
+        <output_table_name>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type choices="string" type="string">string</type>
+          <default type="string"></default>
+        </output_table_name>
+        <overwrite>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type choices="string" type="string">string</type>
+          <default type="string">False</default>
+        </overwrite>
+      </params>
+    </csv_to_sql_tool>  
 	<sql_data_to_opus_tool type="tool_file" >
           <name type="tool_name" >sql_data_to_opus</name>
           <params type="param_template" >
