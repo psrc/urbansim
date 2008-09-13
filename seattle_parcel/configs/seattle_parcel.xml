@@ -1,36 +1,30 @@
 <opus_project>
   <general>
     <description type="string">Sample Seattle project</description>
-    <project_name type="string" flags="hidden">seattle_parcel</project_name>    
+    <project_name flags="hidden" type="string">seattle_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <advanced type="category">
-    <dataset_pool_configuration type="class">
-      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-      <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
-      <package_order_exceptions type="dictionary" />
-    </dataset_pool_configuration>
+      <dataset_pool_configuration type="class">
+        <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
+        <package_order_exceptions type="dictionary" />
+      </dataset_pool_configuration>
     </advanced>
-    <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets> 
+    <available_datasets type="list">['building','parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
     <estimation type="dictionary">
-      <models_to_estimate followers="model_template,choice_model_with_equations_template" type="selectable_list" setexpanded="True" >
+      <models_to_estimate followers="model_template,choice_model_with_equations_template" setexpanded="True" type="selectable_list">
         <real_estate_price_model choices="Estimate|Skip" type="model">Estimate</real_estate_price_model>
         <household_location_choice_model choices="Estimate|Skip" type="model">Skip</household_location_choice_model>
         <employment_location_choice_model choices="Estimate|Skip" type="model">Skip<group_members type="string">home_based</group_members>
         </employment_location_choice_model>
         <employment_location_choice_model choices="Estimate|Skip" type="model">Estimate<group_members type="string">non_home_based</group_members>
         </employment_location_choice_model>
-<!--
-        <home_based_employment_location_choice_model choices="Estimate|Skip" type="model">Skip</home_based_employment_location_choice_model>
-        <non_home_based_employment_location_choice_model choices="Estimate|Skip" type="model">Skip</non_home_based_employment_location_choice_model>
--->
       </models_to_estimate>
-	    
-	  <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
-		
-      <real_estate_price_model type="dictionary">
+      <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+      <real_estate_price_model type="model_estimation">
         <agriculture type="submodel">
           <submodel_id type="integer">1</submodel_id>
           <variables type="variable_list">constant, inugb, lnemp20da, lnsqft</variables>
@@ -130,14 +124,14 @@
           <endyear type="integer">2000</endyear>
         </years>
       </estimation_config>
-      <household_location_choice_model copyable="True" type="dictionary">
+      <household_location_choice_model copyable="True" type="model_estimation">
         <submodel copyable="True" type="submodel">
           <description type="string">No submodel</description>
           <submodel_id type="integer">-2</submodel_id>
           <variables type="variable_list">ln_residential_units</variables>
         </submodel>
       </household_location_choice_model>
-      <employment_location_choice_model copyable="True" type="dictionary">
+      <employment_location_choice_model copyable="True" type="model_estimation">
         <home_based type="dictionary">
           <submodel copyable="True" type="submodel">
             <description type="string">No submodel</description>
@@ -153,8 +147,8 @@
           </submodel>
         </non_home_based>
       </employment_location_choice_model>
-    <model_parameters type="dictionary">
-      <real_estate_price_model type="dictionary">
+      <model_parameters type="dictionary">
+        <real_estate_price_model type="dictionary">
           <abbreviation type="string">REPM</abbreviation>
           <full_name type="string">real_estate_price_model</full_name>
         </real_estate_price_model>
@@ -162,25 +156,11 @@
           <abbreviation type="string">HLCM</abbreviation>
           <full_name type="string">household_location_choice_model</full_name>
         </household_location_choice_model>
-<!--
-        <home_based_employment_location_choice_model type="dictionary">
-          <abbreviation type="string">ELCM</abbreviation>
-          <full_name type="string">employment_location_choice_model</full_name>
-          <location type="string">home_based</location>
-          <add_member_prefix type="boolean">True</add_member_prefix>
-        </home_based_employment_location_choice_model>
-        <non_home_based_employment_location_choice_model type="dictionary">
-          <abbreviation type="string">ELCM</abbreviation>
-          <full_name type="string">employment_location_choice_model</full_name>
-          <location type="string">non_home_based</location>
-          <add_member_prefix type="boolean">False</add_member_prefix>
-        </non_home_based_employment_location_choice_model>
--->
-       </model_parameters>
+      </model_parameters>
     </estimation>
   </model_manager>
   <scenario_manager>
-    <Seattle_baseline executable="True" copyable="True" type="scenario">
+    <Seattle_baseline copyable="True" executable="True" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -188,7 +168,7 @@
         <endyear type="integer">2002</endyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <model_template choices="Run|Skip" type="model" copyable="True">Skip</model_template>
+        <model_template choices="Run|Skip" copyable="True" type="model">Skip</model_template>
         <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>
         <expected_sale_price_model choices="Run|Skip" type="model">Run</expected_sale_price_model>
         <development_proposal_choice_model choices="Run|Skip" type="model">Run</development_proposal_choice_model>
@@ -214,11 +194,11 @@
         </baseyear_cache>
         <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
         <advanced type="category">
-        <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
-          <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
-          <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
-        </baseyear_database_configuration>
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
+            <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+            <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
+          </baseyear_database_configuration>
           <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
           <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
           <tables_to_cache type="selectable_list">
@@ -266,7 +246,7 @@
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
           </tables_to_cache_nchunks>
-        </advanced>       
+        </advanced>
       </creating_baseyear_cache_configuration>
       <advanced type="category">
         <dataset_pool_configuration type="class">
@@ -274,53 +254,57 @@
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
           <package_order_exceptions type="dictionary" />
-        </dataset_pool_configuration>      
+        </dataset_pool_configuration>
         <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
         <flush_variables type="boolean">False</flush_variables>
         <low_memory_run type="boolean">False</low_memory_run>
-        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>        
-        <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>      
+        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
+        <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-           <zone type="dataset" choices="Load|Skip">Load</zone>
-           <household type="dataset" choices="Load|Skip">Load</household>
-           <building type="dataset" choices="Load|Skip">Load</building>
-           <parcel type="dataset" choices="Load|Skip">Load
+          <zone choices="Load|Skip" type="dataset">Load</zone>
+          <household choices="Load|Skip" type="dataset">Load</household>
+          <building choices="Load|Skip" type="dataset">Load</building>
+          <parcel choices="Load|Skip" type="dataset">Load
              <package_name type="string">urbansim_parcel</package_name>
-           </parcel>
-           <person type="dataset" choices="Load|Skip">Load
+          </parcel>
+          <person choices="Load|Skip" type="dataset">Load
              <package_name type="string">urbansim_parcel</package_name>
-           </person>
-           <development_template type="dataset" choices="Load|Skip">Load
+          </person>
+          <development_template choices="Load|Skip" type="dataset">Load
              <package_name type="string">urbansim_parcel</package_name>
-           </development_template>
-           <development_template_component type="dataset" choices="Load|Skip">Load
+          </development_template>
+          <development_template_component choices="Load|Skip" type="dataset">Load
              <package_name type="string">urbansim_parcel</package_name>
-           </development_template_component>
-           <job type="dataset" choices="Load|Skip">Load</job>
-           <building_type type="dataset" choices="Load|Skip">Load
+          </development_template_component>
+          <job choices="Load|Skip" type="dataset">Load</job>
+          <building_type choices="Load|Skip" type="dataset">Load
              <package_name type="string">urbansim_parcel</package_name>
-           </building_type>
-           <travel_data type="dataset" choices="Load|Skip">Load</travel_data>
-           <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
-         </datasets_to_preload>      
+          </building_type>
+          <travel_data choices="Load|Skip" type="dataset">Load</travel_data>
+          <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+        </datasets_to_preload>
       </advanced>
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
-  <!--
-    <Indicator_libraries setexpanded="True" type="group">
-      <standard_indicators type="indicator_library">
-      </standard_indicators>
-      <my_indicators append_to="True" type="indicator_library">
-        <global_population_density type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
-        </global_population_density>      
-      </my_indicators>
-    </Indicator_libraries>
-   -->
     <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs setexpanded="True" type="all_source_data">
+      <Run_2008_08_22_17_05 type="source_data">
+        <cache_directory flags="hidden" type="string">/urbansim_cache/seattle_parcel/runs/run_2.2008_08_22_17_05</cache_directory>
+        <start_year flags="hidden" type="integer">2001</start_year>
+        <end_year flags="hidden" type="integer">2002</end_year>
+        <scenario_name flags="hidden" type="string">seattle_parcel</scenario_name>
+        <run_name flags="hidden" type="string">Run_2008_08_22_17_05</run_name>
+        <run_id flags="hidden" type="integer">2</run_id>
+      </Run_2008_08_22_17_05>
+      <base_year_data type="source_data">
+        <start_year flags="hidden" type="integer">2000</start_year>
+        <end_year flags="hidden" type="integer">2000</end_year>
+        <run_id flags="hidden" type="integer">1</run_id>
+        <run_name flags="hidden" type="string">base_year_data</run_name>
+        <scenario_name flags="hidden" type="string">seattle_parcel</scenario_name>
+        <cache_directory flags="hidden" type="string">/urbansim_cache/seattle_parcel/base_year_data</cache_directory>
+      </base_year_data>
     </Simulation_runs>
   </results_manager>
 </opus_project>

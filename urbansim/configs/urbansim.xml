@@ -703,14 +703,14 @@
       </agent_location_choice_model_template>
     </model_system>
     <estimation type="dictionary" >
-      <model_template copyable="True" type="dictionary" >
+      <model_template copyable="True" type="model_estimation" >
         <submodel copyable="True" type="submodel" >
           <description type="string" >No submodel</description>
           <submodel_id type="integer" >-2</submodel_id>
           <variables type="variable_list" >var1</variables>
         </submodel>
       </model_template>
-      <choice_model_with_equations_template copyable="True" type="dictionary" >
+      <choice_model_with_equations_template copyable="True" type="model_estimation" >
         <submodel copyable="True" type="submodel" >
           <description type="string" >No submodel</description>
           <submodel_id type="integer" >-2</submodel_id>
