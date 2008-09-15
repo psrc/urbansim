@@ -107,9 +107,10 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         self.bm_generate_from_posterior(zone_set)
         
     def _get_value_for_zone(self, zone_id, zone_set, variable_name):
-        if variable_name in self.simulated_values.keys():
+        var_alias = VariableName(variable_name).get_alias()
+        if  var_alias in self.simulated_values.keys():
             index = zone_set.get_id_index(zone_id)
-            return self.simulated_values[variable_name][index]
+            return self.simulated_values[var_alias][index]
         return PSRCTravelModelInputFileWriter._get_value_for_zone(self, zone_id, zone_set, variable_name)
 
     def bm_generate_from_posterior(self, zone_set):
@@ -152,11 +153,12 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             scale_to_ct = True
             simulated_number_of_agents = simulated_number_of_agents/float(simulated_number_of_agents.sum()) * household_control_total
         for var, ratios in self.variables_to_scale[dataset_name].iteritems():
-            self.simulated_values[var] = zeros(zone_set.size())
-            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
+            var_alias = VariableName(var).get_alias()
+            self.simulated_values[var_alias] = zeros(zone_set.size())
+            self.simulated_values[var_alias][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var_alias].dtype)
             logger.log_status(var)
-            logger.log_status(self.simulated_values[var])
-            logger.log_status('Total number of %s: %s' % (var, self.simulated_values[var].sum()))
+            logger.log_status(self.simulated_values[var_alias])
+            logger.log_status('Total number of %s: %s' % (var, self.simulated_values[var_alias].sum()))
             
         # simulate jobs
         dataset_name = 'job'
@@ -180,7 +182,8 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         zone_set.compute_variables(self.variables_for_direct_matching[dataset_name], dataset_pool=self.dataset_pool)
         #logger.log_status('Simulated values of bm variables for %ss:' % dataset_name)
         for var in self.variables_for_direct_matching[dataset_name]:
-            self.simulated_values[var] = zone_set.get_attribute(var)
+            var_alias = VariableName(var).get_alias()
+            self.simulated_values[var_alias] = zone_set.get_attribute(var)
             #logger.log_status(var)
             #logger.log_status(self.simulated_values[var])
          
