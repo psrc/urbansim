@@ -36,6 +36,52 @@
       <is_pre_1940 dataset="parcel" source="expression" type="variable_definition" use="model variable">parcel.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) &lt; 1940</is_pre_1940>
       <existing_units dataset="parcel" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.existing_units</existing_units>
       <units_occupied dataset="parcel" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.units_occupied</units_occupied>
+      <ln_bldage dataset="building" source="expression" type="variable_definition" use="model variable">ln(urbansim_parcel.building.age_masked)</ln_bldage>
+      <avg_unit_price dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price,function=mean,intermediates=[parcel]))</avg_unit_price>
+      <distance_to_art dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell)</distance_to_art>
+      <distance_to_highway dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell)</distance_to_highway>
+      <is_commercial_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_commercial</is_commercial_building>
+      <is_industrial_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_industrial</is_industrial_building>
+      <is_mfh_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_multi_family_residential</is_mfh_building>
+      <is_mixed_use_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_mixed_use</is_mixed_use_building>
+      <is_near_art dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.is_near_arterial_in_gridcell)</is_near_art>
+      <is_near_highway dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.is_near_highway_in_gridcell)</is_near_highway>
+      <is_office_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_office</is_office_building>
+      <is_sfh_building dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim.building.is_single_family_residential</is_sfh_building>
+      <is_unit_price_le_0 dataset="building" source="expression" type="variable_definition" use="model variable">urbansim_parcel.building.unit_price &lt;= 0</is_unit_price_le_0>
+      <ln_bldage dataset="building" source="expression" type="variable_definition" use="model variable">ln(urbansim_parcel.building.age_masked)</ln_bldage>
+      <ln_empden_zone_1 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_1)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_1>
+      <ln_empden_zone_10 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_10)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_10>
+      <ln_empden_zone_11 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_11)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_11>
+      <ln_empden_zone_12 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_12)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_12>
+      <ln_empden_zone_13 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_13)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_13>
+      <ln_empden_zone_14 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_14)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_14>
+      <ln_empden_zone_15 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_15)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_15>
+      <ln_empden_zone_16 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_16)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_16>
+      <ln_empden_zone_17 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_17)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_17>
+      <ln_empden_zone_18 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_18)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_18>
+      <ln_empden_zone_19 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_19)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_19>
+      <ln_empden_zone_2 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_2)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_2>
+      <ln_empden_zone_3 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_3)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_3>
+      <ln_empden_zone_4 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_4)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_4>
+      <ln_empden_zone_5 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_5)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_5>
+      <ln_empden_zone_6 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_6)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_6>
+      <ln_empden_zone_7 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_7)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_7>
+      <ln_empden_zone_8 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_8)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_8>
+      <ln_empden_zone_9 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_9)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_9>
+      <ln_empden_zone_retail dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(zone.aggregate(urbansim.job.is_in_employment_sector_group_retail))/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_retail>
+      <ln_empden_zone_service dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(zone.aggregate(urbansim.job.is_in_employment_sector_group_service))/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_service>
+      <ln_job_sqft_x_bldg_sqft_per_job dataset="building" source="expression" type="variable_definition" use="model variable">ln(urbansim_parcel.job.sqft_imputed * urbansim_parcel.building.building_sqft_per_job)</ln_job_sqft_x_bldg_sqft_per_job>
+      <ln_unit_price_trunc dataset="building" source="expression" type="variable_definition" use="model variable">ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))</ln_unit_price_trunc>
+      <lnemp10tw dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))</lnemp10tw>
+      <lngcdabell dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_bellevue_cbd))</lngcdabell>
+      <lnmp30da dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</lnmp30da>
+      <unit_price dataset="building" source="Python class" type="variable_definition" use="both">urbansim_parcel.building.unit_price</unit_price>
+      <has_children_x_is_single_family_residential dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * urbansim.building.is_single_family_residential</has_children_x_is_single_family_residential>
+      <has_children_x_percent_households_with_children_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * building.disaggregate(psrc_parcel.parcel.percent_households_with_children_within_walking_distance)</has_children_x_percent_households_with_children_within_walking_distance>
+      <is_high_income_x_ln_sqft_per_unit dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</is_high_income_x_ln_sqft_per_unit>
+      <is_young_x_percent_young_households_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_young * building.disaggregate(psrc_parcel.parcel.percent_young_households_within_walking_distance)</is_young_x_percent_young_households_within_walking_distance>
+      <ln_residential_units dataset="building" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</ln_residential_units>
     </expression_library>
     <advanced type="category">
       <dataset_pool_configuration flags="hidden" type="class">
@@ -45,12 +91,12 @@
         <package_order_exceptions type="dictionary" />
       </dataset_pool_configuration>
     </advanced>
-    <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <data_manager>
     <Tool_Library setexpanded="True" type="tool_library">
-      <tool_path flags="hidden" type="tool_path" >tools</tool_path>
-      <opus_tools type="tool_group" setexpanded="True">
+      <tool_path flags="hidden" type="tool_path">tools</tool_path>
+      <opus_tools setexpanded="True" type="tool_group">
         <make_buildout_indicators type="tool_file">
           <name type="tool_name">make_buildout_indicators</name>
           <params type="param_template">
@@ -497,7 +543,7 @@
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
             <data_objects type="string">datasets</data_objects>
-            <index_to_unplace type="string">hrm_index</index_to_unplace>
+            <index_to_unplace type="string">None</index_to_unplace>
             <join_datasets type="boolean">True</join_datasets>
             <portion_to_unplace type="string">.1</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
