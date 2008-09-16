@@ -20,7 +20,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
 
-from numpy import where, arange, resize, array, cumsum, concatenate, round_, any
+from numpy import where, arange, resize, array, cumsum, concatenate, round_, any, logical_or, logical_and, logical_not
 
 class BuildingConstructionModel(Model):
     """Process any (pre-)scheduled development projects (those that have status 'active'). New buildings are 
@@ -46,7 +46,10 @@ class BuildingConstructionModel(Model):
             velocity_function_set = None
                 
         # choose active projects
-        active_idx = where(development_proposal_set.get_attribute("status_id") == development_proposal_set.id_active)[0]
+        is_active = development_proposal_set.get_attribute("status_id") == development_proposal_set.id_active
+        is_delayed_by_velocity = development_proposal_set.get_attribute("status_id") == development_proposal_set.id_with_velocity
+        active_idx = where(logical_or(is_active, is_delayed_by_velocity))[0]
+                                   
         if active_idx.size <= 0:
             logger.log_status("No new buildings built.")
             return development_proposal_set
@@ -86,7 +89,7 @@ class BuildingConstructionModel(Model):
               'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
                       dataset_pool=dataset_pool)
 
-        # from the velocity function determine the amount to be built for each component
+        # from the velocity function determine the amount to be built for each component (in %)
         if velocity_function_set is not None:
             development_amount = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development"], 
                                                                       dataset_pool=dataset_pool)
@@ -187,10 +190,22 @@ class BuildingConstructionModel(Model):
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
         logger.log_status("Number of new buildings by template ids:")
         logger.log_status(number_of_new_buildings_by_template_id)
-        # remove active proposals from the proposal set
-#        development_proposal_set.remove_elements(active_idx)
-        # alternatively, set status_id of active proposals to id_not_available
-        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=active_idx)
+
+        # set status_id of active proposals to id_not_available
+        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=where(is_active))
+        if is_delayed_by_velocity.sum()>0:
+        # for those projects that are delayed by the velocity function, determine, if everything has been built or if it should be considered next year
+            development_amount = development_proposal_set.compute_variables([
+              "development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development)/urbansim_parcel.development_project_proposal.number_of_components"], 
+                                                                      dataset_pool=dataset_pool)
+            will_be_delayed = development_amount < 100
+            velocity_idx = where(logical_and(is_delayed_by_velocity, will_be_delayed))[0]
+            if velocity_idx.size > 0:
+                development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_with_velocity, index=velocity_idx)
+            not_velocity_idx = where(logical_and(is_delayed_by_velocity, logical_not(will_be_delayed)))[0]
+            if not_velocity_idx.size > 0:
+                development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=not_velocity_idx)
+            
         dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
         return development_proposal_set
     
