@@ -2,11 +2,32 @@
   <general>
     <description type="string" >Base UrbanSim project</description>
     <project_name type="string" flags="hidden">urbansim</project_name>
+	<available_datasets type="list">[]</available_datasets>
   </general>
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>
       <data_conversion_tools type="tool_group" setexpanded="True">
+    <raw_sql_query_tool type="tool_file">
+      <name type="tool_name">raw_sql_query</name>
+      <params type="param_template">
+        <database_server_connection>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type type="db_connection_hook">db_connection_hook</type>
+          <default></default>
+        </database_server_connection>
+        <database_name>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type choices="string" type="string">string</type>
+          <default type="string"></default>
+        </database_name>
+        <query>
+          <required choices="Required|Optional" type="string">Required</required>
+          <type type="string">string</type>
+          <default type="string">your query here;</default>
+        </query>
+      </params>
+    </raw_sql_query_tool> 
     <csv_to_sql_tool type="tool_file">
       <name type="tool_name">csv_to_sql</name>
       <params type="param_template">
