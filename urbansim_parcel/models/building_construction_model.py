@@ -47,8 +47,8 @@ class BuildingConstructionModel(Model):
                 
         # choose active projects
         is_active = development_proposal_set.get_attribute("status_id") == development_proposal_set.id_active
-        is_delayed_by_velocity = development_proposal_set.get_attribute("status_id") == development_proposal_set.id_with_velocity
-        active_idx = where(logical_or(is_active, is_delayed_by_velocity))[0]
+        is_delayed_or_active = logical_or(is_active, development_proposal_set.get_attribute("status_id") == development_proposal_set.id_with_velocity)
+        active_idx = where(is_delayed_or_active)[0]
                                    
         if active_idx.size <= 0:
             logger.log_status("No new buildings built.")
@@ -191,20 +191,23 @@ class BuildingConstructionModel(Model):
         logger.log_status("Number of new buildings by template ids:")
         logger.log_status(number_of_new_buildings_by_template_id)
 
-        # set status_id of active proposals to id_not_available
-        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=where(is_active))
-        if is_delayed_by_velocity.sum()>0:
-        # for those projects that are delayed by the velocity function, determine, if everything has been built or if it should be considered next year
+        # recompute the cummulative development amount
+        if velocity_function_set is not None:
+            # determine, if everything has been built or if it should be considered next year
             development_amount = development_proposal_set.compute_variables([
               "development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development)/urbansim_parcel.development_project_proposal.number_of_components"], 
                                                                       dataset_pool=dataset_pool)
-            will_be_delayed = development_amount < 100
-            velocity_idx = where(logical_and(is_delayed_by_velocity, will_be_delayed))[0]
-            if velocity_idx.size > 0:
-                development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_with_velocity, index=velocity_idx)
-            not_velocity_idx = where(logical_and(is_delayed_by_velocity, logical_not(will_be_delayed)))[0]
-            if not_velocity_idx.size > 0:
-                development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=not_velocity_idx)
+        else: # if there is no velocity function, all components have velocity of 100%
+            development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
+        will_be_delayed = development_amount < 100
+        velocity_idx = where(logical_and(is_delayed_or_active, will_be_delayed))[0]
+        if velocity_idx.size > 0:
+            # for the unfinished projects set the status_id to id_with_velocity 
+            development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_with_velocity, index=velocity_idx)
+        not_velocity_idx = where(logical_and(is_delayed_or_active, logical_not(will_be_delayed)))[0]
+        if not_velocity_idx.size > 0:
+            # for the remaining projects set the status_id to id_not_available
+            development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=not_velocity_idx)
             
         dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
         return development_proposal_set
