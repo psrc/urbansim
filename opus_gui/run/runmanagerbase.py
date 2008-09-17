@@ -162,7 +162,7 @@ class ModelGuiElement(QWidget):
 
         self.pbnStartModel = QPushButton(self.startWidget)
         self.pbnStartModel.setObjectName("pbnStartModel")
-        self.pbnStartModel.setText(QString("Start Model..."))
+        self.pbnStartModel.setText(QString("Start Simulation Run..."))
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
         self.startVBoxLayout.addWidget(self.pbnStartModel)
@@ -639,7 +639,7 @@ class ModelGuiElement(QWidget):
         
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Model..."))
+        self.pbnStartModel.setText(QString("Start Simulation Run..."))
 
         #get the last year to show up in the diagnostics tab.
         self.yearItems[-1][1] = True
@@ -754,7 +754,7 @@ class ModelGuiElement(QWidget):
     def runErrorFromThread(self,errorMessage):
         self.running = False
         self.paused = False
-        self.pbnStartModel.setText(QString("Start Model..."))
+        self.pbnStartModel.setText(QString("Start Simulation Run..."))
         QMessageBox.warning(self.mainwindow,'Warning', errorMessage)
 
 
