@@ -57,7 +57,7 @@ class OpusXMLAction_Results(object):
 
         
         #delete run from disk
-        self.actDeleteRun = QAction(self.acceptIcon, 
+        self.actDeleteRun = QAction(self.removeIcon, 
                                           "Remove run and delete from harddrive...",
                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actDeleteRun, SIGNAL("triggered()"), self.deleteRun)          
