@@ -12,8 +12,8 @@
         <chunksize type="integer">12</chunksize>
       </advanced>
       <years type="tuple">
-        <startyear type="integer">1980</startyear>
-        <endyear type="integer">1981</endyear>
+        <firstyear type="integer">1980</firstyear>
+        <lastyear type="integer">1981</lastyear>
       </years>
       <nested_advanced type="category">
         <bool2 type="boolean" choices="True|False">False</bool2>

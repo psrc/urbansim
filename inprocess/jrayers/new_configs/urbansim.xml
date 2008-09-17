@@ -432,8 +432,8 @@
         <low_memory_mode type="boolean" >False</low_memory_mode>
         <base_year type="integer" >0</base_year>
         <years type="tuple" >
-          <startyear type="integer" >0</startyear>
-          <endyear type="integer" >0</endyear>
+          <firstyear type="integer" >0</firstyear>
+          <lastyear type="integer" >0</lastyear>
         </years>
       </estimation_config>
    </Model_Estimation>

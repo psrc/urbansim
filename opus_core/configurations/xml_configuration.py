@@ -689,8 +689,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, 
                          {'project_name':'test_project',
                           'description': 'a test scenario',
-                          'startyear': 2000,
-                          'endyear': 2020,
+                          'firstyear': 2000,
+                          'lastyear': 2020,
                           'x': 10,
                           'y': 20,
                           'morestuff': {'x': 10, 'y': 20}})

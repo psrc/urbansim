@@ -424,8 +424,8 @@
         <low_memory_mode type="boolean">False</low_memory_mode>
         <base_year type="integer">2000</base_year>
         <years type="tuple">
-          <startyear type="integer">2000</startyear>
-          <endyear type="integer">2000</endyear>
+          <firstyear type="integer">2000</firstyear>
+          <lastyear type="integer">2000</lastyear>
         </years>
       </estimation_config>
       <model_parameters type="dictionary">
@@ -457,8 +457,8 @@
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
-        <startyear type="integer">2001</startyear>
-        <endyear type="integer">2002</endyear>
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2002</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>

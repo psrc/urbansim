@@ -16,8 +16,8 @@
       <emptyint type="integer" parser_action="blank_to_None" ></emptyint>
       <emptyfloat type="float" parser_action="blank_to_None" ></emptyfloat>
       <years type="tuple">
-        <startyear type="integer">1980</startyear>
-        <endyear type="integer">1981</endyear>
+        <firstyear type="integer">1980</firstyear>
+        <lastyear type="integer">1981</lastyear>
       </years>
       <list_test type="list">[10, 20, 30]</list_test>
       <vars type="variable_list">population, employment, density</vars>

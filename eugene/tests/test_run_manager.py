@@ -41,7 +41,7 @@ config_template = """<opus_project>
   <scenario_manager>
     <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
       <years_to_run config_name="years" type="tuple">
-        <endyear type="integer">1984</endyear>
+        <lastyear type="integer">1984</lastyear>
       </years_to_run>
       <creating_baseyear_cache_configuration type="class">
         <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">%s/runs</cache_directory_root>

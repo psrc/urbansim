@@ -10,8 +10,8 @@
         <Class_path type="string">opus_core.configurations.test_configurations.old_style_configuration</Class_path>
       </parent_old_format>
       <years type="tuple">
-        <startyear type="integer">1980</startyear>
-        <endyear type="integer">1981</endyear>
+        <firstyear type="integer">1980</firstyear>
+        <lastyear type="integer">1981</lastyear>
       </years>
       <squidcount type="integer">12</squidcount>
     </test_scenario>
