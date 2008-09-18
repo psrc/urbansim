@@ -19,189 +19,532 @@
    <string/>
   </property>
   <property name="windowIcon" >
-   <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+   <iconset resource="opusmain.qrc" >
+    <normaloff>:/Images/Images/cog.png</normaloff>:/Images/Images/cog.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" >
-    <item row="0" column="0" >
-     <widget class="QSplitter" name="splitter" >
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>22</y>
+     <width>974</width>
+     <height>665</height>
+    </rect>
+   </property>
+   <widget class="QSplitter" name="splitter" >
+    <property name="geometry" >
+     <rect>
+      <x>20</x>
+      <y>12</y>
+      <width>941</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="orientation" >
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="opaqueResize" >
+     <bool>true</bool>
+    </property>
+    <property name="handleWidth" >
+     <number>10</number>
+    </property>
+    <property name="childrenCollapsible" >
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="verticalLayoutWidget" >
+     <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <property name="spacing" >
+       <number>5</number>
       </property>
-      <widget class="QTabWidget" name="toolBox" >
-       <property name="enabled" >
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize" >
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="baseSize" >
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="font" >
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="currentIndex" >
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="generalmanager_page" >
-        <attribute name="title" >
-         <string>General</string>
-        </attribute>
-        <layout class="QGridLayout" />
+      <item>
+       <widget class="Line" name="line_2" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
        </widget>
-       <widget class="QWidget" name="datamanager_page" >
-        <attribute name="title" >
-         <string>Data</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QTabWidget" name="dataManager_toolBox" >
-           <property name="font" >
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="datamanager_xmlconfig" >
-            <attribute name="title" >
-             <string>Tools</string>
-            </attribute>
-            <layout class="QGridLayout" />
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <property name="spacing" >
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="tbOpenProject" >
+          <property name="toolTip" >
+           <string>Open project</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbSaveProject" >
+          <property name="toolTip" >
+           <string>Save project</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/disk.png</normaloff>:/Images/Images/disk.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbVariableLibrary" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string>Open Variable Library</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/book_edit.png</normaloff>:/Images/Images/book_edit.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbResultsBrowser" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string>Open Results Browser</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/layout.png</normaloff>:/Images/Images/layout.png</iconset>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbPythonConsole" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string>Open python console</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbLogView" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string>Open log view</string>
+          </property>
+          <property name="text" >
+           <string>Log view</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbEditorView" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string>Open editor view</string>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/table_lightning.png</normaloff>:/Images/Images/table_lightning.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="tbDatabaseConfigurations" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="opusmain.qrc" >
+            <normaloff>:/Images/Images/database_link.png</normaloff>:/Images/Images/database_link.png</iconset>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="toolBox" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize" >
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize" >
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font" >
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="currentIndex" >
+         <number>3</number>
+        </property>
+        <widget class="QWidget" name="generalmanager_page" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>323</width>
+           <height>580</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>General</string>
+         </attribute>
+         <layout class="QGridLayout" />
+        </widget>
+        <widget class="QWidget" name="datamanager_page" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>323</width>
+           <height>580</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>Data</string>
+         </attribute>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QTabWidget" name="dataManager_toolBox" >
+            <property name="font" >
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="currentIndex" >
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="datamanager_xmlconfig" >
+             <property name="geometry" >
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>293</width>
+               <height>533</height>
+              </rect>
+             </property>
+             <attribute name="title" >
+              <string>Tools</string>
+             </attribute>
+             <layout class="QGridLayout" />
+            </widget>
+            <widget class="QWidget" name="datamanager_dirview" >
+             <property name="geometry" >
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>100</width>
+               <height>30</height>
+              </rect>
+             </property>
+             <attribute name="title" >
+              <string>Opus Data</string>
+             </attribute>
+             <layout class="QGridLayout" />
+            </widget>
            </widget>
-           <widget class="QWidget" name="datamanager_dirview" >
-            <attribute name="title" >
-             <string>Opus Data</string>
-            </attribute>
-            <layout class="QGridLayout" />
-           </widget>
-          </widget>
-         </item>
-        </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="modelmanager_page" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>323</width>
+           <height>580</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>Models</string>
+         </attribute>
+         <layout class="QGridLayout" />
+        </widget>
+        <widget class="QWidget" name="runmanager_page" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>323</width>
+           <height>580</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>Scenarios</string>
+         </attribute>
+         <layout class="QGridLayout" />
+        </widget>
+        <widget class="QWidget" name="resultsmanager_page" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>323</width>
+           <height>580</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>Results</string>
+         </attribute>
+         <layout class="QGridLayout" />
+        </widget>
        </widget>
-       <widget class="QWidget" name="modelmanager_page" >
-        <attribute name="title" >
-         <string>Models</string>
-        </attribute>
-        <layout class="QGridLayout" />
-       </widget>
-       <widget class="QWidget" name="runmanager_page" >
-        <attribute name="title" >
-         <string>Scenarios</string>
-        </attribute>
-        <layout class="QGridLayout" />
-       </widget>
-       <widget class="QWidget" name="resultsmanager_page" >
-        <attribute name="title" >
-         <string>Results</string>
-        </attribute>
-        <layout class="QGridLayout" />
-       </widget>
-      </widget>
-      <widget class="QTabWidget" name="tabWidget" >
-       <property name="minimumSize" >
-        <size>
-         <width>600</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="sizeIncrement" >
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="baseSize" >
-        <size>
-         <width>1000</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="font" >
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="currentIndex" >
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tab_editorView" >
-        <attribute name="title" >
-         <string>Editor</string>
-        </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" />
-       </widget>
-       <widget class="QWidget" name="tab_pythonView" >
-        <attribute name="title" >
-         <string>Python Console</string>
-        </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" >
-         <item row="1" column="0" >
-          <widget class="QWidget" native="1" name="pythonLineWidget" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" >
-            <item>
-             <widget class="QLabel" name="pythonLabel" >
-              <property name="text" >
-               <string>>>></string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="pythonLineEdit" />
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0" >
-          <widget class="QWidget" native="1" name="pythonWidget" />
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab_logView" >
-        <attribute name="title" >
-         <string>Log View</string>
-        </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QTextBrowser" name="logViewTextBrowser" />
-         </item>
-        </layout>
-       </widget>
-      </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>600</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="sizeIncrement" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="baseSize" >
+      <size>
+       <width>1000</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="currentIndex" >
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab_editorView" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>594</width>
+        <height>622</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Editor</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="opusmain.qrc" >
+        <normaloff>:/Images/Images/table_lightning.png</normaloff>:/Images/Images/table_lightning.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" />
      </widget>
-    </item>
-   </layout>
+     <widget class="QWidget" name="tab_pythonView" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>594</width>
+        <height>622</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Python Console</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="opusmain.qrc" >
+        <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="1" column="0" >
+        <widget class="QWidget" native="1" name="pythonLineWidget" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="pythonLabel" >
+            <property name="text" >
+             <string>>>></string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="pythonLineEdit" />
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QWidget" native="1" name="pythonWidget" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_logView" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>594</width>
+        <height>622</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Log View</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="opusmain.qrc" >
+        <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QTextBrowser" name="logViewTextBrowser" />
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
@@ -209,7 +552,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
@@ -248,10 +591,20 @@
    <addaction name="menuUtilities" />
    <addaction name="menuHelp" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>687</y>
+     <width>974</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
   <action name="mpActionZoomOut" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomOut.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionZoomOut.png</normaloff>:/Images/Images/mActionZoomOut.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom Out</string>
@@ -259,7 +612,8 @@
   </action>
   <action name="mpActionPan" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionPan.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionPan.png</normaloff>:/Images/Images/mActionPan.png</iconset>
    </property>
    <property name="text" >
     <string>Pan</string>
@@ -267,7 +621,8 @@
   </action>
   <action name="mpActionAddRasterLayer" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddRasterLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionAddRasterLayer.png</normaloff>:/Images/Images/mActionAddRasterLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Raster Layer</string>
@@ -275,7 +630,8 @@
   </action>
   <action name="mpActionZoomIn" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomIn.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionZoomIn.png</normaloff>:/Images/Images/mActionZoomIn.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom In</string>
@@ -283,7 +639,8 @@
   </action>
   <action name="mpActionAddVectorLayer" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionAddLayer.png</normaloff>:/Images/Images/mActionAddLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Vector Layer</string>
@@ -291,7 +648,8 @@
   </action>
   <action name="actionOpen_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Open Project</string>
@@ -299,7 +657,8 @@
   </action>
   <action name="actionSave_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project</string>
@@ -307,7 +666,8 @@
   </action>
   <action name="actionSave_Project_As" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project As...</string>
@@ -315,7 +675,8 @@
   </action>
   <action name="actionOpen_Project_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Open Project</string>
@@ -323,7 +684,8 @@
   </action>
   <action name="actionExit" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/cross.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/cross.png</normaloff>:/Images/Images/cross.png</iconset>
    </property>
    <property name="text" >
     <string>Exit</string>
@@ -331,7 +693,8 @@
   </action>
   <action name="actionSave_Project_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/disk.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/disk.png</normaloff>:/Images/Images/disk.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project</string>
@@ -339,7 +702,8 @@
   </action>
   <action name="actionSave_Project_As_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project As...</string>
@@ -347,7 +711,8 @@
   </action>
   <action name="actionRun_Manager" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/cog.png</normaloff>:/Images/Images/cog.png</iconset>
    </property>
    <property name="text" >
     <string>Run Manager</string>
@@ -355,7 +720,8 @@
   </action>
   <action name="actionAbout" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/help.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/help.png</normaloff>:/Images/Images/help.png</iconset>
    </property>
    <property name="text" >
     <string>About</string>
@@ -363,7 +729,8 @@
   </action>
   <action name="tabActionEditor" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
    </property>
    <property name="text" >
     <string>Editor</string>
@@ -371,7 +738,8 @@
   </action>
   <action name="tabActionMapView" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/map.png</normaloff>:/Images/Images/map.png</iconset>
    </property>
    <property name="text" >
     <string>Map View</string>
@@ -379,7 +747,8 @@
   </action>
   <action name="tabActionPythonConsole" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
    </property>
    <property name="text" >
     <string>Python Console</string>
@@ -387,7 +756,8 @@
   </action>
   <action name="tabActionLogView" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Log View</string>
@@ -395,7 +765,8 @@
   </action>
   <action name="actionPython_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
    </property>
    <property name="text" >
     <string>Python Console</string>
@@ -403,7 +774,8 @@
   </action>
   <action name="actionLog_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
    </property>
    <property name="text" >
     <string>Log View</string>
@@ -411,7 +783,8 @@
   </action>
   <action name="actionEditor_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table_lightning.png</normaloff>:/Images/Images/table_lightning.png</iconset>
    </property>
    <property name="text" >
     <string>Editor View</string>
@@ -419,7 +792,8 @@
   </action>
   <action name="actionMap_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/map.png</normaloff>:/Images/Images/map.png</iconset>
    </property>
    <property name="text" >
     <string>Map View</string>
@@ -437,7 +811,8 @@
   </action>
   <action name="actionClose_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Close Project</string>
@@ -445,7 +820,8 @@
   </action>
   <action name="actionEdit_all_variables" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/book_edit.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/book_edit.png</normaloff>:/Images/Images/book_edit.png</iconset>
    </property>
    <property name="text" >
     <string>Variable Library</string>
@@ -453,7 +829,8 @@
   </action>
   <action name="actionPreferences" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script.png</normaloff>:/Images/Images/script.png</iconset>
    </property>
    <property name="text" >
     <string>Preferences</string>
@@ -461,7 +838,8 @@
   </action>
   <action name="actLaunchResultBrowser" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/layout.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/layout.png</normaloff>:/Images/Images/layout.png</iconset>
    </property>
    <property name="text" >
     <string>Result Browser</string>
@@ -469,7 +847,8 @@
   </action>
   <action name="actionDatabaseSettings" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/database_link.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/database_link.png</normaloff>:/Images/Images/database_link.png</iconset>
    </property>
    <property name="text" >
     <string>Database Connection Settings</string>
