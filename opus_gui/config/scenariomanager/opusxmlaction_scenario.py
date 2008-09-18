@@ -31,6 +31,7 @@ class OpusXMLAction_Scenario(object):
         self.currentColumn = None
         self.currentIndex = None
 
+        self.addIcon = QIcon(":/Images/Images/add.png")
         self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
         self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
         self.acceptIcon = QIcon(":/Images/Images/accept.png")
@@ -39,6 +40,13 @@ class OpusXMLAction_Scenario(object):
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
+
+        self.actAddModel = QAction(self.addIcon,
+                                   "Add Model...",
+                                   self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddModel,
+                        SIGNAL("triggered()"),
+                        self.addModel)
 
         self.actRemoveModel = QAction(self.removeIcon,
                                    "Remove This Model",
@@ -257,6 +265,12 @@ class OpusXMLAction_Scenario(object):
                     self.menu.addAction(self.actRemoveModel)
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
+                elif domElement.attribute(QString("config_name")) == QString("models"):
+                    self.modelMenu = QMenu(QString("Add Model"), self.xmlTreeObject.mainwindow)
+                    self.modelMenu.setIcon(self.addIcon)
+                    self.modelMenu.addAction(QString("models go here"))
+                    self.menu.addMenu(self.modelMenu)
+                    #self.menu.addAction(self.actAddModel)
 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
@@ -280,5 +294,28 @@ class OpusXMLAction_Scenario(object):
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
         return
-
+# Jesse working:
+    def addModel(self):
+        # Add a model to the models_to_run list from the model_system
+        print "Not implemented yet"
+#        self.getListOfModels()
+#    def getListOfModels(self):
+#        '''
+#        Returns a list of the names of models available in the
+#        model_system section of the model manager
+#        '''
+#        model_system = self.mainwindow.toolboxStuff.modelManagerTree.model.domDocument.elementsByTagName(QString("model_system"))
+#        print model_system
+#        for i in range(0, model_system.count()):
+#            print i
+##        configFile = QFile(database_server_configuration_file)
+##        doc = QDomDocument()
+##        doc.setContent(configFile)
+##
+##        list_of_db_connections = []
+##        for i in range(0, doc.documentElement().childNodes().length()):
+##            db_connection_name = doc.documentElement().childNodes().item(i).nodeName()
+##            if db_connection_name != '#comment':
+##                list_of_db_connections.append(str(db_connection_name))
+##        return list_of_db_connections        
 
