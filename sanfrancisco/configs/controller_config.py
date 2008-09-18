@@ -155,7 +155,7 @@ my_controller_configuration = {
                       "coefficients_storage": "base_cache_storage", #"models_configuration['coefficients_storage']",
                       "coefficients_table": "models_configuration['business_location_choice_model']['coefficients_table']",
                       },
-        "output": "(specification, coefficients)"
+        "output": "(specification, coefficients, _index)"
         },
 
     "run": {
@@ -275,6 +275,31 @@ my_controller_configuration = {
                          "output": "(coefficients, dummy)"
                    }
          },
+         
+        'household_transition_model': {
+            'import': {
+                'urbansim.models.household_transition_model': 'HouseholdTransitionModel'
+                },
+            'init': {
+                'arguments': {'location_id_name':'"building_id"',
+                              'debuglevel':'debuglevel'},
+                'name': 'HouseholdTransitionModel'
+                },
+            'prepare_for_run': {
+                'arguments': {'storage': 'base_cache_storage'},
+                'name': 'prepare_for_run',
+                'output': '(control_totals, characteristics)'
+                },
+            'run': {
+                'arguments': {
+                    'year': 'year',
+                    'household_set': 'household',
+                    'control_totals': 'control_totals',
+                    'characteristics': 'characteristics',
+                    }
+                }
+            },
+         
         "household_relocation_model" : {
             "import": {"urbansim.models.household_relocation_model_creator":
                             "HouseholdRelocationModelCreator"
