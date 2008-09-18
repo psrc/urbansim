@@ -94,6 +94,12 @@ class RunManagerBase(object):
 
     def removeEstimationRun(self, estimationToRemove):
         self.estimationList.remove(estimationToRemove)
+        
+    def removeAllElements(self):
+        for model in self.modelElements:
+            model.on_pbnRemoveModel_released()
+        for estimation in self.estimationElements:
+            estimation.on_pbnRemoveModel_released()
 
 # This is an element in the Run Manager GUI that is the container for the model
 # and the model thread.  If the start button is pressed then the GUI will create

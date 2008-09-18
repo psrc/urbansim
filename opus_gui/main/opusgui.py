@@ -537,6 +537,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
         self.toolboxStuff.closeXMLTree()
+        self.runManagerStuff.removeAllElements()
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
