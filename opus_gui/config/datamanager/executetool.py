@@ -114,7 +114,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         #  <opus_data_year type="string">ALL</opus_data_year>
         #  <opus_table_name type="string">ALL</opus_table_name>
         #</opus_database_to_sql_config>
-        print "Main Window Prio - %s" % (str(self.mainwindow.thread().priority()))
+        #print "Main Window Prio - %s" % (str(self.mainwindow.thread().priority()))
         self.execTool.setEnabled(False)
         self.textEdit.clear()
         self.progressBar.setValue(0)
@@ -328,6 +328,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         if success:
             self.progressBar.setValue(100)
         self.execTool.setEnabled(True)
+        self.cancelExec.setText(QString('Close'))
 
     def toolLogPingFromThread(self,log):
         #print "toolLogPingFromThread - %s" % (log)
@@ -371,7 +372,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                                 if children2.item(x2).isText():
                                     filePath = children2.item(x2).nodeValue()
         importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-        print "New import ", importPath
+        #print "New import ", importPath
 
         #Now loop and build up the parameters...
         params = {}

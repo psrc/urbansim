@@ -29,9 +29,9 @@ class RunToolThread(QThread):
         self.opusTool.progressCallback = self.progressCallback
         self.opusTool.logCallback = self.logCallback
         self.opusTool.finishedCallback = self.finishedCallback
-        print "Thread Prio Start - %s" % (str(self.priority()))
+        #print "Thread Prio Start - %s" % (str(self.priority()))
         self.setPriority(QThread.LowPriority)
-        print "Thread Prio Set - %s" % (str(self.priority()))
+        #print "Thread Prio Set - %s" % (str(self.priority()))
         self.opusTool.run()
 
     def startingCallback(self):
@@ -81,7 +81,7 @@ class OpusTool(object):
         #
         try:
             importString = "from %s import opusRun" % (self.toolInclude)
-            print importString
+            #print importString
             exec(importString)
             self.params = self.buildparams()
             if self.startingCallback != None:

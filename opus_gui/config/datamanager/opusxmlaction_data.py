@@ -385,7 +385,7 @@ class OpusXMLAction_Data(object):
                                 if children2.item(x2).isText():
                                     filePath = children2.item(x2).nodeValue()
         importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-        print "New import ", importPath
+        #print "New import ", importPath
 
         #Now loop and build up the parameters...
         params = {}

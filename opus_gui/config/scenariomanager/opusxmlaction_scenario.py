@@ -31,12 +31,21 @@ class OpusXMLAction_Scenario(object):
         self.currentColumn = None
         self.currentIndex = None
 
+        self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
+        self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
         self.acceptIcon = QIcon(":/Images/Images/accept.png")
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
+
+        self.actRemoveModel = QAction(self.removeIcon,
+                                   "Remove This Model",
+                                   self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actRemoveModel,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
 
         self.actRunModel = QAction(self.acceptIcon,
                                    "Run This Scenario",
@@ -87,6 +96,19 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
+        self.actMoveNodeUp = QAction(self.arrowUpIcon,
+                                     "Move Model Up",
+                                     self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actMoveNodeUp,
+                        SIGNAL("triggered()"),
+                        self.moveNodeUp)
+
+        self.actMoveNodeDown = QAction(self.arrowDownIcon,
+                                       "Move Model Down",
+                                       self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actMoveNodeDown,
+                        SIGNAL("triggered()"),
+                        self.moveNodeDown)
 
     def checkIsDirty(self):
         if (self.xmlTreeObject.toolboxbase.resultsManagerTree and self.xmlTreeObject.toolboxbase.resultsManagerTree.model.isDirty()) or \
@@ -108,7 +130,7 @@ class OpusXMLAction_Scenario(object):
                              self.xmlTreeObject.toolboxbase.xml_file,
                              modelToRun)
         self.xmlTreeObject.mainwindow.runManagerStuff.addNewModelRun(newModel)
-
+    
     def openXMLFile(self):
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
@@ -177,6 +199,16 @@ class OpusXMLAction_Scenario(object):
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
+    def moveNodeUp(self):
+        #print "Move Up Pressed"
+        self.currentIndex.model().moveUp(self.currentIndex)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def moveNodeDown(self):
+        #print "Move Down Pressed"
+        self.currentIndex.model().moveDown(self.currentIndex)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
     def cloneNode(self):
         #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -221,6 +253,10 @@ class OpusXMLAction_Scenario(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actEditXMLFileGlobal)
                     self.menu.addAction(self.actEditXMLFileLocal)
+                elif domElement.attribute(QString("type")) == QString("model"):
+                    self.menu.addAction(self.actRemoveModel)
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
