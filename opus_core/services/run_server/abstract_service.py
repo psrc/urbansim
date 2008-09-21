@@ -11,8 +11,6 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
-import os
-
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.services.services_tables import *
 

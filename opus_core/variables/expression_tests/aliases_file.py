@@ -12,7 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable_name import VariableName
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory

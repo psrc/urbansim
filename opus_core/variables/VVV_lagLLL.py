@@ -12,7 +12,6 @@
 # other acknowledgments.
 #
 
-from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.lag_variable import LagVariable
 
 class VVV_lagLLL(LagVariable):
@@ -26,7 +25,6 @@ class VVV_lagLLL(LagVariable):
     
 import os
 from opus_core.tests import opus_unittest
-from opus_core.storage_factory import StorageFactory
     
 class VVV_lagLLLTests(opus_unittest.OpusTestCase):
     """For addional lag variable tests, see:

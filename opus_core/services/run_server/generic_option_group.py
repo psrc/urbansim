@@ -12,9 +12,8 @@
 # other acknowledgments.
 #
 
-import os
 
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
