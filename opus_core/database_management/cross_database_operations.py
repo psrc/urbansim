@@ -12,7 +12,6 @@
 # other acknowledgments.
 #
 
-from sqlalchemy.sql import select, insert
 from sqlalchemy.schema import Table
 from sqlalchemy.types import Integer, String, Numeric
 
