@@ -92,11 +92,6 @@ class RunManager(AbstractService):
             
             # Create baseyear cache
             self.create_baseyear_cache(run_resources)
-#            if run_resources['creating_baseyear_cache_configuration'].cache_from_database:
-#                ForkProcess().fork_new_process(
-#                    run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
-#            else:
-#                CacheFltData().run(run_resources)
                 
             # Create brand-new output database (deletes any prior contents)
             if 'estimation_database_configuration' in run_resources:
@@ -112,8 +107,7 @@ class RunManager(AbstractService):
             if 'base_year' not in run_resources:
                 run_resources['base_year'] = run_resources['years'][0] - 1
 
-            base_year = run_resources['base_year']
-
+#            model_system.run_in_same_process(run_resources)
             if run_as_multiprocess:
                 model_system.run_multiprocess(run_resources)
             else:
