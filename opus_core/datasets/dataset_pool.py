@@ -14,7 +14,6 @@
 
 from copy import deepcopy
 
-from opus_core.class_factory import ClassFactory
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.misc import create_import_for_camel_case_class
 
