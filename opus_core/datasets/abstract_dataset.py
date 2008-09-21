@@ -25,7 +25,7 @@ from numpy import ma
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.misc import create_list_string, all_in_list, is_masked_array
 from opus_core.misc import do_id_mapping_dict_from_array, do_id_mapping_array_from_array
-from opus_core.misc import DebugPrinter
+from opus_core.misc import DebugPrinter, corr
 from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.attribute_box import AttributeBox
 from opus_core.resources import Resources
