@@ -17,8 +17,8 @@ import time
 import sys
 
 from gc import collect
-from shutil import rmtree
 
+from shutil import rmtree
 from optparse import OptionParser
 
 from numpy import ones
@@ -492,6 +492,19 @@ class ModelSystem(object):
                     '%s' % class_path, resources, delete_temp_dir=False,
                     optional_args=optional_arguments)
 
+    def run_in_same_process(self, resources, class_path='opus_core.model_coordinators.model_system'):
+        resources = Resources(resources)
+        if resources['cache_directory'] is not None:
+            cache_directory = resources['cache_directory']
+        else:
+            cache_directory = SimulationState().get_cache_directory()
+
+        ### TODO: Get rid of this! There is no good reason to be changing the
+        ###       Configuration.
+        resources['cache_directory'] = cache_directory
+
+        RunModelSystem(model_system = self, resources = resources)
+         
     def construct_arguments_from_config(self, config):
         key = "arguments"
         if (key not in config.keys()) or (len(config[key].keys()) <= 0):
@@ -502,26 +515,10 @@ class ModelSystem(object):
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
                 
+    
 
 class RunModelSystem(object):
-    def __init__(self, model_system):
-        from opus_core.store.attribute_cache import AttributeCache
-        from opus_core.session_configuration import SessionConfiguration
-        
-        parser = OptionParser()
-        parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
-                          help="Name of file containing resources")
-        parser.add_option("-d", "--delete-resources-file-directory", dest="delete_resources_file_directory",
-                          action="store_true",
-                          help="Delete the directory containing the pickled resources file when done?")
-        parser.add_option("--skip-cache-after-each-year", dest="skip_cache_after_each_year", default=False, 
-                          action="store_true", help="Datasets will not be cached at the end of each year.")
-        parser.add_option("--log-file-name", dest="log_file_name", default='run_model_system.log',
-                          help="File name for logging output of model system (without directory).")
-    
-        (options, args) = parser.parse_args()
-    
-        resources = Resources(get_resources_from_file(options.resources_file_name))
+    def __init__(self, model_system, resources, skip_cache_after_each_year = False, log_file_name = 'run_model_system.log'):
     
         SessionConfiguration(new_instance=True,
                              package_order=resources['dataset_pool_configuration'].package_order,
@@ -537,22 +534,43 @@ class RunModelSystem(object):
             import hotshot
             profiler = hotshot.Profile(resources.get("profile_filename"))
             
-        write_datasets_to_cache_at_end_of_year = not options.skip_cache_after_each_year
+        write_datasets_to_cache_at_end_of_year = not skip_cache_after_each_year
         
         if profiler is None:
-            model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=options.log_file_name)
+            model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=log_file_name)
         else:
-            profiler.run("model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=options.log_file_name)")
+            profiler.run("model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=log_file_name)")
             logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' % 
                                   resources.get("profile_filename"))
             profiler.close()
     
-        if options.delete_resources_file_directory:
-            dir = os.path.split(options.resources_file_name)[0]
-            rmtree(dir)
+
 
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     s = ModelSystem()
-    RunModelSystem(s)
+    parser = OptionParser()
+    parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
+                      help="Name of file containing resources")
+    parser.add_option("-d", "--delete-resources-file-directory", dest="delete_resources_file_directory",
+                      action="store_true",
+                      help="Delete the directory containing the pickled resources file when done?")
+    parser.add_option("--skip-cache-after-each-year", dest="skip_cache_after_each_year", default=False, 
+                      action="store_true", help="Datasets will not be cached at the end of each year.")
+    parser.add_option("--log-file-name", dest="log_file_name", default='run_model_system.log',
+                      help="File name for logging output of model system (without directory).")
+
+    (options, args) = parser.parse_args()
+
+    resources = Resources(get_resources_from_file(options.resources_file_name))
+    delete_resources_file_directory = options.delete_resources_file_directory
+    skip_cache_after_each_year = options.skip_cache_after_each_year
+    log_file_name = options.log_file_name
+    RunModelSystem(model_system = s, 
+                   resources = resources, 
+                   skip_cache_after_each_year = skip_cache_after_each_year, 
+                   log_file_name = log_file_name)
+    if delete_resources_file_directory:
+        dir = os.path.split(options.resources_file_name)[0]
+        rmtree(dir)

@@ -64,5 +64,33 @@ class ModelSystem(CoreModelSystem):
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
+    from shutil import rmtree
+    from optparse import OptionParser
+    from opus_core.resources import Resources   
+    from opus_core.file_utilities import get_resources_from_file
+    
     s = ModelSystem()
-    RunModelSystem(s)
+    parser = OptionParser()
+    parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
+                      help="Name of file containing resources")
+    parser.add_option("-d", "--delete-resources-file-directory", dest="delete_resources_file_directory",
+                      action="store_true",
+                      help="Delete the directory containing the pickled resources file when done?")
+    parser.add_option("--skip-cache-after-each-year", dest="skip_cache_after_each_year", default=False, 
+                      action="store_true", help="Datasets will not be cached at the end of each year.")
+    parser.add_option("--log-file-name", dest="log_file_name", default='run_model_system.log',
+                      help="File name for logging output of model system (without directory).")
+
+    (options, args) = parser.parse_args()
+
+    resources = Resources(get_resources_from_file(options.resources_file_name))
+    delete_resources_file_directory = options.delete_resources_file_directory
+    skip_cache_after_each_year = options.skip_cache_after_each_year
+    log_file_name = options.log_file_name
+    RunModelSystem(model_system = s, 
+                   resources = resources, 
+                   skip_cache_after_each_year = skip_cache_after_each_year, 
+                   log_file_name = log_file_name)
+    if delete_resources_file_directory:
+        dir = os.path.split(options.resources_file_name)[0]
+        rmtree(dir)
