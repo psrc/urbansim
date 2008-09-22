@@ -68,11 +68,16 @@ class RunModelThread(QThread):
     def finishedCallback(self,success):
         if success:
             print "Success returned from Model"
-            self.add_run_to_run_manager_xml()
-            if self.batch_name is not None:
-                self.runIndicatorBatch()
+            
+            if self.modelguielement.model.cancelled:
+                self.modelguielement.model.run_manager.abort_run()
+            else:
+                if self.batch_name is not None:
+                    self.runIndicatorBatch()
+                self.add_run_to_run_manager_xml()
         else:
             print "Error returned from Model"
+        self.modelguielement.model.run_manager.close()
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
     def add_run_to_run_manager_xml(self):
@@ -139,7 +144,7 @@ class OpusModel(object):
         self.currentLogfileKey = None
         self.run_name = None
         # simulate 0 command line arguments by passing in []
-
+        self.cancelled = False
         
     def pause(self):
         self.paused = True
@@ -153,7 +158,8 @@ class OpusModel(object):
         self.running = False
         self.paused = False
         self._write_command_file('stop')
-
+        self.cancelled = True
+        
     def get_run_name(self, config, run_name = None):
         if run_name is None:
             cache_directory = config['cache_directory']
@@ -202,10 +208,10 @@ class OpusModel(object):
                 # time.sleep(5)
                 self.running = True
                 self.run_name = run_name
+                self.run_manager = run_manager
                 run_manager.run_run(config, run_name = run_name)
                 self.running = False
                 succeeded = True
-                run_manager.close()
             except SimulationRunError:
                 self.running = False
                 succeeded = False

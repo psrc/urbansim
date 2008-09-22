@@ -177,7 +177,7 @@ class ModelGuiElement(QWidget):
         
         self.pbnRemoveModel = QPushButton(self.startWidget)
         self.pbnRemoveModel.setObjectName("pbnRemoveModel")
-        self.pbnRemoveModel.setText(QString("Remove From Queue"))
+        self.pbnRemoveModel.setText(QString("Abort Simulation Run"))
         QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
                         self.on_pbnRemoveModel_released)        
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
