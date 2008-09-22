@@ -81,7 +81,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             return QVariant(self.headerdata[col])
         return QVariant()
 
-    def sort(self, ncol, order):
+    def sort(self, ncol = 1, order = Qt.AscendingOrder):
         """Sort table by given column number.
         """
         self.ncol = ncol
