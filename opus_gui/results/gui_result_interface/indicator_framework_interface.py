@@ -83,15 +83,17 @@ class IndicatorFrameworkInterface:
                     indicator['name'] != indicator_name:
                     continue
                 expression = indicator['value']
+                attribute = str(expression)
+                source = indicator['source']
+                break
             
             if expression is None:
                 raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
         
-            attribute = str(expression)
-            source = indicator['source']
         else:
             attribute, source = indicator_definition
             
+        
         if attribute.find('=') == -1 and source == 'expression':
             attribute = str(indicator_name) + '='+ attribute
         
