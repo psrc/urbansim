@@ -144,8 +144,9 @@ class ModelGuiElement(QWidget):
         self.groupBox.setTitle(QString("main_groupBox"))
         self.widgetLayout.addWidget(self.groupBox)
 
-        stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
-        self.groupBox.setTitle(QString(stringToUse))
+        ##stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
+        #self.groupBox.setTitle(QString(stringToUse))
+        self.groupBox.setTitle(QString(""))
         self.groupBox.setFlat(True)
 
         self.vboxlayout = QVBoxLayout(self.groupBox)
@@ -432,7 +433,7 @@ class ModelGuiElement(QWidget):
         
     def setup_indicator_batch_combobox(self):
         self.lblBatch = QLabel(self.optionalFieldsWidget)
-        self.lblBatch.setText(QString('Indicator batch (optional):'))
+        self.lblBatch.setText(QString('Indicator batch:'))
         self.lblBatch.setToolTip(QString('If an indicator batch (defined in the Results Manager) \nis selected, it will be executed over every \nyear of the simulation being configured. \nIt will executed after the simulation is completed.'))
         self.cboOptionalIndicatorBatch = QComboBox(self.optionalFieldsWidget)
         
@@ -446,7 +447,7 @@ class ModelGuiElement(QWidget):
         
     def setup_run_name_line_edit(self):
         self.lblRun = QLabel(self.optionalFieldsWidget)
-        self.lblRun.setText(QString('Run name (optional):'))
+        self.lblRun.setText(QString('Run name:'))
         self.lblRun.setToolTip(QString('This scenario run will appear \nin the Results Manager under the name \nspecified here. If not specified, \nthe name will default to a combination \nof run id and date of run.'))
         
         self.leRunName = QLineEdit(self.optionalFieldsWidget)
@@ -553,20 +554,20 @@ class ModelGuiElement(QWidget):
             self.paused = True
             self.timer.stop()
             self.runThread.pause()
-            self.pbnStartModel.setText(QString("Resume Model..."))
+            self.pbnStartModel.setText(QString("Resume simulation run..."))
         elif self.running == True and self.paused == True:
             # Need to resume a paused run
             self.paused = False
             self.timer.start(1000)
             self.runThread.resume()
-            self.pbnStartModel.setText(QString("Pause Model..."))
+            self.pbnStartModel.setText(QString("Pause simulation run..."))
         elif self.running == False:
             # Update the XML
             self.toolboxStuff.updateOpusXMLTree()
             self.updateConfigAndGuiForRun()
 
             # Fire up a new thread and run the model
-            self.pbnStartModel.setText(QString("Pause Model..."))
+            self.pbnStartModel.setText(QString("Pause simulation run..."))
             # References to the GUI elements for status for this run...
             self.progressBarTotal = self.runProgressBarTotal
             self.progressBarYear = self.runProgressBarYear
@@ -582,7 +583,7 @@ class ModelGuiElement(QWidget):
             self.progressBarTotal.setRange(0,0)
             self.progressBarYear.setRange(0,0)
             self.progressBarModel.setRange(0,0)
-            self.simprogressGroupBox.setTitle(QString("Model initializing..."))
+            self.simprogressGroupBox.setTitle(QString("Simulation run initializing..."))
             
             batch_name = str(self.cboOptionalIndicatorBatch.currentText())
             if batch_name == '(None)':
@@ -627,7 +628,7 @@ class ModelGuiElement(QWidget):
 
     # Called when the model is finished... peg the percentage to 100% and stop the timer.
     def runFinishedFromThread(self,success):
-        print "Model Finished with success = ", success
+        print "Simulation run finished with success = ", success
         self.progressBarTotal.setValue(100)
         self.progressBarYear.setValue(100)
         self.progressBarModel.setValue(100)
@@ -635,9 +636,9 @@ class ModelGuiElement(QWidget):
         self.summaryCurrentModelValue.setText(QString("Finished"))
         self.summaryCurrentPieceValue.setText(QString("Finished"))
         if success:
-            self.simprogressGroupBox.setTitle(QString("Model Finished Successfully"))
+            self.simprogressGroupBox.setTitle(QString("Simulation run Finished Successfully"))
         else:
-            self.simprogressGroupBox.setTitle(QString("Model Error!"))
+            self.simprogressGroupBox.setTitle(QString("Simulation run Error!"))
 
         self.timer.stop()
         # Get the final logfile update after model finishes...
@@ -678,10 +679,10 @@ class ModelGuiElement(QWidget):
         totalProgress = 0
         yearProgress = 0
         modelProgress = 0
-        boxTitle = "Model initializing..." # TODO:  this is for the old prog bar
+        boxTitle = "Simulation run initializing..." # TODO:  this is for the old prog bar
 
         if self.runThread.modelguielement.model.statusfile is None:
-            boxTitle = "Model initializing..."
+            boxTitle = "Simulation run initializing..."
         else:
             # Compute percent progress for the progress bar.
             # The statusfile is written by the _write_status_for_gui method
@@ -744,7 +745,7 @@ class ModelGuiElement(QWidget):
                         self.progressBarModel.setRange(0,100)
 
             except IOError:
-                boxTitle = "Model is initializing..."
+                boxTitle = "Simulation run is initializing..."
 
         newString = QString(boxTitle)
 
