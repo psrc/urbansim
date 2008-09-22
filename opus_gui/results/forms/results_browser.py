@@ -72,6 +72,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if self.cbAutoGen.isChecked():
             self.on_pbnGenerateResults_released()
         self.pbnExportResults.setEnabled(False)
+        self.twVisualizations.removeTab(0)
         
     def focusInEvent(self):
         self.setupAvailableIndicators()
@@ -98,7 +99,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         col = QTableWidgetItem()
         col.setText(QString('Definition'))
         self.tableWidget.setHorizontalHeaderItem(2,col)
-                    
+
+        
+
         for i,indicator in enumerate(indicators):
             row = QTableWidgetItem()
             self.tableWidget.setVerticalHeaderItem(i,row)
@@ -118,8 +121,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             
         if current_row is None or current_row == -1:
             current_row = 0
-        self.tableWidget.resizeColumnsToContents()
         self.tableWidget.resizeRowsToContents()
+        self.tableWidget.resizeColumnsToContents()
         
         self.tableWidget.setCurrentCell(current_row,0)
         self.on_tableWidget_itemSelectionChanged()
@@ -224,7 +227,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if key in self.already_browsed:
             if not self.generating_results:
                 (tab_widget,map_widget) = self.already_browsed[key]
-                self.swap_visualizations(map_widget, tab_widget)
+#                self.swap_visualizations(map_widget, tab_widget)
                 self.pbnGenerateResults.setText(QString('Results Generated'))
             else:
                 self.queued_results = ('swap', (map_widget, tab_widget))
@@ -296,26 +299,40 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         size = QSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         self.twVisualizations.setSizePolicy(size)
 
+        name = '%s/%s/%s'%key
+        new_tab = QTabWidget(self.twVisualizations)
+        self.twVisualizations.addTab(new_tab, QString(name))
+
+        map_widget = None
+        tab_widget = None
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():
             if len(visualizations) > 0:
                 if visualization_type == 'matplotlib_map':
                     viz = visualizations[0]
-                    map_widget = ViewImageForm(self.twVisualizations, viz)
+                    map_widget = ViewImageForm(new_tab, viz)
                     map_widget.setSizePolicy(size)
                 elif visualization_type == 'table_per_year':
                     viz = visualizations[0]
-                    tab_widget = ViewTableForm(self.twVisualizations, viz)
+                    tab_widget = ViewTableForm(new_tab, viz)
                     tab_widget.setSizePolicy(size)
-            else:
-                map_widget = self.tabMap
-                tab_widget = self.tabTable
+#            else:
+#                map_widget = self.tabMap
+#                tab_widget = self.tabTable
             
-        self.swap_visualizations(map_widget, tab_widget)
+        if not map_widget or not tab_widget: return
+        
+        self.tabMap = map_widget
+        self.tabTable = tab_widget
+        
+        new_tab.addTab(self.tabTable, "Table")
+        new_tab.addTab(self.tabMap, "Map")
+        
+        
         self.already_browsed[key] = (tab_widget, map_widget)  
         
-        self.lblViewIndicator.setText(QString(key[1]))
-        self.lblViewRun.setText(QString(key[0]))
-        self.lblViewYear.setText(QString(repr(key[2])))
+#        self.lblViewIndicator.setText(QString(key[1]))
+#        self.lblViewRun.setText(QString(key[0]))
+#        self.lblViewYear.setText(QString(repr(key[2])))
           
         swap = self.queued_results is not None and self.queued_results[0] == 'swap'
         
@@ -340,15 +357,17 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         else:
             if swap:
                 (map_widget, tab_widget) = self.queued_results[1]
-                self.swap_visualizations(map_widget, tab_widget)
-            
+                
+#                self.swap_visualizations(map_widget, tab_widget)
+                name = '%s/%s/%s'%key
+        #        self.swap_visualizations(map_widget, tab_widget)
+                self.add_visualization(map_widget = map_widget, tab_widget = tab_widget, name = name)
+                    
             self.queued_results = None
                 
             self.generating_results = False
             self.pbnGenerateResults.setText(QString('Results Generated'))
-        
-        
-                
+            
     def swap_visualizations(self, map_widget, tab_widget):
         cur_index = self.twVisualizations.currentIndex()
         
@@ -367,7 +386,6 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
         #self.tabMap.show()
         #self.tabTable.show()
-        self.twVisualizations.setCurrentIndex(0)        
         
         self.twVisualizations.setCurrentIndex(cur_index)
     
