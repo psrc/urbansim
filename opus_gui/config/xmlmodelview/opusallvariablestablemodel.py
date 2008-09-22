@@ -138,8 +138,8 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
                 self.arraydata[index.row()][-1] = 1
                 if self.parentWidget:
                     self.parentWidget.dirty = True
-                if self.parentWidget and self.parentWidget.saveChanges:
-                    self.parentWidget.saveChanges.setEnabled(True)  
+#                if self.parentWidget and self.parentWidget.saveChanges:
+#                    self.parentWidget.saveChanges.setEnabled(True)  
                 return True
         if role == Qt.CheckStateRole:
             if index.column() == 0:
@@ -164,8 +164,8 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         self.endInsertRows()
         if self.parentWidget:
             self.parentWidget.dirty = True
-        if self.parentWidget and self.parentWidget.saveChanges:
-            self.parentWidget.saveChanges.setEnabled(True)
+#        if self.parentWidget and self.parentWidget.saveChanges:
+#            self.parentWidget.saveChanges.setEnabled(True)
         return returnval
 
     def removeRow(self,row,parent = QModelIndex()):
@@ -177,8 +177,8 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         self.endRemoveRows()
         if self.parentWidget:
             self.parentWidget.dirty = True
-        if self.parentWidget and self.parentWidget.saveChanges:
-            self.parentWidget.saveChanges.setEnabled(True)  
+#        if self.parentWidget and self.parentWidget.saveChanges:
+#            self.parentWidget.saveChanges.setEnabled(True)  
         return returnval
 
     def deleteAllChecked(self):

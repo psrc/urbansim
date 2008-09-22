@@ -27,7 +27,7 @@ from opus_gui.config.generalmanager.variable_validator import VariableValidator
 import random,pprint,string
 
 class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
-    def __init__(self, mainwindow, fl, allVariablesGui, row = 0, initialParams = None):
+    def __init__(self, mainwindow, fl, allVariablesGui, row = 0, initialParams = None, create_new_from_old = False):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.allVariablesGui = allVariablesGui
@@ -35,6 +35,17 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.row = row
         self.mainwindow = mainwindow.mainwindow
         self.parent = mainwindow
+        
+        if create_new_from_old:
+            self.variableBox.setTitle(QString('Creating new variable (based on %s)'%initialParams[0]))
+            self.mode = 2
+        elif initialParams is not None:
+            self.variableBox.setTitle(QString('Editing existing variable (%s)'%initialParams[0]))
+            self.mode = 0
+        else:
+            self.mode = 1
+            self.variableBox.setTitle(QString('Creating new variable'))
+
         if self.initialParams:
             self.lineEdit.setText(self.initialParams[0])
             self._setup_co_dataset_name(value = self.initialParams[1])
@@ -91,7 +102,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             # If we have made edits then we check to see if this is a new
             # variable or editing an existing.  If editing an existing then
             # we remove the old row and mark the newly inserted row with dirty.
-            if self.initialParams:
+            if self.mode == 0:
                 self.allVariablesGui.tm.removeRow(self.row)
                 dirty = 1
                 
@@ -277,6 +288,14 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                         SIGNAL("triggered()"),
                         self.editRow)
 
+        self.actCreateNewFromOld = QAction(self.editIcon,
+                                  "Create new variable based on this variable",
+                                  mainwindow)
+        QObject.connect(self.actCreateNewFromOld,
+                        SIGNAL("triggered()"),
+                        self.createVariableLike)
+
+
         self.actCheckSyntax = QAction(self.editIcon,
                                   "Check Syntax",
                                   mainwindow)
@@ -311,6 +330,16 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         window.setModal(True)
         window.show()
 
+    def createVariableLike(self):
+        #print "Remove Row Pressed"
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        row = self.currentIndex.row()
+        initialParams = self.currentIndex.model().getRowDataList(self.currentIndex)
+        window = AllVariablesNewGui(self,flags,self, initialParams = initialParams, create_new_from_old = True)
+        window.setModal(True)
+        window.show()
+
+
     def processCustomMenu(self, position):
         #print "Custom Menu"
         if self.tv.indexAt(position).isValid():
@@ -320,9 +349,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             if self.menu:
                 # Tack on a remove row item
                 self.menu.addAction(self.actEditRow)
+                self.menu.addAction(self.actCreateNewFromOld)
+                self.menu.addSeparator()
                 self.menu.addAction(self.actCheckSyntax)
                 self.menu.addAction(self.actCheckAgainstData)
                 if not self.tm.isInherited(self.currentIndex):
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actRemoveRow)
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
