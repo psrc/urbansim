@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>292</height>
+    <width>311</width>
+    <height>275</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -31,14 +31,14 @@
       <item row="0" column="0" >
        <widget class="QLabel" name="menuFontSizeLabel" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>200</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -49,28 +49,37 @@
       </item>
       <item row="0" column="1" >
        <widget class="QSpinBox" name="menuFontSizeSpinBox" >
-        <property name="maximumSize" >
-         <size>
-          <width>42</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="mainTabsFontSizeLabel" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>200</width>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="suffix" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="mainTabsFontSizeLabel" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -81,9 +90,15 @@
       </item>
       <item row="1" column="1" >
        <widget class="QSpinBox" name="mainTabsFontSizeSpinBox" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize" >
          <size>
-          <width>42</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -95,14 +110,14 @@
       <item row="2" column="0" >
        <widget class="QLabel" name="label" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize" >
          <size>
-          <width>200</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -113,9 +128,15 @@
       </item>
       <item row="2" column="1" >
        <widget class="QSpinBox" name="generalTextFontSizeSpinBox" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize" >
          <size>
-          <width>42</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -141,25 +162,18 @@
      <property name="checkable" >
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3" >
-      <item row="0" column="1" >
-       <widget class="QRadioButton" name="prevProjPrefRadioButton" >
-        <property name="maximumSize" >
-         <size>
-          <width>42</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout_2" >
       <item row="0" column="0" >
-       <widget class="QLabel" name="prevProjPrefLabel" >
+       <widget class="QRadioButton" name="prevProjPrefRadioButton" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize" >
          <size>
-          <width>200</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -169,11 +183,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>checkBox</zorder>
-     <zorder>gridLayoutWidget</zorder>
-     <zorder>prevProjPrefRadioButton</zorder>
-     <zorder>prevProjPrefLabel</zorder>
-     <zorder>fontGroupBox</zorder>
     </widget>
    </item>
    <item>
@@ -193,6 +202,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="applyButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text" >
         <string>Apply</string>
        </property>
@@ -203,6 +218,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="okButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text" >
         <string>OK</string>
        </property>
@@ -213,6 +234,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="cancelButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text" >
         <string>Cancel</string>
        </property>
