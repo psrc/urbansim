@@ -36,7 +36,7 @@
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>441</width>
           <height>24</height>
@@ -55,36 +55,19 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="checkAllVariables" >
+        <property name="toolTip" >
+         <string>Checks all variable syntax and makes sure that it can be computed on the baseyear data.</string>
+        </property>
+        <property name="text" >
+         <string>Validate All Variables</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="Line" name="line" >
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="checkAllVariables" >
-        <property name="text" >
-         <string>Check All Variables</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="checkSelectedVariables" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>Check Selected Variables</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="saveChanges" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>Accept Changes</string>
         </property>
        </widget>
       </item>

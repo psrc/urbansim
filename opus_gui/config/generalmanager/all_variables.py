@@ -258,7 +258,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.mainwindow = mainwindow
 
         # For now, disable the save button until we implement the write in the model...
-        self.saveChanges.setEnabled(False)
+#        self.saveChanges.setEnabled(False)
 
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.editIcon = QIcon(":/Images/Images/application_edit.png")
@@ -277,6 +277,21 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                         SIGNAL("triggered()"),
                         self.editRow)
 
+        self.actCheckSyntax = QAction(self.editIcon,
+                                  "Check Syntax",
+                                  mainwindow)
+        QObject.connect(self.actCheckSyntax,
+                        SIGNAL("triggered()"),
+                        self.checkSyntax)
+
+        self.actCheckAgainstData = QAction(self.editIcon,
+                                  "Check Against Data",
+                                  mainwindow)
+        QObject.connect(self.actCheckAgainstData,
+                        SIGNAL("triggered()"),
+                        self.checkAgainstData)
+        
+        
         self.tv.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.tv,SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
@@ -305,6 +320,8 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             if self.menu:
                 # Tack on a remove row item
                 self.menu.addAction(self.actEditRow)
+                self.menu.addAction(self.actCheckSyntax)
+                self.menu.addAction(self.actCheckAgainstData)
                 if not self.tm.isInherited(self.currentIndex):
                     self.menu.addAction(self.actRemoveRow)
                 if not self.menu.isEmpty():
@@ -422,7 +439,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             #print "Dont need to save"
             pass
         # Now disable the accept changes button
-        self.saveChanges.setEnabled(False)
+    #    self.saveChanges.setEnabled(False)
         self.dirty = False
         #self.close()
 
@@ -451,6 +468,25 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         window.setModal(True)
         window.show()
 
+    def checkSyntax(self):
+        row = self.currentIndex.row()
+        success, errors = self.tm.checkSyntax(row = row)
+        if success:
+            QMessageBox.information(self, 'Variable check results', 'Variable syntax check successful!')
+        else:
+            errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self, 'Variable check results', errorString)
+                
+    def checkAgainstData(self):
+        row = self.currentIndex.row()
+        success, errors = self.tm.checkAgainstData(row = row)
+        if success:
+            QMessageBox.information(self, 'Variable data check results', 'Variable checked successfully against baseyear data!')
+        else:
+            errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(errors)
+            QMessageBox.warning(self, 'Variable check results', errorString)
+            
+    
     def on_checkSelectedVariables_released(self):
 #        saveBeforeCheck = QMessageBox.Yes
 #        if self.dirty:

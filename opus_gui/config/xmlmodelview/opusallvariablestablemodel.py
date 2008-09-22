@@ -193,6 +193,15 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             self.removeRow(index)
         self.checkStateOfCheckBoxes(False)
         
+    def checkSyntax(self, row):
+        variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
+        return VariableValidator(parentWidget = self.parentWidget).check_parse_errors(variables = variables)
+        
+    def checkAgainstData(self, row):
+        variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
+        return VariableValidator(parentWidget = self.parentWidget).check_data_errors(variables = variables)
+
+    
     def checkSelectedVariables(self):
         # check the variables in the expression library that have check boxes checked
         tocheck = []
