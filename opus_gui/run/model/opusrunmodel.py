@@ -48,6 +48,8 @@ class RunModelThread(QThread):
         self.modelguielement.model.progressCallback = self.progressCallback
         self.modelguielement.model.finishedCallback = self.finishedCallback
         self.modelguielement.model.errorCallback = self.errorCallback
+        if self.run_name.strip() != '':
+            self.modelguielement.model.run_name = self.run_name
         self.modelguielement.model.run()
 
     def pause(self):
@@ -152,12 +154,12 @@ class OpusModel(object):
         self.paused = False
         self._write_command_file('stop')
 
-    def get_run_name(self, config):
-        if self.run_name is None:
+    def get_run_name(self, config, run_name = None):
+        if run_name is None:
             cache_directory = config['cache_directory']
-            self.run_name = 'Run_%s'%os.path.basename(cache_directory)
+            run_name = 'Run_%s'%os.path.basename(cache_directory)
             
-        return self.run_name
+        return run_name
 
     def run(self):
         if WithOpus:
@@ -174,7 +176,11 @@ class OpusModel(object):
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
                 config = self.xmltreeobject.toolboxbase.opusXMLTree.get_run_configuration(str(self.modeltorun))
                     
-                insert_auto_generated_cache_directory_if_needed(config)
+                cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
+                run_name = self.get_run_name(config = config, run_name = self.run_name)                
+                config['cache_directory'] = os.path.join(cache_directory_root, run_name)
+                
+                #insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
                 server_config = ServicesDatabaseConfiguration()
@@ -191,8 +197,7 @@ class OpusModel(object):
                 config['status_file_for_gui'] = self.statusfile
                 self.commandfile = os.path.join(statusdir, 'command.txt')
                 config['command_file_for_gui'] = self.commandfile
-                
-                run_name = self.get_run_name(config)
+
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 self.running = True

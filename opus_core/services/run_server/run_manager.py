@@ -46,15 +46,17 @@ class RunManager(AbstractService):
         #compose unique cache directory based on the history_id
         self.update_environment_variables(configuration)
         self.run_id = self._get_new_run_id()
-
-        head, tail = os.path.split(cache_directory)
-        unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
-        run_descr = self.run_id
-               
+        
+        if os.path.exists(cache_directory):
+            head, tail = os.path.split(cache_directory)
+            unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
+        else:
+            unique_cache_directory = cache_directory
+            
         self.current_cache_directory = unique_cache_directory
         self.ready_to_run = True
-        
-        logger.log_status('Cache directory for run %s set to %s' % (run_descr, self.current_cache_directory))
+        configuration['cache_directory'] = unique_cache_directory
+        logger.log_status('Cache directory for run %s set to %s' % (self.run_id, self.current_cache_directory))
             
     def get_current_cache_directory(self):
         if not self.ready_to_run:
@@ -76,10 +78,9 @@ class RunManager(AbstractService):
 
         if not self.ready_to_run:
             raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
+        
         if run_resources['cache_directory'] != self.current_cache_directory:
-            #TODO: do not change the configuration en route
-            run_resources['cache_directory'] = self.current_cache_directory
-            #raise 'The configuration and the RunManager conflict on the proper cache_directory'
+            raise 'The configuration and the RunManager conflict on the proper cache_directory'
 
         self.add_row_to_history(self.run_id, run_resources, "started", run_name = run_name)
 

@@ -22,6 +22,7 @@ from opus_gui.run.estimation.opusrunestimation import *
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
+from time import localtime, strftime
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 
@@ -455,7 +456,8 @@ class ModelGuiElement(QWidget):
         self.optionalFieldsLayout.addWidget(self.lblRun, 0, 0)
         self.optionalFieldsLayout.addWidget(self.leRunName, 0, 1)
         
-        self.leRunName.setText(QString(''))
+        run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
+        self.leRunName.setText(QString(run_name))
             
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
