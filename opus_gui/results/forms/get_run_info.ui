@@ -5,120 +5,202 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>204</height>
+    <width>430</width>
+    <height>260</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Details for simulation run</string>
   </property>
-  <widget class="QPushButton" name="btnDone" >
-   <property name="geometry" >
-    <rect>
-     <x>530</x>
-     <y>170</y>
-     <width>71</width>
-     <height>32</height>
-    </rect>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <property name="spacing" >
+    <number>0</number>
    </property>
-   <property name="text" >
-    <string>Ok</string>
+   <property name="topMargin" >
+    <number>12</number>
    </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>591</width>
-     <height>154</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" >
-    <item row="1" column="0" >
-     <widget class="QLabel" name="label_4" >
-      <property name="text" >
-       <string>Scenario:</string>
+   <item>
+    <widget class="QFrame" name="frame" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" >
+      <property name="horizontalSpacing" >
+       <number>17</number>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="1" >
-     <widget class="QLabel" name="lblScenario_name" >
-      <property name="text" >
-       <string>TextLabel</string>
-      </property>
-      <property name="textFormat" >
-       <enum>Qt::AutoText</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>Run name:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" >
-     <widget class="QLabel" name="lblRun_name" >
-      <property name="text" >
-       <string>TextLabel</string>
-      </property>
-      <property name="wordWrap" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" >
-     <widget class="QLabel" name="label_2" >
-      <property name="text" >
-       <string>Years run:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" >
-     <widget class="QLabel" name="lblYears_run" >
-      <property name="text" >
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" >
-     <widget class="QLabel" name="label_3" >
-      <property name="text" >
-       <string>Cache directory:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0" colspan="2" >
-     <widget class="QLabel" name="lblCache_directory" >
-      <property name="text" >
-       <string>TextLabel</string>
-      </property>
-      <property name="wordWrap" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="label_5" >
-      <property name="text" >
-       <string>Run id:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QLabel" name="lblRunId" >
-      <property name="text" >
-       <string>TextLabel</string>
-      </property>
-      <property name="textFormat" >
-       <enum>Qt::AutoText</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="label_5" >
+        <property name="text" >
+         <string>Run id:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="label_4" >
+        <property name="text" >
+         <string>Scenario:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Run name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="label_2" >
+        <property name="text" >
+         <string>Years run:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="label_3" >
+        <property name="text" >
+         <string>Cache directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" >
+       <widget class="QLabel" name="lblCache_directory" >
+        <property name="autoFillBackground" >
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet" >
+         <string notr="true" >background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text" >
+         <string>TextLabel</string>
+        </property>
+        <property name="wordWrap" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" >
+       <widget class="QLabel" name="lblYears_run" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="autoFillBackground" >
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet" >
+         <string notr="true" >background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text" >
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="lblRun_name" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="autoFillBackground" >
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet" >
+         <string notr="true" >background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text" >
+         <string>TextLabel</string>
+        </property>
+        <property name="wordWrap" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLabel" name="lblScenario_name" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="autoFillBackground" >
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet" >
+         <string notr="true" >background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text" >
+         <string>TextLabel</string>
+        </property>
+        <property name="textFormat" >
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="lblRunId" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="autoFillBackground" >
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet" >
+         <string notr="true" >background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text" >
+         <string>TextLabel</string>
+        </property>
+        <property name="textFormat" >
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnDone" >
+       <property name="text" >
+        <string>Ok</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
