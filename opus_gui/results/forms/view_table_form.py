@@ -67,6 +67,8 @@ class ViewTableForm(QWidget):
             self.tableWidget.setHorizontalHeaderItem(j,col)
             j += 1
             
+        self.tableWidget.resizeColumnsToContents()
+        
         order = sorted(enumerate(table_data[keys[0]]), lambda (i,v),(j,v2): int(v*100)-int(v2*100))
         
 
@@ -82,5 +84,5 @@ class ViewTableForm(QWidget):
             if i > limit:
                 break
         
-        self.tableWidget.resizeColumnsToContents()
+        
         #self.tableWidget.resizeRowsToContents()
