@@ -101,18 +101,18 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         
 
     def checkStateOfCheckBoxes(self,newItemAdded):
-        if newItemAdded and self.editable:
-            # If we have a check then we enable delete
-            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(True)
-            self.parentWidget.checkSelectedVariables.setEnabled(True)
+#        if newItemAdded and self.editable:
+#            # If we have a check then we enable delete
+#            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(True)
+#            self.parentWidget.checkSelectedVariables.setEnabled(True)
         # Else now we loop through the items and see if that was the last one removed
         foundOne = False
         for testCase in self.arraydata:
             if testCase[-2]:
                 foundOne = True
-        if (not foundOne) and self.editable:
-            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(False)        
-            self.parentWidget.checkSelectedVariables.setEnabled(False)        
+#        if (not foundOne) and self.editable:
+#            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(False)        
+#            self.parentWidget.checkSelectedVariables.setEnabled(False)        
         
     def initCheckBoxes(self,checkList):
         # Loop through the items and see if it needs a check mark
