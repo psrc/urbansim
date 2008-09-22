@@ -6,16 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>499</height>
+    <width>516</width>
+    <height>436</height>
    </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Variable editor</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <widget class="QGroupBox" name="variableBox" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title" >
       <string>Variable definition</string>
      </property>
@@ -163,15 +175,21 @@ and "primary attribute" refers to a primary attribute of the given dataset. </st
         <layout class="QHBoxLayout" >
          <item>
           <widget class="QLabel" name="label_5" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>100</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>100</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -181,7 +199,20 @@ and "primary attribute" refers to a primary attribute of the given dataset. </st
           </widget>
          </item>
          <item>
-          <widget class="QTextEdit" name="textEdit" />
+          <widget class="QTextEdit" name="textEdit" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="baseSize" >
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -262,6 +293,11 @@ and "primary attribute" refers to a primary attribute of the given dataset. </st
        </widget>
       </item>
      </layout>
+     <zorder>cboCheckSyntax</zorder>
+     <zorder>line</zorder>
+     <zorder>saveChanges</zorder>
+     <zorder>cancelWindow</zorder>
+     <zorder>cboCheckData</zorder>
     </widget>
    </item>
   </layout>

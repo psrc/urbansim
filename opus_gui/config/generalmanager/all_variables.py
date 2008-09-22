@@ -223,6 +223,7 @@ class AllVariablesGui(object):
         for i,origListItem in enumerate(tabledata):
             self.originalList[i] = list(origListItem)
         tm = OpusAllVariablesTableModel(tabledata, header, self, editable)
+        tm.sort()
         self.tm = tm
         self.tv = tv
         tv.setModel(tm)
@@ -233,7 +234,7 @@ class AllVariablesGui(object):
         QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateVertLayout)
         #QObject.connect(tm, SIGNAL("layoutChanged()"), self.updateHorLayout)
         #QObject.connect(tm, SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"), self.updateHorLayout)
-        self.gridlayout.addWidget(tv)
+        self.gridLayout.addWidget(tv)
         tv.horizontalHeader().setStretchLastSection(True)
         QTimer.singleShot(100, self.updateVertLayout)
         #QTimer.singleShot(200, self.updateHorLayout)

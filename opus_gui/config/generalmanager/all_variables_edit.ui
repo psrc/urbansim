@@ -15,11 +15,8 @@
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QGroupBox" name="variableBox" >
-     <property name="title" >
-      <string>Expression Library</string>
-     </property>
-     <layout class="QGridLayout" />
+    <widget class="QWidget" native="1" name="variableBox" >
+     <layout class="QGridLayout" name="gridLayout" />
     </widget>
    </item>
    <item>

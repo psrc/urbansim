@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables_edit.ui'
 #
-# Created: Mon Sep 22 00:22:55 2008
+# Created: Mon Sep 22 01:37:15 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,10 +15,10 @@ class Ui_AllVariablesEditGui(object):
         AllVariablesEditGui.resize(1000, 600)
         self.vboxlayout = QtGui.QVBoxLayout(AllVariablesEditGui)
         self.vboxlayout.setObjectName("vboxlayout")
-        self.variableBox = QtGui.QGroupBox(AllVariablesEditGui)
+        self.variableBox = QtGui.QWidget(AllVariablesEditGui)
         self.variableBox.setObjectName("variableBox")
-        self.gridlayout = QtGui.QGridLayout(self.variableBox)
-        self.gridlayout.setObjectName("gridlayout")
+        self.gridLayout = QtGui.QGridLayout(self.variableBox)
+        self.gridLayout.setObjectName("gridLayout")
         self.vboxlayout.addWidget(self.variableBox)
         self.widget = QtGui.QWidget(AllVariablesEditGui)
         self.widget.setMaximumSize(QtCore.QSize(16777215, 45))
@@ -49,7 +49,6 @@ class Ui_AllVariablesEditGui(object):
 
     def retranslateUi(self, AllVariablesEditGui):
         AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Expression Library", None, QtGui.QApplication.UnicodeUTF8))
         self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setToolTip(QtGui.QApplication.translate("AllVariablesEditGui", "Checks all variable syntax and makes sure that it can be computed on the baseyear data.", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Validate All Variables", None, QtGui.QApplication.UnicodeUTF8))
