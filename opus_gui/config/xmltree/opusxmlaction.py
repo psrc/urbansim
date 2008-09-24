@@ -21,7 +21,7 @@ from opus_gui.config.resultsmanager.opusxmlaction_results import OpusXMLAction_R
 from opus_gui.config.modelmanager.opusxmlaction_model import OpusXMLAction_Model
 from opus_gui.config.scenariomanager.opusxmlaction_scenario import OpusXMLAction_Scenario
 from opus_gui.config.datamanager.opusxmlaction_data import OpusXMLAction_Data
-from opus_gui.config.datamanager.opusxmlaction_datadb import OpusXMLAction_DataDB
+#from opus_gui.config.datamanager.opusxmlaction_datadb import OpusXMLAction_DataDB
 
 class OpusXMLAction(object):
     def __init__(self, xmlTreeObject):
@@ -43,8 +43,8 @@ class OpusXMLAction(object):
             return OpusXMLAction_Scenario(self)
         elif xmlType == "data_manager":
             return OpusXMLAction_Data(self)
-        elif xmlType == "data_manager_dbstree":
-            return OpusXMLAction_DataDB(self)
+#        elif xmlType == "data_manager_dbstree":
+#            return OpusXMLAction_DataDB(self)
         elif xmlType == "general":
             return OpusXMLAction_General(self)
         else:
