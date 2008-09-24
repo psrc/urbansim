@@ -458,14 +458,6 @@ class ResultsManagerXMLHelper:
             
         return node_vals
         
-        
-    def get_project_title(self):
-        _, vals = self.get_element_attributes(node_name = 'general', 
-                                               child_attributes = ['project_name'])
-        if 'project_name' not in vals: return 'No name'
-        project_name = str(vals['project_name'])
-        return project_name
-        
 
     def update_available_runs(self):
         #get existing cache directories, use as primary key to check for duplicates
@@ -492,7 +484,7 @@ class ResultsManagerXMLHelper:
             else:
                 existing_cache_directories[cache_directory] = 1
 
-        project_name = self.get_project_title()
+        project_name = self.toolboxStuff.project_name
 
         server_config = ServicesDatabaseConfiguration()
         run_manager = RunManager(server_config)
