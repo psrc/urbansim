@@ -123,7 +123,9 @@ class RunManager(AbstractService):
             
         self.ready_to_run = False
         
-
+    def abort_run(self):
+        self.delete_everything_for_this_run(run_id = self.run_id, cache_directory = self.current_cache_directory)
+        
     def restart_run(self, run_id, restart_year,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
