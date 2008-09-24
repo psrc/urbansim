@@ -34,7 +34,7 @@ def main(argv):
     app.setApplicationName("OPUS")
 
     # Set the app style
-    app.setStyle(QString("plastique"))
+    #app.setStyle(QString("plastique"))
 
     # QGIS References are removed for the time being...
     #try:
