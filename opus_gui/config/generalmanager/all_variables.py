@@ -19,9 +19,9 @@ from PyQt4.QtGui import *
 
 from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
 from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariablesDelegate
-from opus_gui.config.generalmanager.all_variables_edit_ui import Ui_AllVariablesEditGui
-from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariablesSelectGui
-from opus_gui.config.generalmanager.all_variables_new_ui import Ui_AllVariablesNewGui
+from opus_gui.config.generalmanager.ui_all_variables_edit import Ui_AllVariablesEditGui
+from opus_gui.config.generalmanager.ui_all_variables_select import Ui_AllVariablesSelectGui
+from opus_gui.config.generalmanager.ui_all_variables_new import Ui_AllVariablesNewGui
 from opus_gui.config.generalmanager.variable_validator import VariableValidator
 
 import random,pprint,string

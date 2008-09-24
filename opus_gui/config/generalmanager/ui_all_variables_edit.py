@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'all_variables_edit.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/config/generalmanager/all_variables_edit.ui'
 #
-# Created: Mon Sep 22 01:37:15 2008
+# Created: Wed Sep 24 15:22:34 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,7 +48,7 @@ class Ui_AllVariablesEditGui(object):
         QtCore.QMetaObject.connectSlotsByName(AllVariablesEditGui)
 
     def retranslateUi(self, AllVariablesEditGui):
-        AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        AllVariablesEditGui.setWindowTitle(QtGui.QApplication.translate("AllVariablesEditGui", "Variable Library", None, QtGui.QApplication.UnicodeUTF8))
         self.addNewVariable.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Add New Variable", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setToolTip(QtGui.QApplication.translate("AllVariablesEditGui", "Checks all variable syntax and makes sure that it can be computed on the baseyear data.", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAllVariables.setText(QtGui.QApplication.translate("AllVariablesEditGui", "Validate All Variables", None, QtGui.QApplication.UnicodeUTF8))
