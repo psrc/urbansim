@@ -141,7 +141,11 @@ class ToolboxBase(object):
                 self.configFileTemp.open(QIODevice.ReadWrite)
                 self.doc = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
-                self.opusDataPath = self.opusXMLTree.get_opus_data_path()
+                self.project_name = self.opusXMLTree.full_tree.getroot().findtext('./general/project_name')
+                
+                self.opusDataPath = os.path.join(self.opusXMLTree.get_opus_data_path(), self.project_name)
+                os.environ['OPUSPROJECTNAME'] = self.project_name
+                
                 self.generalManagerTree = OpusXMLTree(self,"general",
                                                       self.mainwindow.generalmanager_page.layout())
                 self.modelManagerTree = OpusXMLTree(self,"model_manager",
@@ -156,6 +160,9 @@ class ToolboxBase(object):
 #                                                      self.mainwindow.datamanager_dbsconnections.layout())
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                                       self.mainwindow.resultsmanager_page.layout())
+                
+
+            
             else:
                 print "Error reading the %s configuration file" % (xml_file)
         else:

@@ -409,8 +409,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.updateProjectHistoryNode()
             self.saveGuiConfig()
                         
-        title = self.resultManagerStuff.xml_helper.get_project_title()
-        os.environ['OPUSPROJECTNAME'] = title
+        title = self.toolboxStuff.project_name
+
         #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
         self.setWindowTitle(self.application_title + " - " + QString(title))
 #        if config:
