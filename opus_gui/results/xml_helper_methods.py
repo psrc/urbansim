@@ -111,7 +111,7 @@ class ResultsManagerXMLHelper:
                 indicators.append(var)
         return indicators      
     
-    def get_available_run_info(self, attributes = [], update = True):
+    def get_available_run_info(self, attributes = [], update = False):
         if update:
             self.update_available_runs()
         
