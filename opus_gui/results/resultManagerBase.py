@@ -11,6 +11,8 @@
 # other acknowledgments.
 # 
 
+import thread
+
 from opus_gui.results.forms.indicator_batch_run_form import IndicatorBatchRunForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
@@ -55,6 +57,9 @@ class ResultManagerBase(AbstractManagerBase):
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
 
     def scanForRuns(self):
+        thread.start_new_thread(self._scanForRuns, ())
+    
+    def _scanForRuns(self):
         run_manager = self._get_run_manager()
         run_manager.clean_runs()
         run_manager.close()
