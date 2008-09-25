@@ -12,10 +12,8 @@
 # 
 
 from PyQt4.QtCore import QString, QObject, SIGNAL, Qt 
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel, \
-                        QTableWidget, QTableWidgetItem, QSizePolicy
+from PyQt4.QtGui import QMessageBox, QTabWidget, QWidget, \
+                        QTableWidgetItem, QSizePolicy
 
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -27,7 +25,6 @@ from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_core.logger import logger
 
-from copy import copy
 
 class ResultBrowser(QWidget, Ui_ResultsBrowser):
     def __init__(self, mainwindow, gui_result_manager):
@@ -39,7 +36,13 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.mainwindow = mainwindow
         self.gui_result_manager = gui_result_manager
         self.toolboxStuff = self.gui_result_manager.mainwindow.toolboxStuff
+        QObject.connect(self.toolboxStuff.generalManagerTree.model, SIGNAL("layoutChanged()"),
+                self.setupAvailableIndicators)
 
+        QObject.connect(self.toolboxStuff.resultsManagerTree.model, SIGNAL("layoutChanged()"),
+                self._setup_simulation_data)
+
+                    
         self.cbAutoGen.setToolTip(QString(
             ('If checked, indicator results will automatically be\n'
             'created for the currently selected simulation run,\n'
@@ -74,11 +77,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.pbnExportResults.setEnabled(False)
         self.twVisualizations.removeTab(0)
         
-    def focusInEvent(self):
-        self.setupAvailableIndicators()
-        self._setup_simulation_data()
-        
     def setupAvailableIndicators(self):
+        print 'setting up available indicators!'
 
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
 

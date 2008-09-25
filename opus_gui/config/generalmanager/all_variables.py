@@ -86,14 +86,11 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         # Else we are looking to see if any of the params have actually changed
         
         vals = [QString(v) for v in self._get_variable_definition()]
-        if (vals[0] != self.initialParams[0]) or \
+        return   (vals[0] != self.initialParams[0]) or \
                  (vals[1] != self.initialParams[1]) or \
                  (vals[2] != self.initialParams[2]) or \
                  (vals[3] != self.initialParams[3]) or \
-                 (vals[4] != self.initialParams[4]):
-            return True
-        else:
-            return False
+                 (vals[4] != self.initialParams[4])
         
     def on_saveChanges_released(self):
         #print "save pressed"
@@ -417,7 +414,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             ##    and check if an inherited parent needs to be placed back in.
             
             # Loop through the list of lists and find the node in the XML and update it
-            for i,testCase in enumerate(self.tabledata):
+            for i,testCase in enumerate(self.tm.arraydata):
                 # Find the XML node that has the tag name in column 1
                 nameToSearchFor = testCase[1]
                 foundInOriginal = False
@@ -458,7 +455,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                 # print "Testing if original is in the new list..."
                 # Test to see if anything in the original is not in the new list
                 weFoundIt = False
-                for ii,newTestCase in enumerate(self.tabledata):
+                for ii,newTestCase in enumerate(self.tm.arraydata):
                     if origTestCase[1] == newTestCase[1]:
                         weFoundIt = True
                         break

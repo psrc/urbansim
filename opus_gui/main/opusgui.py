@@ -150,8 +150,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
-
-        self.all_variables = None
         
         # QGIS References are removed for the time being...
         #Add map tab
@@ -166,7 +164,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #Add log tab
         QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
         
-        QObject.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.tab_changed)
+#        QObject.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.tab_changed)
 
         self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
@@ -182,7 +180,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.consoleStuff = ConsoleBase(self)
         self.runManagerStuff = RunManagerBase(self)
         self.runManagerStuff.setGui(self)
-        self.resultBrowser = None
 
         self.resultManagerStuff = ResultManagerBase(self)
         self.resultManagerStuff.setGui(self)
@@ -254,10 +251,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         self.changeFontSize()
         self.setFocus()
-        
+
+        self.all_variables = None
+        self.resultBrowser = None
+                
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
         
+
         
     def getDbConnectionNames(self):
         '''
@@ -285,8 +286,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def editAllVariables(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
+        
         self.all_variables.setModal(True)
-        self.all_variables.setWindowTitle('Variable Library')
         self.all_variables.show()
             
     def closeCurrentTab(self):
@@ -298,10 +299,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             pass
         # Do something with the widget if we need to...
 
-    def tab_changed(self, index):
-        tab = self.tabWidget.currentWidget()
-        if self.resultBrowser and tab == self.resultBrowser:
-            self.resultBrowser.focusInEvent()
+#    def tab_changed(self, index):
+#        tab = self.tabWidget.currentWidget()
+#        if self.resultBrowser and tab == self.resultBrowser:
+#            self.resultBrowser.focusInEvent()
         
     def openMapTab(self):
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
@@ -423,8 +424,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
             self.resultBrowser.close()
             self.resultBrowser = None
-        
+
+        if self.all_variables is not None:
+            self.all_variables.close()
+            
+
+
         self.changeFontSize()
+
 
     def saveConfig(self):
         try:
