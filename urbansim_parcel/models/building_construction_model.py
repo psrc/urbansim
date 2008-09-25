@@ -198,7 +198,10 @@ class BuildingConstructionModel(Model):
               "development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development)/urbansim_parcel.development_project_proposal.number_of_components"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
-            development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
+            ## TODO: need to be reviewed, probably by Hana
+            ## changed from proposal_component_set to development_proposal_set
+            ## so it will have the same shape as is_delayed_or_active
+            development_amount = resize(array([100], dtype="int32"), development_proposal_set.size())
         will_be_delayed = development_amount < 100
         velocity_idx = where(logical_and(is_delayed_or_active, will_be_delayed))[0]
         if velocity_idx.size > 0:
