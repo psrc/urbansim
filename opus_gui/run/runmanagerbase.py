@@ -21,7 +21,8 @@ from opus_gui.run.model.opusrunmodel import *
 from opus_gui.run.estimation.opusrunestimation import *
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
-from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
+from opus_gui.run.ui_overwrite_dialog import Ui_dlgOverwriteRun
+from opus_gui.run.ui_simulation_run import Ui_SimulationRun
 from time import localtime, strftime
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
@@ -105,11 +106,13 @@ class RunManagerBase(object):
 # This is an element in the Run Manager GUI that is the container for the model
 # and the model thread.  If the start button is pressed then the GUI will create
 # a thread to execute the given model.
-class ModelGuiElement(QWidget):
+class ModelGuiElement(QWidget, Ui_SimulationRun):
     def __init__(self, mainwindow, runManager, model):
         QWidget.__init__(self, mainwindow)
+
         self.mainwindow = mainwindow
-        self.mainwindow = mainwindow
+        self.setupUi(self)
+
         self.runManager = runManager
         self.model = model
         self.model.guiElement = self
@@ -137,255 +140,79 @@ class ModelGuiElement(QWidget):
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = fileNameInfo.fileName()
-
-        # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
-        self.widgetLayout = QVBoxLayout(self)
-        self.widgetLayout.setAlignment(Qt.AlignTop)
-        self.groupBox = QGroupBox(self)
-        self.groupBox.setTitle(QString("main_groupBox"))
-        self.widgetLayout.addWidget(self.groupBox)
-
-        ##stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
-        #self.groupBox.setTitle(QString(stringToUse))
-        self.groupBox.setTitle(QString(""))
-        self.groupBox.setFlat(True)
-
-        self.vboxlayout = QVBoxLayout(self.groupBox)
-        self.vboxlayout.setObjectName("vboxlayout")
-
-        size = QSizePolicy(QSizePolicy.Preferred,QSizePolicy.Preferred)
-        self.groupBox.setSizePolicy(size)
         
-        self.modelControlWidget = QWidget(self.groupBox)
-        self.vboxlayout2 = QGridLayout(self.modelControlWidget)
-        self.vboxlayout2.setObjectName("vboxlayout2")
-
         ### Code for the buttons that start the simulation and remove from queue
 
-        self.startWidget = QWidget(self.groupBox)
-        self.startWidget.setObjectName("startWidget")
-
-        self.startVBoxLayout = QGridLayout(self.startWidget)
-        self.startVBoxLayout.setObjectName("startGridLayout")
-
-        self.pbnStartModel = QPushButton(self.startWidget)
-        self.pbnStartModel.setObjectName("pbnStartModel")
-        self.pbnStartModel.setText(QString("Start Simulation Run..."))
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
-        self.startVBoxLayout.addWidget(self.pbnStartModel)
         
-        self.pbnRemoveModel = QPushButton(self.startWidget)
-        self.pbnRemoveModel.setObjectName("pbnRemoveModel")
-        self.pbnRemoveModel.setText(QString("Abort Simulation Run"))
         QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
                         self.on_pbnRemoveModel_released)        
-        self.startVBoxLayout.addWidget(self.pbnRemoveModel)
-        self.vboxlayout2.addWidget(self.startWidget, 0, 0)
 
-        self.optionalFieldsWidget = QWidget(self.groupBox)
-        self.optionalFieldsWidget.setSizePolicy(size)
-        #self.optionalFieldsGroupBox = QGroupBox(self.optionalFieldsWidget)
-        #self.optionalFieldsGroupBox.setTitle(QString('Optional fields'))
-        self.optionalFieldsLayout = QGridLayout(self.optionalFieldsWidget)
         self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
-        
-        self.vboxlayout2.addWidget(self.optionalFieldsWidget, 0, 1)
-        self.vboxlayout.addWidget(self.modelControlWidget)
-
-        # Add a tab widget and layer in a tree view and log panel
-        self.tabWidget = QTabWidget(self.groupBox)
 
         # Simulation Progress Tab
 
-        # Overall widget in the large group box
-        self.simprogressWidget = QWidget(self.groupBox)
-        self.simprogressWidget.setObjectName("simprogressWidget")
-        self.simprogressLayout = QVBoxLayout(self.simprogressWidget)
-        self.simprogressGroupBox = QGroupBox(self.simprogressWidget)
-        self.simprogressGroupBox.setObjectName("simprogressGroupBox")
-        self.simprogressGroupBox.setTitle("Progress Display")
-
-        ### Progress display stuff goes in here
-        self.simprogressLayoutInner = QGridLayout(self.simprogressGroupBox)    
-
-        ### Year Range Label
-
-        self.summaryYearRangeLabel = QLabel()
-        self.summaryYearRangeLabel.setAlignment(Qt.AlignLeft)
-        self.summaryYearRangeLabel.setObjectName("summaryYearRange")
-        self.summaryYearRangeLabel.setText(QString("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
-        self.summaryYearRangeLabel.setMinimumWidth(300)
-        self.simprogressLayoutInner.addWidget(self.summaryYearRangeLabel,0,0)
-
-        # Begin Progress Simulation Display Bars
-
-        # Layouts needs to be wrapped in a QWidget in order to be added to
-        # a QVBoxLayout
-        self.progressBarWidget = QWidget(self.groupBox)
-        self.progressBarWidget.setObjectName("progressBarWidget")
-
-        ### Total Progress Bar
-
-        self.totalProgressBarLayout = QGridLayout()
-
-        self.runProgressBarTotal = QProgressBar(self.progressBarWidget)
         self.runProgressBarTotal.setProperty("value",QVariant(0))
-        self.runProgressBarTotal.setObjectName("runProgressBarTotal")
-        self.runProgressBarTotal.setMinimumWidth(300)
         self.runProgressBarTotal.reset()
-
-        self.runProgressBarTotalLabel = QLabel(self.runProgressBarTotal)
-        self.runProgressBarTotalLabel.setAlignment(Qt.AlignRight)
-        self.runProgressBarTotalLabel.setObjectName("runProgressBarTotalLabel")
-        self.runProgressBarTotalLabel.setText(QString("Total Progress"))
-
-        ### Current Year
-
-        self.summaryCurrentYearValue = QLabel()
-        self.summaryCurrentYearValue.setAlignment(Qt.AlignLeft)
-        self.summaryCurrentYearValue.setObjectName("summaryCurrentYearValue")
-        self.summaryCurrentYearValue.setText(QString("-"))
-        self.summaryCurrentYearValue.setMinimumWidth(300)
-
-        self.summaryCurrentYearLabel = QLabel(self.summaryCurrentYearValue)
-        self.summaryCurrentYearLabel.setAlignment(Qt.AlignRight)
-        self.summaryCurrentYearLabel.setObjectName("summaryCurrentYearLabel")
-        self.summaryCurrentYearLabel.setText(QString("Current Year:"))
 
         ### Year Progress Bar
         self.yearProgressBarLayout = QGridLayout()
 
-        self.runProgressBarYear = QProgressBar(self.progressBarWidget)
         self.runProgressBarYear.setProperty("value",QVariant(0))
-        self.runProgressBarYear.setObjectName("runProgressBarYear")
-        self.runProgressBarYear.setMinimumWidth(300)
         self.runProgressBarYear.reset()
-
-        self.runProgressBarYearLabel = QLabel(self.runProgressBarYear)
-        self.runProgressBarYearLabel.setAlignment(Qt.AlignRight)
-        self.runProgressBarYearLabel.setObjectName("runProgressBarYearLabel")
-        self.runProgressBarYearLabel.setText(QString("Year Progress"))
-
-        ### Current Model
-
-        self.summaryCurrentModelValue = QLabel()
-        self.summaryCurrentModelValue.setAlignment(Qt.AlignLeft)
-        self.summaryCurrentModelValue.setObjectName("summaryCurrentModelValue")
-        self.summaryCurrentModelValue.setText(QString("-"))
-        self.summaryCurrentModelValue.setMinimumWidth(300)
-
-        self.summaryCurrentModelLabel = QLabel(self.summaryCurrentModelValue)
-        self.summaryCurrentModelLabel.setAlignment(Qt.AlignRight)
-        self.summaryCurrentModelLabel.setObjectName("summaryCurrentModelLabel")
-        self.summaryCurrentModelLabel.setText(QString("Current Model:"))
 
         ### Model Progress Bar
 
         self.modelProgressBarLayout = QGridLayout()
 
-        self.runProgressBarModel = QProgressBar(self.progressBarWidget)
         self.runProgressBarModel.setProperty("value",QVariant(0))
-        self.runProgressBarModel.setObjectName("runProgressBarModel")
-        self.runProgressBarModel.setMinimumWidth(300)
         self.runProgressBarModel.reset()
 
-        self.runProgressBarModelLabel = QLabel(self.runProgressBarModel)
-        self.runProgressBarModelLabel.setAlignment(Qt.AlignRight)
-        self.runProgressBarModelLabel.setObjectName("runProgressBarModelLabel")
-        self.runProgressBarModelLabel.setText(QString("Model Progress"))
-
-        ### Current Piece
-
-        self.summaryCurrentPieceValue = QLabel()
-        self.summaryCurrentPieceValue.setAlignment(Qt.AlignLeft)
-        self.summaryCurrentPieceValue.setObjectName("summaryCurrentPieceValue")
-        self.summaryCurrentPieceValue.setText(QString("-"))
-        self.summaryCurrentPieceValue.setMinimumWidth(300)
-
-        self.summaryCurrentPieceLabel = QLabel(self.summaryCurrentPieceValue)
-        self.summaryCurrentPieceLabel.setAlignment(Qt.AlignRight)
-        self.summaryCurrentPieceLabel.setObjectName("summaryCurrentPieceLabel")
-        self.summaryCurrentPieceLabel.setText(QString("Current Piece:"))
-
-        # Forming the layout with the total progress and the year label
-        self.totalProgressBarLayout.addWidget(self.runProgressBarTotalLabel,0,0)
-        self.totalProgressBarLayout.addWidget(self.runProgressBarTotal,0,1)    
-        self.totalProgressBarLayout.addWidget(self.summaryCurrentYearLabel,1,0)
-        self.totalProgressBarLayout.addWidget(self.summaryCurrentYearValue,1,1) 
-
-        # Forming the layout with the year progress and the model label
-        self.yearProgressBarLayout.addWidget(self.runProgressBarYearLabel,0,0)
-        self.yearProgressBarLayout.addWidget(self.runProgressBarYear,0,1)    
-        self.yearProgressBarLayout.addWidget(self.summaryCurrentModelLabel,1,0)
-        self.yearProgressBarLayout.addWidget(self.summaryCurrentModelValue,1,1) 
-
-        # Forming the layout with model progress and the piece label
-        self.modelProgressBarLayout.addWidget(self.runProgressBarModelLabel,0,0)
-        self.modelProgressBarLayout.addWidget(self.runProgressBarModel,0,1)
-        self.modelProgressBarLayout.addWidget(self.summaryCurrentPieceLabel,1,0)
-        self.modelProgressBarLayout.addWidget(self.summaryCurrentPieceValue,1,1)
-
-        self.progressBarLayout = QGridLayout(self.progressBarWidget)
-
-        self.yearLayout = QHBoxLayout()
-        self.yearLayout.addSpacing(20)
-        self.yearLayout.addLayout(self.yearProgressBarLayout)
-        self.modelLayout = QHBoxLayout()
-        self.modelLayout.addSpacing(40)
-        self.modelLayout.addLayout(self.modelProgressBarLayout)
-        self.progressBarLayout.addLayout(self.totalProgressBarLayout,0,0)
-        self.progressBarLayout.addLayout(self.yearLayout,1,0)
-        self.progressBarLayout.addLayout(self.modelLayout,2,0)    
-
-        # Place progress bars
-        self.simprogressLayoutInner.addWidget(self.progressBarWidget,1,0)
-        self.simprogressLayoutInner.setRowStretch(0,0) # row, weight
-        self.simprogressLayoutInner.setRowStretch(1,1)  
-
-
-        ###
-
-        self.simprogressLayout.addWidget(self.simprogressGroupBox)
-        self.tabWidget.addTab(self.simprogressWidget,"Simulation Progress")
-
-        # End Progress Simulation Display
-
-        # Log panel
-        self.logText = QTextEdit(self.groupBox)
-        self.logText.setReadOnly(True)
-        self.logText.setLineWidth(0)
-        self.tabWidget.addTab(self.logText,"Log")
-
-        # Finally add the tab to the model page
-        self.vboxlayout.addWidget(self.tabWidget)
-
         self.setupDiagnosticIndicatorTab()
+        self.runProgressBarModel.hide()
+        self.runProgressBarModelLabel.hide()
+        self.summaryCurrentPieceValue.hide()
         
     def updateConfigAndGuiForRun(self):
         config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
-        self.summaryYearRangeLabel.setText(QString("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
+        #self.summaryYearRangeLabel.setText(QString("Running model from "+str(self.start_year)+" to "+str(self.end_year)))
+
+    def on_cbYear_stateChanged(self, state):
+        if self.cbYear.isChecked():
+            self.runProgressBarYear.show()
+            self.runProgressBarYearLabel.show()
+            self.summaryCurrentModelValue.show()
+            self.cbModel.setChecked(False)
+            self.cbModel.show()
+#            self.runProgressBarModel.show()
+#            self.runProgressBarModelLabel.show()
+#            self.summaryCurrentPieceValue.show()
+        else:
+            self.runProgressBarYear.hide()
+            self.cbModel.hide()
+            self.runProgressBarYearLabel.hide()
+            self.summaryCurrentModelValue.hide()
+
+            self.runProgressBarModel.hide()
+            self.runProgressBarModelLabel.hide()
+            self.summaryCurrentPieceValue.hide()
+        
+    def on_cbModel_stateChanged(self, state):
+        if self.cbModel.isChecked():
+            self.runProgressBarModel.show()
+            self.runProgressBarModelLabel.show()
+            self.summaryCurrentPieceValue.show()
+        else:
+            self.runProgressBarModel.hide()
+            self.runProgressBarModelLabel.hide()
+            self.summaryCurrentPieceValue.hide()
 
     def setupDiagnosticIndicatorTab(self):
-        # start indicator tab 
-
-        self.indicatorWidget = QWidget(self.mainwindow) 
-        self.indicatorGridBoxLayout = QGridLayout(self.indicatorWidget)
-
-        self.diagnostic_indicator_type = QComboBox(self.mainwindow)
-        self.diagnostic_indicator_type.addItem(QString('map'))
-        self.diagnostic_indicator_type.addItem(QString('table'))
-        
-        self.diagnostic_go_button = QPushButton(self.mainwindow)
-        self.diagnostic_go_button.setText(QString('Diagnose...'))
-
-        
-        self.diagnostic_year = QComboBox(self.mainwindow)
-        self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
 
         config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
 
@@ -395,29 +222,15 @@ class ModelGuiElement(QWidget):
             #the second value in the list determines if it is already added to the drop down
             self.yearItems.append([year, False]); 
 
-        datasets = self.xml_helper.get_available_datasets()
-        self.diagnostic_dataset_name = QComboBox(self.mainwindow)
-        
+        datasets = self.xml_helper.get_available_datasets()        
         
         for dataset in datasets:
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
-        #combo box for selecting indicators for diagnostic
-        self.diagnostic_indicator_name = QComboBox(self.mainwindow)
-
         self.setup_diagnostic_indicators()
         
-        self.indicatorResultsTab = QTabWidget(self.mainwindow)
-
         QObject.connect(self.diagnostic_go_button,SIGNAL("released()"),self.on_indicatorBox)
         QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)       
-
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_go_button, 0, 0)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_type, 0, 1)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_year,0,2)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,3)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,4)
-        self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,5,5)
         
     def setup_diagnostic_indicators(self):
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
@@ -432,30 +245,13 @@ class ModelGuiElement(QWidget):
             return #qt sends two signals for the same event; only process one
         self.setup_diagnostic_indicators()
         
-    def setup_indicator_batch_combobox(self):
-        self.lblBatch = QLabel(self.optionalFieldsWidget)
-        self.lblBatch.setText(QString('Indicator batch:'))
-        self.lblBatch.setToolTip(QString('If an indicator batch (defined in the Results Manager) \nis selected, it will be executed over every \nyear of the simulation being configured. \nIt will executed after the simulation is completed.'))
-        self.cboOptionalIndicatorBatch = QComboBox(self.optionalFieldsWidget)
-        
-        self.optionalFieldsLayout.addWidget(self.lblBatch, 1, 0)
-        self.optionalFieldsLayout.addWidget(self.cboOptionalIndicatorBatch, 1, 1)
-        
+    def setup_indicator_batch_combobox(self):        
         self.cboOptionalIndicatorBatch.addItem(QString('(None)'))
         batches = self.xml_helper.get_available_batches()
         for batch in batches:
             self.cboOptionalIndicatorBatch.addItem(QString(batch['name']))
         
     def setup_run_name_line_edit(self):
-        self.lblRun = QLabel(self.optionalFieldsWidget)
-        self.lblRun.setText(QString('Run name:'))
-        self.lblRun.setToolTip(QString('This scenario run will appear \nin the Results Manager under the name \nspecified here. If not specified, \nthe name will default to a combination \nof run id and date of run.'))
-        
-        self.leRunName = QLineEdit(self.optionalFieldsWidget)
-                
-        self.optionalFieldsLayout.addWidget(self.lblRun, 0, 0)
-        self.optionalFieldsLayout.addWidget(self.leRunName, 0, 1)
-        
         run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
         self.leRunName.setText(QString(run_name))
             
@@ -518,14 +314,17 @@ class ModelGuiElement(QWidget):
 
     def on_pbnRemoveModel_released(self):
         #    if(self.running == True):
+        success = True
         if self.runThread:
-            self.runThread.cancel()
-        if self.timer:
-            self.timer.stop()
-        self.running = False
-        self.paused = False
-        self.runManager.removeModelElement(self)
-        self.runManager.updateModelElements()
+            success = self.runThread.cancel()
+
+        if success:
+            if self.timer:
+                self.timer.stop()
+            self.running = False
+            self.paused = False
+            self.runManager.removeModelElement(self)
+            self.runManager.updateModelElements()
 
     def on_pbnStartModel_released(self):
         proceed = True
@@ -551,19 +350,21 @@ class ModelGuiElement(QWidget):
         if not proceed: return
         
         
-        if self.running == True and self.paused == False:
+        if self.running and not self.paused:
             # Take care of pausing a run
-            self.paused = True
-            self.timer.stop()
-            self.runThread.pause()
-            self.pbnStartModel.setText(QString("Resume simulation run..."))
-        elif self.running == True and self.paused == True:
+            success = self.runThread.pause()
+            if success: 
+                self.paused = True
+                self.timer.stop()
+                self.pbnStartModel.setText(QString("Resume simulation run..."))
+        elif self.running and self.paused:
             # Need to resume a paused run
-            self.paused = False
-            self.timer.start(1000)
-            self.runThread.resume()
-            self.pbnStartModel.setText(QString("Pause simulation run..."))
-        elif self.running == False:
+            success = self.runThread.resume()
+            if success: 
+                self.paused = False
+                self.timer.start(1000)
+                self.pbnStartModel.setText(QString("Pause simulation run..."))
+        elif not self.running:
             # Update the XML
             self.toolboxStuff.updateOpusXMLTree()
             self.updateConfigAndGuiForRun()
@@ -585,7 +386,6 @@ class ModelGuiElement(QWidget):
             self.progressBarTotal.setRange(0,0)
             self.progressBarYear.setRange(0,0)
             self.progressBarModel.setRange(0,0)
-            self.simprogressGroupBox.setTitle(QString("Simulation run initializing..."))
             
             batch_name = str(self.cboOptionalIndicatorBatch.currentText())
             if batch_name == '(None)':
@@ -634,14 +434,13 @@ class ModelGuiElement(QWidget):
         self.progressBarTotal.setValue(100)
         self.progressBarYear.setValue(100)
         self.progressBarModel.setValue(100)
-        self.summaryCurrentYearValue.setText(QString("Finished"))
+        
+        if success: msg = 'Simulation ran successfully!'
+        else: msg = 'Simulation failed.'
+        self.summaryCurrentYearValue.setText(QString(msg))
         self.summaryCurrentModelValue.setText(QString("Finished"))
         self.summaryCurrentPieceValue.setText(QString("Finished"))
-        if success:
-            self.simprogressGroupBox.setTitle(QString("Simulation run Finished Successfully"))
-        else:
-            self.simprogressGroupBox.setTitle(QString("Simulation run Error!"))
-
+        
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.modelguielement.model._get_current_log(self.logFileKey)
@@ -752,7 +551,7 @@ class ModelGuiElement(QWidget):
         newString = QString(boxTitle)
 
         newString.leftJustified(60)
-        self.simprogressGroupBox.setTitle(newString)
+#        self.simprogressGroupBox.setTitle(newString)
         self.progressBarTotal.setValue(totalProgress)
         self.progressBarYear.setValue(yearProgress)
         self.progressBarModel.setValue(modelProgress)

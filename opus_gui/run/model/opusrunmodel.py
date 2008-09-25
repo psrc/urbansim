@@ -53,13 +53,13 @@ class RunModelThread(QThread):
         self.modelguielement.model.run()
 
     def pause(self):
-        self.modelguielement.model.pause()
+        return self.modelguielement.model.pause()
 
     def resume(self):
-        self.modelguielement.model.resume()
+        return self.modelguielement.model.resume()
 
     def cancel(self):
-        self.modelguielement.model.cancel()
+        return self.modelguielement.model.cancel()
 
     def progressCallback(self,percent):
         print "Ping From Model"
@@ -147,19 +147,25 @@ class OpusModel(object):
         self.cancelled = False
         
     def pause(self):
-        self.paused = True
-        self._write_command_file('pause')
-
+        success = self._write_command_file('pause')
+        if success: 
+            self.paused = True
+        return success
+    
     def resume(self):
-        self.paused = False
-        self._write_command_file('resume')
-
+        success = self._write_command_file('resume')
+        if success:
+            self.paused = False
+        return success
+    
     def cancel(self):
-        self.running = False
-        self.paused = False
-        self._write_command_file('stop')
-        self.cancelled = True
-        
+        success = self._write_command_file('stop')
+        if success:
+            self.running = False
+            self.paused = False
+            self.cancelled = True
+        return success
+    
     def get_run_name(self, config, run_name = None):
         if run_name is None:
             cache_directory = config['cache_directory']
@@ -343,6 +349,10 @@ class OpusModel(object):
         return newKey
 
     def _write_command_file(self, command):
-        f = open(self.commandfile, 'w')
-        f.write(command)
-        f.close()
+        try:
+            f = open(self.commandfile, 'w')
+            f.write(command)
+            f.close()
+            return True
+        except:
+            return False

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'overwrite_dialog.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/run/overwrite_dialog.ui'
 #
-# Created: Wed Jun 25 15:51:45 2008
+# Created: Thu Sep 25 00:50:41 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
