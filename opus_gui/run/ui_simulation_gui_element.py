@@ -1,49 +1,50 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/run/simulation_run.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/run/simulation_gui_element.ui'
 #
-# Created: Thu Sep 25 01:30:15 2008
+# Created: Thu Sep 25 11:39:25 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_SimulationRun(object):
-    def setupUi(self, SimulationRun):
-        SimulationRun.setObjectName("SimulationRun")
-        SimulationRun.resize(685, 688)
-        self.gridLayout_2 = QtGui.QGridLayout(SimulationRun)
+class Ui_SimulationGuiElement(object):
+    def setupUi(self, SimulationGuiElement):
+        SimulationGuiElement.setObjectName("SimulationGuiElement")
+        SimulationGuiElement.resize(685, 688)
+        self.gridLayout_2 = QtGui.QGridLayout(SimulationGuiElement)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.modelControlWidget = QtGui.QWidget(SimulationRun)
+        self.modelControlWidget = QtGui.QWidget(SimulationGuiElement)
         self.modelControlWidget.setObjectName("modelControlWidget")
         self.gridLayout = QtGui.QGridLayout(self.modelControlWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.pbnStartModel = QtGui.QPushButton(self.modelControlWidget)
         self.pbnStartModel.setObjectName("pbnStartModel")
         self.gridLayout.addWidget(self.pbnStartModel, 0, 0, 1, 1)
-        self.lblRun = QtGui.QLabel(self.modelControlWidget)
-        self.lblRun.setObjectName("lblRun")
-        self.gridLayout.addWidget(self.lblRun, 0, 1, 1, 1)
-        self.leRunName = QtGui.QLineEdit(self.modelControlWidget)
-        self.leRunName.setObjectName("leRunName")
-        self.gridLayout.addWidget(self.leRunName, 0, 2, 1, 1)
         self.pbnRemoveModel = QtGui.QPushButton(self.modelControlWidget)
         self.pbnRemoveModel.setObjectName("pbnRemoveModel")
         self.gridLayout.addWidget(self.pbnRemoveModel, 1, 0, 1, 1)
+        self.lblRun = QtGui.QLabel(self.modelControlWidget)
+        self.lblRun.setObjectName("lblRun")
+        self.gridLayout.addWidget(self.lblRun, 0, 1, 1, 1)
         self.lblBatch = QtGui.QLabel(self.modelControlWidget)
         self.lblBatch.setObjectName("lblBatch")
         self.gridLayout.addWidget(self.lblBatch, 1, 1, 1, 1)
+        self.leRunName = QtGui.QLineEdit(self.modelControlWidget)
+        self.leRunName.setObjectName("leRunName")
+        self.gridLayout.addWidget(self.leRunName, 0, 2, 1, 1)
         self.cboOptionalIndicatorBatch = QtGui.QComboBox(self.modelControlWidget)
         self.cboOptionalIndicatorBatch.setObjectName("cboOptionalIndicatorBatch")
         self.gridLayout.addWidget(self.cboOptionalIndicatorBatch, 1, 2, 1, 1)
         self.gridLayout_2.addWidget(self.modelControlWidget, 0, 0, 1, 1)
-        self.tabWidget = QtGui.QTabWidget(SimulationRun)
+        self.tabWidget = QtGui.QTabWidget(SimulationGuiElement)
         self.tabWidget.setObjectName("tabWidget")
         self.simprogressWidget = QtGui.QWidget()
         self.simprogressWidget.setGeometry(QtCore.QRect(0, 0, 655, 547))
         self.simprogressWidget.setObjectName("simprogressWidget")
         self.gridLayout_4 = QtGui.QGridLayout(self.simprogressWidget)
+        self.gridLayout_4.setContentsMargins(-1, -1, -1, 12)
         self.gridLayout_4.setVerticalSpacing(14)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.runProgressBarTotalLabel = QtGui.QLabel(self.simprogressWidget)
@@ -113,7 +114,7 @@ class Ui_SimulationRun(object):
         self.summaryCurrentPieceValue.setSizePolicy(sizePolicy)
         self.summaryCurrentPieceValue.setObjectName("summaryCurrentPieceValue")
         self.gridLayout_4.addWidget(self.summaryCurrentPieceValue, 4, 2, 1, 1)
-        spacerItem = QtGui.QSpacerItem(244, 360, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(244, 368, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_4.addItem(spacerItem, 5, 1, 1, 1)
         self.tabWidget.addTab(self.simprogressWidget, "")
         self.tab_2 = QtGui.QWidget()
@@ -129,6 +130,7 @@ class Ui_SimulationRun(object):
         self.gridLayout_5.addWidget(self.logText, 0, 0, 1, 1)
         self.tabWidget.addTab(self.tab_2, "")
         self.indicatorWidget = QtGui.QWidget()
+        self.indicatorWidget.setGeometry(QtCore.QRect(0, 0, 655, 547))
         self.indicatorWidget.setObjectName("indicatorWidget")
         self.gridLayout_3 = QtGui.QGridLayout(self.indicatorWidget)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -156,40 +158,40 @@ class Ui_SimulationRun(object):
         self.tabWidget.addTab(self.indicatorWidget, "")
         self.gridLayout_2.addWidget(self.tabWidget, 1, 0, 1, 1)
 
-        self.retranslateUi(SimulationRun)
+        self.retranslateUi(SimulationGuiElement)
         self.tabWidget.setCurrentIndex(0)
         self.indicatorResultsTab.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(SimulationRun)
+        QtCore.QMetaObject.connectSlotsByName(SimulationGuiElement)
 
-    def retranslateUi(self, SimulationRun):
-        SimulationRun.setWindowTitle(QtGui.QApplication.translate("SimulationRun", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnStartModel.setText(QtGui.QApplication.translate("SimulationRun", "Start Simulation Run...", None, QtGui.QApplication.UnicodeUTF8))
-        self.lblRun.setText(QtGui.QApplication.translate("SimulationRun", "Run Name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnRemoveModel.setText(QtGui.QApplication.translate("SimulationRun", "Abort Simulation Run", None, QtGui.QApplication.UnicodeUTF8))
-        self.lblBatch.setToolTip(QtGui.QApplication.translate("SimulationRun", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+    def retranslateUi(self, SimulationGuiElement):
+        SimulationGuiElement.setWindowTitle(QtGui.QApplication.translate("SimulationGuiElement", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnStartModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Start Simulation Run...", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnRemoveModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Abort Simulation Run", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblRun.setText(QtGui.QApplication.translate("SimulationGuiElement", "Run Name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblBatch.setToolTip(QtGui.QApplication.translate("SimulationGuiElement", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">If an indicator batch (defined in the Results Manager)<br>is selected, it will be executed over every <br>year of the simulation being configured. <br>It will executed after the simulation is completed.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.lblBatch.setText(QtGui.QApplication.translate("SimulationRun", "Indicator Batch:", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setToolTip(QtGui.QApplication.translate("SimulationRun", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.lblBatch.setText(QtGui.QApplication.translate("SimulationGuiElement", "Indicator Batch:", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setToolTip(QtGui.QApplication.translate("SimulationGuiElement", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This scenario run will appear <br>in the Results Manager under the name <br>specified here. If not specified,<br>the name will default to a combination <br>of run id and date of run.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.runProgressBarTotalLabel.setText(QtGui.QApplication.translate("SimulationRun", "Total progress:", None, QtGui.QApplication.UnicodeUTF8))
-        self.summaryCurrentYearValue.setText(QtGui.QApplication.translate("SimulationRun", "-", None, QtGui.QApplication.UnicodeUTF8))
-        self.cbYear.setText(QtGui.QApplication.translate("SimulationRun", "Show progress within current year", None, QtGui.QApplication.UnicodeUTF8))
-        self.runProgressBarYearLabel.setText(QtGui.QApplication.translate("SimulationRun", "Year progress:", None, QtGui.QApplication.UnicodeUTF8))
-        self.summaryCurrentModelValue.setText(QtGui.QApplication.translate("SimulationRun", "-", None, QtGui.QApplication.UnicodeUTF8))
-        self.cbModel.setText(QtGui.QApplication.translate("SimulationRun", "Show progress within current model", None, QtGui.QApplication.UnicodeUTF8))
-        self.runProgressBarModelLabel.setText(QtGui.QApplication.translate("SimulationRun", "Model progress:", None, QtGui.QApplication.UnicodeUTF8))
-        self.summaryCurrentPieceValue.setText(QtGui.QApplication.translate("SimulationRun", "-", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.simprogressWidget), QtGui.QApplication.translate("SimulationRun", "Simulation Progress", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("SimulationRun", "Log", None, QtGui.QApplication.UnicodeUTF8))
-        self.diagnostic_go_button.setText(QtGui.QApplication.translate("SimulationRun", "Diagnose...", None, QtGui.QApplication.UnicodeUTF8))
-        self.diagnostic_indicator_type.addItem(QtGui.QApplication.translate("SimulationRun", "map", None, QtGui.QApplication.UnicodeUTF8))
-        self.diagnostic_indicator_type.addItem(QtGui.QApplication.translate("SimulationRun", "table", None, QtGui.QApplication.UnicodeUTF8))
-        self.indicatorResultsTab.setTabText(self.indicatorResultsTab.indexOf(self.tab_4), QtGui.QApplication.translate("SimulationRun", "Tab 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.indicatorWidget), QtGui.QApplication.translate("SimulationRun", "Diagnostics", None, QtGui.QApplication.UnicodeUTF8))
+        self.runProgressBarTotalLabel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Total progress:", None, QtGui.QApplication.UnicodeUTF8))
+        self.summaryCurrentYearValue.setText(QtGui.QApplication.translate("SimulationGuiElement", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbYear.setText(QtGui.QApplication.translate("SimulationGuiElement", "Show progress within current year", None, QtGui.QApplication.UnicodeUTF8))
+        self.runProgressBarYearLabel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Year progress:", None, QtGui.QApplication.UnicodeUTF8))
+        self.summaryCurrentModelValue.setText(QtGui.QApplication.translate("SimulationGuiElement", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Show progress within current model", None, QtGui.QApplication.UnicodeUTF8))
+        self.runProgressBarModelLabel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Model progress:", None, QtGui.QApplication.UnicodeUTF8))
+        self.summaryCurrentPieceValue.setText(QtGui.QApplication.translate("SimulationGuiElement", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.simprogressWidget), QtGui.QApplication.translate("SimulationGuiElement", "Simulation Progress", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("SimulationGuiElement", "Log", None, QtGui.QApplication.UnicodeUTF8))
+        self.diagnostic_go_button.setText(QtGui.QApplication.translate("SimulationGuiElement", "Diagnose...", None, QtGui.QApplication.UnicodeUTF8))
+        self.diagnostic_indicator_type.addItem(QtGui.QApplication.translate("SimulationGuiElement", "map", None, QtGui.QApplication.UnicodeUTF8))
+        self.diagnostic_indicator_type.addItem(QtGui.QApplication.translate("SimulationGuiElement", "table", None, QtGui.QApplication.UnicodeUTF8))
+        self.indicatorResultsTab.setTabText(self.indicatorResultsTab.indexOf(self.tab_4), QtGui.QApplication.translate("SimulationGuiElement", "Tab 1", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.indicatorWidget), QtGui.QApplication.translate("SimulationGuiElement", "Diagnostics", None, QtGui.QApplication.UnicodeUTF8))
 

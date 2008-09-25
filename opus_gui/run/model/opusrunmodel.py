@@ -22,7 +22,6 @@ try:
     from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
-    from opus_core.configurations.xml_configuration import XMLConfiguration
     from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
     from opus_gui.results.gui_result_interface.batch_processor import BatchProcessor
     from opus_core.services.run_server.run_manager import RunManager

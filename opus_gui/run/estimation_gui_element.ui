@@ -1,0 +1,110 @@
+<ui version="4.0" >
+ <class>EstimationGuiElement</class>
+ <widget class="QWidget" name="EstimationGuiElement" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>709</width>
+    <height>546</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="widgetLayout" >
+   <item row="0" column="0" >
+    <widget class="QPushButton" name="pbnStartModel" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Start Estimation...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QProgressBar" name="runProgressBar" >
+     <property name="value" >
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <spacer name="horizontalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QLabel" name="runStatusLabel" >
+     <property name="text" >
+      <string>Press Start to run the estimation...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>679</width>
+        <height>431</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Estimation result log</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>5</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>5</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="QTextEdit" name="logText" >
+         <property name="lineWidth" >
+          <number>0</number>
+         </property>
+         <property name="readOnly" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+  <zorder>runProgressBar</zorder>
+  <zorder>runStatusLabel</zorder>
+  <zorder>tabWidget</zorder>
+  <zorder>horizontalSpacer</zorder>
+  <zorder>horizontalSpacer_2</zorder>
+  <zorder>pbnStartModel</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
