@@ -53,7 +53,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # required by Qt4 to initialize the UI
         self.setupUi(self)
-
+        for i in range(2,-1,-1):
+            self.tabWidget.removeTab(i)
+        
         self.thread().setPriority(QThread.HighestPriority)
 
         # This is the output for stdout
