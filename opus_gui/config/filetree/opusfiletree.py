@@ -30,8 +30,8 @@ class OpusFileTree(object):
         self.containerWidget = parentWidget
         self.opusDataPath = opusDataPath
 
-        self.groupBox = QGroupBox(self.mainwindow)
-        self.groupBoxLayout = QVBoxLayout(self.groupBox)
+#        self.groupBox = QGroupBox(self.mainwindow)
+#        self.groupBoxLayout = QVBoxLayout(self.mainwindow)
 
         self.treeview = QTreeView(self.mainwindow)
         filters = QStringList()
@@ -46,15 +46,17 @@ class OpusFileTree(object):
         self.treeview.setColumnWidth(0,200)
         self.treeview.hideColumn(2)
         self.treeview.hideColumn(3)
-        self.groupBoxLayout.addWidget(self.treeview)
+#        self.groupBoxLayout.addWidget(self.treeview)
         #self.groupBox.setTitle(QFileInfo(self.toolboxbase.xml_file).filePath())
-        self.containerWidget.addWidget(self.groupBox)
+#        self.containerWidget.addWidget(self.groupBox)
+
+        self.containerWidget.addWidget(self.treeview)
 
         # Hook up to the mousePressEvent and pressed
         self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
         self.xmlAction = OpusFileAction(self)
 
     def removeTree(self):
-        self.groupBox.hide()
-        self.containerWidget.removeWidget(self.groupBox)
+#        self.groupBox.hide()
+#        self.containerWidget.removeWidget(self.groupBox)
         return True
