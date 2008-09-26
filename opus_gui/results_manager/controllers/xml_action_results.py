@@ -132,13 +132,13 @@ class xmlActionController_Results(object):
         
     def configureNewBatchIndicatorVisualization(self, viz = None):
         batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
-        self.xmlTreeObject.mainwindow.resultManagerStuff.configureNewIndicatorBatchVisualization(
+        self.xmlTreeObject.mainwindow.resultsManagerBase.configureNewIndicatorBatchVisualization(
             #visualization_type = viz,
             batch_name = batch_name)
 
     def configureExistingBatchIndicatorVisualization(self):
 
-        self.xmlTreeObject.mainwindow.resultManagerStuff.configureExistingIndicatorBatchVisualization(
+        self.xmlTreeObject.mainwindow.resultsManagerBase.configureExistingIndicatorBatchVisualization(
             selected_index = self.currentIndex)   
         
     def deleteRun(self):
@@ -150,13 +150,13 @@ class xmlActionController_Results(object):
             run_id = vals.get('run_id', None)
             if run_id is not None:
                 run_id = int(run_id)
-                self.xmlTreeObject.mainwindow.resultManagerStuff.deleteRun(
+                self.xmlTreeObject.mainwindow.resultsManagerBase.deleteRun(
                     run_id = int(run_id), cache_directory = cache_directory)    
             
             self.removeNode()   
             
     def importRun(self):
-        self.xmlTreeObject.mainwindow.resultManagerStuff.importRun()  
+        self.xmlTreeObject.mainwindow.resultsManagerBase.importRun()  
           
     def beforeRunIndicatorBatchShown(self):
         domDocument = self.xmlTreeObject.mainwindow.toolboxBase.doc
@@ -175,7 +175,7 @@ class xmlActionController_Results(object):
             self.run_indicator_batch_menu.addAction(act_simulation_run)
                 
     def indicatorBatchRun(self, simulation_run):
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorBatchForm(
+        self.xmlTreeObject.mainwindow.resultsManagerBase.addRunIndicatorBatchForm(
             batch_name = self.currentIndex.internalPointer().node().toElement().tagName(),
             simulation_run = simulation_run)
                       

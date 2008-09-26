@@ -17,13 +17,13 @@ from opus_gui.models_manager.run.opusrunestimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement
 
 class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
-    def __init__(self, mainwindow, runManager, estimation):
+    def __init__(self, mainwindow, modelsManagerBase, estimation):
         QWidget.__init__(self, mainwindow)
         self.setupUi(self)
         
         self.mainwindow = mainwindow
         self.mainwindow = mainwindow
-        self.runManager = runManager
+        self.modelsManagerBase = modelsManagerBase
         self.estimation = estimation
         self.estimation.guiElement = self
         self.inGui = False
@@ -56,8 +56,8 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
             self.timer.stop()
         self.running = False
         self.paused = False
-        self.runManager.removeEstimationElement(self)
-        self.runManager.updateEstimationElements()
+        self.modelsManagerBase.removeGuiElement(self)
+        self.modelsManagerBase.updateGuiElements()
 
     def on_pbnStartModel_released(self):
         

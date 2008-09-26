@@ -11,12 +11,12 @@
 # other acknowledgments.
 # 
 
-from opus_gui.scenarios_manager.controllers.simulation_gui_element import SimulationGuiElement
+from opus_gui.models_manager.controllers.estimation_gui_element import EstimationGuiElement
 from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
-class ScenariosManagerBase(AbstractManagerBase):
+class ModelsManagerBase(AbstractManagerBase):
     def __init__(self, mainwindow):
         AbstractManagerBase.__init__(self, mainwindow = mainwindow)
 
-    def addNewSimulationElement(self,model):
-        self.addNewGuiElement(SimulationGuiElement(self.mainwindow,self,model))
+    def addEstimationElement(self,model):
+        self.addNewGuiElement(EstimationGuiElement(self.mainwindow,self,model))

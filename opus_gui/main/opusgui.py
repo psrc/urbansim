@@ -27,8 +27,11 @@ from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
 
 #from opus_gui.util.consolebase import ConsoleBase
 from opus_gui.config.toolboxbase import ToolboxBase
-from opus_gui.scenarios_manager.scenario_manager_base import ScenarioManagerBase
-from opus_gui.results_manager.resultManagerBase import ResultManagerBase
+
+from opus_gui.scenarios_manager.scenario_manager_base import ScenariosManagerBase
+from opus_gui.results_manager.results_manager_base import ResultsManagerBase
+from opus_gui.models_manager.models_manager_base import ModelsManagerBase
+
 from opus_gui.results_manager.xml_helper_methods import get_child_values
 from opus_gui.exceptions.formatter import formatExceptionInfo
 
@@ -180,11 +183,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #  self.mapStuff = None
 
 #        self.consoleStuff = ConsoleBase(self)
-        self.runManagerBase = ScenarioManagerBase(self)
+        self.runManagerBase = ScenariosManagerBase(self)
         self.runManagerBase.setGui(self)
 
-        self.resultManagerStuff = ResultManagerBase(self)
-        self.resultManagerStuff.setGui(self)
+        self.resultsManagerBase = ResultsManagerBase(self)
+        self.resultsManagerBase.setGui(self)
+        
+        self.modelsManagerBase = ModelsManagerBase(self)
+        self.modelsManagerBase.setGui(self)
 
         try:
             import opus_gui.util.editorbase
@@ -327,7 +333,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         if self.resultBrowser is None:
             from opus_gui.results_manager.controllers.results_browser import ResultBrowser
             self.resultBrowser = ResultBrowser(mainwindow = self,
-                                               gui_result_manager = self.resultManagerStuff)
+                                               gui_result_manager = self.resultsManagerBase)
             
         if self.tabWidget.indexOf(self.resultBrowser) == -1:
             
@@ -419,7 +425,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxBase.runManagerTree.toolboxbase.xml_file).filePath())
         self.setWindowTitle(self.application_title + " - " + QString(title))
 #        if config:
-        self.resultManagerStuff.scanForRuns()    
+        self.resultsManagerBase.scanForRuns()    
         self.actLaunchResultBrowser.setEnabled(True)
         self.actionEdit_all_variables.setEnabled(True)
         if self.resultBrowser is not None:    
@@ -548,7 +554,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
         self.toolboxBase.closeXMLTree()
+        
         self.runManagerBase.removeAllElements()
+        self.resultsManagerBase.removeAllElements()
+        self.modelsManagerBase.removeAllElements()
+        
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)

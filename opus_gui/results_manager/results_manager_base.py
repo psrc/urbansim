@@ -11,8 +11,6 @@
 # other acknowledgments.
 # 
 
-import thread
-
 from opus_gui.results_manager.controllers.indicator_batch_run_form import IndicatorBatchRunForm
 from opus_gui.results_manager.controllers.view_documentation_form import ViewDocumentationForm
 from opus_gui.results_manager.controllers.view_image_form import ViewImageForm
@@ -22,34 +20,13 @@ from opus_gui.results_manager.controllers.configure_new_dataset_table_dialog imp
 from opus_gui.results_manager.controllers.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
 from opus_gui.results_manager.controllers.import_run_dialog import ImportRunDialog
 
-class AbstractManagerBase(object):
-    #mainwindow is an OpusGui object
-    def __init__(self, mainwindow):
-        self.mainwindow = mainwindow
-        self.tabWidget = mainwindow.tabWidget
-        self.gui = mainwindow
-        self.guiElements = []
-        
-    def removeTab(self,guiElement):
-        self.tabWidget.removeTab(self.tabWidget.indexOf(guiElement))
-        self.guiElements.remove(guiElement)
-        guiElement.hide()
-    
-    def updateGuiElements(self):
-        for guiElement in self.guiElements:
-            if guiElement.inGui == False:
-                self.tabWidget.insertTab(0,guiElement,guiElement.tabIcon,guiElement.tabLabel)
-                self.tabWidget.setCurrentIndex(0)
-                guiElement.inGui = True
-    
-    def setGui(self, gui):
-        self.gui = gui
-    
+
 # Main Run manager class
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager
+from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
-class ResultManagerBase(AbstractManagerBase):  
+class ResultsManagerBase(AbstractManagerBase):  
     
     def __init__(self, mainwindow):
         AbstractManagerBase.__init__(self, mainwindow) 
@@ -96,7 +73,7 @@ class ResultManagerBase(AbstractManagerBase):
 
     def addRunIndicatorBatchForm(self, batch_name, simulation_run):
         new_form = IndicatorBatchRunForm(mainwindow = self.mainwindow,
-                                         result_manager = self,
+                                         resultsManagerBase = self,
                                          batch_name = batch_name,
                                          simulation_run = simulation_run)
         new_form.show()

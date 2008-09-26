@@ -109,7 +109,7 @@ class xmlActionController_Models(object):
         newEstimation = OpusEstimation(self.xmlTreeObject,
                                        self.xmlTreeObject.toolboxbase.xml_file,
                                        model_name = model_name)
-        self.xmlTreeObject.mainwindow.runManagerBase.addNewEstimationRun(newEstimation)
+        self.xmlTreeObject.mainwindow.modelsManagerBase.addEstimationElement(model = newEstimation)
 
     def removeNode(self):
         #print "Remove Node Pressed"

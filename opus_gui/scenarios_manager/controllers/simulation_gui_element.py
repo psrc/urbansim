@@ -245,8 +245,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 self.timer.stop()
             self.running = False
             self.paused = False
-            self.runManager.removeModelElement(self)
-            self.runManager.updateModelElements()
+            self.runManager.removeGuiElement(self)
+            self.runManager.updateGuiElements()
 
     def on_pbnStartModel_released(self):
         proceed = True
@@ -381,10 +381,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 form_generator = None
                 if indicator_type == 'matplotlib_map' or \
                    indicator_type == 'matplotlib_chart':
-                    form_generator = self.mainwindow.resultManagerStuff.addViewImageIndicator
+                    form_generator = self.mainwindow.resultsManagerBase.addViewImageIndicator
                 elif indicator_type == 'table_per_year' or \
                      indicator_type == 'table_per_attribute':    
-                    form_generator = self.mainwindow.resultManagerStuff.addViewTableIndicator            
+                    form_generator = self.mainwindow.resultsManagerBase.addViewTableIndicator            
             
                 if form_generator is not None:    
                     for visualization in visualizations:

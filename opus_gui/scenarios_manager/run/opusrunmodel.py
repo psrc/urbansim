@@ -101,7 +101,7 @@ class RunModelThread(QThread):
         self.batch_processor.run()
                 
     def indicatorBatchFinishedCallback(self, success):
-#        results_manager = self.mainwindow.resultManagerStuff
+#        results_manager = self.mainwindow.resultsManagerBase
 #        all_visualizations = self.batch_processor.get_visualizations()
 #        for indicator_type, visualizations in all_visualizations:
 #            if indicator_type == 'matplotlib_map' or \

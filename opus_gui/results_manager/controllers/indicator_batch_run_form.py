@@ -22,12 +22,12 @@ from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 class IndicatorBatchRunForm(QDialog):
-    def __init__(self, mainwindow, result_manager, batch_name = None, simulation_run = None):
+    def __init__(self, mainwindow, resultsManagerBase, batch_name = None, simulation_run = None):
         QDialog.__init__(self, mainwindow)
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
-        self.result_manager = result_manager
-        self.toolboxBase = self.result_manager.mainwindow.toolboxBase
+        self.resultsManagerBase = resultsManagerBase
+        self.toolboxBase = self.resultsManagerBase.mainwindow.toolboxBase
 
         
         self.inGui = False
@@ -143,8 +143,8 @@ class IndicatorBatchRunForm(QDialog):
             self.co_every_year.addItem(yr)
                 
     def on_pbnRemoveModel_released(self):
-        self.result_manager.removeTab(self)
-        self.result_manager.updateGuiElements()
+        self.resultsManagerBase.removeGuiElement(self)
+        self.resultsManagerBase.updateGuiElements()
 
     def on_pbn_run_indicator_group_released(self):
 
@@ -183,9 +183,9 @@ class IndicatorBatchRunForm(QDialog):
         for indicator_type, visualizations in all_visualizations:
             if indicator_type == 'matplotlib_map' or \
                indicator_type == 'matplotlib_chart':
-                form_generator = self.result_manager.addViewImageIndicator
+                form_generator = self.resultsManagerBase.addViewImageIndicator
             elif indicator_type == 'tab':
-                form_generator = self.result_manager.addViewTableIndicator            
+                form_generator = self.resultsManagerBase.addViewTableIndicator            
         
             if form_generator is not None:    
                 for visualization in visualizations:
