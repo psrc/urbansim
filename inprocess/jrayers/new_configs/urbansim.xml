@@ -4,7 +4,7 @@
   </general>
   <data_manager>
     <Tool_Library setexpanded="True" type="tool_library">
-      <tool_path flags="hidden" type="tool_path">tools</tool_path>
+      <tool_path flags="hidden" type="tool_path">data_manager.run.tools</tool_path>
       <sql_data_to_opus_tool type="tool_file"> 
         <name type="tool_name">sql_data_to_opus</name>
         <params type="param_template">
