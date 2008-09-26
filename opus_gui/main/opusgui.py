@@ -14,8 +14,10 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL , QFile, QSettings, QRegExp, QFileInfo
+from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox, QSplashScreen, QLabel, \
+     QWidget, QPushButton, QHBoxLayout, QAction, QFileDialog, QToolButton, QIcon
+from PyQt4.QtXml import QDomDocument
 
 # UI specific includes
 from opus_gui.main.opusmain_ui import Ui_MainWindow
@@ -23,17 +25,17 @@ from opus_gui.main.opusabout import UrbansimAboutGui
 from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
 from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
 
-from opus_gui.util.consolebase import *
-from opus_gui.config.toolboxbase import *
-from opus_gui.run.runmanagerbase import *
-from opus_gui.results.resultManagerBase import *
-from opus_gui.results.xml_helper_methods import get_child_values
+from opus_gui.util.consolebase import ConsoleBase
+from opus_gui.config.toolboxbase import ToolboxBase
+from opus_gui.scenarios_manager.runmanagerbase import RunManagerBase
+from opus_gui.results_manager.resultManagerBase import ResultManagerBase
+from opus_gui.results_manager.xml_helper_methods import get_child_values
 from opus_gui.exceptions.formatter import formatExceptionInfo
 
-from opus_gui.config.generalmanager.all_variables import AllVariablesEditGui
+from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
 
 # General system includes
-import sys,time,tempfile,os
+import sys,time, tempfile, os
 
 
 # Main window used for houseing the canvas, toolbars, and dialogs
@@ -323,7 +325,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openResultBrowser(self):
         if self.resultBrowser is None:
-            from opus_gui.results.forms.results_browser import ResultBrowser
+            from opus_gui.results_manager.forms.results_browser import ResultBrowser
             self.resultBrowser = ResultBrowser(mainwindow = self,
                                                gui_result_manager = self.resultManagerStuff)
             
