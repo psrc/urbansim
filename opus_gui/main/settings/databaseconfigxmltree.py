@@ -41,7 +41,7 @@ class DatabaseConfigXMLTree(OpusXMLTree):
         self.parentWidget.addWidget(self.view)
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.xmlAction = OpusXMLAction(self)
+        self.xmlAction = OpusXMLAction(self, listen_to_menu = False)
         
         
         

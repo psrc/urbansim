@@ -161,8 +161,6 @@ class ToolboxBase(object):
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                                       self.mainwindow.resultsmanager_page.layout())
                 
-
-            
             else:
                 print "Error reading the %s configuration file" % (xml_file)
         else:
@@ -171,25 +169,18 @@ class ToolboxBase(object):
 
     def closeXMLTree(self):
         # Try to remove all the old trees...
-        generalManagerRemoveSuccess = True
         if self.generalManagerTree != None:
             generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
-        resultsManagerRemoveSuccess = True
         if self.resultsManagerTree != None:
             resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
-        modelManagerRemoveSuccess = True
         if self.modelManagerTree != None:
             modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
-        runManagerRemoveSuccess = True
         if self.runManagerTree != None:
             runManagerRemoveSuccess = self.runManagerTree.removeTree()
-        dataManagerRemoveSuccess = True
         if self.dataManagerTree != None:
             dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
-        dataManagerFileRemoveSuccess = True
         if self.dataManagerFileTree != None:
             dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
-        dataManagerDBSRemoveSuccess = True
         if self.dataManagerDBSTree != None:
             dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
 

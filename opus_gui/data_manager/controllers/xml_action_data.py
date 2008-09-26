@@ -24,14 +24,14 @@ from opus_gui.data_manager.controllers.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.executetool import ExecuteToolGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 import os,tempfile
 
-class xmlActionController_Data(object):
-    def __init__(self, opusXMLAction):
-        self.opusXMLAction = opusXMLAction
-        self.mainwindow = opusXMLAction.mainwindow
-        self.xmlTreeObject = opusXMLAction.xmlTreeObject
+class xmlActionController_Data(OpusXMLAction):
+    def __init__(self, xmlTreeObject):
+        OpusXMLAction.__init__(self, xmlTreeObject)
+        self.xmlTreeObject = xmlTreeObject
 
         self.currentColumn = None
         self.currentIndex = None

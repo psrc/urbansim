@@ -18,12 +18,12 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
-class xmlActionController_General(object):
-    def __init__(self, opusXMLAction):
-        self.opusXMLAction = opusXMLAction
-        self.mainwindow = opusXMLAction.mainwindow
-        self.xmlTreeObject = opusXMLAction.xmlTreeObject
+class xmlActionController_General(OpusXMLAction):
+    def __init__(self, xmlTreeObject):
+        
+        self.xmlTreeObject = xmlTreeObject
 
         self.currentColumn = None
         self.currentIndex = None

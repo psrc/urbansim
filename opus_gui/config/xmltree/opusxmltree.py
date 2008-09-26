@@ -21,6 +21,12 @@ from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
+from opus_gui.general_manager.controllers.xml_action_general import xmlActionController_General
+from opus_gui.results_manager.controllers.xml_action_results import xmlActionController_Results
+from opus_gui.models_manager.controllers.xml_action_models import xmlActionController_Models
+from opus_gui.scenarios_manager.controllers.xml_action_scenarios import xmlActionController_Scenarios
+from opus_gui.data_manager.controllers.xml_action_data import xmlActionController_Data
+
 class OpusXMLTree(object):
     def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
         self.toolboxbase = toolboxbase
@@ -47,7 +53,19 @@ class OpusXMLTree(object):
         self.parentWidget.addWidget(self.view)
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.xmlAction = OpusXMLAction(self)
+
+        if self.xmlType == 'results_manager':
+            self.xmlAction = xmlActionController_Results(self)
+        elif self.xmlType == 'models_manager':
+            self.xmlAction = xmlActionController_Models(self)
+        elif self.xmlType == 'scenarios_manager':
+            self.xmlAction = xmlActionController_Scenarios(self)
+        elif self.xmlType == 'data_manager':
+            self.xmlAction = xmlActionController_Data(self)
+        elif self.xmlType == 'general':
+            self.xmlAction = xmlActionController_General(self)
+        else:
+            self.xmlAction = OpusXMLAction(self)
 
     def removeTree(self):
         if not self.model.isDirty():

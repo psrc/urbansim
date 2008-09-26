@@ -21,12 +21,13 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results_manager.controllers.get_run_info import GetRunInfo
+from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
-class xmlActionController_Results(object):
-    def __init__(self, opusXMLAction):
-        self.opusXMLAction = opusXMLAction
-        self.mainwindow = opusXMLAction.mainwindow
-        self.xmlTreeObject = opusXMLAction.xmlTreeObject
+class xmlActionController_Results(OpusXMLAction):
+    def __init__(self, xmlTreeObject):
+        OpusXMLAction.__init__(self, xmlTreeObject)
+        
+        self.xmlTreeObject = xmlTreeObject
         self.toolboxBase = self.xmlTreeObject.mainwindow.toolboxBase
         self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
 

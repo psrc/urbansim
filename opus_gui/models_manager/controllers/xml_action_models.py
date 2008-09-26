@@ -23,11 +23,13 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 from opus_gui.models_manager.controllers.create_model_from_template import CreateModelFromTemplateDialog
 
-class xmlActionController_Models(object):
-    def __init__(self, opusXMLAction):
-        self.opusXMLAction = opusXMLAction
-        self.mainwindow = opusXMLAction.mainwindow
-        self.xmlTreeObject = opusXMLAction.xmlTreeObject
+from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+
+class xmlActionController_Models(OpusXMLAction):
+    
+    def __init__(self, xmlTreeObject):
+        OpusXMLAction.__init__(self, xmlTreeObject)
+        self.xmlTreeObject = xmlTreeObject
 
         self.currentColumn = None
         self.currentIndex = None
