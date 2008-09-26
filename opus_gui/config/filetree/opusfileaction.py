@@ -14,16 +14,15 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from opus_gui.run.tool.opusruntool import *
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QModelIndex
+from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAction, QVBoxLayout, QMenu, QCursor
+
+#from opus_gui.data_manager.opusruntool import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
-from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
-from opus_gui.config.datamanager.executetool import ExecuteToolGui
+from opus_gui.data_manager.controllers.executetool import ExecuteToolGui
 from StringIO import StringIO
-import sys
 
 
 class OpusFileAction(object):

@@ -14,14 +14,14 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QObject, SIGNAL
 
-from opus_gui.config.generalmanager.opusxmlaction_general import OpusXMLAction_General
-from opus_gui.config.resultsmanager.opusxmlaction_results import OpusXMLAction_Results
-from opus_gui.config.modelmanager.opusxmlaction_model import OpusXMLAction_Model
-from opus_gui.config.scenariomanager.opusxmlaction_scenario import OpusXMLAction_Scenario
-from opus_gui.config.datamanager.opusxmlaction_data import OpusXMLAction_Data
-#from opus_gui.config.datamanager.opusxmlaction_datadb import OpusXMLAction_DataDB
+from opus_gui.general_manager.controllers.xml_action_general import xmlActionController_General
+from opus_gui.results_manager.controllers.xml_action_results import xmlActionController_Results
+from opus_gui.models_manager.controllers.xml_action_models import xmlActionController_Models
+from opus_gui.scenarios_manager.controllers.xml_action_scenarios import xmlActionController_Scenarios
+from opus_gui.data_manager.controllers.xml_action_data import xmlActionController_Data
+#from opus_gui.data_manager.opusxmlaction_datadb import OpusXMLAction_DataDB
 
 class OpusXMLAction(object):
     def __init__(self, xmlTreeObject):
@@ -36,17 +36,17 @@ class OpusXMLAction(object):
 
     def getXMLActionObjectByType(self,xmlType):
         if xmlType == "results_manager":
-            return OpusXMLAction_Results(self)
+            return xmlActionController_Results(self)
         elif xmlType == "model_manager":
-            return OpusXMLAction_Model(self)
+            return xmlActionController_Models(self)
         elif xmlType == "scenario_manager":
-            return OpusXMLAction_Scenario(self)
+            return xmlActionController_Scenarios(self)
         elif xmlType == "data_manager":
-            return OpusXMLAction_Data(self)
+            return xmlActionController_Data(self)
 #        elif xmlType == "data_manager_dbstree":
 #            return OpusXMLAction_DataDB(self)
         elif xmlType == "general":
-            return OpusXMLAction_General(self)
+            return xmlActionController_General(self)
         else:
             #error out
             return None

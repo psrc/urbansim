@@ -13,9 +13,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel
+from PyQt4.QtGui import QColor
 
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
