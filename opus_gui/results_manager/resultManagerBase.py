@@ -57,7 +57,8 @@ class ResultManagerBase(AbstractManagerBase):
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
 
     def scanForRuns(self):
-        thread.start_new_thread(self._scanForRuns, ())
+        self._scanForRuns()
+        #thread.start_new_thread(self._scanForRuns, ())
     
     def _scanForRuns(self):
         run_manager = self._get_run_manager()
