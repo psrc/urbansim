@@ -120,7 +120,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.close()
                 
     def on_cboCheckSyntax_released(self):
-        success, errors = VariableValidator(parentWidget=self).check_parse_errors(variables = [self._get_variable_definition()])
+        success, errors = VariableValidator(toolboxStuff=self.mainwindow.toolboxStuff).check_parse_errors(variables = [self._get_variable_definition()])
 
         if success:
             QMessageBox.information(self, 'Variable check results', 'Variable syntax check successful!')
@@ -129,7 +129,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             QMessageBox.warning(self, 'Variable check results', errorString)
             
     def on_cboCheckData_released(self):
-        success, errors = VariableValidator(parentWidget=self).check_data_errors(variables = [self._get_variable_definition()])
+        success, errors = VariableValidator(toolboxStuff=self.mainwindow.toolboxStuff).check_data_errors(variables = [self._get_variable_definition()])
         if success:
             QMessageBox.information(self, 'Variable data check results', 'Variable checked successfully against baseyear data!')
         else:
