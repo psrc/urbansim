@@ -16,6 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
+import os
 
 from opus_gui.results_manager.views.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -333,8 +334,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         self.close()
 
     def on_pbn_set_storage_location_released(self):
-        from opus_core.misc import directory_path_from_opus_path
-        start_dir = directory_path_from_opus_path('opus_gui.projects')
+        start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
         
         configDialog = QFileDialog()
         filter_str = QString("*.gdb")

@@ -22,8 +22,8 @@ from PyQt4.QtXml import QDomDocument
 # UI specific includes
 from opus_gui.main.opusmain_ui import Ui_MainWindow
 from opus_gui.main.opusabout import UrbansimAboutGui
-from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
-from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
+from opus_gui.main.settings.opuspreferences import UrbansimPreferencesGui
+from opus_gui.main.settings.databasesettings import DatabaseSettingsEditGui
 
 #from opus_gui.util.consolebase import ConsoleBase
 from opus_gui.config.toolboxbase import ToolboxBase
@@ -459,8 +459,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def saveConfigAs(self):
         try:
             # get the location for the new config file on disk
-            from opus_core.misc import directory_path_from_opus_path
-            start_dir = directory_path_from_opus_path('opus_gui.projects')
+            start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
             configDialog = QFileDialog()
             filter_str = QString("*.xml")
             fd = configDialog.getSaveFileName(self,QString("Save As..."),
