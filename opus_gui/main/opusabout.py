@@ -14,9 +14,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
+from PyQt4.QtCore import QString, QUrl
+from PyQt4.QtGui import QDialog, QDesktopServices
 # UI specific includes
 from opusabout_ui import Ui_UrbansimAbout
 

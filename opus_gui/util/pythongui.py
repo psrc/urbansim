@@ -12,11 +12,11 @@
 #
 
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QObject, SIGNAL, QString
+from PyQt4.QtGui import QTextBrowser, QFont
 # General system includes
 import sys
-from code import *
+from code import InteractiveConsole
 
 class OpusPythonShell(QTextBrowser):
     class Output:

@@ -12,10 +12,9 @@
 # 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
-import os, sys
+from PyQt4.QtCore import QThread, SIGNAL
+
 
 from opus_core.logger import logger
 

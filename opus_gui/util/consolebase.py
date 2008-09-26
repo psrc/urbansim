@@ -13,8 +13,7 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QGridLayout
 
 from opus_gui.util.pythongui import OpusPythonShell
 

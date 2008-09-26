@@ -14,9 +14,9 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import QString, QFileInfo, QFile, QIODevice
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtXml import QDomDocument
 
 from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
 from opus_gui.config.filetree.opusfiletree import OpusFileTree

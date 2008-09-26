@@ -12,15 +12,14 @@
 # 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import QFile, QIODevice, QTextStream
+from PyQt4.QtGui import QDialog
+from PyQt4.QtXml import QDomDocument
 from opus_gui.settings.databaseconfigxmltree import DatabaseConfigXMLTree
 import os
 
 ############ APR Added 082908 as example of using OpusXMLTree for database XML editing
 from databasesettingsedit_ui import Ui_DatabaseSettingsEditGui
-from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
 
 class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
     def __init__(self, mainwindow, fl):

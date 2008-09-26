@@ -14,15 +14,11 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import SIGNAL, QString
+from PyQt4.QtGui import QDialog
 
-from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
-from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
-from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
+
 from opus_gui.config.managerbase.clonenode_ui import Ui_CloneNodeGui
-
-import random
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
     def __init__(self, opusXMLAction_xxx, fl, clone, parentNode, model):

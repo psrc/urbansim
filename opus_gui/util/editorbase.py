@@ -13,12 +13,9 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.Qsci import *
-
-# General system includes
-import sys,string
+from PyQt4.QtCore import Qt, QString
+from PyQt4.QtGui import QFont, QFontMetrics, QColor, QIcon, QLabel, QWidget, QVBoxLayout
+from PyQt4.Qsci import QsciScintilla, QsciLexerPython
 
 
 # Main 

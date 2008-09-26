@@ -11,9 +11,8 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import QString
+from PyQt4.QtXml import QDomNode, QDomDocument, QDomElement
 
 
 #################### Basic XML Node/Element Helpers #######################

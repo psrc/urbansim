@@ -13,9 +13,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import QString, Qt, QSignalMapper, QVariant
+from PyQt4.QtGui import QFileDialog, QItemDelegate, QComboBox, QLineEdit
 
 class OpusDataDelegate(QItemDelegate):
     def __init__(self, parentView):

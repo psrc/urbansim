@@ -13,8 +13,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QString, QModelIndex
+from PyQt4.QtGui import QTreeView
 
 class OpusDataView(QTreeView):
     def __init__(self, mainwindow):

@@ -13,8 +13,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtXml import *
+from PyQt4.QtCore import QString
+from PyQt4.QtXml import QDomNode
 
 
 class OpusDataItem:

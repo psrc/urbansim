@@ -13,8 +13,9 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
+from PyQt4.QtGui import QVBoxLayout
+
 # QGIS bindings for mapping functions
 from qgis.core import *
 from qgis.gui import *

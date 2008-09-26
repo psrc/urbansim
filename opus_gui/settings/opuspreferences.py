@@ -12,11 +12,11 @@
 # 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtGui import QDialog
 
 # UI specific includes
-from opuspreferences_ui import Ui_PreferencesDialog
+from opus_gui.settings.opuspreferences_ui import Ui_PreferencesDialog
 
 class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
     def __init__(self, mainwindow, fl):
