@@ -325,7 +325,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openResultBrowser(self):
         if self.resultBrowser is None:
-            from opus_gui.results_manager.forms.results_browser import ResultBrowser
+            from opus_gui.results_manager.controllers.results_browser import ResultBrowser
             self.resultBrowser = ResultBrowser(mainwindow = self,
                                                gui_result_manager = self.resultManagerStuff)
             

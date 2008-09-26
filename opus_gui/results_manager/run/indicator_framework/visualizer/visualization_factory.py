@@ -28,7 +28,7 @@ class VisualizationFactory:
            'table':'Table'
         }
         
-        module = 'opus_gui.results_manager.indicator_framework.visualizer.visualizers'
+        module = 'opus_gui.results_manager.run.indicator_framework.visualizer.visualizers'
         module_composed_name = module + '.' + visualization_type
         
         example_indicator = computed_indicators[indicators_to_visualize[0]]
