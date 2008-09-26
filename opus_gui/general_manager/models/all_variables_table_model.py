@@ -15,9 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL, QModelIndex
-from PyQt4.QtGui import QColor
-
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QColor,QMessageBox
 
 import operator
 from opus_gui.general_manager.run.variable_validator import VariableValidator

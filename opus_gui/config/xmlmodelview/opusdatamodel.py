@@ -13,8 +13,10 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel
-from PyQt4.QtGui import QColor
+from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel, QString, QRegExp
+from PyQt4.QtGui import QColor, QIcon, QStyle, QMessageBox
+from PyQt4.QtXml import QDomNode, QDomDocument
+from PyQt4.Qt import qApp
 
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
@@ -633,8 +635,6 @@ class OpusDataModel(QAbstractItemModel):
 #################### Unit Tests for OpusDataModel ###########################
 
 from opus_core.tests import opus_unittest
-from opus_gui.util.xmlhelper import *
-import os
 
 class FakeToolbox(object): pass
 
