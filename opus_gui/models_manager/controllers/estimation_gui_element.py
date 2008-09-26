@@ -49,6 +49,10 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         self.runProgressBar.reset()
      
 
+    def removeElement(self):
+        self.on_pbnRemoveModel_released()
+        return True
+        
     def on_pbnRemoveModel_released(self):
         if self.runThread:
             self.runThread.cancel()
@@ -56,8 +60,6 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
             self.timer.stop()
         self.running = False
         self.paused = False
-        self.modelsManagerBase.removeGuiElement(self)
-        self.modelsManagerBase.updateGuiElements()
 
     def on_pbnStartModel_released(self):
         

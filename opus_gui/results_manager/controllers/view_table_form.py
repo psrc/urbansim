@@ -86,3 +86,5 @@ class ViewTableForm(QWidget):
         
         
         #self.tableWidget.resizeRowsToContents()
+    def removeElement(self):
+        return True

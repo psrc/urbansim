@@ -23,10 +23,12 @@ class AbstractManagerBase(object):
         self.tabWidget.removeTab(self.tabWidget.indexOf(guiElement))
         self.guiElements.remove(guiElement)
         guiElement.hide()
+        guiElement.ingui = False
+        self.updateGuiElements()
     
     def updateGuiElements(self):
         for guiElement in self.guiElements:
-            if guiElement.inGui == False:
+            if not guiElement.inGui:
                 self.tabWidget.insertTab(0,guiElement,guiElement.tabIcon,guiElement.tabLabel)
                 self.tabWidget.setCurrentIndex(0)
                 guiElement.inGui = True
@@ -37,10 +39,12 @@ class AbstractManagerBase(object):
     def addNewGuiElement(self, element):
         self.guiElements.append(element)
         self.updateGuiElements()
+        element.show()
         #self.emit(SIGNAL("newModelAddedToManager()"))
 
     def removeAllElements(self):
-        #TODO: should call a more general remove method in each element
-        for element in self.guiElements:
-            element.on_pbnRemoveModel_released()
-                
+        for i in sorted(range(len(self.guiElements)), reverse = True):
+            element = self.guiElements[i]
+            success = element.removeElement()            
+            if success:
+                self.removeGuiElement(guiElement = element)

@@ -234,6 +234,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 self.indicatorResultsTab.insertTab(0,form,form.tabIcon,form.tabLabel)
 
 
+    def removeElement(self):
+        return self.on_pbnRemoveModel_released()
+        
     def on_pbnRemoveModel_released(self):
         #    if(self.running == True):
         success = True
@@ -245,8 +248,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 self.timer.stop()
             self.running = False
             self.paused = False
-            self.runManager.removeGuiElement(self)
-            self.runManager.updateGuiElements()
+        return success
 
     def on_pbnStartModel_released(self):
         proceed = True

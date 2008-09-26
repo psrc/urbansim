@@ -19,6 +19,7 @@ from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.controllers.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
 from opus_gui.results_manager.controllers.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
 from opus_gui.results_manager.controllers.import_run_dialog import ImportRunDialog
+from opus_gui.results_manager.controllers.results_browser import ResultBrowser
 
 
 # Main Run manager class
@@ -32,7 +33,8 @@ class ResultsManagerBase(AbstractManagerBase):
         AbstractManagerBase.__init__(self, mainwindow) 
         self.toolboxBase = self.mainwindow.toolboxBase  
         self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
-
+        self.resultBrowser = None
+        
     def scanForRuns(self):
         self._scanForRuns()
         #thread.start_new_thread(self._scanForRuns, ())
@@ -58,6 +60,21 @@ class ResultsManagerBase(AbstractManagerBase):
         dlg = ImportRunDialog(self)
         dlg.show()
         
+    def removeGuiElement(self,guiElement):
+        AbstractManagerBase.removeGuiElement(self, guiElement = guiElement)
+        if guiElement == self.resultBrowser:
+            self.resultBrowser = None
+            
+    def add_result_browser(self):
+            
+        if self.resultBrowser is not None:
+            self.removeGuiElement(guiElement = self.resultBrowser)
+        
+        self.resultBrowser = ResultBrowser(mainwindow = self.mainwindow,
+                                               resultsManagerBase = self)            
+            
+        self.addNewGuiElement(element = self.resultBrowser)
+        
     def configureExistingIndicatorBatchVisualization(self, selected_index):
         viz_name = selected_index.internalPointer().node().toElement().tagName()
         _, params = self.xml_helper.get_element_attributes(node_name = viz_name,
@@ -82,21 +99,18 @@ class ResultsManagerBase(AbstractManagerBase):
     def addViewImageIndicator(self, visualization, indicator_type = None):
         new_form = ViewImageForm(mainwindow = self.mainwindow,
                                  visualization = visualization)
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements()
+        self.addNewGuiElement(element = new_form)
+        
 
     def addViewTableIndicator(self, visualization, indicator_type):
-        new_form = ViewTableForm(mainwindow = self.mainwindow,
-                                 visualization = visualization)
         if indicator_type != 'arcgis_map' and visualization.output_type in ['fixed_field','tab','csv']:
-            self.guiElements.insert(0, new_form)
-            self.updateGuiElements()
-        else:
-            del new_form
-            
-    def addViewDocumentationForm(self, indicator_node):
-        new_form = ViewDocumentationForm(mainwindow = self.mainwindow,
-                                         indicator_node = indicator_node)
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements()
+            new_form = ViewTableForm(mainwindow = self.mainwindow,
+                                 visualization = visualization)
+            self.addNewGuiElement(element = new_form)
+#            
+#    def addViewDocumentationForm(self, indicator_node):
+#        new_form = ViewDocumentationForm(mainwindow = self.mainwindow,
+#                                         indicator_node = indicator_node)
+#        self.guiElements.insert(0, new_form)
+#        self.updateGuiElements()
         

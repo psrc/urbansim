@@ -85,10 +85,10 @@ class BatchProcessor(object):
             self.generator.errorCallback = self.errorCallback
             self.visualizer.errorCallback = self.errorCallback
         
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
         
         try:
             self.visualizations = []

@@ -83,10 +83,10 @@ class OpusResultGenerator(object):
         
         maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], expression_library = self.toolboxBase.opusXMLTree.get_expression_library())
 
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
 
         computed_indicator = maker.create(indicator = indicator,
                                           source_data = source_data)

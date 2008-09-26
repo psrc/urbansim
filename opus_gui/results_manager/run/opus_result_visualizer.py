@@ -141,10 +141,10 @@ class OpusResultVisualizer(object):
         viz_args.update(self.kwargs)
         viz_args.update(args)
         
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
         
         viz_factory = VisualizationFactory()        
         self.visualizations = viz_factory.visualize(

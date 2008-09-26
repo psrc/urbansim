@@ -135,7 +135,7 @@ class xmlActionController_Scenarios(object):
         newModel = OpusModel(self.xmlTreeObject,
                              self.xmlTreeObject.toolboxbase.xml_file,
                              modelToRun)
-        self.xmlTreeObject.mainwindow.runManagerBase.addNewSimulationElement(model = newModel)
+        self.xmlTreeObject.mainwindow.scenariosManagerBase.addNewSimulationElement(model = newModel)
     
     def openXMLFile(self):
         filePath = ""

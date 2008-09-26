@@ -39,3 +39,6 @@ class ViewImageForm(QWidget):
         
         self.tabIcon = QIcon(":/Images/Images/map.png")
         self.tabLabel = visualization.table_name
+
+    def removeElement(self):
+        return True

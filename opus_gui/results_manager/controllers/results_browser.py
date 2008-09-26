@@ -13,7 +13,7 @@
 
 from PyQt4.QtCore import QString, QObject, SIGNAL, Qt 
 from PyQt4.QtGui import QMessageBox, QTabWidget, QWidget, \
-                        QTableWidgetItem, QSizePolicy
+                        QTableWidgetItem, QSizePolicy, QIcon
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -27,15 +27,15 @@ from opus_core.logger import logger
 
 
 class ResultBrowser(QWidget, Ui_ResultsBrowser):
-    def __init__(self, mainwindow, gui_result_manager):
+    def __init__(self, mainwindow, resultsManagerBase):
         QWidget.__init__(self, mainwindow)
         self.setupUi(self)
         #self.setFocusPolicy()
         
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
-        self.gui_result_manager = gui_result_manager
-        self.toolboxBase = self.gui_result_manager.mainwindow.toolboxBase
+        self.resultsManagerBase = resultsManagerBase
+        self.toolboxBase = self.resultsManagerBase.mainwindow.toolboxBase
         QObject.connect(self.toolboxBase.generalManagerTree.model, SIGNAL("layoutChanged()"),
                 self.setupAvailableIndicators)
 
@@ -76,10 +76,10 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             self.on_pbnGenerateResults_released()
         self.pbnExportResults.setEnabled(False)
         self.twVisualizations.removeTab(0)
+        self.tabIcon =  QIcon(":/Images/Images/table.png")
+        self.tabLabel = "Result Browser"
         
     def setupAvailableIndicators(self):
-        print 'setting up available indicators!'
-
         indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
 
         current_row = self.tableWidget.currentRow()
@@ -388,6 +388,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         #self.tabTable.show()
         
         self.twVisualizations.setCurrentIndex(cur_index)
+    
+    def removeElement(self):
+        return True
     
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.mainwindow, 'warning', errorMessage)

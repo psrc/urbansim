@@ -142,9 +142,8 @@ class IndicatorBatchRunForm(QDialog):
             yr = QString(repr(i))
             self.co_every_year.addItem(yr)
                 
-    def on_pbnRemoveModel_released(self):
-        self.resultsManagerBase.removeGuiElement(self)
-        self.resultsManagerBase.updateGuiElements()
+    def removeElement(self):
+        return True
 
     def on_pbn_run_indicator_group_released(self):
 

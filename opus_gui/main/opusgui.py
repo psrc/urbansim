@@ -183,8 +183,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #  self.mapStuff = None
 
 #        self.consoleStuff = ConsoleBase(self)
-        self.runManagerBase = ScenariosManagerBase(self)
-        self.runManagerBase.setGui(self)
+        self.scenariosManagerBase = ScenariosManagerBase(self)
+        self.scenariosManagerBase.setGui(self)
 
         self.resultsManagerBase = ResultsManagerBase(self)
         self.resultsManagerBase.setGui(self)
@@ -261,7 +261,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setFocus()
 
         self.all_variables = None
-        self.resultBrowser = None
                 
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
@@ -300,18 +299,24 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
-        self.tabWidget.removeTab(self.tabWidget.currentIndex())
+
+        if widget in self.resultsManagerBase.guiElements:
+            self.resultsManagerBase.removeGuiElement(guiElement = widget)
+        elif widget in self.modelsManagerBase.guiElements:
+            self.resultsManagerBase.removeGuiElement(guiElement = widget)
+        elif widget in self.scenariosManagerBase.guiElements:
+            self.resultsManagerBase.removeGuiElement(guiElement = widget)
+        else: 
+            self.tabWidget.removeTab(self.tabWidget.currentIndex())
         try:
             widget.hide()
         except:
             pass
         # Do something with the widget if we need to...
-
-#    def tab_changed(self, index):
-#        tab = self.tabWidget.currentWidget()
-#        if self.resultBrowser and tab == self.resultBrowser:
-#            self.resultBrowser.focusInEvent()
         
+        
+
+
     def openMapTab(self):
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
@@ -330,19 +335,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
     def openResultBrowser(self):
-        if self.resultBrowser is None:
-            from opus_gui.results_manager.controllers.results_browser import ResultBrowser
-            self.resultBrowser = ResultBrowser(mainwindow = self,
-                                               gui_result_manager = self.resultsManagerBase)
-            
-        if self.tabWidget.indexOf(self.resultBrowser) == -1:
-            
-            self.changeFontSize()
-            self.tabWidget.insertTab(0,self.resultBrowser,
-                                     QIcon(":/Images/Images/table.png"),"Result Browser")
-            self.tabWidget.setCurrentWidget(self.resultBrowser)
-            self.resultBrowser.show()
-
+        self.resultsManagerBase.add_result_browser()
+        
     def openEditorTab(self):
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
@@ -428,10 +422,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.resultsManagerBase.scanForRuns()    
         self.actLaunchResultBrowser.setEnabled(True)
         self.actionEdit_all_variables.setEnabled(True)
-        if self.resultBrowser is not None:    
-            self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
-            self.resultBrowser.close()
-            self.resultBrowser = None
+        
+        self.scenariosManagerBase.removeAllElements()
+        self.resultsManagerBase.removeAllElements()
+        self.modelsManagerBase.removeAllElements()
 
         if self.all_variables is not None:
             self.all_variables.close()
@@ -555,20 +549,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self._saveOrDiscardChanges()
         self.toolboxBase.closeXMLTree()
         
-        self.runManagerBase.removeAllElements()
-        self.resultsManagerBase.removeAllElements()
-        self.modelsManagerBase.removeAllElements()
-        
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
 
         os.environ['OPUSPROJECTNAME'] = 'misc'
-        if self.resultBrowser is not None:
-            self.tabWidget.removeTab(self.tabWidget.indexOf(self.resultBrowser))
-            self.resultBrowser.close()
-            self.resultBrowser = None
-
+        self.scenariosManagerBase.removeAllElements()
+        self.resultsManagerBase.removeAllElements()
+        self.modelsManagerBase.removeAllElements()
 
     def closeEvent(self, event):
         # Check to see if there are changes to the current project, if a project is open
