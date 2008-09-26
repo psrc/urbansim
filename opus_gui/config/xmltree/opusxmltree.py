@@ -25,7 +25,7 @@ from opus_gui.general_manager.controllers.xml_action_general import xmlActionCon
 from opus_gui.results_manager.controllers.xml_action_results import xmlActionController_Results
 from opus_gui.models_manager.controllers.xml_action_models import xmlActionController_Models
 from opus_gui.scenarios_manager.controllers.xml_action_scenarios import xmlActionController_Scenarios
-from opus_gui.data_manager.controllers.xml_action_data import xmlActionController_Data
+from opus_gui.data_manager.controllers.xml_action_data_tools import xmlActionController_Data_tools
 
 class OpusXMLTree(object):
     def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
@@ -61,7 +61,7 @@ class OpusXMLTree(object):
         elif self.xmlType == 'scenarios_manager':
             self.xmlAction = xmlActionController_Scenarios(self)
         elif self.xmlType == 'data_manager':
-            self.xmlAction = xmlActionController_Data(self)
+            self.xmlAction = xmlActionController_Data_tools(self)
         elif self.xmlType == 'general':
             self.xmlAction = xmlActionController_General(self)
         else:

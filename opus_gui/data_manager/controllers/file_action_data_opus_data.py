@@ -24,13 +24,11 @@ from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTable
 from opus_gui.data_manager.controllers.executetool import ExecuteToolGui
 from StringIO import StringIO
 
-class OpusFileAction(object):
-    def __init__(self, xmlFileObject):
-        self.xmlFileObject = xmlFileObject
+from opus_gui.config.filetree.opusfileaction import OpusFileAction
 
-        self.currentColumn = None
-        self.currentIndex = None
-        self.classification = ""
+class fileActionController_Data_opus_data(OpusFileAction):
+    def __init__(self, xmlFileObject):
+        OpusFileAction.__init__(self, xmlFileObject)
 
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
@@ -49,10 +47,6 @@ class OpusFileAction(object):
                                        self.xmlFileObject.mainwindow)
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
                         self.openTextFile)
-
-        QObject.connect(self.xmlFileObject.treeview,
-                        SIGNAL("customContextMenuRequested(const QPoint &)"),
-                        self.processCustomMenu)
 
     def viewDatasetAction(self):
         #print "viewDatasetAction"

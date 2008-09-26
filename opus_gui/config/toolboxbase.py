@@ -154,10 +154,8 @@ class ToolboxBase(object):
                                                   self.mainwindow.runmanager_page.layout())
                 self.dataManagerTree = OpusXMLTree(self,"data_manager",
                                                    self.mainwindow.datamanager_xmlconfig.layout())
-                self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
+                self.dataManagerFileTree = OpusFileTree(self,'data_manager.opus_data',self.opusDataPath,
                                                         self.mainwindow.datamanager_dirview.layout())
-#                self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
-#                                                      self.mainwindow.datamanager_dbsconnections.layout())
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                                       self.mainwindow.resultsmanager_page.layout())
                 

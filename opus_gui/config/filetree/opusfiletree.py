@@ -18,9 +18,11 @@ from PyQt4.QtCore import Qt, QStringList, QDir
 from PyQt4.QtGui import QTreeView, QDirModel
 
 from opus_gui.config.filetree.opusfileaction import OpusFileAction
+from opus_gui.data_manager.controllers.file_action_data_opus_data import fileActionController_Data_opus_data
 
 class OpusFileTree(object):
-    def __init__(self, toolboxbase, opusDataPath, parentWidget):
+    def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget):
+        self.controller_type = controller_type
         self.addTree(toolboxbase,opusDataPath,parentWidget)
 
 
@@ -54,7 +56,10 @@ class OpusFileTree(object):
 
         # Hook up to the mousePressEvent and pressed
         self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.xmlAction = OpusFileAction(self)
+        if self.controller_type == 'data_manager.opus_data':
+            self.xmlAction = fileActionController_Data_opus_data(self)
+        else:
+            self.xmlAction = OpusFileAction(self)
 
     def removeTree(self):
 #        self.groupBox.hide()

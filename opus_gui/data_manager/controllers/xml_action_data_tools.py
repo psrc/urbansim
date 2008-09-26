@@ -28,7 +28,7 @@ from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 import os,tempfile
 
-class xmlActionController_Data(OpusXMLAction):
+class xmlActionController_Data_tools(OpusXMLAction):
     def __init__(self, xmlTreeObject):
         OpusXMLAction.__init__(self, xmlTreeObject)
         self.xmlTreeObject = xmlTreeObject
