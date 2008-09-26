@@ -28,7 +28,7 @@ class EditIndicatorDialog(QDialog, Ui_dlgEditIndicator):
         QDialog.__init__(self, resultManagerBase.mainwindow, flags)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase
-        self.model = resultManagerBase.toolboxStuff.resultsManagerTree.model
+        self.model = resultManagerBase.toolboxBase.resultsManagerTree.model
         self.selected_index = selected_index
         #fill in existing values...
         if self.selected_index is not None:
@@ -44,7 +44,7 @@ class EditIndicatorDialog(QDialog, Ui_dlgEditIndicator):
         indicator_name = self.txtIndicator_name.text()
         package_name = self.txtPackage_name.text()
         expression = self.txtExpression.text()
-        xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
+        xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
         
         if self.selected_index is not None:
             vals = {

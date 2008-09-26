@@ -67,7 +67,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
     def _setup_co_dataset_name(self, value = None):
         from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-        xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxStuff)
+        xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
 
         available_datasets = xml_helper.get_available_datasets()
 
@@ -120,7 +120,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.close()
                 
     def on_cboCheckSyntax_released(self):
-        success, errors = VariableValidator(toolboxStuff=self.mainwindow.toolboxStuff).check_parse_errors(variables = [self._get_variable_definition()])
+        success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_parse_errors(variables = [self._get_variable_definition()])
 
         if success:
             QMessageBox.information(self, 'Variable check results', 'Variable syntax check successful!')
@@ -129,7 +129,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             QMessageBox.warning(self, 'Variable check results', errorString)
             
     def on_cboCheckData_released(self):
-        success, errors = VariableValidator(toolboxStuff=self.mainwindow.toolboxStuff).check_data_errors(variables = [self._get_variable_definition()])
+        success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_data_errors(variables = [self._get_variable_definition()])
         if success:
             QMessageBox.information(self, 'Variable data check results', 'Variable checked successfully against baseyear data!')
         else:
@@ -180,7 +180,7 @@ class AllVariablesGui(object):
         tabledata = []
         self.tabledata = tabledata
         # Grab the general section...
-        tree = self.mainwindow.toolboxStuff.generalManagerTree
+        tree = self.mainwindow.toolboxBase.generalManagerTree
         self.tree = tree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
         all_variables_list = tree.model.findElementIndexByName("expression_library",dbxml,True)

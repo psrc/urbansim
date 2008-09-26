@@ -28,17 +28,17 @@ class GenerateResultsForm(QDialog):
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
         self.result_manager = result_manager
-        self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
+        self.toolboxBase = self.result_manager.mainwindow.toolboxBase
 
         self.inGui = False
         self.logFileKey = 0
 
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         
         self.available_years_for_simulation_runs = {}
         
         self.result_generator = OpusResultGenerator(
-                                    toolboxStuff = self.toolboxStuff)
+                                    toolboxBase = self.toolboxBase)
             
         self.result_generator.guiElement = self
         

@@ -34,8 +34,8 @@ class RunModelThread(QThread):
         self.modelguielement.model.run_name = run_name
         self.xml_file = xml_file
         self.batch_name = batch_name
-        self.toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.toolboxBase = self.modelguielement.mainwindow.toolboxBase
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         self.mainwindow = mainwindow
 
     def run(self):
@@ -89,7 +89,7 @@ class RunModelThread(QThread):
                             batch_name =  self.batch_name) 
         start, end = self.get_years()
         
-        self.batch_processor = BatchProcessor(toolboxStuff = self.toolboxStuff)           
+        self.batch_processor = BatchProcessor(toolboxBase = self.toolboxBase)           
         self.batch_processor.errorCallback = self.errorCallback
         self.batch_processor.finishedCallback = self.indicatorBatchFinishedCallback
         

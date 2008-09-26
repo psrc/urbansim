@@ -23,7 +23,7 @@ from opus_gui.exceptions.formatter import formatExceptionInfo
 
 class OpusResultVisualizer(object):
     def __init__(self, 
-                 toolboxStuff, 
+                 toolboxBase, 
                  indicator_type,
                  indicators, 
                  kwargs = None):
@@ -32,7 +32,7 @@ class OpusResultVisualizer(object):
         self.guiElement = None
         self.config = None
         self.firstRead = True
-        self.toolboxStuff = toolboxStuff
+        self.toolboxBase = toolboxBase
         self.indicator_type = indicator_type
         self.indicators = indicators
         self.visualizations = []
@@ -60,7 +60,7 @@ class OpusResultVisualizer(object):
             
         self.visualizations = {}
         indicators_to_visualize = {}
-        interface = IndicatorFrameworkInterface(toolboxStuff = self.toolboxStuff)
+        interface = IndicatorFrameworkInterface(toolboxBase = self.toolboxBase)
         
         #get common years
         years = set([])

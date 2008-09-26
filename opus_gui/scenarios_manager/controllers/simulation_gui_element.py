@@ -58,8 +58,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.runThread = None
         self.config = None
         
-        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxStuff)
-        self.toolboxStuff = self.mainwindow.toolboxStuff
+        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxBase)
+        self.toolboxBase = self.mainwindow.toolboxBase
         
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
@@ -67,7 +67,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         # Bring up the XML file and grab the start year and end year
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
@@ -98,7 +98,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.summaryCurrentPieceValue.hide()
         
     def updateConfigAndGuiForRun(self):
-        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
@@ -136,7 +136,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def setupDiagnosticIndicatorTab(self):
 
-        config = self.toolboxStuff.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
 
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []
@@ -198,7 +198,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         ]
 
         self.batch_processor = BatchProcessor(
-                                    toolboxStuff = self.toolboxStuff)
+                                    toolboxBase = self.toolboxBase)
             
         self.batch_processor.guiElement = self
              
@@ -288,7 +288,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 self.pbnStartModel.setText(QString("Pause simulation run..."))
         elif not self.running:
             # Update the XML
-            self.toolboxStuff.updateOpusXMLTree()
+            self.toolboxBase.updateOpusXMLTree()
             self.updateConfigAndGuiForRun()
 
             # Fire up a new thread and run the model

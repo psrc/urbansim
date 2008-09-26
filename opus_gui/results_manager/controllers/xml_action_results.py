@@ -27,8 +27,8 @@ class xmlActionController_Results(object):
         self.opusXMLAction = opusXMLAction
         self.mainwindow = opusXMLAction.mainwindow
         self.xmlTreeObject = opusXMLAction.xmlTreeObject
-        self.toolboxStuff = self.xmlTreeObject.mainwindow.toolboxStuff
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.toolboxBase = self.xmlTreeObject.mainwindow.toolboxBase
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
 
         self.currentColumn = None
         self.currentIndex = None
@@ -159,7 +159,7 @@ class xmlActionController_Results(object):
         self.xmlTreeObject.mainwindow.resultManagerStuff.importRun()  
           
     def beforeRunIndicatorBatchShown(self):
-        domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
+        domDocument = self.xmlTreeObject.mainwindow.toolboxBase.doc
         node_list = elementsByAttributeValue(domDocument = domDocument, 
                                               attribute = 'type', 
                                               value = 'source_data')

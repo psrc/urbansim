@@ -17,8 +17,8 @@ from opus_gui.results_manager.run.indicator_framework_interface import Indicator
 from opus_gui.results_manager.run.opus_result_generator import OpusResultGenerator
 
 class VariableValidator(object):
-    def __init__(self, toolboxStuff):
-        self.toolboxStuff = toolboxStuff
+    def __init__(self, toolboxBase):
+        self.toolboxBase = toolboxBase
         
     def validate(self, variables, ok_msg):
         parsing_successful, parsing_errors = self.check_parse_errors(variables)
@@ -92,13 +92,13 @@ class VariableValidator(object):
         
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
         
-        interface = IndicatorFrameworkInterface(self.toolboxStuff)
+        interface = IndicatorFrameworkInterface(self.toolboxBase)
         node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data', 
                                                                  child_attributes = ['start_year'],
                                                                  node_type = 'source_data')
         years = [int(str(vals['start_year']))]
 
-        result_generator = OpusResultGenerator(self.toolboxStuff)
+        result_generator = OpusResultGenerator(self.toolboxBase)
         result_generator.set_data(
                source_data_name = 'base_year_data',
                indicator_name = indicator_name,

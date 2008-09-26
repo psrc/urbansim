@@ -53,8 +53,8 @@ class ResultManagerBase(AbstractManagerBase):
     
     def __init__(self, mainwindow):
         AbstractManagerBase.__init__(self, mainwindow) 
-        self.toolboxStuff = self.mainwindow.toolboxStuff  
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.toolboxBase = self.mainwindow.toolboxBase  
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
 
     def scanForRuns(self):
         self._scanForRuns()

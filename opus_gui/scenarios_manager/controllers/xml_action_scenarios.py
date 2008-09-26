@@ -135,7 +135,7 @@ class xmlActionController_Scenarios(object):
         newModel = OpusModel(self.xmlTreeObject,
                              self.xmlTreeObject.toolboxbase.xml_file,
                              modelToRun)
-        self.xmlTreeObject.mainwindow.runManagerStuff.addNewModelRun(newModel)
+        self.xmlTreeObject.mainwindow.runManagerBase.addNewModelRun(newModel)
     
     def openXMLFile(self):
         filePath = ""
@@ -302,7 +302,7 @@ class xmlActionController_Scenarios(object):
 #        Returns a list of the names of models available in the
 #        model_system section of the model manager
 #        '''
-#        model_system = self.mainwindow.toolboxStuff.modelManagerTree.model.domDocument.elementsByTagName(QString("model_system"))
+#        model_system = self.mainwindow.toolboxBase.modelManagerTree.model.domDocument.elementsByTagName(QString("model_system"))
 #        print model_system
 #        for i in range(0, model_system.count()):
 #            print i

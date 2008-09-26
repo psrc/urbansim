@@ -15,7 +15,7 @@ from opus_gui.scenarios_manager.controllers.simulation_gui_element import Simula
 from opus_gui.models_manager.controllers.estimation_gui_element import EstimationGuiElement
 
 # Main Run manager class
-class RunManagerBase(object):
+class ScenarioManagerBase(object):
     def __init__(self, mainwindow):
         self.mainwindow = mainwindow
         self.tabWidget = mainwindow.tabWidget

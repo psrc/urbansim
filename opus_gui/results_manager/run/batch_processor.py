@@ -18,15 +18,15 @@ from opus_core.logger import logger
 
 class BatchProcessor(object):
     def __init__(self, 
-                 toolboxStuff,
+                 toolboxBase,
                  kwargs = None):
           
         self.generator = OpusResultGenerator(
-           toolboxStuff = toolboxStuff                                            
+           toolboxBase = toolboxBase                                            
         )
           
         self.visualizer = OpusResultVisualizer(
-           toolboxStuff = toolboxStuff,
+           toolboxBase = toolboxBase,
            indicator_type = None,
            indicators = None,
            kwargs = kwargs                     

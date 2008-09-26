@@ -27,7 +27,7 @@ from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
 
 from opus_gui.util.consolebase import ConsoleBase
 from opus_gui.config.toolboxbase import ToolboxBase
-from opus_gui.scenarios_manager.runmanagerbase import RunManagerBase
+from opus_gui.scenarios_manager.scenario_manager_base import ScenarioManagerBase
 from opus_gui.results_manager.resultManagerBase import ResultManagerBase
 from opus_gui.results_manager.xml_helper_methods import get_child_values
 from opus_gui.exceptions.formatter import formatExceptionInfo
@@ -64,10 +64,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.output = OpusGui.Output(self.writeOutput)
         #sys.stdout, sys.stderr = self.output, self.output
 
-        self.toolboxStuff = ToolboxBase(self)
+        self.toolboxBase = ToolboxBase(self)
 
         # Loading startup options from gui configuration xml file
-        startup_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('startup_options').item(0)
+        startup_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('startup_options').item(0)
         splash_pix = get_child_values(parent = startup_node, 
                                  child_names = ['splash_logo'])
 
@@ -78,7 +78,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.splash.show()
 
         # Loading main window title from gui configuration xml file
-        application_options_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('application_options').item(0)
+        application_options_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('application_options').item(0)
         application_title_dict = get_child_values(parent = application_options_node,
                                              child_names = ['application_title'])
         self.application_title = application_title_dict['application_title']
@@ -87,7 +87,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Loading settings from gui configuration xml file regarding font sizes
         try:
             #font settings
-            font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+            font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
             
             self.menu_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['menu_font_size'])['menu_font_size'])
@@ -99,8 +99,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             
         except:
             #font settings
-            self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
-            font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+            self.toolboxBase.reemit_reinit_default_gui_configuration_file()
+            font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
             
             self.menu_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['menu_font_size'])['menu_font_size'])
@@ -111,7 +111,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         
         #loading settings from gui xml regarding previous project   
         try:
-            prev_proj_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
+            prev_proj_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
             self.latest_project_file_name = QString(get_child_values(parent = prev_proj_node,
                                               child_names = ['previous_project'])['previous_project'])
             self.open_latest_project = "True" == str(get_child_values(parent = prev_proj_node,
@@ -119,7 +119,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         except:
             self.latest_project_file_name = ' '
             self.open_latest_project = False
-            self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
+            self.toolboxBase.reemit_reinit_default_gui_configuration_file()
             self.updateFontSettingsNode()
             self.saveGuiConfig()
             
@@ -180,8 +180,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #  self.mapStuff = None
 
         self.consoleStuff = ConsoleBase(self)
-        self.runManagerStuff = RunManagerBase(self)
-        self.runManagerStuff.setGui(self)
+        self.runManagerBase = ScenarioManagerBase(self)
+        self.runManagerBase.setGui(self)
 
         self.resultManagerStuff = ResultManagerBase(self)
         self.resultManagerStuff.setGui(self)
@@ -388,7 +388,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self._saveOrDiscardChanges()
 
         if config:
-            self.toolboxStuff.openXMLTree(config)
+            self.toolboxBase.openXMLTree(config)
 
         else:
             start_dir = ''
@@ -408,15 +408,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             fileNameInfo = QFileInfo(QString(fd))
             fileNameBaseName = fileNameInfo.completeBaseName()
             # Open the file and add to the Run tab...
-            self.toolboxStuff.openXMLTree(fileName)
+            self.toolboxBase.openXMLTree(fileName)
             # Add the project file's path to the title bar
             self.latest_project_file_name = fileName
             self.updateProjectHistoryNode()
             self.saveGuiConfig()
                         
-        title = self.toolboxStuff.project_name
+        title = self.toolboxBase.project_name
 
-        #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
+        #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxBase.runManagerTree.toolboxbase.xml_file).filePath())
         self.setWindowTitle(self.application_title + " - " + QString(title))
 #        if config:
         self.resultManagerStuff.scanForRuns()    
@@ -437,21 +437,21 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def saveConfig(self):
         try:
-            domDocument = self.toolboxStuff.doc
-            opusXMLTree = self.toolboxStuff.opusXMLTree
+            domDocument = self.toolboxBase.doc
+            opusXMLTree = self.toolboxBase.opusXMLTree
             indentSize = 2
             
             data = str(domDocument.toString(indentSize))
 
             opusXMLTree.update(data)
             opusXMLTree.save()
-            self.toolboxStuff.runManagerTree.model.markAsClean()
-            self.toolboxStuff.dataManagerTree.model.markAsClean()
-            if self.toolboxStuff.dataManagerDBSTree is not None:
-                self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
-            self.toolboxStuff.modelManagerTree.model.markAsClean()
-            self.toolboxStuff.resultsManagerTree.model.markAsClean()
-            self.toolboxStuff.generalManagerTree.model.markAsClean()
+            self.toolboxBase.runManagerTree.model.markAsClean()
+            self.toolboxBase.dataManagerTree.model.markAsClean()
+            if self.toolboxBase.dataManagerDBSTree is not None:
+                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
+            self.toolboxBase.modelManagerTree.model.markAsClean()
+            self.toolboxBase.resultsManagerTree.model.markAsClean()
+            self.toolboxBase.generalManagerTree.model.markAsClean()
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage) 
@@ -470,18 +470,18 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 return
             fileName = QString(fd)
 
-            domDocument = self.toolboxStuff.doc
-            opusXMLTree = self.toolboxStuff.opusXMLTree
+            domDocument = self.toolboxBase.doc
+            opusXMLTree = self.toolboxBase.opusXMLTree
             indentSize = 2
             opusXMLTree.update(str(domDocument.toString(indentSize)))
             opusXMLTree.save_as(str(fileName))
-            self.toolboxStuff.runManagerTree.model.markAsClean()
-            self.toolboxStuff.dataManagerTree.model.markAsClean()
-            if self.toolboxStuff.dataManagerDBSTree is not None:
-                self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
-            self.toolboxStuff.modelManagerTree.model.markAsClean()
-            self.toolboxStuff.resultsManagerTree.model.markAsClean()
-            self.toolboxStuff.generalManagerTree.model.markAsClean()
+            self.toolboxBase.runManagerTree.model.markAsClean()
+            self.toolboxBase.dataManagerTree.model.markAsClean()
+            if self.toolboxBase.dataManagerDBSTree is not None:
+                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
+            self.toolboxBase.modelManagerTree.model.markAsClean()
+            self.toolboxBase.resultsManagerTree.model.markAsClean()
+            self.toolboxBase.generalManagerTree.model.markAsClean()
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage) 
@@ -492,27 +492,27 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         and prompts user to save or discard changes.
         """
         saveBeforeOpen = QMessageBox.Discard
-        if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.isDirty():
+        if self.toolboxBase.resultsManagerTree and self.toolboxBase.resultsManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.isDirty():
+        elif self.toolboxBase.modelManagerTree and self.toolboxBase.modelManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.isDirty():
+        elif self.toolboxBase.runManagerTree and self.toolboxBase.runManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.isDirty():
+        elif self.toolboxBase.dataManagerTree and self.toolboxBase.dataManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.dataManagerDBSTree and self.toolboxStuff.dataManagerDBSTree.model.isDirty():
+        elif self.toolboxBase.dataManagerDBSTree and self.toolboxBase.dataManagerDBSTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.generalManagerTree and self.toolboxStuff.generalManagerTree.model.isDirty():
+        elif self.toolboxBase.generalManagerTree and self.toolboxBase.generalManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
@@ -521,18 +521,18 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.saveConfig()
         else:
             #if we have an existing tree we need to remove the dirty bit since we are discarding
-            if self.toolboxStuff.runManagerTree:
-                self.toolboxStuff.runManagerTree.model.markAsClean()
-            if self.toolboxStuff.dataManagerTree:
-                self.toolboxStuff.dataManagerTree.model.markAsClean()
-            if self.toolboxStuff.dataManagerDBSTree:
-                self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
-            if self.toolboxStuff.modelManagerTree:
-                self.toolboxStuff.modelManagerTree.model.markAsClean()
-            if self.toolboxStuff.resultsManagerTree:
-                self.toolboxStuff.resultsManagerTree.model.markAsClean()
-            if self.toolboxStuff.generalManagerTree:
-                self.toolboxStuff.generalManagerTree.model.markAsClean()
+            if self.toolboxBase.runManagerTree:
+                self.toolboxBase.runManagerTree.model.markAsClean()
+            if self.toolboxBase.dataManagerTree:
+                self.toolboxBase.dataManagerTree.model.markAsClean()
+            if self.toolboxBase.dataManagerDBSTree:
+                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
+            if self.toolboxBase.modelManagerTree:
+                self.toolboxBase.modelManagerTree.model.markAsClean()
+            if self.toolboxBase.resultsManagerTree:
+                self.toolboxBase.resultsManagerTree.model.markAsClean()
+            if self.toolboxBase.generalManagerTree:
+                self.toolboxBase.generalManagerTree.model.markAsClean()
 
     def closeConfig(self):
         """
@@ -540,15 +540,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         """
 
         try:
-            configFile = self.toolboxStuff.runManagerTree.model.configFile
+            configFile = self.toolboxBase.runManagerTree.model.configFile
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
             QMessageBox.warning(self, 'Warning', errorMessage) 
 
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
-        self.toolboxStuff.closeXMLTree()
-        self.runManagerStuff.removeAllElements()
+        self.toolboxBase.closeXMLTree()
+        self.runManagerBase.removeAllElements()
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
@@ -713,7 +713,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def updateFontSettingsNode(self):
         #get the font settings node from xml
-        font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+        font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
         nodesToSave = {"menu_font_size":self.menu_font_size,
                        "main_tabs_font_size":self.main_tabs_font_size,
                        "general_text_font_size":self.general_text_font_size}
@@ -737,7 +737,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             
     def updateProjectHistoryNode(self):
         #get the project history node from xml
-        proj_hist_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('project_history').item(0)
+        proj_hist_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
         nodesToSave = {"previous_project":str(self.latest_project_file_name),
                        "open_latest_project_on_start":str(self.open_latest_project)}
         #go through the children of the project history node and set the value accordingly
@@ -756,14 +756,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                             textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
                         child = child.nextSibling()
                 if hasTextNode == False:
-                    newText = self.toolboxStuff.gui_configuration_doc.createTextNode(\
+                    newText = self.toolboxBase.gui_configuration_doc.createTextNode(\
                                     QString(str(nodesToSave[str(node.nodeName())])))
                     element.appendChild(newText)
             node = node.nextSibling()
 
     def saveGuiConfig(self):
         try:
-            self.toolboxStuff.save_gui_configuration_file()
+            self.toolboxBase.save_gui_configuration_file()
         except:
             print "Unexpected error:", sys.exc_info()[0]
   

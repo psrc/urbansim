@@ -27,18 +27,18 @@ class IndicatorBatchRunForm(QDialog):
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
         self.result_manager = result_manager
-        self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
+        self.toolboxBase = self.result_manager.mainwindow.toolboxBase
 
         
         self.inGui = False
         self.logFileKey = 0
 
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         
         self.available_years_for_simulation_runs = {}
 
         self.batch_processor = BatchProcessor(
-                                    toolboxStuff = self.toolboxStuff)
+                                    toolboxBase = self.toolboxBase)
             
         self.batch_processor.guiElement = self
         

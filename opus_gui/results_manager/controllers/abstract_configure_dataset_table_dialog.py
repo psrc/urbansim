@@ -31,8 +31,8 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         self.setModal(True)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase
-        self.model = resultManagerBase.toolboxStuff.resultsManagerTree.model
-        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
+        self.model = resultManagerBase.toolboxBase.resultsManagerTree.model
+        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
         self.leVizName.setText(QString('New visualization'))
         self.dataset_name = None
 #        self.twAvailableIndicators.verticalHeader().hide()

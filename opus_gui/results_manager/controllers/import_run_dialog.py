@@ -32,7 +32,7 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
         QDialog.__init__(self, resultManagerBase.mainwindow, flags)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase
-        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
+        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
         
     def on_buttonBox_accepted(self):
         path = str(self.lePath.text())

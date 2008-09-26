@@ -91,7 +91,7 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         if viz_params is not None:
             viz_name = str(self.leVizName.text()).replace('DATASET',viz_params['dataset_name']).replace(' ','_')
             
-            xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
+            xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
             xml_helper.update_dom_node(index = self.selected_index, 
                                        new_base_node_name = viz_name, 
                                        children_to_update = viz_params)

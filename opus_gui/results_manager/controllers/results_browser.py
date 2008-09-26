@@ -35,11 +35,11 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
         self.gui_result_manager = gui_result_manager
-        self.toolboxStuff = self.gui_result_manager.mainwindow.toolboxStuff
-        QObject.connect(self.toolboxStuff.generalManagerTree.model, SIGNAL("layoutChanged()"),
+        self.toolboxBase = self.gui_result_manager.mainwindow.toolboxBase
+        QObject.connect(self.toolboxBase.generalManagerTree.model, SIGNAL("layoutChanged()"),
                 self.setupAvailableIndicators)
 
-        QObject.connect(self.toolboxStuff.resultsManagerTree.model, SIGNAL("layoutChanged()"),
+        QObject.connect(self.toolboxBase.resultsManagerTree.model, SIGNAL("layoutChanged()"),
                 self._setup_simulation_data)
 
                     
@@ -63,7 +63,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         
         self.setup = True
 
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         self.setupAvailableIndicators()
         self._setup_simulation_data()
         
@@ -260,7 +260,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         ]
                 
         batch_processor = BatchProcessor(
-                            toolboxStuff = self.toolboxStuff)
+                            toolboxBase = self.toolboxBase)
         batch_processor.guiElement = self
         
         

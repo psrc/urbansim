@@ -38,7 +38,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
 
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        self.toolboxStuff = self.mainwindow.toolboxStuff
+        self.toolboxBase = self.mainwindow.toolboxBase
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = QString('%s estimation'%estimation.model_name)
@@ -76,7 +76,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         elif self.running == False:
             self.logFileKey = 0
             # Update the XML
-            self.toolboxStuff.updateOpusXMLTree()
+            self.toolboxBase.updateOpusXMLTree()
             # Fire up a new thread and run the estimation
             # References to the GUI elements for status for this run...
             self.progressBar = self.runProgressBar

@@ -20,15 +20,15 @@ from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 class OpusResultGenerator(object):
     
-    def __init__(self, toolboxStuff):
+    def __init__(self, toolboxBase):
         self.finishedCallback = None
         self.errorCallback = None
         self.guiElement = None
         self.cache_directory = None
         self.firstRead = True
-        self.toolboxStuff = toolboxStuff
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
-        self.interface = IndicatorFrameworkInterface(toolboxStuff = toolboxStuff)
+        self.toolboxBase = toolboxBase
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = toolboxBase)
+        self.interface = IndicatorFrameworkInterface(toolboxBase = toolboxBase)
         self.computed_indicators = []
         
     def set_data(self,
@@ -81,7 +81,7 @@ class OpusResultGenerator(object):
                                  dataset_name = self.dataset_name,
                                  indicator_definition = self.indicator_definition)
         
-        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], expression_library = self.toolboxStuff.opusXMLTree.get_expression_library())
+        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], expression_library = self.toolboxBase.opusXMLTree.get_expression_library())
 
         try:
             import pydevd;pydevd.settrace()

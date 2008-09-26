@@ -68,7 +68,7 @@ class OpusFileAction(object):
         # temporarily use the table name for the dataset name
         # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
-        general = self.xmlFileObject.mainwindow.toolboxStuff.opusXMLTree.get_section('general')
+        general = self.xmlFileObject.mainwindow.toolboxBase.opusXMLTree.get_section('general')
         # problem: this gets the package order for the current project, but the viewer shows all the data
         package_order = general['dataset_pool_configuration'].package_order
         # PREVIOUS HACK: 
@@ -240,7 +240,7 @@ class OpusFileAction(object):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
         #print "Classification = " + classification
-        tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
+        tree = self.xmlFileObject.mainwindow.toolboxBase.dataManagerTree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
         # First loop through all tool_sets
         setsindexlist = tree.model.findElementIndexByType("tool_sets",dbxml,True)
@@ -287,7 +287,7 @@ class OpusFileAction(object):
             parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
             # Add in the code to take action... like run a tool...
             # First find the batch to loop over the configs to execute
-            tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
+            tree = self.xmlFileObject.mainwindow.toolboxBase.dataManagerTree
             toolxml = tree.model.index(0,0,QModelIndex()).parent()
             toolindexlist = tree.model.findElementIndexByName(actiontext,toolxml,False)
             toolindex = toolindexlist[0]

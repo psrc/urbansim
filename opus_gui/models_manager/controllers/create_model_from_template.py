@@ -26,9 +26,9 @@ class CreateModelFromTemplateDialog(QDialog, Ui_CreateModelFromTemplate):
         self.setupUi(self)
         self.opusXMLAction_Model = opusXMLAction_Model
 
-        self.toolboxStuff = self.mainwindow.toolboxStuff
+        self.toolboxBase = self.mainwindow.toolboxBase
 
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         self._setup_co_dataset_name()
         title = str(self.windowTitle())
         newtitle = '%s %s'%(title, str(model_template_node.toElement().tagName()))
@@ -132,7 +132,7 @@ class CreateModelFromTemplateDialog(QDialog, Ui_CreateModelFromTemplate):
         cloned_mt = mt_node.cloneNode()
         node_element = cloned_mt.toElement()
         node_element.setTagName(model_name)
-        model = self.toolboxStuff.modelManagerTree.model
+        model = self.toolboxBase.modelManagerTree.model
         # Find the parent node index to append to
         parentIndex = model.index(0,0,QModelIndex()).parent()
         current_index = model.findElementIndexByName('estimation', parentIndex)[0]

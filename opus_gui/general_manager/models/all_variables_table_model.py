@@ -194,11 +194,11 @@ class AllVariablesTableModel(QAbstractTableModel):
         
     def checkSyntax(self, row):
         variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
-        return VariableValidator(toolboxStuff = self.parentWidget.mainwindow.toolboxStuff).check_parse_errors(variables = variables)
+        return VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).check_parse_errors(variables = variables)
         
     def checkAgainstData(self, row):
         variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
-        return VariableValidator(self.parentWidget.mainwindow.toolboxStuff).check_data_errors(variables = variables)
+        return VariableValidator(self.parentWidget.mainwindow.toolboxBase).check_data_errors(variables = variables)
 
     
     def checkSelectedVariables(self):
@@ -207,7 +207,7 @@ class AllVariablesTableModel(QAbstractTableModel):
         for i,testCase in enumerate(self.arraydata):
             if testCase[-2]:
                 tocheck.append((str(self.arraydata[i][1]), str(self.arraydata[i][2]), str(self.arraydata[i][3]), str(self.arraydata[i][4]), str(self.arraydata[i][5])))
-        success, msg = VariableValidator(toolboxStuff = self.parentWidget.mainwindow.toolboxStuff).validate(variables = tocheck,
+        success, msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = tocheck,
                                      ok_msg = 'All expressions for selected variables parse correctly and can be executed on the baseyear data!')
         if success:
             QMessageBox.information(self.parentWidget, 'Expression check results', msg)
@@ -222,7 +222,7 @@ class AllVariablesTableModel(QAbstractTableModel):
 #        4 source
 #        5 expression
         vars = [(str(v[1]), str(v[2]), str(v[3]), str(v[4]), str(v[5])) for v in self.arraydata]
-        success,msg = VariableValidator(toolboxStuff = self.parentWidget.mainwindow.toolboxStuff).validate(variables = vars,
+        success,msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = vars,
                                      ok_msg = 'All expressions parse correctly and can be executed on the baseyear data!')
         if success:
             QMessageBox.information(self.parentWidget, 'Expression check results', msg)

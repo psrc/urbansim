@@ -70,8 +70,8 @@ def get_child_values(parent, child_names = [], all = False):
 
 class ResultsManagerXMLHelper:
     
-    def __init__(self, toolboxStuff):
-        self.toolboxStuff = toolboxStuff
+    def __init__(self, toolboxBase):
+        self.toolboxBase = toolboxBase
 
         
     #####################################################
@@ -139,7 +139,7 @@ class ResultsManagerXMLHelper:
                         node_attribute = 'type',
                         child_attributes = [],
                         attributes = []):
-        domDocument = self.toolboxStuff.doc
+        domDocument = self.toolboxBase.doc
         node_list = elementsByAttributeValue(
              domDocument = domDocument, 
              attribute = node_attribute, 
@@ -196,7 +196,7 @@ class ResultsManagerXMLHelper:
         if node_type is not None and not isinstance(node_type, QString):
             node_type = QString(node_type)
         
-        domDocument = self.toolboxStuff.doc
+        domDocument = self.toolboxBase.doc
         
         elements = domDocument.elementsByTagName(node_name)
         matching_element = None
@@ -316,7 +316,7 @@ class ResultsManagerXMLHelper:
         if child_node_definitions == []: return
 
         # This list is to hold all of the child dom nodes created
-        model = self.toolboxStuff.resultsManagerTree.model
+        model = self.toolboxBase.resultsManagerTree.model
 
         child_nodes = []
         for args in child_node_definitions:
@@ -325,7 +325,7 @@ class ResultsManagerXMLHelper:
                     args['flags'] += '|hidden'
                 else:
                     args['flags'] = 'hidden'
-            child_node = model.create_node(document = self.toolboxStuff.doc,
+            child_node = model.create_node(document = self.toolboxBase.doc,
                                            temporary = temporary,
                                            **args)
             child_nodes.append(child_node)
@@ -342,8 +342,8 @@ class ResultsManagerXMLHelper:
                           temporary = False,
                           children_hidden = False):
         
-        model = self.toolboxStuff.resultsManagerTree.model
-        document = self.toolboxStuff.doc
+        model = self.toolboxBase.resultsManagerTree.model
+        document = self.toolboxBase.doc
         
         # The new head node to add children to and then insert
         head_node = model.create_node(document = document, 
@@ -370,7 +370,7 @@ class ResultsManagerXMLHelper:
     def update_dom_node(self, index, new_base_node_name = None, children_to_update = None, children_hidden = True, temporary = False):
         if index is None: return 
         
-        model = self.toolboxStuff.resultsManagerTree.model
+        model = self.toolboxBase.resultsManagerTree.model
         # Keep track of any edits so we can mark the GUI as edited and force a save
         # as well as make the node editable if it is not already...
         dirty = False
@@ -462,7 +462,7 @@ class ResultsManagerXMLHelper:
     def update_available_runs(self):
         #get existing cache directories, use as primary key to check for duplicates
         available_runs = self.get_available_run_info(attributes = ['cache_directory'], update = False)
-        model = self.toolboxStuff.resultsManagerTree.model
+        model = self.toolboxBase.resultsManagerTree.model
         existing_cache_directories = {}
         for run in available_runs:
             cache_directory = str(run['cache_directory'])
@@ -484,7 +484,7 @@ class ResultsManagerXMLHelper:
             else:
                 existing_cache_directories[cache_directory] = 1
 
-        project_name = self.toolboxStuff.project_name
+        project_name = self.toolboxBase.project_name
 
         server_config = ServicesDatabaseConfiguration()
         run_manager = RunManager(server_config)

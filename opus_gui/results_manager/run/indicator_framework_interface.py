@@ -24,9 +24,9 @@ from opus_core.services.run_server.run_manager import RunManager
 from sqlalchemy.sql import select
 
 class IndicatorFrameworkInterface:
-    def __init__(self, toolboxStuff):
-        self.toolboxStuff = toolboxStuff
-        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
+    def __init__(self, toolboxBase):
+        self.toolboxBase = toolboxBase
+        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = toolboxBase)
         self.run_manager = RunManager(ServicesDatabaseConfiguration())
         
     def _get_dataset_pool_configuration(self):
