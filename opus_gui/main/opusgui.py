@@ -25,7 +25,7 @@ from opus_gui.main.opusabout import UrbansimAboutGui
 from opus_gui.settings.opuspreferences import UrbansimPreferencesGui
 from opus_gui.settings.databasesettings import DatabaseSettingsEditGui
 
-from opus_gui.util.consolebase import ConsoleBase
+#from opus_gui.util.consolebase import ConsoleBase
 from opus_gui.config.toolboxbase import ToolboxBase
 from opus_gui.scenarios_manager.scenario_manager_base import ScenarioManagerBase
 from opus_gui.results_manager.resultManagerBase import ResultManagerBase
@@ -179,7 +179,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #except ImportError:
         #  self.mapStuff = None
 
-        self.consoleStuff = ConsoleBase(self)
+#        self.consoleStuff = ConsoleBase(self)
         self.runManagerBase = ScenarioManagerBase(self)
         self.runManagerBase.setGui(self)
 
