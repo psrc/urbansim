@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
 import os
 
-from opus_gui.results_manager.views.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
+from opus_gui.results_manager.views.ui_configure_dataset_table import Ui_dlgDatasetTableDialog
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.exceptions.formatter import formatExceptionInfo

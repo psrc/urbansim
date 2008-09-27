@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt
 from PyQt4.QtGui import QDialog
 
 
-from opus_gui.results_manager.views.get_run_info_ui import Ui_dlgGetRunInfo
+from opus_gui.results_manager.views.ui_get_run_info import Ui_dlgGetRunInfo
 from opus_gui.results_manager.xml_helper_methods import get_child_values
 
 class GetRunInfo(QDialog, Ui_dlgGetRunInfo):

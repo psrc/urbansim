@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, Qt
 from PyQt4.QtGui import QDialog, QFileDialog, QMessageBox
 
-from opus_gui.results_manager.views.import_run_dialog_ui import Ui_dlgImportRun
+from opus_gui.results_manager.views.ui_import_run_dialog import Ui_dlgImportRun
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration

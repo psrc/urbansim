@@ -11,27 +11,25 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, Qt
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QDialog, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel
+from PyQt4.QtCore import QString, QObject, SIGNAL
+from PyQt4.QtGui import QMessageBox, QDialog
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
-class IndicatorBatchRunForm(QDialog):
+from opus_gui.results_manager.views.ui_run_indicator_batch import Ui_runIndicatorBatch
+
+class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
     def __init__(self, mainwindow, resultsManagerBase, batch_name = None, simulation_run = None):
         QDialog.__init__(self, mainwindow)
+        self.setupUi(self)
+        
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
         self.resultsManagerBase = resultsManagerBase
         self.toolboxBase = self.resultsManagerBase.mainwindow.toolboxBase
-
-        
-        self.inGui = False
-        self.logFileKey = 0
 
         self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
         
@@ -41,89 +39,13 @@ class IndicatorBatchRunForm(QDialog):
                                     toolboxBase = self.toolboxBase)
             
         self.batch_processor.guiElement = self
-        
-        self.setWindowTitle('Run indicator batch')
-        self.widgetLayout = QVBoxLayout(self)
-        self.widgetLayout.setAlignment(Qt.AlignTop)
-        
-        self.dataGroupBox = QGroupBox(self)
-        self.widgetLayout.addWidget(self.dataGroupBox)
-        
+                
         self.simulation_run = simulation_run
         self.batch_name = batch_name
-
-        self._setup_definition_widget()
-
-
-        self._setup_buttons()
-        #self._setup_tabs()
-        
-        
-    def _setup_buttons(self):
-        # Add Generate button...
-        self.pbn_run_indicator_group = QPushButton(self)
-        self.pbn_run_indicator_group.setObjectName("pbn_run_indicator_group")
-        self.pbn_run_indicator_group.setText(QString("Run indicator group..."))
-        
-        QObject.connect(self.pbn_run_indicator_group, SIGNAL("released()"),
-                        self.on_pbn_run_indicator_group_released)        
-        self.widgetLayout.addWidget(self.pbn_run_indicator_group)
-        
-    def _setup_tabs(self):
-        # Add a tab widget and layer in a tree view and log panel
-        self.tabWidget = QTabWidget(self)
-    
-        # Log panel
-        self.logText = QTextEdit(self)
-        self.logText.setReadOnly(True)
-        self.logText.setLineWidth(0)
-        self.tabWidget.addTab(self.logText,"Log")
-
-        # Finally add the tab to the model page
-        self.widgetLayout.addWidget(self.tabWidget)
-        
-#
-    def _setup_definition_widget(self):
                 
-        ##### setup data group box ####
-        self.gridlayout2 = QGridLayout(self.dataGroupBox)
-        self.gridlayout2.setObjectName("gridlayout2")
-                
-        self.lbl_yr1 = QLabel(self)
-        self.lbl_yr1.setObjectName("lbl_yr1")
-        self.lbl_yr1.setText(QString("From"))
-                
-        self.lbl_yr2 = QLabel(self)
-        self.lbl_yr2.setObjectName("lbl_yr2")
-        self.lbl_yr2.setText(QString("<center>to</center>"))
-
-        self.lbl_yr3 = QLabel(self)
-        self.lbl_yr3.setObjectName("lbl_yr3")
-        self.lbl_yr3.setText(QString("<center>every</center>"))
-
-        self.lbl_yr4 = QLabel(self)
-        self.lbl_yr4.setObjectName("lbl_yr4")
-        self.lbl_yr4.setText(QString("<center>years</center>"))
-        
         self._setup_co__years()
         
-        self.gridlayout2.addWidget(self.lbl_yr1,0,0,1,1)
-        self.gridlayout2.addWidget(self.co_start_year,0,1,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr2,0,2,1,1)
-        self.gridlayout2.addWidget(self.co_end_year,0,3,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr3,0,4,1,1)
-        self.gridlayout2.addWidget(self.co_every_year,0,5,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr4,0,6,1,1)
-        
     def _setup_co__years(self):     
-        self.co_start_year = QComboBox(self.dataGroupBox)
-        self.co_start_year.setObjectName("co_start_year")
-        
-        self.co_end_year = QComboBox(self.dataGroupBox)
-        self.co_end_year.setObjectName("co_end_year")
-        
-        self.co_every_year = QComboBox(self.dataGroupBox)
-        self.co_every_year.setObjectName("co_every_year")
 
         runs = self.xml_helper.get_available_run_info(
                    attributes = ['start_year', 'end_year'])
@@ -145,9 +67,9 @@ class IndicatorBatchRunForm(QDialog):
     def removeElement(self):
         return True
 
-    def on_pbn_run_indicator_group_released(self):
+    def on_buttonBox_accepted(self):
 
-        self.pbn_run_indicator_group.setEnabled(False)
+        self.buttonBox.setEnabled(False)
         
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
@@ -192,9 +114,8 @@ class IndicatorBatchRunForm(QDialog):
             
         # Get the final logfile update after model finishes...
 #        self.logFileKey = self.batch_processor._get_current_log(self.logFileKey)
-        self.pbn_run_indicator_group.setEnabled(True)
+        self.buttonBox.setEnabled(True)
         self.close()
-    
 
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.mainwindow, 'warning', errorMessage)

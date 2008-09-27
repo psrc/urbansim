@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'get_run_info.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/results_manager/views/get_run_info.ui'
 #
-# Created: Mon Sep 22 01:51:59 2008
+# Created: Fri Sep 26 18:36:35 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
