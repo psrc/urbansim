@@ -12,9 +12,6 @@
 # 
 
 
-
-# PyQt4 includes for python bindings to QT
-
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 
 class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):

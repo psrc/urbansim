@@ -12,7 +12,6 @@
 # 
 
 
-
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
