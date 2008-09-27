@@ -11,15 +11,16 @@
 # other acknowledgments.
 # 
 
-from opus_gui.results_manager.controllers.indicator_batch_run_form import IndicatorBatchRunForm
-from opus_gui.results_manager.controllers.view_documentation_form import ViewDocumentationForm
-from opus_gui.results_manager.controllers.view_image_form import ViewImageForm
-from opus_gui.results_manager.controllers.view_table_form import ViewTableForm
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-from opus_gui.results_manager.controllers.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
-from opus_gui.results_manager.controllers.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
-from opus_gui.results_manager.controllers.import_run_dialog import ImportRunDialog
-from opus_gui.results_manager.controllers.results_browser import ResultBrowser
+
+from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrowser
+from opus_gui.results_manager.controllers.dialogs.indicator_batch_run_form import IndicatorBatchRunForm
+from opus_gui.results_manager.controllers.tabs.view_documentation_form import ViewDocumentationForm
+from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
+from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization import ConfigureNewBatchIndicatorVisualization
+from opus_gui.results_manager.controllers.dialogs.configure_existing_batch_indicator_visualization import ConfigureExistingBatchIndicatorVisualization
+from opus_gui.results_manager.controllers.dialogs.import_run_dialog import ImportRunDialog
 
 
 # Main Run manager class
@@ -81,11 +82,11 @@ class ResultsManagerBase(AbstractManagerBase):
                                                child_attributes = ['visualization_type'],
                                                node_type = 'batch_visualization')
 
-        window = ConfigureExistingDatasetTableDialog(self, selected_index)
+        window = ConfigureExistingBatchIndicatorVisualization(self, selected_index)
         window.show()
                     
     def configureNewIndicatorBatchVisualization(self, batch_name):
-        window = ConfigureNewDatasetTableDialog(self, batch_name)
+        window = ConfigureNewBatchIndicatorVisualization(self, batch_name)
         window.show()
 
     def addRunIndicatorBatchForm(self, batch_name, simulation_run):

@@ -21,7 +21,7 @@ from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAc
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
-from opus_gui.data_manager.controllers.executetool import ExecuteToolGui
+from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
 
 from opus_gui.config.filetree.opusfileaction import OpusFileAction

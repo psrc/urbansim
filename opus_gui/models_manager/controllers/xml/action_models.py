@@ -21,7 +21,7 @@ from opus_gui.models_manager.run.opusrunestimation import OpusEstimation
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
-from opus_gui.models_manager.controllers.create_model_from_template import CreateModelFromTemplateDialog
+from opus_gui.models_manager.controllers.dialogs.create_model_from_template import CreateModelFromTemplate
 
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
@@ -135,7 +135,7 @@ class xmlActionController_Models(OpusXMLAction):
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CreateModelFromTemplateDialog(self,flags,clone,parentIndex,model)
+        window = CreateModelFromTemplate(self,flags,clone,parentIndex,model)
         window.setModal(True)
         window.show()        
         

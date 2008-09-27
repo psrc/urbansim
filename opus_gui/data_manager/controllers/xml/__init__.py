@@ -11,12 +11,3 @@
 # other acknowledgments.
 # 
 
-from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import SimulationGuiElement
-from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
-
-class ScenariosManagerBase(AbstractManagerBase):
-    def __init__(self, mainwindow):
-        AbstractManagerBase.__init__(self, mainwindow = mainwindow)
-
-    def addNewSimulationElement(self,model):
-        self.addNewGuiElement(SimulationGuiElement(self.mainwindow,self,model))

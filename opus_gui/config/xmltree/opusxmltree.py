@@ -21,11 +21,11 @@ from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
-from opus_gui.general_manager.controllers.xml_action_general import xmlActionController_General
-from opus_gui.results_manager.controllers.xml_action_results import xmlActionController_Results
-from opus_gui.models_manager.controllers.xml_action_models import xmlActionController_Models
-from opus_gui.scenarios_manager.controllers.xml_action_scenarios import xmlActionController_Scenarios
-from opus_gui.data_manager.controllers.xml_action_data_tools import xmlActionController_Data_tools
+from opus_gui.general_manager.controllers.xml.action_general import xmlActionController_General
+from opus_gui.results_manager.controllers.xml.action_results import xmlActionController_Results
+from opus_gui.models_manager.controllers.xml.action_models import xmlActionController_Models
+from opus_gui.scenarios_manager.controllers.xml.action_scenarios import xmlActionController_Scenarios
+from opus_gui.data_manager.controllers.xml.action_data_tools import xmlActionController_Data_tools
 
 class OpusXMLTree(object):
     def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
@@ -56,9 +56,9 @@ class OpusXMLTree(object):
 
         if self.xmlType == 'results_manager':
             self.xmlAction = xmlActionController_Results(self)
-        elif self.xmlType == 'models_manager':
+        elif self.xmlType == 'model_manager':
             self.xmlAction = xmlActionController_Models(self)
-        elif self.xmlType == 'scenarios_manager':
+        elif self.xmlType == 'scenario_manager':
             self.xmlAction = xmlActionController_Scenarios(self)
         elif self.xmlType == 'data_manager':
             self.xmlAction = xmlActionController_Data_tools(self)

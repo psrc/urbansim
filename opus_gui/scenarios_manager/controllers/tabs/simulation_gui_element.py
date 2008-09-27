@@ -22,8 +22,8 @@ from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.scenarios_manager.run.opusrunmodel import RunModelThread
 
-from opus_gui.results_manager.controllers.view_image_form import ViewImageForm
-from opus_gui.results_manager.controllers.view_table_form import ViewTableForm
+from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_gui.scenarios_manager.views.ui_simulation_gui_element import Ui_SimulationGuiElement
 from opus_gui.scenarios_manager.views.ui_overwrite_dialog import Ui_dlgOverwriteRun
 from time import localtime, strftime

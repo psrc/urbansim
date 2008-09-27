@@ -15,11 +15,11 @@
 
 # PyQt4 includes for python bindings to QT
 
-from opus_gui.results_manager.controllers.abstract_configure_dataset_table_dialog import AbstractConfigureDatasetTableDialog
+from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 
-class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
+class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, resultManagerBase, batch_name):
-        AbstractConfigureDatasetTableDialog.__init__(self,resultManagerBase)
+        AbstractConfigureBatchIndicatorVisualization.__init__(self,resultManagerBase)
     
         self._setup_co_dataset_name()
         self._setup_indicators()

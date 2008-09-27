@@ -19,7 +19,7 @@ from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.models_manager.views.create_model_from_template_ui import Ui_CreateModelFromTemplate
 
-class CreateModelFromTemplateDialog(QDialog, Ui_CreateModelFromTemplate):
+class CreateModelFromTemplate(QDialog, Ui_CreateModelFromTemplate):
     def __init__(self, opusXMLAction_Model, flags, model_template_node, template_index, template_model):
         self.mainwindow = opusXMLAction_Model.mainwindow
         QDialog.__init__(self, self.mainwindow, flags)

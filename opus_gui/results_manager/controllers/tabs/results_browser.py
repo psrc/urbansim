@@ -21,8 +21,8 @@ from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.results_manager.views.results_browser_ui import Ui_ResultsBrowser
-from opus_gui.results_manager.controllers.view_image_form import ViewImageForm
-from opus_gui.results_manager.controllers.view_table_form import ViewTableForm
+from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_core.logger import logger
 
 

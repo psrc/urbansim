@@ -24,7 +24,7 @@ from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.tab
 from opus_gui.exceptions.formatter import formatExceptionInfo
 from opus_core.logger import logger
 
-class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
+class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgDatasetTableDialog):
     def __init__(self, resultManagerBase):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
 

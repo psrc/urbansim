@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from opus_gui.models_manager.controllers.estimation_gui_element import EstimationGuiElement
+from opus_gui.models_manager.controllers.tabs.estimation_gui_element import EstimationGuiElement
 from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
 class ModelsManagerBase(AbstractManagerBase):
