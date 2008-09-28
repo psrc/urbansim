@@ -11,39 +11,43 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, SIGNAL, QModelIndex
-from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import QString, QObject, SIGNAL, \
+                         Qt, QTimer, QModelIndex
+from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
+                        QTextEdit, QTabWidget, QWidget, QPushButton, \
+                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog
 from PyQt4.QtXml import QDomText
 
-from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
+from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
 
-from opus_gui.models_manager.views.create_model_from_template_ui import Ui_CreateModelFromTemplate
+class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
+    def __init__(self, opusXMLAction_Model, model_template_node, template_index, template_model):
+        ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
+                                             template_index, template_model)
 
-class CreateModelFromTemplate(QDialog, Ui_CreateModelFromTemplate):
-    def __init__(self, opusXMLAction_Model, flags, model_template_node, template_index, template_model):
-        self.mainwindow = opusXMLAction_Model.mainwindow
-        QDialog.__init__(self, self.mainwindow, flags)
-        self.setupUi(self)
-        self.opusXMLAction_Model = opusXMLAction_Model
-
-        self.toolboxBase = self.mainwindow.toolboxBase
-
-        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
+        # setup additional ui that's specfic for this model template
+        self.setup_regression_ui()
         self._setup_co_dataset_name()
-        title = str(self.windowTitle())
-        newtitle = '%s %s'%(title, str(model_template_node.toElement().tagName()))
-        self.setWindowTitle(QString(newtitle))
-        self.model_template_node = model_template_node
-        self.template_index = template_index
-        self.template_model = template_model
+        self._setup_model_variables()
+
+    def setup_regression_ui(self):
+        self.cboDataset = QComboBox()
+        self.connect(self.cboDataset, SIGNAL('currentIndexChanged(int)'), self._refresh_model_variables)
+
+        self.cboDependentVariable = QComboBox()
         
+        self.add_widget_pair(QLabel('Dataset'), self.cboDataset)
+        self.add_widget_pair(QLabel('Dependent variable'), self.cboDependentVariable)
         
     def _setup_model_variables(self):
-        
+        '''Collect the model variables and populate the combobox'''        
         model_variables = self.xml_helper.get_available_model_variables(attributes = ['dataset'])
-                            
         self.model_variables = {}
         
+        #TODO: this does not return any model_vars for any data sets
+        # except gridcell?
+        
+        # self.cboDependentVariable.clear()
         for indicator in model_variables:            
             name = indicator['name']
             dataset = indicator['dataset']
@@ -51,23 +55,29 @@ class CreateModelFromTemplate(QDialog, Ui_CreateModelFromTemplate):
             
             if self.cboDataset.currentText() == dataset:
                 self.cboDependentVariable.addItem(QString(name))                
-                      
+
     def _setup_co_dataset_name(self):
+        '''collect avaiable datasets and populate the combobox'''
         available_datasets = self.xml_helper.get_available_datasets()
 
         for dataset in available_datasets:
             self.cboDataset.addItem(QString(dataset))
 
-    def on_cboDataset_currentIndexChanged(self, param):
+    def _refresh_model_variables(self, index):
 
-        if isinstance(param, int):
-            return #qt sends two signals for the same event; only process one
+        # you can specify what signals to catch with this slot
+        # by connect(SIGNAL(currentIndexChanged(int)) vs. 
+        # connect(SIGNAL(currentIndexChanged(QString))
+        # // christoffer
         
+#        if isinstance(index, int):
+#            return #qt sends two signals for the same event; only process one
+#        
         self._setup_model_variables()
+
+    def setup_node(self):
         
-    def on_saveChanges_released(self):
-        
-        model_name = self.cbModelName.text().replace(QString(" "),QString("_"))
+        model_name = self._get_model_name()
         
         nodeElement = self.model_template_node.toElement()
         if not nodeElement.isNull():
@@ -121,29 +131,6 @@ class CreateModelFromTemplate(QDialog, Ui_CreateModelFromTemplate):
                                     self.update_node(domElement, value = self.cboDependentVariable.currentText())
                             sub_sub_node = sub_sub_node.nextSibling()
                 sub_node = sub_node.nextSibling()
-
-        # Swap in the new name and drop in the node...
-        self.template_model.insertRow(self.template_model.rowCount(self.template_index),
-                             self.template_index,
-                             self.model_template_node)
-        self.template_model.emit(SIGNAL("layoutChanged()"))
-        
-        mt_node, _ = self.xml_helper.get_element_attributes(node_name = 'model_template', node_type = 'model_estimation')
-        cloned_mt = mt_node.cloneNode()
-        node_element = cloned_mt.toElement()
-        node_element.setTagName(model_name)
-        model = self.toolboxBase.modelManagerTree.model
-        # Find the parent node index to append to
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        current_index = model.findElementIndexByName('estimation', parentIndex)[0]
-
-        # Now insert the head_node
-        model.insertRow(model.rowCount(current_index),
-                        current_index,
-                        cloned_mt)
-
-        model.emit(SIGNAL("layoutChanged()"))        
-        self.close()
     
     def update_node(self, domElement, value = None, replace = None):
         elementText = str(domElement.text())
@@ -166,6 +153,3 @@ class CreateModelFromTemplate(QDialog, Ui_CreateModelFromTemplate):
             new_node = QDomText()
             new_node.setData(QString(value))
             domElement.appendChild(new_node)
-                
-    def on_cancelWindow_released(self):
-        self.close()

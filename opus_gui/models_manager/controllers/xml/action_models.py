@@ -21,15 +21,18 @@ from opus_gui.models_manager.run.opusrunestimation import OpusEstimation
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
-from opus_gui.models_manager.controllers.dialogs.create_model_from_template import CreateModelFromTemplate
+
+from opus_gui.models_manager.controllers.dialogs.regression_model_from_template import RegressionModelFromTemplateDialog
+from opus_gui.models_manager.controllers.dialogs.simple_model_from_template import SimpleModelFromTemplateDialog
 
 from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
 class xmlActionController_Models(OpusXMLController):
     
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
-        
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', \
+                                   parentWidget = parentWidget, addTree = addTree, \
+                                   listen_to_menu = listen_to_menu) 
 
         self.currentColumn = None
         self.currentIndex = None
@@ -124,20 +127,41 @@ class xmlActionController_Models(OpusXMLController):
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
+        #TODO: move view specific things into dialog for cleaner separation of view/ctrl
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = CloneNodeGui(self,flags,clone,parentIndex,model)
         window.setModal(True)
         window.show()
 
     def createModelFromTemplate(self):
-        #print "cloneNode Pressed"
+        # clone the dom node and fetch the information of where we are in the tree
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CreateModelFromTemplate(self,flags,clone,parentIndex,model)
-        window.setModal(True)
-        window.show()        
+        parentIndex = model.parent(self.currentIndex)
+        
+        # select dialog based on template name
+        tag_name = clone.toElement().tagName()
+        dialog = None
+        # all dialog have the same args, so we just specify them once
+        dialog_args = (self.mainwindow, clone, parentIndex, model)
+        
+        if tag_name == 'simple_model_template':
+            dialog = SimpleModelFromTemplateDialog(*dialog_args)
+        elif tag_name == 'choice_model_template':
+            pass
+        elif tag_name == 'regression_model_template':
+            dialog = RegressionModelFromTemplateDialog(*dialog_args)
+        elif tag_name == 'allocation_model_template':
+            pass
+        elif tag_name == 'agent_location_choice_model_template':
+            pass
+        
+        if not dialog:
+            raise NotImplementedError('dialog for template %s not yet implemented' %tag_name)
+        
+        # show the dialog
+        dialog.setModal(True)
+        dialog.show()
         
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
@@ -171,7 +195,8 @@ class xmlActionController_Models(OpusXMLController):
                 if domElement.attribute(QString("type")) == QString("model_estimation"):
                     self.menu.addAction(self.actRunEstimation)
                 
-                if domElement.tagName() == QString('regression_model_template'):
+                #TODO: Some sort of metadata check for templates rather than naming schemes
+                if domElement.tagName().endsWith('_model_template'):
                     self.menu.addAction(self.actCreateModelFromTemplate)
 
                 if self.menu:
