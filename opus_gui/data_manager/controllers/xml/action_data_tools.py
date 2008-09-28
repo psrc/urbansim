@@ -24,14 +24,13 @@ from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToo
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
-from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
 import os,tempfile
 
-class xmlActionController_Data_tools(OpusXMLAction):
-    def __init__(self, xmlTreeObject):
-        OpusXMLAction.__init__(self, xmlTreeObject)
-        self.xmlTreeObject = xmlTreeObject
+class xmlActionController_Data_tools(OpusXMLController):
+    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True):
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'data_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
 
         self.currentColumn = None
         self.currentIndex = None
@@ -49,119 +48,119 @@ class xmlActionController_Data_tools(OpusXMLAction):
         
         self.actExecToolFile = QAction(self.executeIcon,
                                        "Execute Tool...",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actExecToolFile,
                         SIGNAL("triggered()"),
                         self.execToolFile)
 
         self.actExecToolConfig = QAction(self.executeIcon,
                                            "Execute Tool...",
-                                           self.xmlTreeObject.mainwindow)
+                                           self.mainwindow)
         QObject.connect(self.actExecToolConfig,
                         SIGNAL("triggered()"),
                         self.execToolFile)
 
         self.actAddToolFile = QAction(self.addIcon,
                                         "Add Tool to Library",
-                                        self.xmlTreeObject.mainwindow)
+                                        self.mainwindow)
         QObject.connect(self.actAddToolFile,
                         SIGNAL("triggered()"),
                         self.addToolFile)
 
         self.actAddRequiredStringParam = QAction(self.addIcon,
                                                  "Add Required String Parameter",
-                                                 self.xmlTreeObject.mainwindow)
+                                                 self.mainwindow)
         QObject.connect(self.actAddRequiredStringParam,
                         SIGNAL("triggered()"),
                         self.addRequiredStringParam)
 
         self.actAddRequiredDirParam = QAction(self.addIcon,
                                               "Add Required Directory Parameter",
-                                              self.xmlTreeObject.mainwindow)
+                                              self.mainwindow)
         QObject.connect(self.actAddRequiredDirParam,
                         SIGNAL("triggered()"),
                         self.addRequiredDirParam)
         
         self.actAddRequiredFileParam = QAction(self.addIcon,
                                                "Add Required File Parameter",
-                                               self.xmlTreeObject.mainwindow)
+                                               self.mainwindow)
         QObject.connect(self.actAddRequiredFileParam,
                         SIGNAL("triggered()"),
                         self.addRequiredFileParam)
         
         self.actAddOptionalStringParam = QAction(self.addIcon,
                                                  "Add Optional String Parameter",
-                                                 self.xmlTreeObject.mainwindow)
+                                                 self.mainwindow)
         QObject.connect(self.actAddOptionalStringParam,
                         SIGNAL("triggered()"),
                         self.addOptionalStringParam)
 
         self.actAddOptionalDirParam = QAction(self.addIcon,
                                               "Add Optional Directory Parameter",
-                                              self.xmlTreeObject.mainwindow)
+                                              self.mainwindow)
         QObject.connect(self.actAddOptionalDirParam,
                         SIGNAL("triggered()"),
                         self.addOptionalDirParam)
 
         self.actAddOptionalFileParam = QAction(self.addIcon,
                                                "Add Optional File Parameter",
-                                               self.xmlTreeObject.mainwindow)
+                                               self.mainwindow)
         QObject.connect(self.actAddOptionalFileParam,
                         SIGNAL("triggered()"),
                         self.addOptionalFileParam)
 
         self.actAddNewToolSet = QAction(self.addIcon,
                                         "Add New Tool Set",
-                                        self.xmlTreeObject.mainwindow)
+                                        self.mainwindow)
         QObject.connect(self.actAddNewToolSet,
                         SIGNAL("triggered()"),
                         self.addNewToolSet)
 
         self.actNewConfig = QAction(self.addIcon,
                                      "Add Tool to Tool Set",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actNewConfig,
                         SIGNAL("triggered()"),
                         self.newConfig)
 
         self.actCloneBatch = QAction(self.cloneIcon,
                                      "Clone Tool Set",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actCloneBatch,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actCloneTool = QAction(self.cloneIcon,
                                       "Clone Tool",
-                                      self.xmlTreeObject.mainwindow)
+                                      self.mainwindow)
         QObject.connect(self.actCloneTool,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actOpenDocumentation = QAction(self.calendarIcon,
                                             "Open Documentation",
-                                            self.xmlTreeObject.mainwindow)
+                                            self.mainwindow)
         QObject.connect(self.actOpenDocumentation,
                         SIGNAL("triggered()"),
                         self.openDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMoveNodeUp = QAction(self.arrowUpIcon,
                                      "Move Up",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actMoveNodeUp,
                         SIGNAL("triggered()"),
                         self.moveNodeUp)
 
         self.actMoveNodeDown = QAction(self.arrowDownIcon,
                                        "Move Down",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMoveNodeDown,
                         SIGNAL("triggered()"),
                         self.moveNodeDown)
@@ -169,35 +168,35 @@ class xmlActionController_Data_tools(OpusXMLAction):
         #jesse testing
         self.actExecBatch = QAction(self.executeIcon,
                                       "Execute Tool Set",
-                                      self.xmlTreeObject.mainwindow)
+                                      self.mainwindow)
         QObject.connect(self.actExecBatch,
                         SIGNAL("triggered()"),
                         self.execBatch)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
                                        "Add to current project",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actExportXMLToFile = QAction(self.cloneIcon,
                                           "Export XML Node To File",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actExportXMLToFile,
                         SIGNAL("triggered()"),
                         self.exportXMLToFile)
 
         self.actImportXMLFromFile = QAction(self.cloneIcon,
                                             "Import XML Node From File",
-                                            self.xmlTreeObject.mainwindow)
+                                            self.mainwindow)
         QObject.connect(self.actImportXMLFromFile,
                         SIGNAL("triggered()"),
                         self.importXMLFromFile)
@@ -328,11 +327,11 @@ class xmlActionController_Data_tools(OpusXMLAction):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
         fileInfo = QFileInfo(filePath)
-        baseInfo = QFileInfo(self.xmlTreeObject.toolboxbase.xml_file)
+        baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         fileName = newFile.absoluteFilePath().trimmed()
-        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.mainwindow,
+        x = util.documentationbase.DocumentationTab(self.mainwindow,
                                                     QString(fileName))
 
 
@@ -399,8 +398,8 @@ class xmlActionController_Data_tools(OpusXMLAction):
                         thisElementText = children.item(x).nodeValue()
             params[thisElement.toElement().tagName()] = thisElementText
 
-        x = OpusTool(self.xmlTreeObject.mainwindow,importPath,params)
-        y = RunToolThread(self.xmlTreeObject.mainwindow,x)
+        x = OpusTool(self.mainwindow,importPath,params)
+        y = RunToolThread(self.mainwindow,x)
         y.run()
 
     def toolFinished(self, success):
@@ -563,10 +562,10 @@ class xmlActionController_Data_tools(OpusXMLAction):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
-        if self.xmlTreeObject.view.indexAt(position).isValid() and \
-               self.xmlTreeObject.view.indexAt(position).column() == 0:
-            self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
-            self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+        if self.view.indexAt(position).isValid() and \
+               self.view.indexAt(position).column() == 0:
+            self.currentColumn = self.view.indexAt(position).column()
+            self.currentIndex = self.view.indexAt(position)
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -582,7 +581,7 @@ class xmlActionController_Data_tools(OpusXMLAction):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.mainwindow)
+                self.menu = QMenu(self.mainwindow)
                 if domElement.attribute(QString("type")) == QString("tool_file"):
                     self.menu.addAction(self.actExecToolFile)
                     self.menu.addSeparator()

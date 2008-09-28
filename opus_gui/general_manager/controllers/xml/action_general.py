@@ -18,12 +18,11 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
-from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
-class xmlActionController_General(OpusXMLAction):
-    def __init__(self, xmlTreeObject):
-        
-        self.xmlTreeObject = xmlTreeObject
+class xmlActionController_General(OpusXMLController):
+    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'general', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
 
         self.currentColumn = None
         self.currentIndex = None
@@ -37,28 +36,28 @@ class xmlActionController_General(OpusXMLAction):
 
         self.actEditAllVariables = QAction(self.editExpressionLibIcon,
                                            "Edit Variable Library",
-                                           self.xmlTreeObject.mainwindow)
+                                           self.mainwindow)
         QObject.connect(self.actEditAllVariables,
                         SIGNAL("triggered()"),
                         self.editAllVariables)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
                                        "Add to current project",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -90,10 +89,10 @@ class xmlActionController_General(OpusXMLAction):
 
 
     def processCustomMenu(self, position):
-        if self.xmlTreeObject.view.indexAt(position).isValid() and \
-               self.xmlTreeObject.view.indexAt(position).column() == 0:
-            self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
-            self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+        if self.view.indexAt(position).isValid() and \
+               self.view.indexAt(position).column() == 0:
+            self.currentColumn = self.view.indexAt(position).column()
+            self.currentIndex = self.view.indexAt(position)
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -109,7 +108,7 @@ class xmlActionController_General(OpusXMLAction):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.mainwindow)
+                self.menu = QMenu(self.mainwindow)
 
                 
                 if (domElement.attribute(QString("type")) == QString("variable_definition")) or \

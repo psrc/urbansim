@@ -15,7 +15,7 @@
 from PyQt4.QtCore import QFile, QIODevice, QTextStream
 from PyQt4.QtGui import QDialog
 from PyQt4.QtXml import QDomDocument
-from opus_gui.main.settings.databaseconfigxmltree import DatabaseConfigXMLTree
+from opus_gui.main.settings.database_config_xml_controller import DatabaseConfigXMLController
 import os
 
 ############ APR Added 082908 as example of using OpusXMLTree for database XML editing
@@ -32,7 +32,7 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         self.configFile = QFile(self.database_server_configuration_file)
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
-        self.databaseSettingsEditTree = DatabaseConfigXMLTree(self,"database_server_configurations",
+        self.databaseSettingsEditTree = DatabaseConfigXMLController(self,"database_server_configurations",
                                                     self.gridlayout)
         print self.doc.documentElement().tagName()
 

@@ -18,9 +18,14 @@ from PyQt4.QtCore import QString, QFileInfo, QFile, QIODevice
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtXml import QDomDocument
 
-from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
-from opus_gui.config.filetree.opusfiletree import OpusFileTree
+from opus_gui.data_manager.controllers.files.action_data_opus_data import fileActionController_Data_opus_data
 from opus_core.configurations.xml_configuration import XMLConfiguration
+
+from opus_gui.general_manager.controllers.xml.action_general import xmlActionController_General
+from opus_gui.results_manager.controllers.xml.action_results import xmlActionController_Results
+from opus_gui.models_manager.controllers.xml.action_models import xmlActionController_Models
+from opus_gui.scenarios_manager.controllers.xml.action_scenarios import xmlActionController_Scenarios
+from opus_gui.data_manager.controllers.xml.action_data_tools import xmlActionController_Data_tools
 
 import os,tempfile
 
@@ -47,7 +52,6 @@ class ToolboxBase(object):
         self.runManagerTree = None
         self.dataManagerTree = None
         self.dataManagerFileTree = None
-        self.dataManagerDBSTree = None
         self.generalManagerTree = None
 
         gui_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
@@ -113,13 +117,10 @@ class ToolboxBase(object):
         dataManagerFileRemoveSuccess = True
         if self.dataManagerFileTree != None:
             dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
-        dataManagerDBSRemoveSuccess = True
-        if self.dataManagerDBSTree != None:
-            dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
 
         if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
                runManagerRemoveSuccess and dataManagerRemoveSuccess and \
-               dataManagerFileRemoveSuccess and dataManagerDBSRemoveSuccess and \
+               dataManagerFileRemoveSuccess and \
                generalManagerRemoveSuccess:
             # We have successfully removed the old XML trees
 
@@ -146,18 +147,14 @@ class ToolboxBase(object):
                 self.opusDataPath = os.path.join(self.opusXMLTree.get_opus_data_path(), self.project_name)
                 os.environ['OPUSPROJECTNAME'] = self.project_name
                 
-                self.generalManagerTree = OpusXMLTree(self,"general",
-                                                      self.mainwindow.generalmanager_page.layout())
-                self.modelManagerTree = OpusXMLTree(self,"model_manager",
-                                                    self.mainwindow.modelmanager_page.layout())
-                self.runManagerTree = OpusXMLTree(self,"scenario_manager",
-                                                  self.mainwindow.runmanager_page.layout())
-                self.dataManagerTree = OpusXMLTree(self,"data_manager",
-                                                   self.mainwindow.datamanager_xmlconfig.layout())
-                self.dataManagerFileTree = OpusFileTree(self,'data_manager.opus_data',self.opusDataPath,
+                self.generalManagerTree = xmlActionController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())
+                self.modelManagerTree = xmlActionController_Models(toolboxbase = self, parentWidget = self.mainwindow.modelmanager_page.layout())
+                self.runManagerTree = xmlActionController_Scenarios(toolboxbase = self, parentWidget = self.mainwindow.runmanager_page.layout())
+                self.dataManagerTree = xmlActionController_Data_tools(toolboxbase = self, parentWidget = self.mainwindow.datamanager_xmlconfig.layout())
+                self.resultsManagerTree = xmlActionController_Results(toolboxbase = self, parentWidget = self.mainwindow.resultsmanager_page.layout())
+                
+                self.dataManagerFileTree = fileActionController_Data_opus_data(self,'data_manager.opus_data',self.opusDataPath,
                                                         self.mainwindow.datamanager_dirview.layout())
-                self.resultsManagerTree = OpusXMLTree(self,"results_manager",
-                                                      self.mainwindow.resultsmanager_page.layout())
                 
             else:
                 print "Error reading the %s configuration file" % (xml_file)
@@ -179,8 +176,6 @@ class ToolboxBase(object):
             dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
         if self.dataManagerFileTree != None:
             dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
-        if self.dataManagerDBSTree != None:
-            dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
 
 
     def emit_default_gui_configuration_file(self, file_name):
@@ -203,7 +198,6 @@ class ToolboxBase(object):
 
     def save_gui_configuration_file(self):
         #updates and saves the gui configuration file
-        from opus_core.misc import directory_path_from_opus_path
         from xml.etree.cElementTree import ElementTree, tostring
         import StringIO
         

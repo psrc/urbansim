@@ -24,33 +24,38 @@ from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTable
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
 
-from opus_gui.config.filetree.opusfileaction import OpusFileAction
+from opus_gui.config.filetree.opus_file_controller import OpusFileController
 
-class fileActionController_Data_opus_data(OpusFileAction):
-    def __init__(self, xmlFileObject):
-        OpusFileAction.__init__(self, xmlFileObject)
+class fileActionController_Data_opus_data(OpusFileController):
+    def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
+
+        OpusFileController.__init__(self, toolboxbase = toolboxbase, controller_type = controller_type,
+                                    opusDataPath = opusDataPath, parentWidget = parentWidget,
+                                    listen_to_menu = listen_to_menu)
 
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
 
         self.actRefresh = QAction(self.refreshIcon, "Refresh Tree",
-                                  self.xmlFileObject.mainwindow)
+                                  self.mainwindow)
         QObject.connect(self.actRefresh, SIGNAL("triggered()"),
                         self.refreshAction)
 
         self.actViewDataset = QAction(self.applicationIcon, "View Dataset",
-                                      self.xmlFileObject.mainwindow)
+                                      self.mainwindow)
         QObject.connect(self.actViewDataset, SIGNAL("triggered()"),
                         self.viewDatasetAction)
         
         self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
-                                       self.xmlFileObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
                         self.openTextFile)
+        
+        self.xml_model = toolboxbase.dataManagerTree.model
 
     def viewDatasetAction(self):
         #print "viewDatasetAction"
-        model = self.xmlFileObject.model
+        model = self.model
         table_name = str(model.fileName(self.currentIndex))
         table_name_full = str(model.filePath(self.currentIndex))
         parentIndex = model.parent(self.currentIndex)
@@ -61,7 +66,7 @@ class fileActionController_Data_opus_data(OpusFileAction):
         # temporarily use the table name for the dataset name
         # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
-        general = self.xmlFileObject.mainwindow.toolboxBase.opusXMLTree.get_section('general')
+        general = self.mainwindow.toolboxBase.opusXMLTree.get_section('general')
         # problem: this gets the package order for the current project, but the viewer shows all the data
         package_order = general['dataset_pool_configuration'].package_order
         # PREVIOUS HACK: 
@@ -73,7 +78,7 @@ class fileActionController_Data_opus_data(OpusFileAction):
         # data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order, 
         #    arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
-        tabs = self.xmlFileObject.mainwindow.tabWidget
+        tabs = self.mainwindow.tabWidget
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
@@ -184,35 +189,35 @@ class fileActionController_Data_opus_data(OpusFileAction):
         
     def refreshAction(self):
         #print "refreshAction"
-        self.xmlFileObject.model.refresh(self.xmlFileObject.treeview.rootIndex())
+        self.model.refresh(self.treeview.rootIndex())
 
     def openTextFile(self):
         print "openTextFile pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.xmlFileObject.model.filePath(self.currentIndex))
-        if self.xmlFileObject.mainwindow.editorStuff:
+              (self.currentColumn, self.model.filePath(self.currentIndex))
+        if self.mainwindow.editorStuff:
             print "Loading into qscintilla..."
-            filename = self.xmlFileObject.model.filePath(self.currentIndex)
-            self.xmlFileObject.mainwindow.editorStuff.clear()
+            filename = self.model.filePath(self.currentIndex)
+            self.mainwindow.editorStuff.clear()
             try:
                 f = open(filename,'r')
             except:
                 return
             for l in f.readlines():
-                self.xmlFileObject.mainwindow.editorStuff.append(l)
+                self.mainwindow.editorStuff.append(l)
             f.close()
-            self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
-            self.xmlFileObject.mainwindow.openEditorTab()
+            self.mainwindow.editorStatusLabel.setText(QString(filename))
+            self.mainwindow.openEditorTab()
 
     def fillInAvailableTools(self):
         #print "Checking for tools"
         choices = []
         classification = ""
-        if self.xmlFileObject.model.isDir(self.currentIndex):
+        if self.model.isDir(self.currentIndex):
             regex = QRegExp("\\d{4}")
-            name = self.xmlFileObject.model.fileName(self.currentIndex)
-            parentname = self.xmlFileObject.model.fileName(self.xmlFileObject.model.parent(self.currentIndex))
-            isdir = self.xmlFileObject.model.isDir(self.currentIndex)
-            parentisdir = self.xmlFileObject.model.isDir(self.xmlFileObject.model.parent(self.currentIndex))
+            name = self.model.fileName(self.currentIndex)
+            parentname = self.model.fileName(self.model.parent(self.currentIndex))
+            isdir = self.model.isDir(self.currentIndex)
+            parentisdir = self.model.isDir(self.model.parent(self.currentIndex))
             # print "%s %s %s %s" % (name, parentname,isdir,parentisdir)
             if isdir and regex.exactMatch(name):
                 # We have a database dir
@@ -224,7 +229,7 @@ class fileActionController_Data_opus_data(OpusFileAction):
                 classification = "dataset"
         else:
             regex = QRegExp("\\d{4}")
-            model = self.xmlFileObject.model
+            model = self.model
             parentIndex = model.parent(self.currentIndex)
             parentparentIndex = model.parent(parentIndex)
             parentparentname = model.fileName(parentparentIndex)
@@ -233,15 +238,14 @@ class fileActionController_Data_opus_data(OpusFileAction):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
         #print "Classification = " + classification
-        tree = self.xmlFileObject.mainwindow.toolboxBase.dataManagerTree
-        dbxml = tree.model.index(0,0,QModelIndex()).parent()
+        dbxml = self.xml_model.index(0,0,QModelIndex()).parent()
         # First loop through all tool_sets
-        setsindexlist = tree.model.findElementIndexByType("tool_sets",dbxml,True)
+        setsindexlist = self.xml_model.findElementIndexByType("tool_sets",dbxml,True)
         for setsindex in setsindexlist:
             if setsindex.isValid():
                 #print "Found valid tool_sets"
                 # Now loop through all tool_set and find the ones with a matching classification
-                tsindexlist = tree.model.findElementIndexByType("tool_set",setsindex,True)
+                tsindexlist = self.xml_model.findElementIndexByType("tool_set",setsindex,True)
                 for tsindex in tsindexlist:
                     if tsindex.isValid():
                         #print "Found valid tool_set"
@@ -275,50 +279,49 @@ class fileActionController_Data_opus_data(OpusFileAction):
 
         if action != self.actRefresh:
             actiontext = action.text()
-            filename = self.xmlFileObject.model.fileName(self.currentIndex)
-            filepath = self.xmlFileObject.model.filePath(self.currentIndex)
-            parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+            filename = self.model.fileName(self.currentIndex)
+            filepath = self.model.filePath(self.currentIndex)
+            parentfilepath = self.model.filePath(self.currentIndex.parent())
             # Add in the code to take action... like run a tool...
             # First find the batch to loop over the configs to execute
-            tree = self.xmlFileObject.mainwindow.toolboxBase.dataManagerTree
-            toolxml = tree.model.index(0,0,QModelIndex()).parent()
-            toolindexlist = tree.model.findElementIndexByName(actiontext,toolxml,False)
+            toolxml = self.xml_model.index(0,0,QModelIndex()).parent()
+            toolindexlist = self.xml_model.findElementIndexByName(actiontext,toolxml,False)
             toolindex = toolindexlist[0]
             if toolindex.isValid():
                 # print toolindex.internalPointer().node().toElement().tagName()
                 # We have the tool_set... time to loop over the children and get the configs
-                configindexlist = tree.model.findElementIndexByType("tool_config",toolindex,True)
+                configindexlist = self.xml_model.findElementIndexByType("tool_config",toolindex,True)
                 # print len(configindexlist)
                 for configindex in configindexlist:
                     if configindex.isValid():
                         params = {}
                         thisElement = QString("opus_data_directory")
                         if self.classification == "database":
-                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+                            thisElementText = self.model.filePath(self.currentIndex.parent())
                         elif self.classification == "dataset":
-                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
+                            thisElementText = self.model.filePath(self.currentIndex.parent().parent())
                         elif self.classification == "array":
-                            thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
+                            thisElementText = self.model.filePath(self.currentIndex.parent().parent().parent())
                         params[thisElement] = thisElementText
                         thisElement2 = QString("opus_data_year")
                         if self.classification == "database":
-                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex)
+                            thisElementText2 = self.model.fileName(self.currentIndex)
                         elif self.classification == "dataset":
-                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                            thisElementText2 = self.model.fileName(self.currentIndex.parent())
                         elif self.classification == "array":
-                            thisElementText2 = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
+                            thisElementText2 = self.model.fileName(self.currentIndex.parent().parent())
                         params[thisElement2] = thisElementText2
                         thisElement3 = QString("opus_table_name")
                         if self.classification == "database":
                             thisElementText3 = "ALL"
                         elif self.classification == "dataset":
-                            thisElementText3 = self.xmlFileObject.model.fileName(self.currentIndex)
+                            thisElementText3 = self.model.fileName(self.currentIndex)
                         elif self.classification == "array":
-                            thisElementText3 = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                            thisElementText3 = self.model.fileName(self.currentIndex.parent())
                         params[thisElement3] = thisElementText3
 
                         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-                        window = ExecuteToolGui(self.xmlFileObject.mainwindow,tree.model,
+                        window = ExecuteToolGui(self.mainwindow,self.xml_model,
                                                 configindex.internalPointer().node().toElement(),
                                                 None,flags,optional_params = params)
                         tool_title = window.tool_title.replace('_', ' ')
@@ -329,12 +332,12 @@ class fileActionController_Data_opus_data(OpusFileAction):
 
 
     def processCustomMenu(self, position):
-        self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
-        self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
+        self.currentColumn = self.treeview.indexAt(position).column()
+        self.currentIndex = self.treeview.indexAt(position)
 
-        self.menu = QMenu(self.xmlFileObject.mainwindow)
+        self.menu = QMenu(self.mainwindow)
         if self.currentIndex.isValid():
-            if self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
+            if self.model.fileInfo(self.currentIndex).suffix() == "txt":
                 self.menu.addAction(self.actOpenTextFile)
             else:
                 # Do stuff for directories
@@ -346,7 +349,7 @@ class fileActionController_Data_opus_data(OpusFileAction):
                     self.dynactions = []
                     for i,choice in enumerate(choices):
                         # Add choices with custom text...
-                        dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
+                        dynaction = QAction(self.applicationIcon, choice, self.mainwindow)
                         self.dynactions.append(dynaction)
                         self.menu.addAction(dynaction)
                     QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),

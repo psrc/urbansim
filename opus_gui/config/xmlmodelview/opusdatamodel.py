@@ -238,25 +238,29 @@ class OpusDataModel(QAbstractItemModel):
             return QVariant()
 
     def flags(self, index):
+        flags = None
         if not index.isValid():
-            return Qt.ItemIsEnabled
-        if self.editable == True:
+            flags = Qt.ItemIsEnabled
+        if self.editable:
             element = index.internalPointer().domNode.toElement()
             if not element.isNull():
                 # Check if this node is an inherited node type
                 if element.hasAttribute(QString("inherited")):
                     # We have a node that is inherited...
                     #return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-                    return Qt.ItemIsSelectable
+                    flags = Qt.ItemIsSelectable
             if index.column() == 0:
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
-            elif index.column() == 1:
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-            else:
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+#                if index.isValid():
+#                    flags &= ~Qt.ItemIsEditable
 
+            elif index.column() == 1:
+                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+            else:
+                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        else:
+            flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return flags
 
     def headerData(self, section, oreientation, role):
         if oreientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -640,7 +644,7 @@ class FakeToolbox(object): pass
 
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
-        from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
+        from opus_gui.data_manager.controllers.xml.action_data_tools import xmlActionController_Data_tools
         # find the opus gui directory
         opus_gui_dir = __import__('opus_gui').__path__[0]
         
@@ -694,7 +698,10 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
         self.fakeToolbox.mainwindow = None
         self.fakeToolbox.configFile = None
         self.fakeToolbox.doc = self.qDomDocument
-        self.testTree = OpusXMLTree(self.fakeToolbox,"data_manager",None,addTree=False)
+        self.testTree = xmlActionController_Data_tools(toolboxbase = self.fakeToolbox,
+                                                       xml_type = "data_manager",
+                                                       parentWidget = None,
+                                                       addTree = False)
         self.model = OpusDataModel(self.testTree, self.qDomDocument, None,
                                    None, self.testTree.xmlType, True, addIcons=False)
         

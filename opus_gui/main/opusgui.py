@@ -507,10 +507,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxBase.dataManagerDBSTree and self.toolboxBase.dataManagerDBSTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
         elif self.toolboxBase.generalManagerTree and self.toolboxBase.generalManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
@@ -524,8 +520,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 self.toolboxBase.runManagerTree.model.markAsClean()
             if self.toolboxBase.dataManagerTree:
                 self.toolboxBase.dataManagerTree.model.markAsClean()
-            if self.toolboxBase.dataManagerDBSTree:
-                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
             if self.toolboxBase.modelManagerTree:
                 self.toolboxBase.modelManagerTree.model.markAsClean()
             if self.toolboxBase.resultsManagerTree:

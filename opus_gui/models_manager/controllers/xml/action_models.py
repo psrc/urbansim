@@ -23,13 +23,13 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 from opus_gui.models_manager.controllers.dialogs.create_model_from_template import CreateModelFromTemplate
 
-from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
-class xmlActionController_Models(OpusXMLAction):
+class xmlActionController_Models(OpusXMLController):
     
-    def __init__(self, xmlTreeObject):
-        OpusXMLAction.__init__(self, xmlTreeObject)
-        self.xmlTreeObject = xmlTreeObject
+    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
+        
 
         self.currentColumn = None
         self.currentIndex = None
@@ -42,42 +42,42 @@ class xmlActionController_Models(OpusXMLAction):
 
         self.actRunEstimation = QAction(self.applicationIcon,
                                         "Run Estimation",
-                                        self.xmlTreeObject.mainwindow)
+                                        self.mainwindow)
         QObject.connect(self.actRunEstimation,
                         SIGNAL("triggered()"),
                         self.runEstimationAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
                                        "Add to current project",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actCreateModelFromTemplate = QAction(self.cloneIcon,
                                     "Create model from template",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCreateModelFromTemplate,
                         SIGNAL("triggered()"),
                         self.createModelFromTemplate)
         
         self.actSelectVariables = QAction(self.applicationIcon,
                                           "Select Variables",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actSelectVariables,
                         SIGNAL("triggered()"),
                         self.selectVariables)
@@ -94,12 +94,12 @@ class xmlActionController_Models(OpusXMLAction):
         self.all_variables.show()
 
     def checkIsDirty(self):
-        if (self.xmlTreeObject.toolboxbase.resultsManagerTree and self.xmlTreeObject.toolboxbase.resultsManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.modelManagerTree and self.xmlTreeObject.toolboxbase.modelManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.runManagerTree and self.xmlTreeObject.toolboxbase.runManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.dataManagerTree and self.xmlTreeObject.toolboxbase.dataManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.dataManagerDBSTree and self.xmlTreeObject.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.generalManagerTree and self.xmlTreeObject.toolboxbase.generalManagerTree.model.isDirty()):
+        if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
+               (self.toolboxbase.modelManagerTree and self.toolboxbase.modelManagerTree.model.isDirty()) or \
+               (self.toolboxbase.runManagerTree and self.toolboxbase.runManagerTree.model.isDirty()) or \
+               (self.toolboxbase.dataManagerTree and self.toolboxbase.dataManagerTree.model.isDirty()) or \
+               (self.toolboxbase.dataManagerDBSTree and self.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
+               (self.toolboxbase.generalManagerTree and self.toolboxbase.generalManagerTree.model.isDirty()):
             return True
         else:
             return False
@@ -107,11 +107,11 @@ class xmlActionController_Models(OpusXMLAction):
     def runEstimationAction(self):
         thisNode = self.currentIndex.internalPointer().node()
         model_name = str(thisNode.toElement().tagName())
-        self.xmlTreeObject.toolboxbase.updateOpusXMLTree()
-        newEstimation = OpusEstimation(self.xmlTreeObject,
-                                       self.xmlTreeObject.toolboxbase.xml_file,
+        self.toolboxbase.updateOpusXMLTree()
+        newEstimation = OpusEstimation(self,
+                                       self.toolboxbase.xml_file,
                                        model_name = model_name)
-        self.xmlTreeObject.mainwindow.modelsManagerBase.addEstimationElement(model = newEstimation)
+        self.mainwindow.modelsManagerBase.addEstimationElement(model = newEstimation)
 
     def removeNode(self):
         #print "Remove Node Pressed"
@@ -146,10 +146,10 @@ class xmlActionController_Models(OpusXMLAction):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
-        if self.xmlTreeObject.view.indexAt(position).isValid() and \
-               self.xmlTreeObject.view.indexAt(position).column() == 0:
-            self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
-            self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+        if self.view.indexAt(position).isValid() and \
+               self.view.indexAt(position).column() == 0:
+            self.currentColumn = self.view.indexAt(position).column()
+            self.currentIndex = self.view.indexAt(position)
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -165,7 +165,7 @@ class xmlActionController_Models(OpusXMLAction):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.mainwindow)
+                self.menu = QMenu(self.mainwindow)
 #                if domElement.tagName() == QString("models_to_estimate"):
 #                    self.menu.addAction(self.actRunEstimation)
                 if domElement.attribute(QString("type")) == QString("model_estimation"):

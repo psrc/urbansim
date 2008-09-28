@@ -22,9 +22,9 @@ from opus_gui.results_manager.views.ui_get_run_info import Ui_dlgGetRunInfo
 from opus_gui.results_manager.xml_helper_methods import get_child_values
 
 class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
-    def __init__(self, opusxmlaction, selected_index):
+    def __init__(self, opus_xml_controller, selected_index):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        QDialog.__init__(self, opusxmlaction.mainwindow, flags)
+        QDialog.__init__(self, opus_xml_controller.mainwindow, flags)
         self.setupUi(self)
         self.selected_index = selected_index
         #fill in existing values...

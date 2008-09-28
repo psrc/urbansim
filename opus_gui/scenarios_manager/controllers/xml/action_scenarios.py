@@ -20,12 +20,12 @@ from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 from opus_gui.scenarios_manager.run.opusrunmodel import OpusModel
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
-from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
-class xmlActionController_Scenarios(OpusXMLAction):
-    def __init__(self, xmlTreeObject):
-        OpusXMLAction.__init__(self, xmlTreeObject)
-        self.xmlTreeObject = xmlTreeObject
+class xmlActionController_Scenarios(OpusXMLController):
+    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'scenario_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
+        
 
         self.currentColumn = None
         self.currentIndex = None
@@ -42,101 +42,101 @@ class xmlActionController_Scenarios(OpusXMLAction):
 
         self.actAddModel = QAction(self.addIcon,
                                    "Add Model...",
-                                   self.xmlTreeObject.mainwindow)
+                                   self.mainwindow)
         QObject.connect(self.actAddModel,
                         SIGNAL("triggered()"),
                         self.addModel)
 
         self.actRemoveModel = QAction(self.removeIcon,
                                    "Remove This Model",
-                                   self.xmlTreeObject.mainwindow)
+                                   self.mainwindow)
         QObject.connect(self.actRemoveModel,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actRunModel = QAction(self.acceptIcon,
                                    "Run This Scenario",
-                                   self.xmlTreeObject.mainwindow)
+                                   self.mainwindow)
         QObject.connect(self.actRunModel,
                         SIGNAL("triggered()"),
                         self.runModel)
 
         self.actOpenXMLFile = QAction(self.calendarIcon,
                                       "Open XML File",
-                                      self.xmlTreeObject.mainwindow)
+                                      self.mainwindow)
         QObject.connect(self.actOpenXMLFile,
                         SIGNAL("triggered()"),
                         self.openXMLFile)
 
         self.actEditXMLFileGlobal = QAction(self.calendarIcon,
                                             "Edit XML File Global",
-                                            self.xmlTreeObject.mainwindow)
+                                            self.mainwindow)
         QObject.connect(self.actEditXMLFileGlobal,
                         SIGNAL("triggered()"),
                         self.editXMLFileGlobal)
 
         self.actEditXMLFileLocal = QAction(self.calendarIcon,
                                            "Edit XML File Local",
-                                           self.xmlTreeObject.mainwindow)
+                                           self.mainwindow)
         QObject.connect(self.actEditXMLFileLocal,
                         SIGNAL("triggered()"),
                         self.editXMLFileLocal)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
                                     "Add to current project",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actMoveNodeUp = QAction(self.arrowUpIcon,
                                      "Move Model Up",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actMoveNodeUp,
                         SIGNAL("triggered()"),
                         self.moveNodeUp)
 
         self.actMoveNodeDown = QAction(self.arrowDownIcon,
                                        "Move Model Down",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMoveNodeDown,
                         SIGNAL("triggered()"),
                         self.moveNodeDown)
 
     def checkIsDirty(self):
-        if (self.xmlTreeObject.toolboxbase.resultsManagerTree and self.xmlTreeObject.toolboxbase.resultsManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.modelManagerTree and self.xmlTreeObject.toolboxbase.modelManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.runManagerTree and self.xmlTreeObject.toolboxbase.runManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.dataManagerTree and self.xmlTreeObject.toolboxbase.dataManagerTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.dataManagerDBSTree and self.xmlTreeObject.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
-               (self.xmlTreeObject.toolboxbase.generalManagerTree and self.xmlTreeObject.toolboxbase.generalManagerTree.model.isDirty()):
+        if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
+               (self.toolboxbase.modelManagerTree and self.toolboxbase.modelManagerTree.model.isDirty()) or \
+               (self.toolboxbase.runManagerTree and self.toolboxbase.runManagerTree.model.isDirty()) or \
+               (self.toolboxbase.dataManagerTree and self.toolboxbase.dataManagerTree.model.isDirty()) or \
+               (self.toolboxbase.dataManagerDBSTree and self.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
+               (self.toolboxbase.generalManagerTree and self.toolboxbase.generalManagerTree.model.isDirty()):
             return True
         else:
             return False
 
     def runModel(self):
         # Update the XMLConfiguration copy of the XML tree before running the model
-        self.xmlTreeObject.toolboxbase.updateOpusXMLTree()
+        self.toolboxbase.updateOpusXMLTree()
         modelToRun = self.currentIndex.internalPointer().node().nodeName()
         # Add the model to the run Q
-        newModel = OpusModel(self.xmlTreeObject,
-                             self.xmlTreeObject.toolboxbase.xml_file,
+        newModel = OpusModel(self,
+                             self.toolboxbase.xml_file,
                              modelToRun)
-        self.xmlTreeObject.mainwindow.scenariosManagerBase.addNewSimulationElement(model = newModel)
+        self.mainwindow.scenariosManagerBase.addNewSimulationElement(model = newModel)
     
     def openXMLFile(self):
         filePath = ""
@@ -146,11 +146,11 @@ class xmlActionController_Scenarios(OpusXMLAction):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
         fileInfo = QFileInfo(filePath)
-        baseInfo = QFileInfo(self.xmlTreeObject.toolboxbase.xml_file)
+        baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         #print "Test - ", newFile.absoluteFilePath()
-        self.xmlTreeObject.toolboxbase.openXMLTree(newFile.absoluteFilePath())
+        self.toolboxbase.openXMLTree(newFile.absoluteFilePath())
 
 
     def editXMLFileLocal(self):
@@ -161,17 +161,17 @@ class xmlActionController_Scenarios(OpusXMLAction):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
         fileInfo = QFileInfo(filePath)
-        baseInfo = QFileInfo(self.xmlTreeObject.toolboxbase.xml_file)
+        baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
 
         # To test QScintilla
-        if self.xmlTreeObject.mainwindow.editorStuff:
+        if self.mainwindow.editorStuff:
             #print "Loading into qscintilla..."
             # Now an individual tab
             import opus_gui.util.editorbase
             fileName = newFile.absoluteFilePath()
-            x = util.editorbase.EditorTab(self.xmlTreeObject.mainwindow, QString(fileName))
+            x = util.editorbase.EditorTab(self.mainwindow, QString(fileName))
 
     def editXMLFileGlobal(self):
         filePath = ""
@@ -181,24 +181,24 @@ class xmlActionController_Scenarios(OpusXMLAction):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
         fileInfo = QFileInfo(filePath)
-        baseInfo = QFileInfo(self.xmlTreeObject.toolboxbase.xml_file)
+        baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
 
         # To test QScintilla
-        if self.xmlTreeObject.mainwindow.editorStuff:
+        if self.mainwindow.editorStuff:
             #print "Loading into qscintilla..."
             # Start with the base tab
             fileName = newFile.absoluteFilePath()
-            self.xmlTreeObject.mainwindow.editorStuff.clear()
+            self.mainwindow.editorStuff.clear()
             try:
                 f = open(fileName,'r')
             except:
                 return
             for l in f.readlines():
-                self.xmlTreeObject.mainwindow.editorStuff.append(l)
+                self.mainwindow.editorStuff.append(l)
             f.close()
-            self.xmlTreeObject.mainwindow.editorStatusLabel.setText(QString(fileName))
+            self.mainwindow.editorStatusLabel.setText(QString(fileName))
 
     def removeNode(self):
         #print "Remove Node Pressed"
@@ -233,10 +233,10 @@ class xmlActionController_Scenarios(OpusXMLAction):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
-        if self.xmlTreeObject.view.indexAt(position).isValid() and \
-               self.xmlTreeObject.view.indexAt(position).column() == 0:
-            self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
-            self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+        if self.view.indexAt(position).isValid() and \
+               self.view.indexAt(position).column() == 0:
+            self.currentColumn = self.view.indexAt(position).column()
+            self.currentIndex = self.view.indexAt(position)
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -252,7 +252,7 @@ class xmlActionController_Scenarios(OpusXMLAction):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.mainwindow)
+                self.menu = QMenu(self.mainwindow)
                 if domElement.attribute(QString("executable")) == QString("True"):
                     self.menu.addAction(self.actRunModel)
                 elif domElement.attribute(QString("type")) == QString("file"):
@@ -265,7 +265,7 @@ class xmlActionController_Scenarios(OpusXMLAction):
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
                 elif domElement.attribute(QString("config_name")) == QString("models"):
-                    self.modelMenu = QMenu(QString("Add Model"), self.xmlTreeObject.mainwindow)
+                    self.modelMenu = QMenu(QString("Add Model"), self.mainwindow)
                     self.modelMenu.setIcon(self.addIcon)
                     self.modelMenu.addAction(QString("models go here"))
                     self.menu.addMenu(self.modelMenu)

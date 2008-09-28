@@ -21,14 +21,14 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo
-from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
+from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
 
-class xmlActionController_Results(OpusXMLAction):
-    def __init__(self, xmlTreeObject):
-        OpusXMLAction.__init__(self, xmlTreeObject)
+class xmlActionController_Results(OpusXMLController):
+    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
+        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'results_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu)  
         
-        self.xmlTreeObject = xmlTreeObject
-        self.toolboxBase = self.xmlTreeObject.mainwindow.toolboxBase
+        
+        self.toolboxBase = self.mainwindow.toolboxBase
         self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
 
         self.currentColumn = None
@@ -44,12 +44,12 @@ class xmlActionController_Results(OpusXMLAction):
         
         self.actAddNewIndicatorBatch = QAction(self.acceptIcon, 
                                           "Add new indicator batch...",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actAddNewIndicatorBatch, SIGNAL("triggered()"), self.addNewIndicatorBatch)          
 
         self.actAddVisualizationToBatch = QAction(self.acceptIcon,
                                                'Add new indicator visualization...',
-                                               self.xmlTreeObject.mainwindow
+                                               self.mainwindow
                                                )
         QObject.connect(self.actAddVisualizationToBatch, SIGNAL("triggered()"), self.configureNewBatchIndicatorVisualization)    
 
@@ -57,47 +57,47 @@ class xmlActionController_Results(OpusXMLAction):
         #delete run from disk
         self.actDeleteRun = QAction(self.removeIcon, 
                                           "Remove run and delete from harddrive...",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actDeleteRun, SIGNAL("triggered()"), self.deleteRun)          
 
         self.actImportRun = QAction(self.acceptIcon, 
                                           "Import run from disk",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actImportRun, SIGNAL("triggered()"), self.importRun) 
     
 
         self.actConfigureExistingBatchIndicatorVisualization = QAction(self.acceptIcon,
                                                                        "Configure visualization",
-                                                                       self.xmlTreeObject.mainwindow)
+                                                                       self.mainwindow)
         QObject.connect(self.actConfigureExistingBatchIndicatorVisualization, SIGNAL("triggered()"), self.configureExistingBatchIndicatorVisualization)
 
 
         self.actGetInfoSimulationRuns = QAction(self.acceptIcon, 
                                           "Show details",
-                                          self.xmlTreeObject.mainwindow)
+                                          self.mainwindow)
         QObject.connect(self.actGetInfoSimulationRuns, SIGNAL("triggered()"), self.getInfoSimulationRuns) 
 
 
-#        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.mainwindow)
+#        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.mainwindow)
 #        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove node from current project",
-                                     self.xmlTreeObject.mainwindow)
+                                     self.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
                                        "Add to current project",
-                                       self.xmlTreeObject.mainwindow)
+                                       self.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.mainwindow)
+                                    self.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -133,13 +133,13 @@ class xmlActionController_Results(OpusXMLAction):
         
     def configureNewBatchIndicatorVisualization(self, viz = None):
         batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
-        self.xmlTreeObject.mainwindow.resultsManagerBase.configureNewIndicatorBatchVisualization(
+        self.mainwindow.resultsManagerBase.configureNewIndicatorBatchVisualization(
             #visualization_type = viz,
             batch_name = batch_name)
 
     def configureExistingBatchIndicatorVisualization(self):
 
-        self.xmlTreeObject.mainwindow.resultsManagerBase.configureExistingIndicatorBatchVisualization(
+        self.mainwindow.resultsManagerBase.configureExistingIndicatorBatchVisualization(
             selected_index = self.currentIndex)   
         
     def deleteRun(self):
@@ -151,16 +151,16 @@ class xmlActionController_Results(OpusXMLAction):
             run_id = vals.get('run_id', None)
             if run_id is not None:
                 run_id = int(run_id)
-                self.xmlTreeObject.mainwindow.resultsManagerBase.deleteRun(
+                self.mainwindow.resultsManagerBase.deleteRun(
                     run_id = int(run_id), cache_directory = cache_directory)    
             
             self.removeNode()   
             
     def importRun(self):
-        self.xmlTreeObject.mainwindow.resultsManagerBase.importRun()  
+        self.mainwindow.resultsManagerBase.importRun()  
           
     def beforeRunIndicatorBatchShown(self):
-        domDocument = self.xmlTreeObject.mainwindow.toolboxBase.doc
+        domDocument = self.mainwindow.toolboxBase.doc
         node_list = elementsByAttributeValue(domDocument = domDocument, 
                                               attribute = 'type', 
                                               value = 'source_data')
@@ -176,7 +176,7 @@ class xmlActionController_Results(OpusXMLAction):
             self.run_indicator_batch_menu.addAction(act_simulation_run)
                 
     def indicatorBatchRun(self, simulation_run):
-        self.xmlTreeObject.mainwindow.resultsManagerBase.addRunIndicatorBatchForm(
+        self.mainwindow.resultsManagerBase.addRunIndicatorBatchForm(
             batch_name = self.currentIndex.internalPointer().node().toElement().tagName(),
             simulation_run = simulation_run)
                       
@@ -209,10 +209,10 @@ class xmlActionController_Results(OpusXMLAction):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
-        if self.xmlTreeObject.view.indexAt(position).isValid() and \
-               self.xmlTreeObject.view.indexAt(position).column() == 0:
-            self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
-            self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+        if self.view.indexAt(position).isValid() and \
+               self.view.indexAt(position).column() == 0:
+            self.currentColumn = self.view.indexAt(position).column()
+            self.currentIndex = self.view.indexAt(position)
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -229,7 +229,7 @@ class xmlActionController_Results(OpusXMLAction):
                     return
                 selected_type = domElement.attribute(QString("type"))
                 
-                self.menu = QMenu(self.xmlTreeObject.mainwindow)
+                self.menu = QMenu(self.mainwindow)
 #                if selected_type == QString("indicator_library") and \
 #                       domElement.attribute(QString("append_to")) == QString("True"):
 #                    self.menu.addAction(self.actAddNewIndicator)
@@ -246,7 +246,7 @@ class xmlActionController_Results(OpusXMLAction):
                 elif selected_type == QString("indicator_batch"):
 #                    self._build_indicator_batch_menu()
                     self.menu.addAction(self.actAddVisualizationToBatch)
-                    self.run_indicator_batch_menu = QMenu(self.xmlTreeObject.mainwindow)
+                    self.run_indicator_batch_menu = QMenu(self.mainwindow)
                     self.run_indicator_batch_menu.setTitle(QString('Run indicator batch on...'))
                     QObject.connect(self.run_indicator_batch_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorBatchShown)
                     self.menu.addMenu(self.run_indicator_batch_menu)
@@ -281,7 +281,7 @@ class xmlActionController_Results(OpusXMLAction):
 
 #    def _build_indicator_batch_menu(self):
 #        #needs to be called when indicator_batch right clicked on...
-##        self.indicator_batch_menu = QMenu(self.xmlTreeObject.mainwindow)
+##        self.indicator_batch_menu = QMenu(self.mainwindow)
 ##        self.indicator_batch_menu.setTitle(QString("Add new indicator visualization..."))
 #        
 #
@@ -300,7 +300,7 @@ class xmlActionController_Results(OpusXMLAction):
 #        self.menu.addMenu(self.indicator_batch_menu)
 #
 #        
-#        self.run_indicator_batch_menu = QMenu(self.xmlTreeObject.mainwindow)
+#        self.run_indicator_batch_menu = QMenu(self.mainwindow)
 #        self.run_indicator_batch_menu.setTitle(QString('Run indicator batch on...'))
 #        QObject.connect(self.run_indicator_batch_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorBatchShown)
 #        
