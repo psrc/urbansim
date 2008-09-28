@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, QUrl
 from PyQt4.QtGui import QDialog, QDesktopServices
 # UI specific includes
-from opusabout_ui import Ui_UrbansimAbout
+from opus_gui.main.views.opusabout_ui import Ui_UrbansimAbout
 
 class UrbansimAboutGui(QDialog, Ui_UrbansimAbout):
     def __init__(self, mainwindow, fl):

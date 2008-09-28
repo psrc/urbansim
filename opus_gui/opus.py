@@ -21,7 +21,7 @@ from PyQt4.QtGui import QApplication
 import sys
 
 # Urbansim Tools
-from opus_gui.main.opusgui import OpusGui
+from opus_gui.main.controllers.main_window import OpusGui
 
 # Main entry to program.  Set up the main app and create a new window.
 def main(argv):

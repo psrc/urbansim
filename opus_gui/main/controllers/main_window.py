@@ -20,8 +20,8 @@ from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox, QSpl
 from PyQt4.QtXml import QDomDocument
 
 # UI specific includes
-from opus_gui.main.opusmain_ui import Ui_MainWindow
-from opus_gui.main.opusabout import UrbansimAboutGui
+from opus_gui.main.views.opusmain_ui import Ui_MainWindow
+from opus_gui.main.controllers.opusabout import UrbansimAboutGui
 from opus_gui.main.settings.opuspreferences import UrbansimPreferencesGui
 from opus_gui.main.settings.databasesettings import DatabaseSettingsEditGui
 
