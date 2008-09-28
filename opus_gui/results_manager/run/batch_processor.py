@@ -13,7 +13,7 @@
 
 from opus_gui.results_manager.run.opus_result_generator import OpusResultGenerator
 from opus_gui.results_manager.run.opus_result_visualizer import OpusResultVisualizer
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_core.logger import logger
 
 class BatchProcessor(object):

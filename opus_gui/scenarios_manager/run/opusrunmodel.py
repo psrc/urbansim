@@ -16,7 +16,7 @@
 from PyQt4.QtCore import QThread, QString, SIGNAL, QFileInfo
 
 import os
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import SimulationRunError

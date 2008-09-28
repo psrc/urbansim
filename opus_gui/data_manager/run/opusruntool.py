@@ -15,7 +15,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QThread, SIGNAL
 
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 
 class RunToolThread(QThread):
     def __init__(self, mainwindow,opusTool):

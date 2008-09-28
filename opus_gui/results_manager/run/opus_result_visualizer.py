@@ -18,7 +18,7 @@ from opus_gui.results_manager.run.indicator_framework.visualizer.visualization_f
 from opus_gui.results_manager.run.indicator_framework_interface import IndicatorFrameworkInterface
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_core.storage_factory import StorageFactory
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
     
 
 class OpusResultVisualizer(object):

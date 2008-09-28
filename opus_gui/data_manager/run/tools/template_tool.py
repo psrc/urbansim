@@ -13,7 +13,6 @@
 #
 
 import os, sys, subprocess, time
-from opus_gui.exceptions.formatter import formatExceptionInfo
 
 def opusRun(progressCB,logCB,params=[]):
     param_dict = {}

@@ -17,7 +17,7 @@ from PyQt4.QtCore import QThread, SIGNAL, QFileInfo, QString
 
 import os, time
 
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 from urbansim.estimation.estimation_runner import EstimationRunner
     
 class RunEstimationThread(QThread):

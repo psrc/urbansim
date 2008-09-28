@@ -20,7 +20,7 @@ import os
 from opus_gui.results_manager.views.ui_configure_dataset_table import Ui_dlgDatasetTableDialog
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_core.logger import logger
 
 class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgDatasetTableDialog):

@@ -22,7 +22,7 @@ from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.logger import logger
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 import os
 
 class ImportRunDialog(QDialog, Ui_dlgImportRun):

@@ -33,7 +33,7 @@ from opus_gui.results_manager.results_manager_base import ResultsManagerBase
 from opus_gui.models_manager.models_manager_base import ModelsManagerBase
 
 from opus_gui.results_manager.xml_helper_methods import get_child_values
-from opus_gui.exceptions.formatter import formatExceptionInfo
+from opus_gui.util.exception_formatter import formatExceptionInfo
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
 
