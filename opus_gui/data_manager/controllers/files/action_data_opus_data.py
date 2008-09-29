@@ -20,7 +20,7 @@ from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAc
 #from opus_gui.data_manager.opusruntool import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
-from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
+from opus_gui.abstract_manager.models.table_model import TableModel
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
 
@@ -113,7 +113,7 @@ class fileActionController_Data_opus_data(OpusFileController):
         # If the table data is not empty then we display it
         if tabledata:            
             #tv.resizeColumnsToContents()
-            tm = OpusDatasetTableModel(tabledata, header, container) 
+            tm = TableModel(tabledata, header, container) 
             tv.setModel(tm)
             tv.setSortingEnabled(True)
             tableGroupBoxLayout.addWidget(tv)

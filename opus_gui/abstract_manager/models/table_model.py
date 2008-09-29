@@ -20,7 +20,7 @@ from PyQt4.QtGui import QTextBrowser
 import sys
 import operator
 
-class OpusDatasetTableModel(QAbstractTableModel): 
+class TableModel(QAbstractTableModel): 
     def __init__(self, datain, headerdata, parentWidget=None, *args): 
         QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
@@ -54,13 +54,9 @@ class OpusDatasetTableModel(QAbstractTableModel):
                     myVal = self.arraydata[index.row()]
             else:
                 myVal = self.arraydata
-            if myVal.dtype.name == 'int' or \
-                   myVal.dtype.name == 'int32' or \
-                   myVal.dtype.name == 'int64':
+            if myVal.dtype.name in ['int', 'int32', 'int64']:
                 return QVariant(int(myVal))
-            elif myVal.dtype.name == 'float' or \
-                     myVal.dtype.name == 'float32' or \
-                     myVal.dtype.name == 'float64':
+            elif myVal.dtype.name in ['float', 'float32','float64']:
                 return QVariant(float(myVal))
             else:
                 return QVariant(str(myVal))
