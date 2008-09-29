@@ -22,8 +22,8 @@ from PyQt4.QtXml import QDomDocument
 # UI specific includes
 from opus_gui.main.views.opusmain_ui import Ui_MainWindow
 from opus_gui.main.controllers.opusabout import UrbansimAboutGui
-from opus_gui.main.settings.opuspreferences import UrbansimPreferencesGui
-from opus_gui.main.settings.databasesettings import DatabaseSettingsEditGui
+from opus_gui.main.controllers.opuspreferences import UrbansimPreferencesGui
+from opus_gui.main.controllers.databasesettings import DatabaseSettingsEditGui
 from opus_gui.main.controllers.toolboxbase import ToolboxBase
 
 #from opus_gui.util.consolebase import ConsoleBase

@@ -16,7 +16,7 @@ from PyQt4.QtCore import QObject, SIGNAL
 from PyQt4.QtGui import QDialog
 
 # UI specific includes
-from opus_gui.main.settings.opuspreferences_ui import Ui_PreferencesDialog
+from opus_gui.main.views.ui_opuspreferences import Ui_PreferencesDialog
 
 class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
     def __init__(self, mainwindow, fl):
