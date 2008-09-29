@@ -699,7 +699,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
         self.fakeToolbox.configFile = None
         self.fakeToolbox.doc = self.qDomDocument
         self.testTree = XmlController_DataTools(toolboxbase = self.fakeToolbox,
-                                                       xml_type = "data_manager",
+                                                 #      xml_type = "data_manager",
                                                        parentWidget = None,
                                                        addTree = False)
         self.model = XmlItem(self.testTree, self.qDomDocument, None,
