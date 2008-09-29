@@ -21,7 +21,7 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo
-from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXMLController
 
 class xmlActionController_Results(OpusXMLController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 

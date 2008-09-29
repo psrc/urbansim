@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
-from opus_gui.config.xmltree.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXMLController
 
 class xmlActionController_General(OpusXMLController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 

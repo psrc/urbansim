@@ -24,7 +24,7 @@ from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTable
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
 
-from opus_gui.config.filetree.opus_file_controller import OpusFileController
+from opus_gui.abstract_manager.controllers.files.opus_file_controller import OpusFileController
 
 class fileActionController_Data_opus_data(OpusFileController):
     def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
