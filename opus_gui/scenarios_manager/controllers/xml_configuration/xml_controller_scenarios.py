@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
-from opus_gui.scenarios_manager.run.opusrunmodel import OpusModel
+from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController

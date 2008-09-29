@@ -20,7 +20,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
-from opus_gui.scenarios_manager.run.opusrunmodel import RunModelThread
+from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
