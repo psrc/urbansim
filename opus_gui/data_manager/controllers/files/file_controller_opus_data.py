@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QModelIndex
 from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAction, QVBoxLayout, QMenu, QCursor
 
-#from opus_gui.data_manager.opusruntool import *
+#from opus_gui.data_manager.run_tool import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_gui.abstract_manager.models.table_model import TableModel

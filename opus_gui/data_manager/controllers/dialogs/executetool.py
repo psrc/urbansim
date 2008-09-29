@@ -19,7 +19,7 @@ from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFile
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.util.xmlhelper import getChildElementsText, getElementsByType, getNodeText, getElementText
-from opus_gui.data_manager.run.opusruntool import RunToolThread, OpusTool
+from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
 
 class FileDialogSignal(QWidget):
     def __init__(self, parent=None, typeName=None, param=None):

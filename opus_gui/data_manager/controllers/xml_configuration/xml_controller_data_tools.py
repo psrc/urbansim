@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL, QFile, QIODevi
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QFileDialog
 from PyQt4.QtXml import QDomDocument
 
-from opus_gui.data_manager.run.opusruntool import OpusTool, RunToolThread
+from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 import opus_gui.util.documentationbase
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
