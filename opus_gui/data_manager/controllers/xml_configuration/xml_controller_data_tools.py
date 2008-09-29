@@ -24,13 +24,13 @@ from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToo
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
-from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
 import os,tempfile
 
-class XmlController_DataTools(OpusXMLController):
+class XmlController_DataTools(XmlController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True):
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'data_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'data_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
 
         self.currentColumn = None
         self.currentIndex = None

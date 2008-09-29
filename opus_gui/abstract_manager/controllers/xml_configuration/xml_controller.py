@@ -21,7 +21,7 @@ from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
 
 
-class OpusXMLController(object):
+class XmlController(object):
     def __init__(self, toolboxbase, xml_type, parentWidget, addTree, listen_to_menu = True):
         
         self.toolboxbase = toolboxbase

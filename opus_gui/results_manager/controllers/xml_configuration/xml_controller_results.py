@@ -21,11 +21,11 @@ from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import Cl
 from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo
-from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
-class XmlController_Results(OpusXMLController):
+class XmlController_Results(XmlController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'results_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu)  
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'results_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu)  
         
         
         self.toolboxBase = self.mainwindow.toolboxBase

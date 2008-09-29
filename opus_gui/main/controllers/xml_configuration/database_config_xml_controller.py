@@ -13,14 +13,14 @@
 
 # PyQt4 includes for python bindings to QT
 #from PyQt4.QtCore import Qt
-from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 #from opus_gui.abstract_manager.views.xml_view import XmlView
 #from opus_gui.abstract_manager.models.xml_model import OpusDataModel
 #from opus_gui.abstract_manager.models.xml_item_delegate
 
-class DatabaseConfigXMLController(OpusXMLController):
+class DatabaseConfigXMLController(XmlController):
     def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = xmlType, parentWidget = parentWidget, addTree = addTree, listen_to_menu = False)
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = xmlType, parentWidget = parentWidget, addTree = addTree, listen_to_menu = False)
         
 #    def addTree(self):
 #        self.model = DatabaseConfigXMLModel(self, self.toolboxbase.doc, self.mainwindow,

@@ -17,7 +17,7 @@
 from PyQt4.QtCore import Qt, QStringList, QDir, QObject, SIGNAL
 from PyQt4.QtGui import QTreeView, QDirModel
 
-class OpusFileController(object):
+class FileController(object):
     def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
         self.controller_type = controller_type
 

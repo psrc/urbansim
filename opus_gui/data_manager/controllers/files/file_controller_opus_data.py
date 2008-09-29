@@ -24,12 +24,12 @@ from opus_gui.abstract_manager.models.table_model import TableModel
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
 
-from opus_gui.abstract_manager.controllers.files.opus_file_controller import OpusFileController
+from opus_gui.abstract_manager.controllers.files.file_controller import FileController
 
-class FileController_OpusData(OpusFileController):
+class FileController_OpusData(FileController):
     def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
 
-        OpusFileController.__init__(self, toolboxbase = toolboxbase, controller_type = controller_type,
+        FileController.__init__(self, toolboxbase = toolboxbase, controller_type = controller_type,
                                     opusDataPath = opusDataPath, parentWidget = parentWidget,
                                     listen_to_menu = listen_to_menu)
 

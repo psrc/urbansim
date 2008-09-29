@@ -25,12 +25,12 @@ from opus_gui.general_manager.controllers.all_variables import AllVariablesSelec
 from opus_gui.models_manager.controllers.dialogs.regression_model_from_template import RegressionModelFromTemplateDialog
 from opus_gui.models_manager.controllers.dialogs.simple_model_from_template import SimpleModelFromTemplateDialog
 
-from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
-class XmlController_Models(OpusXMLController):
+class XmlController_Models(XmlController):
     
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', \
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', \
                                    parentWidget = parentWidget, addTree = addTree, \
                                    listen_to_menu = listen_to_menu) 
 

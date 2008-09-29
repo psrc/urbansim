@@ -20,11 +20,11 @@ from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 from opus_gui.scenarios_manager.run.opusrunmodel import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 
-from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
-class XmlController_Scenarios(OpusXMLController):
+class XmlController_Scenarios(XmlController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'scenario_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'scenario_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
         
 
         self.currentColumn = None
