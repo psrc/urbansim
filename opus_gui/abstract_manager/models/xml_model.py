@@ -713,7 +713,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
         self.model = XmlModel(self.testTree, self.qDomDocument, None,
                                    None, self.testTree.xmlType, True, addIcons=False)
 
-    def test_findElementIndex(self):
+    def skip_test_findElementIndex(self):
         if self.app is not None:
             projectIndex = self.model.index(0,0,QModelIndex())
             projectNode = projectIndex.internalPointer().node()
