@@ -17,13 +17,13 @@ from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
 import os
 
-from opus_gui.results_manager.views.ui_configure_dataset_table import Ui_dlgDatasetTableDialog
+from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_core.logger import logger
 
-class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgDatasetTableDialog):
+class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatchIndicatorVisualization):
     def __init__(self, resultManagerBase):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
 
