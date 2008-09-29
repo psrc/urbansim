@@ -65,8 +65,8 @@ class OpusFileController(object):
         self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
 
     def removeTree(self):
-#        self.groupBox.hide()
-#        self.containerWidget.removeWidget(self.groupBox)
+        self.treeview.hide()
+        self.containerWidget.removeWidget(self.treeview)
         return True
 
 

@@ -162,7 +162,7 @@ class ToolboxBase(object):
             print "There was an error removing the old config"
 
 
-    def closeXMLTree(self):
+    def close_controllers(self):
         # Try to remove all the old trees...
         if self.generalManagerTree != None:
             generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
@@ -176,7 +176,6 @@ class ToolboxBase(object):
             dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
         if self.dataManagerFileTree != None:
             dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
-
 
     def emit_default_gui_configuration_file(self, file_name):
         from opus_core.misc import directory_path_from_opus_path
