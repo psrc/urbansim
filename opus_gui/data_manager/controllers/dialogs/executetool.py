@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton
 
-from opus_gui.data_manager.views.executetool_ui import Ui_ExecuteToolGui
+from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.util.xmlhelper import getChildElementsText, getElementsByType, getNodeText, getElementText
 from opus_gui.data_manager.run.opusruntool import RunToolThread, OpusTool
 

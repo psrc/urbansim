@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton
 
 
-from opus_gui.data_manager.views.configuretool_ui import Ui_ConfigureToolGui
+from opus_gui.data_manager.views.ui_configuretool import Ui_ConfigureToolGui
 
 import random
 
