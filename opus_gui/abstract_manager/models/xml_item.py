@@ -17,7 +17,7 @@ from PyQt4.QtCore import QString
 from PyQt4.QtXml import QDomNode
 
 
-class OpusDataItem:
+class XmlItem:
     def __init__(self,domDocument, node, row, parentOpusDataItem):
         self.domDocument = domDocument
         self.domNode = node
@@ -32,7 +32,7 @@ class OpusDataItem:
                 current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
                 (current.nodeType() == QDomNode.ElementNode):
                 childNode = self.domNode.childNodes().item(x)
-                childItem = OpusDataItem(self.domDocument,childNode, i , self)
+                childItem = XmlItem(self.domDocument,childNode, i , self)
                 self.childItems.append(childItem)
                 i = i + 1
                 childItem.initAsRootItem()
@@ -59,7 +59,7 @@ class OpusDataItem:
             if foundSoFar == tryToFind:
                 # We have the one we are looking for
                 childNode = self.domNode.childNodes().item(x)
-                childItem = OpusDataItem(self.domDocument,childNode, i , self)
+                childItem = XmlItem(self.domDocument,childNode, i , self)
                 self.childItems.append(childItem)
                 return childItem
         return None

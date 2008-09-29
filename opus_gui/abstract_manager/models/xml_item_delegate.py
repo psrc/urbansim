@@ -16,7 +16,7 @@
 from PyQt4.QtCore import QString, Qt, QSignalMapper, QVariant
 from PyQt4.QtGui import QFileDialog, QItemDelegate, QComboBox, QLineEdit
 
-class OpusDataDelegate(QItemDelegate):
+class XmlItemDelegate(QItemDelegate):
     def __init__(self, parentView):
         QItemDelegate.__init__(self, parentView)
         self.parentView = parentView

@@ -16,9 +16,9 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QObject, SIGNAL, Qt
 
-from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
-from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
-from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
+from opus_gui.abstract_manager.views.xml_view import XmlView
+from opus_gui.abstract_manager.models.xml_model import XmlModel
+from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
 
 
 class OpusXMLController(object):
@@ -34,10 +34,10 @@ class OpusXMLController(object):
 
 
     def addTree(self, listen_to_menu):
-        self.model = OpusDataModel(self,self.toolboxbase.doc, self.mainwindow,
-                                   self.toolboxbase.configFile, self.xmlType, True)
-        self.view = OpusDataView(self.mainwindow)
-        self.delegate = OpusDataDelegate(self.view)
+        self.model = XmlModel(self,self.toolboxbase.doc, self.mainwindow,
+                              self.toolboxbase.configFile, self.xmlType, True)
+        self.view = XmlView(self.mainwindow)
+        self.delegate = XmlItemDelegate(self.view)
         self.view.setItemDelegate(self.delegate)
         self.view.setModel(self.model)
         # Need to traverse the whole tree and expand the nodes if they default to open

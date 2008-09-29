@@ -16,7 +16,7 @@
 from PyQt4.QtCore import QString, QModelIndex
 from PyQt4.QtGui import QTreeView
 
-class OpusDataView(QTreeView):
+class XmlView(QTreeView):
     def __init__(self, mainwindow):
         QTreeView.__init__(self, mainwindow)
         self.mainwindow = mainwindow

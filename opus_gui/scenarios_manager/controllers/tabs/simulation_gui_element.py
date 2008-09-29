@@ -354,7 +354,6 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     # Called when the model is finished... peg the percentage to 100% and stop the timer.
     def runFinishedFromThread(self,success):
-        print "Simulation run finished with success = ", success
         self.progressBarTotal.setValue(100)
         self.progressBarYear.setValue(100)
         self.progressBarModel.setValue(100)

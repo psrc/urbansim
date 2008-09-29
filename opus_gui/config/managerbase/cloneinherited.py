@@ -17,8 +17,8 @@
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QDialog, QVBoxLayout
 
-from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
-from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
+from opus_gui.abstract_manager.views.xml_view import XmlView
+from opus_gui.abstract_manager.models.xml_item_delegate
 from opus_gui.config.managerbase.cloneinherited_ui import Ui_CloneInheritedGui
 
 
