@@ -18,14 +18,14 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.models_manager.run.opusrunestimation import OpusEstimation
-from opus_gui.abstract_manager.controllers.xml.clonenode import CloneNodeGui
+from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 
 from opus_gui.models_manager.controllers.dialogs.regression_model_from_template import RegressionModelFromTemplateDialog
 from opus_gui.models_manager.controllers.dialogs.simple_model_from_template import SimpleModelFromTemplateDialog
 
-from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXMLController
+from opus_gui.abstract_manager.controllers.xml_configuration.opus_xml_controller import OpusXMLController
 
 class XmlController_Models(OpusXMLController):
     

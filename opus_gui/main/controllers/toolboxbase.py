@@ -21,11 +21,11 @@ from PyQt4.QtXml import QDomDocument
 from opus_gui.data_manager.controllers.files.file_controller_opus_data import FileController_OpusData
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
-from opus_gui.general_manager.controllers.xml.xml_controller_general import XmlController_General
-from opus_gui.results_manager.controllers.xml.xml_controller_results import XmlController_Results
-from opus_gui.models_manager.controllers.xml.xml_controller_models import XmlController_Models
-from opus_gui.scenarios_manager.controllers.xml.xml_controller_scenarios import XmlController_Scenarios
-from opus_gui.data_manager.controllers.xml.xml_controller_data_tools import XmlController_DataTools
+from opus_gui.general_manager.controllers.xml_configuration.xml_controller_general import XmlController_General
+from opus_gui.results_manager.controllers.xml_configuration.xml_controller_results import XmlController_Results
+from opus_gui.models_manager.controllers.xml_configuration.xml_controller_models import XmlController_Models
+from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
+from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
 
 import os,tempfile
 
@@ -198,7 +198,7 @@ class ToolboxBase(object):
 
     def save_gui_configuration_file(self):
         #updates and saves the gui configuration file
-        from xml.etree.cElementTree import ElementTree, tostring
+        from xml.etree.cElementTree import ElementTree
         import StringIO
         
         str_io = StringIO.StringIO(self.gui_configuration_doc.toString(2))

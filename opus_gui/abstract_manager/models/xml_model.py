@@ -645,7 +645,7 @@ class FakeToolbox(object): pass
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
         from PyQt4.QtGui import QApplication
-        from opus_gui.data_manager.controllers.xml.xml_controller_data_tools import XmlController_DataTools
+        from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
         
         self.app = QApplication([],True)
         #retval = app.exec_()
