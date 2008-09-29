@@ -24,9 +24,9 @@ from opus_gui.main.views.opusmain_ui import Ui_MainWindow
 from opus_gui.main.controllers.opusabout import UrbansimAboutGui
 from opus_gui.main.settings.opuspreferences import UrbansimPreferencesGui
 from opus_gui.main.settings.databasesettings import DatabaseSettingsEditGui
+from opus_gui.main.controllers.toolboxbase import ToolboxBase
 
 #from opus_gui.util.consolebase import ConsoleBase
-from opus_gui.config.toolboxbase import ToolboxBase
 
 from opus_gui.scenarios_manager.scenario_manager_base import ScenariosManagerBase
 from opus_gui.results_manager.results_manager_base import ResultsManagerBase
