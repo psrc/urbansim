@@ -13,7 +13,7 @@
 from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, QVariant, QString, QTimer
 from PyQt4.QtGui import QWidget, QIcon, QMessageBox
 
-from opus_gui.models_manager.run.opusrunestimation import RunEstimationThread
+from opus_gui.models_manager.run.run_estimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement
 
 class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
