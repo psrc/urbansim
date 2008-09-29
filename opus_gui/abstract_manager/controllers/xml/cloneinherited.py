@@ -18,8 +18,8 @@ from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QDialog, QVBoxLayout
 
 from opus_gui.abstract_manager.views.xml_view import XmlView
-from opus_gui.abstract_manager.models.xml_item_delegate
-from opus_gui.config.managerbase.cloneinherited_ui import Ui_CloneInheritedGui
+from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
+from opus_gui.abstract_manager.views.ui_cloneinherited import Ui_CloneInheritedGui
 
 
 class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
@@ -34,8 +34,8 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         # Add in the base XML for user to select the drop point
         self.vboxlayout = QVBoxLayout(self.xmlBox)
         self.vboxlayout.setObjectName("vboxlayout")
-        self.view = OpusDataView(self.xmlBox)
-        self.delegate = OpusDataDelegate(self.view)
+        self.view = XmlView(self.xmlBox)
+        self.delegate = XmlItemDelegate(self.view)
         self.view.setItemDelegate(self.delegate)
         self.view.setModel(self.model)
         self.view.openDefaultItems()

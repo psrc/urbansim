@@ -18,7 +18,7 @@ from PyQt4.QtCore import SIGNAL, QString
 from PyQt4.QtGui import QDialog
 
 
-from opus_gui.config.managerbase.clonenode_ui import Ui_CloneNodeGui
+from opus_gui.abstract_manager.views.ui_clonenode import Ui_CloneNodeGui
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
     def __init__(self, opusXMLAction_xxx, fl, clone, parentNode, model):

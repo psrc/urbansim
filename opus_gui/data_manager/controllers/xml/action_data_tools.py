@@ -22,7 +22,7 @@ from opus_gui.data_manager.run.opusruntool import OpusTool, RunToolThread
 import opus_gui.util.documentationbase
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
-from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_gui.abstract_manager.controllers.xml.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXMLController
 

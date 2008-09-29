@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.models_manager.run.opusrunestimation import OpusEstimation
-from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_gui.abstract_manager.controllers.xml.clonenode import CloneNodeGui
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 

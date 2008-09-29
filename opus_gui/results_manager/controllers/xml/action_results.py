@@ -17,7 +17,7 @@
 from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
-from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_gui.abstract_manager.controllers.xml.clonenode import CloneNodeGui
 from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo
