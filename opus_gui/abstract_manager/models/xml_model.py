@@ -644,7 +644,7 @@ class FakeToolbox(object): pass
 
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
-        from opus_gui.data_manager.controllers.xml.action_data_tools import XmlController_Data_tools
+        from opus_gui.data_manager.controllers.xml.xml_controller_data_tools import XmlController_DataTools
         # find the opus gui directory
         opus_gui_dir = __import__('opus_gui').__path__[0]
         
@@ -698,7 +698,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
         self.fakeToolbox.mainwindow = None
         self.fakeToolbox.configFile = None
         self.fakeToolbox.doc = self.qDomDocument
-        self.testTree = XmlController_Data_tools(toolboxbase = self.fakeToolbox,
+        self.testTree = XmlController_DataTools(toolboxbase = self.fakeToolbox,
                                                        xml_type = "data_manager",
                                                        parentWidget = None,
                                                        addTree = False)
