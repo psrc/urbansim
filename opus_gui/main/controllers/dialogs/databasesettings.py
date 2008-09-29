@@ -15,7 +15,7 @@
 from PyQt4.QtCore import QFile, QIODevice, QTextStream
 from PyQt4.QtGui import QDialog
 from PyQt4.QtXml import QDomDocument
-from opus_gui.main.controllers.database_config_xml_controller import DatabaseConfigXMLController
+from opus_gui.main.controllers.xml.database_config_xml_controller import DatabaseConfigXMLController
 import os
 
 ############ APR Added 082908 as example of using OpusXMLTree for database XML editing
