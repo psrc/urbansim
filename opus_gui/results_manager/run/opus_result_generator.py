@@ -81,7 +81,7 @@ class OpusResultGenerator(object):
                                  dataset_name = self.dataset_name,
                                  indicator_definition = self.indicator_definition)
         
-        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], expression_library = self.toolboxBase.opusXMLTree.get_expression_library())
+        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], expression_library = self.toolboxBase.opus_core_xml_configuration.get_expression_library())
 
 #        try:
 #            import pydevd;pydevd.settrace()

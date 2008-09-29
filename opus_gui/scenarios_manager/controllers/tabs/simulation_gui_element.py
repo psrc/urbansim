@@ -67,7 +67,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         # Bring up the XML file and grab the start year and end year
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
@@ -98,7 +98,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.summaryCurrentPieceValue.hide()
         
     def updateConfigAndGuiForRun(self):
-        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
@@ -136,7 +136,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def setupDiagnosticIndicatorTab(self):
 
-        config = self.toolboxBase.opusXMLTree.get_run_configuration(str(self.model.modeltorun))
+        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
 
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []

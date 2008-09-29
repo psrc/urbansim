@@ -66,7 +66,7 @@ class FileController_OpusData(OpusFileController):
         # temporarily use the table name for the dataset name
         # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
-        general = self.mainwindow.toolboxBase.opusXMLTree.get_section('general')
+        general = self.mainwindow.toolboxBase.opus_core_xml_configuration.get_section('general')
         # problem: this gets the package order for the current project, but the viewer shows all the data
         package_order = general['dataset_pool_configuration'].package_order
         # PREVIOUS HACK: 

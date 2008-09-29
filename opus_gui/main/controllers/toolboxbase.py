@@ -43,7 +43,7 @@ class ToolboxBase(object):
         self.doc = None
         self.configFile = None
         self.configFileTemp = None
-        self.opusXMLTree = None
+        self.opus_core_xml_configuration = None
         
         # These are the trees that are displayed for each toolbox
         self.view = None
@@ -65,10 +65,10 @@ class ToolboxBase(object):
         self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
 
     def updateOpusXMLTree(self):
-        if self.opusXMLTree and self.doc:
+        if self.opus_core_xml_configuration and self.doc:
             # print "updateOpusXMLTree"
             indentSize = 2
-            self.opusXMLTree.update(str(self.doc.toString(indentSize)))
+            self.opus_core_xml_configuration.update(str(self.doc.toString(indentSize)))
     
     def openXMLTree(self, xml_file):
         saveBeforeOpen = QMessageBox.Discard
@@ -131,20 +131,20 @@ class ToolboxBase(object):
             fileNameInfo = QFileInfo(self.xml_file)
             fileName = fileNameInfo.fileName().trimmed()
             fileNamePath = fileNameInfo.absolutePath().trimmed()
-            self.opusXMLTree = XMLConfiguration(str(fileName),str(fileNamePath))
+            self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
             [tempFile,tempFilePath] = tempfile.mkstemp()
             #print tempFile,tempFilePath
             # full_tree is the "whole" tree, inherited nodes and all
             # tree is just the actual file the GUI was asked to open
-            self.opusXMLTree.full_tree.write(tempFilePath)
+            self.opus_core_xml_configuration.full_tree.write(tempFilePath)
             self.configFileTemp = QFile(tempFilePath)
             if self.configFile and self.configFileTemp:
                 self.configFileTemp.open(QIODevice.ReadWrite)
                 self.doc = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
-                self.project_name = self.opusXMLTree.full_tree.getroot().findtext('./general/project_name')
+                self.project_name = self.opus_core_xml_configuration.full_tree.getroot().findtext('./general/project_name')
                 
-                self.opusDataPath = os.path.join(self.opusXMLTree.get_opus_data_path(), self.project_name)
+                self.opusDataPath = os.path.join(self.opus_core_xml_configuration.get_opus_data_path(), self.project_name)
                 os.environ['OPUSPROJECTNAME'] = self.project_name
                 
                 self.generalManagerTree = XmlController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())

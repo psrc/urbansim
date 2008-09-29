@@ -179,7 +179,7 @@ class OpusModel(object):
             # find the directory containing the eugene xml configurations
             fileNameInfo = QFileInfo(self.xml_path)
             fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-            config = self.xmltreeobject.toolboxbase.opusXMLTree.get_run_configuration(str(self.modeltorun))
+            config = self.xmltreeobject.toolboxbase.opus_core_xml_configuration.get_run_configuration(str(self.modeltorun))
                 
             cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
             run_name = self.get_run_name(config = config, run_name = self.run_name)                

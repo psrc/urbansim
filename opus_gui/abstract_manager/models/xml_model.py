@@ -335,10 +335,10 @@ class XmlModel(QAbstractItemModel):
         
     def checkIfInheritedAndAddBackToTree(self,nodePath,parentIndex):
         # print "Checking if inherited: %s" % (nodePath) 
-        opusXMLTree = self.parentTree.toolboxbase.opusXMLTree
+        opus_core_xml_configuration = self.parentTree.toolboxbase.opus_core_xml_configuration
         indentSize = 2
-        opusXMLTree.update(str(self.domDocument.toString(indentSize)))
-        found = opusXMLTree.find(str(nodePath))
+        opus_core_xml_configuration.update(str(self.domDocument.toString(indentSize)))
+        found = opus_core_xml_configuration.find(str(nodePath))
         if found is not None:
             # Insert the inherited node
             doc = QDomDocument()

@@ -438,13 +438,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def saveConfig(self):
         try:
             domDocument = self.toolboxBase.doc
-            opusXMLTree = self.toolboxBase.opusXMLTree
+            opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
             indentSize = 2
             
             data = str(domDocument.toString(indentSize))
 
-            opusXMLTree.update(data)
-            opusXMLTree.save()
+            opus_core_xml_configuration.update(data)
+            opus_core_xml_configuration.save()
             self.toolboxBase.runManagerTree.model.markAsClean()
             self.toolboxBase.dataManagerTree.model.markAsClean()
             if self.toolboxBase.dataManagerDBSTree is not None:
@@ -470,10 +470,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             fileName = QString(fd)
 
             domDocument = self.toolboxBase.doc
-            opusXMLTree = self.toolboxBase.opusXMLTree
+            opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
             indentSize = 2
-            opusXMLTree.update(str(domDocument.toString(indentSize)))
-            opusXMLTree.save_as(str(fileName))
+            opus_core_xml_configuration.update(str(domDocument.toString(indentSize)))
+            opus_core_xml_configuration.save_as(str(fileName))
             self.toolboxBase.runManagerTree.model.markAsClean()
             self.toolboxBase.dataManagerTree.model.markAsClean()
             if self.toolboxBase.dataManagerDBSTree is not None:
