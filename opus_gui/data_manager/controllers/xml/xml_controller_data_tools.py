@@ -28,7 +28,7 @@ from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXM
 
 import os,tempfile
 
-class xmlActionController_Data_tools(OpusXMLController):
+class XmlController_DataTools(OpusXMLController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True):
         OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'data_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
 

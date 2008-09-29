@@ -18,14 +18,14 @@ from PyQt4.QtCore import QString, QFileInfo, QFile, QIODevice
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtXml import QDomDocument
 
-from opus_gui.data_manager.controllers.files.action_data_opus_data import fileActionController_Data_opus_data
+from opus_gui.data_manager.controllers.files.file_controller_opus_data import FileController_OpusData
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
-from opus_gui.general_manager.controllers.xml.action_general import xmlActionController_General
-from opus_gui.results_manager.controllers.xml.action_results import xmlActionController_Results
-from opus_gui.models_manager.controllers.xml.action_models import xmlActionController_Models
-from opus_gui.scenarios_manager.controllers.xml.action_scenarios import xmlActionController_Scenarios
-from opus_gui.data_manager.controllers.xml.action_data_tools import xmlActionController_Data_tools
+from opus_gui.general_manager.controllers.xml.xml_controller_general import XmlController_General
+from opus_gui.results_manager.controllers.xml.xml_controller_results import XmlController_Results
+from opus_gui.models_manager.controllers.xml.xml_controller_models import XmlController_Models
+from opus_gui.scenarios_manager.controllers.xml.xml_controller_scenarios import XmlController_Scenarios
+from opus_gui.data_manager.controllers.xml.xml_controller_data_tools import XmlController_DataTools
 
 import os,tempfile
 
@@ -147,13 +147,13 @@ class ToolboxBase(object):
                 self.opusDataPath = os.path.join(self.opusXMLTree.get_opus_data_path(), self.project_name)
                 os.environ['OPUSPROJECTNAME'] = self.project_name
                 
-                self.generalManagerTree = xmlActionController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())
-                self.modelManagerTree = xmlActionController_Models(toolboxbase = self, parentWidget = self.mainwindow.modelmanager_page.layout())
-                self.runManagerTree = xmlActionController_Scenarios(toolboxbase = self, parentWidget = self.mainwindow.runmanager_page.layout())
-                self.dataManagerTree = xmlActionController_Data_tools(toolboxbase = self, parentWidget = self.mainwindow.datamanager_xmlconfig.layout())
-                self.resultsManagerTree = xmlActionController_Results(toolboxbase = self, parentWidget = self.mainwindow.resultsmanager_page.layout())
+                self.generalManagerTree = XmlController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())
+                self.modelManagerTree = XmlController_Models(toolboxbase = self, parentWidget = self.mainwindow.modelmanager_page.layout())
+                self.runManagerTree = XmlController_Scenarios(toolboxbase = self, parentWidget = self.mainwindow.runmanager_page.layout())
+                self.dataManagerTree = XmlController_DataTools(toolboxbase = self, parentWidget = self.mainwindow.datamanager_xmlconfig.layout())
+                self.resultsManagerTree = XmlController_Results(toolboxbase = self, parentWidget = self.mainwindow.resultsmanager_page.layout())
                 
-                self.dataManagerFileTree = fileActionController_Data_opus_data(self,'data_manager.opus_data',self.opusDataPath,
+                self.dataManagerFileTree = FileController_OpusData(self,'data_manager.opus_data',self.opusDataPath,
                                                         self.mainwindow.datamanager_dirview.layout())
                 
             else:

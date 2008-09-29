@@ -26,7 +26,7 @@ from StringIO import StringIO
 
 from opus_gui.abstract_manager.controllers.files.opus_file_controller import OpusFileController
 
-class fileActionController_Data_opus_data(OpusFileController):
+class FileController_OpusData(OpusFileController):
     def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
 
         OpusFileController.__init__(self, toolboxbase = toolboxbase, controller_type = controller_type,

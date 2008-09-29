@@ -22,7 +22,7 @@ from opus_gui.abstract_manager.controllers.xml.clonenode import CloneNodeGui
 
 from opus_gui.abstract_manager.controllers.xml.opus_xml_controller import OpusXMLController
 
-class xmlActionController_Scenarios(OpusXMLController):
+class XmlController_Scenarios(OpusXMLController):
     def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
         OpusXMLController.__init__(self, toolboxbase = toolboxbase, xml_type = 'scenario_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
         
