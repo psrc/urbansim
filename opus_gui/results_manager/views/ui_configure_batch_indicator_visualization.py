@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/results_manager/views/configure_dataset_table_ui.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/results_manager/views/configure_batch_indicator_visualization.ui'
 #
-# Created: Fri Sep 26 18:36:34 2008
+# Created: Mon Sep 29 13:27:13 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_dlgDatasetTableDialog(object):
-    def setupUi(self, dlgDatasetTableDialog):
-        dlgDatasetTableDialog.setObjectName("dlgDatasetTableDialog")
-        dlgDatasetTableDialog.resize(1003, 703)
+class Ui_dlgConfigureBatchIndicatorVisualization(object):
+    def setupUi(self, dlgConfigureBatchIndicatorVisualization):
+        dlgConfigureBatchIndicatorVisualization.setObjectName("dlgConfigureBatchIndicatorVisualization")
+        dlgConfigureBatchIndicatorVisualization.resize(1003, 703)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(dlgDatasetTableDialog.sizePolicy().hasHeightForWidth())
-        dlgDatasetTableDialog.setSizePolicy(sizePolicy)
-        self.gridLayout_6 = QtGui.QGridLayout(dlgDatasetTableDialog)
+        sizePolicy.setHeightForWidth(dlgConfigureBatchIndicatorVisualization.sizePolicy().hasHeightForWidth())
+        dlgConfigureBatchIndicatorVisualization.setSizePolicy(sizePolicy)
+        self.gridLayout_6 = QtGui.QGridLayout(dlgConfigureBatchIndicatorVisualization)
         self.gridLayout_6.setObjectName("gridLayout_6")
-        self.frame = QtGui.QFrame(dlgDatasetTableDialog)
+        self.frame = QtGui.QFrame(dlgConfigureBatchIndicatorVisualization)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")
@@ -225,46 +225,46 @@ class Ui_dlgDatasetTableDialog(object):
         self.gridLayout_3.addWidget(self.twIndicatorsToVisualize, 0, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBox_3, 2, 2, 1, 1)
         self.gridLayout_6.addWidget(self.frame, 0, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(dlgDatasetTableDialog)
+        self.buttonBox = QtGui.QDialogButtonBox(dlgConfigureBatchIndicatorVisualization)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout_6.addWidget(self.buttonBox, 1, 0, 1, 1)
 
-        self.retranslateUi(dlgDatasetTableDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), dlgDatasetTableDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), dlgDatasetTableDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(dlgDatasetTableDialog)
+        self.retranslateUi(dlgConfigureBatchIndicatorVisualization)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), dlgConfigureBatchIndicatorVisualization.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), dlgConfigureBatchIndicatorVisualization.reject)
+        QtCore.QMetaObject.connectSlotsByName(dlgConfigureBatchIndicatorVisualization)
 
-    def retranslateUi(self, dlgDatasetTableDialog):
-        dlgDatasetTableDialog.setWindowTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Batch indicator visualization", None, QtGui.QApplication.UnicodeUTF8))
-        self.gbOutputOptions.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output options", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Visualization name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Type:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboVizType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "Table", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboVizType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "Map", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Dataset name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Format options", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Format:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "Tab delimited file (.tab)", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "Fixed field file (.dat)", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "Export to SQL database", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgDatasetTableDialog", "ESRI database", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbSingleTable.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "The table will have the values of all indicators for each year the indicator batch is run on.", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbSingleTable.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output a single table", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbTablePerYear.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "Each table will have the values of the selected indicators for the given year.", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbTablePerYear.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output a table for every year", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbTablePerIndicator.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "Each table will have the values of a given indicator across all years the batch is run on.", None, QtGui.QApplication.UnicodeUTF8))
-        self.rbTablePerIndicator.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output a table for each indicator", None, QtGui.QApplication.UnicodeUTF8))
-        self.lblOption1.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbn_set_storage_location.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "...", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Available indicators", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, dlgConfigureBatchIndicatorVisualization):
+        dlgConfigureBatchIndicatorVisualization.setWindowTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Batch indicator visualization", None, QtGui.QApplication.UnicodeUTF8))
+        self.gbOutputOptions.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output options", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Visualization name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Type:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboVizType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Table", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboVizType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Map", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Dataset name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Format options", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Format:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Tab delimited file (.tab)", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Fixed field file (.dat)", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Export to SQL database", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "ESRI database", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbSingleTable.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "The table will have the values of all indicators for each year the indicator batch is run on.", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbSingleTable.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output a single table", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTablePerYear.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Each table will have the values of the selected indicators for the given year.", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTablePerYear.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output a table for every year", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTablePerIndicator.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Each table will have the values of a given indicator across all years the batch is run on.", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbTablePerIndicator.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output a table for each indicator", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblOption1.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbn_set_storage_location.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Available indicators", None, QtGui.QApplication.UnicodeUTF8))
         self.twAvailableIndicators.setSortingEnabled(False)
-        self.pbnAddIndicator.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "Add currently selected indicator on the left to this indicator visualization.", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnAddIndicator.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnRemoveIndicator.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "Remove currently selected indicator on the right from this indicator visualization.", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnRemoveIndicator.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "-", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_3.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Indicators in current visualization", None, QtGui.QApplication.UnicodeUTF8))
-        self.twIndicatorsToVisualize.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
-        self.twIndicatorsToVisualize.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Field format", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnAddIndicator.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Add currently selected indicator on the left to this indicator visualization.", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnAddIndicator.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnRemoveIndicator.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Remove currently selected indicator on the right from this indicator visualization.", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnRemoveIndicator.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_3.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Indicators in current visualization", None, QtGui.QApplication.UnicodeUTF8))
+        self.twIndicatorsToVisualize.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.twIndicatorsToVisualize.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Field format", None, QtGui.QApplication.UnicodeUTF8))
 
