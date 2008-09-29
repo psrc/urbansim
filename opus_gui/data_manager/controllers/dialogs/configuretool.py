@@ -23,11 +23,11 @@ from opus_gui.data_manager.views.configuretool_ui import Ui_ConfigureToolGui
 import random
 
 class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
-    def __init__(self, opusXMLAction_xxx, fl):
-        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
+    def __init__(self, xml_controller, fl):
+        QDialog.__init__(self, xml_controller.mainwindow, fl)
         self.setupUi(self)
-        self.opusXMLAction_xxx = opusXMLAction_xxx
-        self.model = opusXMLAction_xxx.currentIndex.model()
+        self.xml_controller = xml_controller
+        self.model = xml_controller.currentIndex.model()
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
@@ -76,12 +76,12 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         
         toolname = self.test_line[0].text()
         # First is the connection node with the connection name
-        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(toolname)
+        newNode = self.xml_controller.currentIndex.model().domDocument.createElement(toolname)
         newNode.setAttribute(QString("type"),QString("tool_config"))
         # Add the tool hook back in
-        newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("tool_hook"))
+        newChild = self.xml_controller.currentIndex.model().domDocument.createElement(QString("tool_hook"))
         newChild.setAttribute(QString("type"),QString("tool_library_ref"))
-        newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection)
+        newText = self.xml_controller.currentIndex.model().domDocument.createTextNode(self.typeSelection)
         newChild.appendChild(newText)
         newNode.appendChild(newChild)
         # for key,val in self.vars.iteritems():
@@ -92,15 +92,15 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
             # print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
-            newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
+            newChild = self.xml_controller.currentIndex.model().domDocument.createElement(key)
             newChild.setAttribute(QString("type"),typeVal)
-            newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(val)
+            newText = self.xml_controller.currentIndex.model().domDocument.createTextNode(val)
             newChild.appendChild(newText)
             newNode.appendChild(newChild)
-        self.opusXMLAction_xxx.currentIndex.model().insertRow(self.opusXMLAction_xxx.currentIndex.model().rowCount(self.opusXMLAction_xxx.currentIndex),
-                                                   self.opusXMLAction_xxx.currentIndex,
+        self.xml_controller.currentIndex.model().insertRow(self.xml_controller.currentIndex.model().rowCount(self.xml_controller.currentIndex),
+                                                   self.xml_controller.currentIndex,
                                                    newNode)
-        self.opusXMLAction_xxx.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        self.xml_controller.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         self.close()
 
     def on_cancelConfig_released(self):

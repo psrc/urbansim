@@ -23,10 +23,10 @@ from opus_gui.abstract_manager.views.ui_cloneinherited import Ui_CloneInheritedG
 
 
 class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
-    def __init__(self, opusXMLAction_xxx, fl, model, clone):
-        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
+    def __init__(self, xml_controller, fl, model, clone):
+        QDialog.__init__(self, xml_controller.mainwindow, fl)
         self.setupUi(self)
-        self.opusXMLAction_xxx = opusXMLAction_xxx
+        self.xml_controller = xml_controller
         self.model = model
         # Since we are referencing the main model we want to now make it
         # read-only while traversing it...

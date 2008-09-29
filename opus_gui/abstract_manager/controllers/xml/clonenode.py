@@ -21,10 +21,10 @@ from PyQt4.QtGui import QDialog
 from opus_gui.abstract_manager.views.ui_clonenode import Ui_CloneNodeGui
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
-    def __init__(self, opusXMLAction_xxx, fl, clone, parentNode, model):
-        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
+    def __init__(self, xml_controller, fl, clone, parentNode, model):
+        QDialog.__init__(self, xml_controller.mainwindow, fl)
         self.setupUi(self)
-        self.opusXMLAction_xxx = opusXMLAction_xxx
+        self.xml_controller = xml_controller
         self.clone = clone
         self.parentNode = parentNode
         self.model = model
