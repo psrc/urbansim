@@ -756,5 +756,5 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         try:
             self.toolboxBase.save_gui_configuration_file()
         except:
-            print "Unexpected error:", sys.exc_info()[0]
-  
+            errorInfo = formatExceptionInfo(custom_message = 'Unexpected error saving the gui config')
+            self.errorCallback(errorInfo)  
