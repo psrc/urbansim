@@ -644,10 +644,10 @@ class FakeToolbox(object): pass
 
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
-        from PyQt4.QtGui import QApplication
         from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
         
         try:
+            from PyQt4.QtGui import QApplication
             self.app = QApplication([],True)
         except:
             self.app = None
