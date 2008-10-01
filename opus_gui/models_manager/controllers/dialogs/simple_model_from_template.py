@@ -27,6 +27,9 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
         ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
                                              template_index, template_model)
         
+        # simple models do not have estimation components
+        self.create_estimation_component = False
+        
         # setup additional ui that's specfic for this model template
         self.setup_simple_ui()
         self._setup_co_dataset_name()
@@ -44,38 +47,22 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
         '''collect avaiable datasets and populate the combobox'''
         available_datasets = self.xml_helper.get_available_datasets()
         self.cboDataset.clear()
-        
+
         for dataset in available_datasets:
             self.cboDataset.addItem(QString(dataset))
 
     def setup_node(self):
         model_name = self._get_model_name()
-                
+
         # update the tag name
         nodeElement = self.model_template_node.toElement()
         nodeElement.setTagName(model_name)
         
-        #TODO: traverse function for xml helper
-        #xmlhelper.getelement(root, 'run/arguments/dataset')        
-        dataset_element = nodeElement.\
-            firstChildElement('run').firstChildElement('arguments').firstChildElement('dataset')
-        expression_element = nodeElement.\
-            firstChildElement('run').firstChildElement('arguments').firstChildElement('expression')
-        outcome_attribute_element = nodeElement.\
-            firstChildElement('run').firstChildElement('arguments').firstChildElement('outcome_attribute')
+        dataset_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/dataset')
+        expression_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/expression')
+        outcome_attribute_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/outcome_attribute')
         
-        #TODO: warning if any of them is null
-        self._set_text_child(dataset_element, self.cboDataset.currentText())
-        self._set_text_child(expression_element, self.leExpression.text())
-        self._set_text_child(outcome_attribute_element, self.leOutcome.text())
-
-    def _set_text_child(self, element, text):
-        #TODO: Could this be useful in Travis' xml helper thing?
-        '''set (or create) a text node as a child of a given element'''
-        #TODO: some checking might be good that the xml tree is not a complete
-        # mess (e.g has an entire subtree under the arguments/dataset)
-        if(element.firstChild().isText()): # element has text child
-            element.firstChild().setNodeValue(QString(text))
-        else: # we have to create the text node
-            text_node = self.mainwindow.toolboxBase.doc.createTextNode(text)
-            element.insertBefore(text_node, element.firstChild())
+        #TODO: warning if any of them is null?
+        self.xml_helper.set_text_child_value(dataset_e, self.cboDataset.currentText())
+        self.xml_helper.set_text_child_value(expression_e, self.leExpression.text())
+        self.xml_helper.set_text_child_value(outcome_attribute_e, self.leOutcome.text())

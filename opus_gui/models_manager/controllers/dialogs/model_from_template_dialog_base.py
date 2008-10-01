@@ -11,12 +11,8 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex, QSize
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog, \
-                        QHBoxLayout, QSizePolicy
+from PyQt4.QtCore import QString, SIGNAL, QModelIndex, QSize, Qt
+from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
 from PyQt4.QtXml import QDomText
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -31,6 +27,9 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     of the template node (self.model_template_node) in that method.
     They should not call _insert_model_and_create_estimation() or implement their own 
     _on_accepted() or _on_rejected() methods.
+    
+    Models that do not have estimation components should set the instance variable 
+    create_estimation_component to False.
     '''
     def __init__(self, mainwindow, model_template_node, template_index, template_model):
         self.mainwindow = mainwindow
@@ -52,6 +51,16 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         
         self.connect(self.buttonBox, SIGNAL("accepted()"), self._on_accepted)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self._on_rejected)
+        
+        self.setModal(True)
+        self.create_estimation_component = True
+        
+        # default name based on tag name for template
+        tag_name = model_template_node.toElement().tagName()
+        tag_name.replace('_template', '').replace('_', ' ')
+        self.leModelName.setText(tag_name)
+        self.leModelName.selectAll()
+        self.leModelName.focusWidget()
         
     def add_widget_pair(self, left_widget, right_widget):
         '''Add a pair of widgets, typically a label and another widget, to the dialog'''
@@ -75,68 +84,33 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     
     def _insert_model_and_create_estimation(self):
         '''insert the node back into the model system and create an entry for the new model in the estimations'''
-        # Swap in the new name and drop in the node...
         
         self.template_model.insertRow(self.template_model.rowCount(self.template_index),
                                       self.template_index,
                                       self.model_template_node)
         self.template_model.emit(SIGNAL('layoutChanged()'))
 
-        # get the actual model template node
-        mt_node, _ = self.xml_helper.get_element_attributes(node_name = 'model_template', node_type = 'model_estimation')
-        cloned_mt = mt_node.cloneNode()
-        node_element = cloned_mt.toElement()
-        
-        node_element.setTagName(self.model_template_node.toElement().tagName())
-        
-        tree_model = self.mainwindow.toolboxBase.modelManagerTree.model
-        
-        # Find the parent node index to append to
-        parentIndex = tree_model.index(0,0,QModelIndex()).parent()
-        current_index = tree_model.findElementIndexByName('estimation', parentIndex)[0]
-
-        # Now insert the head_node
-        tree_model.insertRow(tree_model.rowCount(current_index),
-                        current_index,
-                        cloned_mt)
-
-        tree_model.emit(SIGNAL("layoutChanged()"))
-
-    def _find_fill_in_fields(self):
-        # begin inspecting the model template dom element
-        nodeElement = self.model_template_node.toElement()
-        
-        datasets = self.xml_helper.get_available_datasets()
-        
-        # walk down the tree and collect all interesting sections
-        node = self.model_template_node.firstChild()
-        
-        look_for_sections = ['init', 'run', 'prepare_for_run', 'estimate', 'prepare_for_estimate']
-        found_sections = []
-        
-        while not node.isNull():
-            if node.isElement() and node.toElement().tagName() in look_for_subsections:
-                found_subsections.append(node)
-            node = node.nextSibling()
-
-        # traverse the list of sections and get the argument subsections
-        for node in found_subsections:
-            # we know all things to be filled in are in arguments
-            arguments = node.firstChildElement('arguments')
-
-            if arguments.isNull():
-                continue
+        # create an estimation component
+        #TODO: verify that this belongs in this module
+        if self.create_estimation_component:
+            mt_node, _ = self.xml_helper.get_element_attributes(node_name = 'model_template', node_type = 'model_estimation')
+            cloned_mt = mt_node.cloneNode()
+            node_element = cloned_mt.toElement()
             
-            # go through the arguments
-            argument = arguments.firstChildElement()
-            while argument and not argument.isNull():
-                # check for fields to fill in
-                argument_value = argument.firstChild()
-                if argument_value.isText() and argument_value.nodeValue() == 'fill in':
-                    print "Found fill in %s" %(tag_name)
-
-                argument = argument.nextSiblingElement()
+            node_element.setTagName(self.model_template_node.toElement().tagName())
             
+            tree_model = self.mainwindow.toolboxBase.modelManagerTree.model
+            
+            # Find the parent node index to append to
+            parentIndex = tree_model.index(0,0,QModelIndex()).parent()
+            current_index = tree_model.findElementIndexByName('estimation', parentIndex)[0]
+    
+            # Now insert the head_node
+            tree_model.insertRow(tree_model.rowCount(current_index),
+                            current_index,
+                            cloned_mt)
+    
+            tree_model.emit(SIGNAL("layoutChanged()"))
         
     def setup_node(self):
         # code that sets the specific template variables goes here
