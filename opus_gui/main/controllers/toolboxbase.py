@@ -51,6 +51,9 @@ class ToolboxBase(object):
         self.resultsManagerTree = None
         self.runManagerTree = None
         self.dataManagerTree = None
+        #TODO: is this needed? mainwindow.saveConfig asks for this attribute 
+        self.dataManagerDBSTree = None
+               
         self.dataManagerFileTree = None
         self.generalManagerTree = None
 
