@@ -74,7 +74,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         splash_pix = get_child_values(parent = startup_node, 
                                  child_names = ['splash_logo'])
 
-        splash_pix = os.path.join('main','Images',str(splash_pix['splash_logo']))
+        splash_pix = os.path.join('main','views','Images',str(splash_pix['splash_logo']))
         self.splashPix = QPixmap(QString(splash_pix))
         self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
         self.splash = QSplashScreen(self.splashPixScaled)
