@@ -207,7 +207,7 @@ class XmlController_Results(XmlController):
         self.currentIndex.model().makeEditable(thisNode)
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
+        
     def processCustomMenu(self, position):
         if self.view.indexAt(position).isValid() and \
                self.view.indexAt(position).column() == 0:
@@ -230,6 +230,7 @@ class XmlController_Results(XmlController):
                 selected_type = domElement.attribute(QString("type"))
                 
                 self.menu = QMenu(self.mainwindow)
+                
 #                if selected_type == QString("indicator_library") and \
 #                       domElement.attribute(QString("append_to")) == QString("True"):
 #                    self.menu.addAction(self.actAddNewIndicator)
@@ -251,6 +252,14 @@ class XmlController_Results(XmlController):
                     QObject.connect(self.run_indicator_batch_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorBatchShown)
                     self.menu.addMenu(self.run_indicator_batch_menu)
                                     
+                    xml = self.mainwindow.toolboxBase.opus_core_xml_configuration
+                    find_exp = "./results_manager/Indicator_batches/%s/*"%str(domNode.nodeName())
+                    node_list = xml.full_tree.getroot().find(find_exp)
+                    if node_list is None:
+                        self.run_indicator_batch_menu.setEnabled(False)
+                    else:
+                        self.run_indicator_batch_menu.setEnabled(True)
+                        
                 elif selected_type == QString('batch_visualization'):
                     self.menu.addAction(self.actConfigureExistingBatchIndicatorVisualization)
 

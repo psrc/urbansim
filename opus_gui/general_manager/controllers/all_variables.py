@@ -66,20 +66,20 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         #else:
             #self._setup_co_dataset_name()
 
-    def _setup_co_dataset_name(self, value = None):
-        from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-        xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
-
-        available_datasets = xml_helper.get_available_datasets()
-
-        for dataset in available_datasets:
-            self.cbo_dataset_name.addItem(QString(dataset))
-        
-        if value is not None:
-            idx = self.cbo_dataset_name.findText(value)
-            if idx != -1:
-                self.dataset_name = value
-                self.cbo_dataset_name.setCurrentIndex(idx)        
+#    def _setup_co_dataset_name(self, value = None):
+#        from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
+#        xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
+#
+#        available_datasets = xml_helper.get_available_datasets()
+#
+#        for dataset in available_datasets:
+#            self.cbo_dataset_name.addItem(QString(dataset))
+#        
+#        if value is not None:
+#            idx = self.cbo_dataset_name.findText(value)
+#            if idx != -1:
+#                self.dataset_name = value
+#                self.cbo_dataset_name.setCurrentIndex(idx)        
                             
     def editsMade(self):
         # If we dont have seed params, then this is a new variable
