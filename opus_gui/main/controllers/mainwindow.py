@@ -342,7 +342,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tab_editorView.show()
             self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_editorView,
-                                     QIcon(":/Images/Images/table.png"),"Editor View")
+                                     QIcon(":/Images/Images/table_lightning.png"),"Editor View")
             self.tabWidget.setCurrentWidget(self.tab_editorView)
         
 
@@ -351,7 +351,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tab_logView.show()
             self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_logView,
-                                     QIcon(":/Images/Images/folder.png"),"Log View")
+                                     QIcon(":/Images/Images/table.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
         
 
