@@ -53,10 +53,12 @@ else:
                 storage_location_exists = os.path.exists(full_db_connection_file_path)
                 if not storage_location_exists:
                     raise IOError, 'The ArcSDE geodatabase connection "%s" does not exist.' % (db_connection_file)
+                self.sde = True
             else:
                 storage_location_exists = os.path.exists(storage_location)
                 if not storage_location_exists:
                     raise IOError, 'The storage location "%s" does not exist.' % (storage_location)
+                self.sde = False
 
             # Set the ESRI workspace parameter
             self.gp.Workspace = storage_location
@@ -391,13 +393,15 @@ else:
                     table_names.append(str(fc))
                 fc = fcs.Next()
             
-            # Loop through table names and strip out any SDE specific naming
-            table_names_stripped = []
-            for i in table_names:
-                x = i.split('.')
-                table_names_stripped.append(x[-1])
-
-            return table_names_stripped
+            # Loop through table names and strip out any SDE specific naming if needed
+            if self.sde:
+                table_names_stripped = []
+                for i in table_names:
+                    x = i.split('.')
+                    table_names_stripped.append(x[-1])
+                return table_names_stripped
+            else:
+                return table_names
 
         def table_exists(self, table_name):
             # Reset the workspace
