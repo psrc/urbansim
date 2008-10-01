@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>516</width>
-    <height>436</height>
+    <height>376</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -64,37 +64,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" native="1" name="datasetWidget" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="QLabel" name="label_2" >
-           <property name="minimumSize" >
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="toolTip" >
-            <string>The dataset of the resulting indicator. </string>
-           </property>
-           <property name="text" >
-            <string>Dataset:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbo_dataset_name" />
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <widget class="QWidget" native="1" name="sourceWidget" >
         <layout class="QHBoxLayout" >
          <item>
@@ -118,7 +87,7 @@ An "expression" uses the Tekoa domain-specific language,
 and "primary attribute" refers to a primary attribute of the given dataset. </string>
            </property>
            <property name="text" >
-            <string>Source:</string>
+            <string>Variable type:</string>
            </property>
           </widget>
          </item>

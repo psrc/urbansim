@@ -24,6 +24,7 @@ from opus_gui.general_manager.views.ui_all_variables_edit import Ui_AllVariables
 from opus_gui.general_manager.views.ui_all_variables_select import Ui_AllVariablesSelectGui
 from opus_gui.general_manager.views.ui_all_variables_new import Ui_AllVariablesNewGui
 from opus_gui.general_manager.run.variable_validator import VariableValidator
+from opus_core.variables.variable_name import VariableName
 
 import random,pprint,string
 
@@ -49,7 +50,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
         if self.initialParams:
             self.lineEdit.setText(self.initialParams[0])
-            self._setup_co_dataset_name(value = self.initialParams[1])
+            #self._setup_co_dataset_name(value = self.initialParams[1])
             if str(self.initialParams[2]) == "both":
                 self.cbIndicatorUse.setChecked(True) 
                 self.cbModelUse.setChecked(True)
@@ -62,8 +63,8 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
                 
             self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
             self.textEdit.setPlainText(self.initialParams[4])
-        else:
-            self._setup_co_dataset_name()
+        #else:
+            #self._setup_co_dataset_name()
 
     def _setup_co_dataset_name(self, value = None):
         from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -139,7 +140,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         
     def _get_variable_definition(self):
         variable_name = str(self.lineEdit.text())
-        dataset_name = str(self.cbo_dataset_name.currentText())
+        
         if self.cbIndicatorUse.isChecked():
             if self.cbModelUse.isChecked():
                 use = 'both'
@@ -152,6 +153,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             return None
         source = str(self.comboBox_2.currentText())
         definition = str(self.textEdit.toPlainText())
+        dataset_name = VariableName(expression = definition).get_dataset_name()
         return (variable_name, dataset_name, use, source, definition)
 
         
