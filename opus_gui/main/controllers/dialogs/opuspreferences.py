@@ -42,7 +42,7 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.generalTextFontSizeSpinBox.setValue(self.mainwindow.getGeneralTextFontSize())
 
     def _initRadioButtions(self):
-        self.prevProjPrefRadioButton.setChecked(self.mainwindow.getOpenLatestProject())
+        self.prevProjPrefCheckBox.setChecked(self.mainwindow.getOpenLatestProject())
     
     
     def apply(self):
@@ -50,7 +50,7 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         self.mainwindow.setMenuFontSize(self.menuFontSizeSpinBox.value())
         self.mainwindow.setMainTabsFontSize(self.mainTabsFontSizeSpinBox.value())
         self.mainwindow.setGeneralTextFontSize(self.generalTextFontSizeSpinBox.value())
-        self.mainwindow.setOpenLatestProject(self.prevProjPrefRadioButton.isChecked())
+        self.mainwindow.setOpenLatestProject(self.prevProjPrefCheckBox.isChecked())
         self.mainwindow.changeFontSize()
         self.mainwindow.updateFontSettingsNode()
         self.mainwindow.updateProjectHistoryNode()
