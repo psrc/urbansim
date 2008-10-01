@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'opusmain_new.ui'
+# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/main/views/mainwindow.ui'
 #
-# Created: Sat Sep 20 17:39:36 2008
+# Created: Wed Oct  1 08:10:20 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -227,11 +227,13 @@ class Ui_MainWindow(object):
         self.actionExit.setIcon(icon12)
         self.actionExit.setObjectName("actionExit")
         self.actionSave_Project_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_2.setEnabled(False)
         icon13 = QtGui.QIcon()
         icon13.addPixmap(QtGui.QPixmap(":/Images/Images/disk.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSave_Project_2.setIcon(icon13)
         self.actionSave_Project_2.setObjectName("actionSave_Project_2")
         self.actionSave_Project_As_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_As_2.setEnabled(False)
         self.actionSave_Project_As_2.setIcon(icon10)
         self.actionSave_Project_As_2.setObjectName("actionSave_Project_As_2")
         self.actionRun_Manager = QtGui.QAction(MainWindow)
@@ -257,7 +259,9 @@ class Ui_MainWindow(object):
         self.tabActionLogView.setIcon(icon9)
         self.tabActionLogView.setObjectName("tabActionLogView")
         self.actionPython_View = QtGui.QAction(MainWindow)
+        self.actionPython_View.setEnabled(True)
         self.actionPython_View.setIcon(icon2)
+        self.actionPython_View.setVisible(True)
         self.actionPython_View.setObjectName("actionPython_View")
         self.actionLog_View = QtGui.QAction(MainWindow)
         self.actionLog_View.setIcon(icon3)
@@ -273,6 +277,7 @@ class Ui_MainWindow(object):
         self.actionDecreaseFontSize = QtGui.QAction(MainWindow)
         self.actionDecreaseFontSize.setObjectName("actionDecreaseFontSize")
         self.actionClose_Project = QtGui.QAction(MainWindow)
+        self.actionClose_Project.setEnabled(False)
         self.actionClose_Project.setIcon(icon9)
         self.actionClose_Project.setObjectName("actionClose_Project")
         self.actionEdit_all_variables = QtGui.QAction(MainWindow)

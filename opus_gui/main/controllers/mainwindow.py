@@ -431,7 +431,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.all_variables.close()
             
 
-
+        self.actionClose_Project.setEnabled(True)
+        self.actionSave_Project_2.setEnabled(True)
+        self.actionSave_Project_As_2.setEnabled(True)
         self.changeFontSize()
 
 
@@ -551,6 +553,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.resultsManagerBase.removeAllElements()
         self.modelsManagerBase.removeAllElements()
 
+        self.actionClose_Project.setEnabled(False)
+        self.actionSave_Project_2.setEnabled(False)
+        self.actionSave_Project_As_2.setEnabled(False)
+        
     def closeEvent(self, event):
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()

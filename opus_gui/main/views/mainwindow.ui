@@ -188,8 +188,8 @@
         <attribute name="title" >
          <string>Results</string>
         </attribute>
+        <layout class="QGridLayout" />
        </widget>
-       <layout class="QGridLayout" />
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="sizePolicy" >
@@ -498,6 +498,9 @@
    </property>
   </action>
   <action name="actionSave_Project_2" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
    <property name="icon" >
     <iconset resource="opusmain.qrc" >
      <normaloff>:/Images/Images/disk.png</normaloff>:/Images/Images/disk.png</iconset>
@@ -507,6 +510,9 @@
    </property>
   </action>
   <action name="actionSave_Project_As_2" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
    <property name="icon" >
     <iconset resource="opusmain.qrc" >
      <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
@@ -570,6 +576,9 @@
    </property>
   </action>
   <action name="actionPython_View" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
    <property name="icon" >
     <iconset resource="opusmain.qrc" >
      <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
@@ -579,6 +588,12 @@
    </property>
    <property name="toolTip" >
     <string>Open Python Console</string>
+   </property>
+   <property name="visible" >
+    <bool>true</bool>
+   </property>
+   <property name="iconVisibleInMenu" >
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionLog_View" >
@@ -625,6 +640,9 @@
    </property>
   </action>
   <action name="actionClose_Project" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
    <property name="icon" >
     <iconset resource="opusmain.qrc" >
      <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
