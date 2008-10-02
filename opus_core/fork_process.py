@@ -63,10 +63,10 @@ class ForkProcess(object):
                 
         module_path = module_path_from_opus_path(module_name)
         if pickle_file_path is None:
-            python_cmd = "%s %s %s" % (sys.executable, module_path, 
+            python_cmd = "%s \"%s\" %s" % (sys.executable, module_path, 
                                            optional_args)
         else:
-            python_cmd = "%s %s -r %s %s" % (sys.executable, module_path, 
+            python_cmd = "%s \"%s\" -r %s %s" % (sys.executable, module_path, 
                                                  pickle_file_path, 
                                                  optional_args)
             
