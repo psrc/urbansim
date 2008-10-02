@@ -63,7 +63,7 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.cboDataset.addItem(QString(dataset))
 
     def setup_node(self):
-        model_name = self._get_model_name()
+        model_name = self.get_model_name()
                 
         # update the tag name
         nodeElement = self.model_template_node.toElement()

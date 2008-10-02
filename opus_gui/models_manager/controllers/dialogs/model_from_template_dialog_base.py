@@ -32,18 +32,14 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     create_estimation_component to False.
     '''
     def __init__(self, mainwindow, model_template_node, template_index, template_model):
+        # parent window for the dialog box
         self.mainwindow = mainwindow
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         QDialog.__init__(self, self.mainwindow, flags)
         
         self.setupUi(self)
-        # self.opusXMLAction_Model = opusXMLAction_Model
-        
-        self.xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
 
-        title = str(self.windowTitle())
-        newtitle = '%s %s'%(title, str(model_template_node.toElement().tagName()))
-        self.setWindowTitle(QString(newtitle))
+        self.xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
         
         self.model_template_node = model_template_node
         self.template_index = template_index
@@ -53,6 +49,9 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         self.connect(self.buttonBox, SIGNAL('rejected()'), self._on_rejected)
         
         self.setModal(True)
+        # should we create an estimation component when inserting the
+        # model into the tree. Override this value for model dialogs that do 
+        # not have an estimation component.
         self.create_estimation_component = True
         
         # default name based on tag name for template
@@ -61,6 +60,10 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         self.leModelName.setText(tag_name)
         self.leModelName.selectAll()
         self.leModelName.focusWidget()
+        
+        title = str(self.windowTitle())
+        newtitle = '%s %s'%(title, tag_name)
+        self.setWindowTitle(QString(newtitle))
         
     def add_widget_pair(self, left_widget, right_widget):
         '''Add a pair of widgets, typically a label and another widget, to the dialog'''
@@ -77,7 +80,7 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         layout.addWidget(right_widget)
         self.groupBox.layout().addLayout(layout)
         
-    def _get_model_name(self):
+    def get_model_name(self):
         '''return a valid model name based on the string the user entered'''
         #TODO: the name should actually be valid (ie, alphanumeric)
         return self.leModelName.text().replace(QString(' '), QString('_'))

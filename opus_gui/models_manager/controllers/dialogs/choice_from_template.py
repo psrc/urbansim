@@ -11,12 +11,9 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog, \
-                        QLineEdit
+from PyQt4.QtCore import QString, SIGNAL
+                         
+from PyQt4.QtGui import QComboBox, QLabel, QLineEdit
 
 from PyQt4.QtXml import QDomElement, QDomText, QDomDocument
 
@@ -64,7 +61,7 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.add_widget_pair(QLabel(l), w)
 
     def setup_node(self):
-        model_name = self._get_model_name()
+        model_name = self.get_model_name()
 
         # update the tag name
         nodeElement = self.model_template_node.toElement()
