@@ -22,10 +22,12 @@ from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import Cl
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 
+# Dialogs for instantiating model templates
 from opus_gui.models_manager.controllers.dialogs.regression_model_from_template import RegressionModelFromTemplateDialog
 from opus_gui.models_manager.controllers.dialogs.simple_model_from_template import SimpleModelFromTemplateDialog
 from opus_gui.models_manager.controllers.dialogs.allocation_from_template import AllocationModelFromTemplateDialog
-from opus_gui.models_manager.controllers.dialogs.choice_from_template import ChoiceModelFromTemplateDialog 
+from opus_gui.models_manager.controllers.dialogs.choice_from_template import ChoiceModelFromTemplateDialog
+from opus_gui.models_manager.controllers.dialogs.agent_location_choice_from_model import AgentLocationChoiceModelFromTemplateDialog
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
@@ -156,7 +158,7 @@ class XmlController_Models(XmlController):
         elif tag_name == 'allocation_model_template':
             dialog = AllocationModelFromTemplateDialog(*dialog_args)                                            
         elif tag_name == 'agent_location_choice_model_template':
-            pass
+            dialog = AgentLocationChoiceModelFromTemplateDialog(*dialog_args)
         
         if not dialog:
             raise NotImplementedError('dialog for template %s not yet implemented' %tag_name)
