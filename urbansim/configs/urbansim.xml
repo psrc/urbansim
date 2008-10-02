@@ -89,6 +89,8 @@
           </params>
 	</sql_data_to_opus_tool>
 	<opus_database_to_sql_tool type="tool_file" >
+		  <acts_on flags="hidden" type="acts_on" >database</acts_on>
+		  <exports_to flags="hidden" type="exports_to">SQL</exports_to>
           <name type="tool_name" >opus_database_to_sql</name>
           <params type="param_template" >
             <database_server_connection>
@@ -119,6 +121,8 @@
           </params>
 	</opus_database_to_sql_tool>
 	<opus_database_to_esri_tool type="tool_file" >
+	      <acts_on flags="hidden" type="acts_on" >database</acts_on>
+		  <exports_to flags="hidden" type="exports_to">ESRI</exports_to>
           <name type="tool_name" >opus_database_to_esri</name>
           <params type="param_template" >
             <esri_data_path>
@@ -144,6 +148,8 @@
           </params>
 	</opus_database_to_esri_tool>
 	<opus_dataset_to_sql_tool type="tool_file" >
+	      <acts_on flags="hidden" type="acts_on" >dataset</acts_on>
+		  <exports_to flags="hidden" type="exports_to">SQL</exports_to>
           <name type="tool_name" >opus_dataset_to_sql</name>
           <params type="param_template" >
             <sql_db_name>
@@ -169,6 +175,8 @@
           </params>
 	</opus_dataset_to_sql_tool>
 	<opus_dataset_to_esri_tool type="tool_file" >
+	      <acts_on flags="hidden" type="acts_on" >dataset</acts_on>
+		  <exports_to flags="hidden" type="exports_to">ESRI</exports_to>
           <name type="tool_name" >opus_dataset_to_esri</name>
           <params type="param_template" >
             <esri_data_path>
@@ -402,49 +410,6 @@
       </template_tools>
     </Tool_Library>
     <Tool_Sets type="tool_sets" setexpanded="True">
-
-      <opus_database_to_sql type="tool_set" setexpanded="False" >
-        <classification flags="hidden" type="classification" >database</classification>
-        <opus_database_to_sql_config type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_sql_tool</tool_hook>
-          <database_server_connection type="db_connection_hook"></database_server_connection>
-          <database_name type="string" >mytestdb</database_name>
-          <opus_data_directory type="dir_path" />
-          <opus_data_year type="string" >ALL</opus_data_year>
-          <opus_table_name type="string" >ALL</opus_table_name>
-        </opus_database_to_sql_config>
-      </opus_database_to_sql>
-      <opus_database_to_esri type="tool_set" setexpanded="False" >
-        <classification flags="hidden" type="classification" >database</classification>
-        <opus_database_to_esri_config type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_esri_tool</tool_hook>
-          <esri_data_path type="file_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
-          <opus_data_directory type="dir_path" />
-          <opus_data_year type="string" >ALL</opus_data_year>
-          <opus_table_name type="string" >ALL</opus_table_name>
-        </opus_database_to_esri_config>
-      </opus_database_to_esri>
-      <opus_dataset_to_sql type="tool_set" setexpanded="False" >
-        <classification flags="hidden" type="classification" >dataset</classification>
-        <opus_dataset_to_sql_config type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_sql_tool</tool_hook>
-          <sql_db_name type="string" >mytestdb</sql_db_name>
-          <opus_data_directory type="dir_path" />
-          <opus_data_year type="string" >ALL</opus_data_year>
-          <opus_table_name type="string" >ALL</opus_table_name>
-        </opus_dataset_to_sql_config>
-      </opus_dataset_to_sql>
-      <opus_dataset_to_esri type="tool_set" setexpanded="False" >
-        <classification flags="hidden" type="classification" >dataset</classification>
-        <opus_dataset_to_esri_config type="tool_config" >
-          <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_esri_tool</tool_hook>
-          <esri_data_path type="file_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
-          <opus_data_directory type="dir_path" />
-          <opus_data_year type="integer" ></opus_data_year>
-          <opus_table_name type="integer" ></opus_table_name>
-        </opus_dataset_to_esri_config>
-      </opus_dataset_to_esri>
-
       <sample_tool_set type="tool_set">
         <template_tool_config type="tool_config" >
           <tool_hook flags="hidden" type="tool_library_ref" >template_tool</tool_hook>

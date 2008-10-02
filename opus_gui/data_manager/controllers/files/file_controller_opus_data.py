@@ -35,6 +35,7 @@ class FileController_OpusData(FileController):
 
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
+        self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
 
         self.actRefresh = QAction(self.refreshIcon, "Refresh Tree",
                                   self.mainwindow)
@@ -210,7 +211,7 @@ class FileController_OpusData(FileController):
 
     def fillInAvailableTools(self):
         #print "Checking for tools"
-        choices = []
+        choices = {}
         classification = ""
         if self.model.isDir(self.currentIndex):
             regex = QRegExp("\\d{4}")
@@ -237,15 +238,15 @@ class FileController_OpusData(FileController):
             if parentparentisdir and regex.exactMatch(parentparentname):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
-        #print "Classification = " + classification
+        # print "Classification = " + classification
         dbxml = self.xml_model.index(0,0,QModelIndex()).parent()
         # First loop through all tool_sets
-        setsindexlist = self.xml_model.findElementIndexByType("tool_sets",dbxml,True)
+        setsindexlist = self.xml_model.findElementIndexByType("tool_library",dbxml,True)
         for setsindex in setsindexlist:
             if setsindex.isValid():
                 #print "Found valid tool_sets"
                 # Now loop through all tool_set and find the ones with a matching classification
-                tsindexlist = self.xml_model.findElementIndexByType("tool_set",setsindex,True)
+                tsindexlist = self.xml_model.findElementIndexByType("tool_file",setsindex,True)
                 for tsindex in tsindexlist:
                     if tsindex.isValid():
                         #print "Found valid tool_set"
@@ -260,25 +261,29 @@ class FileController_OpusData(FileController):
                                 if tschildren.item(x).isElement():
                                     tselement = tschildren.item(x).toElement()
                                     if tselement.hasAttribute(QString("type")) and \
-                                           (tselement.attribute(QString("type")) == QString("classification")):
+                                           (tselement.attribute(QString("type")) == QString("acts_on")):
                                         if tselement.hasChildNodes():
                                             classchildren = tselement.childNodes()
                                             for x in xrange(0,classchildren.count(),1):
                                                 if classchildren.item(x).isText():
                                                     #print "Found some text in the classification element"
                                                     classificationtext = classchildren.item(x).nodeValue()
+                                    if tselement.hasAttribute(QString("type")) and \
+                                           (tselement.attribute(QString("type")) == QString("exports_to")):
+                                        #print tselement.text()
+                                        export_to_text = tselement.text()
                         tagName = tsitem.domNode.toElement().tagName()
                         if classificationtext != "" and classificationtext == classification:
-                            choices.append(tagName)
+                            choices[tagName] = export_to_text
         self.classification = classification
         return choices
 
     def dataActionMenuFunction(self,action):
-        # print "%s - %s" % (filename,actiontext)
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
 
         if action != self.actRefresh:
-            actiontext = action.text()
+            #actiontext = action.text()
+            actiontext = self.dynactions[action.text()]
             filename = self.model.fileName(self.currentIndex)
             filepath = self.model.filePath(self.currentIndex)
             parentfilepath = self.model.filePath(self.currentIndex.parent())
@@ -288,46 +293,54 @@ class FileController_OpusData(FileController):
             toolindexlist = self.xml_model.findElementIndexByName(actiontext,toolxml,False)
             toolindex = toolindexlist[0]
             if toolindex.isValid():
-                # print toolindex.internalPointer().node().toElement().tagName()
+                #print toolindex.internalPointer().node().toElement().tagName()
+                flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+                window = ExecuteToolGui(self.mainwindow,self.xml_model,
+                                        toolindex.internalPointer().node().toElement(),
+                                        None,flags,optional_params = None)
+                tool_title = window.tool_title.replace('_', ' ')
+                tool_title2 = str(tool_title).title()
+                window.setWindowTitle(tool_title2)
+                window.show()
                 # We have the tool_set... time to loop over the children and get the configs
-                configindexlist = self.xml_model.findElementIndexByType("tool_config",toolindex,True)
-                # print len(configindexlist)
-                for configindex in configindexlist:
-                    if configindex.isValid():
-                        params = {}
-                        thisElement = QString("opus_data_directory")
-                        if self.classification == "database":
-                            thisElementText = self.model.filePath(self.currentIndex.parent())
-                        elif self.classification == "dataset":
-                            thisElementText = self.model.filePath(self.currentIndex.parent().parent())
-                        elif self.classification == "array":
-                            thisElementText = self.model.filePath(self.currentIndex.parent().parent().parent())
-                        params[thisElement] = thisElementText
-                        thisElement2 = QString("opus_data_year")
-                        if self.classification == "database":
-                            thisElementText2 = self.model.fileName(self.currentIndex)
-                        elif self.classification == "dataset":
-                            thisElementText2 = self.model.fileName(self.currentIndex.parent())
-                        elif self.classification == "array":
-                            thisElementText2 = self.model.fileName(self.currentIndex.parent().parent())
-                        params[thisElement2] = thisElementText2
-                        thisElement3 = QString("opus_table_name")
-                        if self.classification == "database":
-                            thisElementText3 = "ALL"
-                        elif self.classification == "dataset":
-                            thisElementText3 = self.model.fileName(self.currentIndex)
-                        elif self.classification == "array":
-                            thisElementText3 = self.model.fileName(self.currentIndex.parent())
-                        params[thisElement3] = thisElementText3
-
-                        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-                        window = ExecuteToolGui(self.mainwindow,self.xml_model,
-                                                configindex.internalPointer().node().toElement(),
-                                                None,flags,optional_params = params)
-                        tool_title = window.tool_title.replace('_', ' ')
-                        tool_title2 = str(tool_title).title()
-                        window.setWindowTitle(tool_title2)
-                        window.show()
+#                configindexlist = self.xml_model.findElementIndexByType("tool_file",toolindex,True)
+#                #print len(configindexlist)
+#                for configindex in configindexlist:
+#                    if configindex.isValid():
+#                        params = {}
+#                        thisElement = QString("opus_data_directory")
+#                        if self.classification == "database":
+#                            thisElementText = self.model.filePath(self.currentIndex.parent())
+#                        elif self.classification == "dataset":
+#                            thisElementText = self.model.filePath(self.currentIndex.parent().parent())
+#                        elif self.classification == "array":
+#                            thisElementText = self.model.filePath(self.currentIndex.parent().parent().parent())
+#                        params[thisElement] = thisElementText
+#                        thisElement2 = QString("opus_data_year")
+#                        if self.classification == "database":
+#                            thisElementText2 = self.model.fileName(self.currentIndex)
+#                        elif self.classification == "dataset":
+#                            thisElementText2 = self.model.fileName(self.currentIndex.parent())
+#                        elif self.classification == "array":
+#                            thisElementText2 = self.model.fileName(self.currentIndex.parent().parent())
+#                        params[thisElement2] = thisElementText2
+#                        thisElement3 = QString("opus_table_name")
+#                        if self.classification == "database":
+#                            thisElementText3 = "ALL"
+#                        elif self.classification == "dataset":
+#                            thisElementText3 = self.model.fileName(self.currentIndex)
+#                        elif self.classification == "array":
+#                            thisElementText3 = self.model.fileName(self.currentIndex.parent())
+#                        params[thisElement3] = thisElementText3
+#
+#                        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+#                        window = ExecuteToolGui(self.mainwindow,self.xml_model,
+#                                                configindex.internalPointer().node().toElement(),
+#                                                None,flags,optional_params = params)
+#                        tool_title = window.tool_title.replace('_', ' ')
+#                        tool_title2 = str(tool_title).title()
+#                        window.setWindowTitle(tool_title2)
+#                        window.show()
         return
 
 
@@ -343,17 +356,33 @@ class FileController_OpusData(FileController):
                 # Do stuff for directories
                 choices = self.fillInAvailableTools()
                 if self.classification == "dataset":
+                    self.export_menu = QMenu(QString('Export Opus dataset to'), self.mainwindow)
+                    self.export_menu.setIcon(self.tableGoIcon)
+                    if len(choices) > 0:
+                        self.dynactions = {}
+                        for i,j in choices.iteritems():
+                            dynaction = QAction(self.applicationIcon, j, self.mainwindow)
+                            self.export_menu.addAction(dynaction)
+                            self.dynactions[j] = i
+                        QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
+                                        self.dataActionMenuFunction)                            
+                    self.menu.addMenu(self.export_menu)
+                    self.menu.addSeparator()
                     # We need to provide the option to open the dataset
                     self.menu.addAction(self.actViewDataset)
-                if len(choices) > 0:
-                    self.dynactions = []
-                    for i,choice in enumerate(choices):
-                        # Add choices with custom text...
-                        dynaction = QAction(self.applicationIcon, choice, self.mainwindow)
-                        self.dynactions.append(dynaction)
-                        self.menu.addAction(dynaction)
-                    QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
-                                    self.dataActionMenuFunction)
+                if self.classification == "database":
+                    self.export_menu = QMenu(QString('Export Opus database to'), self.mainwindow)
+                    self.export_menu.setIcon(self.tableGoIcon)
+                    if len(choices) > 0:
+                        self.dynactions = {}
+                        for i,j in choices.iteritems():
+                            dynaction = QAction(self.applicationIcon, j, self.mainwindow)
+                            self.export_menu.addAction(dynaction)
+                            self.dynactions[j] = i
+                        QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
+                                        self.dataActionMenuFunction) 
+                    self.menu.addMenu(self.export_menu)
+                    self.menu.addSeparator()                  
         # Now tack on a refresh for all right clicks
         #print "Setting model refresh"
         self.menu.addAction(self.actRefresh)
