@@ -15,7 +15,6 @@
         <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
         <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
         <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
-        <package_order_exceptions type="dictionary" />
       </dataset_pool_configuration>
     </advanced>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
@@ -135,7 +134,6 @@
           <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list">['seattle_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
-          <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
         <low_memory_mode type="boolean">False</low_memory_mode>
@@ -274,7 +272,6 @@
           <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
-          <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
         <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
         <flush_variables type="boolean">False</flush_variables>

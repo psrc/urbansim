@@ -16,7 +16,7 @@
 class DatasetPoolConfiguration(object):
     """Provides configuration information for a DatasetPool object."""
 
-    def __init__(self, package_order, package_order_exceptions):
+    def __init__(self, package_order, package_order_exceptions={}):
         self.package_order = package_order
         self.package_order_exceptions = package_order_exceptions
         
@@ -33,18 +33,10 @@ class Tests(opus_unittest.OpusTestCase):
     
     def test_stored_valudes(self):
         expected_package_order = ['a', 'c', 'b']
-        expected_package_order_exceptions = {'dataset_1':'d', 
-                               'dataset_2':'b'}
-        dataset_pool_config = DatasetPoolConfiguration(
-            package_order=expected_package_order,
-            package_order_exceptions=expected_package_order_exceptions
-            )
-            
-        self.assertEqual(dataset_pool_config.package_order, 
-            expected_package_order)
-            
-        self.assertEqual(dataset_pool_config.package_order_exceptions,
-            expected_package_order_exceptions)
+        expected_package_order_exceptions = {}
+        dataset_pool_config = DatasetPoolConfiguration(package_order=expected_package_order)
+        self.assertEqual(dataset_pool_config.package_order, expected_package_order)
+        self.assertEqual(dataset_pool_config.package_order_exceptions, expected_package_order_exceptions)
         
 
 if __name__=='__main__':
