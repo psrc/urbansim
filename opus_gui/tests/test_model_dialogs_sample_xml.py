@@ -1,3 +1,4 @@
+#IGNORE_THIS_FILE
 #TODO: replace with loading of actual xml configs
 model_templates_xml  = \
 '''

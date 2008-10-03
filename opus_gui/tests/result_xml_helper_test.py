@@ -1,5 +1,5 @@
-# TESTING
-  
+#IGNORE_THIS_FILE
+
 from opus_core.tests import opus_unittest
 from PyQt4.QtCore import QString
 from PyQt4.QtGui import QApplication
