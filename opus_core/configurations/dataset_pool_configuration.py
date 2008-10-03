@@ -18,6 +18,8 @@ class DatasetPoolConfiguration(object):
 
     def __init__(self, package_order, package_order_exceptions={}):
         self.package_order = package_order
+        if len(package_order_exceptions)>0:
+            raise ValueError, "parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary"
         self.package_order_exceptions = package_order_exceptions
         
 
@@ -37,6 +39,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool_config = DatasetPoolConfiguration(package_order=expected_package_order)
         self.assertEqual(dataset_pool_config.package_order, expected_package_order)
         self.assertEqual(dataset_pool_config.package_order_exceptions, expected_package_order_exceptions)
+        # try passing in a nonempty package_order_exceptions and make sure it raises an error
+        self.assertRaises(ValueError, DatasetPoolConfiguration, expected_package_order, {'pkg': 'gridcell'})
         
 
 if __name__=='__main__':
