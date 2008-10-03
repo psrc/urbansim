@@ -21,8 +21,8 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
     ModelFromTemplateDialogBase
 
 class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, opusXMLAction_Model, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
+    def __init__(self, main_window, model_template_node, template_index, template_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
                                              template_index, template_model)
         
         # setup additional ui that's specfic for this model template
@@ -58,45 +58,30 @@ class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.add_widget_pair(QLabel(l), w)
 
     def setup_node(self):
-        model_name = self.get_model_name()
-
-        # update the tag name
-        nodeElement = self.model_template_node.toElement()
-        nodeElement.setTagName(model_name)
-        
-        # helper function to shorten name and couple with paths for debugging prints
-        element_by_path = lambda x: (x, self.xml_helper.get_sub_element_by_path(nodeElement, x))
+        model_name = self.get_model_xml_name()
+        self.set_model_name(model_name)
         
         # used multiple times; define once
         agent_set = self.leAgentSet.text()
         filter = self.leFilter.text()
         agents_for_est_tbl = self.leAgentsForEstimationTbl.text()
         location_id = self.leLocationIdString.text()
-        
-        element_text_pairs = (
-            (element_by_path('init/arguments/location_set'), self.leLocationSet.text()),
-            (element_by_path('init/arguments/filter'), filter),
-            (element_by_path('init/arguments/submodel_string'), self.leSubModelString.text()),
-            (element_by_path('init/arguments/location_id_string'), location_id),
-            (element_by_path('init/arguments/short_name'), self.leShortName.text()),
 
-            (element_by_path('run/arguments/agent_set'), agent_set),
+        self.set_xml_element_to_value('init/arguments/location_set', self.leLocationSet.text()),
+        self.set_xml_element_to_value('init/arguments/filter', filter)
+        self.set_xml_element_to_value('init/arguments/submodel_string', self.leSubModelString.text()),
+        self.set_xml_element_to_value('init/arguments/location_id_string', location_id)
+        self.set_xml_element_to_value('init/arguments/short_name', self.leShortName.text()),
 
-            (element_by_path('prepare_for_run/arguments/specification_table'), model_name + '_specification'), 
-            (element_by_path('prepare_for_run/arguments/coefficients_table'), model_name + '_coefficients_table'),
+        self.set_xml_element_to_value('run/arguments/agent_set', agent_set)
 
-            (element_by_path('estimate/arguments/agent_set'), agent_set),
+        self.set_xml_element_to_value('prepare_for_run/arguments/specification_table', model_name + '_specification') 
+        self.set_xml_element_to_value('prepare_for_run/arguments/coefficients_table', model_name + '_coefficients_table')
 
-            (element_by_path('prepare_for_estimate/arguments/specification_table'), model_name + '_specification'),
-            (element_by_path('prepare_for_estimate/arguments/agent_set'), agent_set),
-            (element_by_path('prepare_for_estimate/arguments/agents_for_estimation_table'), agents_for_est_tbl),
-            (element_by_path('prepare_for_estimate/arguments/filter'), filter),
-            (element_by_path('prepare_for_estimate/arguments/location_id_variable'), location_id)
-        )
-        
-        # setup the node
-        for (element_path, element_o), text in element_text_pairs:
-            if element_o and isinstance(element_o, QDomElement):
-                self.xml_helper.set_text_child_value(element_o, text)
-            else:
-                print 'Invalid element (%s) provided in setup_node(). Text=:"%s"' %(element_path, text)
+        self.set_xml_element_to_value('estimate/arguments/agent_set', agent_set)
+
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/specification_table', model_name + '_specification')
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/agent_set', agent_set)
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/agents_for_estimation_table', agents_for_est_tbl)
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/filter', filter)
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/location_id_variable', location_id)

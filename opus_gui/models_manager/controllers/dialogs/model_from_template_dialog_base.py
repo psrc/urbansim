@@ -13,7 +13,7 @@
 
 from PyQt4.QtCore import QString, SIGNAL, QModelIndex, QSize, Qt
 from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
-from PyQt4.QtXml import QDomText
+from PyQt4.QtXml import QDomText, QDomElement
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -39,7 +39,10 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         
         self.setupUi(self)
 
-        self.xml_helper = ResultsManagerXMLHelper(self.mainwindow.toolboxBase)
+        # handy reference to the dom doc for the helper functions
+        self.domDocument = mainwindow.toolboxBase.doc
+        
+        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxBase)
         
         self.model_template_node = model_template_node
         self.template_index = template_index
@@ -65,6 +68,9 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         newtitle = '%s %s'%(title, tag_name)
         self.setWindowTitle(QString(newtitle))
         
+        # the pairings of xml nodes (by path) and their values
+        self._xmlpath_value_pairs = []
+        
     def add_widget_pair(self, left_widget, right_widget):
         '''Add a pair of widgets, typically a label and another widget, to the dialog'''
         # make the leftmost widget (usually a label) constraint to a certain size
@@ -79,11 +85,23 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         layout.addWidget(left_widget)
         layout.addWidget(right_widget)
         self.groupBox.layout().addLayout(layout)
-        
-    def get_model_name(self):
+
+    def set_xml_element_to_value(self, xmlpath, value):
+        xml_element = self.xml_helper.get_sub_element_by_path(self.model_template_node, xmlpath)
+        if not xml_element or not isinstance(xml_element, QDomElement):
+            raise ValueError('No such element (%s) (root: %s)' \
+                             %(xmlpath, self.model_template_node.toElement().tagName()))
+        self.xml_helper.set_text_child_value(xml_element, value)
+
+    def get_model_xml_name(self):
         '''return a valid model name based on the string the user entered'''
         #TODO: the name should actually be valid (ie, alphanumeric)
         return self.leModelName.text().replace(QString(' '), QString('_'))
+    
+    def set_model_name(self, value = None):
+        '''set the name of the root node to a valid xml value. Default to self.get_model_xml_name()'''
+        xmlname = value if value else self.get_model_xml_name()
+        self.model_template_node.toElement().setTagName(xmlname)
     
     def _insert_model_and_create_estimation(self):
         '''insert the node back into the model system and create an entry for the new model in the estimations'''

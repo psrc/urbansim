@@ -21,8 +21,8 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
     ModelFromTemplateDialogBase
 
 class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, opusXMLAction_Model, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
+    def __init__(self, main_window, model_template_node, template_index, template_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
                                              template_index, template_model)
         
         # setup additional ui that's specfic for this model template
@@ -61,35 +61,22 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.add_widget_pair(QLabel(l), w)
 
     def setup_node(self):
-        model_name = self.get_model_name()
-
-        # update the tag name
-        nodeElement = self.model_template_node.toElement()
-        nodeElement.setTagName(model_name)
         
-        element_by_path = lambda x: self.xml_helper.get_sub_element_by_path(nodeElement, x)
+        model_name = self.get_model_xml_name()
+        self.set_model_name()
         
         # used multiple times; define once
         agent_set = self.leAgentSet.text()
         agent_set_filter = self.leAgentFilter.text()
-        
-        element_text_pairs = (
-            (element_by_path('init/arguments/choice_set'), self.leChoiceSet.text()),
-            (element_by_path('init/arguments/submodel_string'), self.leSubModelString.text()),
-            (element_by_path('init/arguments/choice_attribute_name'), self.leChoiceAttributeName.text()),
-            (element_by_path('init/arguments/estimate_config/estimation_size_agents'), self.leEstimationSizeAgents.text()),
-            (element_by_path('run/arguments/agent_set'), agent_set),
-            (element_by_path('prepare_for_run/arguments/agent_set'), agent_set),
-            (element_by_path('prepare_for_run/arguments/specification_table'), model_name + '_specification'), 
-            (element_by_path('prepare_for_run/arguments/coefficients_table'), model_name + '_coefficients_table'),
-            (element_by_path('estimate/arguments/agent_set'), agent_set),
-            (element_by_path('prepare_for_estimate/arguments/agent_set'), agent_set),
-            (element_by_path('prepare_for_estimate/arguments/agent_filter'), agent_set_filter)
-        )
-        
-        # setup the node
-        for element, text in element_text_pairs:
-            if element and isinstance(element, QDomElement):
-                self.xml_helper.set_text_child_value(element, text)
-            else:
-                print 'Invalid element provided in setup_node(). Text=:"%s"' %text
+
+        self.set_xml_element_to_value('init/arguments/choice_set', self.leChoiceSet.text())
+        self.set_xml_element_to_value('init/arguments/submodel_string', self.leSubModelString.text())
+        self.set_xml_element_to_value('init/arguments/choice_attribute_name', self.leChoiceAttributeName.text())
+        self.set_xml_element_to_value('init/arguments/estimate_config/estimation_size_agents', self.leEstimationSizeAgents.text())
+        self.set_xml_element_to_value('run/arguments/agent_set', agent_set)
+        self.set_xml_element_to_value('prepare_for_run/arguments/agent_set', agent_set)
+        self.set_xml_element_to_value('prepare_for_run/arguments/specification_table', model_name + '_specification')
+        self.set_xml_element_to_value('prepare_for_run/arguments/coefficients_table', model_name + '_coefficients_table')
+        self.set_xml_element_to_value('estimate/arguments/agent_set', agent_set)
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/agent_set', agent_set)
+        self.set_xml_element_to_value('prepare_for_estimate/arguments/agent_filter', agent_set_filter)

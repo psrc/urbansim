@@ -23,8 +23,8 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
 #TODO: Rodo this one to have the same code formatting as the newer dialogs
 
 class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, opusXMLAction_Model, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
+    def __init__(self, main_window, model_template_node, template_index, template_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
                                              template_index, template_model)
 
         # setup additional ui that's specfic for this model template
@@ -79,11 +79,8 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
     def setup_node(self):
         
-        model_name = self.get_model_name()
-        
-        nodeElement = self.model_template_node.toElement()
-        if not nodeElement.isNull():
-            nodeElement.setTagName(model_name)
+        model_name = self.get_model_xml_name()
+        self.set_model_name(model_name)
 
         run_node = None
         prepare_for_run_node = None

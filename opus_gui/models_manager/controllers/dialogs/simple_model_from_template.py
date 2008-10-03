@@ -23,8 +23,8 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
     ModelFromTemplateDialogBase
 
 class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, opusXMLAction_Model, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, opusXMLAction_Model, model_template_node, \
+    def __init__(self, main_window, model_template_node, template_index, template_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
                                              template_index, template_model)
         
         # simple models do not have estimation components
@@ -52,17 +52,8 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.cboDataset.addItem(QString(dataset))
 
     def setup_node(self):
-        model_name = self.get_model_name()
-
-        # update the tag name
-        nodeElement = self.model_template_node.toElement()
-        nodeElement.setTagName(model_name)
+        self.set_model_name()
+        self.set_xml_element_to_value('run/arguments/dataset', self.cboDataset.currentText())
+        self.set_xml_element_to_value('run/arguments/expression', self.leExpression.text())
+        self.set_xml_element_to_value('run/arguments/outcome_attribute', self.leOutcome.text())
         
-        dataset_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/dataset')
-        expression_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/expression')
-        outcome_attribute_e = self.xml_helper.get_sub_element_by_path(nodeElement, 'run/arguments/outcome_attribute')
-        
-        #TODO: warning if any of them is null?
-        self.xml_helper.set_text_child_value(dataset_e, self.cboDataset.currentText())
-        self.xml_helper.set_text_child_value(expression_e, self.leExpression.text())
-        self.xml_helper.set_text_child_value(outcome_attribute_e, self.leOutcome.text())
