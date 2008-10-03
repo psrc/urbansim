@@ -12,7 +12,7 @@
 # 
 
 from PyQt4.QtCore import QString, QModelIndex, SIGNAL
-from PyQt4.QtXml import QDomNode, QDomElement
+from PyQt4.QtXml import QDomNode, QDomElement, QDomDocument
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager
@@ -90,7 +90,7 @@ class ResultsManagerXMLHelper:
         return self._get_node_group(node_value = 'indicator_batch', 
                                     node_attribute = 'type', 
                                     child_attributes = attributes)  
-                
+
     def get_available_indicator_names(self, attributes = [],child_attributes = [], return_all = False):
         variables = self._get_node_group(node_value = 'variable_definition', 
                                     node_attribute = 'type', 
@@ -134,7 +134,39 @@ class ResultsManagerXMLHelper:
                 run_manager = RunManager(server_config)
                 run['years'] = run_manager.get_years_run(str(run['cache_directory']))
         
-        return run_info        
+        return run_info     
+    
+    def get_sub_element_by_path(self, root, path):
+        '''grab a subelement by path from the given root (root can be node or element)'''
+        root_element = None
+        if isinstance(root, QDomElement): 
+            root_element = root
+        elif isinstance(root, QDomNode):
+            root_element = root.toElement()
+        elif isinstance(root, QString):
+            # resolve root node by name
+            elements = self.toolboxBase.doc.elementsByTagName(root)
+            if elements and elements.lenght == 1:
+                root_element = elements[0]
+        
+        # check that we got a valid root_element
+        if root_element is None or (not root_element.isElement()):
+            print 'Could not resolve provided root element (%s) to a node in the dom tree' %root
+            return QDomNode() # empty node
+        
+        # grab the subtree element and return it
+        resolved_path = path.split('/')
+        current_element = root_element
+        
+        while resolved_path:
+            sub_path = resolved_path.pop(0)
+            if sub_path:
+                current_element = current_element.firstChildElement(sub_path)
+                if current_element.isNull():
+                    # could not resolve path all the way, return empty node
+                    return QDomNode()
+            
+        return current_element   
     
     def _get_node_group(self,
                         node_value, 
@@ -225,39 +257,6 @@ class ResultsManagerXMLHelper:
                                  child_names = child_attributes,
                                  all = all)
         return matching_element, child_attributes
-    
-    def get_sub_element_by_path(self, root, path):
-        '''grab a subelement by path from the given root (node or element)'''
-        root_element = None
-        if isinstance(root, QDomElement): 
-            root_element = root
-        elif isinstance(root, QDomNode):
-            root_element = root.toElement()
-        elif isinstance(root, QString):
-            # resolve root node by name
-            elements = self.toolboxBase.doc.elementsByTagName(root)
-            if elements and elements.lenght == 1:
-                root_element = elements[0]
-        
-        # check that we got a valid root_element
-        if not root_element or not root_element.isElement():
-            print 'Could not resolve provided root element (%s) to a node in the dom tree' %root
-            return QDomNode() # empty node
-        
-        # grab the subtree element and return it
-        resolved_path = path.split('/')
-        current_element = root_element
-        
-        while resolved_path:
-            sub_path = resolved_path.pop(0)
-            if sub_path:
-                current_element = current_element.firstChildElement(sub_path)
-                if current_element.isNull():
-                    # could not resolve path all the way, return empty node
-                    return QDomNode()
-            
-        return current_element
-    
         
     
     #####################################################
@@ -479,23 +478,6 @@ class ResultsManagerXMLHelper:
             model.makeEditable(base_node)
             # Flag the model as dirty to prompt for save
             model.markAsDirty()
-            
-    def set_text_child_value(self, element, text):
-        '''Set the value of an elements text child. Create/remove a text child if needed.'''
-        #TODO: some checking might be good that the xml tree is not a complete
-        # mess (e.g has an entire subtree under the arguments/dataset)
-        #TODO: check if setting to a zero string is better/different from removing child element
-        if(element.firstChild().isText()):
-            # element has text child set it or remove it
-            if text:
-                element.firstChild().setNodeValue(QString(text))
-            else:
-                element.removeChild(element.firstChild())
-        else:
-            # no text child, create one if needed
-            if text:
-                text_node = self.toolboxBase.doc.createTextNode(text)
-                element.insertBefore(text_node, element.firstChild())
         
     def _convert_to_node_dictionary(self, child_dictionary):
         type_map = {
@@ -592,3 +574,17 @@ class ResultsManagerXMLHelper:
                                              temporary = False)
             existing_cache_directories[cache_directory] = 1
             
+
+    def set_text_child_value(self, element, text):
+        '''Set the value of an elements text child. Create text children if appropriate.'''
+        # check if the node already has a text child and just set it if it has
+        if element.firstChild().isText():
+                element.firstChild().setNodeValue(QString(text))
+        else:
+            # add a text child if the node is a leaf, otherwise raise a error
+            if not element.firstChild().isNull():
+                raise ValueError('Tried to set a text child of a node that already has children')
+    
+            text_node = self.toolboxBase.doc.createTextNode(text)
+            element.insertBefore(text_node, QDomNode())
+        
