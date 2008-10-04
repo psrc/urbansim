@@ -92,7 +92,6 @@ class Baseline(GeneralConfiguration):
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['pag_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             'models_configuration':models_configuration,
 

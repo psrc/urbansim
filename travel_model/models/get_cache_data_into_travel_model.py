@@ -35,7 +35,6 @@ class GetCacheDataIntoTravelModel(AbstractTravelModel):
         attribute_cache = AttributeCache()
         dataset_pool = SessionConfiguration(new_instance=True,
                                             package_order=config['dataset_pool_configuration'].package_order,
-                                            package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions, 
                                             in_storage=attribute_cache).get_dataset_pool()
 
         #cache_storage = AttributeCache().get_flt_storage_for_year(year_for_base_year_cache)

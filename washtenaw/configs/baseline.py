@@ -162,7 +162,6 @@ class Baseline(GeneralConfiguration):
                 },
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             'base_year':2005,
             'years':(2006, 2010),

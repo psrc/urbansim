@@ -53,7 +53,6 @@ class TestRunEstimation(opus_unittest.TestCase):
                 'cache_directory' : cache_dir,
                 'dataset_pool_configuration': DatasetPoolConfiguration(
                     package_order=['washtenaw', 'urbansim', 'opus_core'],
-                    package_order_exceptions={},
                     ),
                 'datasets_to_cache_after_each_model':[],
                 'low_memory_mode':False,

@@ -112,7 +112,6 @@ my_run_configuration = {
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['randstad', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
         ),
     "base_year":1995,
     'years':(1996, 2005), 

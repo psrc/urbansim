@@ -47,7 +47,6 @@ class ExpandPersons(object):
         
         SessionConfiguration(new_instance=True,
                              package_order=config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=attribute_cache)
         
         if not os.path.exists(os.path.join(config['cache_directory'], str(config['base_year']))):
@@ -101,7 +100,6 @@ if __name__ == '__main__':
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['urbansim_parcel','urbansim', 'opus_core'],
-            package_order_exceptions={},
             ),
         'low_memory_mode': False,
         'cache_directory': '/urbansim_cache/psrc_parcel/persons',

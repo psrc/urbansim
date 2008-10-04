@@ -38,7 +38,6 @@ class ConfigDataPreparation(PsrcParcelConfiguration):
             'cache_directory': '/Users/hana/urbansim_cache/psrc/data_preparation/cache',
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             'base_year':2000,
             'years':(2001, 2005),

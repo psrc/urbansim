@@ -28,7 +28,6 @@ class BaselineEstimation(Baseline):
                                                              )
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(
                                                                       package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                                                                      package_order_exceptions={},
                                                                       )
         self['datasets_to_cache_after_each_model'] = []
         self["datasets_to_preload"] = {

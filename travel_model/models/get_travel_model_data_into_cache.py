@@ -46,7 +46,6 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
         attribute_cache = AttributeCache()        
         dataset_pool = SessionConfiguration(new_instance=True,
                                             package_order=config['dataset_pool_configuration'].package_order,
-                                            package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions, 
                                             in_storage=attribute_cache).get_dataset_pool()
         zone_set = dataset_pool.get_dataset('zone')
 
