@@ -143,7 +143,6 @@ class IndicatorDataManager:
                         
                         pool = DatasetPoolConfiguration(
                             package_order = order,
-                            package_order_exceptions = {},
                         )
                         source_data_params['dataset_pool_configuration'] = pool
                     else:

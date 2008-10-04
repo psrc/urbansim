@@ -89,9 +89,8 @@ class SourceData(object):
         
         return metadata_lines
     
-    def get_package_order_and_exceptions(self):
-        return (self.dataset_pool_configuration.package_order, 
-                self.dataset_pool_configuration.package_order_exceptions)
+    def get_package_order(self):
+        return self.dataset_pool_configuration.package_order
         
     def _check_integrity(self):
         cross_scenario_comparison = self.comparison_cache_directory != ''
@@ -128,7 +127,6 @@ class TestSourceData(TestWithAttributeData):
             name = 'test',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         )
 
@@ -157,7 +155,6 @@ class TestSourceData(TestWithAttributeData):
                 name = 'test2',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
-                    package_order_exceptions={},
                 )
             )
         except IntegrityError:
@@ -172,7 +169,6 @@ class TestSourceData(TestWithAttributeData):
                 name = 'test3',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
-                    package_order_exceptions={},
                 )
             )
         except IntegrityError:
@@ -189,7 +185,6 @@ class TestSourceData(TestWithAttributeData):
                 name = 'test4',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
-                    package_order_exceptions={},
                 )
             )
         except IntegrityError:
@@ -207,7 +202,6 @@ class TestSourceData(TestWithAttributeData):
                 name = 'test5',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
-                    package_order_exceptions={},
                 )
             )
         except IntegrityError:

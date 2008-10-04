@@ -70,7 +70,6 @@ result_template = SourceData(
    years = [2000, 2010],
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['urbansim','opus_core'],
-         package_order_exceptions={},
          ),
    name = 'run_1090'
 )

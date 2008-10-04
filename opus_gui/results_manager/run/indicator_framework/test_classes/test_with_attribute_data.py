@@ -59,7 +59,6 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
 
         self.dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         
     def _set_cache_directory(self, cache_directory):
@@ -68,7 +67,6 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
             SessionConfiguration(
                 new_instance = True,
                 package_order = self.dataset_pool_configuration.package_order,
-                package_order_exceptions = self.dataset_pool_configuration.package_order_exceptions,
                 in_storage = AttributeCache()) 
             
     def _get_dataset(self, dataset_name, cache_directory = None, year = None):

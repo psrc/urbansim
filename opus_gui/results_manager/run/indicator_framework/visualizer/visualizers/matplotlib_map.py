@@ -125,8 +125,7 @@ class MatplotlibMap(Visualization):
         source_data = example_indicator.source_data        
         dataset_to_attribute_map = {}
         
-        (package_order, package_order_exceptions) = \
-            source_data.get_package_order_and_exceptions()
+        package_order = source_data.get_package_order()
             
             
         self._create_input_stores(years = source_data.years)
@@ -149,7 +148,6 @@ class MatplotlibMap(Visualization):
                 SessionConfiguration(
                     new_instance = True,
                     package_order = package_order,
-                    package_order_exceptions = package_order_exceptions,
                     in_storage = AttributeCache()) 
                 SimulationState().set_cache_directory(source_data.cache_directory)
                 SimulationState().set_current_time(year)

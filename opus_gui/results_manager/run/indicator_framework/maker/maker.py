@@ -74,8 +74,7 @@ class Maker(object):
               'dataset_name':None
         }
 
-        (self.package_order, self.package_order_exceptions) = \
-            self.source_data.get_package_order_and_exceptions()
+        self.package_order = self.source_data.get_package_order()
                     
         SimulationState().set_cache_directory(cache_directory) 
         
@@ -105,7 +104,6 @@ class Maker(object):
             SessionConfiguration(
                 new_instance = True,
                 package_order = self.package_order,
-                package_order_exceptions = self.package_order_exceptions,
                 in_storage = AttributeCache()) 
                     
             for name, indicator in indicators.items():

@@ -265,7 +265,6 @@ class IndicatorResultsTests(TestWithAttributeData):
             run_description = '(opus_core)',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             ))
             
     def test__year_aggregation(self):

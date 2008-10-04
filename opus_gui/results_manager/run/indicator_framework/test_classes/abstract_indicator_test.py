@@ -29,7 +29,6 @@ class AbstractIndicatorTest(TestWithAttributeData):
             name = 'test_cross_scenario_source_data',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         )
         self.source_data = SourceData(
@@ -39,6 +38,5 @@ class AbstractIndicatorTest(TestWithAttributeData):
             name= 'test_source_data',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         )
