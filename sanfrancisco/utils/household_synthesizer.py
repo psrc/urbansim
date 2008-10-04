@@ -35,7 +35,6 @@ class HouseholdSynthesizer(object):
 
         SessionConfiguration(new_instance=True,
                              package_order=config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         #if not os.path.exists(config['cache_directory']):  ## if cache exists, it will automatically skip
         cacher = CreateBaseyearCache()

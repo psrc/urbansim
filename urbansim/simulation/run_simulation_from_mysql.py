@@ -40,7 +40,6 @@ class RunSimulationFromMysql:
 
         SessionConfiguration(new_instance=True,
                              package_order=self.config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=self.config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         
         ForkProcess().fork_new_process(self.config['creating_baseyear_cache_configuration'].cache_scenario_database, self.config)

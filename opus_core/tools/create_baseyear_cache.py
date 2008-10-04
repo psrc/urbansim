@@ -63,8 +63,7 @@ if __name__ == "__main__":
             config['cache_directory'] = options.cache_directory
         
         SessionConfiguration(new_instance=True,
-                             package_order=config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,                              
+                             package_order=config['dataset_pool_configuration'].package_order,                            
                              in_storage=AttributeCache())
         cacher = CreateBaseyearCache()
         cache_dir = cacher.run(config)

@@ -111,8 +111,7 @@ if __name__ == "__main__":
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
     SessionConfiguration(new_instance=True,
-                         package_order=resources['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
+                         package_order=resources['dataset_pool_configuration'].package_order,                    
                          in_storage=AttributeCache())
 
 #    logger.enable_memory_logging()

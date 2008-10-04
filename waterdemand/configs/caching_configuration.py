@@ -34,6 +34,5 @@ class CachingConfiguration(Baseline):
         self['cache_directory'] = 'c:/urbansim_cache/water_test'
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(
             package_order=['waterdemand', 'psrc', 'urbansim', 'opus_core'],
-            package_order_exceptions={},
             )
         self['scenario_database_configuration'].database_name = 'bellevue_consump_agg_month_year'

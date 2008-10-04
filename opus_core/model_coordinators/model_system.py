@@ -522,7 +522,6 @@ class RunModelSystem(object):
     
         SessionConfiguration(new_instance=True,
                              package_order=resources['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
     
     #    logger.enable_memory_logging()

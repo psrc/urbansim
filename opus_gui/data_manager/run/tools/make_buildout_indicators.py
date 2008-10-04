@@ -58,7 +58,6 @@ def opusRun(progressCB,logCB,params):
         years = [int(year)],
         dataset_pool_configuration = DatasetPoolConfiguration(
             package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim','opus_core'],
-            package_order_exceptions={},
             ),       
     )
     

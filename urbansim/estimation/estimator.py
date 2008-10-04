@@ -42,7 +42,6 @@ class Estimator(object):
 
         SessionConfiguration(new_instance=True,
                              package_order=config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         self.config = Resources(config)
         self.save_estimation_results = save_estimation_results

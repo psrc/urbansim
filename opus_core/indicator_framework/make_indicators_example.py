@@ -177,7 +177,6 @@ source_data = SourceData(
    years = [1980, 1981],
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['eugene','urbansim','opus_core'],
-         package_order_exceptions={},
          ),                  
 )
 

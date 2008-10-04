@@ -40,7 +40,6 @@ class IndicatorFrameworkInterface:
 
         dataset_pool_configuration = DatasetPoolConfiguration(
              package_order= package_order,
-             package_order_exceptions={},
              )
 
         return dataset_pool_configuration

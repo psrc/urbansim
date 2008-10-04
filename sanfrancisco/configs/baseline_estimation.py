@@ -35,14 +35,12 @@ class BaselineEstimation(Baseline):
 
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
         ),                          
     'estimation_database_configuration': EstimationDatabaseConfiguration(
         database_name = "sanfrancisco_baseyear_change_20080125",
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
         ),     
     'datasets_to_cache_after_each_model':[],
     'base_year': 2001,

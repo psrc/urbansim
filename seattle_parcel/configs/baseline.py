@@ -90,7 +90,6 @@ class Baseline(UrbansimParcelConfiguration):
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
 
             'base_year':2000,

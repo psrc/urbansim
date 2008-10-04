@@ -86,7 +86,6 @@ class Baseline(GeneralConfiguration):
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['sanfrancisco', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),                          
             'models_configuration':models_configuration,
             

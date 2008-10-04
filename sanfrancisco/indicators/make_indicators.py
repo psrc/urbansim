@@ -35,7 +35,6 @@ source_data = SourceData(
     years = [2001],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
-        package_order_exceptions={},
         ),       
 )
 single_year_requests = [
@@ -109,7 +108,6 @@ source_data = SourceData(
     years = [2001,2002],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
-        package_order_exceptions={},
         ),       
 )
 

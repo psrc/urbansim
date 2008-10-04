@@ -59,7 +59,6 @@ class SynthesizerConfiguration(Configuration):
             ),            
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['sanfrancisco', 'urbansim', 'opus_core'],
-            package_order_exceptions={},
             ),
         'base_year': 2001,
         }

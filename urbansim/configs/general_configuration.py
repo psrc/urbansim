@@ -270,7 +270,6 @@ class GeneralConfiguration(Configuration):
                 },
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             'services_database_configuration':ServicesDatabaseConfiguration(),
             }

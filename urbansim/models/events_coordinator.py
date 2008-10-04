@@ -221,7 +221,6 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         self.model_configuration = run_configuration['models_configuration']
         SessionConfiguration(new_instance=True,
                              package_order=run_configuration['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=run_configuration['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=self.storage)
         
     def tearDown(self):

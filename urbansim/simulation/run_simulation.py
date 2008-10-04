@@ -40,7 +40,6 @@ class RunSimulation(object):
 
         SessionConfiguration(new_instance=True,
                              package_order=self.config['dataset_pool_configuration'].package_order,
-                             package_order_exceptions=self.config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         
         if config['creating_baseyear_cache_configuration'].cache_from_database:

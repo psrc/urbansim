@@ -27,7 +27,6 @@ class AbstractIndicatorTest(TestWithAttributeData):
             years = [1980],
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         )
         self.source_data = SourceData(
@@ -35,6 +34,5 @@ class AbstractIndicatorTest(TestWithAttributeData):
             years = [1980],
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
-                package_order_exceptions={},
             )
         )

@@ -135,6 +135,5 @@ if __name__ == "__main__":
 #    logger.enable_memory_logging()
     SessionConfiguration(new_instance=True,
                          package_order=resources['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,
                          in_storage=AttributeCache())
     CacheScenarioDatabase().run(resources)
