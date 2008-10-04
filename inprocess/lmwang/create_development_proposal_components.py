@@ -69,7 +69,6 @@ if __name__ == "__main__":
         dataset_pool.remove_all_datasets()
     #    dataset_pool = DatasetPool(
     #        package_order=['psrc','urbansim','opus_core'],
-    #        package_order_exceptions={},
     #        storage=AttributeCache())
     
         proposal_set = dataset_pool.get_dataset("development_project_proposal")

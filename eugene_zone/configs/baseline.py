@@ -106,7 +106,6 @@ class Baseline(UrbansimZoneConfiguration):
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['eugene_zone', 'eugene', 'urbansim_zone', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             }
         self.merge(config_changes)

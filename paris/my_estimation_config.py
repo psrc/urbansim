@@ -27,7 +27,6 @@ my_configuration = {
 
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['paris', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
         ),                          
     'estimation_database_configuration': EstimationDatabaseConfiguration(
         database_name = "",

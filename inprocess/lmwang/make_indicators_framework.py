@@ -33,8 +33,7 @@ source_data = SourceData(
    #used instead of years for that particular indicator
    years = [2000, 2010, 2020, 2030],
    dataset_pool_configuration = DatasetPoolConfiguration(
-                package_order=['psrc', 'urbansim', 'opus_core'],
-                package_order_exceptions={})
+                package_order=['psrc', 'urbansim', 'opus_core'])
 )
 #
 # When the attribute name includes the year as "DDDD", it will be replaced

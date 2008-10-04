@@ -238,7 +238,6 @@ if __name__ == "__main__":
         SessionConfiguration().get_dataset_pool().remove_all_datasets()
         dataset_pool = DatasetPool(
             package_order=['psrc','urbansim','opus_core'],
-            package_order_exceptions={},
             storage=AttributeCache())
 
         choice_set = dataset_pool.get_dataset(choice_set_name)

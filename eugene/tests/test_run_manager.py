@@ -72,7 +72,6 @@ def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     
     SessionConfiguration(new_instance=True,
                          package_order=run_configuration['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=run_configuration['dataset_pool_configuration'].package_order_exceptions,
                          in_storage=AttributeCache())
     insert_auto_generated_cache_directory_if_needed(run_configuration)
     caller.resources = run_configuration

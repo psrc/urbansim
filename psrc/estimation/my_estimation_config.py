@@ -25,7 +25,6 @@ my_configuration = {
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['psrc', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
         ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,

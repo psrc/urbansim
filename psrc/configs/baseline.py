@@ -114,7 +114,6 @@ class Baseline(GeneralConfiguration):
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc', 'urbansim', 'opus_core'],
-                package_order_exceptions={},
                 ),
             'base_year':2000,
             'years':(2001, 2030),

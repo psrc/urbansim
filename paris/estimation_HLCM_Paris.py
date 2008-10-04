@@ -240,7 +240,6 @@ if __name__ == "__main__":
     attribute_cache = AttributeCache()
     sc = SessionConfiguration(new_instance=True,
                          package_order=my_configuration['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=my_configuration['dataset_pool_configuration'].package_order_exceptions,
                          in_storage=attribute_cache)
 
 

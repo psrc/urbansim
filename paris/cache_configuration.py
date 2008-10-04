@@ -58,7 +58,6 @@ class CacheConfiguration(Configuration):
             ),            
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['paris', 'urbansim', 'opus_core'],
-            package_order_exceptions={},
             ),
         'base_year': 2000,
         }

@@ -81,7 +81,6 @@ class TestIndicators(opus_unittest.OpusIntegrationTestCase):
             years = [self.year],
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['psrc','urbansim','opus_core'],
-                package_order_exceptions={},
                 ),
             )       
                 

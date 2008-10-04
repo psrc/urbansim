@@ -58,6 +58,5 @@ config = {
         },
     'dataset_pool_configuration': DatasetPoolConfiguration(
       package_order=['psrc', 'urbansim', 'opus_core'],
-      package_order_exceptions={},
       ),
     }

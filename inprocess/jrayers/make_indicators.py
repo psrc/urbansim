@@ -35,7 +35,6 @@ source_data = SourceData(
     years = range(2000,2031,1),
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['seattle_parcel', 'psrc_parcel','urbansim_parcel', 'psrc', 'urbansim','opus_core'],
-        package_order_exceptions={},
         ),       
 )
 

@@ -64,7 +64,6 @@ def prepare_for_running_macro(parser):
     resources = Resources(get_resources_from_file(options.resources_file_name))
     
     SessionConfiguration(new_instance=True,
-                         package_order=resources['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
+                         package_order=resources['dataset_pool_configuration'].package_order,                           
                          in_storage=AttributeCache())
     return (resources, options)

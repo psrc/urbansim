@@ -42,7 +42,6 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         attribute_cache = AttributeCache()
         sc = SessionConfiguration(new_instance=True,
                                   package_order=self.config['dataset_pool_configuration'].package_order,
-                                  package_order_exceptions=self.config['dataset_pool_configuration'].package_order_exceptions, 
                                   in_storage=attribute_cache)
         dataset_pool = sc.get_dataset_pool()
 

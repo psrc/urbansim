@@ -74,7 +74,6 @@ if __name__ == "__main__":
     
     SessionConfiguration(new_instance=True,
                          package_order=['psrc','urbansim','opus_core'],
-                         package_order_exceptions={},
                          in_storage=AttributeCache())
 
     if options.augment_variables == True:
