@@ -84,7 +84,7 @@ class SourceData(object):
         
         return metadata_lines
     
-    def get_package_orders(self):
+    def get_package_order(self):
         return self.dataset_pool_configuration.package_order
         
     def _check_integrity(self):
