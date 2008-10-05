@@ -79,8 +79,7 @@ class AbstractIndicator(object):
         self.run_description = self.source_data.get_run_description()
 
         # Use attribute cache so that can access info from prior years, too.
-        (self.package_order, self.package_order_exceptions) = \
-            self.source_data.get_package_order_and_exceptions()
+        self.package_order = self.source_data.get_package_order()
             
         self.data_manager = IndicatorDataManager()
         
@@ -134,7 +133,6 @@ class AbstractIndicator(object):
             SessionConfiguration(
                 new_instance = True,
                 package_order = self.package_order,
-                package_order_exceptions = self.package_order_exceptions,
                 in_storage = AttributeCache()) 
          
     def create(self, display_error_box):

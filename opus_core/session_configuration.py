@@ -38,7 +38,6 @@ class SessionConfiguration(Singleton, GeneralResources):
                      # opus_core.singleton intercepts this argument in its definition 
                      # of __new__.
                  package_order=['opus_core'],
-                 package_order_exceptions={},
                  in_storage=None
                  ):
         if self.is_new_instance(): # This is set by opus_core.singleton.__new__
@@ -54,7 +53,6 @@ class SessionConfiguration(Singleton, GeneralResources):
             
             # Info used to create the dataset pool.
             self.package_order = package_order
-            self.package_order_exceptions = package_order_exceptions
             self.in_storage = in_storage
             
             self.dataset_pool = None
@@ -90,8 +88,7 @@ class SessionConfiguration(Singleton, GeneralResources):
         if self.dataset_pool is None:
             self.dataset_pool = DatasetPool(
                 self.package_order,
-                self.package_order_exceptions,
-                self.in_storage)
+                storage=self.in_storage)
             
         return self.dataset_pool
     

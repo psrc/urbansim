@@ -26,16 +26,15 @@ class DatasetPool(object):
     def __init__(self, package_order=[], package_order_exceptions={}, storage=None, datasets_dict={}):
         """Keeps a set of datasets by name & knows where to look for dataset modules."""
         self._package_order = package_order
-        self._package_order_exceptions = package_order_exceptions
+        if len(package_order_exceptions)>0:
+            raise ValueError, "parameter package_order_exceptions is deprecated and shouldn't be used -- tried to pass in a non-empty dictionary to package_order_exceptions"        
         self._storage = storage
         self._loaded_datasets = {}
         self.add_datasets_if_not_included(datasets_dict)
         
     def get_copy(self):
         """Return a copy of this dataset pool, without copying the datasets."""
-        pool = DatasetPool(package_order=self._package_order,
-                           package_order_exceptions=self._package_order_exceptions,
-                           storage=self._storage)
+        pool = DatasetPool(package_order=self._package_order, storage=self._storage)
         for dataset_name, dataset in self._loaded_datasets.iteritems():
             pool._add_dataset(dataset_name, dataset)
         return pool
@@ -43,9 +42,6 @@ class DatasetPool(object):
     def get_package_order(self):
         return self._package_order
     
-    def get_package_order_exceptions(self):
-        return self._package_order_exceptions
-        
     def get_storage(self):
         return self._storage
     
@@ -102,30 +98,19 @@ class DatasetPool(object):
     
     def _load_new_dataset(self, dataset_name, dataset_arguments):
         """Create a new dataset object and put it in the pool.
-        
-        Use class specified in the package_order_exceptions list. 
-        If none specified, use first one found in the 'datasets' directory
+        Use first class found in the 'datasets' directory
         for the packages in package_order."""
         
-        if dataset_name in self._package_order_exceptions:
-            dataset = self._create_dataset(
-                self._package_order_exceptions[dataset_name], 
-                dataset_arguments)
-                
+        arguments = deepcopy(dataset_arguments)
+        # Augment arguments as needed.
+        if '_x_' in dataset_name:
+            dataset_names = dataset_name.split('_x_')
+            for i in range(len(dataset_names)):
+                key = 'dataset%s' % (i+1)
+                arguments[key] = self.get_dataset(dataset_names[i])
         else:
-            arguments = deepcopy(dataset_arguments)
-            # Augment arguments as needed.
-            if '_x_' in dataset_name:
-                dataset_names = dataset_name.split('_x_')
-                for i in range(len(dataset_names)):
-                    key = 'dataset%s' % (i+1)
-                    arguments[key] = self.get_dataset(dataset_names[i])
-            else:
-                arguments['in_storage'] = self._storage
-    
-            dataset = DatasetFactory().search_for_dataset(dataset_name, self._package_order, 
-                                                           subdir='datasets', 
-                                                           arguments=arguments)        
+            arguments['in_storage'] = self._storage
+        dataset = DatasetFactory().search_for_dataset(dataset_name, self._package_order, subdir='datasets', arguments=arguments)        
         self._add_dataset(dataset_name, dataset)
     
     def _create_dataset(self, module_path, dataset_arguments):
@@ -157,7 +142,7 @@ from opus_core.misc import replace_string_in_files
 
 
 class TestDatasetPool(opus_unittest.OpusTestCase):
-    def get_dataset_pool(self, package_order, package_order_exceptions={}):
+    def get_dataset_pool(self, package_order):
         opus_core_path = package().get_opus_core_path()
         cache_dir = os.path.join(opus_core_path, 'data', 'test_cache', '1980')
         
@@ -166,7 +151,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         from opus_core.store.flt_storage import flt_storage
 
         storage = flt_storage(Resources({'storage_location':cache_dir}))
-        return DatasetPool(package_order, package_order_exceptions, storage)
+        return DatasetPool(package_order, storage=storage)
     
     def test_get_copy(self):
         pool = self.get_dataset_pool(package_order=['a','b'])
@@ -206,8 +191,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
             replace_string_in_files(temp_package_dataset_path, 'Alldata', 'Newdata')
             
             package_order = [temp_package_name, 'opus_core']
-            package_order_exceptions = {'fake_dataset':'opus_core.datasets.alldata_dataset'}
-            dataset_pool = self.get_dataset_pool(package_order, package_order_exceptions=package_order_exceptions)
+            dataset_pool = self.get_dataset_pool(package_order)
             temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
             
             # Create a temporary Opus package with a variant of the alldata dataset.
@@ -232,8 +216,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
             replace_string_in_files(temp_package_dataset_path, 'Alldata', 'Newdata')
             
             package_order = [temp_package_name, 'opus_core']
-            package_order_exceptions = {'fake_dataset':'opus_core.datasets.alldata_dataset'}
-            dataset_pool = self.get_dataset_pool(package_order, package_order_exceptions=package_order_exceptions)
+            dataset_pool = self.get_dataset_pool(package_order)
             
             # Make sure it works as expected for 'alldata'.
             self.do_test_get_dataset(dataset_pool)
@@ -253,13 +236,11 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         
     def test_get_dataset(self):
         package_order = ['opus_core']
-        package_order_exceptions = {'fake_dataset':'opus_core.datasets.alldata_dataset'}
-        dataset_pool = self.get_dataset_pool(package_order, package_order_exceptions=package_order_exceptions)
+        dataset_pool = self.get_dataset_pool(package_order)
         self.do_test_get_dataset(dataset_pool)
         
     def do_test_get_dataset(self, dataset_pool):
         test_dataset_name = 'alldata'
-        different_dataset_name = 'fake_dataset'
         dataset1 = dataset_pool.get_dataset(test_dataset_name)
         
         self.assert_(dataset1 is not None, "Could not get 'alldata' dataset")
@@ -275,13 +256,6 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         self.assert_(dataset2 is dataset1, 'Different datasets received from '
             'calls of get_dataset on the same dataset name! Expected %s; '
             'received %s.' % (dataset1, dataset2))
-            
-        dataset3 = dataset_pool.get_dataset(different_dataset_name)
-        
-        self.assert_(dataset3 is not dataset1, 'Same datasets received from '
-            'calls of get_dataset on different dataset names! Got another %s.' 
-                % dataset3)
-        
         
 if __name__ == '__main__':
     opus_unittest.main()

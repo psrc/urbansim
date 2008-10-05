@@ -142,7 +142,6 @@ class MultipleYearDatasetView(AbstractDataset):
         try:
             my_dataset_pool = DatasetPool(
                 package_order=calling_dataset_pool.get_package_order(),
-                package_order_exceptions=calling_dataset_pool.get_package_order_exceptions(),
                 storage=AttributeCache())
             dataset = my_dataset_pool.get_dataset(dataset_name)
             attribute_name = attribute_name.replace('DDDD',repr(year))

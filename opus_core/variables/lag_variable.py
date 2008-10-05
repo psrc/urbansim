@@ -107,7 +107,6 @@ class LagVariable(Variable):
             # Get an empty dataset pool with same search paths.
             my_dataset_pool = DatasetPool(
                 package_order=calling_dataset_pool.get_package_order(),
-                package_order_exceptions=calling_dataset_pool.get_package_order_exceptions(),
                 storage=AttributeCache())
 
             ds = dataset.empty_dataset_like_me(in_storage=AttributeCache())
