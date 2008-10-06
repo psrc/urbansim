@@ -183,7 +183,7 @@ class ToolboxBase(object):
     def emit_default_gui_configuration_file(self, file_name):
         from opus_core.misc import directory_path_from_opus_path
 
-        default_gui_config_path = os.path.join(directory_path_from_opus_path('opus_gui.main.settings'),
+        default_gui_config_path = os.path.join(directory_path_from_opus_path('opus_gui.main'),
                                                'default_gui_configuration.xml')
         default_gui_config = open(default_gui_config_path)
         new_file = open(file_name, 'w')
