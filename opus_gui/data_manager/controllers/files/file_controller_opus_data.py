@@ -267,14 +267,16 @@ class FileController_OpusData(FileController):
                                             for x in xrange(0,classchildren.count(),1):
                                                 if classchildren.item(x).isText():
                                                     #print "Found some text in the classification element"
-                                                    classificationtext = classchildren.item(x).nodeValue()
+                                                    #classificationtext = classchildren.item(x).nodeValue()
+                                                    classificationtext = str(classchildren.item(x).nodeValue()).split(',')
                                     if tselement.hasAttribute(QString("type")) and \
                                            (tselement.attribute(QString("type")) == QString("exports_to")):
                                         #print tselement.text()
                                         export_to_text = tselement.text()
                         tagName = tsitem.domNode.toElement().tagName()
-                        if classificationtext != "" and classificationtext == classification:
-                            choices[tagName] = export_to_text
+                        for i in classificationtext:
+                            if i != "" and i == classification:
+                                choices[tagName] = export_to_text
         self.classification = classification
         return choices
 
