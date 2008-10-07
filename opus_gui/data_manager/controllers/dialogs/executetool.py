@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton
+from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.util.xmlhelper import getChildElementsText, getElementsByType, getNodeText, getElementText
@@ -131,7 +131,10 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         for x in xrange(0,len(self.test_text)):
             #self.vars[self.test_text[x].text()] = self.test_line[x].text()
             key = self.test_text[x].text()
-            val = self.test_line[x].text()
+            if type(self.test_line[x]) == QComboBox:
+                val = self.test_line[x].currentText()
+            else:
+                val = self.test_line[x].text()
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
             #print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
@@ -208,7 +211,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             #param and see if it matches... if so swap it in
             if self.optional_params and self.optional_params.has_key(param[0]):
                 param[2] = QString(self.optional_params[param[0]])
-            # print "Key: %s , Val: %s" % (param[0],param[1])
+            print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
             self.test_widget.append(widgetTemp)
@@ -233,12 +236,18 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_text_type.setText(QString("(").append(paramName).append(QString(")")))
             hlayout.addWidget(test_text)
             hlayout.addWidget(test_text_type)
-            test_line = QLineEdit(widgetTemp)
+            if param[1] == 'db_connection_hook':
+                test_line = QComboBox(widgetTemp)
+                db_connection_choices = self.mainwindow.getDbConnectionNames()
+                for i in db_connection_choices:
+                    test_line.addItem(QString(i))
+            else:
+                test_line = QLineEdit(widgetTemp)
             self.test_line.append(test_line)
             test_line.setEnabled(True)
             test_line.setMinimumSize(QSize(200,0))
             test_line.setObjectName(QString("test_line").append(QString(i)))
-            test_line.setText(QString(param[2]))
+            #test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
             # If we have a dir_path or file_path add a select button
             if (paramName == QString('dir_path')) or (paramName == QString('file_path')):
