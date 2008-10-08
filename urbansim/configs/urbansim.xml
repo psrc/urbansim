@@ -7,6 +7,58 @@
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >data_manager.run.tools</tool_path>
+	  <synthesizer_tools type="tool_group" setexpanded="True">
+	    <import_raw_pums_data_to_db type="tool_file">
+		  <name type="tool_name">import_raw_pums_data_to_db</name>
+		  <params type="param_template">
+		    <create_hh_table>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</create_hh_table>
+			<pums_hh_table_name>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</pums_hh_table_name>
+			<insert_hh_records>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</insert_hh_records>
+			<create_pp_table>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</create_pp_table>
+			<pums_pp_table_name>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</pums_pp_table_name>
+			<insert_pp_records>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="string">string</type>
+	          <default type="string">y</default>
+			</insert_pp_records>
+			<raw_pums_file_path>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="file_path">file_path</type>
+	          <default type="file_path"></default>
+			</raw_pums_file_path>
+	        <database_server_connection>
+	          <required choices="Required|Optional" type="string">Required</required>
+	          <type type="db_connection_hook">db_connection_hook</type>
+	          <default></default>
+	        </database_server_connection>
+	        <database_name>
+		      <required choices="Required|Optional" type="string">Required</required>
+		      <type choices="string" type="string">string</type>
+		      <default type="string"></default>
+		    </database_name>			
+		  </params>
+		</import_raw_pums_data_to_db>
+	  </synthesizer_tools>
 	  <opus_data_import_export_tools type="tool_group" setexpanded="True">
 		<sql_data_to_opus_tool type="tool_file" >
 	          <name type="tool_name" >sql_data_to_opus</name>
