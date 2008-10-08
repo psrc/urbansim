@@ -14,8 +14,6 @@
 
 """Collection of useful miscellaneous functions and definitions"""
 
-import copy
-import os
 import os.path
 import re
 import shutil
@@ -1028,7 +1026,43 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         
     def test_list2string(self):
         self.assertEqual(list2string([42, 900.4, 20.333]), "42 900.4 20.333")
-        self.assertEqual(list2string(["aaa", 5, "xx", 6.8], sep=', '), "aaa, 5, xx, 6.8")
+        self.assertEqual(list2string(["aaa", 5, "xx", 6.8], sep=', '), "aaa, 5, xx, 6.8")   
         
+    def test_get_distinct_list(self):
+        self.assertEquals(get_distinct_list([]), [])
+        self.assertEquals(get_distinct_list(['zxq', 'zxq', 5.4, 9, ['3', 'a'], 5.4, 5.4, ['3', 'a']]), ['zxq', 5.4, 9, ['3', 'a']] )
+        
+    def test_create_list_string(self):
+        self.assertEquals(create_list_string(['aa', 'b', '', ' dd'], 'SEP'), 'aaSEPbSEPSEP dd')
+        
+    def test_get_field_names(self):
+        from numpy import rec
+        recArr = rec.fromarrays([[1], [2], [3]], names = 'One, Two, Three')
+        self.assertEquals(get_field_names(recArr, False), ['Three', 'Two', 'One'])
+        self.assertEquals(get_field_names(recArr, True), ['three', 'two', 'one'])
+        self.assertEquals(get_field_names(recArr), ['three', 'two', 'one'])
+                        
+    def test_flatten_list(self):
+        nestedList = [3, 4.0, 'five']
+        testList = [nestedList]
+        self.assertEquals(flatten_list(testList), nestedList)
+        
+    def test_ismember(self):
+        from numpy import array
+        a = array([1, 2])
+        b = array([1, 2])
+        c = array([1, 1])
+        d = array([2, 1, 2, 2, 1])
+        e = array([4, 5, 6])
+        f = array([])
+        g = array([3,1])       
+        self.assertEqual(ismember(a,a).all(), ismember(a,b).all(), array([True, True]).all())
+        self.assertEqual(ismember(c,a).all(), ismember(a,d).all(), array([True, True]).all())
+        self.assertEqual(ismember(d,a).all(), array([True, True, True, True, True]).all())
+        self.assertEqual(ismember(d,c).all(), array([False, True, False, False, True]).all())
+        self.assertEqual(ismember(a,c).all(), array([True, False]).all())
+        self.assertEqual(ismember(a,g).all(), array([False, True]).all())
+        self.assertEqual(ismember(a,f).all(), ismember(a,g).all(), array([False, False]).all())
+     
 if __name__ == "__main__":
     opus_unittest.main()
