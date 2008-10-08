@@ -30,8 +30,119 @@
     </expression_library>
   </general>
   <model_manager>
-    <test_model_config type="string" />
-  </model_manager>
+    <model_system type="dictionary">
+      <regression_model_template copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
+        </import>
+        <init type="dictionary">
+          <name flags="hidden" type="string">RegressionModel</name>
+          <arguments type="dictionary">
+            <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
+            <submodel_string parser_action="blank_to_None" type="string" />
+            <run_config parser_action="blank_to_None" type="string" />
+            <estimate_config parser_action="blank_to_None" type="string" />
+            <debuglevel flags="hidden" type="integer">0</debuglevel>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <dataset type="string">fill in</dataset>
+            <index flags="hidden" parser_action="blank_to_None" type="string">rm_index</index>
+            <chunk_specification parser_action="blank_to_None" type="string" />
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+        </run>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
+            <sample_coefficients type="boolean">False</sample_coefficients>
+            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <multiplicator type="integer">1</multiplicator>
+          </arguments>
+          <output flags="hidden" type="string">(specification, coefficients, rm_index)</output>
+        </prepare_for_run>
+        <estimate type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <dataset type="string">fill in</dataset>
+            <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
+            <index flags="hidden" parser_action="blank_to_None" type="string">rm_index</index>
+            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+          <output flags="hidden" type="string">(coefficients, dummy)</output>
+        </estimate>
+        <prepare_for_estimate type="dictionary">
+          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
+          </arguments>
+          <output flags="hidden" type="string">(specification, rm_index)</output>
+        </prepare_for_estimate>
+      </regression_model_template>
+    </model_system>
+    <estimation type="dictionary">
+      <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+      <model_template copyable="True" type="model_estimation">
+        <submodel copyable="True" type="submodel">
+          <description type="string">No submodel</description>
+          <submodel_id type="integer">-2</submodel_id>
+          <variables type="variable_list">var1</variables>
+        </submodel>
+      </model_template>
+      <choice_model_with_equations_template copyable="True" type="model_estimation">
+        <submodel copyable="True" type="submodel">
+          <description type="string">No submodel</description>
+          <submodel_id type="integer">-2</submodel_id>
+          <choice_1 copyable="True" type="dictionary">
+            <equation_id type="integer">1</equation_id>
+            <variables type="variable_list">constant</variables>
+          </choice_1>
+          <choice_2 copyable="True" type="dictionary">
+            <equation_id type="integer">2</equation_id>
+            <variables type="variable_list">var1</variables>
+          </choice_2>
+        </submodel>
+      </choice_model_with_equations_template>
+      <estimation_config type="dictionary">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <Class_name flags="hidden" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string" />
+        </estimation_database_configuration>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <gridcell choices="Load|Skip" copyable="True" followers="my_dataset" type="dataset">Load</gridcell>
+          </datasets_to_preload>
+        <dataset_pool_configuration type="class">
+          <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+          <package_order_exceptions type="dictionary" />
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">1980</base_year>
+        <years type="tuple">
+          <firstyear type="integer">1980</firstyear>
+          <lastyear type="integer">1980</lastyear>
+        </years>
+      </estimation_config>
+    </estimation>
+    </model_manager>
   <scenario_manager>
     <Eugene_baseline executable="True" copyable="True" setexpanded="True" type="scenario">
       <parent type="scenario_name">default_scenario</parent>
@@ -158,42 +269,7 @@
     </Eugene_baseline>
   </scenario_manager>
   <results_manager>
-  <!-- 
-    <Indicator_libraries setexpanded="True" type="group">
-      <model.gridcell type="indicator_library">
-        <population type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">urbansim.DATASET.population</expression>
-        </population>
-        <number_of_jobs type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">urbansim.DATASET.number_of_jobs</expression>
-        </number_of_jobs>
-        <industrial_sqft type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">urbansim.DATASET.industrial_sqft</expression>
-        </industrial_sqft>
-        <total_land_value type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">urbansim.DATASET.total_land_value</expression>
-        </total_land_value>
-        <population_density type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">urbansim.DATASET.population_density</expression>
-        </population_density>
-      </model.gridcell>
-      <my_indicators append_to="True" type="indicator_library">
-        <residential_units type="indicator">
-          <package type="string">urbansim</package>
-          <expression type="string">alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
-        </residential_units>
-      </my_indicators>
-    </Indicator_libraries>
- -->
-    <Indicator_batches setexpanded="True" type="group">
-    </Indicator_batches>
-    <Simulation_runs setexpanded="True" type="all_source_data">
-
-    </Simulation_runs>
+    <Indicator_batches setexpanded="True" type="group"></Indicator_batches>
+    <Simulation_runs setexpanded="True" type="all_source_data"></Simulation_runs>
   </results_manager>
 </opus_project>
