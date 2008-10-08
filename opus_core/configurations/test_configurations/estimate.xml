@@ -21,7 +21,7 @@
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
         <single_family_residential type="submodel" >
-          <submodel_id type="integer" >24</submodel_id>
+          <submodel_id type="integer" randomattribute="Clam" >24</submodel_id>
           <variables type="variable_list">ln_cost, existing_units</variables>
         </single_family_residential>
       </real_estate_price_model>

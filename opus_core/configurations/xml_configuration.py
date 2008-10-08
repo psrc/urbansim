@@ -737,7 +737,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           'estimation_config': {}}
         self.assertEqual(config, should_be)
         
-    def test_inherited_attributes(self):
+    def test_inherited_nodes(self):
         # make sure that inherited attributes are tagged as 'inherited'
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
@@ -751,7 +751,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         existing_units_node = expression_library_node.find('existing_units')
         self.assertEqual(existing_units_node.get('inherited'), 'estimate')
         
-    def test_grandchild_inherited_attributes(self):
+    def test_grandchild_inherited_nodes(self):
         # test two levels of inheritance, with multiple inheritance as well
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
@@ -769,6 +769,22 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         existing_units_node = expression_library_node.find('existing_units')
         self.assertEqual(existing_units_node.get('inherited'), 'estimate')
         
+    def test_inherited_attributes(self):
+        # make sure that inherited attributes are overridden properly, and otherwise passed through if not overridden
+        path = 'model_manager/estimation/real_estate_price_model/single_family_residential/submodel_id'
+        f1 = os.path.join(self.test_configs, 'estimate.xml')
+        n1 = XMLConfiguration(f1).full_tree.find(path)
+        self.assertEqual(n1.get('randomattribute'), 'Clam')
+        f2 = os.path.join(self.test_configs, 'estimation_child.xml')
+        n2 = XMLConfiguration(f2).full_tree.find(path)
+        self.assertEqual(n2.get('randomattribute'), 'Squid')
+        f3 = os.path.join(self.test_configs, 'estimation_child2.xml')
+        n3 = XMLConfiguration(f3).full_tree.find(path)
+        self.assertEqual(n3.get('randomattribute'), 'Clam')
+        f4 = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        n4 = XMLConfiguration(f4).full_tree.find(path)
+        self.assertEqual(n4.get('randomattribute'), 'Squid')
+          
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')
