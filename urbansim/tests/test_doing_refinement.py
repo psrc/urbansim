@@ -50,7 +50,7 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
                                             'job',
                                             'job',
                                             'household',
-                                            'household',
+                                            '',
                                             'household',
                                             'person'
                                             ]),

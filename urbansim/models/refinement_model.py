@@ -75,7 +75,7 @@ class RefinementModel(Model):
                     this_refinement = refinements_this_year.get_data_element(refinement_index)
                     ## get agent_dataset and location_dataset if specified
                     if not hasattr(this_refinement, 'agent_dataset') or len(this_refinement.agent_dataset)==0:
-                        agent_dataset_name = VariableName( this_refinement.location_expression ).get_dataset_name()
+                        agent_dataset_name = VariableName( this_refinement.agent_expression ).get_dataset_name()
                     else:
                         agent_dataset_name = this_refinement.agent_dataset
                     agent_dataset = dataset_pool.get_dataset( agent_dataset_name )
