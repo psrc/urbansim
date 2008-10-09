@@ -31,7 +31,7 @@
 </variables>
 
 <specification_variables type="dictionary">
-  <_definition_ flags="hidden">all_variables</_definition_>
+  <_definition_ hidden="True">all_variables</_definition_>
   <1 type="submodel">Agriculture
        <constant choices="Use">Use</constant>
        <inugb choices="Use|Skip">Use</inugb>

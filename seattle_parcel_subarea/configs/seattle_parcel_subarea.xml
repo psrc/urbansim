@@ -3,8 +3,8 @@
     <description type="string">Sample Seattle project</description>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <dataset_pool_configuration type="class">
-      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
     </dataset_pool_configuration>
   </general>
@@ -56,25 +56,25 @@
       </household_location_choice_model>
       <large_area_household_location_choice_model copyable="True" type="dictionary">
         <estimate type="dictionary">
-          <output flags="hidden" type="string">(%s, _)</output>
+          <output hidden="True" type="string">(%s, _)</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
-            <agents_index flags="hidden" type="string">_index</agents_index>
+            <agents_index hidden="True" type="string">_index</agents_index>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">_specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
           </arguments>
         </estimate>
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <seattle_parcel_subarea.models.subarea_household_location_choice_model type="string">SubareaHouseholdLocationChoiceModel</seattle_parcel_subarea.models.subarea_household_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">SubareaHouseholdLocationChoiceModel</name>
+          <name hidden="True" type="string">SubareaHouseholdLocationChoiceModel</name>
           <arguments type="dictionary">
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
             <choices type="quoted_string">urbansim.lottery_choices</choices>
             <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <location_set type="string">building</location_set>
             <sample_size_locations type="integer">30</sample_size_locations>
             <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
@@ -92,14 +92,14 @@
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output flags="hidden" type="string">(_specification, _index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output hidden="True" type="string">(_specification, _index)</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
             <data_objects type="string">datasets</data_objects>
-            <index_to_unplace flags="hidden" type="string">hrm_index</index_to_unplace>
+            <index_to_unplace hidden="True" type="string">hrm_index</index_to_unplace>
             <join_datasets type="boolean">True</join_datasets>
             <portion_to_unplace type="string">portion_to_unplace</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
@@ -108,8 +108,8 @@
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">(_specification, _coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">(_specification, _coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
@@ -120,12 +120,12 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
-            <agents_index flags="hidden" type="string">None</agents_index>
+            <agents_index hidden="True" type="string">None</agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
-            <coefficients type="string" flags="hidden">_coefficients</coefficients>
-            <data_objects type="string" flags="hidden">datasets</data_objects>
-            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
-            <specification type="string" flags="hidden">_specification</specification>
+            <coefficients type="string" hidden="True">_coefficients</coefficients>
+            <data_objects type="string" hidden="True">datasets</data_objects>
+            <debuglevel type="string" hidden="True">debuglevel</debuglevel>
+            <specification type="string" hidden="True">_specification</specification>
             <maximum_runs type="integer">10</maximum_runs>
             <agents_filter type="quoted_string">household.building_id&lt;=0</agents_filter>
           </arguments>
@@ -154,27 +154,27 @@
         <estimate type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">index</agents_index>
+            <agents_index hidden="True" type="string">index</agents_index>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, _)</output>
+          <output hidden="True" type="string">(coefficients, _)</output>
         </estimate>
         <group_by_attribute type="tuple">
           <grouping_table type="string">job_building_type</grouping_table>
           <grouping_column type="string">name</grouping_column>
         </group_by_attribute>
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubareaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">SubareaEmploymentLocationChoiceModel</name>
+          <name hidden="True" type="string">SubareaEmploymentLocationChoiceModel</name>
           <arguments type="dictionary">
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
             <choices type="quoted_string">urbansim.lottery_choices</choices>
             <estimation type="quoted_string">opus_core.bhhh_mnl_estimation</estimation>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <location_set type="string">building</location_set>
             <sample_size_locations type="integer">30</sample_size_locations>
             <capacity_string type="quoted_string">vacant_SSS_job_space</capacity_string>
@@ -193,8 +193,8 @@
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output flags="hidden" type="string">(specification, index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output hidden="True" type="string">(specification, index)</output>
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
@@ -207,8 +207,8 @@
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">(specification, coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">(specification, coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
@@ -219,12 +219,12 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">erm_index</agents_index>
+            <agents_index hidden="True" type="string">erm_index</agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
             <coefficients type="string">coefficients</coefficients>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
             <maximum_runs type="integer">3</maximum_runs>
           </arguments>
         </run>
@@ -233,27 +233,27 @@
         <estimate type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">index</agents_index>
+            <agents_index hidden="True" type="string">index</agents_index>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, _)</output>
+          <output hidden="True" type="string">(coefficients, _)</output>
         </estimate>
         <group_by_attribute type="tuple">
           <grouping_table type="string">job_building_type</grouping_table>
           <grouping_column type="string">name</grouping_column>
         </group_by_attribute>
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubareaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">SubareaEmploymentLocationChoiceModel</name>
+          <name hidden="True" type="string">SubareaEmploymentLocationChoiceModel</name>
           <arguments type="dictionary">
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
             <choices type="quoted_string">urbansim.lottery_choices</choices>
             <estimation type="quoted_string">opus_core.bhhh_mnl_estimation</estimation>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <location_set type="string">building</location_set>
             <sample_size_locations type="integer">30</sample_size_locations>
             <capacity_string type="quoted_string">vacant_SSS_job_space</capacity_string>
@@ -272,8 +272,8 @@
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output flags="hidden" type="string">(specification, index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output hidden="True" type="string">(specification, index)</output>
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
@@ -286,8 +286,8 @@
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">(specification, coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">(specification, coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
@@ -298,12 +298,12 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">erm_index</agents_index>
+            <agents_index hidden="True" type="string">erm_index</agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
             <coefficients type="string">coefficients</coefficients>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
             <maximum_runs type="integer">3</maximum_runs>
           </arguments>
         </run>
@@ -409,13 +409,13 @@
       <estimation_config type="dictionary">
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
         <estimation_database_configuration type="class">
-          <Class_name flags="hidden" type="string">EstimationDatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
           <database_name type="string">none</database_name>
         </estimation_database_configuration>
         <dataset_pool_configuration type="class">
-          <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list">['seattle_parcel', 'urbansim_parcel', 'urbansim']</package_order>
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
@@ -476,19 +476,19 @@
         <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Run</distribute_unplaced_jobs_model>
       </models_to_run>
       <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
-        <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
-        <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+        <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
         <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_subarea/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
-        <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
         <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_subarea/runs</cache_directory_root>
         <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
         <baseyear_cache type="class">
-          <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
           <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_subarea/base_year_data</existing_cache_to_copy>
         </baseyear_cache>
         <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
@@ -536,11 +536,11 @@
         <tables_to_cache_nchunks type="dictionary">
           <parcels type="integer">1</parcels>
         </tables_to_cache_nchunks>
-        <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
-        <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-        <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
         <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
       </dataset_pool_configuration>
       <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
@@ -549,7 +549,7 @@
       <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 
                                                       'development_project_proposal_component', 
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
-      <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
+      <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <zone choices="Load|Skip" type="dataset">Load</zone>
         <household choices="Load|Skip" type="dataset">Load</household>

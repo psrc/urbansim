@@ -19,8 +19,8 @@ class ResultsManagerXMLHelperTests(opus_unittest.OpusTestCase):
     def test_set_text_child_value(self):
         test_xml = '''
           <no_leaf copyable="True" type="dictionary" >
-            <leaf_trunc flags="hidden" type="dictionary" />
-            <leaf_empty_string flags="hidden" type="dictionary" >
+            <leaf_trunc hidden="True" type="dictionary" />
+            <leaf_empty_string hidden="True" type="dictionary" >
             </leaf_empty_string>
             <leaf_with_text>_template_text_string_</leaf_with_text>
           </no_leaf>

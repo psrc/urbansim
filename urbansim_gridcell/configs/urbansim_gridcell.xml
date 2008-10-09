@@ -1,7 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Base UrbanSim gridcell project</description>
-    <project_name type="string" flags="hidden">urbansim_gridcell</project_name>
+    <project_name type="string" hidden="True">urbansim_gridcell</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
       <number_of_jobs type="variable_definition" dataset="zone" use="both" source="Python class">urbansim.zone.number_of_jobs</number_of_jobs>
@@ -10,19 +10,19 @@
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
     <dataset_pool_configuration type="class">
-      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['urbansim', 'opus_core']</package_order>
     </dataset_pool_configuration>
   </general>
   <model_manager>
     <default_model_configurations type="dictionary">
       <development_project_types parser_action="execute" type="class" cloneable="True">
-        <Class_name flags="hidden" type="string">DevelopmentProjectTypesConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.development_project_types_configuration_creator</Class_path>
+        <Class_name hidden="True" type="string">DevelopmentProjectTypesConfigurationCreator</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.development_project_types_configuration_creator</Class_path>
         <commercial type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
           <categories type="list">[1000, 2000, 5000, 10000]</categories>
           <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_commercial_sqft</developable_maximum_unit_variable_full_name>
           <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_commercial_sqft</developable_minimum_unit_variable_full_name>
@@ -30,8 +30,8 @@
           <units type="string">commercial_sqft</units>
         </commercial>
         <industrial type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
           <categories type="list">[1000, 2000, 5000, 10000]</categories>
           <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_industrial_sqft</developable_maximum_unit_variable_full_name>
           <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_industrial_sqft</developable_minimum_unit_variable_full_name>
@@ -39,8 +39,8 @@
           <units type="string">industrial_sqft</units>
         </industrial>
         <residential type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
           <categories type="list">[1, 2, 3, 5, 10, 20]</categories>
           <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_residential_units</developable_maximum_unit_variable_full_name>
           <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_residential_units</developable_minimum_unit_variable_full_name>
@@ -50,8 +50,8 @@
       </development_project_types>
       <residential_development_project_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" parser_action="execute" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" parser_action="execute" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
           <project_type type="string">residential</project_type>
           <coefficients_table type="string">residential_development_location_choice_model_coefficients</coefficients_table>
           <specification_table type="string">residential_development_location_choice_model_specification</specification_table>
@@ -60,8 +60,8 @@
       </residential_development_project_location_choice_model>
       <commercial_development_project_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
           <project_type type="string">commercial</project_type>
           <coefficients_table type="string">commercial_development_location_choice_model_coefficients</coefficients_table>
           <specification_table type="string">commercial_development_location_choice_model_specification</specification_table>
@@ -70,8 +70,8 @@
       </commercial_development_project_location_choice_model>
       <industrial_development_project_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
           <project_type type="string">industrial</project_type>
           <coefficients_table type="string">industrial_development_location_choice_model_coefficients</coefficients_table>
           <specification_table type="string">industrial_development_location_choice_model_specification</specification_table>
@@ -86,15 +86,15 @@
       </development_project_location_choice_defaults>
       <prescheduled_events type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">PrescheduledEventsConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.prescheduled_events_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">PrescheduledEventsConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.prescheduled_events_configuration_creator</Class_path>
           <output_events type="string">development_events</output_events>
         </controller>
       </prescheduled_events>
       <events_coordinator type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">EventsCoordinatorConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.events_coordinator_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">EventsCoordinatorConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.events_coordinator_configuration_creator</Class_path>
           <location_set type="string">gridcell</location_set>
           <development_type_set type="string">development_type</development_type_set>
           <input_events type="string">development_events</input_events>
@@ -104,8 +104,8 @@
       </events_coordinator>
       <home_based_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">HomeBasedChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.home_based_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">HomeBasedChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.home_based_choice_model_configuration_creator</Class_path>
           <records_per_chunk type="integer">500</records_per_chunk>
           <agent_set type="string">person</agent_set>
           <estimation_procedure type="string">opus_core.bhhh_mnl_estimation</estimation_procedure>
@@ -119,8 +119,8 @@
       </home_based_choice_model>
       <auto_ownership_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">AutoOwnershipChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.auto_ownership_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">AutoOwnershipChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.auto_ownership_choice_model_configuration_creator</Class_path>
           <agent_set type="string">household</agent_set>
           <records_per_chunk type="integer">500</records_per_chunk>
           <estimation_procedure type="string">opus_core.bhhh_mnl_estimation</estimation_procedure>
@@ -132,8 +132,8 @@
       </auto_ownership_choice_model>
       <residential_land_share_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">ResidentialLandShareModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.residential_land_share_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">ResidentialLandShareModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.residential_land_share_model_configuration_creator</Class_path>
           <dataset type="string">gridcell</dataset>
           <coefficients_table type="string">residential_land_share_model_coefficients</coefficients_table>
           <specification_table type="string">residential_land_share_model_specification</specification_table>
@@ -143,8 +143,8 @@
       </residential_land_share_model>
       <land_price_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">LandPriceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.land_price_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">LandPriceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.land_price_model_configuration_creator</Class_path>
           <dataset type="string">gridcell</dataset>
           <nchunks type="integer">1</nchunks>
           <threshold type="integer">1000</threshold>
@@ -155,8 +155,8 @@
       </land_price_model>
       <development_project_transition_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">DevelopmentProjectTransitionModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_transition_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentProjectTransitionModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_project_transition_model_configuration_creator</Class_path>
           <location_set type="string">gridcell</location_set>
           <history_table type="string">development_event_history</history_table>
           <vacancy_table type="string">target_vacancy</vacancy_table>
@@ -165,23 +165,23 @@
       </development_project_transition_model>
       <development_event_transition_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">DevelopmentEventTransitionModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.development_event_transition_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DevelopmentEventTransitionModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.development_event_transition_model_configuration_creator</Class_path>
           <input_projects type="string">dptm_results</input_projects>
           <output_events type="string">development_events</output_events>
         </controller>
       </development_event_transition_model>
       <household_transition_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">HouseholdTransitionModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.household_transition_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">HouseholdTransitionModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.household_transition_model_configuration_creator</Class_path>
           <household_set type="string">household</household_set>
         </controller>
       </household_transition_model>
       <employment_transition_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">EmploymentTransitionModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.employment_transition_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">EmploymentTransitionModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.employment_transition_model_configuration_creator</Class_path>
           <job_set type="string">job</job_set>
           <job_building_types type="string">job_building_type</job_building_types>
           <location_id_name type="string">grid_id</location_id_name>
@@ -189,8 +189,8 @@
       </employment_transition_model>
       <household_relocation_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
           <agent_set type="string">household</agent_set>
           <rate_table parser_action="blank_to_None" type="string">annual_relocation_rates_for_households</rate_table>
           <location_id_name type="string">grid_id</location_id_name>
@@ -201,8 +201,8 @@
       </household_relocation_model>
       <household_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">household</agent_set>
           <sampler parser_action="blank_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
           <choices type="string">urbansim.lottery_choices</choices>
@@ -223,8 +223,8 @@
       </household_location_choice_model>
       <employment_relocation_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">EmploymentRelocationModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">EmploymentRelocationModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <what type="string">jobs</what>
           <rate_table parser_action="blank_to_None" type="string">annual_relocation_rates_for_jobs</rate_table>
@@ -235,8 +235,8 @@
       </employment_relocation_model>
       <employment_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <sample_size_locations type="integer">30</sample_size_locations>
           <sampler parser_action="blank_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
@@ -264,8 +264,8 @@
       </employment_location_choice_model>
       <home_based_employment_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">HomeBasedEmploymentLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.home_based_employment_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">HomeBasedEmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.home_based_employment_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <location_set type="string">gridcell</location_set>
           <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
@@ -284,8 +284,8 @@
       </home_based_employment_location_choice_model>
       <governmental_employment_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <location_set type="string">gridcell</location_set>
           <filter parser_action="blank_to_None" type="string" />
@@ -294,16 +294,16 @@
       </governmental_employment_location_choice_model>
       <distribute_unplaced_jobs_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <location_set type="string">gridcell</location_set>
         </controller>
       </distribute_unplaced_jobs_model>
       <real_estate_price_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">RealEstatePriceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.real_estate_price_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">RealEstatePriceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.real_estate_price_model_configuration_creator</Class_path>
           <nchunks type="integer">1</nchunks>
           <dataset type="string">building</dataset>
           <outcome_attribute type="string">ln_unit_price=ln(urbansim.building.avg_val_per_unit)</outcome_attribute>
@@ -315,8 +315,8 @@
       </real_estate_price_model>
       <building_transition_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">BuildingTransitionModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.building_transition_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">BuildingTransitionModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.building_transition_model_configuration_creator</Class_path>
           <building_set type="string">building</building_set>
           <location_set type="string">gridcell</location_set>
           <building_types_table type="string">building_type</building_types_table>
@@ -325,8 +325,8 @@
       </building_transition_model>
       <building_relocation_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">BuildingRelocationModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.building_relocation_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">BuildingRelocationModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.building_relocation_model_configuration_creator</Class_path>
           <agent_set type="string">building</agent_set>
           <location_id_name type="string">gridcell.get_id_name()[0]</location_id_name>
           <output_index type="string">brm_index</output_index>
@@ -334,8 +334,8 @@
       </building_relocation_model>
       <building_location_choice_model type="dictionary">
         <controller parser_action="execute" type="class">
-          <Class_name flags="hidden" type="string">BuildingLocationChoiceModelConfigurationCreator</Class_name>
-          <Class_path flags="hidden" type="string">urbansim.configurations.building_location_choice_model_configuration_creator</Class_path>
+          <Class_name hidden="True" type="string">BuildingLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path hidden="True" type="string">urbansim.configurations.building_location_choice_model_configuration_creator</Class_path>
           <records_per_chunk type="integer">500</records_per_chunk>
           <agent_set type="string">building</agent_set>
           <location_set type="string">gridcell</location_set>
@@ -352,8 +352,8 @@
     <default_scenario type="scenario">
       <data type="category" cloneable="True">
         <baseyear_database config_name="scenario_database_configuration" type="class">
-          <Class_name flags="hidden" type="string">ScenarioDatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+          <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
           <protocol type="string" />
           <host_name type="string" />
           <user_name type="string" />
@@ -363,8 +363,8 @@
         <cache_configuration type="category">
           <cache_directory type="string" />
           <creating_baseyear_cache_configuration type="class">
-            <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
-            <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+            <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+            <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
             <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
             <tables_to_cache type="selectable_list">
               <annual_employment_control_totals type="table" choices="Cache|Skip">Cache</annual_employment_control_totals>
@@ -496,8 +496,8 @@
           <nchunks type="integer">1</nchunks>
         </chunk_specification>
         <dataset_pool_configuration type="class">
-          <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-          <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list">['urbansim', 'opus_core']</package_order>
         </dataset_pool_configuration>
       </advanced>

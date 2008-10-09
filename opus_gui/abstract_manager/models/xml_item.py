@@ -28,8 +28,8 @@ class XmlItem:
         i = 0
         for x in xrange(0,self.domNode.childNodes().count(),1):
             current = self.domNode.childNodes().item(x)
-            if (current.attributes().namedItem(QString("flags")).isNull() or \
-                current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
+            if (current.attributes().namedItem(QString("hidden")).isNull() or \
+                current.attributes().namedItem(QString("hidden")).nodeValue() != QString("True")) and \
                 (current.nodeType() == QDomNode.ElementNode):
                 childNode = self.domNode.childNodes().item(x)
                 childItem = XmlItem(self.domDocument,childNode, i , self)
@@ -51,8 +51,8 @@ class XmlItem:
         foundSoFar = 0
         for x in xrange(0,self.domNode.childNodes().count(),1):
             current = self.domNode.childNodes().item(x)
-            if (current.attributes().namedItem(QString("flags")).isNull() or \
-                current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
+            if (current.attributes().namedItem(QString("hidden")).isNull() or \
+                current.attributes().namedItem(QString("hidden")).nodeValue() != QString("True")) and \
                 (current.nodeType() == QDomNode.ElementNode):
                 # We found one
                 foundSoFar = foundSoFar + 1

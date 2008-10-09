@@ -117,7 +117,7 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
 <opus_project>
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
-      <tool_path flags="hidden" type="tool_path" >tools</tool_path>
+      <tool_path hidden="True" type="tool_path" >tools</tool_path>
       <shapefile_to_postgis type="tool_file">
         <name type="tool_name">shapefile_to_postgis</name>
         <params type="param_template">

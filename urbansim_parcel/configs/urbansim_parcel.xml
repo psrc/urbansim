@@ -1,7 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Refactored Default UrbanSim parcel project</description>
-    <project_name flags="hidden" type="string">urbansim_parcel</project_name>
+    <project_name hidden="True" type="string">urbansim_parcel</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
       <constant dataset="parcel" source="built-in" type="variable_definition" use="model variable">constant</constant>
@@ -84,7 +84,7 @@
       <ln_residential_units dataset="building" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</ln_residential_units>
     </expression_library>
     <advanced type="category">
-      <dataset_pool_configuration flags="hidden" type="class">
+      <dataset_pool_configuration hidden="True" type="class">
         <Class_name type="string">DatasetPoolConfiguration</Class_name>
         <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
         <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
@@ -94,7 +94,7 @@
   </general>
   <data_manager>
     <Tool_Library setexpanded="True" type="tool_library">
-      <tool_path flags="hidden" type="tool_path">data_manager.run.tools</tool_path>
+      <tool_path hidden="True" type="tool_path">data_manager.run.tools</tool_path>
       <opus_tools setexpanded="True" type="tool_group">
         <make_buildout_indicators type="tool_file">
           <name type="tool_name">make_buildout_indicators</name>
@@ -127,7 +127,7 @@
   <model_manager>
     <model_system type="dictionary">
       <refinement_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.refinement_model type="string">RefinementModel</urbansim.models.refinement_model>
         </import>
         <init type="dictionary">
@@ -135,57 +135,57 @@
           <arguments type="dictionary" />
         </init>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <refinement_dataset_name type="quoted_string">refinement</refinement_dataset_name>
             <refinement_storage type="string">base_cache_storage</refinement_storage>
             <refinement_table_name type="quoted_string">refinements</refinement_table_name>
           </arguments>
-          <output flags="hidden" type="string">refinement</output>
+          <output hidden="True" type="string">refinement</output>
         </prepare_for_run>
         <run type="dictionary">
-          <name flags="hidden" type="string">run</name>
+          <name hidden="True" type="string">run</name>
           <arguments type="dictionary">
             <refinement_dataset type="string">refinement</refinement_dataset>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
       </refinement_model>
       <real_estate_price_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.real_estate_price_model type="string">RealEstatePriceModel</urbansim.models.real_estate_price_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">RealEstatePriceModel</name>
+          <name hidden="True" type="string">RealEstatePriceModel</name>
           <arguments type="dictionary">
             <submodel_string type="quoted_string">land_use_type_id</submodel_string>
             <dependent_variable config_name="outcome_attribute" type="quoted_string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</dependent_variable>
             <filter_attribute type="quoted_string">numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)</filter_attribute>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <estimate_config type="string">Resources({'save_predicted_values_and_errors': False})</estimate_config>
           </arguments>
         </init>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">real_estate_price_model_coefficients</coefficients_table>
           </arguments>
-          <output flags="hidden" type="string">(specification, coefficients)</output>
+          <output hidden="True" type="string">(specification, coefficients)</output>
         </prepare_for_run>
         <run type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
-            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
             <dataset type="string">parcel</dataset>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
             <run_config type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':20.0855, 'outlier_is_greater_than': 1096.63})</run_config>
           </arguments>
         </run>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <name hidden="True" type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
@@ -193,35 +193,35 @@
             <dataset type="string">parcel</dataset>
             <threshold type="integer">0</threshold>
           </arguments>
-          <output flags="hidden" type="string">(specification, index)</output>
+          <output hidden="True" type="string">(specification, index)</output>
         </prepare_for_estimate>
         <estimate type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
+            <specification hidden="True" type="string">specification</specification>
             <dependent_variable config_name="outcome_attribute" type="quoted_string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</dependent_variable>
             <dataset type="string">parcel</dataset>
-            <index flags="hidden" type="string">index</index>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <index hidden="True" type="string">index</index>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, dummy)</output>
+          <output hidden="True" type="string">(coefficients, dummy)</output>
         </estimate>
       </real_estate_price_model>
       <employment_transition_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.employment_transition_model type="string">EmploymentTransitionModel</urbansim.models.employment_transition_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">EmploymentTransitionModel</name>
+          <name hidden="True" type="string">EmploymentTransitionModel</name>
           <arguments type="dictionary">
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <location_id_name type="quoted_string">building_id</location_id_name>
           </arguments>
         </init>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">control_totals</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">control_totals</output>
           <arguments type="dictionary">
             <storage type="string">base_cache_storage</storage>
           </arguments>
@@ -236,20 +236,20 @@
         </run>
       </employment_transition_model>
       <employment_relocation_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.employment_relocation_model_creator type="string">EmploymentRelocationModelCreator</urbansim.models.employment_relocation_model_creator>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">EmploymentRelocationModelCreator().get_model</name>
+          <name hidden="True" type="string">EmploymentRelocationModelCreator().get_model</name>
           <arguments type="dictionary">
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <location_id_name type="quoted_string">building_id</location_id_name>
             <probabilities type="quoted_string">urbansim.employment_relocation_probabilities</probabilities>
           </arguments>
         </init>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">erm_resources</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">erm_resources</output>
           <arguments type="dictionary">
             <rate_storage type="string">base_cache_storage</rate_storage>
             <rate_table type="quoted_string">annual_relocation_rates_for_jobs</rate_table>
@@ -257,9 +257,9 @@
           </arguments>
         </prepare_for_run>
         <run type="dictionary">
-          <output flags="hidden" type="string">erm_index</output>
+          <output hidden="True" type="string">erm_index</output>
           <arguments type="dictionary">
-            <resources flags="hidden" type="string">erm_resources</resources>
+            <resources hidden="True" type="string">erm_resources</resources>
             <agent_set type="string">job</agent_set>
           </arguments>
         </run>
@@ -268,27 +268,27 @@
         <estimate type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">index</agents_index>
+            <agents_index hidden="True" type="string">index</agents_index>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, _)</output>
+          <output hidden="True" type="string">(coefficients, _)</output>
         </estimate>
         <group_by_attribute type="tuple">
           <grouping_table type="string">job_building_type</grouping_table>
           <grouping_column type="string">name</grouping_column>
         </group_by_attribute>
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.employment_location_choice_model type="string">EmploymentLocationChoiceModel</urbansim.models.employment_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">EmploymentLocationChoiceModel</name>
+          <name hidden="True" type="string">EmploymentLocationChoiceModel</name>
           <arguments type="dictionary">
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
             <choices type="quoted_string">urbansim.lottery_choices</choices>
             <estimation type="quoted_string">opus_core.bhhh_mnl_estimation</estimation>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <location_set type="string">building</location_set>
             <sample_size_locations type="integer">30</sample_size_locations>
             <capacity_string type="quoted_string">vacant_SSS_job_space</capacity_string>
@@ -305,8 +305,8 @@
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output flags="hidden" type="string">(specification, index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output hidden="True" type="string">(specification, index)</output>
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
@@ -319,8 +319,8 @@
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">(specification, coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">(specification, coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
@@ -331,26 +331,26 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">erm_index</agents_index>
+            <agents_index hidden="True" type="string">erm_index</agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
             <coefficients type="string">coefficients</coefficients>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
             <maximum_runs type="integer">3</maximum_runs>
           </arguments>
         </run>
       </employment_location_choice_model>
       <distribute_unplaced_jobs_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.distribute_unplaced_jobs_model type="string">DistributeUnplacedJobsModel</urbansim_parcel.models.distribute_unplaced_jobs_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">DistributeUnplacedJobsModel</name>
+          <name hidden="True" type="string">DistributeUnplacedJobsModel</name>
           <arguments type="dictionary">
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <filter type="quoted_string">urbansim_parcel.building.is_governmental</filter>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
         <run type="dictionary">
@@ -363,34 +363,34 @@
         </run>
       </distribute_unplaced_jobs_model>
       <governmental_employment_location_choice_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.scaling_jobs_model type="string">ScalingJobsModel</urbansim_parcel.models.scaling_jobs_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">ScalingJobsModel</name>
+          <name hidden="True" type="string">ScalingJobsModel</name>
           <arguments type="dictionary">
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <filter type="quoted_string">urbansim_parcel.building.is_governmental</filter>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">job</agent_set>
-            <agents_index flags="hidden" type="string">erm_index</agents_index>
+            <agents_index hidden="True" type="string">erm_index</agents_index>
             <data_objects type="string">datasets</data_objects>
             <location_set type="string">building</location_set>
           </arguments>
         </run>
       </governmental_employment_location_choice_model>
       <household_relocation_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.household_relocation_model_creator type="string">HouseholdRelocationModelCreator</urbansim.models.household_relocation_model_creator>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">HouseholdRelocationModelCreator().get_model</name>
+          <name hidden="True" type="string">HouseholdRelocationModelCreator().get_model</name>
           <arguments type="dictionary">
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <location_id_name type="quoted_string">building_id</location_id_name>
             <probabilities type="quoted_string">urbansim.household_relocation_probabilities</probabilities>
           </arguments>
@@ -403,72 +403,72 @@
           </arguments>
         </prepare_for_run>
         <run type="dictionary">
-          <output flags="hidden" type="string">hrm_index</output>
+          <output hidden="True" type="string">hrm_index</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
-            <resources flags="hidden" type="string">hrm_resources</resources>
+            <resources hidden="True" type="string">hrm_resources</resources>
           </arguments>
         </run>
       </household_relocation_model>
       <process_pipeline_events copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.process_pipeline_events type="string">ProcessPipelineEvents</urbansim_parcel.models.process_pipeline_events>
         </import>
-        <init flags="hidden" type="dictionary">
-          <name flags="hidden" type="string">ProcessPipelineEvents</name>
+        <init hidden="True" type="dictionary">
+          <name hidden="True" type="string">ProcessPipelineEvents</name>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <building_dataset type="string">building</building_dataset>
-            <year flags="hidden" type="string">year</year>
-            <storage flags="hidden" type="string">base_cache_storage</storage>
+            <year hidden="True" type="string">year</year>
+            <storage hidden="True" type="string">base_cache_storage</storage>
           </arguments>
-          <output flags="hidden" type="string">scheduled_development_events</output>
+          <output hidden="True" type="string">scheduled_development_events</output>
         </run>
       </process_pipeline_events>
       <expected_sale_price_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.development_project_proposal_regression_model type="string">DevelopmentProjectProposalRegressionModel</urbansim_parcel.models.development_project_proposal_regression_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">DevelopmentProjectProposalRegressionModel</name>
+          <name hidden="True" type="string">DevelopmentProjectProposalRegressionModel</name>
           <arguments type="dictionary">
             <submodel_string type="quoted_string">land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)</submodel_string>
             <filter_attribute type="quoted_string">urbansim_parcel.development_project_proposal.is_size_fit</filter_attribute>
             <outcome_attribute_name type="quoted_string">ln_unit_price_expected</outcome_attribute_name>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <parcel_filter_for_new_development type="quoted_string">has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0</parcel_filter_for_new_development>
             <parcel_filter_for_redevelopment type="quoted_string">low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) &lt; 0.1</parcel_filter_for_redevelopment>
-            <specification_storage flags="hidden" type="string">base_cache_storage</specification_storage>
+            <specification_storage hidden="True" type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
-            <coefficients_storage flags="hidden" type="string">base_cache_storage</coefficients_storage>
+            <coefficients_storage hidden="True" type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">real_estate_price_model_coefficients</coefficients_table>
-            <spec_replace_module_variable_pair flags="hidden" type="string">('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')</spec_replace_module_variable_pair>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <spec_replace_module_variable_pair hidden="True" type="string">('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')</spec_replace_module_variable_pair>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
-          <output flags="hidden" type="string">(development_project_proposal, specification, coefficients)</output>
+          <output hidden="True" type="string">(development_project_proposal, specification, coefficients)</output>
         </prepare_for_run>
         <run type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
-            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
             <dataset type="string">development_project_proposal</dataset>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
           </arguments>
-          <output flags="hidden" type="string">development_project_proposal</output>
+          <output hidden="True" type="string">development_project_proposal</output>
         </run>
       </expected_sale_price_model>
       <development_proposal_choice_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.development_project_proposal_sampling_model type="string">DevelopmentProjectProposalSamplingModel</urbansim_parcel.models.development_project_proposal_sampling_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">DevelopmentProjectProposalSamplingModel</name>
+          <name hidden="True" type="string">DevelopmentProjectProposalSamplingModel</name>
           <arguments type="dictionary">
             <proposal_set type="string">development_project_proposal</proposal_set>
             <weight_string type="quoted_string">exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)</weight_string>
@@ -479,46 +479,46 @@
           <arguments type="dictionary">
             <n type="integer">500</n>
           </arguments>
-          <output flags="hidden" type="string">(development_project_proposal, demolished_buildings)</output>
+          <output hidden="True" type="string">(development_project_proposal, demolished_buildings)</output>
         </run>
       </development_proposal_choice_model>
       <building_construction_model copyable="True" type="dictionary">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim_parcel.models.building_construction_model type="string">BuildingConstructionModel</urbansim_parcel.models.building_construction_model>
         </import>
-        <init flags="hidden" type="dictionary">
-          <name flags="hidden" type="string">BuildingConstructionModel</name>
+        <init hidden="True" type="dictionary">
+          <name hidden="True" type="string">BuildingConstructionModel</name>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <development_proposal_set type="string">development_project_proposal</development_proposal_set>
             <building_dataset type="string">building</building_dataset>
-            <buildings_to_be_demolished flags="hidden" type="string">demolished_buildings</buildings_to_be_demolished>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <buildings_to_be_demolished hidden="True" type="string">demolished_buildings</buildings_to_be_demolished>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
       </building_construction_model>
       <household_location_choice_model copyable="True" type="dictionary">
         <estimate type="dictionary">
-          <output flags="hidden" type="string">(coefficients, _)</output>
+          <output hidden="True" type="string">(coefficients, _)</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
-            <agents_index flags="hidden" type="string">_index</agents_index>
+            <agents_index hidden="True" type="string">_index</agents_index>
             <data_objects type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">_specification</specification>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
           </arguments>
         </estimate>
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.household_location_choice_model type="string">HouseholdLocationChoiceModel</urbansim.models.household_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">HouseholdLocationChoiceModel</name>
+          <name hidden="True" type="string">HouseholdLocationChoiceModel</name>
           <arguments type="dictionary">
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
             <choices type="quoted_string">urbansim.lottery_choices</choices>
             <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
             <location_set type="string">building</location_set>
             <sample_size_locations type="integer">30</sample_size_locations>
             <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
@@ -535,8 +535,8 @@
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output flags="hidden" type="string">(_specification, _index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output hidden="True" type="string">(_specification, _index)</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
@@ -551,8 +551,8 @@
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output flags="hidden" type="string">(_specification, _coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output hidden="True" type="string">(_specification, _coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
@@ -563,12 +563,12 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
-            <agents_index flags="hidden" type="string">hrm_index</agents_index>
+            <agents_index hidden="True" type="string">hrm_index</agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
-            <coefficients flags="hidden" type="string">_coefficients</coefficients>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
-            <specification flags="hidden" type="string">_specification</specification>
+            <coefficients hidden="True" type="string">_coefficients</coefficients>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
             <maximum_runs type="integer">10</maximum_runs>
           </arguments>
         </run>

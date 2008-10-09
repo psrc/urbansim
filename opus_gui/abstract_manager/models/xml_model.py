@@ -444,8 +444,8 @@ class XmlModel(QAbstractItemModel):
         nodeElement = node.toElement()
         if not nodeElement.isNull():
             # Check if it is hidden... and if so we skip it in the visible tree
-            if not nodeElement.hasAttribute(QString("flags")) or \
-                   nodeElement.attribute(QString("flags")) != QString("hidden"):
+            if not nodeElement.hasAttribute(QString("hidden")) or \
+                   nodeElement.attribute(QString("hidden")) != QString("True"):
                 item = XmlItem(self.domDocument,node,row,parentItem)
                 item.initAsRootItem()
                 # print "len=%d row=%d" % (len(parentItem.childItems),row)
@@ -579,11 +579,11 @@ class XmlModel(QAbstractItemModel):
     #            if self.rowCount(child)>0:
     #                self.stripAttribute(attribute,child,recursive)
 
-    def create_node(self, document, name, type, value = "", choices = None, temporary = False, flags = None):
+    def create_node(self, document, name, type, value='', choices=None, temporary=False, flags=None, hidden=False):
         newNode = document.createElement(QString(name))
-        newNode.setAttribute(QString("type"),QString(type))
+        newNode.setAttribute(QString('type'),QString(type))
         
-        if value != "":
+        if value != '':
             if type == 'list':
                 newText = document.createTextNode(QString(str(value)))
             else:
@@ -592,9 +592,11 @@ class XmlModel(QAbstractItemModel):
         if choices is not None:
             newNode.setAttribute(QString('choices'), QString(choices))
         if temporary is True:
-            newNode.setAttribute(QString("temporary"),QString("True"))
+            newNode.setAttribute(QString('temporary'),QString('True'))
         if flags is not None:
             newNode.setAttribute(QString('flags'), QString(flags))
+        if hidden:
+            newNode.setAttribute(QString('hidden'), QString('True'))
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
@@ -660,7 +662,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
 <opus_project>
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
-      <tool_path flags="hidden" type="tool_path" >tools</tool_path>
+      <tool_path hidden="True" type="tool_path" >tools</tool_path>
       <shapefile_to_postgis type="tool_file">
         <name type="tool_name">shapefile_to_postgis</name>
         <params type="param_template">

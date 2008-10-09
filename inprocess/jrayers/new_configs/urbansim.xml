@@ -4,7 +4,7 @@
   </general>
   <data_manager>
     <Tool_Library setexpanded="True" type="tool_library">
-      <tool_path flags="hidden" type="tool_path">data_manager.run.tools</tool_path>
+      <tool_path hidden="True" type="tool_path">data_manager.run.tools</tool_path>
       <sql_data_to_opus_tool type="tool_file"> 
         <name type="tool_name">sql_data_to_opus</name>
         <params type="param_template">
@@ -63,9 +63,9 @@
 	<sample_tool_set type="tool_set">
 	</sample_tool_set>
     <opus_database_to_sql setexpanded="False" type="tool_set">
-      <classification flags="hidden" type="classification">database</classification>
+      <classification hidden="True" type="classification">database</classification>
       <opus_database_to_sql_config type="tool_config">
-        <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
+        <tool_hook hidden="True" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
         <sql_db_name type="string">mytestdb</sql_db_name>
         <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
@@ -73,9 +73,9 @@
       </opus_database_to_sql_config>
     </opus_database_to_sql>
     <opus_database_to_esri setexpanded="False" type="tool_set">
-      <classification flags="hidden" type="classification">database</classification>
+      <classification hidden="True" type="classification">database</classification>
       <opus_database_to_esri_config type="tool_config">
-        <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
+        <tool_hook hidden="True" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
         <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
         <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
@@ -83,9 +83,9 @@
       </opus_database_to_esri_config>
     </opus_database_to_esri>
     <opus_dataset_to_sql setexpanded="False" type="tool_set">
-      <classification flags="hidden" type="classification">dataset</classification>
+      <classification hidden="True" type="classification">dataset</classification>
       <opus_dataset_to_sql_config type="tool_config">
-        <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
+        <tool_hook hidden="True" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
         <sql_db_name type="string">mytestdb</sql_db_name>
         <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
@@ -93,9 +93,9 @@
       </opus_dataset_to_sql_config>
     </opus_dataset_to_sql>
     <opus_dataset_to_esri setexpanded="False" type="tool_set">
-      <classification flags="hidden" type="classification">dataset</classification>
+      <classification hidden="True" type="classification">dataset</classification>
       <opus_dataset_to_esri_config type="tool_config">
-        <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
+        <tool_hook hidden="True" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
         <esri_data_path type="dir_path">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
         <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
@@ -108,27 +108,27 @@
   <model_manager>
    <Model_Template_Library type="model_template_library">
         <simple_model_template  type="dictionary" copyable="True">
-         <import flags="hidden" type="dictionary">
+         <import hidden="True" type="dictionary">
           <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">SimpleModel</name>
+          <name hidden="True" type="string">SimpleModel</name>
           </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">fill in</dataset>
             <expression type="quoted_string">fill in</expression>
             <outcome_attribute type="quoted_string" parser_action="blank_to_None"></outcome_attribute>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
        </simple_model_template>  
        <choice_model_template  type="dictionary" copyable="True">
-         <import flags="hidden" type="dictionary">
+         <import hidden="True" type="dictionary">
           <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">ChoiceModel</name>
+          <name hidden="True" type="string">ChoiceModel</name>
           <arguments type="dictionary">
             <choice_set type="string">fill in</choice_set>
             <utilities type="quoted_string">opus_core.linear_utilities</utilities>
@@ -141,22 +141,22 @@
             <estimate_config type="dictionary">
               <estimation_size_agents type="float">1.0</estimation_size_agents>
             </estimate_config>
-            <debuglevel flags="hidden" type="integer">0</debuglevel>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <debuglevel hidden="True" type="integer">0</debuglevel>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
-            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" flags="hidden">cm_index</agents_index>
+            <agents_index type="string" hidden="True">cm_index</agents_index>
             <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <agent_set type="string" parser_action="blank_to_None"></agent_set>
             <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
@@ -165,59 +165,59 @@
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">choice_model_template_coefficients</coefficients_table>
             <sample_coefficients type="boolean">False</sample_coefficients>
-            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <cache_storage hidden="True" type="string">base_cache_storage</cache_storage>
             <multiplicator type = "integer">1</multiplicator>
           </arguments>
-          <output flags="hidden" type="string">(specification, coefficients, cm_index)</output>
+          <output hidden="True" type="string">(specification, coefficients, cm_index)</output>
         </prepare_for_run>
         <estimate type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
+            <specification hidden="True" type="string">specification</specification>
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" flags="hidden">cm_index</agents_index>
+            <agents_index type="string" hidden="True">cm_index</agents_index>
             <procedure type="quoted_string">opus_core.bhhh_mnl_estimation</procedure>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, dummy)</output>
+          <output hidden="True" type="string">(coefficients, dummy)</output>
         </estimate>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <name hidden="True" type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <agent_set type="string" parser_action="blank_to_None"></agent_set>
             <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">choice_model_template_specification</specification_table>
           </arguments>
-          <output flags="hidden" type="string">(specification, cm_index)</output>
+          <output hidden="True" type="string">(specification, cm_index)</output>
         </prepare_for_estimate>
        </choice_model_template>
        <regression_model_template  type="dictionary" copyable="True">
-         <import flags="hidden" type="dictionary">
+         <import hidden="True" type="dictionary">
           <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">RegressionModel</name>
+          <name hidden="True" type="string">RegressionModel</name>
           <arguments type="dictionary">
             <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
             <submodel_string type="string" parser_action="blank_to_None"></submodel_string>
             <run_config type="string" parser_action="blank_to_None"></run_config>
             <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
-            <debuglevel flags="hidden" type="integer">0</debuglevel>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <debuglevel hidden="True" type="integer">0</debuglevel>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
-            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
             <dataset type="string">fill in</dataset>
-            <index type="string" parser_action="blank_to_None" flags="hidden">rm_index</index>
+            <index type="string" parser_action="blank_to_None" hidden="True">rm_index</index>
             <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset type="string" parser_action="blank_to_None"></dataset>
             <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
@@ -226,70 +226,70 @@
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
             <sample_coefficients type="boolean">False</sample_coefficients>
-            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <cache_storage hidden="True" type="string">base_cache_storage</cache_storage>
             <multiplicator type = "integer">1</multiplicator>
           </arguments>
-          <output flags="hidden" type="string">(specification, coefficients, rm_index)</output>
+          <output hidden="True" type="string">(specification, coefficients, rm_index)</output>
         </prepare_for_run>
         <estimate type="dictionary">
           <arguments type="dictionary">
-            <specification flags="hidden" type="string">specification</specification>
+            <specification hidden="True" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
             <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
-            <index flags="hidden" type="string" parser_action="blank_to_None">rm_index</index>
+            <index hidden="True" type="string" parser_action="blank_to_None">rm_index</index>
             <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
-            <data_objects flags="hidden" type="string">datasets</data_objects>
+            <data_objects hidden="True" type="string">datasets</data_objects>
           </arguments>
-          <output flags="hidden" type="string">(coefficients, dummy)</output>
+          <output hidden="True" type="string">(coefficients, dummy)</output>
         </estimate>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <name hidden="True" type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <dataset type="string" parser_action="blank_to_None"></dataset>
             <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">regression_model_template_specification</specification_table>
           </arguments>
-          <output flags="hidden" type="string">(specification, rm_index)</output>
+          <output hidden="True" type="string">(specification, rm_index)</output>
         </prepare_for_estimate>
        </regression_model_template>
       <allocation_model_template  type="dictionary" copyable="True">
-         <import flags="hidden" type="dictionary">
+         <import hidden="True" type="dictionary">
           <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">AllocationModel</name>
+          <name hidden="True" type="string">AllocationModel</name>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="quoted_string">fill in</outcome_attribute>
             <weight_attribute type="quoted_string">fill in</weight_attribute>
-            <control_totals flags="hidden" type="string">cts</control_totals>
-            <current_year flags="hidden" type="string">year</current_year>
+            <control_totals hidden="True" type="string">cts</control_totals>
+            <current_year hidden="True" type="string">year</current_year>
             <control_total_attribute type="quoted_string">fill in</control_total_attribute>
             <year_attribute type="quoted_string">year</year_attribute>
             <capacity_attribute parser_action="blank_to_None" type="quoted_string" />
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
+          <name hidden="True" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <storage type="string">base_cache_storage</storage>
             <control_totals_table_name type="quoted_string">fill in</control_totals_table_name>
             <control_totals_id_name type="list">['year']</control_totals_id_name>
             <control_totals_dataset_name type="quoted_string">control_totals</control_totals_dataset_name>
           </arguments>
-          <output flags="hidden" type="string">cts</output>
+          <output hidden="True" type="string">cts</output>
         </prepare_for_run>
        </allocation_model_template>
        <agent_location_choice_model_template type="dictionary" copyable="True">
-        <import flags="hidden" type="dictionary">
+        <import hidden="True" type="dictionary">
           <urbansim.models.agent_location_choice_model type="string">AgentLocationChoiceModel</urbansim.models.agent_location_choice_model>
         </import>
         <init type="dictionary">
-          <name flags="hidden" type="string">AgentLocationChoiceModel</name>
+          <name hidden="True" type="string">AgentLocationChoiceModel</name>
           <arguments type="dictionary">
             <location_set type="string">fill in</location_set>
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
@@ -299,11 +299,11 @@
             <filter type="quoted_string" parser_action="blank_to_None"></filter>
             <submodel_string type="quoted_string" parser_action="blank_to_None"></submodel_string>
             <location_id_string type="quoted_string" parser_action="blank_to_None"></location_id_string>
-            <dataset_pool type="string" flags="hidden">dataset_pool</dataset_pool>
+            <dataset_pool type="string" hidden="True">dataset_pool</dataset_pool>
             <model_name type="quoted_string">AgentLocationChoiceModel</model_name>
             <short_name type="quoted_string">ALCM</short_name>
             <variable_package type="quoted_string">urbansim</variable_package>  
-            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
             <run_config type="dictionary">
               <sample_size_locations type="integer">30</sample_size_locations>
               <sample_proportion_locations type="integer" parser_action="blank_to_None"></sample_proportion_locations>
@@ -322,36 +322,36 @@
          </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name flags="hidden" type="string">prepare_for_estimate</name>
-          <output type="string" flags="hidden">(alcm_specification, alcm_index)</output>
+          <name hidden="True" type="string">prepare_for_estimate</name>
+          <output type="string" hidden="True">(alcm_specification, alcm_index)</output>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">agent_location_choice_model_specification</specification_table>
             <agent_set type="string">fill in</agent_set>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <agents_for_estimation_table type="quoted_string">fill in</agents_for_estimation_table>
-            <data_objects type="string" flags="hidden">datasets</data_objects>
-            <index_to_unplace type="string" flags="hidden" parser_action="blank_to_None"></index_to_unplace>
+            <data_objects type="string" hidden="True">datasets</data_objects>
+            <index_to_unplace type="string" hidden="True" parser_action="blank_to_None"></index_to_unplace>
             <join_datasets type="boolean" choices="True|False">True</join_datasets>
-            <portion_to_unplace type="string" flags="hidden">1.0</portion_to_unplace>
+            <portion_to_unplace type="string" hidden="True">1.0</portion_to_unplace>
             <filter type="quoted_string" parser_action="blank_to_None"></filter>
             <location_id_variable type="quoted_string" parser_action="blank_to_None"></location_id_variable>
           </arguments>
         </prepare_for_estimate>
          <estimate type="dictionary">
-          <output type="string" flags="hidden">(alcm_coefficients, dummy)</output>
+          <output type="string" hidden="True">(alcm_coefficients, dummy)</output>
           <arguments type="dictionary">
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" flags="hidden">alcm_index</agents_index>
+            <agents_index type="string" hidden="True">alcm_index</agents_index>
             <procedure type="quoted_string">opus_core.bhhh_mnl_estimation</procedure>
-            <data_objects type="string" flags="hidden">datasets</data_objects>
-            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
-            <specification type="string" flags="hidden">alcm_specification</specification>
+            <data_objects type="string" hidden="True">datasets</data_objects>
+            <debuglevel type="string" hidden="True">debuglevel</debuglevel>
+            <specification type="string" hidden="True">alcm_specification</specification>
           </arguments>
         </estimate>
         <prepare_for_run type="dictionary">
-          <name flags="hidden" type="string">prepare_for_run</name>
-          <output type="string" flags="hidden">(alcm_specification, alcm_coefficients)</output>
+          <name hidden="True" type="string">prepare_for_run</name>
+          <output type="string" hidden="True">(alcm_specification, alcm_coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">agent_location_choice_model_coefficients</coefficients_table>
@@ -362,12 +362,12 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" flags="hidden" parser_action="blank_to_None"></agents_index>
+            <agents_index type="string" hidden="True" parser_action="blank_to_None"></agents_index>
             <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
-            <coefficients type="string" flags="hidden">alcm_coefficients</coefficients>
-            <data_objects type="string" flags="hidden">datasets</data_objects>
-            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
-            <specification type="string" flags="hidden">alcm_specification</specification>
+            <coefficients type="string" hidden="True">alcm_coefficients</coefficients>
+            <data_objects type="string" hidden="True">datasets</data_objects>
+            <debuglevel type="string" hidden="True">debuglevel</debuglevel>
+            <specification type="string" hidden="True">alcm_specification</specification>
             <maximum_runs type="integer">10</maximum_runs>
           </arguments>
         </run>
@@ -415,16 +415,16 @@
    <estimation_config type="dictionary">
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >fill in (relative to OPUS_DATA_PATH)</cache_directory>
         <estimation_database_configuration type="class" >
-          <Class_name flags="hidden" type="string" >EstimationDatabaseConfiguration</Class_name>
-          <Class_path flags="hidden" type="string" >opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <Class_name hidden="True" type="string" >EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string" >opus_core.database_management.configurations.estimation_database_configuration</Class_path>
           <database_name type="string" ></database_name>
         </estimation_database_configuration>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
          <my_dataset type="dataset" choices="Load|Skip" copyable="True">Skip</my_dataset>
          </datasets_to_preload>
         <dataset_pool_configuration type="class" >
-          <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
-          <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
+          <Class_name hidden="True" type="string" >DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
           <package_order type="list" >['urbansim', 'opus_core']</package_order>
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list" >[]</datasets_to_cache_after_each_model>

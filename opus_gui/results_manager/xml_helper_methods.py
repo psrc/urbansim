@@ -355,10 +355,10 @@ class ResultsManagerXMLHelper:
         child_nodes = []
         for args in child_node_definitions:
             if children_hidden:
-                if 'flags' in args: 
-                    args['flags'] += '|hidden'
-                else:
-                    args['flags'] = 'hidden'
+                args['hidden'] = 'True'
+            elif 'hidden' in args:
+                args['hidden'] = 'False'
+            # if not present, let 'hidden' default to False
             child_node = model.create_node(document = self.toolboxBase.doc,
                                            temporary = temporary,
                                            **args)
