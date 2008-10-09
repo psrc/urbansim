@@ -247,6 +247,11 @@ class XMLConfiguration(object):
         # to reuse bits of the xml from parent_node.  (The xml for it is created by this class 
         # from its file during initialization, so we don't need to make a copy).
         # Precondition: path gives a unique element in this configuration's xml tree.
+        # First merge in any attributes from the parent that aren't in the child (except for 'inherited' attributes)
+        this_node = self._find_node(path) 
+        for k in parent_node.keys():
+            if k!='inherited' and k not in this_node.attrib:
+                this_node.set(k, parent_node.get(k))
         prev_child = None
         for child in parent_node.getchildren():
             if path=='':
@@ -771,20 +776,24 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         
     def test_inherited_attributes(self):
         # make sure that inherited attributes are overridden properly, and otherwise passed through if not overridden
-        path = 'model_manager/estimation/real_estate_price_model/single_family_residential/submodel_id'
+        path = 'general/test_node'
         f1 = os.path.join(self.test_configs, 'estimate.xml')
         n1 = XMLConfiguration(f1).full_tree.find(path)
-        self.assertEqual(n1.get('randomattribute'), 'Clam')
+        self.assertEqual(n1.get('test_attribute'), 'parent_value')
+        self.assertEqual(n1.get('oceanic_attribute'), 'squid')
         f2 = os.path.join(self.test_configs, 'estimation_child.xml')
         n2 = XMLConfiguration(f2).full_tree.find(path)
-        self.assertEqual(n2.get('randomattribute'), 'Squid')
+        self.assertEqual(n2.get('test_attribute'), 'child_value')
+        self.assertEqual(n2.get('oceanic_attribute'), 'squid')
         f3 = os.path.join(self.test_configs, 'estimation_child2.xml')
         n3 = XMLConfiguration(f3).full_tree.find(path)
-        self.assertEqual(n3.get('randomattribute'), 'Clam')
+        self.assertEqual(n3.get('test_attribute'), 'parent_value')
+        self.assertEqual(n3.get('oceanic_attribute'), 'squid')
         f4 = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         n4 = XMLConfiguration(f4).full_tree.find(path)
-        self.assertEqual(n4.get('randomattribute'), 'Squid')
-          
+        self.assertEqual(n4.get('test_attribute'), 'child_value')
+        self.assertEqual(n4.get('oceanic_attribute'), 'squid')  
+  
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')

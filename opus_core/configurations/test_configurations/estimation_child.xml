@@ -6,12 +6,13 @@
       <tax type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.tax</tax>
     </expression_library>
     <project_name type="string">test_project</project_name>
+    <test_node type="string" test_attribute="child_value">still testing attribute inheritance</test_node>
   </general>
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
         <single_family_residential type="submodel" >
-          <submodel_id type="integer"  randomattribute="Squid" >240</submodel_id>
+          <submodel_id type="integer">240</submodel_id>
         </single_family_residential>
       </real_estate_price_model>
       <models_to_estimate type="selectable_list" >

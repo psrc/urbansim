@@ -5,6 +5,7 @@
     <expression_library type="dictionary" >
       <ln_cost dataset="parcel" source="expression" type="variable_definition" use="model variable">ln(psrc.parcel.cost)+100</ln_cost>
     </expression_library>
+    <test_node type="string">still testing attribute inheritance</test_node>
     <project_name type="string">test_project</project_name>
   </general>
   <model_manager>
