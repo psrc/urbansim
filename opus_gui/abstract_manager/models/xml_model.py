@@ -579,7 +579,7 @@ class XmlModel(QAbstractItemModel):
     #            if self.rowCount(child)>0:
     #                self.stripAttribute(attribute,child,recursive)
 
-    def create_node(self, document, name, type, value='', choices=None, temporary=False, flags=None, hidden=False):
+    def create_node(self, document, name, type, value='', choices=None, temporary=False, flags=None, hidden=None):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString('type'),QString(type))
         
@@ -595,8 +595,8 @@ class XmlModel(QAbstractItemModel):
             newNode.setAttribute(QString('temporary'),QString('True'))
         if flags is not None:
             newNode.setAttribute(QString('flags'), QString(flags))
-        if hidden:
-            newNode.setAttribute(QString('hidden'), QString('True'))
+        if hidden is not None:
+            newNode.setAttribute(QString('hidden'), QString(hidden))
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
