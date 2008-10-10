@@ -20,8 +20,7 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
     def __init__(self, mainwindow, modelsManagerBase, estimation):
         QWidget.__init__(self, mainwindow)
         self.setupUi(self)
-        
-        self.mainwindow = mainwindow
+
         self.mainwindow = mainwindow
         self.modelsManagerBase = modelsManagerBase
         self.estimation = estimation
