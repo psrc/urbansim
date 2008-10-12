@@ -127,15 +127,16 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                        
          'employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
+                                sample_size_locations = 60,
                                 location_set = "building",
                                 input_index = 'erm_index',
-                                estimation_weight_string = "vacant_SSS_job_space",
+                                estimation_weight_string = None,
                                 #agents_for_estimation_table = None, # will take standard jobs table 
                                 agents_for_estimation_table = "jobs_for_estimation",
-                                join_datasets = False,
+                                join_datasets = True,
                                 #estimation_size_agents = 0.3,
                                 number_of_units_string = "total_SSS_job_space",
-                                filter = "building.non_residential_sqft",
+                                filter = "building.non_residential_sqft>0",
                                 filter_for_estimation = "numpy.logical_and(job.building_id>0, job.disaggregate(building.non_residential_sqft) > 0)",
                                 #filter_for_estimation = "numpy.logical_and(job.building_id>0,job.join_flag<3)",
                                 portion_to_unplace = 0,
@@ -163,6 +164,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                     location_set = 'building',
                                     filter = 'urbansim_parcel.building.is_governmental',
                                     agents_filter = 'urbansim.job.is_in_employment_sector_group_scalable_sectors'
+                                                                                  ).execute(),
+            'distribute_unplaced_mining_utilities_jobs_model':  DistributeUnplacedJobsModelConfigurationCreator(
+                                    location_set = 'building',
+                                    filter = None,
+                                    agents_filter = 'numpy.logical_or(job.sector_id==1, job.sector_id==9)'
                                                                                   ).execute(),
             'governmental_employment_location_choice_model': 
                    GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
