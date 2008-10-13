@@ -671,6 +671,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
            'urbansim_parcel.models.scaling_jobs_model': 'ScalingJobsModel'}
         models_configuration['distribute_unplaced_jobs_model']['controller']['import'] =  {
            'urbansim_parcel.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'}
+        models_configuration['distribute_unplaced_mining_utilities_jobs_model']['controller']['import'] =  {
+           'urbansim_parcel.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'}
         models_configuration['real_estate_price_model_for_all_parcels'] = Configuration(models_configuration['real_estate_price_model'])
         models_configuration['real_estate_price_model_for_all_parcels']['controller']['init']['arguments']['filter_attribute'] = None
 
