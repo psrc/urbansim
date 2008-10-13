@@ -76,14 +76,6 @@ def create_list_string(list, sep):
     # a very efficient function
     return sep.join(list)
 
-def get_field_names(recarray, lower=True):
-    """Returns a list of field names of a record array. If lower equals 1, the names are transformed to lower case."""
-    # using list comprehensions make things clearer, and we only do the (lower) test *once*
-    if lower:
-        return [field.lower() for field in recarray.dtype.fields.keys()]
-    else:
-        return [field for field in recarray.dtype.fields.keys()]
-
 def byteswap_if_needed(data, byteorder):
     """
     Ensures that data is read and written in the correct byteorder.
@@ -155,16 +147,6 @@ def write_table_to_text_file(filename, table, mode="wb", delimiter=' '):
     write_to_text_file(filename, table[0,:], mode=mode, delimiter=delimiter)
     for k in range(1,table.shape[0]):
         write_to_text_file(filename, table[k,:], delimiter=delimiter, mode="ab")
-
-def load_from_file(filename, byteorder=DEFAULT_BYTEORDER, type='float32'):
-    from numpy import fromfile
-
-    """Reads float data from a file."""
-    float_file = file(filename, mode="rb")
-    data = fromfile(float_file,dtype=type)
-    float_file.close()
-    byteswap_if_needed(data, byteorder)
-    return data
 
 def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=' ', header=False, comment=None):
 
@@ -270,24 +252,6 @@ def get_distinct_list(list):
         if not(item in newlist):
             newlist = newlist + [item]
     return newlist
-
-def create_name_array(prefix,cols,rows,z):
-    from numpy import array, reshape
-
-    name_list = []
-    if z <= 1:
-        if rows == 1: #1d array
-            name_list=create_string_list(prefix,cols)
-        else:         #2d array
-            for j in range(rows):
-                for i in range(cols):
-                    name_list.append(prefix + `j+1` + '_' + `i+1`)
-    else:             # 3d array
-        for j in range(rows):
-            for i in range(cols):
-                for k in range(z):
-                    name_list.append(prefix + `j+1` + '_' + `i+1` + '_' + `k+1`)
-    return reshape(array(name_list), (rows*cols*z,))
 
 def create_string_list(prefix, n):
     """Create a list of strings 'prefix+number' with number=1,...,n.
@@ -439,15 +403,6 @@ def unique(arr):
     if arr.ndim == 1:
         return reshape(new_array,(arr.size,))
     return new_array
-
-def switch(arr, pos1, pos2):
-    """Exchange the 'pos1'-th item in the array 'arr' with the one on the 'pos2'-th position."""
-    from numpy import arange
-
-    index = arange(arr.size)
-    index[pos2] = pos1
-    index[pos1] = pos2
-    return arr[index]
 
 def has_this_method(object, method_name):
     """Does this object have a method named method_name?"""
@@ -621,13 +576,6 @@ def ismember(ar1, ar2) :
     ir = a.searchsorted(ar1, side='right')
     return ir != il
 
-def flatten(l):
-    """Flattens a list."""
-    if isinstance(l,list):
-        return sum(map(flatten,l),[])
-    else:
-        return [l]
-
 def get_host_name():
     """Get the host name of this computer in a platform-independent manner."""
     fullname = socket.gethostname()
@@ -635,13 +583,6 @@ def get_host_name():
     # or might also have the full internet address; and it might be in lower or
     # upper case.  Normalize to be just the machine name, in lower case.
     return fullname.split('.')[0].lower()
-
-def reverse_dictionary(dictionary):
-    """Returns a dictionary where values are keys and keys are values of the given 'dictionary'."""
-    newdict = {}
-    for key, value in dictionary.iteritems():
-        newdict[value]=key
-    return newdict
 
 def clip_to_zero_if_needed(values, function=""):
     from numpy import clip
@@ -770,10 +711,6 @@ def get_dataset_from_storage(dataset_name, directory, storage_type, package_orde
     except: # take generic dataset
         return Dataset(dataset_name=dataset_name, **dataset_args)
     
-def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
-    """See doc string to get_dataset_from_storage which  is called with storage_type='flt_storage'."""
-    return get_dataset_from_storage(dataset_name, directory, 'flt_storage', package_order=package_order, dataset_args=dataset_args)
-
 def get_dataset_from_tab_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
     """See doc string to get_dataset_from_storage which  is called with storage_type='tab_storage'."""
     return get_dataset_from_storage(dataset_name, directory, 'tab_storage', package_order=package_order, dataset_args=dataset_args)
@@ -1008,14 +945,6 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
         self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
         
-    def test_get_dataset_from_flt_storage(self):
-        import opus_core
-        
-        attribute = 'little_endian'
-        location = os.path.join(opus_core.__path__[0], 'data', 'flt')
-        dataset = get_dataset_from_flt_storage('endian', directory=location, dataset_args={'in_table_name':'endians', 'id_name':[]})
-        self.assertAlmostEqual(11.0, dataset.get_attribute_by_index(attribute, 0))
-        
     def test_get_dataset_from_tab_storage(self):
         import opus_core
         
@@ -1034,14 +963,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         
     def test_create_list_string(self):
         self.assertEquals(create_list_string(['aa', 'b', '', ' dd'], 'SEP'), 'aaSEPbSEPSEP dd')
-        
-    def test_get_field_names(self):
-        from numpy import rec
-        recArr = rec.fromarrays([[1], [2], [3]], names = 'One, Two, Three')
-        self.assertEquals(get_field_names(recArr, False), ['Three', 'Two', 'One'])
-        self.assertEquals(get_field_names(recArr, True), ['three', 'two', 'one'])
-        self.assertEquals(get_field_names(recArr), ['three', 'two', 'one'])
-                        
+             
     def test_flatten_list(self):
         nestedList = [3, 4.0, 'five']
         testList = [nestedList]
