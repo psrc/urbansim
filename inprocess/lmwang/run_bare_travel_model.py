@@ -87,5 +87,5 @@ if __name__ == "__main__":
     config = ModelConfig(options.cache_directory, options.year, travel_model_path)
 
     ForkProcess().fork_new_process('opus_core.tools.start_run', resources=config,
-                                   optional_args="--hostname None")
+                                   optional_args=["--hostname", "None"])
     

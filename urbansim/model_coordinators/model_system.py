@@ -38,7 +38,7 @@ class ModelSystem(CoreModelSystem):
                     if profiler_name is not None:
                         resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
                     ForkProcess().fork_new_process(
-                        'urbansim.model_coordinators.model_system', resources, optional_args='--log-file-name=%s' % log_file_name)
+                        'urbansim.model_coordinators.model_system', resources, optional_args=['--log-file-name', log_file_name])
                     logger.enable_file_logging(log_file, verbose=False)
                 finally:
                     logger.end_block()
@@ -58,8 +58,7 @@ class ModelSystem(CoreModelSystem):
             else:
                 models = year_models_dict['models']  #travel model format
             for opus_path in models:
-                ForkProcess().fork_new_process(opus_path,
-                    resources, optional_args='-y %d' % year)                
+                ForkProcess().fork_new_process(opus_path, resources, optional_args=['-y', year])
 
 if __name__ == "__main__":
     try: import wingdbstub

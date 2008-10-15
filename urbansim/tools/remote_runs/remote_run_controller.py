@@ -332,7 +332,7 @@ class RemoteRun:
                             tripgen_dir = tm.get_emme2_dir(this_end_year, 'tripgen')
                             max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
                         else:
-                            optional_args='-y %d' % this_end_year
+                            optional_args=['-y', this_end_year]
                             if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
                                 optional_args='%s -m -z %s' % (optional_args, max_zone_id)
                             elif full_model_path == 'opus_emme2.models.run_travel_model':

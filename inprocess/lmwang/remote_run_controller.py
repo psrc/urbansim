@@ -160,7 +160,7 @@ if __name__ == "__main__":
             if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
                 for full_model_path in travel_model_resources['travel_model_configuration']['models']:
                     ForkProcess().fork_new_process(full_model_path, 
-                        travel_model_resources, optional_args='-y %d' % this_end_year)
+                        travel_model_resources, optional_args=['-y', this_end_year])
 
         if not os.path.exists(os.path.join(local_cache_directory, str(this_end_year+1))):
             raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \

@@ -70,10 +70,7 @@ class AbstractFunctionalTestForDoExportCacheToDelimitedFiles(object):
     def test_does_copy_entire_cache(self):
         path_to_cache = os.path.join(self.temp_dir, '1000')
         tool_opus_path = 'opus_core.tools.do_export_cache_to_%s_delimited_files' % self.type
-        optional_args = '-c %s -o %s' % (
-            path_to_cache,
-            self.temp_dir
-            )
+        optional_args = ['-c', path_to_cache, '-o', self.temp_dir]
         ForkProcess().fork_new_process(tool_opus_path, 
                                        resources = None, 
                                        optional_args = optional_args)
@@ -85,11 +82,7 @@ class AbstractFunctionalTestForDoExportCacheToDelimitedFiles(object):
     def test_does_copy_one_table(self):
         path_to_cache = os.path.join(self.temp_dir, '1000')
         tool_opus_path = 'opus_core.tools.do_export_cache_to_%s_delimited_files' % self.type
-        optional_args = '-c %s -o %s -t %s' % (
-            path_to_cache,
-            self.temp_dir,
-            'table_a',
-            )
+        optional_args = ['-c', path_to_cache, '-o', self.temp_dir, '-t', 'table_a']
         ForkProcess().fork_new_process(tool_opus_path, 
                                        resources = None, 
                                        optional_args = optional_args)

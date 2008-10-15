@@ -467,7 +467,7 @@ class ModelSystem(object):
                 if profiler_name is not None:
                     resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
                 ForkProcess().fork_new_process(
-                    'opus_core.model_coordinators.model_system', resources, optional_args='--log-file-name=%s' % log_file_name)
+                    'opus_core.model_coordinators.model_system', resources, optional_args=['--log-file-name', log_file_name])
                 logger.enable_file_logging(log_file, verbose=False)
             finally:
                 logger.end_block()
@@ -484,13 +484,9 @@ class ModelSystem(object):
         ###       Configuration.
         resources['cache_directory'] = cache_directory
 
-        if run_in_background:
-            optional_arguments = '&'
-        else:
-            optional_arguments = ''
         ForkProcess().fork_new_process(
                     '%s' % class_path, resources, delete_temp_dir=False,
-                    optional_args=optional_arguments)
+                    optional_args=optional_arguments, run_in_background=run_in_background)
 
     def run_in_same_process(self, resources, class_path='opus_core.model_coordinators.model_system'):
         resources = Resources(resources)

@@ -14,6 +14,7 @@
 
 import os
 import sys
+import subprocess
 
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -24,9 +25,13 @@ from opus_core.file_utilities import write_resources_to_file
 
 class ForkProcess(object):
     """Fork a new process."""
+
+    def __init__(self):
+        self.popen = None
+        self.stdout = None
     
-    def fork_new_process(self, module_name, resources, delete_temp_dir=True, optional_args='',
-                         quiet=False):
+    def fork_new_process(self, module_name, resources, delete_temp_dir=True, optional_args=[],
+                         quiet=False, run_in_background=False):
         """Invoke the module whose fully-qualified opus name is module_name and pass it the 
         pickled resources.  Stores resources in pickle_file_path.
         If quiet=True, the console output for the command will not appear.
@@ -46,11 +51,18 @@ class ForkProcess(object):
             
             if quiet:
                 log_file_path = os.path.join(pickle_dir, '_log_.log')
-                python_cmd += ' > %s 2>&1' % log_file_path
-        
-            logger.log_status("Invoking: %s" % python_cmd)
-            exit_status = os.system(python_cmd)
-            if exit_status!=0:
+                output_file = open(log_file_path, "w")
+            else:
+#                output_file = subprocess.PIPE
+                output_file = None
+
+            logger.log_status("Invoking: %s" % " ".join(python_cmd))
+            self.popen = subprocess.Popen(python_cmd, stdin=None, stdout=output_file, stderr=output_file)
+#            self.popen = subprocess.Popen(python_cmd, stdout=sys.stdout, stderr=sys.stdout)
+            if not run_in_background:
+                self.popen.wait()
+            exit_status = self.popen.returncode
+            if exit_status!=None and exit_status!=0:
                 raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (module_name, python_cmd))
                 
         finally:
@@ -59,17 +71,18 @@ class ForkProcess(object):
                 pass
     
     def _assemble_command_line_call(self, module_name, resources, 
-                                    pickle_file_path, optional_args=''):
-                
+                                    pickle_file_path, optional_args=[]):
+        
         module_path = module_path_from_opus_path(module_name)
-        if pickle_file_path is None:
-            python_cmd = "%s \"%s\" %s" % (sys.executable, module_path, 
-                                           optional_args)
-        else:
-            python_cmd = "%s \"%s\" -r %s %s" % (sys.executable, module_path, 
-                                                 pickle_file_path, 
-                                                 optional_args)
-            
+        
+        python_cmd = [sys.executable, module_path]
+        
+        if pickle_file_path:
+            python_cmd += ["-r", pickle_file_path]
+        
+        for optional_arg in optional_args:
+            python_cmd += [str(optional_arg)]
+        
         return python_cmd
     
 

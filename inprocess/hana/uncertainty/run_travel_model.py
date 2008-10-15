@@ -75,7 +75,7 @@ class RunTravelModel:
             logger.log_status("No configuration for year %s" % year)
             return False
         for full_model_path in config['travel_model_configuration'][year].get('models'):
-            optional_args='-y %d' % year
+            optional_args=['-y', year]
             ForkProcess().fork_new_process(full_model_path, config, optional_args=optional_args)
         return True    
 
