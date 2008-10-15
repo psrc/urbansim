@@ -411,7 +411,7 @@ class SpecifiedCoefficients(object):
             if var == self.constant_string:
                 result.append(i)
             i+=1
-        return array(result)
+        return array(result, dtype="int32")
 
     def add_calibration_constants(self, constants_array):
         const_index = self.get_constants_positions()[0]
