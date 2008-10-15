@@ -14,20 +14,21 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import SIGNAL, QString
+from PyQt4.QtCore import SIGNAL, QString, Qt
 from PyQt4.QtGui import QDialog
-
 
 from opus_gui.abstract_manager.views.ui_clonenode import Ui_CloneNodeGui
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
-    def __init__(self, xml_controller, fl, clone, parentNode, model):
-        QDialog.__init__(self, xml_controller.mainwindow, fl)
+    def __init__(self, xml_controller, clone, parentNode, model):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        QDialog.__init__(self, xml_controller.mainwindow, flags)
         self.setupUi(self)
         self.xml_controller = xml_controller
         self.clone = clone
         self.parentNode = parentNode
         self.model = model
+        self.setModal(True)
 
     def on_createXML_released(self):
         newNameWithSpace = self.newName.text()
