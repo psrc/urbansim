@@ -28,16 +28,17 @@ class XmlController(object):
         self.mainwindow = toolboxbase.mainwindow
         self.xmlType = xml_type
         self.parentWidget = parentWidget
+        
+        self.model = XmlModel(self,self.toolboxbase.doc, self.mainwindow,
+                              self.toolboxbase.configFile, self.xmlType, True)
+        self.view = XmlView(self.mainwindow)
+        self.delegate = XmlItemDelegate(self.view)
 
         if addTree:
             self.addTree(listen_to_menu = listen_to_menu)
 
 
     def addTree(self, listen_to_menu):
-        self.model = XmlModel(self,self.toolboxbase.doc, self.mainwindow,
-                              self.toolboxbase.configFile, self.xmlType, True)
-        self.view = XmlView(self.mainwindow)
-        self.delegate = XmlItemDelegate(self.view)
         self.view.setItemDelegate(self.delegate)
         self.view.setModel(self.model)
         # Need to traverse the whole tree and expand the nodes if they default to open
