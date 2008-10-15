@@ -986,5 +986,18 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(ismember(a,g).all(), array([False, True]).all())
         self.assertEqual(ismember(a,f).all(), ismember(a,g).all(), array([False, False]).all())
      
+    def test_write_to_text_file(self):
+        from numpy import array
+        file_name = 'test_file_name'
+        arr = array(['a', 'b', 'c'])
+        delim = '|'
+        write_to_text_file(file_name, arr, 'wb', delim)
+        written_data = ''
+        i=0
+        for i in range(len(arr)-1):
+            written_data += (arr[i] + delim) 
+        written_data += arr[i+1]
+        self.assertEqual(load_from_text_file(file_name), written_data)
+     
 if __name__ == "__main__":
     opus_unittest.main()
