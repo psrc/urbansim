@@ -21,7 +21,8 @@ class AbstractManagerBase(object):
         
     def removeGuiElement(self,guiElement):
         self.tabWidget.removeTab(self.tabWidget.indexOf(guiElement))
-        self.guiElements.remove(guiElement)
+        if guiElement in self.guiElements:
+            self.guiElements.remove(guiElement)
         guiElement.hide()
         guiElement.ingui = False
         self.updateGuiElements()
