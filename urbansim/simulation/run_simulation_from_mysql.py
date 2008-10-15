@@ -47,8 +47,8 @@ class RunSimulationFromMysql:
         # Create output database (normally done by run manager)
         if 'estimation_database_configuration' in self.config:
             db_server = DatabaseServer(self.config['estimation_database_configuration'])
-            db_server.drop_database(self.config['estimation_database_configuration'].database_name)
-            db_server.create_database(self.config['estimation_database_configuration'].database_name)
+            if not db_server.has_database(self.config['estimation_database_configuration'].database_name):
+                db_server.create_database(self.config['estimation_database_configuration'].database_name)
                    
     def run_simulation(self, simulation_instance=None):
         logger.start_block('Simulation on database %s' 

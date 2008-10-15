@@ -97,8 +97,9 @@ class RunManager(AbstractService):
             # Create brand-new output database (deletes any prior contents)
             if 'estimation_database_configuration' in run_resources:
                 db_server = DatabaseServer(run_resources['estimation_database_configuration'])
-                db_server.drop_database(run_resources['estimation_database_configuration'].database_name)
-                db_server.create_database(run_resources['estimation_database_configuration'].database_name)                
+                if not db_server.has_database(run_resources['estimation_database_configuration'].database_name):
+                    db_server.create_database(run_resources['estimation_database_configuration'].database_name)
+             
             
             # Run simulation
             exec('from %s import ModelSystem' % model_system_class_path)
