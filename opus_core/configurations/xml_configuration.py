@@ -167,8 +167,7 @@ class XMLConfiguration(object):
 
         submodel_list = self.get_section('model_manager/model_system/' + 
                                          model_name + '/specification/')
-                                         
-		# if there was no submodels, try the old location
+        # if there was no submodels, try the old location
         #TODO: refactor xml instead
         if not submodel_list:
             old_section = self.get_section('model_manager/estimation')
