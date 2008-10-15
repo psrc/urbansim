@@ -122,35 +122,35 @@ class XMLHelperTests(opus_unittest.OpusTestCase):
         <name type="tool_name">shapefile_to_postgis</name>
         <params type="param_template">
           <dbname type="string">
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string">1</default>
-	  </dbname>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string">1</default>
+          </dbname>
           <schema_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </schema_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </schema_name>
           <shapefile_path>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="file_path" type="string">file_path</type>
-	    <default type="file_path"></default>
-	  </shapefile_path>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="file_path" type="string">file_path</type>
+            <default type="file_path"></default>
+          </shapefile_path>
           <output_table_name>
-	    <required choices="Required|Optional" type="string">Required</required>
-	    <type choices="string" type="string">string</type>
-	    <default type="string"></default>
-	  </output_table_name>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string"></default>
+          </output_table_name>
           <geometry_type>
-	    <required choices="Required|Optional" type="string">Optional</required>
-	    <type choices="string" type="string">string</type>
-	    <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON" type="string">NONE</default>
-	  </geometry_type>
+            <required choices="Required|Optional" type="string">Optional</required>
+            <type choices="string" type="string">string</type>
+            <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON" type="string">NONE</default>
+          </geometry_type>
           <overwrite>
-	    <required choices="Required|Optional" type="string">Optional</required>
-	    <type choices="string" type="string">string</type>
-	    <default choices="YES|NO" type="string">NO</default>
-	  </overwrite>
+            <required choices="Required|Optional" type="string">Optional</required>
+            <type choices="string" type="string">string</type>
+            <default choices="YES|NO" type="string">NO</default>
+          </overwrite>
         </params>
       </shapefile_to_postgis>
     </Tool_Library>
