@@ -20,12 +20,18 @@ class XmlView(QTreeView):
     def __init__(self, mainwindow):
         QTreeView.__init__(self, mainwindow)
         self.mainwindow = mainwindow
+        self.setAnimated(True)
+        self.setMinimumHeight(200)
 
     def openDefaultItems(self):
         # Loop through all the data model items displayed and expand
         # if they are marked to be expanded by default
         model = self.model()
         self.loopItems(model,model.index(0,0,QModelIndex()).parent())
+        
+        # refresh the widths of the columns
+        self.setColumnWidth(0,200)
+        self.setColumnWidth(1,50)
 
     def loopItems(self,model,parentIndex):
         rows = model.rowCount(parentIndex)
