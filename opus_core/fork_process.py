@@ -23,15 +23,18 @@ from opus_core.logger import logger
 from opus_core.misc import module_path_from_opus_path
 from opus_core.file_utilities import write_resources_to_file
 
+PIPE = -1
+STDOUT = -2
+LOG = -3
+
 class ForkProcess(object):
     """Fork a new process."""
 
     def __init__(self):
         self.popen = None
-        self.stdout = None
     
     def fork_new_process(self, module_name, resources, delete_temp_dir=True, optional_args=[],
-                         quiet=False, run_in_background=False):
+                         stdin=None, stdout=None, stderr=None, run_in_background=False):
         """Invoke the module whose fully-qualified opus name is module_name and pass it the 
         pickled resources.  Stores resources in pickle_file_path.
         If quiet=True, the console output for the command will not appear.
@@ -49,16 +52,25 @@ class ForkProcess(object):
                                                           pickle_file_path, 
                                                           optional_args)
             
-            if quiet:
+            if stdin == PIPE:
+                stdin = subprocess.PIPE
+
+            if stdout == PIPE:
+                stdout = subprocess.PIPE
+            elif stdout == LOG:
                 log_file_path = os.path.join(pickle_dir, '_log_.log')
-                output_file = open(log_file_path, "w")
-            else:
-#                output_file = subprocess.PIPE
-                output_file = None
+                stdout = open(log_file_path, "w")
+
+            if stderr == PIPE:
+                stderr = subprocess.PIPE
+            elif stderr == STDOUT:
+                stderr = subprocess.STDOUT
+            elif stderr == LOG:
+                log_file_path = os.path.join(pickle_dir, '_errlog_.log')
+                stderr = open(log_file_path, "w")
 
             logger.log_status("Invoking: %s" % " ".join(python_cmd))
-            self.popen = subprocess.Popen(python_cmd, stdin=None, stdout=output_file, stderr=output_file)
-#            self.popen = subprocess.Popen(python_cmd, stdout=sys.stdout, stderr=sys.stdout)
+            self.popen = subprocess.Popen(python_cmd, stdin=stdin, stdout=stdout, stderr=stdout)
             if not run_in_background:
                 self.popen.wait()
             exit_status = self.popen.returncode
@@ -70,6 +82,7 @@ class ForkProcess(object):
                 rmtree(pickle_dir)
                 pass
     
+
     def _assemble_command_line_call(self, module_name, resources, 
                                     pickle_file_path, optional_args=[]):
         
