@@ -1,27 +1,28 @@
 <opus_project>
-  <general>
-   <expression_library type="dictionary">
-     <var1 type="variable_definition" dataset="dataset" use="model variable" source="expression" copyable="True">package.dataset.some_variable_or_expression</var1>
-   </expression_library>
-    <project_name type="string">test_project</project_name>
-  </general>
-  <model_manager>
-    <estimation>
-    <choice_model_with_equations_template  type="dictionary" copyable='True'>
-   <submodel type="submodel" copyable='True'>
-      <description type="string">No submodel</description>
-      <submodel_id type="integer">-2</submodel_id>
-      <choice_1 type="dictionary" copyable='True'>
-        <equation_id type="integer">1</equation_id>
-        <variables type="variable_list">constant</variables>
-        </choice_1>
-        <choice_2 type="dictionary" copyable='True'>
-          <equation_id type="integer">2</equation_id>
-          <variables type="variable_list">var1</variables>
-        </choice_2>
-   </submodel>
-   </choice_model_with_equations_template>
-    </estimation>
-  </model_manager>
-  <scenario_manager/>
+    <general>
+        <expression_library type="dictionary">
+            <var1 type="variable_definition" dataset="dataset" use="model variable" source="expression" copyable="True">package.dataset.some_variable_or_expression</var1>
+        </expression_library>
+        <project_name type="string">test_project</project_name>
+    </general>
+    <model_manager>
+        <model_system type="model_system">
+            <choice_model_with_equations_template type="model" copyable="True">
+                <specification type="dictionary">
+                    <submodel type="submodel" copyable="True">
+                        <description type="string">No submodel</description>
+                        <submodel_id type="integer">-2</submodel_id>
+                        <choice_1 type="dictionary" copyable="True">
+                            <equation_id type="integer">1</equation_id>
+                            <variables type="variable_list">constant</variables>
+                        </choice_1>
+                        <choice_2 type="dictionary" copyable="True">
+                            <equation_id type="integer">2</equation_id>
+                            <variables type="variable_list">var1</variables>
+                        </choice_2>
+                    </submodel>
+                </specification>
+            </choice_model_with_equations_template>
+        </model_system>
+    </model_manager>
 </opus_project>
