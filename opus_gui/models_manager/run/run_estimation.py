@@ -58,13 +58,14 @@ class RunEstimationThread(QThread):
 
 
 class OpusEstimation(object):
-    def __init__(self,xmltreeobject,xml_path, model_name):
+    def __init__(self, xmltreeobject, xml_path, model_name):
+        dummy_callback = lambda x: None
         self.xmltreeobject = xmltreeobject
         self.xml_path = xml_path
         self.er = None
-        self.progressCallback = None
-        self.finishedCallback = None
-        self.errorCallback = None
+        self.progressCallback = dummy_callback
+        self.finishedCallback = dummy_callback
+        self.errorCallback = dummy_callback
         self.guiElement = None
         self.config = None
         self.statusfile = None
@@ -101,12 +102,13 @@ class OpusEstimation(object):
         try:
             fileNameInfo = QFileInfo(self.xml_path)
             filename = fileNameInfo.absoluteFilePath().trimmed()
+            # get the configuration for estimations
             xml_config = self.xmltreeobject.toolboxbase.opus_core_xml_configuration
-            estimation_section = xml_config.get_section('model_manager/estimation')
+            estimation_section = xml_config.get_section('model_manager/model_system/')
             estimation_config = estimation_section['estimation_config']
             self.config = estimation_config
             # TODO: put save_estimation results etc into config
-            save_results = estimation_section['save_estimation_results']
+            save_results = estimation_config['save_estimation_results']
             model_name = self.model_name
 #                for model_name in estimation_config['models_to_estimate']:
             # If we've paused the estimation, wait 10 seconds, and see if we are unpaused.  If we've cancelled,
@@ -118,6 +120,8 @@ class OpusEstimation(object):
                 
                 if type(model_name) == dict:
                     for name, group_members in model_name.items():
+                        print "Name %s./nGroup Members: %s" %(name, group_members)
+                        
                         self.__class__.er = EstimationRunner(model=name, 
                                               xml_configuration=xml_config, 
                                               model_group = group_members['group_members'],
@@ -127,7 +131,10 @@ class OpusEstimation(object):
                     self.er.estimate()
                     self.running = False
                 else:
-                    self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None, save_estimation_results=save_results)
+                    self.er = EstimationRunner(model=model_name, 
+                        xml_configuration=xml_config, 
+                        configuration=None, 
+                        save_estimation_results=save_results)
                     self.running = True
                     self.er.estimate()
                     self.running = False
@@ -144,12 +151,10 @@ class OpusEstimation(object):
     def _compute_progress(self):
         if self.statusfile is None:
             return {"percentage":0,"message":"Estimation initializing..."}
-        # Compute percent progress for the progress bar.
-        try:
-            # Need to calculate the percentage here...
-            return {"percentage":percentage,"message":message}
-        except IOError:
-            return {"percentage":0,"message":"Estimation initializing..."}
+        #TODO: Compute percent progress for the progress bar.
+        percentage = 0
+        message = 'Estimation initializing...'
+        return {"percentage":percentage,"message":message}
 
     def _get_current_log(self, key):
         newKey = key
