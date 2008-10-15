@@ -80,8 +80,8 @@
             </households_table_name>
           </params>
 		</delete_empty_household_records>
-		<create_households_table type="tool_file">
-          <name type="tool_name">synthesizer_create_households_table</name>
+		<create_households_input_table type="tool_file">
+          <name type="tool_name">synthesizer_create_households_input_table</name>
           <params type="param_template">
             <database_server_connection>
               <required choices="Required|Optional" type="string">Required</required>
@@ -99,7 +99,32 @@
               <default type="string"></default>
             </raw_pums_households_table_name>
           </params>
-		</create_households_table>
+		</create_households_input_table>
+		<create_persons_input_table type="tool_file">
+          <name type="tool_name">synthesizer_create_persons_input_table</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </database_name>
+			<raw_pums_persons_table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+			</raw_pums_persons_table_name>
+            <raw_pums_households_table_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"></default>
+            </raw_pums_households_table_name>
+          </params>
+		</create_persons_input_table>
 	  </synthesizer_tools>
 	  <opus_data_import_export_tools type="tool_group" setexpanded="True">
 		<sql_data_to_opus_tool type="tool_file" >
