@@ -139,7 +139,13 @@ class XMLConfiguration(object):
         If the configuration has an expression library, add
         that to the configuration under the key 'expression_library' """
         # grab general configuration for estimations
-        config = self.get_section('model_manager/model_system')['estimation_config']
+        config_section = self.get_section('model_manager/model_system')
+        # if it doesn't find config there, try the old location
+        #TODO: refactor xml files instead
+        if 'estimation_config' not in config_section:
+            config_section = self.get_section('model_manager/estimation')
+
+        config = config_section['estimation_config']
         self._merge_controllers(config)
         self._insert_expression_library(config)
         return config
@@ -161,7 +167,14 @@ class XMLConfiguration(object):
 
         submodel_list = self.get_section('model_manager/model_system/' + 
                                          model_name + '/specification/')
-        
+                                         
+		# if there was no submodels, try the old location
+        #TODO: refactor xml instead
+        if not submodel_list:
+            old_section = self.get_section('model_manager/estimation')
+            if model_name in old_section:
+                submodel_list = old_section[model_name]
+
         result = {}
         result['_definition_'] = all_vars
         if model_group is not None:
@@ -337,15 +350,6 @@ class XMLConfiguration(object):
         
         my_controller_configuration = self.get_section('model_manager/model_system')
         
-        if my_controller_configuration is not None:
-            if "models_configuration" not in config:
-                config["models_configuration"] = {}
-            for model in my_controller_configuration.keys():
-                if model not in config["models_configuration"].keys():
-                    config["models_configuration"][model] = {}
-                config['models_configuration'][model]['controller'] = my_controller_configuration[model]
-                
-        my_controller_configuration = self.get_section('model_manager/model_system')
         if my_controller_configuration is not None:
             if "models_configuration" not in config:
                 config["models_configuration"] = {}
