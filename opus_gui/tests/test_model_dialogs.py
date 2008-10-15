@@ -13,6 +13,8 @@
 # 
 
 #IGNORE_THIS_FILE
+# the tests work, but the test server doesn't have a X-server so it can't 
+# start the application process
 from opus_core.tests import opus_unittest
 
 from PyQt4.QtGui import QApplication
@@ -72,10 +74,12 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
         # test_model_element = self.doc.firstChildElement('simple_model_template')
         
         dummy_e = self.root.firstChildElement('dummy_model')
-        dialog = ModelFromTemplateDialogBase(self.mainwindow, dummy_e, None, None)
+        dialog = ModelFromTemplateDialogBase(self.mainwindow,
+                                             dummy_e, None, None)
 
         self.assertTrue(dummy_e is not None)
-        self.assertTrue(isinstance(dummy_e, QDomElement) and (not dummy_e.isNull()))
+        self.assertTrue(isinstance(dummy_e, QDomElement) and 
+                        (not dummy_e.isNull()))
         
         self.assertTrue(dialog is not None, 'Did not create dialog')
         
@@ -84,22 +88,29 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
         name_after_init = dialog.leModelName.text()
         name_from_get_name = dialog.get_model_xml_name()
         
-        self.assertTrue(name_after_init == 'dummy model', 'Name not made friendlier in dialog')
-        self.assertTrue(name_from_get_name == 'dummy_model', 'Name not transformed to xml form when pulled from text field')
+        self.assertTrue(name_after_init == 'dummy model')
+        self.assertTrue(name_from_get_name == 'dummy_model')
         
         pre_name = dialog.model_template_node.toElement().tagName()
         dialog.set_model_name()
-        self.assertTrue(dialog.model_template_node.toElement().tagName() == dialog.get_model_xml_name())
+        self.assertTrue(dialog.model_template_node.toElement().tagName() == \
+                        dialog.get_model_xml_name())
         dialog.set_model_name('gunk')
-        self.assertTrue(dialog.model_template_node.toElement().tagName() == 'gunk')
+        self.assertTrue(dialog.model_template_node.toElement().tagName() == \
+                        'gunk')
         
-        dummy_child = dummy_e.firstChildElement('dummy_child')
+        dummy_child = dummy_e.firstChildElement('structure'). \
+                    firstChildElement('dummy_child')
         cur_text = dummy_child.firstChild().nodeValue()
         new_text = 'splendid'
-        dialog.set_xml_element_to_value('dummy_child/', new_text)
-        
+        dialog.set_structure_element_to_value('dummy_child', new_text)
+        # make sure the structure element was set correctly
         self.assertEquals(dummy_child.firstChild().nodeValue(), new_text)
-        self.assertRaises(ValueError, dialog.set_xml_element_to_value, 'some/nonexisting/path/', new_text)
+        # trying to set nonexisting paths should raise value error
+        self.assertRaises(ValueError,
+                          dialog.set_structure_element_to_value, 
+                          'some/nonexisting/path/', 
+                          new_text)
         
         
     def test_simple_model_dialog(self):
