@@ -18,5 +18,5 @@ class ModelsManagerBase(AbstractManagerBase):
     def __init__(self, mainwindow):
         AbstractManagerBase.__init__(self, mainwindow = mainwindow)
 
-    def addEstimationElement(self,model):
-        self.addNewGuiElement(EstimationGuiElement(self.mainwindow,self,model))
+    def addEstimationElement(self, estimation):
+        self.addNewGuiElement(EstimationGuiElement(self.mainwindow,self,estimation))
