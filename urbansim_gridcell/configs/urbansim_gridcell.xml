@@ -433,25 +433,25 @@
       </data>
       <model_system type="category">
         <models_to_run config_name="models" type="selectable_list">
-          <prescheduled_events type="model" choices="Run|Skip">Run</prescheduled_events>
-          <events_coordinator type="model" choices="Run|Skip">Run</events_coordinator>
-          <residential_land_share_model type="model" choices="Run|Skip">Run</residential_land_share_model>
-          <land_price_model type="model" choices="Run|Skip">Run</land_price_model>
-          <development_project_transition_model type="model" choices="Run|Skip">Run</development_project_transition_model>
-          <residential_development_project_location_choice_model type="model" choices="Run|Skip">Run</residential_development_project_location_choice_model>
-          <commercial_development_project_location_choice_model type="model" choices="Run|Skip">Run</commercial_development_project_location_choice_model>
-          <industrial_development_project_location_choice_model type="model" choices="Run|Skip">Run</industrial_development_project_location_choice_model>
-          <development_event_transition_model type="model" choices="Run|Skip">Run</development_event_transition_model>
-          <events_coordinator type="model" choices="Run|Skip">Run</events_coordinator>
-          <residential_land_share_model type="model" choices="Run|Skip">Run</residential_land_share_model>
-          <household_transition_model type="model" choices="Run|Skip">Run</household_transition_model>
-          <employment_transition_model type="model" choices="Run|Skip">Run</employment_transition_model>
-          <household_relocation_model type="model" choices="Run|Skip">Run</household_relocation_model>
-          <household_location_choice_model type="model" choices="Run|Skip">Run</household_location_choice_model>
-          <employment_relocation_model type="model" choices="Run|Skip">Run</employment_relocation_model>
-          <employment_location_choice_model type="model" choices="Run|Skip">Run<group_members type="string">_all_</group_members>
+          <prescheduled_events type="model_choice" choices="Run|Skip">Run</prescheduled_events>
+          <events_coordinator type="model_choice" choices="Run|Skip">Run</events_coordinator>
+          <residential_land_share_model type="model_choice" choices="Run|Skip">Run</residential_land_share_model>
+          <land_price_model type="model_choice" choices="Run|Skip">Run</land_price_model>
+          <development_project_transition_model type="model_choice" choices="Run|Skip">Run</development_project_transition_model>
+          <residential_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</residential_development_project_location_choice_model>
+          <commercial_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</commercial_development_project_location_choice_model>
+          <industrial_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</industrial_development_project_location_choice_model>
+          <development_event_transition_model type="model_choice" choices="Run|Skip">Run</development_event_transition_model>
+          <events_coordinator type="model_choice" choices="Run|Skip">Run</events_coordinator>
+          <residential_land_share_model type="model_choice" choices="Run|Skip">Run</residential_land_share_model>
+          <household_transition_model type="model_choice" choices="Run|Skip">Run</household_transition_model>
+          <employment_transition_model type="model_choice" choices="Run|Skip">Run</employment_transition_model>
+          <household_relocation_model type="model_choice" choices="Run|Skip">Run</household_relocation_model>
+          <household_location_choice_model type="model_choice" choices="Run|Skip">Run</household_location_choice_model>
+          <employment_relocation_model type="model_choice" choices="Run|Skip">Run</employment_relocation_model>
+          <employment_location_choice_model type="model_choice" choices="Run|Skip">Run<group_members type="string">_all_</group_members>
           </employment_location_choice_model>
-          <distribute_unplaced_jobs_model type="model" choices="Run|Skip">Run</distribute_unplaced_jobs_model>
+          <distribute_unplaced_jobs_model type="model_choice" choices="Run|Skip">Run</distribute_unplaced_jobs_model>
         </models_to_run>
         <others type="category">
           <base_year type="integer">1980</base_year>
