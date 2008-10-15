@@ -47,7 +47,7 @@ class RunManager(AbstractService):
         self.update_environment_variables(configuration)
         self.run_id = self._get_new_run_id()
         
-        if os.path.exists(cache_directory):
+        if not os.path.exists(cache_directory):
             head, tail = os.path.split(cache_directory)
             unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
         else:
