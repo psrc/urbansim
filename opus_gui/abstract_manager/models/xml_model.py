@@ -48,13 +48,13 @@ class XmlModel(QAbstractItemModel):
             return
         #print "Found ", self.xmlRoot.nodeName()
         #self._rootItem = OpusDataItem(document,document.documentElement(), 0, self)
-        self._rootItem = XmlItem(document,self.xmlRoot, 0, None)
+        self._rootItem = XmlItem(document,self.xmlRoot, None)
         # Loop through the first level children and inti them as a root item
         # and append to the tree...
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
             current = self.xmlRoot.childNodes().item(x)
             if current.nodeType() == QDomNode.ElementNode:
-                self._rootItemSub = XmlItem(document,current, x, self._rootItem)
+                self._rootItemSub = XmlItem(document,current, self._rootItem)
                 self._rootItemSub.initAsRootItem()
                 self._rootItem.childItems.append(self._rootItemSub)
 
@@ -446,7 +446,7 @@ class XmlModel(QAbstractItemModel):
             # Check if it is hidden... and if so we skip it in the visible tree
             if not nodeElement.hasAttribute(QString("hidden")) or \
                    nodeElement.attribute(QString("hidden")) != QString("True"):
-                item = XmlItem(self.domDocument,node,row,parentItem)
+                item = XmlItem(self.domDocument, node, parentItem)
                 item.initAsRootItem()
                 # print "len=%d row=%d" % (len(parentItem.childItems),row)
                 parentItem.childItems.insert(row,item)
