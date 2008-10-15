@@ -64,11 +64,11 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
     def setup_node(self):
         self.set_model_name()
-        self.set_xml_element_to_value('run/arguments/dataset', self.cboDataset.currentText()),
-        self.set_xml_element_to_value('run/arguments/outcome_attribute', self.leOutcome.text()),
-        self.set_xml_element_to_value('run/arguments/weight_attribute', self.leWeight.text()),
-        self.set_xml_element_to_value('run/arguments/control_total_attribute', self.leControlTotal.text()),
-        self.set_xml_element_to_value('run/arguments/year_attribute', self.leYearAttribute.text()),
-        self.set_xml_element_to_value('run/arguments/capacity_attribute', self.leCapacityAtr.text()),
-        self.set_xml_element_to_value('prepare_for_run/arguments/control_totals_table_name', self.leControlTblName.text())
+        self.set_structure_element_to_value('run/dataset', self.cboDataset.currentText()),
+        self.set_structure_element_to_value('run/outcome_attribute', self.leOutcome.text()),
+        self.set_structure_element_to_value('run/weight_attribute', self.leWeight.text()),
+        self.set_structure_element_to_value('run/control_total_attribute', self.leControlTotal.text()),
+        self.set_structure_element_to_value('run/year_attribute', self.leYearAttribute.text()),
+        self.set_structure_element_to_value('run/capacity_attribute', self.leCapacityAtr.text()),
+        self.set_structure_element_to_value('prepare_for_run/control_totals_table_name', self.leControlTblName.text())
 

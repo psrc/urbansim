@@ -66,89 +66,22 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
             self.cboDataset.addItem(QString(dataset))
 
     def _refresh_model_variables(self, index):
-
-        # you can specify what signals to catch with this slot
-        # by connect(SIGNAL(currentIndexChanged(int)) vs. 
-        # connect(SIGNAL(currentIndexChanged(QString))
-        # // christoffer
-        
-#        if isinstance(index, int):
-#            return #qt sends two signals for the same event; only process one
-#        
         self._setup_model_variables()
 
     def setup_node(self):
         
         model_name = self.get_model_xml_name()
         self.set_model_name(model_name)
-
-        run_node = None
-        prepare_for_run_node = None
-        estimate_node = None
-        prepare_for_estimate_node = None
         
-        node = self.model_template_node.firstChild()
-        # Only march on if we have non-null nodes
-        while not node.isNull():
-            # We only want to check out this node if it is of type "element"
-            if node.isElement():
-                domElement = node.toElement()
-                if not domElement.isNull():
-                    # Now we check to see if the tagname is the one we are looking for
-                    name = str(domElement.tagName())
-                    if name == 'run':
-                        run_node = node
-                    elif name == 'prepare_for_run':
-                        prepare_for_run_node = node
-                    elif name == 'estimate':
-                        estimate_node = node
-                    elif name == 'prepare_for_estimate':
-                        prepare_for_estimate_node = node
-            node = node.nextSibling()
+        spc_tbl_name = model_name + '_specification'
+        coef_tbl_name = model_name + '_coefficients_table'
+        dataset = self.cboDataset.currentText()
+        dep_var = self.cboDependentVariable.currentText()
 
-        dataset_name = self.cboDataset.currentText()
-        for node in [run_node, prepare_for_run_node, estimate_node, prepare_for_estimate_node]:    
-#            print '%s'%node.toElement().tagName()
-            sub_node = node.firstChild()                
-            while not sub_node.isNull():
-                if sub_node.isElement():
-                    domElement = sub_node.toElement()
-                    name = str(domElement.tagName())
-#                    print '\tsub: %s'%name
-                    if name == 'arguments':
-                        sub_sub_node = sub_node.firstChild()
-                        while not sub_sub_node.isNull():
-                            if sub_sub_node.isElement():
-                                domElement = sub_sub_node.toElement()
-                                name = str(domElement.tagName())
-#                                print '\t\tsubsub: %s'%name
-                                if name == 'dataset':
-                                    self.update_node(domElement, dataset_name)
-                                elif name in ['specification_table', 'coefficients_table', 'specification_table']:
-                                    self.update_node(domElement, replace = ('regression_model_template', model_name))
-                                elif name == 'dependent_variable':
-                                    self.update_node(domElement, value = self.cboDependentVariable.currentText())
-                            sub_sub_node = sub_sub_node.nextSibling()
-                sub_node = sub_node.nextSibling()
-    
-    def update_node(self, domElement, value = None, replace = None):
-        elementText = str(domElement.text())
+        self.set_structure_element_to_value('run/dataset', dataset)
+        self.set_structure_element_to_value('prepare_for_run/specification_table', spc_tbl_name)
+        self.set_structure_element_to_value('prepare_for_run/coefficients_table', coef_tbl_name)
+        self.set_structure_element_to_value('estimate/dataset', dataset)
+        self.set_structure_element_to_value('estimate/dependent_variable', dep_var)
+        self.set_structure_element_to_value('prepare_for_estimate/specification_table', spc_tbl_name)
 
-        if replace is None:
-            value = str(value)
-        else:
-            value = elementText.replace(replace[0], replace[1])
-
-        found = False
-        if elementText != value:
-            if domElement.hasChildNodes():
-                children = domElement.childNodes()
-                for x in xrange(0,children.count(),1):
-                    if children.item(x).isText():
-                        textNode = children.item(x).toText()
-                        textNode.setData(QString(value))
-                        found = True
-        if not found:
-            new_node = QDomText()
-            new_node.setData(QString(value))
-            domElement.appendChild(new_node)

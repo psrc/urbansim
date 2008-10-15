@@ -42,7 +42,7 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
         self.add_widget_pair(QLabel('Dataset'), self.cboDataset)
         self.add_widget_pair(QLabel('expression'), self.leExpression)
         self.add_widget_pair(QLabel('Outcome variable'), self.leOutcome)
-        
+
     def _setup_co_dataset_name(self):
         '''collect avaiable datasets and populate the combobox'''
         available_datasets = self.xml_helper.get_available_datasets()
@@ -53,7 +53,7 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
     def setup_node(self):
         self.set_model_name()
-        self.set_xml_element_to_value('run/arguments/dataset', self.cboDataset.currentText())
-        self.set_xml_element_to_value('run/arguments/expression', self.leExpression.text())
-        self.set_xml_element_to_value('run/arguments/outcome_attribute', self.leOutcome.text())
+        self.set_structure_element_to_value('run/dataset', self.cboDataset.currentText())
+        self.set_structure_element_to_value('run/expression', self.leExpression.text())
+        self.set_structure_element_to_value('run/outcome_attribute', self.leOutcome.text())
         

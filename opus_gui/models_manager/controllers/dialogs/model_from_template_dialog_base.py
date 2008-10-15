@@ -13,30 +13,32 @@
 
 from PyQt4.QtCore import QString, SIGNAL, QModelIndex, QSize, Qt
 from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
-from PyQt4.QtXml import QDomText, QDomElement
+from PyQt4.QtXml import QDomElement
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
-from opus_gui.models_manager.views.ui_model_from_template_dialog_base import Ui_ModelFromTemplateDialogBase
+from opus_gui.models_manager.views.ui_model_from_template_dialog_base import \
+     Ui_ModelFromTemplateDialogBase
 
 class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
-    '''Base dialog class to allow for easy creation of more specific model template creation dialogs
+    '''Base dialog class to allow for easy creation of more specific model
+    template creation dialogs
     
-    When the user clicks the OK button, this base calls the method setup_node() before inserting the
-    cloned node into the model tree. Child dialogs should implement and handle their modification 
-    of the template node (self.model_template_node) in that method.
-    They should not call _insert_model_and_create_estimation() or implement their own 
+    When the user clicks the OK button, this base calls the method
+    setup_node() before inserting the cloned node into the model tree. Child
+    dialogs should implement and handle their modification of the template
+    node (self.model_template_node) in that method. They should not call
+    _insert_model_and_create_estimation() or implement their own
     _on_accepted() or _on_rejected() methods.
     
-    Models that do not have estimation components should set the instance variable 
-    create_estimation_component to False.
+    Models that do not have estimation components should set the instance
+    variable create_estimation_component to False.
     '''
     def __init__(self, mainwindow, model_template_node, template_index, template_model):
         # parent window for the dialog box
         self.mainwindow = mainwindow
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         QDialog.__init__(self, self.mainwindow, flags)
-        
         self.setupUi(self)
 
         # handy reference to the dom doc for the helper functions
@@ -72,11 +74,13 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         self._xmlpath_value_pairs = []
         
     def add_widget_pair(self, left_widget, right_widget):
-        '''Add a pair of widgets, typically a label and another widget, to the dialog'''
-        # make the leftmost widget (usually a label) constraint to a certain size
-        # to maintain a nice grid
-        left_widget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding))
-        right_widget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum))
+        '''Add a pair of widgets to the dialog.'''
+        # make the leftmost widget (usually a label) constraint to a certain 
+        # size to maintain a nice grid
+        left_widget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, 
+                                              QSizePolicy.MinimumExpanding))
+        right_widget.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, 
+                                               QSizePolicy.Maximum))
         
         left_widget.setMinimumSize(QSize(100, 0))
         left_widget.setMaximumSize(QSize(200, 16777215))
@@ -86,62 +90,74 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         layout.addWidget(right_widget)
         self.groupBox.layout().addLayout(layout)
 
-    def set_xml_element_to_value(self, xmlpath, value):
-        xml_element = self.xml_helper.get_sub_element_by_path(self.model_template_node, xmlpath)
+    def set_structure_element_to_value(self, xmlpath, value):
+        '''sets an element of the model structure to value
+        usage example:
+        to set "structure/init/name" to "modelname"; 
+          set_structure_element_to_value("init/name", "modelname")'''
+        structure_element = \
+        self.xml_helper.get_sub_element_by_path(self.model_template_node, 
+                                                'structure/')
+        
+        xml_element = \
+            self.xml_helper.get_sub_element_by_path(structure_element, xmlpath)
+        
         if not xml_element or not isinstance(xml_element, QDomElement):
-            raise ValueError('No such element (%s) (root: %s)' \
-                             %(xmlpath, self.model_template_node.toElement().tagName()))
+            raise ValueError('No such element (%s>%s)' \
+                             %(structure_element.toElement().tagName(),xmlpath))
         self.xml_helper.set_text_child_value(xml_element, value)
 
     def get_model_xml_name(self):
         '''return a valid model name based on the string the user entered'''
-        #TODO: the name should actually be valid (ie, alphanumeric)
+        #TODO: make sure that the name is actually a valid xml name
         return self.leModelName.text().replace(QString(' '), QString('_'))
     
     def set_model_name(self, value = None):
-        '''set the name of the root node to a valid xml value. Default to self.get_model_xml_name()'''
+        '''set the name of the root node to a valid xml value. 
+        Default value is self.get_model_xml_name().'''
         xmlname = value if value else self.get_model_xml_name()
         self.model_template_node.toElement().setTagName(xmlname)
-    
-    def _insert_model_and_create_estimation(self):
-        '''insert the node back into the model system and create an entry for the new model in the estimations'''
         
-        self.template_model.insertRow(self.template_model.rowCount(self.template_index),
-                                      self.template_index,
-                                      self.model_template_node)
-        self.template_model.emit(SIGNAL('layoutChanged()'))
+    def _create_estimation_component(self, element):
+        # select template for estimations
+        estimation_template = self.xml_helper.get_sub_element_by_path( \
+            self.template_model.xmlRoot, 
+            '/model_system/basic_estimation_template')
+        
+        # make sure there is a template
+        if estimation_template.isNull() or not estimation_template.isElement():
+            print 'Warning: Could not find estimation template.'
+            return
 
-        # create an estimation component
-        #TODO: verify that this belongs in this module
-        if self.create_estimation_component:
-            mt_node, _ = self.xml_helper.get_element_attributes(node_name = 'model_template', node_type = 'model_estimation')
-            cloned_mt = mt_node.cloneNode()
-            node_element = cloned_mt.toElement()
-            
-            node_element.setTagName(self.model_template_node.toElement().tagName())
-            
-            tree_model = self.mainwindow.toolboxBase.modelManagerTree.model
-            
-            # Find the parent node index to append to
-            parentIndex = tree_model.index(0,0,QModelIndex()).parent()
-            current_index = tree_model.findElementIndexByName('estimation', parentIndex)[0]
-    
-            # Now insert the head_node
-            tree_model.insertRow(tree_model.rowCount(current_index),
-                            current_index,
-                            cloned_mt)
-    
-            tree_model.emit(SIGNAL("layoutChanged()"))
+        estimation_clone = estimation_template.cloneNode(True).toElement()
+        spec_element = \
+            self.xml_helper.get_sub_element_by_path(element, 'specification/')
+        
+        # reparent all the cloned submodels into the model/specification
+        submodel = estimation_clone.firstChildElement('submodel')
+        while not submodel.isNull():
+            spec_element.appendChild(submodel)
+            submodel = submodel.nextSiblingElement('submodel')
+
+        
+    def _create_estimations_and_insert_node(self):
+        '''insert the node back into the model system and create an entry for 
+        the new model in the estimations'''
+        new_model_element = self.model_template_node.toElement()
+        self._create_estimation_component(new_model_element)
+        new_model_element.removeAttribute('hidden')
+        new_model_element.setAttribute('type', QString('model'))
+        self.template_model.insert_model(new_model_element)
         
     def setup_node(self):
         # code that sets the specific template variables goes here
         pass
-    
+
     def _on_accepted(self):
         # code that sets the specific template variables goes here
         self.setup_node()
         # insert into project tree and tree view model
-        self._insert_model_and_create_estimation()
-        
+        self._create_estimations_and_insert_node()
+
     def _on_rejected(self):
         self.close()

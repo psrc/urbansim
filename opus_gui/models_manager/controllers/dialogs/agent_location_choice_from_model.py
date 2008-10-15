@@ -67,21 +67,21 @@ class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
         agents_for_est_tbl = self.leAgentsForEstimationTbl.text()
         location_id = self.leLocationIdString.text()
 
-        self.set_xml_element_to_value('init/arguments/location_set', self.leLocationSet.text()),
-        self.set_xml_element_to_value('init/arguments/filter', filter)
-        self.set_xml_element_to_value('init/arguments/submodel_string', self.leSubModelString.text()),
-        self.set_xml_element_to_value('init/arguments/location_id_string', location_id)
-        self.set_xml_element_to_value('init/arguments/short_name', self.leShortName.text()),
+        self.set_structure_element_to_value('init/location_set', self.leLocationSet.text()),
+        self.set_structure_element_to_value('init/filter', filter)
+        self.set_structure_element_to_value('init/submodel_string', self.leSubModelString.text()),
+        self.set_structure_element_to_value('init/location_id_string', location_id)
+        self.set_structure_element_to_value('init/short_name', self.leShortName.text()),
 
-        self.set_xml_element_to_value('run/arguments/agent_set', agent_set)
+        self.set_structure_element_to_value('run/agent_set', agent_set)
 
-        self.set_xml_element_to_value('prepare_for_run/arguments/specification_table', model_name + '_specification') 
-        self.set_xml_element_to_value('prepare_for_run/arguments/coefficients_table', model_name + '_coefficients_table')
+        self.set_structure_element_to_value('prepare_for_run/specification_table', model_name + '_specification') 
+        self.set_structure_element_to_value('prepare_for_run/coefficients_table', model_name + '_coefficients_table')
 
-        self.set_xml_element_to_value('estimate/arguments/agent_set', agent_set)
+        self.set_structure_element_to_value('estimate/agent_set', agent_set)
 
-        self.set_xml_element_to_value('prepare_for_estimate/arguments/specification_table', model_name + '_specification')
-        self.set_xml_element_to_value('prepare_for_estimate/arguments/agent_set', agent_set)
-        self.set_xml_element_to_value('prepare_for_estimate/arguments/agents_for_estimation_table', agents_for_est_tbl)
-        self.set_xml_element_to_value('prepare_for_estimate/arguments/filter', filter)
-        self.set_xml_element_to_value('prepare_for_estimate/arguments/location_id_variable', location_id)
+        self.set_structure_element_to_value('prepare_for_estimate/specification_table', model_name + '_specification')
+        self.set_structure_element_to_value('prepare_for_estimate/agent_set', agent_set)
+        self.set_structure_element_to_value('prepare_for_estimate/agents_for_estimation_table', agents_for_est_tbl)
+        self.set_structure_element_to_value('prepare_for_estimate/filter', filter)
+        self.set_structure_element_to_value('prepare_for_estimate/location_id_variable', location_id)
