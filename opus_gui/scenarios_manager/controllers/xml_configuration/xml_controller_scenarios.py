@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
+from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QKeySequence
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
@@ -39,6 +39,7 @@ class XmlController_Scenarios(XmlController):
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
+        self.modelIcon = QIcon(":/Images/Images/cog.png")
 
         self.actAddModel = QAction(self.addIcon,
                                    "Add Model...",
@@ -267,12 +268,10 @@ class XmlController_Scenarios(XmlController):
                 elif domElement.attribute(QString("config_name")) == QString("models"):
                     self.modelMenu = QMenu(QString("Add Model"), self.mainwindow)
                     self.modelMenu.setIcon(self.addIcon)
-                    self.modelMenu.addAction(QString("models go here"))
+                    QObject.connect(self.modelMenu, SIGNAL('aboutToShow()'), self.aboutToShowModelMenu)
                     self.menu.addMenu(self.modelMenu)
-                    #self.menu.addAction(self.actAddModel)
-
                 if self.menu:
-                    # Last minute chance to add items that all menues should have
+                    # Last minute chance to add items that all menus should have
                     if domElement.hasAttribute(QString("inherited")):
                         # Tack on a make editable if the node is inherited
                         self.menu.addSeparator()
@@ -293,28 +292,40 @@ class XmlController_Scenarios(XmlController):
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
         return
-# Jesse working:
-    def addModel(self):
+    
+    def aboutToShowModelMenu(self):
+        models = self.getAvailableModels()
+        for model in models:
+            action = QAction(self.modelIcon, model, self.mainwindow)
+            callback = lambda model_name=model: self.addModel(model_name)
+            QObject.connect(action, SIGNAL("triggered()"), callback)
+            self.modelMenu.addAction(action)
+
+    def getAvailableModels(self):
+        from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
+        model_elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc, attribute='type', value='model')
+        available_models = []
+        for model in model_elements:
+            model_name = model[1].nodeName()
+            available_models.append(model_name)
+        return available_models
+
+    def addModel(self, model_name):
         # Add a model to the models_to_run list from the model_system
-        print "Not implemented yet"
-#        self.getListOfModels()
-#    def getListOfModels(self):
-#        '''
-#        Returns a list of the names of models available in the
-#        model_system section of the model manager
-#        '''
-#        model_system = self.mainwindow.toolboxBase.modelManagerTree.model.domDocument.elementsByTagName(QString("model_system"))
-#        print model_system
-#        for i in range(0, model_system.count()):
-#            print i
-##        configFile = QFile(database_server_configuration_file)
-##        doc = QDomDocument()
-##        doc.setContent(configFile)
-##
-##        list_of_db_connections = []
-##        for i in range(0, doc.documentElement().childNodes().length()):
-##            db_connection_name = doc.documentElement().childNodes().item(i).nodeName()
-##            if db_connection_name != '#comment':
-##                list_of_db_connections.append(str(db_connection_name))
-##        return list_of_db_connections        
+        
+#        new_model = self.toolboxbase.doc.createElement(model_name)
+#        new_model.setAttribute(QString("choices"),QString("Run|Skip"))
+#        new_model.setAttribute(QString("type"),QString("model"))
+#        x = self.toolboxbase.doc.elementsByTagName(QString("models_to_run"))
+#        x.item(0).appendChild(new_model)
+        
+        from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
+        helper = ResultsManagerXMLHelper(self.toolboxbase)
+        head_node_args = {"choices":"Run|Skip", "type":"model",'value':'Run'}
+        helper._add_new_xml_tree(head_node_name=model_name, 
+                                 head_node_args=head_node_args, 
+                                 parent_name='models_to_run',
+                                 xml_tree = self.toolboxbase.runManagerTree)
+
+
 

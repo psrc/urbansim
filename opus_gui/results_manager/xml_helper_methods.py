@@ -374,9 +374,12 @@ class ResultsManagerXMLHelper:
                           parent_name,
                           child_node_definitions = [],
                           temporary = False,
-                          children_hidden = False):
+                          children_hidden = False,
+                          xml_tree = None):
         
-        model = self.toolboxBase.resultsManagerTree.model
+        if xml_tree is None:
+            xml_tree = self.toolboxBase.resultsManagerTree
+        model = xml_tree.model
         document = self.toolboxBase.doc
         
         # The new head node to add children to and then insert
