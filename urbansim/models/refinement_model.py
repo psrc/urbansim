@@ -160,8 +160,8 @@ class RefinementModel(Model):
         
         if amount < fit_index.size:
             logger.log_warning("Refinement requests to subtract %s agents,  but there are %s agents in total satisfying %s and %s;" \
-                               "subtract %s agents instead" % (fit_index.size, this_refinement.agent_expression, 
-                                                               this_refinement.location_expression, amount, 
+                               "subtract %s agents instead" % (amount, fit_index.size, this_refinement.agent_expression, 
+                                                               this_refinement.location_expression,
                                                                fit_index.size) )
             amount = fit_index.size
             
@@ -185,7 +185,7 @@ class RefinementModel(Model):
             location_dataset.modify_attribute( this_refinement.location_capacity_attribute, 
                                                new_values
                                                )
-            self._add_refinement_info_to_dataset(location_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_location_id)
+            self._add_refinement_info_to_dataset(location_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_location_index)
             
         agent_dataset.modify_attribute(location_dataset.get_id_name()[0], 
                                        -1 * ones( movers_index.size, dtype='int32' ),
