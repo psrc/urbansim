@@ -17,6 +17,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.misc import DebugPrinter
 from opus_core.storage_factory import StorageFactory
 from opus_core.resource_factory import ResourceFactory
+from opus_core.resources import Resources
 from numpy import arange, array, where, transpose
 
 class DevelopmentProjectDataset(Dataset):
@@ -100,7 +101,13 @@ class DevelopmentProjectCreator(object):
                     }
             )
 
+        if categories is None:
+            resources = Resources({"category_variable_name": None})
+        else:
+            resources = None
+            
         project = DevelopmentProjectDataset(
+            resources = resources,
             in_storage = storage, 
             in_table_name = project_table_name,
             categories = categories,
@@ -110,8 +117,7 @@ class DevelopmentProjectCreator(object):
             )
 
         for attr in attributes:
-            project.add_attribute(history_table.get_attribute_by_index(attr, history_values_without_zeros_idx),
-                                  attr, metadata=AttributeType.PRIMARY)
+            project.add_primary_attribute(history_table.get_attribute_by_index(attr, history_values_without_zeros_idx), attr)
                                   
         project.add_submodel_categories()
         
