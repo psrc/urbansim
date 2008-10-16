@@ -32,6 +32,9 @@ class FileDialogSignal(QWidget):
     def updateParam(self,param):
         self.param = param
 
+    def updateType(self,typeName):
+        self.type = typeName
+
     def relayButtonSignal(self):
         #print "relayButtonSignal"
         self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
