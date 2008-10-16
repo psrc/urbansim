@@ -975,20 +975,20 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         b = array([1, 2])
         c = array([1, 1])
         d = array([2, 1, 2, 2, 1])
-        e = array([4, 5, 6])
-        f = array([])
-        g = array([3,1])       
+        e = array([])
+        f = array([3,1])       
         self.assertEqual(ismember(a,a).all(), ismember(a,b).all(), array([True, True]).all())
         self.assertEqual(ismember(c,a).all(), ismember(a,d).all(), array([True, True]).all())
         self.assertEqual(ismember(d,a).all(), array([True, True, True, True, True]).all())
         self.assertEqual(ismember(d,c).all(), array([False, True, False, False, True]).all())
         self.assertEqual(ismember(a,c).all(), array([True, False]).all())
-        self.assertEqual(ismember(a,g).all(), array([False, True]).all())
-        self.assertEqual(ismember(a,f).all(), ismember(a,g).all(), array([False, False]).all())
+        self.assertEqual(ismember(a,f).all(), array([False, True]).all())
+        self.assertEqual(ismember(a,e).all(), ismember(a,f).all(), array([False, False]).all())
      
+    # also tests the load_from_text_file function
     def test_write_to_text_file(self):
         from numpy import array
-        file_name = 'test_file_name'
+        file_name = 'misc_test_file'
         arr = array(['a', 'b', 'c'])
         delim = '|'
         write_to_text_file(file_name, arr, 'wb', delim)
@@ -998,6 +998,15 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             written_data += (arr[i] + delim) 
         written_data += arr[i+1]
         self.assertEqual(load_from_text_file(file_name), written_data)
-     
+
+    def test_create_string_list(self):
+        self.assertEqual(create_string_list('prefix',0), [])
+        self.assertEqual(create_string_list('prefix',3), ['prefix1','prefix2','prefix3'])
+
+    def test_remove_all(self):
+        self.assertEqual(remove_all((),()), [])
+        self.assertEqual(remove_all((1,'a'),'b'), [1,'a'])
+        self.assertEqual(remove_all((1,'a'),'a'), [1])
+
 if __name__ == "__main__":
     opus_unittest.main()
