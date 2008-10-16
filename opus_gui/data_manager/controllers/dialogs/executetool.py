@@ -202,6 +202,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                     tagName = child.tagName()
                     typeName = child.attribute(QString('type'))
                     nodeVal = getElementText(child)
+                    #print 'nodeVal = %s' % nodeVal
                     self.tooltypearray.append([tagName,typeName,nodeVal])
 
 
@@ -211,7 +212,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             #param and see if it matches... if so swap it in
             if self.optional_params and self.optional_params.has_key(param[0]):
                 param[2] = QString(self.optional_params[param[0]])
-            print "Key: %s , Val: %s" % (param[0],param[1])
+            #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
             self.test_widget.append(widgetTemp)
@@ -241,13 +242,19 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 db_connection_choices = self.mainwindow.getDbConnectionNames()
                 for i in db_connection_choices:
                     test_line.addItem(QString(i))
+                self.test_line.append(test_line)
+                test_line.setEnabled(True)
+                test_line.setMinimumSize(QSize(200,0))
+                test_line.setObjectName(QString("test_line").append(QString(i)))
+                index = test_line.findText(param[2], Qt.MatchExactly)
+                test_line.setCurrentIndex(index)
             else:
                 test_line = QLineEdit(widgetTemp)
-            self.test_line.append(test_line)
-            test_line.setEnabled(True)
-            test_line.setMinimumSize(QSize(200,0))
-            test_line.setObjectName(QString("test_line").append(QString(i)))
-            #test_line.setText(QString(param[2]))
+                self.test_line.append(test_line)
+                test_line.setEnabled(True)
+                test_line.setMinimumSize(QSize(200,0))
+                test_line.setObjectName(QString("test_line").append(QString(i)))
+                test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
             # If we have a dir_path or file_path add a select button
             if (paramName == QString('dir_path')) or (paramName == QString('file_path')):

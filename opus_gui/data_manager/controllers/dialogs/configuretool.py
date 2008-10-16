@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QFrame
+from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QFrame, QComboBox
 
 
 from opus_gui.data_manager.views.ui_configuretool import Ui_ConfigureToolGui
@@ -87,8 +87,12 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         # for key,val in self.vars.iteritems():
         for x in xrange(1,len(self.test_text)):
             #self.vars[self.test_text[x].text()] = self.test_line[x].text()
-            key = self.test_text[x].text()
-            val = self.test_line[x].text()
+            if type(self.test_line[x]) == QComboBox:
+                key = self.test_text[x].text()
+                val = self.test_line[x].currentText()
+            else:
+                key = self.test_text[x].text()
+                val = self.test_line[x].text()
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
             # print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
@@ -213,11 +217,26 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
             test_text_type.setText(QString("(").append(paramName).append(QString(")")))
             hlayout.addWidget(test_text)
             hlayout.addWidget(test_text_type)
-            test_line = QLineEdit(widgetTemp)
-            self.test_line.append(test_line)
-            test_line.setEnabled(True)
-            test_line.setMinimumSize(QSize(200,0))
-            test_line.setObjectName(QString("test_line").append(QString(i)))
-            test_line.setText(QString(""))
+            if param[1] == 'db_connection_hook':
+                test_line = QComboBox(widgetTemp)
+                db_connection_choices = self.xml_controller.mainwindow.getDbConnectionNames()
+                for i in db_connection_choices:
+                    test_line.addItem(QString(i))
+                self.test_line.append(test_line)
+                test_line.setEnabled(True)
+                test_line.setMinimumSize(QSize(200,0))
+                test_line.setObjectName(QString("test_line").append(QString(i)))
+            else:
+                test_line = QLineEdit(widgetTemp)
+                self.test_line.append(test_line)
+                test_line.setEnabled(True)
+                test_line.setMinimumSize(QSize(200,0))
+                test_line.setObjectName(QString("test_line").append(QString(i)))
+#            test_line = QLineEdit(widgetTemp)
+#            self.test_line.append(test_line)
+#            test_line.setEnabled(True)
+#            test_line.setMinimumSize(QSize(200,0))
+#            test_line.setObjectName(QString("test_line").append(QString(i)))
+#            test_line.setText(QString(""))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)
