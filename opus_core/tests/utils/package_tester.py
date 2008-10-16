@@ -19,12 +19,18 @@ from warnings import filterwarnings
 from opus_core.tests.utils.opus_test_runner import OpusTestRunner
 from opus_core.tests.utils.opus_test_runner import OpusXMLTestRunner
 from opus_core.tests.utils.package_test_loader import PackageTestLoader
+from opus_core.tests.common import TestForSQLPassword, TestPackageSyntax
 from opus_core.opus_package import OpusPackage
 
 class PackageTester(object):
     def run_all_tests_for_package(self, package):
         # Defaults
         loader = PackageTestLoader().load_tests_from_package
+        # Test for SQL Password
+        TestForSQLPassword(package).test_no_sql_password_in_files();
+        # Test Package Syntax
+        TestPackageSyntax(package).test_no_opus_syntax_violations();
+        
         xml_file_name = 'TEST_all_tests.xml'
 
         # Unlike 2.3, Python 2.4 complains about MySQL warnings. 

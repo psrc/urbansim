@@ -41,7 +41,7 @@ class OpusSyntaxChecker(object):
         files_with_tab = []
         for py_file_name in py_file_names:
             lines_with_tabs = self._has_tabs(py_file_name)
-            if not os.path.basename(py_file_name) in file_names_that_do_not_need_gpl and not self._has_GPL(py_file_name): 
+            if self._file_needs_GPL(os.path.basename(py_file_name), file_names_that_do_not_need_gpl) and not self._has_GPL(py_file_name):
                 logger.log_error("missing GPL in file %s" % py_file_name)
                 files_with_no_license.append(py_file_name)
             if lines_with_tabs:
@@ -63,7 +63,7 @@ class OpusSyntaxChecker(object):
         return lines_with_tabs
         
     gpl_text = "under the terms of the GNU General Public License"
-    gpl_text = re.sub('[ ]+', '.*', gpl_text)    # replace white aspaces with *, for regular expression
+    gpl_text = re.sub('[ ]+', '.*', gpl_text)    # replace white spaces with *, for regular expression
     def _has_GPL(self, file_name):
         """Return false if there is no GPL in this file's header. """
         f=open(file_name, 'r')
@@ -71,7 +71,14 @@ class OpusSyntaxChecker(object):
         f.close()
         return re.search(self.gpl_text, ''.join(header_text.split()))
         
-        
+    def _file_needs_GPL(self, py_file_basename, file_names_that_do_not_need_gpl=[]):
+        """Return true if the file needs the GPL, return false otherwise"""
+        i = 0
+        while (i < len(file_names_that_do_not_need_gpl)):
+            if(re.compile(file_names_that_do_not_need_gpl[i]).search(py_file_basename)):
+                return False
+            i += 1
+        return True
 
 from opus_core.tests import opus_unittest
 import tempfile
@@ -122,6 +129,7 @@ class TestSyntaxChecker(opus_unittest.OpusTestCase):
         mock_python_file.close()
         OpusSyntaxChecker()._check_syntax_for_dir(self.temp_dir)
 
+        
 
 if __name__ == '__main__':
     opus_unittest.main()
