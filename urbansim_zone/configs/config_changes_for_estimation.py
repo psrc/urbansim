@@ -85,7 +85,8 @@ class ConfigChangesForEstimation(Configuration):
                                     ],
                             "datasets_to_preload": {
                                 'pseudo_building':{},
-                                'zone':{}
+                                'zone':{},
+                                'urbansim_constant': {}
                                 },   },
             'residential_development_project_location_choice_model': {
                             'models': [
@@ -93,7 +94,8 @@ class ConfigChangesForEstimation(Configuration):
                                     ],
                             "datasets_to_preload": {
                                 'pseudo_building':{},
-                                'zone':{}
+                                'zone':{},
+                                'urbansim_constant': {}
                                 },   
                                     }
                                              

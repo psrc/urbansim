@@ -24,15 +24,16 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
                  debuglevel = 'debuglevel',
                  location_set = 'zone',
                  events_for_estimation_table = 'development_event_history',
-                 submodel_string = 'building_type_id',
+                 submodel_string = None,
                  input_agent_set = None,
                  coefficients_table = None,
                  specification_table = None,
+                 units = 'job_spaces'
                  ):
         
         """Construct attributes that depend upon project_type's value"""        
 
-        self._model_name = '%s_%s' % (project_type, self._model_name)
+        self._model_name = '%s%s' % (project_type, self._model_name)
         
         # Set defaults, which may be overridden by the kwarg values.
         if input_agent_set is None:
@@ -52,6 +53,7 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
         self.specification_table = specification_table
         self.coefficients_table = coefficients_table
         self.input_agent_set = input_agent_set
+        self.units = units
         
     def execute(self):
         # Names of intermediate objects used to get data between steps
@@ -88,7 +90,8 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
                     'events_for_estimation_table': "'%s'" % self.events_for_estimation_table,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
-                    'urbansim_constant': 'urbansim_constant'
+                    'urbansim_constant': 'urbansim_constant',
+                    'units': "'%s'" % self.units
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(%s, %s)' % (_specification, _projects)
@@ -142,26 +145,25 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.development_project_location_choice_model_creator': 'DevelopmentProjectLocationChoiceModelCreator'
+                'urbansim_zone.models.development_project_location_choice_model': 'DevelopmentProjectLocationChoiceModel'
                 },
             'init': {
                 'arguments': {
-                    'location_set': 'gridcell',
-                    'model_configuration': "model_configuration['development_project_types']['project_type']",
+                    'location_set': 'zone',
                     'project_type': "'project_type'",
-                    'submodel_string': "'size_category'"
+                    'submodel_string': None
                     },
-                'name': 'DevelopmentProjectLocationChoiceModelCreator().get_model'
+                'name': 'DevelopmentProjectLocationChoiceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {
-                    'base_year': "resources['base_year']",
-                    'categories': "model_configuration['development_project_types']['project_type']['categories']",
+                    'base_year': 'base_year',
                     'events_for_estimation_storage': 'base_cache_storage',
                     'events_for_estimation_table': "'development_event_history'",
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'project_type_development_location_choice_model_specification'",
-                    'urbansim_constant': 'urbansim_constant'
+                    'urbansim_constant': 'urbansim_constant',
+                    'units': "'job_spaces'"
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, projects)'
@@ -201,7 +203,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
             events_for_estimation_table = 'events_for_estimation_table',
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
-            submodel_string = None
+            submodel_string = None,
+            units = 'residential_units'
             )
         
         expected = Configuration({
@@ -215,26 +218,25 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.development_project_location_choice_model_creator': 'DevelopmentProjectLocationChoiceModelCreator'
+                'urbansim_zone.models.development_project_location_choice_model': 'DevelopmentProjectLocationChoiceModel'
                 },
             'init': {
                 'arguments': {
                     'location_set': 'location_set',
-                    'model_configuration': "model_configuration['development_project_types']['project_type']",
                     'project_type': "'project_type'",
                     'submodel_string': None
                     },
-                'name': 'DevelopmentProjectLocationChoiceModelCreator().get_model'
+                'name': 'DevelopmentProjectLocationChoiceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {
-                    'base_year': "resources['base_year']",
-                    'categories': "model_configuration['development_project_types']['project_type']['categories']",
+                    'base_year': 'base_year',
                     'events_for_estimation_storage': 'base_cache_storage',
                     'events_for_estimation_table': "'events_for_estimation_table'",
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'specification_table'",
-                    'urbansim_constant': 'urbansim_constant'
+                    'urbansim_constant': 'urbansim_constant',
+                    'units': "'residential_units'"
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, projects)'

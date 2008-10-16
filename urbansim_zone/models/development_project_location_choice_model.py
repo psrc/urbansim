@@ -135,7 +135,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None,
                               events_for_estimation_storage=None,
-                              events_for_estimation_table=None, urbansim_constant=None, base_year=0,
+                              events_for_estimation_table=None, urbansim_constant=None, base_year=0, units='job_spaces',
                               categories=None):
 
         from opus_core.model import get_specification_for_estimation
@@ -151,7 +151,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
             event_set.remove_non_recent_data(base_year, urbansim_constant['recent_years'])
             projects = DevelopmentProjectCreator().create_projects_from_history(
                                                event_set, self.project_type,
-                                               self.units, categories)
+                                               units, categories)
         return (specification, projects)
     
     def prepare_for_run(self, *args, **kwargs):

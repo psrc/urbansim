@@ -14,7 +14,9 @@
 aliases = [
         "residential_units = zone.aggregate(pseudo_building.residential_units)",
         "vacant_residential_units = numpy.maximum(0, urbansim_zone.zone.residential_units - urbansim.zone.number_of_households)",
-        "number_of_vacant_commercial_jobs = numpy.maximum(0, zone.aggregate(pseudo_building.job_spaces * urbansim_zone.pseudo_building.is_building_type_commercial) - urbansim_zone.zone.number_of_commerical_jobs)",
-        "number_of_vacant_industrial_jobs = numpy.maximum(0, zone.aggregate(pseudo_building.job_spaces * urbansim_zone.pseudo_building.is_building_type_industrial) - urbansim_zone.zone.number_of_industrial_jobs)",
+        "commercial_job_spaces = zone.aggregate(pseudo_building.job_spaces * urbansim_zone.pseudo_building.is_building_type_commercial)",
+        "industrial_job_spaces = zone.aggregate(pseudo_building.job_spaces * urbansim_zone.pseudo_building.is_building_type_industrial)",
+        "number_of_vacant_commercial_jobs = numpy.maximum(0, urbansim_zone.zone.commercial_job_spaces - urbansim_zone.zone.number_of_commercial_jobs)",
+        "number_of_vacant_industrial_jobs = numpy.maximum(0, urbansim_zone.zone.industrial_job_spaces - urbansim_zone.zone.number_of_industrial_jobs)",
         "developable_residential_units = numpy.maximum(0, zone.aggregate(pseudo_building.residential_units_capacity - pseudo_building.residential_units))",
            ]
