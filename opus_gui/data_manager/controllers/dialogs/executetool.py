@@ -32,9 +32,6 @@ class FileDialogSignal(QWidget):
     def updateParam(self,param):
         self.param = param
 
-    def updateParam(self,typeName):
-        self.type = typeName
-
     def relayButtonSignal(self):
         #print "relayButtonSignal"
         self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
@@ -270,7 +267,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 tool_path = getElementText(i)
                 exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
                 exec exec_stmt
-                help = QString(opusHelp())
+                help = QString(opusHelp()) # wont this always fail with 'undef variable?'
                 self.toolhelpEdit.insertPlainText(help)
             except:
                 help = 'could not find opusHelp function in tool module'
