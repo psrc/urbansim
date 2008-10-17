@@ -16,9 +16,11 @@
 % Each latex source file (including the 'include' files) should have
 % the GNU Free Documentation License as a comment.
 
-\documentclass{manual}
-\usepackage{amsmath, graphics, graphicx, rotating, html, upquote, makeidx}
-\usepackage{color, fancyhdr, longtable, epsfig,lscape, booktabs,multirow, boxit, listings}
+\documentclass{latex_files/manual}
+\usepackage{amsmath, graphics, graphicx,
+latex_files/rotating, latex_files/html, upquote, makeidx}
+\usepackage{color, latex_files/fancyhdr, longtable, epsfig,lscape,
+booktabs,multirow, latex_files/boxit, listings}
 % this package causes the font encodings to include an _ (underscore)
 % character -- this is useful because then searching the pdf document
 % finds names with underscores in them.  (Otherwise the underscore is
@@ -110,22 +112,24 @@ Web: \url{http://www.urbansim.org}\\
 % start the page numbering for the Part I page, so that it matches the
 % actual pages (as shown when viewing the pdf file with Acrobat)
 \setcounter{page}{6}
-\input{overview/overview}
 
-\input{components/components}
-%\input{using-urbansim}
-%\input{indicators}
+\input{part-overview/overview}
 
-\input{api/api}
+\input{part-gui/gui}
 
-\input{info_for_software_devs/info_for_software_devs}
+\input{part-components/components}
+
+\input{part-projects/projects}
+
+\input{part-model-system/model-system}
+
+\input{part-api/api}
+
+
+\input{part-developers/developers}
 
 \appendix
-\part{Appendices}
-\input{opus-core-selected-methods}
-\input{gnu-free-documentation-license}
-\input{glossary}
-
+\input{appendicies/appendicies}
 % Module index omitted for now:
 %begin{latexonly}
 % \renewcommand{\indexname}{Module Index}
