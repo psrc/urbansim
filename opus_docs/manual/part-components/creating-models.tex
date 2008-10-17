@@ -1,0 +1,554 @@
+\chapter{Creating Models in Opus}
+
+\section{Model Types in Opus}
+
+Opus provides infrastructure to develop, specify, estimate, diagnose and predict with a variety of model types.  The Opus GUI currently supports the creation of several types of models by providing templates that can be copied and configured. More will be added in the future.  These initial types are: 
+
+\squishlist
+\item Simple Models
+\item Sampling Models
+\item Allocation Models
+\item Regression Models
+\item Choice Models
+\item Location Choice Models
+\squishend 
+
+\subsection{Simple Models}
+The simplest form of a model in Opus is called, for lack of imagination, Simple Model.  It is about as simple as a model can get: compute a variable and write the results to a dataset.  Here are some examples of what could be done with a simple model:
+
+\squishlist
+\item Aging Model: add one to the age of each person, each year
+\item Walkability Model: write the result of an expression that evaluates the amount of retail activity within walking distance
+\item Redevelopment Potential Model: compute the ratio of improvement to total value for each parcel and write this to the parcel dataset
+\squishend
+
+A Simple Model template is available in the Model Manager, and can be copied and configured in order to create a new Simple Model like the examples above. It takes only three arguments in its configuration:
+
+\squishlist
+\item Dataset: the Opus Dataset that the result will be written to
+\item Outcome Attribute: the name of the attribute on the Dataset that will contain the predicted values
+\item Expression: the Opus Expression that computes the result to be assigned to the outcome attribute
+\squishend 
+
+\subsection{Sampling Models}
+The second type of model template is a Sampling Model.  This generic model takes a probability (a rate), compares it to a random number, and if the random number is larger than the given probability (rate), it assigns the outcome as being chosen.  Some examples will make the use of this model clearer. Say we want to build a household evolution model.  We need to deal with aging, which we can do with a Simple Model.  We also models that predict:
+
+\squishlist
+\item Births
+\item Deaths
+\item Children leaving home as they age
+\item Divorces
+\item Entering the labor market
+\item Retiring
+\squishend
+
+For all of these examples -- assuming that we want to base our predictions on expected rates that vary by person or household attributes -- we need a more sophisticated model that we shall call a Sampling Model.  Since we need to assign a tangible outcome rather than a probability, we use a sampling method to assign the outcome in proportion to the probability.  This method is also occasionally referred to as a Monte Carlo Sampling algorithm.
+
+The algorithm is simple.  Let's say we have a probability of a coin toss, heads or tails each having a probability of 0.5.  A sampling model to predict an outcome attribute of Heads, would take the expected probability of a fair coint toss resulting in an outcome of Heads as being 0.5.  We then draw a random number from a univariate distribution between 0 and 1, and compare it to the expected probability. If the random draw is greater than the expected probability, then we set the choice outcome to Heads.  If it is less than 0.5, then we set the choice outcome to Tails.  Since we are drawing from a univariate random distribution between 0 and 1, we would expect that around half of the draws would be less than 0.5 and half would be greater than this value.  Larger numbers of draws will tend to converge towards the expected probability by the law of large numbers.  A very large number of draws should match the expected probability to a very high degree of precision.
+
+To make the model useful for practical applications, we can add a means to apply different probabilities to different subsets of the data.  For example, death rates or birth rates vary by gender, age, and race/ethnicity, and to some extent by income.  We might want to stratify our probabilities by one or more of these attributes, and then use the sampling model to sample outcomes using the expected probabilities for each subgroup.
+
+The Sampling Model takes the following arguments:
+
+\squishlist
+\item Outcome Dataset: the name of the dataset to receive the predicted values
+\item Outcome Attribute: the name of the attribute to contain the predicted outcomes
+\item Probability Dataset: the name of the dataset containing the probabilities
+\item Probability Attribute: the name of the attribute containing the probability values (or rates)
+\item List of Classification Attributes: attributes of Outcome Dataset that will be used to index different Probabilities (e.g. age and income in household relocation)
+\squishend
+\subsection{Allocation Models}
+Another simple generic model supported in Opus is the Allocation Model, which does not require estimating model parameters.  This model proportionately allocates some aggregate quantity to a smaller unit of analysis using a weight.  This model could be configured, for example, to allocate visitor population estimates, military population, nursing home population, and other quantities to traffic analysis zones for use in the travel model system.  Or it could be used to build up a simplistic incremental land use allocation model (though this would not contain much behavioral content).
+
+The algorithm for this type of model is quite simple.  To create an Allocation Model, we need to specify six arguments:
+
+\squishlist
+\item Dataset to contain the new computed variable
+\item Name of the new computed variable $Y$, which will be indexed by the ids of the dataset it is being allocated to, $Y_i$.
+\item Dataset containing the total quantity to be allocated (this can contain a geographic identifier, and will include a year column).
+\item Variable containing the control total to be allocated, $T$
+\item Variable containing the (optional) capacity value $C$, indexed as $C_i$
+\item Variable containing the weight to use in the allocation $w$, indexed as $w_i$, with a sum across all $i$ as $W$
+\squishend
+
+The algorithm is then just:
+
+\begin{equation}
+Y_i = min(round(T\frac{w_i}{W}),C_i)
+\end{equation}
+
+If a capacity variable is specified, we add an iterative loop, from $m$ to $M$, to allocate any excess above the capacity to other destinations that still have remaining capacity:
+
+\begin{equation}
+T^m = sum(round(T\frac{w_i}{W}) - C_i)
+\end{equation}
+
+In each iteration, we exclude alternatives where $Y>=C$, and repeat the allocation with the remaining unallocated total:
+
+\begin{equation}
+Y^m_i = Y^{m-1}_i + (T_m\frac{w_i}{W})
+\end{equation}
+
+We then iterate over $m$ until $T^m = 0$ 
+
+This simple algorithm is fairly versatile, and can be used in two modes: as incremental growth or as total values. If used in incremental mode, it adds the allocated quantity to the existing quantities.  The alternative, total, mode for this model replaces the quantities with the new predicted values.
+
+\subsection{Regression Models}
+
+Regression models are available to address problems in which the dependent variable is continuous, and a linear equation can be specified to predict it.  The primary use of this model in a core model in UrbanSim is the prediction of property values.  In the context of predicting property values, the model is referred to as a hedonic regression \cite{waddell-hedonic-1993}, but the Opus regression model is general enough to address any standard multiple regression specification.  Other examples of applications for this basic class of models would be to predict water or energy consumption per household, or parking prices.
+
+The basic form is:
+
+\begin{equation}
+Y_i = \alpha + \beta X_i + \epsilon_i
+\end{equation}
+
+where $X_i$ is a matrix of explanatory, or independent, variables, and $\beta$ is a vector of estimated parameters.  Opus provides an estimation method using Ordinary Least Squares, and additional estimation methods are available by interfacing Opus with the R statistical package.  For the current discussion, we focus on working with the built-in estimation capacity.
+
+\subsection{Choice Models}
+
+Many modeling problems do not have a continuous outcome, or dependent variable.  It is common to have modeling problems in which the outcome is the selection of one of a set of possible discrete outcomes, like which mode to take to work, or whether to buy or rent a property.  This class of problem we will refer to as discrete choice situations, and we develop choice models to address them.
+
+Recall from Section \ref{sec:discrete-choice} that the standard multinomial logit model \cite{mcfadden-1974,mcfadden-1981} can be specified as:
+
+\begin{equation}
+    P_i = \frac{\mathrm{e}^{V_i}}{\sum_j \mathrm{e}^{V_j}},
+    \label{eq:mnl}
+\end{equation}
+where $j$ is an index over all possible alternatives,
+$V_i = \beta\cdot {x}_i$ is a linear-in-parameters
+function, $x_i$ is a vector of observed, exogenous, independent
+alternative-specific variables that may be interacted with the
+characteristics of the agent making the choice,
+and $\beta$ is a vector of $k$ coefficients
+estimated with the method of maximum likelihood \cite{Greene-2002}.
+
+The multinomial logit model is a very robust and widely used model in practical applications in transportation planning, marketing, and many other fields.  It is easy to compute and is therefore fast enough to use on large-scale computational problems such as residential location choice.  For explanatory purposes, we will focus initially on choice problems with small numbers of alternatives, such as the choice to rent or own a house, or the number of vehicles a household will choose to own.
+
+Note that there are limitations to the MNL model, and assumptions a user should be aware of.  The most important of these is the Independence of Irrelevant Alternatives (IIA) property, which implies that adding or eliminating an alternative from a choice set will affect all of the remaining alternatives proportionately.  Stated another way, the relative probabilities of any two alternatives will be unaffected by adding or removing another alternative.  See \cite{train-book-2003} for a thorough introduction to discrete choice modeling using MNL and other choice model specifications.
+
+We now turn to a tutorial for creating models of some of these types using the Opus GUI.  In the following sections, we provide a worked example of creating a new model of each type.  The other model types follow the same pattern in the Opus GUI.
+
+\section{Creating an Allocation Model}
+
+To demonstrate the creation of an Allocation Model in Opus, let us assume that the task at hand is to create a model that allocates home-based jobs to zones.  Home-based jobs are those jobs that are located in properties that are residential in character.  Assume that we have no behavioral information about this problem, other than the insight that home-based jobs are... home-based.  So we can infer that we should probably allocate these jobs to places that have housing (or households).  In allocating these jobs to zones (traffic analysis zones used in the travel model), we can count how many residential units are in each zone, and use this as the weight to allocate the total home-based jobs to zones.  That is, we want to proportionately allocate home-based jobs to zones, weighted by the number of residential units in the zone.  This is equivalent to saying that we want each residential unit to have an equal probability of receiving a home-based job (assuming that we do not have any information to suggest which residential units would be more likely than others to receive such a job).
+
+The next consideration is the capacity of zones to absorb home-based jobs.  One simplifying assumption we could make is that there is a maximum of one home-based job per residential unit in a zone.  On average, our aggregate information suggests that most residential units do not have a home-based job, so this assumtion should not be constraining.
+
+We now have all the information we need to specify a model for home-based jobs.  We will name the model allocate\_home\_based\_jobs, to be descriptive.  The table below contains the \emph{arguments} we will need to use in creating this model in the GUI.
+
+\begin{table}[htp]
+\caption{Creating an Allocate Home Based Jobs Model}
+\label{tab:allocation-model}
+\begin{center}
+\begin{tabular}{ p{1.5in}  p{4.4in}  }
+\toprule[1.5pt]
+Configuration Entry & Value \\
+\midrule
+Model Name & allocate\_home\_based\_jobs\_model \\
+Dataset & zone \\
+Outcome Attribute & home\_based\_jobs \\
+Weight Attribute & zone.aggregate(building.residential\_units) \\
+Control Totals & annual\_employment\_control\_totals \\
+Year Attribute & year \\
+Capacity Attribute & zone.aggregate(building.residential\_units) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+The capacity to create new allocation models, such as this, is now available in the Opus GUI.  To create this allocation model, or one like it, open a project, like seattle\_parcel, and go to the Model Manager tab.  Open model\_system, and you will see an \emph{allocation\_model\_template}.  Right-click on this and select \emph{Add to current project}, then right-click again and select \emph{Copy Node}.  Assign the name \emph{allocate\_home\_based\_jobs\_model} when prompted for the XML Node Name to create.  Now, edit the values in the run arguments of the newly created node (at the bottom of the models list) to match the values in the table above. Figures \ref{fig:model-allocation-1} and \ref{fig:model-allocation-2} show screenshots of these initial steps in this process.  Figure \ref{fig:model-allocation-1} shows the model template for an allocation model, with fields identified as needing to be filled in by the user. Figure \ref{fig:model-allocation-2} shows the new copy, named and filled in with the actual settings, from the table above. 
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/create-model-template-allocation.png}
+\end{center}
+\caption{Template for Allocation Model}
+\label{fig:model-allocation-1}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/create-allocation-model.png}
+\end{center}
+\caption{Creating Home-Based Employment Allocation Model}
+\label{fig:model-allocation-2}
+\end{figure}
+
+Now the new allocation model exists.  It will still need to be added to a list of models to run in order to actually be executed.  This is done in the Scenario Manager.  Select the models\_to\_run entry under the Seattle\_baseline, and if it is not already editable, right-click and select Add to current project.  Then right-click and select Copy Node, and assign the new model name to it.  For testing purposes, it would be advisable to change the values of all the other models to Skip, and just run the one new model to test it.   After this, you should be able to right-click on the scenario name in the GUI and run the scenario, with the new model actually executing.  This is shown in the screenshot in Figure \ref{fig:model-allocation-3}.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/create-allocation-model-run.png}
+\end{center}
+\caption{Running the Home-Based Employment Allocation Model}
+\label{fig:model-allocation-3}
+\end{figure}
+
+More advanced data handling and preparation is also available for this class of model.  A specific set of extensions has been added for the Maricopa Association of Governments to allow the control totals to be stored in an Excel spreadsheet, and the weight and capacity attributes to be stored in an ESRI Shape file or geodatabase.  These extensions are currently handled in the \emph{prepare for run} method of the model, in Python code, and is not directly available in the GUI.
+
+\section{Creating a Regression Model}
+
+Regression models are simple to specify in the Opus GUI, and can be estimated and simulated within the graphical interface.  We will use as an example the development of a model to predict land values per square foot for all parcels.  Assume we want to create a model that predicts the value of land, per square foot, using the tax assessor valuations of land value and the square footage measures of each parcel available in the assessor data.  Since the outcome is continuous, but truncated at zero and increasing to quite large values, we might want to use a log-transformation of the price per square foot.  This would allow for representing the diminishing returns to larger quantities on some attributes.  We begin, however, with a simple nominal value per square foot, which implies that a unit increase in the amount of an independent variable, adds a constant dollar amount to the value of land per square foot.
+
+The table below summarizes the arguments we would set for creating this model:
+
+\begin{table}[htp]
+\caption{Creating a Land Price per Square Foot Model}
+\label{tab:land-price-sqft-model}
+\begin{center}
+\begin{tabular}{ p{1.3in}  p{1.3in} p{3.0in}  }
+\toprule[1.5pt]
+Configuration Entry & Node & Value \\
+\midrule
+Model Name & & land\_price\_sqft\_model \\
+Dataset & Run and Estimate & parcel \\
+Specification Table & Prepare for Run & land\_price\_sqft\_model\_specifications \\
+Coefficients Table & Prepare for Run & land\_price\_sqft\_model\_coefficients \\
+Outcome Attribute & Estimate &ln\_price\_sqft = \\ & & ln\_bounded(parcel.land\_value/parcel.parcel\_sqft)  \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+To create this model in the Opus GUI, you would first make sure that you have made the Model System editable, and then copy the regression model template to a new XML node, which we shall call in this case land\_price\_sqft\_model.  Right-click on the regression\_model\_template, and save the copy as land\_price\_sqft\_model.  Once this new model configuration is created, we need to fill in fields marked as 'fill in' in the value field.  Use the values in the table above to fill in the appropriate values to create a model to predict land values per square foot.  Figure \ref{fig:model-regression-1} shows the fields to be filled in or modified to create this model.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.4]{graphics/create-regression-model.png}
+\end{center}
+\caption{Create a Regression Model from a Template}
+\label{fig:model-regression-1}
+\end{figure}
+
+Once the correct values have been assigned to the configuration of the new model, we can move to the task of specifying and estimating this model.  For this, we need to move from the model system component of the GUI to the estimation node, below it.  Here again we will see a model\_template.  Copy this template to a new name, to match the name of the model we just created: land\_price\_sqft\_model.  Once this is done, we need to fill in the specification for this model.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.4]{graphics/specify-regression-template.png}
+\end{center}
+\caption{Specify a Regression Model from a Template}
+\label{fig:model-regression-2}
+\end{figure}
+
+A preliminary specification for such a model might include a constant, at a minimum, since we need an intercept for a regression model in general (we don't want to force the assumption that the intercept is at zero).  We might also add, for a very simple specification, an accessibility variable like the generalized cost to the central business district of Seattle.  Another likely candidate would be distance from major highways, or a dummy variable identifying parcels that are very close to a highway.  A specification like this can be easily put into the model, in the GUI, by simply adding expressions into the all\_variables list, and then including the names of these expressions in the submodel list.  Note that if a model applies the same specification to all the data, it has no submodels, and the submodel\_id is set to -2.  We will use this default in this example.  Table \ref{tab:land-price-sqft-model-specification} shows an initial specification for this new model, creating two expressions to add to the model.
+
+
+%\begin{figure}[htp]
+%\begin{center}
+%\includegraphics[scale=0.4]{graphics/specify-regression-template.png}
+%\end{center}
+%\caption{Land Price per Sqft Model Specification}
+%\label{fig:model-regression-3}
+%\end{figure}
+
+\begin{table}[htp]
+\caption{Sample Initial Specification of a Land Price per Square Foot Model}
+\label{tab:land-price-sqft-model-specification}
+\begin{center}
+\begin{tabular}{ p{1.5in}  p{4.0in}  }
+\toprule[1.5pt]
+Name & Expression \\
+\midrule
+cbd\_time & parcel.disaggregate(zone.travel\_time\_to\_cbd)\\
+hwy300 & parcel.disaggregate(gridcell.distance\_to\_highway)$<$300\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+
+Once the model specification has been entered, we can add it to the list of models to estimate, and select it as the model to estimate.  This can be done by right-clicking on the regression model template entry in the models to estimate node, assigning the new model name to the copy, and changing its value from skip to estimate.  %The result is shown in Figure \ref{fig:model-regression-4}.
+
+%\begin{figure}[htp]
+%\begin{center}
+%\includegraphics[scale=0.4]{graphics/add-to-models-to-estimate.png}
+%\end{center}
+%\caption{Adding the New Model to the List of Models to Estimate}
+%\label{fig:model-regression-4}
+%\end{figure}
+
+
+\section{Creating a Choice Model}
+The next type of model we will create is a choice model.  This is a very common modeling application, and is used widely.  Our example for this demonstration is a model of housing type choice, which for purposes of keeping the example simple, we reduce to two alternatives: single-family housing type, or other.  It is likely that households choosing to live in single-family housing may make different trade-offs in other choices, such as travel, and car ownership.  By reducing the model to two outcomes, we create a binary choice model specification.  We always need to use one alternative as a base of comparison in choice models, so for this model we will use the other housing type as the base of comparison.  
+
+Below are the configuration settings for creating a choice model of housing type.  In order to create this model for estimation purposes, we will exclude the few households that are in non-residential property types, and only keep those in multi-family, condominium, and single-family housing.  These are reflected by building type id values of 4, 12, and 19, respectively, in the seattle parcel data.  Filtering the data to include only these three values can be done with the numpy logical\_or command, but since it takes only two arguments, we need to create a nested comparison, as shown below.  Since there are three housing types represented in this data, and we want to create a binary choice outcome for simplicity, it is necessary to create a dependent variable that is 2 if the household occupies a single family house, and 1 otherwise.  In this example, since we will use the entire household table, we draw a small sample of 5\% of the agents to use in estimating the model.
+
+\begin{table}[htp]
+\caption{Creating a Housing Type Choice Model}
+\label{tab:housing-type-choice-model}
+\begin{center}
+\begin{tabular}{ p{1.2in}  p{1.2in} p{3.2in}  }
+\toprule[1.5pt]
+Configuration Entry & Node & Value \\
+\midrule
+Model Name & & housing\_type\_choice\_model \\
+Choice Set & Init & [1, 2] \\
+Choice Attribute & Init & single\_family=(household.disaggregate\\ & & (building.building\_type\_id)==19)+1 \\
+Estimation Size Agents & Init.Estimation Config & 0.05 \\
+Agent Set & Run, Prepare for Run, Estimate, Prepare for Estimate & household \\
+Agent Filter & Prepare for Run & numpy.logical\_or(numpy.logical\_or(household.\\ & & disaggregate(building.building\_type\_id)==4,household. \\ & & disaggregate(building.building\_type\_id)==12),household.\\ & & disaggregate(building.building\_type\_id)==19) \\
+Specification Table & Prepare for Run & housing\_type\_choice\_model\_specifications \\
+Coefficients Table & Prepare for Run, Prepare for Estimate & housing\_type\_choice\_model\_coefficients \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Figure \ref{fig:configure-choice-model} shows the housing type choice model configuration in progress.  For a binary choice model such as this, the specification of the model is quite similar to the specification of the regression model, but there are some subtle differences.  The most important one is that, as this model is implemented in Opus now, it requires at least one variable in each equation - that is - per alternative.  We typically assign the constant to alternative 1, and all other variables to alternative 2.  In a future revision of the code, the base alternative will not take any variables (this is the more standard implementation).  Figure \ref{fig:choice-model-specification} shows the initial specification of the housing type choice model, with a constant for the other housing types, and income and has\_children included in the utility specification for the single family housing alternative. 
+
+Once the model is specified, it needs to be added to the list of models to estimate, and selected as the model to estimate, as was the case in the preceding regression model example.  Once the model has been added and the project saved, the model can be estimated with the normal right-click option on the models to estimate node.  The results are shown in Figure \ref{fig:choice-model-estimation}.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/configure-choice-model.png}
+\end{center}
+\caption{Configuring the Housing Type Choice Model}
+\label{fig:configure-choice-model}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/choice-model-specification.png}
+\end{center}
+\caption{Specifying the Housing Type Choice Model}
+\label{fig:choice-model-specification}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/choice-model-estimation.png}
+\end{center}
+\caption{Estimating the Housing Type Choice Model}
+\label{fig:choice-model-estimation}
+\end{figure}
+
+\section{Interactive Estimation and Diagnostics}
+
+\subsection{Estimation of a Regression Model}
+
+In this section, we take up the topic of estimating and diagnosing models interactively, from the command line.  Eventually the functions described here will be available in the Graphical User Interface, but as of now they are only available from the interactive command mode.
+
+Assume we want to estimate the real estate price model in the seattle\_parcel project, which includes submodels to separately specify the model for each general land use type.  If you are using a computer with the Windows operating system, open a command shell, and type the following:
+
+\begin{lstlisting}
+python -i c:\opus\src\urbansim\tools\start_estimation.py -x c:\opus\project_configs\seattle_parcel.xml -m real_estate_price_model
+\end{lstlisting}
+
+Depending on exactly what the specification is, the result would look something like the listing below:\\
+
+\begin{lstlisting}
+(clipped results)
+...
+    ===============================================
+
+    Estimate regression for submodel 28
+    Number of observations: 1155
+    R-Squared:             0.0096657786478383297
+    Adjusted R-Squared:    0.0079464484024351911
+    Suggested |t-value| >  2.6555330204981247
+    -----------------------------------------------
+    Coeff_names estimate        SE      t-values
+      constant   3.14716        0.284388         11.0665
+      lnempden  0.0471131       0.014493         3.25074
+     lngcdacbd  0.244395        0.089292         2.73703
+    ===============================================
+
+    Estimate regression for submodel 30
+    Number of observations: 456
+    R-Squared:             0.23620022093023421
+    Adjusted R-Squared:    0.22253042622652475
+    Suggested |t-value| >  2.4743671533372704
+    -----------------------------------------------
+    Coeff_names estimate        SE      t-values
+      constant  -10.6226         31.7798        -0.334255
+    hbwavgtmda  -0.0372783      0.0168999       -2.20582
+    ln_bldgage  -0.0340602      0.0220903       -1.54186
+     ln_invfar  0.266353        0.0347524        7.66431
+     lnemp20tw  -0.0295508      0.0280097       -1.05502
+     lnemp30da   1.37285         2.38156        0.576451
+     lngcdacbd  -0.494537       0.219013        -2.25803
+        lnsqft  -0.119418       0.0256662       -4.65272
+       lnunits  0.206834        0.0271091        7.62969
+    ===============================================
+
+Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): completed...0.9 sec
+\end{lstlisting}
+
+Since the model was estimated in interactive mode, using the -i option in the python command to start the estimation, the program remains active after estimation is completed, and additional commands may be directly entered at the python prompt: $>>>$.  Assume that we want to further explore the data in submodel 30 (mixed-use properties).  
+
+One of the first things one might wish to do is to examine the correlation among the variables in a model.  We can do this by using one of the built-in estimator methods, plot\_correlation, with the following command:
+
+\begin{lstlisting}
+>>> estimator.plot_correlation(30)
+\end{lstlisting}
+
+The method computes a correlation matrix for the data used in submodel 30 and generates a plot of this correlation, as shown in Figure \ref{fig:correlation30}:
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/correlation30.png}
+\end{center}
+\caption{Correlation Matrix Plot for Submodel 30 in Real Estate Price Modell}
+\label{fig:correlation30}
+\end{figure}
+
+Note that when a plot is generated from the command line in Python, control of Python is focused on the graphics window, and there is no Python prompt available.  When finished viewing the figure, exit the graphics window by clicking on the x to close it, and the Python prompt will return for more interactive commands.
+
+We can retrieve the data for submodel 30 as a dataset that we can further analyze using Opus methods for the Dataset class.  Begin with the following command to retrieve the data and assign it to an object called ds30 (for submodel 30):
+
+\begin{lstlisting}
+>>> ds30 = estimator.get_data_as_dataset(30)
+>>>
+\end{lstlisting}
+
+The syntax above indicates that we are executing a method called get\_data\_as\_dataset of the class estimator, which is the class that is running the estimation of the model.  The value 30 in parentheses is an argument being passed to this method, to identify that we want to retrieve only the subset of the data that corresponds with submodel 30.  If we wanted all the data, we would leave out the argument, but keep the empty parentheses.  Note that nothing special happens when this command is executed.  If it succeeded, it will create the new dataset object called ds30, and return to the python prompt.  At this point, we can use a variety of built in methods for the dataset class to further explore the data.  The first of these methods is summary(), which computes a statistical summary of the data in this object, like so:\\
+
+\begin{lstlisting}
+>>> ds30.summary()
+Attribute name	mean       sd	       sum            min             max
+-------------------------------------------------------------------------
+lnemp20tw       8.96	       1.57     4087.51       5.86363       12.1193
+lnemp30da      13.21      0.01     6024.29       13.1266       13.2164
+ln_bldgage      3.08        1.41     1404.12      -0.287682    4.60517
+ln_invfar       0.23       1.09     104.191       -2.44127     4.56796
+lngcdacbd      2.84        0.22     1292.87       2.36556       3.29027
+hbwavgtmda     13.15      1.8       5995.99       10.1786       18.0341
+lnunits         1.08        1.47     492.089        0            5.63121
+lnsqft          9.74        1.17      4440.23       6.42972      14.1835
+
+Size: 456  records
+identifiers: 
+         id  in range  1 - 456
+\end{lstlisting}
+
+
+Another useful Dataset method is the plot\_histogram, which computes a histogram for an attribute of a dataset and plots it, as shown in Figure \ref{fig:histogram-lnsqft}:\\
+
+\begin{lstlisting}
+>>> ds30 = plot_histogram('lnsqft')
+\end{lstlisting}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/histogram-lnsqft.png}
+\end{center}
+\caption{Histogram of Lnsqft from Data in Submodel 30 of the Real Estate Price Modell}
+\label{fig:histogram-lnsqft}
+\end{figure}
+
+
+After interactive exploration of the data used in the model, we might choose to drop or add variables from the specification.  For demonstration purposes, drop lnemp30da from the specification of submodel 30, in the GUI, and save the project.  Alternatively this could be done by editing the seattle\_parcel.xml (be careful to use an editor that will not damage the format of the file, for example in Windows you can use a Notepad version that has added XML support). Once the specification has been edited and saved, re-run the estimation for only submodel 30 like this:\\
+
+
+\begin{lstlisting}
+>>> estimator.reestimate(30)
+Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): started on Thu May 22 09:36:12 2008
+    Estimate regression for submodel 30
+    Number of observations: 456
+    WARNING: Estimation may led to singularities. Results may be not correct.
+    R-Squared:             0.23563241597137002
+    Adjusted R-Squared:    0.22368917247092268
+    Suggested |t-value| >  2.4743671533372704
+    -----------------------------------------------
+    Coeff_names estimate        SE      t-values
+      constant   7.69055         0.83843         9.17256
+    hbwavgtmda  -0.0395769      0.0164105       -2.41168
+    ln_bldgage  -0.0340862      0.0220738       -1.54419
+     ln_invfar   0.26758        0.0346613        7.71983
+     lnemp20tw  -0.030372       0.0279526       -1.08655
+     lngcdacbd  -0.545171       0.200477        -2.71937
+        lnsqft  -0.118709       0.0256177       -4.63389
+       lnunits  0.204933        0.0268876        7.62182
+    ===============================================
+
+Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): completed...0.1 sec
+>>> 
+>>>
+\end{lstlisting}
+
+Notice that now we see a warning, indicating a problem in the specification.  Let's drop the least significant variable, lnemp20tw, and try estimating again:
+
+\begin{lstlisting}
+>>> estimator.reestimate(30)
+Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): started on Thu May 22 09:43:26 2008
+    Estimate regression for submodel 30
+    Number of observations: 456
+    R-Squared:             0.23361810689099238
+    Adjusted R-Squared:    0.22337692346414595
+    Suggested |t-value| >  2.4743671533372704
+    -----------------------------------------------
+    Coeff_names estimate        SE      t-values
+      constant   6.99788        0.544696         12.8473
+    hbwavgtmda  -0.0378939      0.0163405       -2.31901
+    ln_bldgage  -0.037881       0.0218001       -1.73765
+     ln_invfar  0.271372        0.0344921        7.86765
+     lngcdacbd  -0.390517       0.141209        -2.76553
+        lnsqft  -0.121596       0.0254847       -4.77133
+       lnunits  0.203752        0.0268711        7.58258
+    ===============================================
+\end{lstlisting}
+
+Now the results do not indicate a warning, though we could experiment further to refine the specification. This interactive approach is very efficient for rapidly experimenting with model specifications and re-estimating a single model.  The same approach is available to estimate a subset of the models, using the following syntax:
+
+\begin{lstlisting}
+>>> estimator.reestimate(submodels=[3,7,9])
+\end{lstlisting}
+
+\subsection{Estimation of a Choice Model}
+
+From the command shell (but not in python), we can also start the estimation of a choice model, like the housing type choice model created earlier in this chapter:
+
+\begin{lstlisting}
+python -i c:\opus\src\urbansim\tools\start_estimation.py -x c:\opus\project_configs\seattle_parcel.xml -m housing_type_choice_model 
+\end{lstlisting}
+
+The resulting output is shown below:
+
+\begin{lstlisting}
+(clipped listing)
+...
+            Estimating Choice Model (from opus_core.choice_model): started on Thu May 22 09:51:57 2008
+                single_family=(household.disaggregate(building.building_type_id)==19)+1....0.3 sec
+                submodel: -2
+                Convergence achieved.
+                Akaike's Information Criterion (AIC):  333880.22475104179
+                Number of Iterations:  18
+                ***********************************************
+                Log-likelihood is:            -166938.1123755209
+                Null Log-likelihood is:       -177492.11908410664
+                Likelihood ratio index:       0.059461832801627756
+                Adj. likelihood ratio index:  0.059450564695695318
+                Number of observations:       256067
+                Suggested |t-value| >         3.5289083875852207
+                Convergence statistic is:     0.00048567907076085262
+                -----------------------------------------------
+                Coeff_names     estimate        std err         t-values
+                  constant      0.600053        0.00561164        106.93
+                    income      1.13913e-05     5.77362e-08      197.299
+                ***********************************************
+                Elapsed time:  11.355681 seconds
+            Estimating Choice Model (from opus_core.choice_model): completed...12.5 sec
+        Simulate year 2000: completed...................................14.2 sec
+        Closing log file: /Users/pwaddell/opus/data/seattle_parcel/base_year_data/year_2000_log.txt
+    Starting simulation for year 2000: completed........................14.4 sec
+Start simulation run: completed.........................................14.4 sec
+Closing log file: /Users/pwaddell/opus/data/seattle_parcel/base_year_data/run_model_system.log
+>>> 
+\end{lstlisting}
+
+Note that the same method used for the regression model, get\_data\_as\_dataset, can be used to retrieve the data and analyze it interactively. 
+
+%\begin{lstlisting}
+%# reestimate and analyze data as above
+%# in addition
+% >>> estimator.plot_choice_set()
+% >>> estimator.plot_choice_set_attribute('ln(gridcell.residential_units)')
+%
+%# if you uncomment line 42 in
+%# inprocess/hana/demo/baseline_estimation.py, you can plot the change in
+%# utility
+% >>> estimator.plot_utility()
+%
+%# see also python -i urbansim/tools/start_estimation.py --help
+%\end{lstlisting}

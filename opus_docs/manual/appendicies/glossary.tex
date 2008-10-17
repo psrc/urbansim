@@ -1,0 +1,194 @@
+% Copyright (c) 2005-2008 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Glossary}
+
+This section defines important terms used in describing the Opus system,
+from a modeler's viewpoint.  In addition, there are a few
+technology-oriented terms that might otherwise be confused with these
+domain-specific terms.
+
+\begin{description}
+
+\item[Agent] \index{agent}
+An object, such as a job or a household, that takes direct action 
+on its environment, such as making choices among a set of alternatives.  
+Typically, agents represent ``real-world'' objects from the model
+domain.  Agents have state. 
+Agents can engage in behavior, communicate, change state, etc. 
+An agent's behavior usually depends upon its context.  
+
+\item[Agent set] \index{agent set}
+An object that contains a set of agents.
+
+\item[Alternative] \index{alternative}
+One of the objects that an agent may choose.
+
+\item[Attribute] \attributesindex
+A value that can be attributed to a particular object.  An
+inherent characteristic of an object.  For instance, the UrbanSim
+job object may have attributes \attributesindex such as ``id'', ``gridcell_id'', 
+and ``is_in_scalable_sector_group''.  Attributes \attributesindex may be 
+"primary'', \primaryattributesindex in that the jobs in the input database 
+have values for that attribute. \attributesindex  Or attributes \attributesindex may be computed
+by a variable \variablesindex definition.  There are no ``constant'' attributes. \attributesindex 
+Models may modify any attributes, \attributesindex including ``primary'' attributes. \primaryattributesindex
+
+\item[baseyear cache] \baseyearcacheindex
+The file-based storage for the attribute \attributesindex values read from the baseyear
+database.  Access to a file-based cache is much faster than to a database. 
+Data cached during model simulation is written to a simulation cache. 
+
+\item[Characteristic] \characteristicsindex
+Synonym for attribute. \attributesindex
+
+\item[Choice] \index{choice}
+We avoid using this term because it is ambiguous: it can mean either
+a member of a choice set, or it can mean the single chosen
+alternative.
+
+\item[Choice set] \index{choice set}
+An object that contains a set of alternatives.  By convention, we use
+this term instead of ``alternative set''.
+
+\item[Category] \index{category}
+A single state of a nominal variable, such as a development type.
+Often used to group objects based upon their characteristics. \characteristicsindex
+
+\item[Category set] \index{category set}
+A set of categories.
+
+\item[CUSPA] \cuspaindex
+The Center for Urban Simulation and Policy Analysis \cuspaindex at the University of Washington
+(home of the UrbanSim project).
+
+\item[Dataset] \datasetindex
+A set of objects, such as gridcells or jobs, of the same type.
+You can think of a dataset \datasetindex as a table, with one column
+for each attribute, \attributesindex and one row for each object.  
+Each object in the dataset \datasetindex has a unique identifier (an integer) stored in
+an attribute \attributesindex whose name is referenced as ``id_name''. \datasetindex  
+
+In practice, a dataset \datasetindex often is constructed from a single
+table read from a Storage object, though some datasets \datasetindex
+are constructed by joining information from multiple tables.
+
+\item[Logit Equation] \index{Logit Equation}
+Also known as a Logit Transformation, this transforms the
+collection of an agent's computed direct utilities for all
+alternatives in the choice set into an estimated probability for
+each alternative:
+\begin{equation}
+    P_{ij}=\frac{e^{\lambda U_{ij}}}{\sum_{j' \in J}e^{\lambda
+    U_{ij'}}},
+\end{equation}
+
+\item[Estimated Utility Function] \index{Estimated Utility Function}
+A set of paired variables \variablesindex and coefficients \coefficientsindex of the form $\sum
+c_{i}*v_{i}$.
+
+\item[Interaction Set] \index{interaction set}
+A dataset \datasetindex of variables \variablesindex describing the interaction between two
+different datasets. \datasetindex  See ``Interaction Variable''. \variablesindex
+
+\item[Interaction Variable] \index{interaction variable}
+A variable \variablesindex that computes the interaction between two different
+datasets, \datasetindex such as that gridcell ``number_of_households'' 
+variable \variablesindex that computes the number of households residing in
+each gridcell.
+
+\item[Logit Model] \index{Logit Model} \index{model!Logit}
+A Logit model is defined using an indirect utility equation, which
+includes the error term and specifies how that error is
+distributed. For example:
+\begin{equation}
+    U_{ij}={\theta}{X}_{ij}+\epsilon_{ij}
+    =\sum_{k \in K}{\theta}_{k}X^{k}_{ij}+\epsilon_{ij},
+\end{equation}
+\indent where $\epsilon_{ij}$ is i.i.d. distributed Gumbel Type I.
+
+\item[Model] \index{model}
+An object that defines behavior and that has a \verb|run()|
+method.  Models have no state. They get their data from data
+objects, and store their results in data objects.  A model can be
+a formula that calculates on the data provided to it. A model can
+be a sequence of actions to perform.  A model also can act as an
+action.  A model must have a \verb|run()| method.
+
+By convention, every model
+module contains a set of tests that test that model.
+
+\item[Model implementation] \index{model!implementation}
+A model whose specification, or both specification and
+coefficients, \coefficientsindex have been estimated to a particular data set.
+
+\item[Model object] \index{model!object}
+A model, or a model part.  Model objects act on data objects.
+
+\item[Model component] \index{model!component}
+An object that performs a logically distinct task that is part of
+how the model runs.  Every model is formed by a sequence, and
+perhaps cycle, of model steps.  Different models may 
+combine the same model components in different ways to define
+different models.
+
+Note that models can become components in other higher-level models, such as a
+land-price model and a neighborhood choice model that are parts of a
+household-location-choice model, which is part of an UrbanSim model.
+
+\item[Model specification] \index{model!specification}
+A definition of what variables are included in an econometric
+model.  Coefficient \coefficientsindex values may, or may not, also be part of the
+specification.
+
+\item[Opus] \index{Opus} The Open Platform for Urban Simulation, a new
+Python-based \pythonindex framework for writing urban and regional models.
+
+\item[Opus package] \indexii{Opus}{package} The term ``Opus package'' refers to 
+any Python \pythonindex package built using the Opus framework and that follows
+the Opus package guidelines.  The packages in the Opus base distribution
+will all be Opus packages in this sense, as will contributed Opus packages. See
+Section~\ref{sec:create-opus-package} for directions for creating your own Opus
+package. 
+
+\item[Python package] \pythonpackagesindex
+A way of structuring Python's \pythonindex module namespace by using ``dotted module
+names''.  See the Python \pythonindex documentation at \url{http://www.python.org/doc}.
+
+\item[Resources] \index{Resources} 
+A Python \pythonindex dictionary object.  It is used to contain parameters passed
+between model steps.
+
+\item[simulation cache] \simulationcacheindex
+The file-based storage for the attribute values for the datasets \datasetindex used by the
+models. Access to a file-based cache is much faster than to a database.  The
+baseyear attributes \attributesindex are stored in the baseyear cache. \baseyearcacheindex
+
+\item[]\item[Simulation cycle] \index{simulation cycle}
+A set of sub-models that run in sequence before repeating.
+Typically, this refers to the outermost loop.
+
+\item[Submodel] \index{submodel}
+A \ldots \emph{need to supply this definition}
+
+\item[Time step] \index{time step}
+The unit of simulated time between each simulation cycle. For many
+simulations, this will be a year.
+
+\item[Variable] \variablesindex
+An attribute \attributesindex that is computed by a variable \variablesindex definition.  Each
+variable \variablesindex definition resides in its own Python \pythonindex module.  The 
+Python \pythonindex module for a variable, \variablesindex e.g. ``is_industrial'', is the
+same as the variable \variablesindex name except with a ``.py'' extension, 
+e.g. ``is_industrial.py''.  
+
+\item[Work request system] \index{work request system}
+A system for filing and tracking work requests, including bug
+reports.
+
+\end{description}
