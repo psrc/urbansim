@@ -16,8 +16,8 @@ from opus_core.configuration import Configuration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.real_estate_price_model_configuration_creator import RealEstatePriceModelConfigurationCreator
 from urbansim.configurations.events_coordinator_configuration_creator import EventsCoordinatorConfigurationCreator
-from urbansim.configurations.development_event_transition_model_configuration_creator import DevelopmentEventTransitionModelConfigurationCreator
-from urbansim.configurations.development_project_transition_model_configuration_creator import DevelopmentProjectTransitionModelConfigurationCreator
+from urbansim_zone.configs.development_event_transition_model_configuration_creator import DevelopmentEventTransitionModelConfigurationCreator
+from urbansim_zone.configs.development_project_transition_model_configuration_creator import DevelopmentProjectTransitionModelConfigurationCreator
 from urbansim_zone.configs.development_project_location_choice_model_configuration_creator import DevelopmentProjectLocationChoiceModelConfigurationCreator
 from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
@@ -59,7 +59,8 @@ class UrbansimZoneConfiguration(Configuration):
                         project_type = 'commercial',
                         coefficients_table = 'commercial_development_location_choice_model_coefficients',
                         specification_table = 'commercial_development_location_choice_model_specification',
-                        units = 'commercial_job_spaces'
+                        units = 'commercial_job_spaces',
+                        sampler = None,
                         ).execute(),
         'industrial_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
                         project_type = 'industrial',
@@ -72,6 +73,9 @@ class UrbansimZoneConfiguration(Configuration):
                         output_changed_indices = 'changed_indices',
                         ).execute(),
          'development_project_transition_model': DevelopmentProjectTransitionModelConfigurationCreator(
+                        vacancy_variables = {"commercial": "urbansim_zone.zone.number_of_vacant_commercial_jobs",
+                                             "industrial": "urbansim_zone.zone.number_of_vacant_industrial_jobs"
+                                            },
                         output_results = 'dptm_results',
                         ).execute(),
         'development_event_transition_model': DevelopmentEventTransitionModelConfigurationCreator(
@@ -151,6 +155,7 @@ class UrbansimZoneConfiguration(Configuration):
                 #'travel_data':{},
                 'job_building_type':{},
                 'target_vacancy':{},
+                'development_event_history':{}
                 }
 
 

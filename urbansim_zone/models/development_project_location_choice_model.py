@@ -95,8 +95,11 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
             return LocationChoiceModel.get_weights_for_sampling_locations(self, agent_set, agents_index)
         if self.capacity is None:
             RuntimeError, "The capacity string must be given."
-        self.choice_set.compute_variables([self.filter], dataset_pool = self.dataset_pool)
-        where_developable = where(logical_and(self.capacity > 0, self.choice_set.get_attribute(self.filter) > 0))[0]
+        where_developable = self.capacity > 0
+        if self.filter is not None:
+            self.choice_set.compute_variables([self.filter], dataset_pool = self.dataset_pool)
+            where_developable = logical_and(self.capacity > 0, self.choice_set.get_attribute(self.filter) > 0)
+        where_developable = where(where_developable)[0]
         weight_array = (ones((agents_index.size, where_developable.size), dtype=int8)).astype(bool8)
         
         max_capacity = self.capacity[where_developable]
