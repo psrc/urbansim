@@ -98,10 +98,6 @@ Web: \url{http://www.urbansim.org}\\
 
 \input{copyright}
 
-% \begin{abstract}
-% abstract would go here, but we don't have one
-% \end{abstract}
-
 % The ugly "%begin{latexonly}" pseudo-environment suppresses the table
 % of contents for HTML generation.
 %
@@ -114,27 +110,15 @@ Web: \url{http://www.urbansim.org}\\
 % start the page numbering for the Part I page, so that it matches the
 % actual pages (as shown when viewing the pdf file with Acrobat)
 \setcounter{page}{6}
-\part{Overview of Opus and UrbanSim}\label{part-overview}
-%\input{introduction}
-\input{opus-overview}
-\input{urbansim-overview}
+\input{overview/overview}
 
-\part{Opus and UrbanSim User Guide}\label{part-user-guide}
-\input{installation}
-\input{python-numpy-expressions}
-\input{creating-models}
+\input{components/components}
 %\input{using-urbansim}
 %\input{indicators}
 
-\part{Opus and UrbanSim Reference Guide}\label{part-reference-guide}
-%\input{urbansim-package-tutorial}
-\input{opus-core}
-\input{urbansim-package}
-%\input{urbansim-database-tables}
+\input{api/api}
 
-\part{Information for Software Developers}\label{part-developers}
-\input{programming}
-\input{writing-documentation}
+\input{info_for_software_devs/info_for_software_devs}
 
 \appendix
 \part{Appendices}
