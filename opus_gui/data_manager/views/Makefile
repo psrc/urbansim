@@ -15,28 +15,25 @@
 RM = rm -f
 #RM = del
 
-all: newtoolbatch_ui.py newtoollibrary_ui.py configuretool_ui.py newdbconnection_ui.py executetool_ui.py executetoolset_ui.py
+all: newtoolbatch_ui.py newtoollibrary_ui.py configuretool_ui.py executetool_ui.py executetoolset_ui.py
 
 clean:
-	$(RM) newtoolbatch_ui.py newtoollibrary_ui.py configuretool_ui.py newdbconnection_ui.py executetool_ui.py executetoolset_ui.py
+	$(RM) newtoolbatch_ui.py newtoollibrary_ui.py configuretool_ui.py executetool_ui.py executetoolset_ui.py
 	$(RM) *.pyc
 	$(RM) *~
 
 newtoolbatch_ui.py: newtoolbatch.ui
-	pyuic4 -o newtoolbatch_ui.py newtoolbatch.ui
+	pyuic4 -o ui_newtoolbatch.py newtoolbatch.ui
 
 newtoollibrary_ui.py: newtoollibrary.ui
-	pyuic4 -o newtoollibrary_ui.py newtoollibrary.ui
+	pyuic4 -o ui_newtoollibrary.py newtoollibrary.ui
 
 configuretool_ui.py: configuretool.ui
-	pyuic4 -o configuretool_ui.py configuretool.ui
+	pyuic4 -o ui_configuretool.py configuretool.ui
 
 executetool_ui.py: executetool.ui
-	pyuic4 -o executetool_ui.py executetool.ui
-
-newdbconnection_ui.py: newdbconnection.ui
-	pyuic4 -o newdbconnection_ui.py newdbconnection.ui
+	pyuic4 -o ui_executetool.py executetool.ui
 
 executetoolset_ui.py: executetoolset.ui
-	pyuic4 -o executetoolset_ui.py executetoolset.ui
+	pyuic4 -o ui_executetoolset.py executetoolset.ui
 

@@ -29,7 +29,7 @@ class RunToolThread(QThread):
         self.opusTool.logCallback = self.logCallback
         self.opusTool.finishedCallback = self.finishedCallback
         #print "Thread Prio Start - %s" % (str(self.priority()))
-        self.setPriority(QThread.LowPriority)
+        #self.setPriority(QThread.LowPriority)
         #print "Thread Prio Set - %s" % (str(self.priority()))
         self.opusTool.run()
 

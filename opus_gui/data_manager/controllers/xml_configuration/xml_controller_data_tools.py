@@ -25,7 +25,8 @@ from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
-
+from opus_gui.data_manager.controllers.dialogs.executetoolset import ExecuteToolSetGui
+from opus_gui.util.xmlhelper import getElementsByTagname
 import os,tempfile
 
 class XmlController_DataTools(XmlController):
@@ -414,24 +415,45 @@ class XmlController_DataTools(XmlController):
     def execBatch(self):
         #print "Execute batch pressed..."
         batchNode = self.currentIndex.internalPointer().node().toElement()
-        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         childNodes = batchNode.childNodes()
+        tool_hooks = []
         for x in xrange(0,childNodes.count(),1):
             thisNode = childNodes.item(x)
-            if thisNode.isElement():
-                thisElement = thisNode.toElement()
-                if thisElement.hasAttribute(QString("type")) and \
-                       (thisElement.attribute(QString("type")) == QString("tool_config")):
-                    #self.execToolConfigGen(thisElement)
-                    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-                    window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
-                                            thisElement,
-                                            self.execToolConfigGen,flags)
-                    tool_title = window.tool_title.replace('_', ' ')
-                    tool_title2 = str(tool_title).title()
-                    window.setWindowTitle(tool_title2)
-                    window.setModal(True)
-                    window.show()
+            thisNodesChildren = thisNode.childNodes()
+            for y in range(0, thisNodesChildren.count(), 1):
+                newNode = thisNodesChildren.item(y)
+                newElement = newNode.toElement()
+                if newElement.hasAttribute(QString("type")) and \
+                    (newElement.attribute(QString("type")) == QString("tool_library_ref")):
+                    tool_hooks.append(newElement.text())
+        
+        tool_hook_to_tool_name_dict = {}
+        for i in tool_hooks:
+            tool_file = getElementsByTagname(library, i, False, True)
+            x = tool_file[0].elementsByTagName(QString("name"))
+            for j in range(0, x.length(), 1):
+                tool_hook_to_tool_name_dict[i] = x.item(j).toElement().text()
+                    
+#            if thisNode.isElement():
+#                thisElement = thisNode.toElement()
+#                if thisElement.hasAttribute(QString("type")) and \
+#                       (thisElement.attribute(QString("type")) == QString("tool_config")):
+#                    print thisElement.text()
+#                    #self.execToolConfigGen(thisElement)
+#                    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+#                    window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
+#                                            thisElement,
+#                                            self.execToolConfigGen,flags)
+#                    tool_title = window.tool_title.replace('_', ' ')
+#                    tool_title2 = str(tool_title).title()
+#                    window.setWindowTitle(tool_title2)
+#                    window.setModal(True)
+#                    window.show()
+        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        flgs = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        wndow = ExecuteToolSetGui(self.mainwindow, flgs, childNodes, tool_hook_to_tool_name_dict)
+        wndow.show()
 
     def cloneNode(self):
         #print "cloneNode Pressed"

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configuretool.ui'
 #
-# Created: Wed Jun 11 13:20:05 2008
+# Created: Fri Oct 17 11:18:35 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
