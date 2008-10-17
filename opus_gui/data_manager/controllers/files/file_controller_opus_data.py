@@ -282,7 +282,6 @@ class FileController_OpusData(FileController):
 
     def dataActionMenuFunction(self,action):
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
-
         if action != self.actRefresh:
             #actiontext = action.text()
             actiontext = self.dynactions[action.text()]
@@ -295,57 +294,31 @@ class FileController_OpusData(FileController):
             toolindexlist = self.xml_model.findElementIndexByName(actiontext,toolxml,False)
             toolindex = toolindexlist[0]
             if toolindex.isValid():
-                #print toolindex.internalPointer().node().toElement().tagName()
+                print toolindex.internalPointer().node().toElement().tagName()
+                params = self.getOptionalParams()
                 flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
                 window = ExecuteToolGui(self.mainwindow,self.xml_model,
                                         toolindex.internalPointer().node().toElement(),
-                                        None,flags,optional_params = None)
+                                        None,flags,optional_params = params)
                 tool_title = window.tool_title.replace('_', ' ')
                 tool_title2 = str(tool_title).title()
                 window.setWindowTitle(tool_title2)
                 window.show()
-                # We have the tool_set... time to loop over the children and get the configs
-#                configindexlist = self.xml_model.findElementIndexByType("tool_file",toolindex,True)
-#                #print len(configindexlist)
-#                for configindex in configindexlist:
-#                    if configindex.isValid():
-#                        params = {}
-#                        thisElement = QString("opus_data_directory")
-#                        if self.classification == "database":
-#                            thisElementText = self.model.filePath(self.currentIndex.parent())
-#                        elif self.classification == "dataset":
-#                            thisElementText = self.model.filePath(self.currentIndex.parent().parent())
-#                        elif self.classification == "array":
-#                            thisElementText = self.model.filePath(self.currentIndex.parent().parent().parent())
-#                        params[thisElement] = thisElementText
-#                        thisElement2 = QString("opus_data_year")
-#                        if self.classification == "database":
-#                            thisElementText2 = self.model.fileName(self.currentIndex)
-#                        elif self.classification == "dataset":
-#                            thisElementText2 = self.model.fileName(self.currentIndex.parent())
-#                        elif self.classification == "array":
-#                            thisElementText2 = self.model.fileName(self.currentIndex.parent().parent())
-#                        params[thisElement2] = thisElementText2
-#                        thisElement3 = QString("opus_table_name")
-#                        if self.classification == "database":
-#                            thisElementText3 = "ALL"
-#                        elif self.classification == "dataset":
-#                            thisElementText3 = self.model.fileName(self.currentIndex)
-#                        elif self.classification == "array":
-#                            thisElementText3 = self.model.fileName(self.currentIndex.parent())
-#                        params[thisElement3] = thisElementText3
-#
-#                        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-#                        window = ExecuteToolGui(self.mainwindow,self.xml_model,
-#                                                configindex.internalPointer().node().toElement(),
-#                                                None,flags,optional_params = params)
-#                        tool_title = window.tool_title.replace('_', ' ')
-#                        tool_title2 = str(tool_title).title()
-#                        window.setWindowTitle(tool_title2)
-#                        window.show()
         return
-
-
+    
+    def getOptionalParams(self):
+        params = {}
+        if self.classification == 'database':
+            params['opus_data_directory'] = self.model.filePath(self.currentIndex.parent())
+            params['opus_data_year'] = self.model.fileName(self.currentIndex)
+            params['opus_table_name'] = 'ALL'
+            return params
+        elif self.classification == 'dataset':
+            params['opus_data_directory'] = self.model.filePath(self.currentIndex.parent().parent())
+            params['opus_data_year'] = self.model.fileName(self.currentIndex.parent())
+            params['opus_table_name'] = self.model.fileName(self.currentIndex)
+            return params
+        
     def processCustomMenu(self, position):
         self.currentColumn = self.treeview.indexAt(position).column()
         self.currentIndex = self.treeview.indexAt(position)

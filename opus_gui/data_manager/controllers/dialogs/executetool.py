@@ -210,8 +210,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         for i,param in enumerate(self.tooltypearray):
             #Swap in the passed params if they exist... loop through each passed
             #param and see if it matches... if so swap it in
-            if self.optional_params and self.optional_params.has_key(param[0]):
-                param[2] = QString(self.optional_params[param[0]])
+            if self.optional_params and self.optional_params.has_key(str(param[0])):
+                param[2] = QString(self.optional_params[str(param[0])])
             #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
