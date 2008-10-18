@@ -15,8 +15,7 @@
 from opus_core.configuration import Configuration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.real_estate_price_model_configuration_creator import RealEstatePriceModelConfigurationCreator
-from urbansim.configurations.events_coordinator_configuration_creator import EventsCoordinatorConfigurationCreator
-from urbansim_zone.configs.development_event_transition_model_configuration_creator import DevelopmentEventTransitionModelConfigurationCreator
+from urbansim_zone.configs.add_projects_to_buildings_configuration_creator import AddProjectsToBuildingsConfigurationCreator
 from urbansim_zone.configs.development_project_transition_model_configuration_creator import DevelopmentProjectTransitionModelConfigurationCreator
 from urbansim_zone.configs.development_project_location_choice_model_configuration_creator import DevelopmentProjectLocationChoiceModelConfigurationCreator
 from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
@@ -29,10 +28,16 @@ from urbansim.configurations.governmental_employment_location_choice_model_confi
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
 
 class UrbansimZoneConfiguration(Configuration):
+
     def __init__(self):
         Configuration.__init__(self)
         self['models'] = [
                 'real_estate_price_model',
+                'development_project_transition_model',
+                'commercial_development_project_location_choice_model',
+                'industrial_development_project_location_choice_model',
+                'residential_development_project_location_choice_model',
+                'add_projects_to_buildings',
                 'household_transition_model',
                 'employment_transition_model',
                 'household_relocation_model',
@@ -47,13 +52,15 @@ class UrbansimZoneConfiguration(Configuration):
             dataset='pseudo_building', 
             outcome_attribute = 'ln_unit_price=ln(pseudo_building.avg_value)',
             submodel_string = 'building_type_id',
-            filter_variable = None                                                   
+            filter_variable = None,
             ).execute(),
         'residential_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
                         project_type = 'residential',
                         coefficients_table = 'residential_development_location_choice_model_coefficients',
                         specification_table = 'residential_development_location_choice_model_specification',
                         units = 'residential_units',
+                        sampler = None,
+                        capacity_string = 'urbansim_zone.zone.developable_residential_units',
                         ).execute(),
         'commercial_development_project_location_choice_model': DevelopmentProjectLocationChoiceModelConfigurationCreator(
                         project_type = 'commercial',
@@ -66,11 +73,8 @@ class UrbansimZoneConfiguration(Configuration):
                         project_type = 'industrial',
                         coefficients_table = 'industrial_development_location_choice_model_coefficients',
                         specification_table = 'industrial_development_location_choice_model_specification',
-                        units = 'industrial_job_spaces'
-                        ).execute(),
-        'events_coordinator':  EventsCoordinatorConfigurationCreator(
-                        input_events = 'development_events',
-                        output_changed_indices = 'changed_indices',
+                        units = 'industrial_job_spaces',
+                        sampler = None,
                         ).execute(),
          'development_project_transition_model': DevelopmentProjectTransitionModelConfigurationCreator(
                         vacancy_variables = {"commercial": "urbansim_zone.zone.number_of_vacant_commercial_jobs",
@@ -78,17 +82,14 @@ class UrbansimZoneConfiguration(Configuration):
                                             },
                         output_results = 'dptm_results',
                         ).execute(),
-        'development_event_transition_model': DevelopmentEventTransitionModelConfigurationCreator(
-                        input_projects = 'dptm_results',
-                        output_events = 'development_events',
-                        ).execute(),
+        'add_projects_to_buildings': AddProjectsToBuildingsConfigurationCreator().execute(), 
         'employment_transition_model': 
                   EmploymentTransitionModelConfigurationCreator(
-            location_id_name="zone_id"
+            location_id_name="zone_id",
             ).execute(),
         'household_transition_model': 
                   HouseholdTransitionModelConfigurationCreator(
-            location_id_name="zone_id"
+            location_id_name="zone_id",
             ).execute(),
  
         'employment_relocation_model': 
@@ -120,7 +121,7 @@ class UrbansimZoneConfiguration(Configuration):
                                 capacity_string = "urbansim_zone.zone.number_of_vacant_SSS_jobs",
                                 ).execute(),
                                        
-            'home_based_employment_location_choice_model': 
+          'home_based_employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
                                 location_set = "zone",
                                 input_index = 'erm_index',
@@ -152,10 +153,10 @@ class UrbansimZoneConfiguration(Configuration):
                 'zone':{},
                 'household':{},
                 'job': {},
-                #'travel_data':{},
                 'job_building_type':{},
                 'target_vacancy':{},
-                'development_event_history':{}
+                'development_event_history':{},
+                'building_type': {}
                 }
 
 

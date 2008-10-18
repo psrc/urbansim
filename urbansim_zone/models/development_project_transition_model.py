@@ -190,7 +190,8 @@ class DPTMTests(StochasticTestCase):
                 "zone_id": array( [1,1,1, 2,2,2, 3,3,3, 4,4,4, 5,5,5, 6,6,6, 7,7,7, 8,8,8, 9,9,9, 10,10,10] ),
                 "building_type_id": array(10*[1,2,3]),
                 "residential_units": array(10*[200, 0, 0]),
-                "job_spaces": array(10*[0,100,100])
+                "commercial_job_spaces": array(10*[0,100,0]),
+                "industrial_job_spaces": array(10*[0,0,100])
                 }
             )
 #            create 1000 households, 100 in each of the 10 zones.

@@ -22,7 +22,7 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
     _model_name = 'development_project_transition_model'
     
     def __init__(self,
-            debuglevel = 0,
+            debuglevel = 'debuglevel',
             location_set = 'zone',
             history_table = 'development_event_history',
             vacancy_table = 'target_vacancy',

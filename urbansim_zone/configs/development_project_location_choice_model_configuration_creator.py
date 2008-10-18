@@ -30,6 +30,7 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
                  specification_table = None,
                  units = 'job_spaces',
                  sampler = 'opus_core.samplers.weighted_sampler', # module for sampling alternatives
+                 capacity_string = 'urbansim_zone.zone.vacant_SSS_job_space'
                  ):
         
         """Construct attributes that depend upon project_type's value"""        
@@ -56,7 +57,8 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
         self.input_agent_set = input_agent_set
         self.units = units
         self.sampler = sampler
-        
+        self.capacity_string = capacity_string
+
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.
@@ -83,6 +85,7 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
                     'project_type': "'%s'" % self.project_type,
                     'sampler': get_string_or_None(self.sampler),
                     'submodel_string': get_string_or_None(self.submodel_string),
+                    'capacity_string': get_string_or_None(self.capacity_string),
                     },
                 'name': 'DevelopmentProjectLocationChoiceModel'
                 },
@@ -155,7 +158,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                     'location_set': 'zone',
                     'project_type': "'project_type'",
                     'sampler': "'opus_core.samplers.weighted_sampler'",
-                    'submodel_string': None
+                    'submodel_string': None,
+                    'capacity_string': "'urbansim_zone.zone.vacant_SSS_job_space'"
                     },
                 'name': 'DevelopmentProjectLocationChoiceModel'
                 },
@@ -209,7 +213,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
             specification_table = 'specification_table',
             submodel_string = None,
             units = 'residential_units',
-            sampler = None
+            sampler = None,
+            capacity_string = None
             )
         
         expected = Configuration({
@@ -230,7 +235,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                     'location_set': 'location_set',
                     'project_type': "'project_type'",
                     'sampler': None,
-                    'submodel_string': None
+                    'submodel_string': None,
+                    'capacity_string': None
                     },
                 'name': 'DevelopmentProjectLocationChoiceModel'
                 },
