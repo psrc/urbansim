@@ -17,7 +17,9 @@
 # python -i urbansim/tools/start_estimation.py -c eugene_zone.configs.baseline_estimation -s eugene_zone.estimation.repm_specification -m "real_estate_price_model"
 
 all_variables = [   
-    ('ljobs = ln(pseudo_building.job_spaces)', 'BLJ'),
+    ('lcomjobs = ln(pseudo_building.commercial_job_spaces)', 'BLCJ'),
+    ('lindjobs = ln(pseudo_building.industrial_job_spaces)', 'BLIJ'),
+    ('lgovjobs = ln(pseudo_building.governmental_job_spaces)', 'BLGJ'),
     ('ldu = ln(pseudo_building.residential_units)', 'BLDU'),
             ]
 
@@ -27,15 +29,15 @@ specification = {
         '_definition_': all_variables,
         1: # commercial
             ['constant',
-             'ljobs'
+             'lcomjobs'
              ],
         2: # governmental
             ['constant',
-             'ljobs'
+             'lgovjobs'
              ],
         3: # industrial
             ['constant',
-             'ljobs'
+             'lindjobs'
              ],
         4: # residential
             ['constant',

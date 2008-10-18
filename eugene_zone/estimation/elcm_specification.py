@@ -13,8 +13,8 @@
 # 
 
 all_variables = [   
-    ('lsfi = ln(urbansim_zone.zone.total_commercial_job_space)', 'BLSFI'),
-    ('lsfc = ln(urbansim_zone.zone.total_industrial_job_space)', 'BLSFC'),
+    ('lcjs = ln(urbansim_zone.zone.total_commercial_job_space)', 'BLSFC'),
+    ('lijs = ln(urbansim_zone.zone.total_industrial_job_space)', 'BLSFI'),
     ('ldu = ln(urbansim_zone.zone.residential_units)', 'BLDU'),
     ('lavinc = ln(urbansim.zone.average_income)','BLAVINC'),
     ('ljobs = ln(urbansim.zone.number_of_jobs)', 'BLJOBS'), 
@@ -32,7 +32,7 @@ specification['industrial'] = { #industrial
 '_definition_': all_variables,
 1:
     [
-     #'lsfi',
+     #'lijs',
      'lindjobs',
      'ljobs',
      #'ldu',
@@ -41,7 +41,7 @@ specification['industrial'] = { #industrial
     ],
 2:    
     [
-     'lsfi', 
+     'lijs', 
      #'lindjobs',
      #'ldu',
      'lavinc',
@@ -50,7 +50,7 @@ specification['industrial'] = { #industrial
     ],
 3:
     [
-     'lsfi', 
+#     'lijs', 
      'lindjobs',
      #'ljobs',
      #'ldu',
@@ -59,7 +59,7 @@ specification['industrial'] = { #industrial
      ],
 4:
     [
-     'lsfi',
+     'lijs',
      #'lindjobs',
      'ljobs',
      #'ldu',
@@ -68,7 +68,7 @@ specification['industrial'] = { #industrial
     ],
 5:
     [
-     'lsfi',
+     'lijs',
      'lindjobs',
      'ljobs',
      #'ldu',
@@ -77,16 +77,16 @@ specification['industrial'] = { #industrial
     ],
 6:
     [
-     'lsfi', 
-     #'lindjobs',
-     'ljobs',
+#     'lijs', 
+     'lindjobs',
+ #    'ljobs',
      #'ldu',
      #'lavinc',
      #'lcbd'
      ],
 7:
     [
-     'lsfi',
+     'lijs',
      'lindjobs',
      #'ljobs',
      'ldu',
@@ -101,7 +101,7 @@ specification['commercial'] = {  #commercial
 '_definition_': all_variables,
 1:
     [
-     #'lsfc',
+     #'lcjs',
      #'lcomjobs',
      'ljobs',
      'ldu',
@@ -111,7 +111,7 @@ specification['commercial'] = {  #commercial
     ],
 2:
     [
-     #'lsfc',
+     #'lcjs',
      #'lcomjobs',
      'ljobs',
      'ldu',
@@ -121,7 +121,7 @@ specification['commercial'] = {  #commercial
     ],
 3:
     [
-     'lsfc',
+     'lcjs',
      'lcomjobs',
      'ljobs',
      #'ldu',
@@ -131,7 +131,7 @@ specification['commercial'] = {  #commercial
     ],
 4:
     [
-     'lsfc',
+     'lcjs',
      'lcomjobs',
      #'ljobs',
      'ldu',
@@ -141,7 +141,7 @@ specification['commercial'] = {  #commercial
     ],
 5:
     [
-     #'lsfc',
+     #'lcjs',
      'lcomjobs',
      #'ljobs',
      'ldu',
@@ -151,7 +151,7 @@ specification['commercial'] = {  #commercial
     ],
 6:
     [
-     #'lsfc',
+     #'lcjs',
      'lcomjobs',
      #'ljobs',
      'ldu',
@@ -161,7 +161,7 @@ specification['commercial'] = {  #commercial
     ],
 7:
     [
-     #'lsfc',
+     #'lcjs',
      'lcomjobs',
      'ljobs',
      'ldu',
@@ -172,7 +172,7 @@ specification['commercial'] = {  #commercial
 
 8:
     [
-     'lsfc',
+     'lcjs',
      #'lcomjobs',
      'ljobs',
      'ldu',
