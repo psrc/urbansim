@@ -542,9 +542,14 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
-    def __init__(self, mainwindow, fl, nodeToUpdate=None, callback=None):
-        QDialog.__init__(self, mainwindow, fl)
+    def __init__(self, mainwindow, nodeToUpdate=None, callback=None):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+            Qt.WindowMaximizeButtonHint
+        QDialog.__init__(self, mainwindow, flags)
         self.setupUi(self)
+        
+        self.setModal(True)
+        
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
         AllVariablesGui.__init__(self, mainwindow, fl, False)
