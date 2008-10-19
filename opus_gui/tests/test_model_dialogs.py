@@ -75,7 +75,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
         
         dummy_e = self.root.firstChildElement('dummy_model')
         dialog = ModelFromTemplateDialogBase(self.mainwindow,
-                                             dummy_e, None, None)
+                                             dummy_e, None)
 
         self.assertTrue(dummy_e is not None)
         self.assertTrue(isinstance(dummy_e, QDomElement) and 
@@ -116,7 +116,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
     def test_simple_model_dialog(self):
         template_node = self.root.firstChildElement('simple_model_template').cloneNode().toElement()
         
-        dialog = SimpleModelFromTemplateDialog(self.mainwindow, template_node, None, None)
+        dialog = SimpleModelFromTemplateDialog(self.mainwindow, template_node, None)
         
         self.assertTrue(dialog is not None)
         self.assertTrue(template_node is not None)
@@ -127,7 +127,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
 
     def test_agent_location_model_dialog(self):
         template_node = self.root.firstChildElement('agent_location_choice_model_template').cloneNode().toElement()
-        dialog = AgentLocationChoiceModelFromTemplateDialog(self.mainwindow, template_node, None, None)
+        dialog = AgentLocationChoiceModelFromTemplateDialog(self.mainwindow, template_node, None)
 
         self.assertTrue(dialog is not None)
         self.assertTrue(template_node is not None)
@@ -138,7 +138,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
         
     def test_allocation_model_dialog(self):
         template_node = self.root.firstChildElement('allocation_model_template').cloneNode().toElement()
-        dialog = AllocationModelFromTemplateDialog(self.mainwindow, template_node, None, None)
+        dialog = AllocationModelFromTemplateDialog(self.mainwindow, template_node, None)
 
         self.assertTrue(dialog is not None)
         self.assertTrue(template_node is not None)
@@ -149,7 +149,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
 
     def test_choice_model_dialog(self):
         template_node = self.root.firstChildElement('choice_model_template').cloneNode().toElement()
-        dialog = ChoiceModelFromTemplateDialog(self.mainwindow, template_node, None, None)
+        dialog = ChoiceModelFromTemplateDialog(self.mainwindow, template_node, None)
 
         self.assertTrue(dialog is not None)
         self.assertTrue(template_node is not None)
@@ -160,7 +160,7 @@ class TestModelManagerDialogs(opus_unittest.OpusTestCase):
 
     def test_regression_model_dialog(self):
         template_node = self.root.firstChildElement('regression_model_template').cloneNode().toElement()
-        dialog = RegressionModelFromTemplateDialog(self.mainwindow, template_node, None, None)
+        dialog = RegressionModelFromTemplateDialog(self.mainwindow, template_node, None)
 
         self.assertTrue(dialog is not None)
         self.assertTrue(template_node is not None)
