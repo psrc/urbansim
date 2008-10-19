@@ -24,8 +24,8 @@ from opus_gui.results_manager.controllers.dialogs.get_run_info import GetRunInfo
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
 class XmlController_Results(XmlController):
-    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'results_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu)  
+    def __init__(self, toolboxbase, parentWidget): 
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'results_manager', parentWidget = parentWidget)  
         
         
         self.toolboxBase = self.mainwindow.toolboxBase

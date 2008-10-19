@@ -14,7 +14,7 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QObject, SIGNAL, Qt
+from PyQt4.QtCore import QObject, SIGNAL, Qt, QString
 
 from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.abstract_manager.models.xml_model import XmlModel
@@ -22,25 +22,37 @@ from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
 
 
 class XmlController(object):
-    def __init__(self, toolboxbase, xml_type, parentWidget, addTree, listen_to_menu = True):
+    def __init__(self, toolboxbase, xml_type, parentWidget):
         
         self.toolboxbase = toolboxbase
         self.mainwindow = toolboxbase.mainwindow
         self.xmlType = xml_type
         self.parentWidget = parentWidget
         
-        self.model = XmlModel(self,self.toolboxbase.doc, self.mainwindow,
-                              self.toolboxbase.configFile, self.xmlType, True)
+        self.model = None
+        self.view = None
+        self.delegate = None
+        
+        # default model, view and delegate
+        self.setupModelViewDelegate()
+        self.setupWidget()
+
+
+    def setupModelViewDelegate(self):
+        '''bind the model, view and delegate to this controller. 
+        Override for inheriting classes that want to use different 
+        controller items.'''
+        self.model = XmlModel(self, self.toolboxbase.doc, self.mainwindow,
+                      self.toolboxbase.configFile, self.xmlType, True)
         self.view = XmlView(self.mainwindow)
         self.delegate = XmlItemDelegate(self.view)
 
-        if addTree:
-            self.addTree(listen_to_menu = listen_to_menu)
-
-
-    def addTree(self, listen_to_menu):
+        
+    def setupWidget(self):
+        '''setup the view and add it to the parent widget'''
         self.view.setItemDelegate(self.delegate)
         self.view.setModel(self.model)
+        
         # Need to traverse the whole tree and expand the nodes if they default to open
         self.view.openDefaultItems()
         self.view.setAnimated(True)
@@ -49,13 +61,13 @@ class XmlController(object):
         self.view.setMinimumHeight(200)
 
         self.parentWidget.addWidget(self.view)
+        
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
+        QObject.connect(self.view,
+                        SIGNAL("customContextMenuRequested(const QPoint &)"),
+                        self.processCustomMenu)
         
-        if listen_to_menu:
-            QObject.connect(self.view,
-                            SIGNAL("customContextMenuRequested(const QPoint &)"),
-                            self.processCustomMenu)
 
     def removeTree(self):
         if not self.model.isDirty():
@@ -64,7 +76,6 @@ class XmlController(object):
             return True
         else:
             return False
-
 
     def processCustomMenu(self, position):
         raise Exception('Method processCustomMenu is not implemented')

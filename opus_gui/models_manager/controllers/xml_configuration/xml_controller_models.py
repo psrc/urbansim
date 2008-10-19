@@ -30,26 +30,17 @@ from opus_gui.models_manager.controllers.dialogs.choice_from_template import Cho
 from opus_gui.models_manager.controllers.dialogs.agent_location_choice_from_model import AgentLocationChoiceModelFromTemplateDialog
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlView
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
+
 from opus_gui.models_manager.models.xml_model_models import XmlModel_Models
 
 class XmlController_Models(XmlController):
     
-    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
+    def __init__(self, toolboxbase, parentWidget): 
         XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', \
-                                   parentWidget = parentWidget, addTree = addTree, \
-                                   listen_to_menu = listen_to_menu)
-        
-        self.model = XmlModel_Models(self, self.toolboxbase.doc, \
-                                     self.mainwindow, \
-                                     self.toolboxbase.configFile, \
-                                     self.xmlType, True)
-        
-        # re add the tree
-        self.addTree(False)
-        
-        self.currentColumn = None
-        self.currentIndex = None
-        
+                                   parentWidget = parentWidget)
+
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
@@ -100,13 +91,22 @@ class XmlController_Models(XmlController):
                         self.selectVariables)
         
         # create actions for the model from template dialogs
-        self.createFromModelTemplateActions = []
+        self.create_from_template_actions = []
         for l in ('Agent Location Choice Model', \
                   'Allocation Model', \
                   'Choice Model', \
                   'Regression Model', \
                   'Simple Model'):
-            self.createFromModelTemplateActions.append(self.newCreateFromTemplateAction(l))
+            self.create_from_template_actions.append(self.newCreateFromTemplateAction(l))
+            
+    
+    def setupModelViewDelegate(self):
+        '''switch out the model'''
+        self.model = XmlModel_Models(self, self.toolboxbase.doc, self.mainwindow,
+              self.toolboxbase.configFile, self.xmlType, True)
+        self.view = XmlView(self.mainwindow)
+        self.delegate = XmlItemDelegate(self.view)
+
 
     def newCreateFromTemplateAction(self, label):
         '''create an action with a text of label and bind it to self.createNewModelFromTemplate with
@@ -115,17 +115,20 @@ class XmlController_Models(XmlController):
         callback = lambda x=QString(label).toLower(): self.createModelFromTemplate(x)
         QObject.connect(action, SIGNAL("triggered()"), callback)
         return action
+    
+    def currentItem(self):
+        return self.view.currentIndex()
+    
+    def currentElement(self):
+        return self.currentItem().internalPointer().node().toElement()
    
     def selectVariablesCallback(self, returnList, returnString):
         print returnString
         
     def selectVariables(self):
-        thisNode = self.currentIndex.internalPointer().node()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        self.all_variables = AllVariablesSelectGui(self.mainwindow,flags,callback=self.selectVariablesCallback,
-                                                   nodeToUpdate=thisNode)
-        self.all_variables.setModal(True)
-        self.all_variables.show()
+        AllVariablesSelectGui(self.mainwindow,
+                              callback=self.selectVariablesCallback,
+                              nodeToUpdate=self.currentElement()).show()
 
     def checkIsDirty(self):
         if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
@@ -138,28 +141,31 @@ class XmlController_Models(XmlController):
         else:
             return False
 
+
     def runEstimationAction(self):
-        active_element = self.currentIndex.internalPointer().node().toElement()
-        model_name = str(active_element.tagName())
+        current_element = self.currentItem().internalPointer().node().toElement()
+        model_name = str(current_element.tagName())
         self.toolboxbase.updateOpusXMLTree()
         newEstimation = OpusEstimation(self,
                                        self.toolboxbase.xml_file,
                                        model_name = model_name)
-        self.mainwindow.modelsManagerBase.addEstimationElement(estimation = newEstimation)
+        self.mainwindow.modelsManagerBase.addEstimationElement(newEstimation)
+
 
     def removeNode(self):
         #print "Remove Node Pressed"
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
-                                            self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        self.model.removeRow(self.currentItem().internalPointer().row(),
+                                            self.model.parent(self.currentItem()))
+        self.model.emit(SIGNAL("layoutChanged()"))
+
 
     def cloneNode(self):
         #print "cloneNode Pressed"
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parentIndex = self.currentIndex.model().parent(self.currentIndex)
-        model = self.currentIndex.model()
-        window = CloneNodeGui(self, clone, parentIndex, model)
+        clone = self.currentElement().cloneNode()
+        parentIndex = self.model.parent(self.currentItem())
+        window = CloneNodeGui(self, clone, parentIndex, self.model)
         window.show()
+
 
     def createModelFromTemplate(self, model_name):
         '''select element to clone and present the correct dialog for it'''
@@ -177,15 +183,13 @@ class XmlController_Models(XmlController):
 
         # clone the dom node and fetch the information of where we are in the tree
         clone = template_node.cloneNode()
-        model = self.currentIndex.model()
-        parentIndex = self.currentIndex
         
         # select dialog based on model name
         model_name = QString(model_name).toLower()
         dialog = None
         
-        # all dialog have the same args, so we just specify them once
-        dialog_args = (self.mainwindow, clone, parentIndex, model)
+        # all dialog have the same arguments, so we just specify them once
+        dialog_args = (self.mainwindow, clone, self.model)
         
         if model_name == 'simple model':
             dialog = SimpleModelFromTemplateDialog(*dialog_args)
@@ -202,73 +206,62 @@ class XmlController_Models(XmlController):
             raise NotImplementedError('dialog for template %s not yet implemented' %model_name)
         
         # show the dialog
-        dialog.setModal(True)
         dialog.show()
         
+        
     def makeEditableAction(self):
-        thisNode = self.currentIndex.internalPointer().node()
-        self.currentIndex.model().makeEditable(thisNode)
-        # Finally we refresh the tree to indicate that there has been a change
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        self.model.makeEditable(self.currentElement())
+        self.model.emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
-        if self.view.indexAt(position).isValid() and \
-               self.view.indexAt(position).column() == 0:
-            self.currentColumn = self.view.indexAt(position).column()
-            self.currentIndex = self.view.indexAt(position)
-            item = self.currentIndex.internalPointer()
-            domNode = item.node()
-            if domNode.isNull():
-                return
+        # grab the item and make sure its valid
+        index = self.view.indexAt(position)
+        if not index.isValid() or index.column() != 0:
+            return
+
+        item = self.view.indexAt(position) # get object at mouse coord
+        if not item.isValid():
+            return
+        domElement = item.internalPointer().node().toElement()
+        if domElement.isNull():
+            return
+        
+        element_type = domElement.attribute('type').toLower()
             
-            # Handle ElementNodes
-            if domNode.isElement():
-                domElement = domNode.toElement()
-                if domElement.isNull():
-                    return
-                
-                element_type = domElement.attribute('type')
-                
-                # create menu to populate
-                menu = QMenu(self.mainwindow)
+        # create menu to populate
+        menu = QMenu(self.mainwindow)
 
-                if element_type == 'model_system':
-                    submenu = QMenu(menu) # to populate with templates
-                    submenu.setTitle('Create model from template')
-                    for act in self.createFromModelTemplateActions:
-                        submenu.addAction(act)
-                    menu.addMenu(submenu)
-                    
-                if element_type in ['model', 'submodel', 'model_system']:
-                    menu.addAction(self.actRunEstimation)
+        # populate menu with model manager specifics
+        if element_type == 'model_system':
+            submenu = QMenu(menu) # to populate with templates
+            submenu.setTitle('Create model from template')
+            for act in self.create_from_template_actions:
+                submenu.addAction(act)
+            menu.addMenu(submenu)
+            
+        if element_type in ['model', 'submodel', 'model_system']:
+            menu.addAction(self.actRunEstimation)
+        
+        # populate the common alternatives
+        menu.addSeparator()
+        
+        # add generic menu items
+        if domElement.hasAttribute(QString("inherited")):
+            # inherited items should be copied into this project before 
+            # we allow manipulating
+            menu.addAction(self.actMakeEditable)
+        else:
+            if domElement.attribute("copyable").toLower() == QString("true"):
+                menu.addAction(self.actCloneNode)
                 
-                if menu:
-                    menu.addSeparator()
-                    # Last minute chance to add items that all menues should have
-                    if domElement.hasAttribute(QString("inherited")):
-                        # Tack on a make editable if the node is inherited
-                        menu.addSeparator()
-                        menu.addAction(self.actMakeEditable)
-                    else:
-                        if domElement.hasAttribute(QString("copyable")) and \
-                               domElement.attribute(QString("copyable")) == QString("True"):
-                            menu.addSeparator()
-                            menu.addAction(self.actCloneNode)
-                        elif domElement.hasAttribute(QString("type")) and \
-                               domElement.attribute(QString("type")) == QString("variable_list"):
-                            menu.addSeparator()
-                            menu.addAction(self.actSelectVariables)
+            elif element_type == QString("variable_list"):
+                menu.addAction(self.actSelectVariables)
+        
+            if element_type in ['dictionary', 'selectable_list', 
+                                'model_estimation', 'list']:
+                menu.addAction(self.actRemoveNode)
 
-                        if domElement and (not domElement.isNull()) and \
-                               domElement.hasAttribute(QString("type")) and \
-                               ((domElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (domElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (domElement.attribute(QString("type")) == QString("model_estimation")) or \
-                                (domElement.attribute(QString("type")) == QString("list"))):
-                            menu.addSeparator()
-                            menu.addAction(self.actRemoveNode)
-                # Check if the menu has any elements before exec is called
-                if not menu.isEmpty():
-                    menu.exec_(QCursor.pos())
-        return
+        # Check if the menu has any elements before exec is called
+        if not menu.isEmpty():
+            menu.exec_(QCursor.pos())
 

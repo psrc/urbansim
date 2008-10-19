@@ -30,8 +30,10 @@ from opus_gui.util.xmlhelper import getElementsByTagname
 import os,tempfile
 
 class XmlController_DataTools(XmlController):
-    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True):
-        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'data_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
+    def __init__(self, toolboxbase, parentWidget):
+        XmlController.__init__(self, toolboxbase = toolboxbase, 
+                               xml_type = 'data_manager', 
+                               parentWidget = parentWidget) 
 
         self.currentColumn = None
         self.currentIndex = None

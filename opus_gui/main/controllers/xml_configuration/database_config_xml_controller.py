@@ -19,8 +19,11 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 #from opus_gui.abstract_manager.models.xml_item_delegate
 
 class DatabaseConfigXMLController(XmlController):
-    def __init__(self, toolboxbase, xmlType, parentWidget, addTree=True):
-        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = xmlType, parentWidget = parentWidget, addTree = addTree, listen_to_menu = False)
+    def __init__(self, toolboxbase, xmlType, parentWidget):
+        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = xmlType, parentWidget = parentWidget)
+        
+    def processCustomMenu(self, position):
+        pass # to avoid raising not implemented error
         
 #    def addTree(self):
 #        self.model = DatabaseConfigXMLModel(self, self.toolboxbase.doc, self.mainwindow,

@@ -23,9 +23,10 @@ from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import Cl
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 
 class XmlController_Scenarios(XmlController):
-    def __init__(self, toolboxbase, parentWidget, addTree = True, listen_to_menu = True): 
-        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'scenario_manager', parentWidget = parentWidget, addTree = addTree, listen_to_menu = listen_to_menu) 
-        
+    def __init__(self, toolboxbase, parentWidget): 
+        XmlController.__init__(self, toolboxbase = toolboxbase, 
+                               xml_type = 'scenario_manager', 
+                               parentWidget = parentWidget) 
 
         self.currentColumn = None
         self.currentIndex = None
