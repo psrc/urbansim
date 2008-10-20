@@ -158,7 +158,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
         
 class AllVariablesGui(object):
-    def __init__(self, mainwindow, fl, editable):
+    def __init__(self, mainwindow, editable):
         #if edit_select:
         #    print "Select GUI"
         #else:
@@ -174,6 +174,7 @@ class AllVariablesGui(object):
         delegate = AllVariablesTableViewDelegate(tv)
         tv.setItemDelegate(delegate)
         tv.setSortingEnabled(True)
+        tv.setColumnWidth(0, 25) # adjust size to fit check box
 #        tv.setSelectionBehavior(QTableView.SelectRows)
         
         # So we have a data structure to define the headers for the table...
@@ -552,7 +553,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
-        AllVariablesGui.__init__(self, mainwindow, fl, False)
+        AllVariablesGui.__init__(self, mainwindow, False)
         self.pp = pprint.PrettyPrinter(indent=4)
         if nodeToUpdate:
             self.nodeToUpdate = nodeToUpdate
@@ -562,44 +563,47 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         self.tm.initCheckBoxes(self.getCurrentList(self.nodeToUpdate))
         
     def getCurrentList(self,node):
-        if not node.isNull():
-            # We only want to check out this node if it is of type "element"
-            if node.isElement():
-                domElement = node.toElement()
-                if not domElement.isNull():
-                    # Only set the text field to be the string representation of the
-                    # python list of selections.
-                    # We need to grab the text node from the element
-                    if domElement.hasChildNodes():
-                        children = domElement.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                textNode = children.item(x).toText()
-                                # Finally set the text node value
-                                return map(lambda s: s.strip(), str(textNode.data()).split(','))
+        element = node.toElement()
+        if element.isNull():
+            return []
+        # Only set the text field to be the string representation of the
+        # python list of selections.
+        # We need to grab the text node from the element
+        if element.hasChildNodes():
+            children = element.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    textNode = children.item(x).toText()
+                    # Finally set the text node value
+                    return map(lambda s: s.strip(), str(textNode.data()).split(','))
         return []
                                 
     def updateNodeFromListString(self,node,listString):
-        if not node.isNull():
-            # We only want to check out this node if it is of type "element"
-            if node.isElement():
-                domElement = node.toElement()
-                if not domElement.isNull():
-                    # Only set the text field to be the string representation of the
-                    # python list of selections.
-                    # We need to grab the text node from the element
-                    if domElement.hasChildNodes():
-                        children = domElement.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                textNode = children.item(x).toText()
-                                # Finally set the text node value
-                                textNode.setData(listString)
-                                # Here we have to manually mark the model as dirty since
-                                # we are changing out the XML DOM under the models nose
-                                self.tree.model.markAsDirty()
-                                self.tree.model.emit(SIGNAL("layoutChanged()"))
+        element = node.toElement()
+        if element.isNull():
+            return
+        # Only set the text field to be the string representation of the
+        # python list of selections.
+        # We need to grab the text node from the element
+        if element.hasChildNodes():
+            children = element.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    textNode = children.item(x).toText()
+                    # Finally set the text node value
+                    textNode.setData(listString)
+        else:
+            # child does not have child elements, create and append a text node
+            doc = self.mainwindow.toolboxBase.doc
+            spawn_text = doc.createTextNode(listString)
+            element.insertBefore(spawn_text, QDomNode())
 
+        # Here we have to manually mark the model as dirty since
+        # we are changing out the XML DOM under the models nose
+        self.tree.model.markAsDirty()
+        self.tree.model.emit(SIGNAL("layoutChanged()"))
+
+            
     def on_saveSelections_released(self):
         #print "save pressed"
         returnList = []
