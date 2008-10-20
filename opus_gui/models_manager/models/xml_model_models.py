@@ -14,23 +14,20 @@
 
 from PyQt4.QtCore import QVariant, QString, Qt, QModelIndex, SIGNAL
 from PyQt4.QtGui import QColor
+
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.abstract_manager.models.xml_item import XmlItem
 
 
 class XmlModel_Models(XmlModel):
     
-    # tag name for estimation configuration
-    estimation_config_tag_name = 'estimation_config'
-    
-    #TODO: icons for Models / Estimations
     def __init__(self, parentTree, document, mainwindow, configFile, xmlType, 
                  editable, addIcons=True):
         XmlModel.__init__(self, parentTree, document, mainwindow, configFile, 
                           xmlType, editable, addIcons)
 
     def data_handler(self, index, role):
-        '''override the displaying of xml nodes'''
+        #override visual representation of some data types
         element = index.internalPointer().node().toElement()
         element_type = element.attribute('type')
         
@@ -54,10 +51,10 @@ class XmlModel_Models(XmlModel):
     def build_item_tree_from_root(self):
         '''override the default tree building to make sure estimate_config 
         is in top'''
-        child_nodes = [e for e in self.child_elements(self.xmlRoot)]
+        child_nodes = [e.tagName() for e in self.child_elements(self.xmlRoot)]
         # move estimation_config to first slot
         if QString('estimation_config') in child_nodes:
-            idx = child_nodes.index(self.estimation_config_tag_name)
+            idx = child_nodes.index('estimation_config')
             child_nodes.insert(0, child_nodes.pop(child_nodes.index(idx)))
 
         for e in child_nodes:
@@ -68,8 +65,19 @@ class XmlModel_Models(XmlModel):
 
     def insert_model(self, model_element):
         '''inserts a dom element under model_system'''
-        # insert last under the first node
-        model_system_index = self.index(0, 0, QModelIndex())
+        # find the model_system node
+        model_system_index = None
+        for row in xrange(0, self.rowCount(None)):
+            index = self.index(row, 0, QModelIndex())
+            element = index.internalPointer().node().toElement()  
+            if element.tagName() == 'model_system':
+                model_system_index = index
+                break
+        if not model_system_index:
+            print "Warning! Could not find model_system in tree. " \
+                  "Unable to insert model."
+            return
+        
         self.insertRow(self.rowCount(model_system_index), 
                        model_system_index, 
                        model_element)
