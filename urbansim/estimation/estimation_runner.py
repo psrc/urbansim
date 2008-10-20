@@ -44,7 +44,7 @@ class EstimationRunner(Estimator):
         if configuration is None:
             if self.xml_configuration is None:
                 raise StandardError, "Either dictionary based or XML based configuration must be given."
-            config = self.xml_configuration.get_estimation_configuration()
+            config = self.xml_configuration.get_estimation_configuration(model)
         else:
             config = Configuration(configuration)
         config_changes = config.get('config_changes_for_estimation', {})
@@ -52,7 +52,7 @@ class EstimationRunner(Estimator):
         specification_dict=None
         if self.xml_configuration is not None:
             specification_dict = self.xml_configuration.get_estimation_specification(model, model_group=model_group)
-            
+
         if model_group is None:
             if model in config_changes.keys():
                 config.merge(config_changes[model])
