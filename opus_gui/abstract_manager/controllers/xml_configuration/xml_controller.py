@@ -15,6 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QObject, SIGNAL, Qt, QString
+from PyQt4.QtGui import QAction
 
 from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.abstract_manager.models.xml_model import XmlModel
@@ -61,14 +62,19 @@ class XmlController(object):
         self.view.setMinimumHeight(200)
 
         self.parentWidget.addWidget(self.view)
-        
+
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.view,
                         SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
         
-
+    def createAction(self, icon, text, callback):
+        '''convenience method to create actions''' 
+        action = QAction(icon, text, self.mainwindow)
+        QObject.connect(action, SIGNAL('triggered()'), callback)
+        return action
+        
     def removeTree(self):
         if not self.model.isDirty():
             self.view.hide()
