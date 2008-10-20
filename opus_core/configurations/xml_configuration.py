@@ -134,10 +134,12 @@ class XMLConfiguration(object):
         config['project_name'] = project_name
         return config
     
-    def get_estimation_configuration(self):
+    def get_estimation_configuration(self, model_name = None):
         """Extract an estimation configuration from this xml project and return it.
         If the configuration has an expression library, add
-        that to the configuration under the key 'expression_library' """
+        that to the configuration under the key 'expression_library' 
+        If the model_name argument is given, also parse overriding 
+        configurations for that specific model."""
         # grab general configuration for estimations
         config_section = self.get_section('model_manager/model_system')
         # if it doesn't find config there, try the old location
@@ -148,6 +150,31 @@ class XMLConfiguration(object):
         config = config_section['estimation_config']
         self._merge_controllers(config)
         self._insert_expression_library(config)
+        
+        # ignore the configuration changes for unspecified models
+        if model_name is None:
+            return config
+        
+        # get the configuration overrides for the model
+        changes_dict = {}
+        
+        # get the models_to_run
+        models_to_run = []
+        models_to_run_node = \
+            self._find_node('model_manager/model_system/%s/structure/'
+                            'prepare_for_estimate/models_to_run/' 
+                            %model_name)
+        if models_to_run_node is not None:
+            # model has a "models to run"-list
+            models_to_run = self._convert_node_to_data(models_to_run_node)
+
+        # include this model in the models_to_run list
+        models_to_run.append({model_name: ["estimate"]})
+        # include the list in the model specific changes
+        changes_dict['models'] = models_to_run
+        
+        config['config_changes_for_estimation'] = {model_name: changes_dict}
+
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):
@@ -171,7 +198,7 @@ class XMLConfiguration(object):
         #TODO: refactor xml instead
         if not submodel_list:
             old_section = self.get_section('model_manager/estimation')
-            if model_name in old_section:
+            if old_section is not None and (model_name in old_section):
                 submodel_list = old_section[model_name]
 
         result = {}
@@ -195,7 +222,7 @@ class XMLConfiguration(object):
 
         if model_group is not None:
             result = result_group
-            
+        
         return result
     
     def save(self):
@@ -375,7 +402,7 @@ class XMLConfiguration(object):
             included = self._find_node(node.text)
             for child in included:
                 self._add_to_dict(child, result_dict)
-        elif action=='only_for_includes':
+        elif action in ['only_for_includes', 'skip']:
             pass
         else:
             data = self._convert_node_to_data(node)
@@ -384,20 +411,24 @@ class XMLConfiguration(object):
                 result_dict.update(data)
             elif 'config_name' in node.attrib:
                 result_dict[node.get('config_name')] = data
+            elif type_name == 'model_template':
+                pass # we dont want templates in dicts
             else:
                 result_dict[node.tag] = data
     
     def _convert_node_to_data(self, node):
         # convert the information under node into the appropriate Python datatype.
         # To do this, branch on the node's type attribute.  For some kinds of data,
-        # return None if the node should be skipped.  For example, for type="model"
-        # return None if that is a model that isn't selected to be run
+        # return None if the node should be skipped.  
+        # For example, for type="model_choice" return None if that is a model 
+        # that isn't selected to be run
         type_name = node.get('type')
         if type_name=='integer':
             return self._convert_string_to_data(node, int)
         elif type_name=='float':
             return self._convert_string_to_data(node, float)
-        elif type_name=='string' or type_name=='password' or type_name=='variable_definition' or type_name=='path':
+        elif type_name=='string' or type_name=='password' or \
+             type_name=='variable_definition' or type_name=='path':
             return self._convert_string_to_data(node, str)
         elif type_name=='quoted_string':
             if node.text is not None:
@@ -425,12 +456,10 @@ class XMLConfiguration(object):
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
         elif type_name in ['dictionary', 'category', 'submodel', 
-                           'model_system', 'configuration',
-                           # these are old
-                           'model_estimation']:
+                           'model_system', 'configuration','model_estimation']:
             return self._convert_dictionary_to_data(node)
         elif type_name in ['model_template', 'estimation_template']:
-            return None # templates don't need to be in dicts
+            return None
         elif type_name == 'model':
             return self._convert_model_to_data(node)
         elif type_name=='category_with_special_keys':
@@ -443,7 +472,7 @@ class XMLConfiguration(object):
             return ''
         elif type_name=='db_connection_hook':
             return node.text
-        elif type_name=='model_choice': # old 'model' should not exist in newew version of the xml
+        elif type_name=='model_choice':
             return self._convert_custom_type_to_data(node, "Skip")
         elif type_name=='table':
             return self._convert_custom_type_to_data(node, "Skip")
@@ -499,8 +528,12 @@ class XMLConfiguration(object):
             return result_list
         
     def _convert_variable_list_to_data(self, node):
-        # node should be a text node with a comma-separated list of variable names (perhaps with white space as well)
-        return map(lambda s: s.strip(), node.text.split(','))
+        # node should be a text node with a comma-separated list of variable 
+        # names (perhaps with white space as well)
+        if node.text is None: 
+            return [] # this is the case with xml stumps (like: <var_list />)
+        else:
+            return map(lambda s: s.strip(), node.text.split(','))
         
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
