@@ -19,9 +19,10 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
     ModelFromTemplateDialogBase
 
 class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, main_window, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
-                                             template_index, template_model)
+    def __init__(self, main_window, model_template_node, model_manager_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, 
+                                             model_template_node,
+                                             model_manager_model)
         
         # allocation models do not have estimation components
         self.create_estimation_component = False

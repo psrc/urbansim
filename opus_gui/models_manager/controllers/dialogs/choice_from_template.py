@@ -21,9 +21,10 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
     ModelFromTemplateDialogBase
 
 class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, main_window, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
-                                             template_index, template_model)
+    def __init__(self, main_window, model_template_node, model_manager_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, 
+                                             model_template_node,
+                                             model_manager_model)
         
         # setup additional ui that's specfic for this model template
         self.setup_choice_ui()
@@ -50,7 +51,6 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             ('Submodel String', self.leSubModelString),
             #TODO replace with cbo
             ('Choice Attribute Set', self.leChoiceAttributeName),
-            
             ('Fraction of Agents for Estimation', self.leEstimationSizeAgents),
             ('Agent Set', self.leAgentSet),
             #TODO: check what filters do

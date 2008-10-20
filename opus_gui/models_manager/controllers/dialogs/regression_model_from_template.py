@@ -23,9 +23,10 @@ from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base
 #TODO: Rodo this one to have the same code formatting as the newer dialogs
 
 class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
-    def __init__(self, main_window, model_template_node, template_index, template_model):
-        ModelFromTemplateDialogBase.__init__(self, main_window, model_template_node, \
-                                             template_index, template_model)
+    def __init__(self, main_window, model_template_node, model_manager_model):
+        ModelFromTemplateDialogBase.__init__(self, main_window, 
+                                             model_template_node,
+                                             model_manager_model)
 
         # setup additional ui that's specfic for this model template
         self.setup_regression_ui()

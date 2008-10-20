@@ -34,31 +34,24 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     Models that do not have estimation components should set the instance
     variable create_estimation_component to False.
     '''
-    def __init__(self, mainwindow, model_template_node, template_index, template_model):
+    def __init__(self, mainwindow, model_template_node, model_manager_model):
         # parent window for the dialog box
         self.mainwindow = mainwindow
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+                Qt.WindowMaximizeButtonHint
         QDialog.__init__(self, self.mainwindow, flags)
         self.setupUi(self)
-
-        # handy reference to the dom doc for the helper functions
-        self.domDocument = mainwindow.toolboxBase.doc
-        
+       
         self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxBase)
         
         self.model_template_node = model_template_node
-        self.template_index = template_index
-        self.template_model = template_model
+        self.model_manager_model = model_manager_model
         
         self.connect(self.buttonBox, SIGNAL("accepted()"), self._on_accepted)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self._on_rejected)
         
         self.setModal(True)
-        # should we create an estimation component when inserting the
-        # model into the tree. Override this value for model dialogs that do 
-        # not have an estimation component.
-        self.create_estimation_component = True
-        
+      
         # default name based on tag name for template
         tag_name = model_template_node.toElement().tagName()
         tag_name.replace('_template', '').replace('_', ' ')
@@ -91,7 +84,7 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         self.groupBox.layout().addLayout(layout)
 
     def set_structure_element_to_value(self, xmlpath, value):
-        '''sets an element of the model structure to value
+        '''sets an element rooted in the models structure to a value
         usage example:
         to set "structure/init/name" to "modelname"; 
           set_structure_element_to_value("init/name", "modelname")'''
@@ -118,36 +111,13 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         xmlname = value if value else self.get_model_xml_name()
         self.model_template_node.toElement().setTagName(xmlname)
         
-    def _create_estimation_component(self, element):
-        # select template for estimations
-        estimation_template = self.xml_helper.get_sub_element_by_path( \
-            self.template_model.xmlRoot, 
-            '/model_system/basic_estimation_template')
-        
-        # make sure there is a template
-        if estimation_template.isNull() or not estimation_template.isElement():
-            print 'Warning: Could not find estimation template.'
-            return
-
-        estimation_clone = estimation_template.cloneNode(True).toElement()
-        spec_element = \
-            self.xml_helper.get_sub_element_by_path(element, 'specification/')
-        
-        # reparent all the cloned submodels into the model/specification
-        submodel = estimation_clone.firstChildElement('submodel')
-        while not submodel.isNull():
-            spec_element.appendChild(submodel)
-            submodel = submodel.nextSiblingElement('submodel')
-
-        
     def _create_estimations_and_insert_node(self):
         '''insert the node back into the model system and create an entry for 
         the new model in the estimations'''
         new_model_element = self.model_template_node.toElement()
-        self._create_estimation_component(new_model_element)
         new_model_element.removeAttribute('hidden')
         new_model_element.setAttribute('type', QString('model'))
-        self.template_model.insert_model(new_model_element)
+        self.model_manager_model.insert_model(new_model_element)
         
     def setup_node(self):
         # code that sets the specific template variables goes here
