@@ -22,7 +22,7 @@ class XMLConfiguration(object):
     An XMLConfiguration is a kind of configuration that represents a project 
     and that can be stored or loaded from an XML file.
     """
-    
+
     def __init__(self, filename, default_directory=None, is_parent=False):
         """Initialize this configuration from the contents of the xml file named by 'filename'.
         Look first in the default directory if present; otherwise in the directory in which
@@ -456,7 +456,8 @@ class XMLConfiguration(object):
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
         elif type_name in ['dictionary', 'category', 'submodel', 
-                           'model_system', 'configuration','model_estimation']:
+                           'model_system', 'configuration','model_estimation',
+                           'submodel_equation']:
             return self._convert_dictionary_to_data(node)
         elif type_name in ['model_template', 'estimation_template']:
             return None
