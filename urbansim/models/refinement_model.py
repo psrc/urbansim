@@ -68,7 +68,7 @@ class RefinementModel(Model):
         for this_transaction in sort( unique(transactions) ):
             #transaction_list = [] # list of each action in this transaction
             agents_pool = []  # index to agents to keep track agent within 1 transaction
-            logger.start_block("Refinement transaction %s" % this_transaction)
+            logger.start_block("Refinement transaction %i" % this_transaction)
             for action_type in action_order:
                 action_function = getattr(self, '_' + action_type)
                 for refinement_index in where( logical_and(transactions==this_transaction, actions == action_type))[0]:
@@ -82,7 +82,7 @@ class RefinementModel(Model):
                     location_dataset = None
                     if len(this_refinement.location_expression)>0:
                         location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
-                    logger.log_status("Action: %s %s agents satisfying %s and %s " % \
+                    logger.log_status("Action: %s %i agents satisfying %s and %s " % \
                                       (action_type, this_refinement.amount,
                                        this_refinement.agent_expression, 
                                        this_refinement.location_expression
@@ -91,9 +91,13 @@ class RefinementModel(Model):
                                      agent_dataset, location_dataset, 
                                      this_refinement, 
                                      dataset_pool )
-            
+                    
             ## delete agents still in agents_pool at the end of the transaction
             #agent_dataset.remove_elements( array(agents_pool) )
+
+#            dataset_pool.flush_loaded_datasets()
+#            dataset_pool.remove_all_datasets()
+                        
             logger.end_block()
             
     def get_fit_agents_index(self, agent_dataset, 
@@ -158,14 +162,18 @@ class RefinementModel(Model):
                                               this_refinement.location_expression,
                                               dataset_pool)
         
-        if amount < fit_index.size:
+        if amount > fit_index.size:
             logger.log_warning("Refinement requests to subtract %s agents,  but there are %s agents in total satisfying %s and %s;" \
                                "subtract %s agents instead" % (amount, fit_index.size, this_refinement.agent_expression, 
                                                                this_refinement.location_expression,
                                                                fit_index.size) )
             amount = fit_index.size
+        
+        if amount == fit_index.size:
+            movers_index = fit_index
+        else:
+            movers_index = sample_noreplace( fit_index, amount )
             
-        movers_index = sample_noreplace( fit_index, amount )
         agents_pool += movers_index.tolist()
         ## modify location capacity attribute if specified
         if this_refinement.location_capacity_attribute is not None and len(this_refinement.location_capacity_attribute) > 0:
