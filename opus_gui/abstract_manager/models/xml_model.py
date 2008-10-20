@@ -167,10 +167,21 @@ class XmlModel(QAbstractItemModel):
     def columnCount(self, parent):
         #return 1
         return 2
+    
+    def data_handler(self, index, role):
+        '''allow inheriting classes to be able to just override specific parts
+        of data(). Return QVariant() to fall back on default handler'''
+        return QVariant() # not handled 
 
     def data(self, index, role):
         if not index.isValid():
             return QVariant()
+        
+        # check if the data_handler cares about this index
+        data_handler = self.data_handler(index, role)
+        if data_handler != QVariant():
+            return data_handler
+        
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
@@ -238,29 +249,24 @@ class XmlModel(QAbstractItemModel):
             return QVariant()
 
     def flags(self, index):
-        flags = None
-        if not index.isValid():
-            flags = Qt.ItemIsEnabled
-        if self.editable:
-            element = index.internalPointer().domNode.toElement()
-            if not element.isNull():
-                # Check if this node is an inherited node type
-                if element.hasAttribute(QString("inherited")):
-                    # We have a node that is inherited...
-                    #return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-                    flags = Qt.ItemIsSelectable
-            if index.column() == 0:
-                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
-#                if index.isValid():
-#                    flags &= ~Qt.ItemIsEditable
 
-            elif index.column() == 1:
-                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-            else:
-                flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        else:
-            flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        return flags
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        if not self.editable:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+         
+        # check for inherited nodes
+        element = index.internalPointer().domNode.toElement()
+        if not element.isNull():
+            if element.hasAttribute(QString("inherited")):
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+        # editable, non inherited items are only editable in second column  
+        if index.column() == 1:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
 
     def headerData(self, section, oreientation, role):
         if oreientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -298,13 +304,15 @@ class XmlModel(QAbstractItemModel):
         return self.createIndex(parentItem.row(),0,parentItem)
 
     def rowCount(self, parent):
-        if parent.isValid() and parent.column() > 0:
-            return 0
+        
+        
         parentItem = None
-        if not parent.isValid():
+        if not parent or not parent.isValid():
             #print "row_count non-valid root item"
             parentItem = self._rootItem
         else:
+            if parent.column() > 0:
+                return 0 # only allow multiple rows for first column
             parentItem = parent.internalPointer()
         return len(parentItem.childItems)
 
