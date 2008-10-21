@@ -16,8 +16,6 @@ from PyQt4.QtCore import QVariant, QString, Qt, QModelIndex, SIGNAL
 from PyQt4.QtGui import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
-from opus_gui.abstract_manager.models.xml_item import XmlItem
-
 
 class XmlModel_Models(XmlModel):
     
