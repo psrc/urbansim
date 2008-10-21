@@ -262,7 +262,7 @@ class XmlController_Scenarios(XmlController):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actEditXMLFileGlobal)
                     self.menu.addAction(self.actEditXMLFileLocal)
-                elif domElement.attribute(QString("type")) == QString("model"):
+                elif domElement.attribute(QString("type")) == QString("model_choice"):
                     self.menu.addAction(self.actRemoveModel)
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
