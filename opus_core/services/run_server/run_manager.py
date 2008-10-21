@@ -34,6 +34,7 @@ class RunManager(AbstractService):
         AbstractService.__init__(self, options)
         self.run_id = None
         self.ready_to_run = False
+        self.model_system = None
 
     def create_baseyear_cache(self, resources):
         if resources['creating_baseyear_cache_configuration'].cache_from_database:
@@ -105,6 +106,7 @@ class RunManager(AbstractService):
             exec('from %s import ModelSystem' % model_system_class_path)
                 
             model_system = ModelSystem()
+            self.model_system = model_system
 
             if 'base_year' not in run_resources:
                 run_resources['base_year'] = run_resources['years'][0] - 1
@@ -114,6 +116,8 @@ class RunManager(AbstractService):
                 model_system.run_multiprocess(run_resources)
             else:
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
+
+            self.model_system = None
 
         except:
             self.add_row_to_history(self.run_id, run_resources, "failed", run_name = run_name)

@@ -23,6 +23,9 @@ class ModelSystem(CoreModelSystem):
     Uses the information in configuration to run/estimate a set of models.
     """
             
+    def __init__(self):
+        CoreModelSystem.__init__(self)
+    
     def _run_each_year_as_separate_process(self, start_year, end_year, seed_array, resources, log_file_name='run_multiprocess.log'):
         skip_first_year_of_urbansim = resources.get('skip_urbansim', False)
         log_file = os.path.join(resources['cache_directory'], log_file_name)
@@ -37,7 +40,7 @@ class ModelSystem(CoreModelSystem):
                     logger.disable_file_logging(log_file)
                     if profiler_name is not None:
                         resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
-                    ForkProcess().fork_new_process(
+                    self._fork_new_process(
                         'urbansim.model_coordinators.model_system', resources, optional_args=['--log-file-name', log_file_name])
                     logger.enable_file_logging(log_file, verbose=False)
                 finally:
@@ -49,7 +52,7 @@ class ModelSystem(CoreModelSystem):
             if 'post_year_configuration' in resources:
                 self._run_travel_models_in_separate_processes(resources['post_year_configuration'], year, resources)
             iyear +=1
-
+        self._notify_stopped()
 
     def _run_travel_models_in_separate_processes(self, year_models_dict, year, resources):
         if year in year_models_dict:
@@ -58,7 +61,7 @@ class ModelSystem(CoreModelSystem):
             else:
                 models = year_models_dict['models']  #travel model format
             for opus_path in models:
-                ForkProcess().fork_new_process(opus_path, resources, optional_args=['-y', year])
+                self._fork_new_process(opus_path, resources, optional_args=['-y', year])
 
 if __name__ == "__main__":
     try: import wingdbstub

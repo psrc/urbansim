@@ -15,6 +15,7 @@
 import os
 import time
 import sys
+import threading
 
 from gc import collect
 
@@ -43,6 +44,11 @@ class ModelSystem(object):
     Uses the information in configuration to run/estimate a set of models for given set of years.
     """
     
+    def __init__(self):
+        self.running = False
+        self.forked_processes = []
+        self.running_conditional = threading.Condition()
+
     def run(self, resources, write_datasets_to_cache_at_end_of_year=True, log_file_name='run_model_system.log'):
         """Entries in resources: (entries with no defaults are required)
                models - a list containing names of models to be run. Each name
@@ -466,13 +472,14 @@ class ModelSystem(object):
                 logger.disable_file_logging(log_file)
                 if profiler_name is not None:
                     resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
-                ForkProcess().fork_new_process(
+                self._fork_new_process(
                     'opus_core.model_coordinators.model_system', resources, optional_args=['--log-file-name', log_file_name])
                 logger.enable_file_logging(log_file, verbose=False)
             finally:
                 logger.end_block()
             iyear +=1
-            
+        self._notify_stopped()
+    
     def run_in_one_process(self, resources, run_in_background=False, class_path='opus_core.model_coordinators.model_system'):
         resources = Resources(resources)
         if resources['cache_directory'] is not None:
@@ -484,9 +491,10 @@ class ModelSystem(object):
         ###       Configuration.
         resources['cache_directory'] = cache_directory
 
-        ForkProcess().fork_new_process(
-                    '%s' % class_path, resources, delete_temp_dir=False,
-                    optional_args=optional_arguments, run_in_background=run_in_background)
+        self._fork_new_process(
+            '%s' % class_path, resources, delete_temp_dir=False,
+            optional_args=optional_arguments, run_in_background=run_in_background)
+        self._notify_stopped()
 
     def run_in_same_process(self, resources, class_path='opus_core.model_coordinators.model_system'):
         resources = Resources(resources)
@@ -499,8 +507,10 @@ class ModelSystem(object):
         ###       Configuration.
         resources['cache_directory'] = cache_directory
 
+        self._notify_started()
         RunModelSystem(model_system = self, resources = resources)
-         
+        self._notify_stopped()
+            
     def construct_arguments_from_config(self, config):
         key = "arguments"
         if (key not in config.keys()) or (len(config[key].keys()) <= 0):
@@ -510,8 +520,52 @@ class ModelSystem(object):
         for arg_key in arg_dict.keys():
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
-                
-    
+
+    def wait_for_start(self):
+        self.running_conditional.acquire()
+        while not self.running:
+            self.running_conditional.wait()
+        self.running_conditional.release()
+
+    def wait_for_finish(self):
+        self.running_conditional.acquire()
+        while self.running:
+            self.running_conditional.wait()
+        self.running_conditional.release()
+
+    def wait_for_process_or_finish(self, process_index):
+        self.running_conditional.acquire()
+        while process_index >= len(self.forked_processes) and self.running:
+            self.running_conditional.wait()
+        self.running_conditional.release()
+        if not self.running:
+            process_index = len(self.forked_processes)-1
+        return process_index
+
+    def _fork_new_process(self, module_name, resources, run_in_background=False, **key_args):
+        self.running_conditional.acquire()
+        self.running = True
+        self.forked_processes.append(ForkProcess())
+        key_args["run_in_background"] = True
+        self.forked_processes[-1].fork_new_process(module_name, resources, **key_args)
+        self.running_conditional.notifyAll()
+        self.running_conditional.release()
+        if not run_in_background:
+            self.forked_processes[-1].wait()
+            self.forked_processes[-1].cleanup()
+        
+    def _notify_started(self):
+        self.running_conditional.acquire()
+        self.running = True
+        self.running_conditional.notifyAll()
+        self.running_conditional.release()
+        
+    def _notify_stopped(self):
+        self.running_conditional.acquire()
+        self.running = False
+        self.running_conditional.notifyAll()
+        self.running_conditional.release()
+
 
 class RunModelSystem(object):
     def __init__(self, model_system, resources, skip_cache_after_each_year = False, log_file_name = 'run_model_system.log'):
