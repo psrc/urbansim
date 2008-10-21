@@ -42,82 +42,18 @@ class XmlController_Scenarios(XmlController):
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         self.modelIcon = QIcon(":/Images/Images/cog.png")
 
-        self.actAddModel = QAction(self.addIcon,
-                                   "Add Model...",
-                                   self.mainwindow)
-        QObject.connect(self.actAddModel,
-                        SIGNAL("triggered()"),
-                        self.addModel)
+        self.actAddModel = self.createAction(self.addIcon,"Add Model...",self.addModel)
+        self.actRemoveModel = self.createAction(self.removeIcon,"Remove This Model",self.removeNode)
+        self.actRunModel = self.createAction(self.acceptIcon,"Run This Scenario",self.runModel)
+        self.actOpenXMLFile = self.createAction(self.calendarIcon,"Open XML File",self.openXMLFile)
+        self.actEditXMLFileGlobal = self.createAction(self.calendarIcon,"Edit XML File Global",self.editXMLFileGlobal)
+        self.actEditXMLFileLocal = self.createAction(self.calendarIcon,"Edit XML File Local",self.editXMLFileLocal)
+        self.actMakeEditable = self.createAction(self.makeEditableIcon,"Add to current project",self.makeEditableAction)
+        self.actRemoveNode = self.createAction(self.removeIcon,"Remove node from current project",self.removeNode)
+        self.actCloneNode = self.createAction(self.cloneIcon,"Copy Node",self.cloneNode)
+        self.actMoveNodeUp = self.createAction(self.arrowUpIcon,"Move Model Up",self.moveNodeUp)
+        self.actMoveNodeDown = self.createAction(self.arrowDownIcon,"Move Model Down",self.moveNodeDown)
 
-        self.actRemoveModel = QAction(self.removeIcon,
-                                   "Remove This Model",
-                                   self.mainwindow)
-        QObject.connect(self.actRemoveModel,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-
-        self.actRunModel = QAction(self.acceptIcon,
-                                   "Run This Scenario",
-                                   self.mainwindow)
-        QObject.connect(self.actRunModel,
-                        SIGNAL("triggered()"),
-                        self.runModel)
-
-        self.actOpenXMLFile = QAction(self.calendarIcon,
-                                      "Open XML File",
-                                      self.mainwindow)
-        QObject.connect(self.actOpenXMLFile,
-                        SIGNAL("triggered()"),
-                        self.openXMLFile)
-
-        self.actEditXMLFileGlobal = QAction(self.calendarIcon,
-                                            "Edit XML File Global",
-                                            self.mainwindow)
-        QObject.connect(self.actEditXMLFileGlobal,
-                        SIGNAL("triggered()"),
-                        self.editXMLFileGlobal)
-
-        self.actEditXMLFileLocal = QAction(self.calendarIcon,
-                                           "Edit XML File Local",
-                                           self.mainwindow)
-        QObject.connect(self.actEditXMLFileLocal,
-                        SIGNAL("triggered()"),
-                        self.editXMLFileLocal)
-
-        self.actMakeEditable = QAction(self.makeEditableIcon,
-                                    "Add to current project",
-                                    self.mainwindow)
-        QObject.connect(self.actMakeEditable,
-                        SIGNAL("triggered()"),
-                        self.makeEditableAction)
-
-        self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove node from current project",
-                                     self.mainwindow)
-        QObject.connect(self.actRemoveNode,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-
-        self.actCloneNode = QAction(self.cloneIcon,
-                                    "Copy Node",
-                                    self.mainwindow)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
-        self.actMoveNodeUp = QAction(self.arrowUpIcon,
-                                     "Move Model Up",
-                                     self.mainwindow)
-        QObject.connect(self.actMoveNodeUp,
-                        SIGNAL("triggered()"),
-                        self.moveNodeUp)
-
-        self.actMoveNodeDown = QAction(self.arrowDownIcon,
-                                       "Move Model Down",
-                                       self.mainwindow)
-        QObject.connect(self.actMoveNodeDown,
-                        SIGNAL("triggered()"),
-                        self.moveNodeDown)
 
     def checkIsDirty(self):
         if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \

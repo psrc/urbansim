@@ -49,160 +49,28 @@ class XmlController_DataTools(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         
-        self.actExecToolFile = QAction(self.executeIcon,
-                                       "Execute Tool...",
-                                       self.mainwindow)
-        QObject.connect(self.actExecToolFile,
-                        SIGNAL("triggered()"),
-                        self.execToolFile)
-
-        self.actExecToolConfig = QAction(self.executeIcon,
-                                           "Execute Tool...",
-                                           self.mainwindow)
-        QObject.connect(self.actExecToolConfig,
-                        SIGNAL("triggered()"),
-                        self.execToolFile)
-
-        self.actAddToolFile = QAction(self.addIcon,
-                                        "Add Tool to Library",
-                                        self.mainwindow)
-        QObject.connect(self.actAddToolFile,
-                        SIGNAL("triggered()"),
-                        self.addToolFile)
-
-        self.actAddRequiredStringParam = QAction(self.addIcon,
-                                                 "Add Required String Parameter",
-                                                 self.mainwindow)
-        QObject.connect(self.actAddRequiredStringParam,
-                        SIGNAL("triggered()"),
-                        self.addRequiredStringParam)
-
-        self.actAddRequiredDirParam = QAction(self.addIcon,
-                                              "Add Required Directory Parameter",
-                                              self.mainwindow)
-        QObject.connect(self.actAddRequiredDirParam,
-                        SIGNAL("triggered()"),
-                        self.addRequiredDirParam)
-        
-        self.actAddRequiredFileParam = QAction(self.addIcon,
-                                               "Add Required File Parameter",
-                                               self.mainwindow)
-        QObject.connect(self.actAddRequiredFileParam,
-                        SIGNAL("triggered()"),
-                        self.addRequiredFileParam)
-        
-        self.actAddOptionalStringParam = QAction(self.addIcon,
-                                                 "Add Optional String Parameter",
-                                                 self.mainwindow)
-        QObject.connect(self.actAddOptionalStringParam,
-                        SIGNAL("triggered()"),
-                        self.addOptionalStringParam)
-
-        self.actAddOptionalDirParam = QAction(self.addIcon,
-                                              "Add Optional Directory Parameter",
-                                              self.mainwindow)
-        QObject.connect(self.actAddOptionalDirParam,
-                        SIGNAL("triggered()"),
-                        self.addOptionalDirParam)
-
-        self.actAddOptionalFileParam = QAction(self.addIcon,
-                                               "Add Optional File Parameter",
-                                               self.mainwindow)
-        QObject.connect(self.actAddOptionalFileParam,
-                        SIGNAL("triggered()"),
-                        self.addOptionalFileParam)
-
-        self.actAddNewToolSet = QAction(self.addIcon,
-                                        "Add New Tool Set",
-                                        self.mainwindow)
-        QObject.connect(self.actAddNewToolSet,
-                        SIGNAL("triggered()"),
-                        self.addNewToolSet)
-
-        self.actNewConfig = QAction(self.addIcon,
-                                     "Add Tool to Tool Set",
-                                     self.mainwindow)
-        QObject.connect(self.actNewConfig,
-                        SIGNAL("triggered()"),
-                        self.newConfig)
-
-        self.actCloneBatch = QAction(self.cloneIcon,
-                                     "Clone Tool Set",
-                                     self.mainwindow)
-        QObject.connect(self.actCloneBatch,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
-        self.actCloneTool = QAction(self.cloneIcon,
-                                      "Clone Tool",
-                                      self.mainwindow)
-        QObject.connect(self.actCloneTool,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
-        self.actOpenDocumentation = QAction(self.calendarIcon,
-                                            "Open Documentation",
-                                            self.mainwindow)
-        QObject.connect(self.actOpenDocumentation,
-                        SIGNAL("triggered()"),
-                        self.openDocumentation)
-
-        self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove node from current project",
-                                     self.mainwindow)
-        QObject.connect(self.actRemoveNode,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-
-        self.actMoveNodeUp = QAction(self.arrowUpIcon,
-                                     "Move Up",
-                                     self.mainwindow)
-        QObject.connect(self.actMoveNodeUp,
-                        SIGNAL("triggered()"),
-                        self.moveNodeUp)
-
-        self.actMoveNodeDown = QAction(self.arrowDownIcon,
-                                       "Move Down",
-                                       self.mainwindow)
-        QObject.connect(self.actMoveNodeDown,
-                        SIGNAL("triggered()"),
-                        self.moveNodeDown)
-
-        #jesse testing
-        self.actExecBatch = QAction(self.executeIcon,
-                                      "Execute Tool Set",
-                                      self.mainwindow)
-        QObject.connect(self.actExecBatch,
-                        SIGNAL("triggered()"),
-                        self.execBatch)
-
-        self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Add to current project",
-                                       self.mainwindow)
-        QObject.connect(self.actMakeEditable,
-                        SIGNAL("triggered()"),
-                        self.makeEditableAction)
-
-        self.actCloneNode = QAction(self.cloneIcon,
-                                    "Copy Node",
-                                    self.mainwindow)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
-        self.actExportXMLToFile = QAction(self.cloneIcon,
-                                          "Export XML Node To File",
-                                          self.mainwindow)
-        QObject.connect(self.actExportXMLToFile,
-                        SIGNAL("triggered()"),
-                        self.exportXMLToFile)
-
-        self.actImportXMLFromFile = QAction(self.cloneIcon,
-                                            "Import XML Node From File",
-                                            self.mainwindow)
-        QObject.connect(self.actImportXMLFromFile,
-                        SIGNAL("triggered()"),
-                        self.importXMLFromFile)
+        self.actExecToolFile = self.createAction(self.executeIcon,"Execute Tool...",self.execToolFile)
+        self.actExecToolConfig = self.createAction(self.executeIcon,"Execute Tool...",self.execToolFile)
+        self.actAddToolFile = self.createAction(self.addIcon,"Add Tool to Library",self.addToolFile)
+        self.actAddRequiredStringParam = self.createAction(self.addIcon,"Add Required String Parameter",self.addRequiredStringParam)
+        self.actAddRequiredDirParam = self.createAction(self.addIcon,"Add Required Directory Parameter",self.addRequiredDirParam)
+        self.actAddRequiredFileParam = self.createAction(self.addIcon,"Add Required File Parameter",self.addRequiredFileParam)
+        self.actAddOptionalStringParam = self.createAction(self.addIcon,"Add Optional String Parameter",self.addOptionalStringParam)
+        self.actAddOptionalDirParam = self.createAction(self.addIcon,"Add Optional Directory Parameter",self.addOptionalDirParam)
+        self.actAddOptionalFileParam = self.createAction(self.addIcon,"Add Optional File Parameter",self.addOptionalFileParam)
+        self.actAddNewToolSet = self.createAction(self.addIcon,"Add New Tool Set",self.addNewToolSet)
+        self.actNewConfig = self.createAction(self.addIcon,"Add Tool to Tool Set",self.newConfig)
+        self.actCloneBatch = self.createAction(self.cloneIcon,"Clone Tool Set",self.cloneNode)
+        self.actCloneTool = self.createAction(self.cloneIcon,"Clone Tool",self.cloneNode)
+        self.actOpenDocumentation = self.createAction(self.calendarIcon,"Open Documentation",self.openDocumentation)
+        self.actRemoveNode = self.createAction(self.removeIcon,"Remove node from current project",self.removeNode)
+        self.actMoveNodeUp = self.createAction(self.arrowUpIcon,"Move Up",self.moveNodeUp)
+        self.actMoveNodeDown = self.createAction(self.arrowDownIcon,"Move Down",self.moveNodeDown)
+        self.actExecBatch = self.createAction(self.executeIcon,"Execute Tool Set",self.execBatch)
+        self.actMakeEditable = self.createAction(self.makeEditableIcon,"Add to current project",self.makeEditableAction)
+        self.actCloneNode = self.createAction(self.cloneIcon,"Copy Node",self.cloneNode)
+        self.actExportXMLToFile = self.createAction(self.cloneIcon,"Export XML Node To File",self.exportXMLToFile)
+        self.actImportXMLFromFile = self.createAction(self.cloneIcon,"Import XML Node From File",self.importXMLFromFile)
 
 
     def addToolFile(self):

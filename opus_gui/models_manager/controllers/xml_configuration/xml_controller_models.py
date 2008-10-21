@@ -48,34 +48,22 @@ class XmlController_Models(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         
-        self.actRunEstimation = self.createAction(self.applicationIcon,
-                              "Run Estimation", 
-                              self.runEstimationAction)
-
-        self.actRemoveNode = self.createAction(self.removeIcon,
-                              "Remove node from current project", 
-                              self.removeNode)
-
-        self.actMakeEditable = self.createAction(self.makeEditableIcon,
-                              "Add to current project", 
-                              self.makeEditableAction)
-
-        self.actCloneNode = self.createAction(self.cloneIcon,
-                              "Duplicate Node", 
-                              self.cloneNode)
+        self.actRunEstimation = self.createAction(self.applicationIcon, \
+            "Run Estimation", self.runEstimationAction)
+        self.actRemoveNode = self.createAction(self.removeIcon, \
+            "Remove node from current project", self.removeNode)
+        self.actMakeEditable = self.createAction(self.makeEditableIcon, \
+            "Add to current project", self.makeEditableAction)
+        self.actCloneNode = self.createAction(self.cloneIcon, \
+            "Duplicate Node", self.cloneNode)
         
         cb = lambda x=None:RenameNodeGui(self, self.currentElement()).show()
-        self.actRenameNode = self.createAction(self.makeEditableIcon, 
-                              "Rename Node", 
-                              cb)
-
-        self.actCreateModelFromTemplate = self.createAction(self.cloneIcon,
-                              "Create model from template", 
-                              self.createModelFromTemplate)
-        
-        self.actSelectVariables = self.createAction(self.applicationIcon,
-                              "Select Variables", 
-                              self.selectVariables)
+        self.actRenameNode = self.createAction(self.makeEditableIcon, \
+            "Rename Node", cb) 
+        self.actCreateModelFromTemplate = self.createAction(self.cloneIcon, \
+            "Create model from template", self.createModelFromTemplate)
+        self.actSelectVariables = self.createAction(self.applicationIcon, \
+            "Select Variables", self.selectVariables)
 
         # create actions for the model from template dialogs
         self.create_from_template_actions = []
@@ -204,6 +192,10 @@ class XmlController_Models(XmlController):
         item = self.view.indexAt(position) # get object at mouse coord
         if not item.isValid():
             return
+        
+        # make the item the current item in the model
+        self.view.setCurrentIndex(index)
+        
         domElement = item.internalPointer().node().toElement()
         if domElement.isNull():
             return
@@ -221,7 +213,8 @@ class XmlController_Models(XmlController):
                 submenu.addAction(act)
             menu.addMenu(submenu)
             
-        if element_type in ['model', 'submodel', 'model_system']:
+#        if element_type in ['model', 'submodel', 'model_system']:
+        if element_type == 'model':
             menu.addAction(self.actRunEstimation)
             
         menu.addSeparator()

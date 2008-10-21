@@ -34,33 +34,10 @@ class XmlController_General(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
-        self.actEditAllVariables = QAction(self.editExpressionLibIcon,
-                                           "Edit Variable Library",
-                                           self.mainwindow)
-        QObject.connect(self.actEditAllVariables,
-                        SIGNAL("triggered()"),
-                        self.editAllVariables)
-
-        self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove node from current project",
-                                     self.mainwindow)
-        QObject.connect(self.actRemoveNode,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-
-        self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Add to current project",
-                                       self.mainwindow)
-        QObject.connect(self.actMakeEditable,
-                        SIGNAL("triggered()"),
-                        self.makeEditableAction)
-
-        self.actCloneNode = QAction(self.cloneIcon,
-                                    "Copy Node",
-                                    self.mainwindow)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
+        self.actEditAllVariables = QAction(self.editExpressionLibIcon, "Edit Variable Library", self.editAllVariables)
+        self.actRemoveNode = QAction(self.removeIcon, "Remove node from current project", self.removeNode)
+        self.actMakeEditable = QAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
+        self.actCloneNode = QAction(self.cloneIcon, "Copy Node", self.cloneNode)
 
     def editAllVariables(self):
         self.mainwindow.editAllVariables()

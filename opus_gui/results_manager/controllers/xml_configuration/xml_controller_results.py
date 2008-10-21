@@ -41,66 +41,18 @@ class XmlController_Results(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
-        
-        self.actAddNewIndicatorBatch = QAction(self.acceptIcon, 
-                                          "Add new indicator batch...",
-                                          self.mainwindow)
-        QObject.connect(self.actAddNewIndicatorBatch, SIGNAL("triggered()"), self.addNewIndicatorBatch)          
-
-        self.actAddVisualizationToBatch = QAction(self.acceptIcon,
-                                               'Add new indicator visualization...',
-                                               self.mainwindow
-                                               )
-        QObject.connect(self.actAddVisualizationToBatch, SIGNAL("triggered()"), self.configureNewBatchIndicatorVisualization)    
-
-        
-        #delete run from disk
-        self.actDeleteRun = QAction(self.removeIcon, 
-                                          "Remove run and delete from harddrive...",
-                                          self.mainwindow)
-        QObject.connect(self.actDeleteRun, SIGNAL("triggered()"), self.deleteRun)          
-
-        self.actImportRun = QAction(self.acceptIcon, 
-                                          "Import run from disk",
-                                          self.mainwindow)
-        QObject.connect(self.actImportRun, SIGNAL("triggered()"), self.importRun) 
-    
-
-        self.actConfigureExistingBatchIndicatorVisualization = QAction(self.acceptIcon,
-                                                                       "Configure visualization",
-                                                                       self.mainwindow)
-        QObject.connect(self.actConfigureExistingBatchIndicatorVisualization, SIGNAL("triggered()"), self.configureExistingBatchIndicatorVisualization)
-
-
-        self.actGetInfoSimulationRuns = QAction(self.acceptIcon, 
-                                          "Show details",
-                                          self.mainwindow)
-        QObject.connect(self.actGetInfoSimulationRuns, SIGNAL("triggered()"), self.getInfoSimulationRuns) 
-
+        self.actAddNewIndicatorBatch = self.createAction(self.acceptIcon, "Add new indicator batch...",self.addNewIndicatorBatch)          
+        self.actAddVisualizationToBatch = self.createAction(self.acceptIcon,'Add new indicator visualization...',self.configureNewBatchIndicatorVisualization)    
+        self.actDeleteRun = self.createAction(self.removeIcon, "Remove run and delete from harddrive...",self.deleteRun)          
+        self.actImportRun = self.createAction(self.acceptIcon, "Import run from disk",self.importRun) 
+        self.actConfigureExistingBatchIndicatorVisualization = self.createAction(self.acceptIcon,"Configure visualization",self.configureExistingBatchIndicatorVisualization)
+        self.actGetInfoSimulationRuns = self.createAction(self.acceptIcon, "Show details",self.getInfoSimulationRuns) 
+        self.actRemoveNode = QAction(self.removeIcon, "Remove node from current project", self.removeNode)
+        self.actMakeEditable = QAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
+        self.actCloneNode = QAction(self.cloneIcon, "Copy Node", self.cloneNode)
 
 #        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.mainwindow)
 #        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
-
-        self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove node from current project",
-                                     self.mainwindow)
-        QObject.connect(self.actRemoveNode,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-
-        self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Add to current project",
-                                       self.mainwindow)
-        QObject.connect(self.actMakeEditable,
-                        SIGNAL("triggered()"),
-                        self.makeEditableAction)
-
-        self.actCloneNode = QAction(self.cloneIcon,
-                                    "Copy Node",
-                                    self.mainwindow)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
 
 
     def addNewIndicatorBatch(self):
