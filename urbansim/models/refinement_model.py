@@ -23,6 +23,7 @@ from opus_core.misc import safe_array_divide
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
+from opus_core.variables.attribute_type import AttributeType
 
 class RefinementModel(Model):
     """ Model refines simulation results by shifting agents' location around
@@ -140,7 +141,7 @@ class RefinementModel(Model):
                 values = value + zeros(dataset.size(), dtype=type(value))
             else:
                 values = value + zeros(index.size, dtype=type(value) )
-            self._add_or_modify_attribute(dataset, name, values, default_value=default_value, index=index)
+            self._add_or_modify_attribute(dataset, name, values, default_value=default_value, index=index, metadata=AttributeType.PRIMARY)
     
     def _add_or_modify_attribute(self, dataset, attribute_name, values, default_value=-1, index=None, metadata=2):
         """add attribute_name if not presented in dataset attribute names, modify it otherwise
@@ -364,7 +365,14 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.datasets.dataset import Dataset
 from numpy import arange, array, ma, allclose
+import tempfile, os, shutil
+from opus_core.simulation_state import SimulationState
+from opus_core.store.attribute_cache import AttributeCache
+from opus_core.session_configuration import SessionConfiguration
+from urbansim.building.aliases import aliases
 
+
+aliases +=[ 'raz_id = building.disaggregate(parcel.raz_id)' ]
 class RefinementModelTest(opus_unittest.OpusTestCase):
     def setUp(self):
         building_data = {
@@ -419,12 +427,12 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
                                        'household.persons==3',
                                        'person.job_id'
                                       ]),
-            'location_expression': array(['building.raz_id==3',
-                                          'building.raz_id==4',
-                                          '(building.raz_id==5) * (building.disaggregate(parcel.generic_land_use_type_id)==4)',
-                                          'building.raz_id==6',
-                                          'building.raz_id==6',
-                                          'building.raz_id==6',
+            'location_expression': array(['urbansim.building.raz_id==3',
+                                          'urbansim.building.raz_id==4',
+                                          '(urbansim.building.raz_id==5) * (building.disaggregate(parcel.generic_land_use_type_id)==4)',
+                                          'urbansim.building.raz_id==6',
+                                          'urbansim.building.raz_id==6',
+                                          'urbansim.building.raz_id==6',
                                           'household.refinement_id==6'
                                           ]),
             'location_capacity_attribute':array(['',
@@ -436,31 +444,43 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
                                                  ''
                                               ])
         }
-        storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(table_name = 'buildings', table_data = building_data)
-        storage.write_table(table_name = 'parcels', table_data = parcel_data)
-        storage.write_table(table_name = 'households', table_data = household_data)
-        storage.write_table(table_name = 'jobs', table_data = job_data)
-        storage.write_table(table_name = 'persons', table_data = person_data)
-        storage.write_table(table_name = 'refinements', table_data = refinement_data)
-        self.dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim', 'opus_core'])
+        self.tmp_dir = tempfile.mkdtemp(prefix='urbansim_tmp')
+
+        SimulationState().set_cache_directory(self.tmp_dir)
+        attribute_cache = AttributeCache()
+        self.dataset_pool = SessionConfiguration(new_instance=True,
+                                                 package_order=['urbansim', 'opus_core'],
+                                                 in_storage=attribute_cache).get_dataset_pool()        
+
+        #storage = StorageFactory().get_storage('flt_storage', storage_location=self.tmp_dir)
+        attribute_cache.write_table(table_name = 'buildings', table_data = building_data)
+        attribute_cache.write_table(table_name = 'parcels', table_data = parcel_data)
+        attribute_cache.write_table(table_name = 'households', table_data = household_data)
+        attribute_cache.write_table(table_name = 'jobs', table_data = job_data)
+        attribute_cache.write_table(table_name = 'persons', table_data = person_data)
+        attribute_cache.write_table(table_name = 'refinements', table_data = refinement_data)
+        
+        #self.dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim', 'opus_core'])
         self.refinement = self.dataset_pool.get_dataset('refinement')
         self.jobs = self.dataset_pool.get_dataset('job')
         self.persons = self.dataset_pool.get_dataset('person')
         self.hhs = self.dataset_pool.get_dataset('household')
         self.buildings = self.dataset_pool.get_dataset('building')
-        self.buildings.compute_variables('raz_id=building.disaggregate(parcel.raz_id)', self.dataset_pool)
+        #self.buildings.compute_variables('raz_id=building.disaggregate(parcel.raz_id)', self.dataset_pool)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
         
     def test_transaction(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2021, dataset_pool=self.dataset_pool)
-        jobs13_raz3 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id==3, intermediates=[building]))', 
+        jobs13_raz3 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(urbansim.building.raz_id==3))', 
                                                   dataset_pool=self.dataset_pool)
-        jobs13_raz4 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id, intermediates=[building])==4)', 
+        jobs13_raz4 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(urbansim.building.raz_id)==4)', 
                                                   dataset_pool=self.dataset_pool)
-        jobs13_raz5 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id, intermediates=[building])==5)', 
+        jobs13_raz5 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(urbansim.building.raz_id)==5)', 
                                                   dataset_pool=self.dataset_pool)        
-        jobs_raz5 = self.jobs.compute_variables('job.disaggregate(parcel.raz_id, intermediates=[building])==5', 
+        jobs_raz5 = self.jobs.compute_variables('job.disaggregate(urbansim.building.raz_id)==5', 
                                                 dataset_pool=self.dataset_pool)
         
         #check results
@@ -475,7 +495,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
     def test_target_action(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2022, dataset_pool=self.dataset_pool)
-        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(parcel.raz_id==6, intermediates=[building])', 
+        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(urbansim.building.raz_id==6)', 
                                               dataset_pool=self.dataset_pool)
         hhs_bldg = self.buildings.compute_variables('building.number_of_agents(household)', 
                                                     dataset_pool=self.dataset_pool)
@@ -501,7 +521,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
     def test_set_value_action(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2024, dataset_pool=self.dataset_pool)
-        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(parcel.raz_id==6, intermediates=[building])', 
+        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(urbansim.building.raz_id==6)', 
                                               dataset_pool=self.dataset_pool)
         hhs_bldg = self.buildings.compute_variables('building.number_of_agents(household)', 
                                                     dataset_pool=self.dataset_pool)
