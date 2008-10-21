@@ -11,94 +11,14 @@
   </general>
   <model_manager>
     <model_system setexpanded="True" type="model_system">
-      <estimation_config type="configuration">
-        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
-        <estimation_database_configuration type="class">
-          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
-          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
-          <database_name type="string" />
-        </estimation_database_configuration>
-        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <gridcell choices="Load|Skip" copyable="True" followers="my_dataset" type="dataset">Load</gridcell>
-        </datasets_to_preload>
-        <dataset_pool_configuration type="class">
-          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-          <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
-          <package_order_exceptions type="dictionary" />
-        </dataset_pool_configuration>
-        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
-        <low_memory_mode type="boolean">False</low_memory_mode>
-        <base_year type="integer">1980</base_year>
-        <years type="tuple">
-          <firstyear type="integer">1980</firstyear>
-          <lastyear type="integer">1980</lastyear>
-        </years>
-        <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
-      </estimation_config>
-      <regression_model copyable="True" type="model">
+      <simple_model_template copyable="True" hidden="True" type="model_template">
         <specification type="dictionary">
           <submodel copyable="True" type="submodel">
             <description type="string">No submodel</description>
             <submodel_id type="integer">-2</submodel_id>
-            <variables type="variable_list">population</variables>
+            <variables type="variable_list" />
           </submodel>
         </specification>
-        <structure type="dictionary">
-          <import type="dictionary">
-            <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
-          </import>
-          <init type="dictionary">
-            <name type="string">RegressionModel</name>
-            <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
-            <submodel_string parser_action="blank_to_None" type="string" />
-            <run_config parser_action="blank_to_None" type="string" />
-            <estimate_config parser_action="blank_to_None" type="string" />
-            <debuglevel type="integer">0</debuglevel>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-          </init>
-          <run type="dictionary">
-            <specification type="string">specification</specification>
-            <coefficients type="string">coefficients</coefficients>
-            <dataset type="string">gridcell</dataset>
-            <index parser_action="blank_to_None" type="string">rm_index</index>
-            <chunk_specification parser_action="blank_to_None" type="string" />
-            <data_objects type="string">datasets</data_objects>
-          </run>
-          <prepare_for_run type="dictionary">
-            <name type="string">prepare_for_run</name>
-            <dataset parser_action="blank_to_None" type="string" />
-            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">regression_model_specification</specification_table>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="quoted_string">regression_model_coefficients_table</coefficients_table>
-            <sample_coefficients type="boolean">False</sample_coefficients>
-            <cache_storage type="string">base_cache_storage</cache_storage>
-            <multiplicator type="integer">1</multiplicator>
-            <output type="string">(specification, coefficients, rm_index)</output>
-          </prepare_for_run>
-          <estimate type="dictionary">
-            <specification type="string">specification</specification>
-            <dataset type="string">gridcell</dataset>
-            <dependent_variable config_name="outcome_attribute" type="quoted_string">population</dependent_variable>
-            <index parser_action="blank_to_None" type="string">rm_index</index>
-            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
-            <data_objects type="string">datasets</data_objects>
-            <output type="string">(coefficients, dummy)</output>
-          </estimate>
-          <prepare_for_estimate type="dictionary">
-            <name type="string">prepare_for_estimate</name>
-            <dataset parser_action="blank_to_None" type="string" />
-            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">regression_model_specification</specification_table>
-            <output type="string">(specification, rm_index)</output>
-          </prepare_for_estimate>
-        </structure>
-      </regression_model>
-      <simple_model_template copyable="True" hidden="True" type="model_template">
-        <specification type="dictionary" />
         <structure type="dictionary">
           <import type="dictionary">
             <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
@@ -114,11 +34,12 @@
           </run>
           <prepare_for_run type="dictionary" />
           <estimate type="dictionary" />
-          <prepare_for_estimate type="dictionary" />
+          <prepare_for_estimate type="dictionary">
+            <models_to_run parser_action="skip" type="list">[]</models_to_run>
+          </prepare_for_estimate>
         </structure>
       </simple_model_template>
       <choice_model_template copyable="True" hidden="True" type="model_template">
-        <specification type="dictionary" />
         <structure type="dictionary">
           <import type="dictionary">
             <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
@@ -175,11 +96,32 @@
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">choice_model_template_specification</specification_table>
             <output type="string">(specification, cm_index)</output>
+            <models_to_run parser_action="skip" type="list">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <choice_1 copyable="True" type="submodel_equation">
+              <equation_id type="integer">1</equation_id>
+              <variables type="variable_list">constant</variables>
+            </choice_1>
+            <choice_2 copyable="True" type="submodel_equation">
+              <equation_id type="integer">2</equation_id>
+              <variables type="variable_list" />
+            </choice_2>
+          </submodel>
+        </specification>
       </choice_model_template>
       <regression_model_template copyable="True" hidden="True" type="model_template">
-        <specification type="dictionary" />
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
         <structure type="dictionary">
           <import type="dictionary">
             <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
@@ -229,11 +171,18 @@
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">regression_model_template_specification</specification_table>
             <output type="string">(specification, rm_index)</output>
+            <models_to_run parser_action="skip" type="list">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
       </regression_model_template>
       <allocation_model_template copyable="True" hidden="True" type="model_template">
-        <specification type="dictionary" />
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
         <structure type="dictionary">
           <import type="dictionary">
             <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
@@ -261,11 +210,19 @@
             <output type="string">cts</output>
           </prepare_for_run>
           <estimate type="dictionary" />
-          <prepare_for_estimate type="dictionary" />
+          <prepare_for_estimate type="dictionary">
+            <models_to_run parser_action="skip" type="list">[]</models_to_run>
+          </prepare_for_estimate>
         </structure>
       </allocation_model_template>
       <agent_location_choice_model_template copyable="True" hidden="True" type="model_template">
-        <specification type="dictionary" />
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
         <structure type="dictionary">
           <import type="dictionary">
             <urbansim.models.agent_location_choice_model type="string">AgentLocationChoiceModel</urbansim.models.agent_location_choice_model>
@@ -315,6 +272,7 @@
             <portion_to_unplace type="string">1.0</portion_to_unplace>
             <filter parser_action="blank_to_None" type="quoted_string" />
             <location_id_variable parser_action="blank_to_None" type="quoted_string" />
+            <models_to_run parser_action="skip" type="list">[]</models_to_run>
           </prepare_for_estimate>
           <estimate type="dictionary">
             <output type="string">(alcm_coefficients, dummy)</output>
@@ -345,29 +303,33 @@
           </run>
         </structure>
       </agent_location_choice_model_template>
-      <basic_estimation_template copyable="True" hidden="True" type="estimation_template">
-        <submodel copyable="True" type="submodel">
-          <description type="string">No submodel</description>
-          <submodel_id type="integer">-2</submodel_id>
-          <variables type="variable_list">var1</variables>
-        </submodel>
-      </basic_estimation_template>
-      <choice_model_with_equations_estimation_template copyable="True" hidden="True" type="estimation_template">
-        <submodel copyable="True" type="submodel">
-          <description type="string">No submodel</description>
-          <submodel_id type="integer">-2</submodel_id>
-          <choice_1 copyable="True" type="dictionary">
-            <equation_id type="integer">1</equation_id>
-            <variables type="variable_list">constant</variables>
-          </choice_1>
-          <choice_2 copyable="True" type="dictionary">
-            <equation_id type="integer">2</equation_id>
-            <variables type="variable_list">var1</variables>
-          </choice_2>
-        </submodel>
-      </choice_model_with_equations_estimation_template>
+      <estimation_config hidden="False" type="configuration">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string" />
+        </estimation_database_configuration>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <gridcell choices="Load|Skip" copyable="True" followers="my_dataset" type="dataset">Load</gridcell>
+        </datasets_to_preload>
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+          <package_order_exceptions type="dictionary" />
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">1980</base_year>
+        <years type="tuple">
+          <firstyear type="integer">1980</firstyear>
+          <lastyear type="integer">1980</lastyear>
+        </years>
+        <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+      </estimation_config>
     </model_system>
-    </model_manager>
+  </model_manager>
   <scenario_manager>
     <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
       <parent type="scenario_name">default_scenario</parent>
@@ -495,6 +457,14 @@
   <results_manager>
     <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
+      <No_description type="source_data">
+        <run_id hidden="True" type="integer">129</run_id>
+        <run_name hidden="True" type="string">No description</run_name>
+        <cache_directory hidden="True" type="string">/Users/christofferklang/Documents/workspace/Opus/data/eugene_gridcell/runs/2008_10_14_20_30</cache_directory>
+        <start_year hidden="True" type="integer">1981</start_year>
+        <end_year hidden="True" type="integer">1981</end_year>
+        <scenario_name hidden="True" type="string">eugene_gridcell</scenario_name>
+      </No_description>
       <base_year_data type="source_data">
         <end_year hidden="True" type="integer">1980</end_year>
         <start_year hidden="True" type="integer">1980</start_year>
