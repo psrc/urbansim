@@ -168,12 +168,13 @@ class XMLConfiguration(object):
             # model has a "models to run"-list
             models_to_run = self._convert_node_to_data(models_to_run_node)
 
-        # include this model in the models_to_run list
-        models_to_run.append({model_name: ["estimate"]})
-        # include the list in the model specific changes
+            # include this model in the models_to_run list
+            models_to_run.append({model_name: ["estimate"]})
+
+        # only submit changes to config if models_to_run was updated
         changes_dict['models'] = models_to_run
-        
-        config['config_changes_for_estimation'] = {model_name: changes_dict}
+        if models_to_run:
+            config['config_changes_for_estimation'] = {model_name: changes_dict}
 
         return config
 
