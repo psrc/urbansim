@@ -11,16 +11,13 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog
-from PyQt4.QtXml import QDomText
+from PyQt4.QtCore import QString, SIGNAL
+
+from PyQt4.QtGui import QLabel, QComboBox
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
 
-#TODO: Rodo this one to have the same code formatting as the newer dialogs
+#TODO: Redo this one to have the same code formatting as the newer dialogs
 
 class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
     def __init__(self, main_window, model_template_node, model_manager_model):
@@ -28,19 +25,18 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
                                              model_template_node,
                                              model_manager_model)
 
-        # setup additional ui that's specfic for this model template
-        self.setup_regression_ui()
-        self._setup_co_dataset_name()
-        self._setup_model_variables()
-
-    def setup_regression_ui(self):
+        # setup additional ui that's specific for this model template
         self.cboDataset = QComboBox()
         self.connect(self.cboDataset, SIGNAL('currentIndexChanged(int)'), self._refresh_model_variables)
-
         self.cboDependentVariable = QComboBox()
         
         self.add_widget_pair(QLabel('Dataset'), self.cboDataset)
         self.add_widget_pair(QLabel('Dependent variable'), self.cboDependentVariable)
+        # setup combo boxes
+        self._setup_co_dataset_name()
+        self.model_variables = {}
+        self._setup_model_variables()
+
         
     def _setup_model_variables(self):
         '''Collect the model variables and populate the combobox'''        

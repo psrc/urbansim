@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, SIGNAL, QModelIndex, QSize, Qt
+from PyQt4.QtCore import QString, SIGNAL, QSize, Qt
 from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
 from PyQt4.QtXml import QDomElement
 

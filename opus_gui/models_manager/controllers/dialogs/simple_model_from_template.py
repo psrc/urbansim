@@ -11,13 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex
-from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog, \
-                        QLineEdit
-from PyQt4.QtXml import QDomText, QDomDocument
+from PyQt4.QtGui import QLineEdit, QComboBox, QLabel
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import \
     ModelFromTemplateDialogBase
@@ -28,14 +22,6 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
                                              model_template_node,
                                              model_manager_model)
         
-        # simple models do not have estimation components
-        self.create_estimation_component = False
-        
-        # setup additional ui that's specfic for this model template
-        self.setup_simple_ui()
-        self._setup_co_dataset_name()
-
-    def setup_simple_ui(self):
         self.cboDataset = QComboBox()
         self.leExpression = QLineEdit('expression')
         self.leOutcome = QLineEdit('outcome variable')
@@ -43,6 +29,8 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
         self.add_widget_pair(QLabel('Dataset'), self.cboDataset)
         self.add_widget_pair(QLabel('expression'), self.leExpression)
         self.add_widget_pair(QLabel('Outcome variable'), self.leOutcome)
+        
+        self._setup_co_dataset_name()
 
     def _setup_co_dataset_name(self):
         '''collect avaiable datasets and populate the combobox'''
@@ -50,7 +38,7 @@ class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
         self.cboDataset.clear()
 
         for dataset in available_datasets:
-            self.cboDataset.addItem(QString(dataset))
+            self.cboDataset.addItem(dataset)
 
     def setup_node(self):
         self.set_model_name()

@@ -10,12 +10,8 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
-from PyQt4.QtCore import QString, SIGNAL
                          
-from PyQt4.QtGui import QComboBox, QLabel, QLineEdit
-
-from PyQt4.QtXml import QDomElement, QDomText, QDomDocument
+from PyQt4.QtGui import QLabel, QLineEdit
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import \
     ModelFromTemplateDialogBase
@@ -25,14 +21,6 @@ class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
         ModelFromTemplateDialogBase.__init__(self, main_window,
                                              model_template_node,
                                              model_manager_model)
-        
-        # setup additional ui that's specfic for this model template
-        self.setup_alcm_ui()
-        # self._setup_co_dataset_name()
-
-    def setup_alcm_ui(self):
-        '''create the additional gui components for the agent location choice model'''
-
         self.leLocationSet = QLineEdit()
         self.leFilter = QLineEdit()
         self.leSubModelString = QLineEdit()
@@ -57,7 +45,7 @@ class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
         for l,w in ctrl_pairs:
             self.add_widget_pair(QLabel(l), w)
-
+            
     def setup_node(self):
         model_name = self.get_model_xml_name()
         self.set_model_name(model_name)

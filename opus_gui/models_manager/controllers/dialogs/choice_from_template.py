@@ -11,11 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, SIGNAL
-                         
-from PyQt4.QtGui import QComboBox, QLabel, QLineEdit
-
-from PyQt4.QtXml import QDomElement, QDomText, QDomDocument
+from PyQt4.QtGui import QLabel, QLineEdit
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import \
     ModelFromTemplateDialogBase
@@ -27,14 +23,8 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
                                              model_manager_model)
         
         # setup additional ui that's specfic for this model template
-        self.setup_choice_ui()
-        # self._setup_co_dataset_name()
 
-    def setup_choice_ui(self):
-        '''create the additional gui components for the choice model'''
-        
         #TODO: Check which of these we can make comboboxes instead of line edits
-
         #TODO: where do we find the possible choice sets?
         self.leChoiceSet = QLineEdit('')
         self.leSubModelString = QLineEdit('')
@@ -49,7 +39,7 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             ('Choice set', self.leChoiceSet),
             #TODO: replace with cbo
             ('Submodel String', self.leSubModelString),
-            #TODO replace with cbo
+            #TODO replace with cbo 
             ('Choice Attribute Set', self.leChoiceAttributeName),
             ('Fraction of Agents for Estimation', self.leEstimationSizeAgents),
             ('Agent Set', self.leAgentSet),

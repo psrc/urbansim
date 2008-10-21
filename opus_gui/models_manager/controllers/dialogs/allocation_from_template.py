@@ -11,9 +11,8 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, SIGNAL
+from PyQt4.QtCore import QString
 from PyQt4.QtGui import QLabel, QLineEdit, QComboBox
-from PyQt4.QtXml import QDomText, QDomDocument, QDomElement
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import \
     ModelFromTemplateDialogBase
@@ -27,13 +26,6 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
         # allocation models do not have estimation components
         self.create_estimation_component = False
         
-        # setup additional ui that's specfic for this model template
-        self.setup_allocation_ui()
-        self._setup_co_dataset_name()
-
-    def setup_allocation_ui(self):
-        '''create the additional gui components for the allocation model'''
-        
         #TODO: Check which of these we can make comboboxes instead of line edits
         self.cboDataset = QComboBox()
         self.leOutcome = QLineEdit('')
@@ -42,7 +34,7 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
         self.leYearAttribute = QLineEdit('year')
         self.leCapacityAtr = QLineEdit('')
         self.leControlTblName = QLineEdit('control_totals')
-        
+
         ctrl_pairs = ( # use tuple to preserve order
             ('Dataset', self.cboDataset),
             ('Outcome Variable', self.leOutcome),
@@ -54,6 +46,8 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
         )
         for l,w in ctrl_pairs:
             self.add_widget_pair(QLabel(l), w)
+            
+        self._setup_co_dataset_name()
 
     def _setup_co_dataset_name(self):
         '''collect avaiable datasets and populate a combobox'''
@@ -65,11 +59,11 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
     def setup_node(self):
         self.set_model_name()
-        self.set_structure_element_to_value('run/dataset', self.cboDataset.currentText()),
-        self.set_structure_element_to_value('run/outcome_attribute', self.leOutcome.text()),
-        self.set_structure_element_to_value('run/weight_attribute', self.leWeight.text()),
-        self.set_structure_element_to_value('run/control_total_attribute', self.leControlTotal.text()),
-        self.set_structure_element_to_value('run/year_attribute', self.leYearAttribute.text()),
-        self.set_structure_element_to_value('run/capacity_attribute', self.leCapacityAtr.text()),
+        self.set_structure_element_to_value('run/dataset', self.cboDataset.currentText())
+        self.set_structure_element_to_value('run/outcome_attribute', self.leOutcome.text())
+        self.set_structure_element_to_value('run/weight_attribute', self.leWeight.text())
+        self.set_structure_element_to_value('run/control_total_attribute', self.leControlTotal.text())
+        self.set_structure_element_to_value('run/year_attribute', self.leYearAttribute.text())
+        self.set_structure_element_to_value('run/capacity_attribute', self.leCapacityAtr.text())
         self.set_structure_element_to_value('prepare_for_run/control_totals_table_name', self.leControlTblName.text())
 
