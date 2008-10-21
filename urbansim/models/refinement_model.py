@@ -82,19 +82,27 @@ class RefinementModel(Model):
                     location_dataset = None
                     if len(this_refinement.location_expression)>0:
                         location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
-                    logger.log_status("Action: %s %i agents satisfying %s and %s " % \
+                    
+                    logger.log_status("Action: %s %i agents satisfying %s" % \
                                       (action_type, this_refinement.amount,
-                                       this_refinement.agent_expression, 
-                                       this_refinement.location_expression
+                                       ' and '.join( [this_refinement.agent_expression, 
+                                                    this_refinement.location_expression] ).strip(' and ')
                                    ) )
                     action_function( agents_pool, this_refinement.amount,
                                      agent_dataset, location_dataset, 
                                      this_refinement, 
                                      dataset_pool )
                     
+                    agent_dataset.flush_dataset()
+                    dataset_pool._remove_dataset(agent_dataset.get_dataset_name())
+                    if location_dataset is not None:
+                        location_dataset.flush_dataset()
+                        dataset_pool._remove_dataset(location_dataset.get_dataset_name())
+                    
             ## delete agents still in agents_pool at the end of the transaction
             #agent_dataset.remove_elements( array(agents_pool) )
-
+            
+            
 #            dataset_pool.flush_loaded_datasets()
 #            dataset_pool.remove_all_datasets()
                         
@@ -105,6 +113,7 @@ class RefinementModel(Model):
                              location_expression,
                              dataset_pool):
         if agent_expression is not None and len(agent_expression) > 0:
+            #agent_exp_vname= VariableName(  )
             agents_indicator = agent_dataset.compute_variables(agent_expression, 
                                                                dataset_pool=dataset_pool)
         else:
@@ -112,14 +121,16 @@ class RefinementModel(Model):
         
         
         if location_expression is not None and len(location_expression) > 0:
-            location_indicator = agent_dataset.compute_variables( "%s.disaggregate(%s)"  % 
-                                                                 ( agent_dataset.dataset_name, 
-                                                                   location_expression ),
+            #location_exp_vname= VariableName("%s.disaggregate(%s)"  % ( agent_dataset.dataset_name, 
+                                                                        #location_expression ))
+            location_indicator = agent_dataset.compute_variables( "%s.disaggregate(%s)"  % ( agent_dataset.dataset_name, 
+                                                                                             location_expression ),
                                                                  dataset_pool=dataset_pool)
         else:
             location_indicator = ones( agent_dataset.size(), dtype='bool' )
         
         fit_index = where ( agents_indicator * location_indicator )[0]
+        
         return fit_index
     
     def _add_refinement_info_to_dataset(self, dataset, names, refinement, default_value=-1, index=None):
@@ -163,9 +174,10 @@ class RefinementModel(Model):
                                               dataset_pool)
         
         if amount > fit_index.size:
-            logger.log_warning("Refinement requests to subtract %s agents,  but there are %s agents in total satisfying %s and %s;" \
-                               "subtract %s agents instead" % (amount, fit_index.size, this_refinement.agent_expression, 
-                                                               this_refinement.location_expression,
+            logger.log_warning("Refinement requests to subtract %i agents,  but there are %i agents in total satisfying %s;" \
+                               "subtract %i agents instead" % (amount, fit_index.size, 
+                                                               ' and '.join( [this_refinement.agent_expression, 
+                                                                            this_refinement.location_expression] ).strip(' and '),
                                                                fit_index.size) )
             amount = fit_index.size
         
@@ -182,7 +194,7 @@ class RefinementModel(Model):
             movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
             movers_location_index = location_dataset.get_id_index( movers_location_id )
             num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()) )[0]
-            num_of_agents_by_location = location_dataset.compute_variables( "%s.number_of_agents(%s)" % \
+            num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
                                                                             (location_dataset.dataset_name,
                                                                             agent_dataset.dataset_name),
                                                                             dataset_pool=dataset_pool)
@@ -217,17 +229,21 @@ class RefinementModel(Model):
             agents_index_from_agents_pool = sample_noreplace( agents_pool, amount_from_agents_pool )
             [ agents_pool.remove(i) for i in agents_index_from_agents_pool ]
             if fit_index.size == 0:
-                logger.log_warning("Refinement requests to add %s agents,  but there are only %s agents subtracted from previous action and no agents satisfying %s and %s to clone from;" \
-                                   "add %s agents instead" % (amount, amount_from_agents_pool, this_refinement.agent_expression, 
-                                                              this_refinement.location_expression, amount_from_agents_pool,) )
+                ##cannot find agents to copy their location or clone them, place agents in agents_pool
+                logger.log_warning("Refinement requests to add %i agents,  but there are only %i agents subtracted from previous action(s) and no agents satisfying %s to clone from;" \
+                                   "add %i agents instead" % (amount, amount_from_agents_pool, 
+                                                              ' and '.join( [this_refinement.agent_expression, 
+                                                                           this_refinement.location_expression]).strip(' and '), 
+                                                              amount_from_agents_pool,) )
 
                 amount = amount_from_agents_pool
-                ## cannot find agents to copy their location or clone them
+                
                 is_suitable_location = location_dataset.compute_variables( this_refinement.location_expression,
                                                                            dataset_pool=dataset_pool )
                 location_id_for_agents_pool = sample_replace( location_dataset.get_id_attribute()[is_suitable_location],
                                                                  amount_from_agents_pool )
             else:
+                
                 agents_index_for_location = sample_replace( fit_index, amount_from_agents_pool)
                 location_id_for_agents_pool = agent_dataset.get_attribute( location_dataset.get_id_name()[0] 
                                                                          )[agents_index_for_location]
@@ -235,8 +251,8 @@ class RefinementModel(Model):
 
         elif fit_index.size == 0:
             ## no agents in agents_pool and no agents to clone either, --> fail
-            logger.log_error("Action 'add' failed: there is no agent subtracted from previous action, and no suitable agents satisfying %s and %s to clone from." % \
-                             (this_refinement.agent_expression, this_refinement.location_expression) )
+            logger.log_error( "Action 'add' failed: there is no agent subtracted from previous action, and no suitable agents satisfying %s to clone from." % \
+                              'and'.join( [this_refinement.agent_expression, this_refinement.location_expression] ).strip('and') )
             return
             
         if amount > amount_from_agents_pool:
@@ -248,7 +264,7 @@ class RefinementModel(Model):
             movers_location_index = location_dataset.get_id_index( movers_location_id )
             
             num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()) )[0]
-            num_of_agents_by_location = location_dataset.compute_variables( "%s.number_of_agents(%s)" % \
+            num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
                                                                             ( location_dataset.dataset_name,
                                                                             agent_dataset.dataset_name ),
                                                                             dataset_pool=dataset_pool)
@@ -296,15 +312,22 @@ class RefinementModel(Model):
                                               this_refinement.location_expression,
                                               dataset_pool)
         if fit_index.size > amount:
+            logger.log_status("%i agents satisfying conditions, greater than target and to subtract %i agents" % \
+                              (amount, fit_index.size - amount ) )
             self._subtract( agents_pool, fit_index.size - amount,
                             agent_dataset, location_dataset, 
                             this_refinement,
                             dataset_pool)
         elif fit_index.size < amount:
+            logger.log_status("%i agents satisfying conditions, less than target and to add %i agents" % \
+                              (amount, amount - fit_index.size ) )
             self._add( agents_pool, amount - fit_index.size,
                        agent_dataset, location_dataset, 
                        this_refinement,
                        dataset_pool)
+        else:
+            logger.log_status("%i agents satisfying conditions, meeting target and to do nothing" %  amount )
+            
             
     def _synchronize(self, agents_pool, amount, 
                      agent_dataset, location_dataset, 
@@ -431,13 +454,13 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
     def test_transaction(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2021, dataset_pool=self.dataset_pool)
-        jobs13_raz3 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(building.raz_id==3))', 
+        jobs13_raz3 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id==3, intermediates=[building]))', 
                                                   dataset_pool=self.dataset_pool)
-        jobs13_raz4 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(building.raz_id)==4)', 
+        jobs13_raz4 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id, intermediates=[building])==4)', 
                                                   dataset_pool=self.dataset_pool)
-        jobs13_raz5 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(building.raz_id)==5)', 
+        jobs13_raz5 = self.jobs.compute_variables('numpy.logical_and(job.sector_id==13, job.disaggregate(parcel.raz_id, intermediates=[building])==5)', 
                                                   dataset_pool=self.dataset_pool)        
-        jobs_raz5 = self.jobs.compute_variables('job.disaggregate(building.raz_id)==5', 
+        jobs_raz5 = self.jobs.compute_variables('job.disaggregate(parcel.raz_id, intermediates=[building])==5', 
                                                 dataset_pool=self.dataset_pool)
         
         #check results
@@ -452,7 +475,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
     def test_target_action(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2022, dataset_pool=self.dataset_pool)
-        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(building.raz_id==6)', 
+        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(parcel.raz_id==6, intermediates=[building])', 
                                               dataset_pool=self.dataset_pool)
         hhs_bldg = self.buildings.compute_variables('building.number_of_agents(household)', 
                                                     dataset_pool=self.dataset_pool)
@@ -478,7 +501,7 @@ class RefinementModelTest(opus_unittest.OpusTestCase):
     def test_set_value_action(self):
         model = RefinementModel()
         model.run(self.refinement, current_year=2024, dataset_pool=self.dataset_pool)
-        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(building.raz_id==6)', 
+        hhs_raz6 = self.hhs.compute_variables('household.disaggregate(parcel.raz_id==6, intermediates=[building])', 
                                               dataset_pool=self.dataset_pool)
         hhs_bldg = self.buildings.compute_variables('building.number_of_agents(household)', 
                                                     dataset_pool=self.dataset_pool)
