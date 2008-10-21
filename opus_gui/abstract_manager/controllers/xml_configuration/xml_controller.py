@@ -56,10 +56,7 @@ class XmlController(object):
         
         # Need to traverse the whole tree and expand the nodes if they default to open
         self.view.openDefaultItems()
-        self.view.setAnimated(True)
-        self.view.setColumnWidth(0,200)
-        self.view.setColumnWidth(1,50)
-        self.view.setMinimumHeight(200)
+
 
         self.parentWidget.addWidget(self.view)
 
