@@ -18,7 +18,8 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
 
 from opus_gui.models_manager.run.run_estimation import OpusEstimation
-from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
+from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import \
+    CloneNodeGui, RenameNodeGui
 
 from opus_gui.general_manager.controllers.all_variables import AllVariablesSelectGui
 
@@ -46,59 +47,48 @@ class XmlController_Models(XmlController):
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-
-        self.actRunEstimation = QAction(self.applicationIcon,
-                                        "Run Estimation",
-                                        self.mainwindow)
-        QObject.connect(self.actRunEstimation,
-                        SIGNAL("triggered()"),
-                        self.runEstimationAction)
-
-        self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove node from current project",
-                                     self.mainwindow)
-        QObject.connect(self.actRemoveNode,
-                        SIGNAL("triggered()"),
-                        self.removeNode)
-        #TODO: Maybe 'Make copy from inherited' or something would be better 
-        # than 'Add' which suggest that it doesn't exist?
-        self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Add to current project",
-                                       self.mainwindow)
-        QObject.connect(self.actMakeEditable,
-                        SIGNAL("triggered()"),
-                        self.makeEditableAction)
-
-        self.actCloneNode = QAction(self.cloneIcon,
-                                    "Duplicate Node",
-                                    self.mainwindow)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
-        self.actCreateModelFromTemplate = QAction(self.cloneIcon,
-                                    "Create model from template",
-                                    self.mainwindow)
-        QObject.connect(self.actCreateModelFromTemplate,
-                        SIGNAL("triggered()"),
-                        self.createModelFromTemplate)
         
-        self.actSelectVariables = QAction(self.applicationIcon,
-                                          "Select Variables",
-                                          self.mainwindow)
-        QObject.connect(self.actSelectVariables,
-                        SIGNAL("triggered()"),
-                        self.selectVariables)
+        self.actRunEstimation = self.createAction(self.applicationIcon,
+                              "Run Estimation", 
+                              self.runEstimationAction)
+
+        self.actRemoveNode = self.createAction(self.removeIcon,
+                              "Remove node from current project", 
+                              self.removeNode)
+
+        self.actMakeEditable = self.createAction(self.makeEditableIcon,
+                              "Add to current project", 
+                              self.makeEditableAction)
+
+        self.actCloneNode = self.createAction(self.cloneIcon,
+                              "Duplicate Node", 
+                              self.cloneNode)
         
+        cb = lambda x=None:RenameNodeGui(self, self.currentElement()).show()
+        self.actRenameNode = self.createAction(self.makeEditableIcon, 
+                              "Rename Node", 
+                              cb)
+
+        self.actCreateModelFromTemplate = self.createAction(self.cloneIcon,
+                              "Create model from template", 
+                              self.createModelFromTemplate)
+        
+        self.actSelectVariables = self.createAction(self.applicationIcon,
+                              "Select Variables", 
+                              self.selectVariables)
+
         # create actions for the model from template dialogs
         self.create_from_template_actions = []
-        for l in ('Agent Location Choice Model', \
-                  'Allocation Model', \
-                  'Choice Model', \
-                  'Regression Model', \
+        for l in ('Agent Location Choice Model',
+                  'Allocation Model',
+                  'Choice Model',
+                  'Regression Model',
                   'Simple Model'):
-            self.create_from_template_actions.append(self.newCreateFromTemplateAction(l))
-            
+            callback = \
+                lambda x=l.lower():self.createModelFromTemplate(x)
+            self.create_from_template_actions.\
+                append(self.createAction(self.cloneIcon, l, callback))
+
     
     def setupModelViewDelegate(self):
         '''switch out the model'''
@@ -108,14 +98,6 @@ class XmlController_Models(XmlController):
         self.delegate = XmlItemDelegate(self.view)
 
 
-    def newCreateFromTemplateAction(self, label):
-        '''create an action with a text of label and bind it to self.createNewModelFromTemplate with
-        an argument of the lower case label'''
-        action = QAction(self.cloneIcon, label, self.mainwindow)
-        callback = lambda x=QString(label).toLower(): self.createModelFromTemplate(x)
-        QObject.connect(action, SIGNAL("triggered()"), callback)
-        return action
-    
     def currentItem(self):
         return self.view.currentIndex()
     
@@ -241,11 +223,12 @@ class XmlController_Models(XmlController):
             
         if element_type in ['model', 'submodel', 'model_system']:
             menu.addAction(self.actRunEstimation)
-        
-        # populate the common alternatives
+            
         menu.addSeparator()
-        
         # add generic menu items
+        if element_type in ['model', 'submodel']:
+            menu.addAction(self.actRenameNode)
+
         if domElement.hasAttribute(QString("inherited")):
             # inherited items should be copied into this project before 
             # we allow manipulating
@@ -253,12 +236,12 @@ class XmlController_Models(XmlController):
         else:
             if domElement.attribute("copyable").toLower() == QString("true"):
                 menu.addAction(self.actCloneNode)
-                
+
             elif element_type == QString("variable_list"):
                 menu.addAction(self.actSelectVariables)
-        
-            if element_type in ['dictionary', 'selectable_list', 
-                                'model_estimation', 'list']:
+            
+            # select which nodes that are removable
+            if element_type in ['model', 'submodel', 'submodel_equation']:
                 menu.addAction(self.actRemoveNode)
 
         # Check if the menu has any elements before exec is called
