@@ -48,15 +48,15 @@ class XmlModel(QAbstractItemModel):
             return
         #print "Found ", self.xmlRoot.nodeName()
         #self._rootItem = OpusDataItem(document,document.documentElement(), 0, self)
-        self._rootItem = XmlItem(document,self.xmlRoot, None)
-        # Loop through the first level children and inti them as a root item
-        # and append to the tree...
+        self._rootItem = XmlItem(self.domDocument, self.xmlRoot, None)
+        # Loop through the first level children and init them as a root item
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
             current = self.xmlRoot.childNodes().item(x)
             if current.nodeType() == QDomNode.ElementNode:
-                self._rootItemSub = XmlItem(document,current, self._rootItem)
-                self._rootItemSub.initAsRootItem()
-                self._rootItem.childItems.append(self._rootItemSub)
+                _rootItemSub = XmlItem(self.domDocument,current, self._rootItem)
+                _rootItemSub.initAsRootItem()
+                self._rootItem.childItems.append(_rootItemSub)
+
 
         if addIcons:
             # Add some icons
@@ -74,6 +74,7 @@ class XmlModel(QAbstractItemModel):
             self.chartLineIcon = QIcon(":/Images/Images/chart_line.png")
             self.chartOrgIcon = QIcon(":/Images/Images/chart_organisation.png")
             self.cogIcon = QIcon(":/Images/Images/cog.png")
+            self.cogBlueIcon = QIcon(":/Images/Images/cog_blue.png")
             self.databaseLinkIcon = QIcon(":/Images/Images/database_link.png")
             self.databaseIcon = QIcon(":/Images/Images/database.png")
             self.databaseTableIcon = QIcon(":/Images/Images/database_table.png")
@@ -108,9 +109,9 @@ class XmlModel(QAbstractItemModel):
             self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirOpenIcon),
                                       QIcon.Normal, QIcon.On)
             self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
-            
+
+
     def findXMLRoot(self,doc,tp):
-        i = 0
         childNode = None
         for x in xrange(0,doc.childNodes().count(),1):
             current = doc.childNodes().item(x)
@@ -132,6 +133,7 @@ class XmlModel(QAbstractItemModel):
                    "integer":self.fieldIcon,
                    "float":self.fieldIcon,
                    "model":self.cogIcon,
+                   "submodel":self.cogBlueIcon,
                    "dataset":self.folderDatabaseIcon,
                    "table":self.tableIcon,
                    "password":self.lockIcon,
