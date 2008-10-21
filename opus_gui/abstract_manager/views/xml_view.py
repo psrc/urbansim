@@ -30,7 +30,7 @@ class XmlView(QTreeView):
         self.loopItems(model,model.index(0,0,QModelIndex()).parent())
         
         # refresh the widths of the columns
-        self.setColumnWidth(0,200)
+        self.setColumnWidth(0,250)
         self.setColumnWidth(1,50)
 
     def loopItems(self,model,parentIndex):
