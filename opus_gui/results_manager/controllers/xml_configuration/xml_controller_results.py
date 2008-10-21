@@ -47,9 +47,9 @@ class XmlController_Results(XmlController):
         self.actImportRun = self.createAction(self.acceptIcon, "Import run from disk",self.importRun) 
         self.actConfigureExistingBatchIndicatorVisualization = self.createAction(self.acceptIcon,"Configure visualization",self.configureExistingBatchIndicatorVisualization)
         self.actGetInfoSimulationRuns = self.createAction(self.acceptIcon, "Show details",self.getInfoSimulationRuns) 
-        self.actRemoveNode = QAction(self.removeIcon, "Remove node from current project", self.removeNode)
-        self.actMakeEditable = QAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
-        self.actCloneNode = QAction(self.cloneIcon, "Copy Node", self.cloneNode)
+        self.actRemoveNode = self.createAction(self.removeIcon, "Remove node from current project", self.removeNode)
+        self.actMakeEditable = self.createAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
+        self.actCloneNode = self.createAction(self.cloneIcon, "Copy Node", self.cloneNode)
 
 #        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.mainwindow)
 #        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)

@@ -34,10 +34,10 @@ class XmlController_General(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
-        self.actEditAllVariables = QAction(self.editExpressionLibIcon, "Edit Variable Library", self.editAllVariables)
-        self.actRemoveNode = QAction(self.removeIcon, "Remove node from current project", self.removeNode)
-        self.actMakeEditable = QAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
-        self.actCloneNode = QAction(self.cloneIcon, "Copy Node", self.cloneNode)
+        self.actEditAllVariables = self.createAction(self.editExpressionLibIcon, "Edit Variable Library", self.editAllVariables)
+        self.actRemoveNode = self.createAction(self.removeIcon, "Remove node from current project", self.removeNode)
+        self.actMakeEditable = self.createAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
+        self.actCloneNode = self.createAction(self.cloneIcon, "Copy Node", self.cloneNode)
 
     def editAllVariables(self):
         self.mainwindow.editAllVariables()
