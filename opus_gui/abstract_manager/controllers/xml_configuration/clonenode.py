@@ -64,6 +64,7 @@ class RenameNodeGui(CloneNodeGui):
         # dialog is identical to clone node dialog except for some text strings
         self.label.setText('Please select a new name')
         self.createXML.setText('Rename')
+        self.newName.setText(node.tagName())
         
         self.node = node
         self.xml_controller = xml_controller
