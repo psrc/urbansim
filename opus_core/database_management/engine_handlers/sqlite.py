@@ -14,6 +14,7 @@
 
 from opus_core.database_management.engine_handlers.abstract_engine import AbstractDatabaseEngineManager
 import os, fnmatch
+from opus_core.logger import logger
 
 class SqliteServerManager(AbstractDatabaseEngineManager):
     
@@ -66,8 +67,12 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
         
     def drop_database(self, server, database_name):
         database_path = self._get_database_path(database_name = database_name) 
-        os.remove(database_path)   
-
+        try:
+            os.remove(database_path)   
+        except:
+            logger.log_error('Could not remove sqlite database file at %'%database_path)
+            raise
+            
     def has_database(self, server, database_name):
         dbs = [f[:-4] for f in os.listdir(self.schema_path) if fnmatch.fnmatch(f,'*.txt')]
         return database_name in dbs 

@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-import sys
+import sys, gc
 
 from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
 from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
@@ -96,6 +96,7 @@ class OpusDatabase(object):
             pass
         self.engine = None
         self.metadata = None
+        gc.collect()
 
     def execute(self, query, recurse = True):
         try:
