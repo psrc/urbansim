@@ -552,28 +552,30 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
 #                 }
 #             },
 
-        'modify_workers_jobs_after_hlcm_model': {
+        'modify_workers_jobs_after_moving_households': {
             "import": {"opus_core.join_attribute_modification_model": "JoinAttributeModificationModel"},
             "init": {"name": "JoinAttributeModificationModel"},
             "run": {"arguments": {
                           "dataset": "person",
                           "secondary_dataset": "household",
-                          "index": "hrm_index", # this must be the same that goes into the HLCM argument 'agents_index'
+                          #"index": "hrm_index", # this must be the same that goes into the HLCM argument 'agents_index'
                           "attribute_to_be_modified": "'job_id'",
-                          "value": -1     
+                          "value": -1,
+                          "filter": "'household.building_id <> urbansim.household.building_id_lag1'"
                                   }
                                                  },
                             },
                             
-        'modify_workers_jobs_after_elcm_model': {
+        'modify_workers_jobs_after_moving_jobs': {
             "import": {"opus_core.join_attribute_modification_model": "JoinAttributeModificationModel"},
             "init": {"name": "JoinAttributeModificationModel"},
             "run": {"arguments": {
                           "dataset": "person",
                           "secondary_dataset": "job",
-                          "index": "erm_index", # this must be the same that goes into the ELCM argument 'agents_index'
+                          #"index": "erm_index", # this must be the same that goes into the ELCM argument 'agents_index'
                           "attribute_to_be_modified": "'job_id'",
-                          "value": -1     
+                          "value": -1,
+                          "filter": "'job.building_id <> urbansim.job.building_id_lag1'"
                                   }
                                                  },
                             },

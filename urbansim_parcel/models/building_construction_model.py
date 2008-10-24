@@ -19,7 +19,6 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
-
 from numpy import where, arange, resize, array, cumsum, concatenate, round_, any, logical_or, logical_and, logical_not
 
 class BuildingConstructionModel(Model):
@@ -222,22 +221,15 @@ class BuildingConstructionModel(Model):
         if buildings_to_be_demolished.size <= 0:
             return
         
-        building_dataset.remove_elements(building_dataset.get_id_index(buildings_to_be_demolished))
-        logger.log_status("%s buildings demolished." % buildings_to_be_demolished.size)
-        buildings_id_name = building_dataset.get_id_name()[0]
-        modify_workers_jobs_model = JoinAttributeModificationModel()
-        persons = dataset_pool.get_dataset('person')
-        
-        # remove occupants from demolished buildings and make workers in those buildings unemployed
+        id_index_in_buildings = building_dataset.get_id_index(buildings_to_be_demolished)
+        # remove occupants from buildings to be demolished
+        JAMM = JoinAttributeModificationModel()
         for agent_name in ['household', 'job']:            
             agents = dataset_pool.get_dataset(agent_name)
-            location_ids = agents.get_attribute(buildings_id_name)
-            id_index_in_buildings = building_dataset.try_get_id_index(location_ids)
-            if any(id_index_in_buildings < 0):
-                idx = where(id_index_in_buildings < 0)[0]
-                agents.modify_attribute(name=buildings_id_name, data=idx.size*[-1], index = idx)
-                logger.log_status("%s %ss removed from demolished buildings." % (idx.size, agent_name))
-                modify_workers_jobs_model.run(persons, agents, index=idx, attribute_to_be_modified='job_id', value=-1)
+            JAMM.run(agents, building_dataset, index=id_index_in_buildings, value=-1)
+            
+        building_dataset.remove_elements(id_index_in_buildings)
+        logger.log_status("%s buildings demolished." % buildings_to_be_demolished.size)
 
                 
 from opus_core.tests import opus_unittest
@@ -245,13 +237,14 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import arange, array, all
 
+
 class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
     def test_demolition(self):
         demolish_buildings = array([10, 3, 180])
         household_data = {
             'household_id': arange(10)+1,
             'building_id': array([10, 3, 6, 150, 10, 10, -1, 5, 3, 3])
-            # demolished         [*   *           *   *  (*)    *  *]
+            # demolished         [*   *           *   *         *  *]
             }
         person_data = {
             'person_id':arange(15)+1,
@@ -277,6 +270,11 @@ class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
         
         BCM = BuildingConstructionModel()
         BCM.demolish_buildings(demolish_buildings, dataset_pool.get_dataset('building'), dataset_pool)
+        JAMM = JoinAttributeModificationModel()
+        JAMM.run(dataset_pool.get_dataset('person'), dataset_pool.get_dataset('household'), 
+                 attribute_to_be_modified='job_id', value=-1, filter='household.building_id <=0')
+        JAMM.run(dataset_pool.get_dataset('person'), dataset_pool.get_dataset('job'), 
+                 attribute_to_be_modified='job_id', value=-1, filter='job.building_id <=0')
         self.assertEqual(all(dataset_pool.get_dataset('household').get_attribute('building_id') ==
                                   array([-1, -1, 6, 150, -1, -1, -1, 5, -1, -1])), True)
         self.assertEqual(all(dataset_pool.get_dataset('job').get_attribute('building_id') ==
