@@ -129,18 +129,20 @@ class Baseline(UrbansimParcelConfiguration):
                 "expected_sale_price_model",
                 "development_proposal_choice_model",
                 "building_construction_model",
+                "modify_workers_jobs_after_moving_households", # from demolished buildings
+                "modify_workers_jobs_after_moving_jobs", # from demolished buildings
                 "household_transition_model",
                 "employment_transition_model",
                 'job_person_consistency_keeper',
                 "household_relocation_model",
                 "household_location_choice_model",
-                "modify_workers_jobs_after_hlcm_model",
+                "modify_workers_jobs_after_moving_households",
                 "employment_relocation_model",
                 #{"employment_location_choice_model":{'group_members': '_all_'}},
                 {"employment_location_choice_model":{'group_members': ['non_home_based']}},
                 'distribute_unplaced_jobs_model',
                 'distribute_unplaced_mining_utilities_jobs_model',
-                "modify_workers_jobs_after_elcm_model",
+                "modify_workers_jobs_after_moving_jobs",
                 'work_at_home_choice_model',
                 'workplace_choice_model_for_resident'
                 ],
