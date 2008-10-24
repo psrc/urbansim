@@ -19,19 +19,18 @@ from warnings import filterwarnings
 from opus_core.tests.utils.opus_test_runner import OpusTestRunner
 from opus_core.tests.utils.opus_test_runner import OpusXMLTestRunner
 from opus_core.tests.utils.package_test_loader import PackageTestLoader
-# *** temporarily removed due to test failure
-# from opus_core.tests.common import TestForSQLPassword, TestPackageSyntax
+from opus_core.tests.common_check_for_sql_password import TestForSQLPassword
+from opus_core.tests.common_test_package_syntax import TestPackageSyntax
 from opus_core.opus_package import OpusPackage
 
 class PackageTester(object):
     def run_all_tests_for_package(self, package):
-        # Defaults
+        # Common tests to be run on each package
+        TestForSQLPassword(package_name = package).test_no_sql_password_in_files()
+        TestPackageSyntax(package_name = package).test_no_opus_syntax_violations()
+        
+        # Default
         loader = PackageTestLoader().load_tests_from_package
-        # Test for SQL Password
-# *** temporarily removed due to test failure
-        #TestForSQLPassword(package).test_no_sql_password_in_files();
-        # Test Package Syntax
-        #TestPackageSyntax(package).test_no_opus_syntax_violations();
         
         xml_file_name = 'TEST_all_tests.xml'
 
@@ -49,7 +48,7 @@ class PackageTester(object):
                 xml_file_name = 'TEST_all_integration_tests.xml'
         
         loader(package)
-        
+
         output_as_xml = False
         for opt in sys.argv:
             if opt in ('-x','-X','--xml'):
