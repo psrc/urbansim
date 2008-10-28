@@ -446,7 +446,7 @@ class InteractionDataset(Dataset):
         return attr1 == self.get_2d_dataset_attribute(name2)
 
     def is_less_or_equal(self, name1, name2):
-        """Test equality of 2 variables. 'name1' is an attribute of dataset1, 'name2' is an attribute of 'dataset2'.
+        """Test if attribute 'name1' (attr. of dataset1) is <= than attr. 'name2' (attr. 'dataset2').
         Return a 2D array.
         """
         self.load_datasets()
@@ -454,7 +454,7 @@ class InteractionDataset(Dataset):
         return attr1 <= self.get_2d_dataset_attribute(name2)
 
     def is_greater_or_equal(self, name1, name2):
-        """Test equality of 2 variables. 'name1' is an attribute of dataset1, 'name2' is an attribute of 'dataset2'.
+        """est if attribute 'name1' (attr. of dataset1) is >= than attr. 'name2' (attr. 'dataset2').
         Return a 2D array.
         """
         self.load_datasets()
