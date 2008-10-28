@@ -301,19 +301,21 @@ The two interacting datasets \datasetindex can be accessed by the method
 The method \method{get_attribute_of_dataset(name, dataset_number)} returns values of
 the given attribute \attributesindex that belongs to the dataset given by  \verb|dataset_number| where
 only values associated to the corresponding index are included. Thus, a
-call \verb|self.get_attribute_of_dataset("attr", 1)| \attributesindex gives an array of size
-\verb|index1|, whereas a call \verb|self.get_dataset(1).get_attribute("attr")| \attributesindex
+call \verb|get_attribute_of_dataset("attr", 1)| \attributesindex gives an array of size
+\verb|index1|, whereas a call \verb|get_dataset(1).get_attribute("attr")| \attributesindex
 gives an array containing values for all elements of \verb|dataset1|.
 
-The method \method{compute_variables()} \variablesindex determines from the fully-qualified
-names of variables, \variablesindex to which dataset the variable \variablesindex belongs to. If it belongs to
+The method \method{compute_variables()} \variablesindex determines from each of the fully-qualified
+names of variables or expressions, \variablesindex to which dataset the variable \variablesindex belongs to. If it belongs to
 the \verb|dataset1| or \verb|dataset2|, it calls \method{compute_variables()} \variablesindex on
 those datasets (the values are computed for all elements of the datasets,
 regardless of the given index). If it is an interaction variable, \variablesindex it is
 computed only for elements given by \verb|index1| and \verb|index2|.
 
 The \class{InteractionDataset} class contains several methods that are useful for
-variable \variablesindex computation, such as \method{multiply()} and \method{divide()}.
+variable \variablesindex computation on a 2-d array, such as \method{multiply()}, \method{divide()},
+\method{is_same_as()}, \method{is_less_or_equal()}, \method{is_greater_or_equal()}, all of which take 
+as arguments two interacting attribute names.
 
 An interaction set is automatically created and used in the
 \class{ChoiceModel} class (see Section~\ref{sec:choice-model}).
@@ -323,9 +325,9 @@ An interaction set is automatically created and used in the
 %
 One of the design elements of Opus is to allow users to choose alternative
 data storage methods depending on their needs, while keeping a consistent
-internal representation of data used by the system.  Currently Opus classes
+internal representation of data used by the system.  Currently, Opus classes
 exist for reading and writing data in Random Access Memory (RAM), to database
-tables, Tab-delimited ASCII files, and binary files.  Other storage methods can
+tables, tab- and comma-delimited ASCII files, and binary files.  Other storage methods can
 be added as the need arises.
 
 The generic class that supports data storage is called
@@ -365,13 +367,14 @@ storage location.
 {\bf \method{get_table_names()}}: Returns a list of all the names of tables
 that exist at the respective storage location.
 
-{\bf Developer note:} {\textit In order to be able to implement the storage
+{\bf Developer note:} \textit{In order to be able to implement the storage
 interface, the new storage subclass must implement methods \method{load_table},
 \method{get_storage_location}, \method{write_table},
 and \method{get_column_names}.}
 
 The predefined storage classes in \package{opus_core} are \class{dict_storage}, \class{csv_storage},
-\class{tab_storage}, \class{sql_storage}, \class{flt_storage}, and \class{dbf_storage} implemented
+\class{tab_storage}, \class{sql_storage}, \class{flt_storage}, \class{dbf_storage}, 
+and \class{esri_storage} implemented
 in modules of the same name in \verb|opus_core.store|. Their instances can be
 created using the method \method{get_storage(type, storage_location,...)} of
 class \class{StorageFactory}; \verb|type| is the storage type (e.g. ``sql_storage'')
@@ -386,7 +389,9 @@ storage type, and how each may deviate from the above descriptions.
 %
 The simplest storage class. It is an in-memory implementation of the
 storage interface. The constructor of this class has no parameters (no \verb|storage_location|
-parameter needed).
+parameter needed). Obviously, the first method to be used 
+before being able to do anything useful with an object of this type is the method
+\method{write_table()}.
 
 \subsection{csv_storage and tab_storage}
 %
@@ -407,12 +412,12 @@ optional type information for each column. The type information, if provided, is
 appended to the column name and separated by a colon, as in \verb|id:int32| which
 specifies to use the numpy \verb|int32| type for storing the \verb|id| values. 
 The type may be any of the numpy types in
-Table~\ref{storage-numpy-python-mapping}:
+Table~\ref{storage-numpy-python-mapping}.
 
 \begin{table}
 \begin{center}
 \begin{tabular}{|l|}\hline
-Storage Type \\
+Column Type \\
 \hline
 bool8 \\
 int8 \\
@@ -427,11 +432,13 @@ float32 \\
 float64 \\
 complex64 \\
 complex128 \\
+string{\it x}\\
 \hline
 \end{tabular}
 \end{center}
 \caption{\label{storage-numpy-python-mapping}Allowable column types
-for csv_storage and tab_storage.}
+for csv_storage and tab_storage. 
+{\it x} in the last line is an integer determining length of the string.}
 \end{table}
 
 If type information is not included, Opus will use \verb|float64| for numeric data
@@ -464,7 +471,8 @@ connection to a database. Here's an example of obtaining an
 
 \begin{verbatim}
 >>> import os
->>> from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+>>> from opus_core.database_management.database_server_configuration import \
+                                         DatabaseServerConfiguration
 >>> from opus_core.database_management.database_server import DatabaseServer
 >>> from opus_core.storage_factory import StorageFactory
 >>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
@@ -502,7 +510,7 @@ The file names correspond to attribute names with an extension that determines
 the type of the stored data. The file extension consists of three parts, one
 character for the byte order, one character for the type of the data, and one or
 more characters for the size of the column in bytes. The extension is similar to
-the dtype for numpy arrays, only the charakter for the byte order is changed from
+the dtype for numpy arrays, only the character for the byte order is changed from
 '<', '>', or '|' (for little endian, big endian, or irrelevant) to 'l', 'b', or
 'i'. The method \method{write_table()} stores attribute according to the scheme
 above.
@@ -511,7 +519,7 @@ above.
 %
 The \verb|dbf_storage| provides DBase-formated file-based storage for
 datasets.  It uses the dbfpy Python package available at
-\url{http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy}.
+\url{<"http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy}.
 
 The constructor of this class expects an entry \verb|storage_location| in its
 arguments. It should be a base directory on a hard drive where
@@ -523,6 +531,8 @@ base directory) without an extension in which the data are stored in an ``.dbf''
 file.  The extension ``.dbf'' is added automatically. Each table is stored in one
 file. The format of these files is described at
 \url{http://www.clicketyclick.dk/databases/xbase/format/data_types.html\#DATA_TYPES}.
+\subsection{esri_storage}
+%
 
 \section{Opus Variables} \indexii{Variables}{Opus}
 \label{sec:opus-variable}
