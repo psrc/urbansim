@@ -53,8 +53,7 @@ class XmlController_General(XmlController):
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneNodeGui(self,flags,clone,parentIndex,model)
+        window = CloneNodeGui(self,clone,parentIndex,model)
         window.setModal(True)
         window.show()
 

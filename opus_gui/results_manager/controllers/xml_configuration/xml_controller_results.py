@@ -150,9 +150,7 @@ class XmlController_Results(XmlController):
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneNodeGui(self,flags,clone,parentIndex,model)
-        window.show()
+        window = CloneNodeGui(self, clone,parentIndex,model)
 
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
