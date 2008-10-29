@@ -161,6 +161,8 @@ by \verb|get_attribute(alias)|.
 %
 \subsection{Computing Variables}
 %
+\label{sec:core-dataset-compute-variables}
+%
 A variable (or equivalently, a computed attribute) is specified either by an expression of by a 
 fully-qualified name (see Section~\ref{sec:opus-variable}).
 Datasets \datasetindex automatically compute each variable \variablesindex when, and only when,
@@ -178,10 +180,16 @@ this one variable \variablesindex depends.  Lazily computing variables \variable
 computational load as well as eliminating the need to worry about when
 variables \variablesindex are computed: it will happen when, and only when, it is needed.
 
-The method \method{compute_variables()} \variablesindex takes as an arguments a list of
-variable \variablesindex names to be computed and an object of class \class{DatasetPool} which
+The method \method{compute_variables()} \variablesindex takes the following arguments:
+\begin{itemize}
+\item \verb|names| - a list of
+variable \variablesindex names to be computed,
+\item \verb|dataset_pool| - an object of class \class{DatasetPool} which
 maintains a 'pool' of additional datasets that the variables \variablesindex (and their dependent
-variables) \variablesindex need for the computation (see Section~\ref{sec:core-dataset-pool}). 
+variables) \variablesindex need for the computation (see Section~\ref{sec:core-dataset-pool}), and
+\item \verb|resources| - an object of class \class{Resources} which can contain additional arguments 
+to be passed to each of the variable computation (see Section~\ref{sec:variable-implementation}).
+\end{itemize}
 The method returns an array of values that result from computing the last variable in the 
 list of variable names.
 
@@ -519,7 +527,7 @@ above.
 %
 The \verb|dbf_storage| provides DBase-formated file-based storage for
 datasets.  It uses the dbfpy Python package available at
-\url{<"http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy}.
+\url{http://sourceforge.net/projects/dbfpy}.
 
 The constructor of this class expects an entry \verb|storage_location| in its
 arguments. It should be a base directory on a hard drive where
@@ -631,21 +639,18 @@ Variable \variablesindex objects are created automatically within the dataset \d
 Each variable \variablesindex class has a required method \method{compute()} which defines how
 to compute this variable. \variablesindex
 
-It takes as an argument an object of class \class{Resources}, called
-\verb|arguments| which is a container for all arguments and datasets \datasetindex that this
-variable \variablesindex might need for its computation. Since this method is called from the
-dataset \datasetindex method \method{compute_variables()}, \variablesindex it is important to pass all
-required objects into the \verb|resources| argument of
-\method{compute_variables()}. \variablesindex If the variable \variablesindex needs attributes \variablesindex of another
-dataset, \datasetindex this dataset \datasetindex should be stored in \verb|resources| under its dataset \datasetindex
-name.
+It takes as an argument an object of class \class{DatasetPool} which
+maintains a 'pool' of additional datasets that this variable \variablesindex needs for its computation 
+(see Section~\ref{sec:core-dataset-pool}). Note that this method is called from the
+dataset \datasetindex method \method{compute_variables()} (see Section~\ref{sec:core-dataset-compute-variables}), 
+and its \verb|dataset_pool| argument is passed from there. 
 
 The implementation of the \method{compute()} method can assume that all
-required variables \variablesindex are already computed and accessible by the dataset \datasetindex
-method \method{get_attribute()}, \attributesindex if they are listed in the
-\method{dependencies()} method (see Section~\ref{sec:dependencies}).
+variables \variablesindex that are listed in the
+\method{dependencies()} method (see below) are already computed and accessible by the dataset \datasetindex
+method \method{get_attribute()}.
 
-The \method{compute()} method returns a numpy array \numpyindex of the size of number
+The \method{compute()} method should return a numpy array \numpyindex of the size of number
 of elements in the ``owner'' dataset. \datasetindex
 
 \subsubsection{Optional Method \method{dependencies()}}
@@ -654,27 +659,28 @@ of elements in the ``owner'' dataset. \datasetindex
 %
 This optional method takes no arguments and returns a list of variable \variablesindex names
 that this variable \variablesindex needs in order to compute its values. Each variable \variablesindex name
-must be either a fully-qualified Opus variable \variablesindex name, or a dataset-qualified \datasetindex
+must be either an expression, a fully-qualified Opus variable \variablesindex name, or a dataset-qualified \datasetindex
 primary attribute \primaryattributesindex name. It is important to list all dependent variables \variablesindex
-here and don't invoke the computation of the dependent variables \variablesindex from the
+here and not invoke the computation of the dependent variables \variablesindex from the
 \method{compute()} method, since the dependencies tree mechanism would not
 work correctly (see Section~\ref{sec:dependencies-tree}). If the names of the
-dependent variables \variablesindex are not known at the time this method is called, the
+dependent variables \variablesindex are not known at the time this method is called and are determined dynamically, the
 dependencies list can be extended from the \method{compute()} method using the
-\class{Variable} \variablesindex method \method{add_dependencies()} which takes as an argument
-a list of additional dependencies (specified either as character strings or in
-form of \class{AttributeBox}). \attributesindex \method{add_dependencies()} extends the
+\class{Variable} \variablesindex method \method{add_and_solve_dependencies()} which takes as arguments
+a list of additional dependencies (each specified either as a character string or an objects of class \class{AttributeBox}) 
+and the dataset pool object. \attributesindex \method{add_and_solve_dependencies()} computes 
+the additional variables and extends the
 dependencies list only when the \method{compute()} method runs for the first
 time.
 
 \subsubsection{Other Methods and Properties}
 %
+The following behavior is only available if the computation is invoked from the dataset method  
+\method{compute_variables()} (see Section~\ref{sec:core-dataset-compute-variables}).
+
 If the variable \variablesindex defines the property \verb|_return_type| to be one of the
 following numpy types, Opus will automatically cast the results into that
-type.  If the \verb|arguments| passed into the \method{compute()} method
-contains an entry \verb|check_variables|, \variablesindex then it will also issue a warning if
-the values being cast are too large to fit into the destination type.  The
-allowable values for \verb|_return_type| are:
+type: 
 \begin{itemize}
 \tight
 \item bool8
@@ -692,11 +698,15 @@ allowable values for \verb|_return_type| are:
 \item complex128
 \item longlong
 \end{itemize}
-
+The argument \verb|resources| passed into the \method{compute_variables()} method can 
+contain an entry \verb|check_variables|. This can be either a list of variable names or a '*' (meaning 'all variables').
+For each of those variables a 'check' is perfomed.
+This means that it will issue a warning if
+the values being cast are too large to fit into the destination type.
 In addition, each Opus variable \variablesindex may have the optional \method{pre_check()} and
 \method{post_check()} methods to implement the ``programming by contract''
 \index{Programming by contract} model of software development (see
-Section~\ref{sec:programming-by-contract}).
+Section~\ref{sec:programming-by-contract}). These methods are also invoked on the 'checked' variables. 
 
 \subsection{Variable Dependencies Tree}
 \label{sec:dependencies-tree}
