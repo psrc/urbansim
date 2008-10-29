@@ -716,8 +716,8 @@ Opus implements a mechanism of computing variables \variablesindex structured in
 dependencies tree. A variable \variablesindex is only computed if its children have changed
 since the last computation. Thus, a dataset \datasetindex object keeps a version information
 about each attribute \attributesindex or variable \variablesindex and each variable \variablesindex class keeps information
-about with which versions of the dependent variables \variablesindex this variable \variablesindex was
-computed. This mechanism is automatically invoked by calling the method
+about which versions of the dependent variables \variablesindex this variable \variablesindex was
+computed with. This mechanism is automatically invoked by calling the method
 \method{compute_variables()} \variablesindex of the class \class{Dataset}. \datasetindex
 
 As an example, consider Figure~\ref{fig:opus-core-variable-tree}. There are 8
@@ -733,11 +733,12 @@ implementation for those attributes). \attributesindex
 \begin{figure}
 \begin{center}
 %begin{latexonly}
-\includegraphics[scale=0.6, angle=-90]{images/variabletreeinitial.pdf}
+\includegraphics[scale=0.6]{images/variabletreeinitial.pdf}
 %end{latexonly}
 \caption{\label{fig:opus-core-variable-tree}\small Example of a variable
-  dependencies tree.}
-\htmlonly{\includegraphics[scale=0.6, angle=-90]{images/variabletreeinitial.jpg}}
+  dependencies tree. The arrows indicate the dependency direction: 
+  $a \longrightarrow b$ means '$a$ is dependent on $b$'.}
+\htmlonly{\includegraphics[scale=0.6]{images/variabletreeinitial.jpg}}
 \end{center}
 \end{figure}
 
