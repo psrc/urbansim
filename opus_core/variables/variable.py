@@ -278,7 +278,7 @@ class Variable(object):
             self.dependencies_list = self.dependencies_list + map(lambda x: (x, 0), dep_list)
             
     def add_and_solve_dependencies(self, dep_list=[], dataset_pool=None):
-        """Calls 'add_dependencies' andif it is run for the first time, it also calls the 
+        """Calls 'add_dependencies' and if it is run for the first time, it also calls the 
         '_solve_dependencies' method."""
         self.add_dependencies(dep_list)
         if self.number_of_compute_runs == 0:
