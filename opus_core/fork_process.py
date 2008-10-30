@@ -32,6 +32,8 @@ class ForkProcess(object):
 
     def __init__(self):
         self.popen = None
+        self.module_name = None
+        self.python_cmd = None
         self._pickle_dir = None
     
     def fork_new_process(self, module_name, resources, delete_temp_dir=True, optional_args=[],
@@ -40,6 +42,7 @@ class ForkProcess(object):
         pickled resources.  Stores resources in pickle_file_path.
         If quiet=True, the console output for the command will not appear.
         """
+        self.module_name = module_name
         self._pickle_dir = mkdtemp()
         try:
             if resources is None:
@@ -48,11 +51,12 @@ class ForkProcess(object):
                 pickle_file_path = os.path.join(self._pickle_dir, 'resources.pickle')
                 write_resources_to_file(pickle_file_path, resources)
             
-            python_cmd = self._assemble_command_line_call(module_name, 
-                                                          resources, 
-                                                          pickle_file_path, 
-                                                          optional_args)
-            
+            self.python_cmd = \
+                self._assemble_command_line_call(module_name, 
+                                                 resources, 
+                                                 pickle_file_path, 
+                                                 optional_args)
+        
             if stdin == PIPE:
                 stdin = subprocess.PIPE
 
@@ -70,11 +74,10 @@ class ForkProcess(object):
                 log_file_path = os.path.join(self._pickle_dir, '_errlog_.log')
                 stderr = open(log_file_path, "w")
 
-            logger.log_status("Invoking: %s" % " ".join(python_cmd))
-            self.popen = subprocess.Popen(python_cmd, stdin=stdin, stdout=stdout, stderr=stdout)
+            logger.log_status("Invoking: %s" % " ".join(self.python_cmd))
+            self.popen = subprocess.Popen(self.python_cmd, stdin=stdin, stdout=stdout, stderr=stdout)
             if not run_in_background:
-                self.popen.wait()
-            self.check_status()
+                self.wait()
                 
         finally:
             if not run_in_background and delete_temp_dir:
@@ -83,16 +86,17 @@ class ForkProcess(object):
     def wait(self):
         if self.popen is not None:
             self.popen.wait()
+            self.check_status()
             
     def check_status(self):
-        exit_status = self.popen.returncode
-        if exit_status!=None and exit_status!=0:
-            raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (module_name, python_cmd))
+        if self.popen is not None and \
+           self.popen.returncode is not None and \
+           self.popen.returncode != 0:
+            raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
 
     def cleanup(self):
         if os.path.exists(self._pickle_dir):
             rmtree(self._pickle_dir)
-            pass
 
     def _assemble_command_line_call(self, module_name, resources, 
                                     pickle_file_path, optional_args=[]):

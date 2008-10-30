@@ -84,7 +84,7 @@ if __name__ == "__main__":
                       help="File name for logging output of model system (without directory).")
 
     (options, args) = parser.parse_args()
-
+    
     resources = Resources(get_resources_from_file(options.resources_file_name))
     delete_resources_file_directory = options.delete_resources_file_directory
     skip_cache_after_each_year = options.skip_cache_after_each_year

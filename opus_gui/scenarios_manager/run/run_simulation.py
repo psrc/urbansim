@@ -139,6 +139,7 @@ class OpusModel(object):
         self.run_name = None
         # simulate 0 command line arguments by passing in []
         self.cancelled = False
+        self.run_manager = None
         
     def pause(self):
         success = self._write_command_file('pause')
