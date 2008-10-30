@@ -14,6 +14,7 @@
 
 import os,sys
 import copy
+import numpy
 from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
 from numpy import sometrue, where, equal, not_equal, ndarray
 from numpy import reshape, sort, searchsorted, repeat, argsort
@@ -166,8 +167,11 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
 
 #         if not sometrue(dup_indicator):
 #             return sampled_index
-
-        uniqueidx = unique1d(proposed_index, True)[0]
+        i = 0
+        if numpy.__version__ >= '1.2.0':
+        ## numpy.unique1d in version 1.2.0 has reversed the return, changed [0]->[1]
+            i = 1
+        uniqueidx = unique1d(proposed_index, True)[i]
         valid_index = proposed_index[sort(uniqueidx)]
         #valid_index = unique_values(proposed_index)
         #import pdb; pdb.set_trace()
