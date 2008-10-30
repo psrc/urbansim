@@ -720,16 +720,6 @@ about which versions of the dependent variables \variablesindex this variable \v
 computed with. This mechanism is automatically invoked by calling the method
 \method{compute_variables()} \variablesindex of the class \class{Dataset}. \datasetindex
 
-As an example, consider Figure~\ref{fig:opus-core-variable-tree}. There are 8
-variables/attributes, \variablesindex\attributesindex belonging to 3 datasets, \datasetindex \verb|ds1|, \verb|ds2|, and
-\verb|ds3|.  The arrows show the dependency hierarchy between variables. \variablesindex The
-hierarchy is defined in the method \method{dependencies()} of each variable \variablesindex
-where children are listed in their fully-qualified names (in
-this example the names in the parentheses in the figure). Note that two
-attributes \attributesindex here are primary, namely ``ds3.var_d'' and ``ds2.var_e'', and
-thus are defined in their dataset-qualified \datasetindex name (there is no variable \variablesindex
-implementation for those attributes). \attributesindex
-
 \begin{figure}
 \begin{center}
 %begin{latexonly}
@@ -738,16 +728,31 @@ implementation for those attributes). \attributesindex
 \caption{\label{fig:opus-core-variable-tree}\small Example of a variable
   dependencies tree. The arrows indicate the dependency direction: 
   $a \longrightarrow b$ means '$a$ is dependent on $b$'.}
-\htmlonly{\includegraphics[scale=0.6]{images/variabletreeinitial.jpg}}
+\htmlonly{\includegraphics[scale=0.9]{images/variabletreeinitial.jpg}}
 \end{center}
 \end{figure}
+
+As an example, consider Figure~\ref{fig:opus-core-variable-tree}. There are 8
+variables/attributes, \variablesindex\attributesindex belonging to 3 datasets, \datasetindex \verb|ds1|, \verb|ds2|, and
+\verb|ds3|.  The arrows show the dependency hierarchy between variables. \variablesindex The
+hierarchy is defined in the method \method{dependencies()} of each variable \variablesindex
+by listing all direct 'children' variables as expressions, fully-qualified names or dataset-qualified names (in
+this example the names in the parentheses in the figure). Note that two
+attributes \attributesindex here are primary, namely ``ds3.var_d'' and ``ds2.var_e'', and
+thus are defined in their dataset-qualified \datasetindex name (there is no variable \variablesindex
+implementation for those attributes). \attributesindex For example, the \method{dependencies()} method of the root variable 
+``pkg.ds1.my_variable'' returns a list of three elements: \verb|['pkg.ds1.var_a', 'pkg.ds1.var_b', 'pkg.ds2.var_b']|, 
+and \method{dependencies()} of the variable ``pkg.ds1.var_a'' returns a list with one expression:
+\verb|['var_c = log(ds3.var_d)/log(pkg.ds3.var_e)']|. As described in Section~\ref{sec:opus-core-expressions}, 
+expressions do not have user-defined implementations (they are created on the fly). Therefore there is 
+no need to define dependencies for the variable ``ds3.var_c'', Opus determines them automaticaly. 
 
 Now suppose we have a system of several models, three of which are invoking
 the computation of ``my_variable'' \variablesindex of dataset \datasetindex \verb|ds1|. Suppose also that
 initially we have created the three datasets \datasetindex and loaded the two primary
 attributes. \primaryattributesindex Opus assigns to each newly created attribute \attributesindex a version number 0 in
 its attribute \attributesindex box.  This situation is shown in the left upper corner of
-Figure~\ref{fig:opus-core-variable-tree-1}. Box number 1. shows that there are only
+Figure~\ref{fig:opus-core-variable-tree-1}. Box number 1 shows that there are only
 two attributes \attributesindex in the system, both with version number 0.
 
 \begin{figure}
@@ -761,11 +766,12 @@ two attributes \attributesindex in the system, both with version number 0.
 \end{center}
 \end{figure}
 
-Box 2. shows a situation when the first model invokes the computation of
+Box 2 shows a situation when the first model invokes the computation of
 ``my_variable'' \variablesindex \footnote{Because of the dependencies on variables of other
   datasets, the correct call is\\
-  \code{ds1.compute_variables("my_variable", resources=Resources({"ds2":ds2, "ds3":ds3}))}.\\
-  We simplify it for
+  \code{ds1.compute_variables(["pkg.ds1.my_variable"], dataset_pool=pool)} where \code{pool}
+  is constructed as described in Section~\ref{sec:core-dataset-pool} and contains datasets ``ds2'' and ``ds3''.
+  We simplify the notation here for
   a better readability.}. The system works through the defined dependencies and
 computes all variables \variablesindex needed to compute ``my_variable''. \variablesindex In this process,
 again, each newly computed variable \variablesindex gets the version number 0 (illustrated by
@@ -776,20 +782,20 @@ the figure, this is illustrated by the small boxes bellow each variable. \variab
 Note that all elements in Figure~\ref{fig:opus-core-variable-tree-1} that are
 created or change their values are shaded.
 
-The box number 3. shows a situation in which another model changes values of
+The box number 3 shows a situation in which another model changes values of
 variable ``var_e'' of the dataset \datasetindex \verb|ds2| which causes an increment of the
 version number. Therefore, when the next model invokes
 \method{compute_variables("my_variable")}, \variablesindex Opus determines that there is a
 mismatch between versions of ``ds.var_e'' on which variables \variablesindex ``ds1.var_b'' and
-``ds2.var_b'' were computed and its current version. Then all
+``ds2.var_b'' were computed and its current version (the mismatch is visualized by red crosses). Then all
 variables \variablesindex above ``ds.var_e'' are recomputed, their version numbers
 incremented, and the version numbers in the dependencies lists are updated
-(box 4.).
+(box 4).
 
 A similar situation arises when another model changes the variable \variablesindex
-``ds3.var_e'' (box 5.). The next call of
+``ds3.var_e'' (box 5). The next call of
 \method{compute_variables("my_variable")} \variablesindex causes a recomputing of 4
-variables \variablesindex (box 6.) In the right lower corner of
+variables \variablesindex (box 6) In the right lower corner of
 Figure~\ref{fig:opus-core-variable-tree-1}, the state of the three datasets \datasetindex is
 shown at the end of the run of our example models.
 
