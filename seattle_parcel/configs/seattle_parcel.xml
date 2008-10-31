@@ -15,11 +15,11 @@
   <model_manager>
     <estimation type="dictionary">
       <models_to_estimate followers="model_template,choice_model_with_equations_template" setexpanded="True" type="selectable_list">
-        <real_estate_price_model choices="Estimate|Skip" type="model_choice">Estimate</real_estate_price_model>
-        <household_location_choice_model choices="Estimate|Skip" type="model_choice">Skip</household_location_choice_model>
-        <employment_location_choice_model choices="Estimate|Skip" type="model_choice">Skip<group_members type="string">home_based</group_members>
+        <real_estate_price_model choices="Estimate|Skip" type="model">Estimate</real_estate_price_model>
+        <household_location_choice_model choices="Estimate|Skip" type="model">Skip</household_location_choice_model>
+        <employment_location_choice_model choices="Estimate|Skip" type="model">Skip<group_members type="string">home_based</group_members>
         </employment_location_choice_model>
-        <employment_location_choice_model choices="Estimate|Skip" type="model_choice">Estimate<group_members type="string">non_home_based</group_members>
+        <employment_location_choice_model choices="Estimate|Skip" type="model">Estimate<group_members type="string">non_home_based</group_members>
         </employment_location_choice_model>
       </models_to_estimate>
       <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
@@ -166,19 +166,19 @@
         <lastyear type="integer">2002</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <model_template choices="Run|Skip" copyable="True" type="model_choice">Skip</model_template>
-        <real_estate_price_model choices="Run|Skip" type="model_choice">Run</real_estate_price_model>
-        <expected_sale_price_model choices="Run|Skip" type="model_choice">Run</expected_sale_price_model>
-        <development_proposal_choice_model choices="Run|Skip" type="model_choice">Run</development_proposal_choice_model>
-        <building_construction_model choices="Run|Skip" type="model_choice">Run</building_construction_model>
-        <household_transition_model choices="Run|Skip" type="model_choice">Run</household_transition_model>
-        <employment_transition_model choices="Run|Skip" type="model_choice">Run</employment_transition_model>
-        <household_relocation_model choices="Run|Skip" type="model_choice">Run</household_relocation_model>
-        <household_location_choice_model choices="Run|Skip" type="model_choice">Run</household_location_choice_model>
-        <employment_relocation_model choices="Run|Skip" type="model_choice">Run</employment_relocation_model>
-        <employment_location_choice_model choices="Run|Skip" type="model_choice">Run<group_members type="string">non_home_based</group_members>
+        <model_template choices="Run|Skip" copyable="True" type="model">Skip</model_template>
+        <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>
+        <expected_sale_price_model choices="Run|Skip" type="model">Run</expected_sale_price_model>
+        <development_proposal_choice_model choices="Run|Skip" type="model">Run</development_proposal_choice_model>
+        <building_construction_model choices="Run|Skip" type="model">Run</building_construction_model>
+        <household_transition_model choices="Run|Skip" type="model">Run</household_transition_model>
+        <employment_transition_model choices="Run|Skip" type="model">Run</employment_transition_model>
+        <household_relocation_model choices="Run|Skip" type="model">Run</household_relocation_model>
+        <household_location_choice_model choices="Run|Skip" type="model">Run</household_location_choice_model>
+        <employment_relocation_model choices="Run|Skip" type="model">Run</employment_relocation_model>
+        <employment_location_choice_model choices="Run|Skip" type="model">Run<group_members type="string">non_home_based</group_members>
         </employment_location_choice_model>
-        <distribute_unplaced_jobs_model choices="Run|Skip" type="model_choice">Run</distribute_unplaced_jobs_model>
+        <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Run</distribute_unplaced_jobs_model>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
