@@ -9,16 +9,16 @@
     <test_node type="string" test_attribute="child_value">still testing attribute inheritance</test_node>
   </general>
   <model_manager>
-    <model_system type="dictionary" >
-        <real_estate_price_model type="model">
-            <specification type="dictionary">
-                <single_family_residential type="submodel">
-                    <submodel_id type="integer">240</submodel_id>
-                    <variables type="variable_list">ln_cost, existing_units</variables>
-                </single_family_residential>
-            </specification>
-        </real_estate_price_model>
-    </model_system>
+    <estimation type="dictionary" >
+      <real_estate_price_model type="dictionary" >
+        <single_family_residential type="submodel" >
+          <submodel_id type="integer">240</submodel_id>
+        </single_family_residential>
+      </real_estate_price_model>
+      <models_to_estimate type="selectable_list" >
+        <household_location_choice_model type="model" choices="Estimate|Skip" >Estimate</household_location_choice_model>
+      </models_to_estimate>
+    </estimation>
   </model_manager>
   <scenario_manager/>
 </opus_project>

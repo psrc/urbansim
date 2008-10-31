@@ -26,13 +26,13 @@
         <str2 type="string">clam</str2>
       </dicttest>
       <models type="selectable_list">
-        <model1 type="model_choice" choices="Run|Skip">Run</model1>
-        <model2 type="model_choice" choices="Run|Skip">Run<group_members type="string">all</group_members>
+        <model1 type="model" choices="Run|Skip">Run</model1>
+        <model2 type="model" choices="Run|Skip">Run<group_members type="string">all</group_members>
         </model2>
-        <model3 type="model_choice" choices="Run|Skip">Run<chooser type="string">random</chooser>
+        <model3 type="model" choices="Run|Skip">Run<chooser type="string">random</chooser>
           <sampler type="string">fussy</sampler>
         </model3>
-        <model4 type="model_choice" choices="Run|Skip">Skip</model4>
+        <model4 type="model" choices="Run|Skip">Skip</model4>
       </models>
       <mytables type="selectable_list">
         <gridcells type="table" choices="Load|Skip">Load</gridcells>
