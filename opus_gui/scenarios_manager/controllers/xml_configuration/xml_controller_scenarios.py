@@ -21,6 +21,7 @@ from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
+from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 class XmlController_Scenarios(XmlController):
     def __init__(self, toolboxbase, parentWidget): 
@@ -54,6 +55,7 @@ class XmlController_Scenarios(XmlController):
         self.actMoveNodeUp = self.createAction(self.arrowUpIcon,"Move Model Up",self.moveNodeUp)
         self.actMoveNodeDown = self.createAction(self.arrowDownIcon,"Move Model Down",self.moveNodeDown)
 
+        self.xml_helper = ResultsManagerXMLHelper(self.toolboxbase)
 
     def checkIsDirty(self):
         if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
@@ -107,9 +109,9 @@ class XmlController_Scenarios(XmlController):
         if self.mainwindow.editorStuff:
             #print "Loading into qscintilla..."
             # Now an individual tab
-            import opus_gui.util.editorbase
+            from opus_gui.util.editorbase import EditorTab
             fileName = newFile.absoluteFilePath()
-            x = util.editorbase.EditorTab(self.mainwindow, QString(fileName))
+            x = EditorTab(self.mainwindow, QString(fileName))
 
     def editXMLFileGlobal(self):
         filePath = ""
@@ -159,9 +161,7 @@ class XmlController_Scenarios(XmlController):
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneNodeGui(self,flags,clone,parentIndex,model)
-        window.setModal(True)
+        window = CloneNodeGui(self, clone,parentIndex,model)
         window.show()
 
     def makeEditableAction(self):
@@ -181,88 +181,107 @@ class XmlController_Scenarios(XmlController):
                 parentNode = parentIndex.internalPointer().node()
                 parentElement = parentNode.toElement()
             item = self.currentIndex.internalPointer()
-            domNode = item.node()
-            if domNode.isNull():
+            domElement = item.node().toElement()
+            if domElement.isNull():
                 return
-            # Handle ElementNodes
-            if domNode.isElement():
-                domElement = domNode.toElement()
-                if domElement.isNull():
-                    return
 
-                self.menu = QMenu(self.mainwindow)
-                if domElement.attribute(QString("executable")) == QString("True"):
-                    self.menu.addAction(self.actRunModel)
-                elif domElement.attribute(QString("type")) == QString("file"):
-                    self.menu.addAction(self.actOpenXMLFile)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actEditXMLFileGlobal)
-                    self.menu.addAction(self.actEditXMLFileLocal)
-                elif domElement.attribute(QString("type")) == QString("model_choice"):
-                    self.menu.addAction(self.actRemoveModel)
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("config_name")) == QString("models"):
-                    self.modelMenu = QMenu(QString("Add Model"), self.mainwindow)
-                    self.modelMenu.setIcon(self.addIcon)
-                    QObject.connect(self.modelMenu, SIGNAL('aboutToShow()'), self.aboutToShowModelMenu)
-                    self.menu.addMenu(self.modelMenu)
-                if self.menu:
-                    # Last minute chance to add items that all menus should have
-                    if domElement.hasAttribute(QString("inherited")):
-                        # Tack on a make editable if the node is inherited
-                        self.menu.addSeparator()
-                        self.menu.addAction(self.actMakeEditable)
-                    else:
-                        if domElement.hasAttribute(QString("copyable")) and \
-                               domElement.attribute(QString("copyable")) == QString("True"):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actCloneNode)
-                        if domElement and (not domElement.isNull()) and \
-                               domElement.hasAttribute(QString("type")) and \
-                               ((domElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (domElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (domElement.attribute(QString("type")) == QString("list"))):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actRemoveNode)
-                # Check if the menu has any elements before exec is called
-                if not self.menu.isEmpty():
-                    self.menu.exec_(QCursor.pos())
+            # version specific settings
+            xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
+            model_choice_name = "model_choice" if xml_version > 1.0 else "model" 
+
+            # create and populate menu based on the node element
+            menu = QMenu(self.mainwindow)
+            if domElement.attribute(QString("executable")) == QString("True"):
+                menu.addAction(self.actRunModel)
+            elif domElement.attribute(QString("type")) == QString("file"):
+                menu.addAction(self.actOpenXMLFile)
+                menu.addSeparator()
+                menu.addAction(self.actEditXMLFileGlobal)
+                menu.addAction(self.actEditXMLFileLocal)
+                
+            elif domElement.attribute(QString("type")) == model_choice_name:
+                menu.addAction(self.actRemoveModel)
+                menu.addAction(self.actMoveNodeUp)
+                menu.addAction(self.actMoveNodeDown)
+                
+            elif domElement.attribute("config_name") == QString("models"):
+                # decide which scenario to add models to
+                scenario_index = self.currentIndex
+                
+                # build a submenu with models
+                models_submenu = QMenu(menu)
+                models_submenu.setTitle('Add model to run')
+                available_models = self.getAvailableModels()
+                for model in available_models:
+                    callback = lambda x=model: self.addModel(scenario_index, x)
+                    models_submenu.addAction(self.createAction(self.addIcon, 
+                                                               model, callback))
+                menu.addMenu(models_submenu)
+            
+            # TODO: Implement
+            # self.add_default_actions(domElement, menu)
+            
+            if menu:
+                # Last minute chance to add items that all menus should have
+                if domElement.hasAttribute(QString("inherited")):
+                    # Tack on a make editable if the node is inherited
+                    menu.addSeparator()
+                    menu.addAction(self.actMakeEditable)
+                else:
+                    if domElement.hasAttribute(QString("copyable")) and \
+                           domElement.attribute(QString("copyable")) == QString("True"):
+                        menu.addSeparator()
+                        menu.addAction(self.actCloneNode)
+                    if domElement and (not domElement.isNull()) and \
+                           domElement.hasAttribute(QString("type")) and \
+                           ((domElement.attribute(QString("type")) == QString("dictionary")) or \
+                            (domElement.attribute(QString("type")) == QString("selectable_list")) or \
+                            (domElement.attribute(QString("type")) == QString("list"))):
+                        menu.addSeparator()
+                        menu.addAction(self.actRemoveNode)
+            # Check if the menu has any elements before exec is called
+            if not menu.isEmpty():
+                menu.exec_(QCursor.pos())
         return
     
-    def aboutToShowModelMenu(self):
-        models = self.getAvailableModels()
-        for model in models:
-            action = QAction(self.modelIcon, model, self.mainwindow)
-            callback = lambda model_name=model: self.addModel(model_name)
-            QObject.connect(action, SIGNAL("triggered()"), callback)
-            self.modelMenu.addAction(action)
-
     def getAvailableModels(self):
+        ''' return a list of names for available models in the project'''
         from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
-        model_elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc, attribute='type', value='model')
+        
+        xml_version = xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
+        model_elements = []
+        
+        if xml_version > 1.0:
+            elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
+                                                  attribute='type', value='model')
+            model_elements = [e[0] for e in elements]
+        else:
+            # we can't fetch by type in old xml versions, so grab everything
+            # that is under model_manager/model_system and filter out hidden
+            # elements (such as templates). Note that this doesn't guarantee
+            # that we only get models, but it's the best possible guess
+            root = self.model.domDocument.documentElement()
+            model_system = self.xml_helper.get_sub_element_by_path(root, 'model_manager/model_system')
+            model_nodes = model_system.childNodes()
+            for x in range(0, model_nodes.length()):
+                model_node = model_nodes.item(x).toElement()
+                if not model_node.isNull() and not \
+                    model_node.attribute('hidden').toLower() == QString('true'):
+                    model_elements.append(model_node)
+        
         available_models = []
         for model in model_elements:
-            model_name = model[1].nodeName()
+            model_name = model.nodeName()
             available_models.append(model_name)
         return available_models
 
-    def addModel(self, model_name):
-        # Add a model to the models_to_run list from the model_system
-        
-#        new_model = self.toolboxbase.doc.createElement(model_name)
-#        new_model.setAttribute(QString("choices"),QString("Run|Skip"))
-#        new_model.setAttribute(QString("type"),QString("model"))
-#        x = self.toolboxbase.doc.elementsByTagName(QString("models_to_run"))
-#        x.item(0).appendChild(new_model)
-        
-        from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-        helper = ResultsManagerXMLHelper(self.toolboxbase)
-        head_node_args = {"choices":"Run|Skip", "type":"model",'value':'Run'}
-        helper._add_new_xml_tree(head_node_name=model_name, 
-                                 head_node_args=head_node_args, 
-                                 parent_name='models_to_run',
-                                 xml_tree = self.toolboxbase.runManagerTree)
-
-
-
+    def addModel(self, scenario_index, model_name):
+        xml_version = xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
+        spawn = self.model.domDocument.createElement(model_name)
+        spawn_text = self.model.domDocument.createTextNode('Run')
+        spawn.appendChild(spawn_text)
+        spawn.setAttribute('choices', 'Run|Skip')
+        type_name = 'model_choice' if xml_version > 1.0 else 'model'
+        spawn.setAttribute('type', type_name)
+        # insert as first child to scenario
+        self.model.insertRow(0, scenario_index, spawn)
