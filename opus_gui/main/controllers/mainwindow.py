@@ -38,7 +38,7 @@ from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
 
 # General system includes
-import sys,time, tempfile, os
+import time, tempfile, os
 
 
 # Main window used for houseing the canvas, toolbars, and dialogs
@@ -387,10 +387,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
 
-        if config:
+        if config: # open the configuration file
             self.toolboxBase.openXMLTree(config)
 
-        else:
+        else: # show open config dialog box
             start_dir = ''
             opus_home = os.environ.get('OPUS_HOME')
             if opus_home:
@@ -476,6 +476,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             indentSize = 2
             opus_core_xml_configuration.update(str(domDocument.toString(indentSize)))
             opus_core_xml_configuration.save_as(str(fileName))
+            # update 'latest project'
+            self.latest_project_file_name = fileName_file_name = fileName
+            self.updateProjectHistoryNode()
+            # mark all trees as clean
             self.toolboxBase.runManagerTree.model.markAsClean()
             self.toolboxBase.dataManagerTree.model.markAsClean()
             if self.toolboxBase.dataManagerDBSTree is not None:
