@@ -21,7 +21,8 @@ from opus_gui.abstract_manager.views.ui_clonenode import Ui_CloneNodeGui
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
     def __init__(self, xml_controller, clone, parentNode, model):
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+            Qt.WindowMaximizeButtonHint
         QDialog.__init__(self, xml_controller.mainwindow, flags)
         self.setupUi(self)
         self.xml_controller = xml_controller
@@ -52,7 +53,6 @@ class CloneNodeGui(QDialog, Ui_CloneNodeGui):
         
 class RenameNodeGui(CloneNodeGui):
     def __init__(self, xml_controller, node):
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         CloneNodeGui.__init__(self, xml_controller, None, None, None)
         
         # check that we got a valid node
