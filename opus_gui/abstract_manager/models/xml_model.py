@@ -133,6 +133,7 @@ class XmlModel(QAbstractItemModel):
                    "integer":self.fieldIcon,
                    "float":self.fieldIcon,
                    "model":self.cogIcon,
+                   "model_choice":self.cogIcon,
                    "submodel":self.cogBlueIcon,
                    "dataset":self.folderDatabaseIcon,
                    "table":self.tableIcon,
@@ -465,6 +466,7 @@ class XmlModel(QAbstractItemModel):
             self.makeEditable(node)
         if not self.isTemporary(node):
             self.markAsDirty()
+        self.emit(SIGNAL("layoutChanged()"))
         return returnval
 
     def removeRow(self,row,parent,checkInherited=True):
