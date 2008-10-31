@@ -47,6 +47,7 @@ class XMLConfiguration(object):
         self.parent_map = None
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
+        self.xml_version = 1.0
         self.initialize_from_xml_file(is_parent)
         
     def initialize_from_xml_file(self, is_parent=False):
@@ -81,7 +82,7 @@ class XMLConfiguration(object):
             return None
         else:
             return Configuration(self._node_to_config(x))
-        
+
     def get_expression_library(self):
         """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
         dictionary are pairs (dataset_name, variable_name) and the values are the corresponding expressions."""
@@ -141,10 +142,9 @@ class XMLConfiguration(object):
         If the model_name argument is given, also parse overriding 
         configurations for that specific model."""
         # grab general configuration for estimations
-        config_section = self.get_section('model_manager/model_system')
-        # if it doesn't find config there, try the old location
-        #TODO: refactor xml files instead
-        if 'estimation_config' not in config_section:
+        if self.xml_version > 1.0:
+            config_section = self.get_section('model_manager/model_system')
+        else:
             config_section = self.get_section('model_manager/estimation')
 
         config = config_section['estimation_config']
@@ -158,23 +158,24 @@ class XMLConfiguration(object):
         # get the configuration overrides for the model
         changes_dict = {}
         
-        # get the models_to_run
-        models_to_run = []
-        models_to_run_node = \
-            self._find_node('model_manager/model_system/%s/structure/'
-                            'prepare_for_estimate/models_to_run/' 
-                            %model_name)
-        if models_to_run_node is not None:
-            # model has a "models to run"-list
-            models_to_run = self._convert_node_to_data(models_to_run_node)
-
-            # include this model in the models_to_run list
-            models_to_run.append({model_name: ["estimate"]})
-
-        # only submit changes to config if models_to_run was updated
-        changes_dict['models'] = models_to_run
-        if models_to_run:
-            config['config_changes_for_estimation'] = {model_name: changes_dict}
+        if self.xml_version > 1.0:
+            # look for a models to run list in prepare for estimate            
+            models_to_run = []
+            models_to_run_node = \
+                self._find_node('model_manager/model_system/%s/structure/'
+                                'prepare_for_estimate/models_to_run/' 
+                                %model_name)
+            if models_to_run_node is not None:
+                # model has a "models to run"-list
+                models_to_run = self._convert_node_to_data(models_to_run_node)
+    
+                # include this model in the models_to_run list
+                models_to_run.append({model_name: ["estimate"]})
+    
+            # only submit changes to config if models_to_run was updated
+            changes_dict['models'] = models_to_run
+            if models_to_run:
+                config['config_changes_for_estimation'] = {model_name: changes_dict}
 
         return config
 
@@ -193,14 +194,14 @@ class XMLConfiguration(object):
         # sort the list of variables to make it easier to test the results
         all_vars.sort()
 
-        submodel_list = self.get_section('model_manager/model_system/' + 
-                                         model_name + '/specification/')
-        # if there was no submodels, try the old location
-        #TODO: refactor xml instead
-        if not submodel_list:
-            old_section = self.get_section('model_manager/estimation')
-            if old_section is not None and (model_name in old_section):
-                submodel_list = old_section[model_name]
+        # look for list of submodels
+        if self.xml_version > 1.0:
+            submodel_list = self.get_section('model_manager/model_system/' + 
+                                             model_name + '/specification/')
+        else:
+            estimation_section = self.get_section('model_manager/estimation')
+            if model_name in estimation_section:
+                submodel_list = estimation_section[model_name]
 
         result = {}
         result['_definition_'] = all_vars
@@ -259,6 +260,15 @@ class XMLConfiguration(object):
         full_root = self.full_tree.getroot()
         if full_root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
+        
+        # set the parser to this files xml version
+        version_node = self.tree.getroot().find('xml_version')
+        if version_node is not None:
+            self.xml_version = self._convert_node_to_data(version_node)
+        else:
+            # files w/o specified version gets treated as 1.0
+            self.xml_version = 1.0 
+
         for p in self._get_parent_trees():
             self._merge_parent_elements(p, '')
         if is_parent:
@@ -266,7 +276,7 @@ class XMLConfiguration(object):
                 if n.get('inherited') is None:
                     n.set('inherited', self.name)
         # Parent map... can be used for working back up the XML tree
-        self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)        
+        self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)
 
     def _find_node(self, path):
         # find path in my xml tree
@@ -285,6 +295,15 @@ class XMLConfiguration(object):
         for p in parent_nodes:
             x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
             parent_trees.append(x.full_tree.getroot())
+            # warn if the xml version is not consistent through out the entire
+            # inheritage tree
+            if x.xml_version != self.xml_version:
+                print ('Warning! Different versions of XML structure.\n'
+                       'Switching from version %s in file %s\n'
+                       'to version %s in file %s'
+                        %(x.xml_version, x.full_filename,
+                          self.xml_version, self.full_filename))
+
         return parent_trees
     
     def _merge_parent_elements(self, parent_node, path):
@@ -462,8 +481,13 @@ class XMLConfiguration(object):
             return self._convert_dictionary_to_data(node)
         elif type_name in ['model_template', 'estimation_template']:
             return None
+        # type = 'model' was changed to 'model_choice' from xml version 1.0 
+        # and up.
         elif type_name == 'model':
-            return self._convert_model_to_data(node)
+            if self.xml_version > 1:
+                return self._convert_model_to_data(node)
+            else:
+                return self._convert_custom_type_to_data(node, "Skip")
         elif type_name=='category_with_special_keys':
             return self._convert_dictionary_with_special_keys_to_data(node)
         elif type_name=='class':
@@ -808,41 +832,27 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
-
+            
     def test_get_section(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
-        config = XMLConfiguration(f).get_section('model_manager/model_system')
+        config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
-            'estimation_config': {},
-            'real_estate_price_model': {
-                'prepare_for_run': {
-                    'arguments': {
-                        'specification_table':'real_estate_price_model_specification',
-                        'specification_storage':'base_cache_storage',
-                    },
-                    'name':'prepare_for_run'
-                }
-            }
-        }
+          'real_estate_price_model': {
+            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'existing_units']}},
+          'models_to_estimate': ['real_estate_price_model'],
+          'estimation_config': {}}
         self.assertEqual(config, should_be)
         
     def test_get_section_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
-        config = XMLConfiguration(f).get_section('model_manager/model_system')
+        config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
-            'estimation_config': {},
-            'real_estate_price_model': {
-                'prepare_for_run': {
-                    'arguments': {
-                        'specification_table':'real_estate_price_model_specification',
-                        'specification_storage':'base_cache_storage',
-                    },
-                    'name':'prepare_for_run'
-                }
-            }
-        }
+          'real_estate_price_model': {
+            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'existing_units']}},
+          'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model'],
+          'estimation_config': {}}
         self.assertEqual(config, should_be)
-
+        
     def test_inherited_nodes(self):
         # make sure that inherited attributes are tagged as 'inherited'
         f = os.path.join(self.test_configs, 'estimation_child.xml')
@@ -912,22 +922,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test getting a run specification that includes a controller in the xml
         f = os.path.join(self.test_configs, 'controller_test.xml')
         config = XMLConfiguration(f).get_run_configuration('baseline')
-        should_be = {
-            'project_name':'test_project',
-            'models_configuration': {
-                'real_estate_price_model': {
-                    'controller': {
-                        'prepare_for_run': {
-                            'name': 'prepare_for_run', 
-                            'arguments': {
-                                'specification_storage': 'base_cache_storage', 
-                                'specification_table': 'real_estate_price_model_specification'
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        should_be = {'project_name':'test_project',
+                    'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
+          'name': 'prepare_for_run', 
+          'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
+          }}}}}
         self.assertEqual(config, should_be)
         
     def test_travel_model_config(self):
@@ -946,31 +945,22 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # for ln_cost and a variable defined as a Python class 
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {
-            '_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
-            24: ['ln_cost', 'existing_units']
-        }
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
+          24: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification_with_equation(self):
         f = os.path.join(self.test_configs, 'estimate_choice_model.xml')
         config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
-        should_be = {
-            '_definition_': ['var1 = package.dataset.some_variable_or_expression'],
-            -2: {
-                1: ['constant'], 
-                2: ['var1']
-            }
-        }
+        should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],
+          -2: {1: ['constant'], 2: ['var1']}}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {
-            '_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
-            240: ['ln_cost', 'existing_units']
-        }
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
+          240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
         
     def test_expression_library(self):
@@ -1054,14 +1044,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # no model_manager section in the updated configuration
         section2 = config.get_section('model_manager/estimation')
         self.assertEqual(section2, None)
-        # now re-initialize from the original xml file, which has a model 
-        # manager section and no scenario manager section
+        # now re-initialize from the original xml file, which has a model manager section and no scenario manager section
         config.initialize_from_xml_file()
         section3 = config.get_section('scenario_manager/test_scenario')
         self.assertEqual(section3, None)
         # no model_manager section in the updated configuration
-        section4 = config.get_section('model_manager/model_system')
-        self.assertEqual(section4['real_estate_price_model']['prepare_for_run']['name'], 'prepare_for_run')
+        section4 = config.get_section('model_manager/estimation')
+        self.assertEqual(section4['real_estate_price_model']['single_family_residential']['variables'], ['ln_cost', 'existing_units'])
 
     def test_update_and_save(self):
         # make sure nodes marked as temporary or inherited are filtered out when doing an update and a save
