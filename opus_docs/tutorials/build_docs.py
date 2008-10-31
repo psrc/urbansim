@@ -12,24 +12,13 @@
 # other acknowledgments.
 # 
 
-
 import os
-import opus_docs
+import opus_docs.tools
 
-basepath = opus_docs.__path__[0]
-path = os.path.join(basepath, 'tutorials')
-print "path = '%s'" % path
+def main():
+    path = os.path.join(opus_docs.__path__[0], "tutorials")
+    modules = ["run-eugene-model", "lorenz-curve"]
+    opus_docs.tools.build(modules, cwd=path, make_index=False)
 
-cwd = os.getcwd()
-os.chdir(path)    
-
-modules = ["run-eugene-model", "lorenz-curve"]
-for module in modules:
-   # run latex twice to resolve cross-references correctly
-    os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
-    os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
-    # run latex2html to make an html version of the manual.  
-    latex2html_call = 'latex2html -local_icons -bottom_navigation -address "info (at) urbansim.org" %s' % module
-    os.system( latex2html_call )
-
-os.chdir(cwd)
+if __name__ == "__main__":
+    main()
