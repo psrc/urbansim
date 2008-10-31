@@ -88,7 +88,8 @@ class ChunkModel(Model):
         return self.index_of_current_chunk
     
     def get_agents_order(self, dataset):
-        """ Return desired order of individuals within a dataset containig only agents for chunking.
+        """ Return desired order of individuals within a dataset containing only agents for chunking.
+        'dataset' is an object of class DatasetSubset.
         """
         return arange(dataset.size())
 

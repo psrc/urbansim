@@ -14,7 +14,6 @@
 
 from opus_core.model import Model
 from opus_core.variables.variable_name import VariableName
-from opus_core.variables.attribute_type import AttributeType
 
 class SimpleModel(Model):
     """
@@ -27,7 +26,7 @@ class SimpleModel(Model):
             outcome_attribute = VariableName(expression).get_alias()
         if outcome_attribute in dataset.get_known_attribute_names():
             dataset.delete_one_attribute(outcome_attribute)
-        dataset.add_attribute(data=values, name=outcome_attribute, metadata=AttributeType.PRIMARY)
+        dataset.add_primary_attribute(data=values, name=outcome_attribute)
         return values
     
 from opus_core.tests import opus_unittest

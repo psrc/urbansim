@@ -22,7 +22,6 @@ class AllocationModel(Model):
     """ Model allocates given quantity according to weights while meeting capacity restrictions.
     """
     model_name = "Allocation Model"
-    model_short_name = "AM"
 
     def run(self, dataset, outcome_attribute, weight_attribute, 
                  control_totals, current_year, control_total_attribute=None, 
