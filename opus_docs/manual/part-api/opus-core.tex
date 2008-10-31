@@ -837,11 +837,6 @@ The attribute name used in an expression can be:
 Example: \code{household.income}.
 \end{itemize}
 
-(Currently the attribute name can also be an un-qualified attribute for an
-existing attribute of the dataset, but support for this may be dropped in
-future versions of Opus.  So we recommend always qualifying the attribute
-name with the name of the dataset in an expression.)
-
 The variable names can include arguments (Section
 \ref{sec:tutorial-numbersinvariables}).  For example,
 \class{is_near_highway_if_threshold_is_2} matches the variable definition
@@ -983,16 +978,16 @@ expressions.
 The \package{opus_core} package offers a few simple models that can serve as parent classes
 for user specific models or can be used directly. Their hierarchy is shown in
 Figure~\ref{fig:opus-core-model}. \class{Model} and \class{ChunkModel} are abstract
-classes, \class{ChoiceModel} and \class{RegressionModel} implement different
-model functionality. The classes are described in detail in the next sections.
+classes, each of the remaining models implements a specific 
+functionality. The classes are described in detail in the next sections.
 
 \begin{figure}
 \begin{center}
 %begin{latexonly}
-\includegraphics[scale=0.8, angle=-90]{images/coremodelswithmethods.pdf}
+\includegraphics[scale=0.8]{images/coremodelswithmethods.pdf}
 %end{latexonly}
-\caption{\label{fig:opus-core-model}\small Models in Opus \package{opus_core}.}
-\htmlonly{\includegraphics[scale=0.8, angle=-90]{images/coremodelswithmethods.jpg}}
+\caption{\label{fig:opus-core-model}\small Models in \package{opus_core}.}
+\htmlonly{\includegraphics[scale=0.8]{images/coremodelswithmethods.jpg}}
 \end{center}
 \end{figure}
 
@@ -1001,7 +996,7 @@ model functionality. The classes are described in detail in the next sections.
 automatic logger which prints out information about the model start, end and
 processing time.  Model supports two methods: an obligatory method
 \method{run()} and an optional method \method{estimate()}. Each child of
-\class{Model} can define a class attribute \attributesindex \verb|models_name| that is used as
+\class{Model} can define a class attribute \attributesindex \verb|model_name| that is used as
 an identification of the specific model in the logger output. Any arguments
 can be passed into the \method{run()} and \method{estimate()} methods and
 those can return any values.
@@ -1022,7 +1017,7 @@ memory. The class does not have any effect on an \method{estimate()} method.
 \item[dataset] - an object of class \class{Dataset} along whose elements the
   model will be chunked.
 \item[dataset_index] - an index of elements within \verb|dataset| that are to
-  be chunked.
+  be chunked. Default is None which means that all elements of \verb|dataset| are considered.
 \item[result_array_type] - a type of the resulting array. It can be any numerical type of numpy array. \numpyindex
         The default value is \verb|float32|.
 \item[...] - optional additional arguments that are passed to the method
@@ -1037,22 +1032,33 @@ the method \method{run_chunk()} and passes as arguments the corresponding portio
 of \verb|dataset_index|, \datasetindex the whole \verb|dataset| \datasetindex and all additional
 arguments. By default the order of elements in \verb|dataset_index| is
 preserved. This can be changed by redefining the method
-\method{get_agents_order()}. This method takes a dataset \datasetindex as argument which is an
+\method{get_agents_order()} (see below). 
+
+{\it Output}:~\\[1mm]
+%
+The class returns an array of the same size as \verb|dataset_index| and of type \verb|result_array_type| 
+(passed to the method as input).
+Values of this array are return values of the (possibly) multiple calls of the method \verb|run_chunk()|.
+The $i$-th value in this array is a result for the \verb|dataset_index|[$i$]-th element of \verb|dataset|.
+
+\subsubsection{Implementing a Child Class}
+%
+All models that are derived from the ChunkModel class must have the method \method{run_chunk()} implemented. 
+It has two non-keyword arguments: an integer array and an object of class \class{Dataset}. The first argument 
+is an index of elements within the second argument. The method can have additional keyword arguments.  
+The method is expected to return an array of the same size as the size of the first argument (i.e. the chunk size).
+The $i$-th value of the result is expected to be associated with the dataset element indexed by index[$i$].
+
+Optionally, the method  \method{get_agents_order()} can be implemented in the child class. It determines the order in which 
+dataset elements are passed into chunks. This method takes a dataset \datasetindex as an argument which is an
 object of class \class{DatasetSubset} \datasetsubsetindex containing only those elements of the
 original \verb|dataset| \datasetindex that are defined by \verb|dataset_index|. \datasetindex It returns
-an index of elements in the given dataset \datasetindex determining the order in which the
+an index of elements within the given subset determining the order in which the
 elements should be processed. For example, if this method returns a randomized
 index, the elements passed into \method{run_chunk()} will be processed in
 randomized order.
 
 
-{\it Output}:~\\[1mm]
-%
-The class returns \verb|result_array| (passed to the method as input) filled
-by values returned by \verb|run_chunk()| are filled into. This requires that
-the method \verb|run_chunk()| returns an array of the same type as
-\verb|result_array| and its size corresponds to the number of elements in one
-chunk.
 
 \subsection{ChoiceModel Class}
 \label{sec:choice-model}
@@ -1088,7 +1094,7 @@ The class is initialized by passing the following arguments:
   final choices (see Section~\ref{sec:choices}). Default value is
   \verb|'opus_core.random_choices'|.
 \item[submodel_string] - If model contains submodels, this character string
-  specifies what agent's attribute \attributesindex determines those submodels.
+  specifies what agent' attribute \attributesindex determines those submodels. Default is None, i.e. no submodels.
 \item[choice_attribute_name] - Name of the attribute \attributesindex that identifies the
   choices. This argument is only relevant if \verb|choice_set| is not an
   instance of \class{Dataset}. \datasetindex Otherwise the choices are identified by the
@@ -1096,11 +1102,13 @@ The class is initialized by passing the following arguments:
   \verb|'choice_id'|
 \item[interaction_pkg] - This argument is only relevant if there is an
   implementation of an interaction dataset that corresponds to interaction
-  between agents and choices. Default value is \verb|'opus_core'|.
+  between agents and choices. It is the name of the Opus package where the implementation lives.
+  Default value is \verb|'opus_core'|.
 \item[run_config] - A collection of additional arguments that control a
-  simulation run. It should be of class \class{Resources}.
+  simulation run. It should be of class \class{Resources}. Default is None.
 \item[estimate_config] - A collection of additional arguments that control an
-  estimation run. It should be of class \class{Resources}.
+  estimation run. It should be of class \class{Resources}. Default is None.
+\item[dataset_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 The initialization method creates a class attribute \attributesindex \verb|upc_sequence|, using
 the passed arguments \verb|utilities|, \verb|probabilities| and
@@ -1108,7 +1116,7 @@ the passed arguments \verb|utilities|, \verb|probabilities| and
 Section~\ref{sec:upc-sequence}). A class attribute \attributesindex \verb|choice_set| is an
 object of \class{Dataset}. \datasetindex If the argument \verb|choice_set| is a list or
 array, a \class{Dataset} \datasetindex is created using the values of the argument as the
-unique identifier called \verb|choice_attribute_name|. \attributesindex
+unique identifier. The name of this unique identifier is the value of \verb|choice_attribute_name|. \attributesindex
 
 \subsubsection{The Run Method}
 %
@@ -1118,18 +1126,20 @@ and coefficients. \coefficientsindex
 {\it Input}:
 \begin{description}
 \item[specification] - an instance of class \class{EquationSpecification}
-  specifying variables \variablesindex to be used in the simulation.
+  specifying variables \variablesindex to be used in the simulation (see Section~\ref{sec:specification}).
 \item[coefficients] - an instance of class \class{Coefficients} \coefficientsindex that contains
-  values of coefficients \coefficientsindex to be used in the simulation.
+  values of coefficients \coefficientsindex to be used in the simulation (see Section~\ref{sec:coefficients}).
 \item[agent_set] - an instance of class \class{Dataset} \datasetindex representing the whole
   set of agents to be used for the variable \variablesindex computation.
 \item[agents_index] - an index within the \verb|agent_set| determining which
-  agents enter the choice process. If it is not given, all agents are
+  agents enter the choice process. If it is not given (default), all agents are
   considered.
 \item[chunk_specification] - a dictionary specifying how to determine the number
-  of chunks to run the model in (see Section~\ref{sec:models-configuration}).
-\item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+  of chunks to run the model in (see Section~\ref{sec:models-configuration}). 
+  Default is None, which is equivalent to 1 chunk.
+\item[data_objects] - a dictionary containing additional datasets \datasetindex 
+  needed for computing variables. \variablesindex This argument is obsolete - the datasets should be 
+  included in the \verb|dataset_pool| argument of the constructor.
 \item[run_config] - additional \class{Resources} for controlling the
   simulation run.
 \end{description}
@@ -1168,17 +1178,18 @@ a given specification.
 {\it Input}:
 \begin{description}
 \item[specification] - an instance of class \class{EquationSpecification}
-  specifying variables \variablesindex to be used in the estimation.
+  specifying variables \variablesindex to be used in the estimation (see Section~\ref{sec:specification}).
 \item[agent_set] - a \class{Dataset} \datasetindex representing the whole set of agents
   to be used for the variable \variablesindex computation.
 \item[agents_index] - an index within the \verb|agent_set| determining which
-  agents will be used for the estimation. If it is not given, all agents are
+  agents will be used for the estimation. If it is not given (default), all agents are
   considered.
 \item[procedure] - a character string giving the fully qualified name of the
-  estimation procedure. This argument can be also passed via
-  \verb|estimate_config| as an entry \verb|'estimation'|.
-\item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+  estimation procedure (see Section~\ref{sec:estimation-procedure}). This argument can be also passed via
+  \verb|estimate_config| as an entry \verb|'estimation'|. The default value is None.
+\item[data_objects] - a dictionary containing additional datasets \datasetindex
+  needed for computing variables. \variablesindex This argument is obsolete - the datasets should be 
+  included in the \verb|dataset_pool| argument of the constructor.
 \item[estimate_config] - additional \class{Resources} for controlling the
   estimation run.
 \end{description}
@@ -1203,13 +1214,12 @@ adding entries needed for the estimation) as arguments (see
 Section~\ref{sec:estimation-procedure} for more details).  From the returned
 dictionary, items ``estimators'', ``standard_errors'', ``other_measures'' and
 ``other_info'' are extracted. After results from all submodels are collected,
-a \class{Coefficient} \coefficientsindex object is created using those extracted values.
+a \class{Coefficient} \coefficientsindex object is created using those extracted values (see Section~\ref{sec:specification}).
 
 {\it Output}:~\\[1mm]
 The method returns a tuple of the created \class{Coefficient} \coefficientsindex object and a
-dictionary with entries for each submodel equals a dictionary returned by the
-\verb|run()| method of \verb|procedure| for that submodel.
-
+dictionary with one entry for each submodel. 
+Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsection{RegressionModel Class}
 \index{class!RegressionModel}
