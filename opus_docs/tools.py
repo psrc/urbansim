@@ -13,6 +13,7 @@
 # 
 
 import os
+import sys
 import subprocess
 
 def build(modules, cwd=os.getcwd(), make_index=True):
@@ -42,9 +43,11 @@ def run(command, cwd, stop_on_error=True):
     proc = subprocess.Popen(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     (stdout, stderr) = proc.communicate()
     if proc.returncode != 0:
-        print stdout
         if stop_on_error:
-            raise Exception("Fatal error for command: " + str(command))
+            exception_msg = "Fatal error for command: " + str(command) + "\nCommand output:\n" + stdout;
+            raise Exception(exception_msg)
+        else:
+            sys.stderr.write(stdout)
 
 # The old script called latex (rather than pdflatex), followed by dvips and ps2pdf
 #  -  pdflatex works better that latex followed by  dvips and ps2pdf for producing pdf files if there are no figures
