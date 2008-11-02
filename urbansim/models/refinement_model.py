@@ -27,7 +27,7 @@ from opus_core.variables.attribute_type import AttributeType
 
 class RefinementModel(Model):
     """ Model refines simulation results by shifting agents' location around
-    according to specified actions ('subtract', 'add', 'target', 'set_value'):
+    according to specified actions ('subtract', 'add', 'target', 'set_value', 'delete'):
     
     subtract - unplace/removes agents satisfying agent_expression from locations with location_expression being true;
     modify - takes agents that are unplaced by preceeding subtract action, and modify their attribute(s) to 
@@ -47,7 +47,7 @@ class RefinementModel(Model):
     model_short_name = "RM"
 
     def run(self, refinement_dataset=None, current_year=None, 
-            action_order=['subtract', 'add', 'target', 'set_value'],
+            action_order=['subtract', 'add', 'target', 'set_value', 'delete'],
             dataset_pool=None):
         
         """'refinement_dataset' is a RefinementDataset object.  see unittest for its columns
