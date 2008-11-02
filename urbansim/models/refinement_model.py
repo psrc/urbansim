@@ -214,7 +214,55 @@ class RefinementModel(Model):
                                        )
         self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_index)
         
+    def _delete(self, agents_pool, amount, 
+                  agent_dataset, location_dataset, 
+                  this_refinement,
+                  dataset_pool ):
+        """similar to subtract action, instead of unplacing agents delete remove agents from the agent dataset,
+        those agents won't be available for later action
+        """
         
+        fit_index = self.get_fit_agents_index(agent_dataset, 
+                                              this_refinement.agent_expression, 
+                                              this_refinement.location_expression,
+                                              dataset_pool)
+        
+        if amount > fit_index.size or amount < 0:
+            logger.log_warning("Refinement requests to delete %i agents,  but there are %i agents in total satisfying %s;" \
+                               "delete %i agents instead" % (amount, fit_index.size, 
+                                                               ' and '.join( [this_refinement.agent_expression, 
+                                                                            this_refinement.location_expression] ).strip(' and '),
+                                                               fit_index.size) )
+            amount = fit_index.size
+        
+        if amount == fit_index.size:
+            movers_index = fit_index
+        else:
+            movers_index = sample_noreplace( fit_index, amount )
+            
+        agents_pool = list( set(agents_pool) - set(movers_index) )
+        ## modify location capacity attribute if specified
+        if this_refinement.location_capacity_attribute is not None and len(this_refinement.location_capacity_attribute) > 0:
+            location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
+
+            movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
+            movers_location_index = location_dataset.get_id_index( movers_location_id )
+            num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()) )[0]
+            num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
+                                                                            (location_dataset.dataset_name,
+                                                                            agent_dataset.dataset_name),
+                                                                            dataset_pool=dataset_pool)
+            
+            shrink_factor = safe_array_divide( (num_of_agents_by_location - num_of_movers_by_location ).astype('float32'),
+                                                num_of_agents_by_location, return_value_if_denominator_is_zero = 1.0  )
+            new_values = round_( shrink_factor * location_dataset.get_attribute(this_refinement.location_capacity_attribute) )
+            location_dataset.modify_attribute( this_refinement.location_capacity_attribute, 
+                                               new_values
+                                               )
+            self._add_refinement_info_to_dataset(location_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_location_index)
+            
+        agent_dataset.remove_elements( array(movers_index) )
+                
     def _add(self, agents_pool, amount, 
              agent_dataset, location_dataset, 
              this_refinement,
