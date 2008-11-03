@@ -420,7 +420,8 @@ optional type information for each column. The type information, if provided, is
 appended to the column name and separated by a colon, as in \verb|id:int32| which
 specifies to use the numpy \verb|int32| type for storing the \verb|id| values. 
 The type may be any of the numpy types in
-Table~\ref{storage-numpy-python-mapping}.
+Table~\ref{storage-numpy-python-mapping}.
+
 
 \begin{table}
 \begin{center}
@@ -538,9 +539,34 @@ accept a \verb|table_name| parameter interpret it as a file name (relative to th
 base directory) without an extension in which the data are stored in an ``.dbf''
 file.  The extension ``.dbf'' is added automatically. Each table is stored in one
 file. The format of these files is described at
-\url{http://www.clicketyclick.dk/databases/xbase/format/data_types.html\#DATA_TYPES}.
+\url{http://www.clicketyclick.dk/databases/xbase/format/data_types.html\#DATA_TYPES}.
+
 \subsection{esri_storage}
 %
+The \verb|esri_storage| class provides ESRI-based file storage for datasets.  It uses the 
+ESRI Geoprocessing framework, interfacing via Python, to provide access to ESRI storage
+objects.  Consequently, ArcGIS v9.x is required to utilize this storage class.  Any 9.x version
+of ArcGIS should work fine, although it is recommended that you read through our instructions
+for installing OPUS along with ArcGIS here http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/PythonAndArcGIS.
+
+The constructor of this class takes a \verb|storage_location| in its arguments.  This
+can be one of several different types of paths.  It can be a standard directory path (e.g. 
+'c:\temp'), a path to a personal or file geodatabase (e.g. 'c:\temp\mydb.mdb' or 'c:\temp\mydb.gdb'), or
+it can be a path to an ArcSDE database connection (e.g. 'Database Connections\your_db_conn.sde').
+In the case that you use an ArcSDE path, that connection must already exist in ArcCatalog with the 
+proper connection information.
+
+The \verb|esri_storage| class will read the attributes of any file type that ESRI normally provides 
+access to within ArcGIS.  This includes the attribute tables of shapefiles, standalone
+dbf files, feature classes in geodatabases, and tables within geodatabases.
+
+The \verb|esri_storage| class will write dbf tables or tables within a geodatabase.  If the 
+constructor were given a regular file path, dbf tables will be written.  In this case, in order 
+to conform with dbf standards, long column names will be truncated and renamed to be unique.  In the 
+case of geodatabase tables, tables will be written with the full column and table names intact.
+
+For additional information about specific methods in the \verb|esri_storage| class, see the python 
+module itself for docstrings that document specifics about the methods and arguments.
 
 \section{Opus Variables} \indexii{Variables}{Opus}
 \label{sec:opus-variable}
