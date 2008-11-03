@@ -307,8 +307,6 @@ class XmlModel(QAbstractItemModel):
         return self.createIndex(parentItem.row(),0,parentItem)
 
     def rowCount(self, parent):
-        
-        
         parentItem = None
         if not parent or not parent.isValid():
             #print "row_count non-valid root item"
@@ -488,6 +486,7 @@ class XmlModel(QAbstractItemModel):
             # be added back in
             if checkInherited:
                 self.checkIfInheritedAndAddBackToTree(domNodePath, parent)
+        self.emit(SIGNAL("layoutChanged()"))
         return returnval
 
     def moveUp(self,item,howmany=1):
@@ -573,6 +572,7 @@ class XmlModel(QAbstractItemModel):
         if len(finds) == 0:
             finds.append(QModelIndex())
         return finds
+
 
     # This function needs to be tested... but is here for the future
     #def stripAttribute(self,attribute,parent,recursive=True):
