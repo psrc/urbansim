@@ -406,6 +406,8 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 self.mainwindow.toolboxBase = tb
                 self._rootItem = XmlItem(dd, dd.documentElement(), None)
                 self._rootItem.initAsRootItem()
+                self.xmlRoot = dd.documentElement().\
+                    firstChildElement('leveltwo')
             # create fake abstract model methods that are used
             def createIndex(self, row, col, parent): pass
             def removeRow(self, row, parent_node): pass
@@ -428,8 +430,6 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         ctrl.model = DummyModel(doc)
         
         self.root = doc.documentElement()
-        # fake manager root
-        ctrl.xmlRoot = self.root.firstChildElement('leveltwo')
         self.xml = XmlManipulator(ctrl)
         
         
