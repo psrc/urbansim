@@ -38,11 +38,20 @@ class ParcelDataset(UrbansimDataset):
             index = None,
             recompute_flag = False,
             variable_package_name="urbansim_parcel.parcel",
-            consider_constraints_as_rules=False,
+            consider_constraints_as_rules=True,
             ):
         """
         calculate the min and max development capacity given by constraints.
         modelled from the method of gridcell
+
+        if consider_constraints_as_rules is True, nothing is allowed to be built unless it is specified.  
+        It interprets -1 in minimum/maximum as unconstrained and not allowing any development if not 
+        specified in development_constraints table,
+        
+        else if consider_constraints_as_rules is False, anything can be built unless it is disallowed explicity.  
+        It interprets any number in minimum/maximum as it is, i.e. -1 or any negative value as not allowing any 
+        development and allowing any development if not specified in development_constriant
+        
         """
         if (self.development_constraints <> None) and (not recompute_flag):
             if (index <> None) and alltrue(self.development_constraints["index"] == index):
