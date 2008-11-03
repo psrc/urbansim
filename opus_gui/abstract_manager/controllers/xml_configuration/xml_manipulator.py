@@ -114,7 +114,7 @@ class XmlManipulator(object):
             For example: models_manager.xml_controller.xml.manager_root() 
             returns the root xml element for the Models Manager tab.
         '''
-        return self._controller.xmlRoot
+        return self._model.xmlRoot
     
     
     def get(self, element_or_path, root = None):
@@ -241,9 +241,15 @@ class XmlManipulator(object):
             self._model.makeEditable(element)
         
     
-    def children(self, element):
-        '''Return a tuple consisting of all child QDomElement's of [element]'''
+    def children(self, element = None):
+        '''
+        Return a tuple consisting of all child QDomElement's of [element].
+        If [element] is None, the absolute root of the project is used.
+        '''
         childlist = []
+        element = self._resolve_root_node(element)
+        if element is None:
+            return tuple()
         child = element.firstChildElement()
         while not child.isNull():
             childlist.append(child)
@@ -294,7 +300,6 @@ class XmlManipulator(object):
         self._model.removeRow(item.row(), parent_index)
         
         
-    
     def rename(self, tagname, element):
         '''
         Renames the tag for [element] to [tagname] if the [tagname] is a 
