@@ -1,4 +1,5 @@
 <opus_project>
+  <xml_version parser_action="skip" type="float"> 1.1 </xml_version>
   <general>
     <description type="string">Sample Eugene project</description>
     <project_name flags="hidden" hidden="True" type="string">eugene_gridcell</project_name>
