@@ -25,7 +25,7 @@ class XmlItem:
         self.childItems = []
 
     def initAsRootItem(self):
-        '''use this element as a root item and selectivly add its children'''
+        '''use this element as a root item and selectively add its children'''
         for x in xrange(0, self.domNode.childNodes().count(), 1):
             child_node = self.domNode.childNodes().item(x).toElement()
             # do not add nodes (or subtrees) that should be hidden
@@ -35,6 +35,12 @@ class XmlItem:
                 self.childItems.append(child_item)
                 # descend into childs subtree
                 child_item.initAsRootItem()
+                
+    
+    def refresh(self):
+        '''refreshes this item and all of it's children'''
+        self.childItems = []
+        self.initAsRootItem()
 
     def node(self):
         return self.domNode
