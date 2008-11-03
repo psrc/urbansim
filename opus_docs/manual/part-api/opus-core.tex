@@ -547,12 +547,12 @@ The \verb|esri_storage| class provides ESRI-based file storage for datasets.  It
 ESRI Geoprocessing framework, interfacing via Python, to provide access to ESRI storage
 objects.  Consequently, ArcGIS v9.x is required to utilize this storage class.  Any 9.x version
 of ArcGIS should work fine, although it is recommended that you read through our instructions
-for installing OPUS along with ArcGIS here http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/PythonAndArcGIS.
+for installing OPUS along with ArcGIS here \url{http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/PythonAndArcGIS}.
 
 The constructor of this class takes a \verb|storage_location| in its arguments.  This
 can be one of several different types of paths.  It can be a standard directory path (e.g. 
-'c:\temp'), a path to a personal or file geodatabase (e.g. 'c:\temp\mydb.mdb' or 'c:\temp\mydb.gdb'), or
-it can be a path to an ArcSDE database connection (e.g. 'Database Connections\your_db_conn.sde').
+'c:\temp'), a path to a personal or file geodatabase (e.g. 'c:/temp/mydb.mdb' or 'c:/temp/mydb.gdb'), or
+it can be a path to an ArcSDE database connection (e.g. 'Database Connections/your_db_conn.sde').
 In the case that you use an ArcSDE path, that connection must already exist in ArcCatalog with the 
 proper connection information.
 
