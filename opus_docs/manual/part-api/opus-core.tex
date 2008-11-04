@@ -63,7 +63,8 @@ The \class{Dataset} \datasetindex class is initialized by the following argument
   from (see Section~\ref{sec:data-storage}).
 \item[id_name] \index{in_name} - a list of character strings giving the names of the unique
   identifiers of the dataset. \datasetindex If it is an empty list, a ``hidden'' identifier\index{hidden identifier}
-  will be created, i.e. an additional attribute of the dataset that enumerates the entries.
+  will be created, i.e. an additional attribute of the dataset that enumerates the entries. Note that the unique identifier 
+  must have integer values larger than 0.
 \item[dataset_name] \index{database_name} - a character string giving the name of the dataset. \datasetindex
 \item[out_storage] \index{out_storage} - an object of class \class{Storage}\index{Storage} for writing the data
   into (see Section~\ref{sec:data-storage}). This argument can be omitted in
@@ -998,6 +999,8 @@ the same as above, except that the final return statement is replaced with
 The \method{aggregate}, \method{disaggregate}, and \method{number_of_agents}
 methods are defined on \class{DummyDataset}, so that they can be used in
 expressions.
+
+\input part-api/opus-core-dataset-tutorial.tex
 
 \section{Models} \index{Models}
 \label{sec:opus-core-models}
