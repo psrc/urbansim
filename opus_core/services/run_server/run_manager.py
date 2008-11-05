@@ -471,11 +471,26 @@ class SimulationRunError(Exception):
     pass
             
 def insert_auto_generated_cache_directory_if_needed(config):
-    """Auto-generate a cache directory based upon current date-time."""
-    cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
-    date_time_string = strftime('%Y_%m_%d_%H_%M', localtime())
-    cache_directory = os.path.join(cache_directory_root, date_time_string)
-    config['cache_directory'] = cache_directory
+    """    
+    Insert an auto generated cache directory with current date-time in cache_directory_root to config.
+    Do nothing if 
+    1. 'cache_directory' is in config's keys, and
+    2. a) the specified cache_directory doesn't exists, or
+       b) the specified cache_directory exists, but 'overwrite_cache_directory_if_exists' is set to True
+    
+    """
+    insert_auto_generated_cache_directory = True
+    if config.has_key('cache_directory'):
+        if not os.path.exists(config['cache_directory']):
+            insert_auto_generated_cache_directory = False
+        elif config.has_key('overwrite_cache_directory_if_exists') and config['overwrite_cache_directory_if_exists'] is True:
+            insert_auto_generated_cache_directory = False
+        
+    if insert_auto_generated_cache_directory:
+        cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
+        date_time_string = strftime('%Y_%m_%d_%H_%M', localtime())
+        cache_directory = os.path.join(cache_directory_root, date_time_string)
+        config['cache_directory'] = cache_directory
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
