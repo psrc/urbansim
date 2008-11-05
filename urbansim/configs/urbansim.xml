@@ -125,6 +125,46 @@
             </raw_pums_households_table_name>
           </params>
 		</create_persons_input_table>
+		<create_tables type="tool_file">
+          <name type="tool_name">synthesizer_create_tables</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+            <project_name>
+            	<required choices="Required|Optional" type="string">Required</required>
+            	<type choices="string" type="string">string</type>
+            	<default type="string"></default>
+            </project_name>
+            <path>
+            	<required choices="Required|Optional" type="string">Required</required>
+            	<type choices="file_path" type="string">file_path</type>
+            	<default type="string"></default>
+            </path>
+          </params>
+		</create_tables>	
+		<prepare_data type="tool_file">
+          <name type="tool_name">synthesizer_prepare_data</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+          </params>
+		</prepare_data>	
+		<synthesizer_demo type="tool_file">
+          <name type="tool_name">synthesizer_demo</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default></default>
+            </database_server_connection>
+          </params>
+		</synthesizer_demo>	
 	  </synthesizer_tools>
 	  <opus_data_import_export_tools type="tool_group" setexpanded="True">
 		<sql_data_to_opus_tool type="tool_file" >
@@ -602,7 +642,7 @@
       </sample_tool_set>
     </Tool_Sets>
   </data_manager>
-    
+
   <results_manager>
   <!--
     <Indicator_libraries type="group" setexpanded="True" >
