@@ -266,7 +266,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.setupUi(self)
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
-        AllVariablesGui.__init__(self, mainwindow, fl, True)
+        AllVariablesGui.__init__(self, mainwindow, True)
         
         self.mainwindow = mainwindow
 
