@@ -1,0 +1,186 @@
+\chapter{Parcel Data}
+
+\subsubsection{parcels} 
+This table contains attributes about parcels.
+
+\begin{description}
+\item parcel\_id - unique identifier
+\item zone\_id - id number for the zone that the parcel's centroid falls within
+\item ownership\_type\_id - identifies the category of the parcel owner
+\item land\_use\_type\_id - identifies the land use of the parcel
+\item city\_id - id number for the city that the parcel's centroid falls within
+\item county\_id - id number for the county that the parcel's centroid falls within
+\item plan\_type\_id - id number that identifies the parcel's plan type
+\item mpa\_id - id number for the mpa that the parcel's centroid falls within
+\item census\_block\_id - id number for the census block that the parcel's centroid falls within
+\item raz\_id - id number for the raz that the parcel's centroid falls within
+\item parcel\_sqft - square feet of the parcel as an integer
+\item assessor\_parcel\_id - original tax assessor's id number
+\item tax\_exempt\_flag - identifies parcel as tax exempt or not
+\item is\_in\_flood\_plain - indicates whether or not a parcel is in a flood plain
+\item is\_on\_steep\_slope - indicates whether or not a parcel is on a steep slope
+\item is\_in\_fault\_zone - indicates whether or not a parcel is in a fault zone
+\item is\_in\_archaeological\_area - indicates whether or not a parcel is in an archaeological area
+\item centroid\_x - state plane x coordinate of parcel centroid
+\item centroid\_y - state plane y coordinate of parcel centroid
+\item land\_value - value of the land from the assessor 
+\end{description}
+
+\subsubsection{development\_project\_proposals} 
+
+A record in this table, when combined with one or more records in the development\_project\_components table, represents a "known" development project. This table would be populated with projects known to be coming in the future. This table would also be populated during a simulation run for projects that are not yet complete, in other words, projects that are in the middle of developing according to their velocity function. It is entirely possible for a simulation run to happen without pre-populating this table with records.
+
+\begin{description}
+\item development\_project\_id - unique identifier
+\item development\_template\_id - indicates the development template that represents the project
+\item far - floor to area ratio of the project
+\item percent\_open - the percent of the land area of the project accounted for by "overhead" uses such as rights of way or open space
+\item status\_id - this represents active, proposed, or planned developments with the following codes: 
+  \begin{description}
+  \item[1] in active development
+  \item[2] proposed for development
+  \item[3] planned and will be developed
+  \item[4] tentative
+  \item[5] not available (already developed)
+  \item[6]  refused
+  \end{description}
+\item parcel\_id - indicates the parcel\_id on which the development occurs
+\item start\_year - the year in which this project is expected to begin building
+\item built\_sqft\_to\_date - the number of non-residential sqft built in the current simulation year
+\item built\_units\_to\_date - the number of residential units built in the current simulation year 
+\end{description}
+
+\subsubsection{development\_project\_proposal\_components} 
+
+A record in this table represents a portion of a development project identified in the development\_project\_proposals table. In some sense a single record here is meant to represent a single building, or part of a building. Therefore individual records here do not necessarily represent single free-standing buildings, although they are mostly treated that way. This table allows for the flexible representation of mixed uses to occur on a parcel. Examples include multiple free-standing buildings with different uses, a single building with multiple uses inside of it (a single record for each use), or further complex representations of mixed use.
+
+\begin{description}
+\item development\_project\_component\_id - unique identifier
+\item development\_project\_id - identifies which development the project belongs to
+\item velocity\_function\_id - identifies the rate or function by which the project develops over time
+\item percent\_of\_building\_sqft - identifies the percentage of the building that this component takes up
+  \begin{itemize}
+  \item 100\% would indicate a free-standing building with a single use
+  \item Several records with percent\_of\_building\_sqft adding up to 100\% would indicate a multiple use single building. 
+  \end{itemize}
+\item construction\_cost\_per\_unit - the per unit construction cost for residential uses only
+\item sqft\_per\_unit - the square footage per residential unit
+\item building\_type\_id - indicates the building type of this particular component
+\item land\_area - the land area "claimed" by the building component
+                + This includes not only the building footprint but also additional land used such as yards, parking lots, etc. 
+\item residential\_units - the number of residential units in the building component 
+\end{description}
+
+\subsubsection{development\_templates} 
+
+This table, along with corresponding records in the development\_template\_components table, represents development templates. This table is roughly equivalent in nature to the development\_projects table. This table is meant to be a repository of development templates to be drawn from when simulating new development and needs to be populated with a number of templates for the modeling system to utilize.
+
+\begin{description}
+\item development\_template\_id - unique identifier
+\item percent\_open - the percent of the land area of the project accounted for by "overhead" uses such as rights of way or open space
+\item min\_land - minimum amount of land in square feet to be utilized for this development
+\item max\_land - maximum amount of land in square feet to be utilized for this development
+\item density\_type - a readable name that describes the `density' field: units per acre, FAR
+\item density - indicates the density of the development
+\item land\_use\_type\_id - specifies the land use type for the development template
+\item development\_type - a readable name that describes the type of development this record represents (e.g. SFR-parcel, MFR-apartment, MFR-condo, etc.), this field is not used by the model and is there to make the table more readable 
+\end{description}
+
+\subsubsection{development\_template\_components} 
+
+This table is roughly equivalent to the development\_project\_components table and represents buildings or parts of buildings to be included in a particular development template.
+
+\begin{description}
+\item development\_template\_component\_id - unique identifier
+\item development\_template\_id - indicates which development template this component belongs to
+\item velocity\_funtion\_id - indicates the velocity function used by this template
+\item building\_type\_id - indicates the building type of this particular component
+\item percent\_of\_building\_sqft - identifies the percentage of the building that this component takes up
+\item construction\_cost\_per\_unit - the per unit construction cost
+\item building\_sqft\_per\_unit - the square footage per residential unit 
+\end{description}
+
+\subsubsection{velocity\_functions} 
+
+This table is designed to hold the velocity functions that specify the rate at which development is built out.
+
+\begin{description}
+\item velocity\_function\_id - unique identifier
+\item annual\_construction\_schedule - this field will contain a numbered list of this form: [25, 50, 75, 100]
+  \begin{itemize}
+  \item a particular development\_template\_component or development\_project\_component will have one velocity\_function\_id attached to it
+  \item annual\_construction\_schedule could take the form [0, 0, 0, 33, 66, 100] to offset a particular component a number of years from the 
+      development\_project start\_year 
+   \end{itemize}
+\end{description}
+
+\subsubsection{building\_quality\_types} 
+
+This table identifies building quality types.
+
+\begin{description}
+\item building\_quality\_type\_id - unique identifier
+\item building\_quality\_name - readable name identifying building quality 
+\end{description}
+
+\subsubsection{refinements} 
+\label{sec:refinements}
+
+This table is required by the refinement model. The entries in this table define refinements to make to an existing simulation run. No fields can be null, if the attribute is not needed put a single quote (') in the field.
+
+\begin{description}
+\item refinement\_id - unique identifier
+\item agent\_expression - string expression defining what agents to add or subtract
+\item location\_capacity\_attribute - defines a capacity attribute
+\item location\_expression - string expression defining where to add or subtract agents
+\item amount - number of agents to add or subtract
+\item year - integer for which year this refinement applies
+\item action - add, subtract, or target are the valid entries
+\item transaction\_id - if two or more records have matching transaction ids the refinement model will attempt to balance between the refinements 
+\end{description}
+
+\subsubsection{building\_sqft\_per\_job\_by\_zone\_generic\_land\_use\_type\_id}
+
+This table is required to compute the buildout indicators.
+
+\begin{description}
+\item zone\_id - a unique identifier for each zone in your region
+\item building\_sqft\_per\_job\_glu1 - there will be one of these fields for each generic\_land\_use\_type you have, replacing the `1' at the end with the generic\_land\_use\_type
+\item building\_sqft\_per\_job\_glu....n 
+\end{description}
+
+\subsubsection{demolition\_cost\_per\_sqft} 
+
+This table provides information to the developer model about the costs of demolition by building type. These numbers are used to calculate the cost of demolition of existing development so that a more accurate cost of redevelopment can be calculated.
+
+\begin{description}
+\item building\_type\_id - building type
+\item demolition\_cost\_per\_sqft - cost in dollars per sqft of demolition 
+\end{description}
+
+\subsubsection{building\_sqft\_per\_job} 
+
+This building contains information on the amount of space each job will take in a particular building type, by zone.
+
+\begin{description}
+\item zone\_id - the zone the record applies to
+\item building\_type\_id - the building type the record applies to
+\item building\_sqft\_per\_job - the sqft per job each job will take in a particular building type in a particular zone 
+\end{description}
+
+\subsubsection{buildings} 
+
+This table contains attributes associated with buildings.
+
+\begin{description}
+\item building\_id - unique identifier
+\item parcel\_id - identifies which parcel the building sits on
+\item building\_type\_id - integer identifying the building type
+\item land\_area - describes the land area occupied by the building itself + associated infrastructure (e.g. lawn, parking lot, etc.)
+\item non\_residential\_sqft - the total sqft of non residential space in the building
+\item residential\_units - the number of residential units in the building
+\item sqft\_per\_unit - the average number of sqft per unit of residential space
+\item year\_built - the year the building was constructed
+\item building\_quality\_type\_id - describes building quality
+\item improvement\_value - the improvement value from the assessor or other source 
+\end{description}
