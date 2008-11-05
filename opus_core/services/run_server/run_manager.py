@@ -471,15 +471,11 @@ class SimulationRunError(Exception):
     pass
             
 def insert_auto_generated_cache_directory_if_needed(config):
-    """Auto-generate a cache directory based upon current date-time in cache_directory_root
-    if 'cache_directory' is not in config's keys, or its values is None or empty string,
-    esle do nothing
-    """
-    if not config.has_key('cache_directory') or config['cache_directory'] is None or len(config['cache_directory'])==0:
-        cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
-        date_time_string = strftime('%Y_%m_%d_%H_%M', localtime())
-        cache_directory = os.path.join(cache_directory_root, date_time_string)
-        config['cache_directory'] = cache_directory
+    """Auto-generate a cache directory based upon current date-time."""
+    cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
+    date_time_string = strftime('%Y_%m_%d_%H_%M', localtime())
+    cache_directory = os.path.join(cache_directory_root, date_time_string)
+    config['cache_directory'] = cache_directory
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration
