@@ -483,13 +483,13 @@ location  cost  capacity
 8        400    1
 9        800    2
 \end{verbatim}
-One can load this dataset using the class \class{GridcellDataset} which takes the
-same arguments as \class{HouseholdDataset}:
+One can represent this dataset using again the  \class{Dataset} class:
 \label{page:tutorial-gc-locations}
 \begin{verbatim}
->>> from urbansim.datasets.gridcell_dataset import GridcellDataset
->>> locations = GridcellDataset(in_storage = storage,
-        in_table_name = 'locations', id_name='location')
+>>> locations = Dataset(in_storage = storage,
+                        in_table_name = 'locations', 
+                        id_name='location',
+                        dataset_name='gridcell')
 \end{verbatim}
 We use here the \verb|storage| object
 created on page~\pageref{storagepage}, since the table is stored in the same directory.
@@ -507,16 +507,16 @@ respectively:
 >>> coefficients = Coefficients(names=("costcoef", ), values=(-0.01,))
 >>> specification = EquationSpecification(variables=("gridcell.cost", ),
                                           coefficients=("costcoef", ))
->>> from urbansim.models.household_location_choice_model_creator import \
-                               HouseholdLocationChoiceModelCreator
->>> hlcm = HouseholdLocationChoiceModelCreator().get_model(
+>>> from urbansim.models.household_location_choice_model import \
+                               HouseholdLocationChoiceModel
+>>> hlcm = HouseholdLocationChoiceModel(
                                location_set = locations,
                                sampler=None,
                                compute_capacity_flag=False)
 \end{verbatim}
-The household location choice model (HLCM) creator returns an instance of class
-\class{AgentLocationChoiceModel} with some useful default settings for models where agents are households and
-locations are gridcells.  The argument \verb|sampler| specifies a module to be
+The household location choice model (HLCM) is a child of 
+\class{LocationChoiceModel} with some useful default settings.  
+The argument \verb|sampler| specifies a module to be
 used for sampling locations to each agent. If it is None, all locations are
 considered as a possible alternative for each agent.  The argument
 \verb|compute_capacity_flag| specifies if the procedure should take capacity of
@@ -524,31 +524,30 @@ locations into account.
 
 We can run the HLCM by using the method \method{run()}
 which takes as obligatory arguments \verb|specification|, \verb|coefficients| \coefficientsindex
-and the set of agents for which the model runs.  The optional argument
-\verb|debuglevel| controls the amount of outputs during the computation.
+and the set of agents for which the model runs.  
 \coefficientsindex
 \begin{verbatim}
 >>> seed(1)
->>> result = hlcm.run(specification, coefficients, agent_set=households,
-                                                            debuglevel=1)
-Running Household Location Choice Model
-                        (from urbansim.models.agent_location_choice_model):
-                                         started on Mon Mar 19 20:04:26 2007
+>>> result = hlcm.run(specification, coefficients, agent_set=households)
+Running Household Location Choice Model 
+                 (from urbansim.models.household_location_choice_model): 
+                                     started on Wed Nov  5 12:53:11 2008
     Total number of individuals: 10
-    HLCM chunk 1 out of 1.: started on Mon Mar 19 20:04:26 2007
+    HLCM chunk 1 out of 1.: started on Wed Nov  5 12:53:11 2008
         Number of agents in this chunk: 10
-        HLCM chunk 1 out of 1.: completed............................0.0 sec
-Running Household Location Choice Model
-    (from urbansim.models.agent_location_choice_model): completed...0.0 sec
+    HLCM chunk 1 out of 1.: completed....................................0.0 sec
+Running Household Location Choice Model 
+      (from urbansim.models.household_location_choice_model): completed...0.0 sec
+
 \end{verbatim}
 
 The results of the HLCM run determine locations that
 agents have chosen. The model modifies values of the attribute \attributesindex `location' of
-the agent set or adds this attribute \attributesindex to the dataset \datasetindex if it doesn't exist:
+the agent set or adds this attribute \attributesindex to the dataset, \datasetindex if it doesn't exist:
 \attributesindex
 \begin{verbatim}
 >>> households.get_attribute("location")
-array([7, 2, 5, 5, 5, 7, 7, 2, 5, 2])
+array([5, 5, 5, 5, 5, 7, 7, 2, 5, 5])
 \end{verbatim}
 
 One way of visualizing results of the HLCM run is to plot a histogram \histogramindex of the

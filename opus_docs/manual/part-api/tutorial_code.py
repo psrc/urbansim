@@ -98,24 +98,24 @@ coefficients = Coefficients(
                      values=array([0.5,      0.2,       -5.0,     1.3]))
 
 # LCM
-from urbansim.datasets.gridcell_dataset import GridcellDataset
-
-locations = GridcellDataset(in_storage = storage,
-    in_table_name = "locations", id_name="location")
+locations = Dataset(in_storage = storage,
+                        in_table_name = 'locations', 
+                        id_name='location',
+                        dataset_name='gridcell')
 
 
 coefficients = Coefficients(names=("costcoef", ), values=(-0.01,))
 specification = EquationSpecification(variables=("gridcell.cost", ),
                                       coefficients=("costcoef", ))
 
-from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
-hlcm = HouseholdLocationChoiceModelCreator().get_model(
+from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
+hlcm = HouseholdLocationChoiceModel(
     location_set = locations,
     sampler=None, compute_capacity_flag=False)
 seed(1)
-results = hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
+results = hlcm.run(specification, coefficients, agent_set=households)
 households.get_attribute("location")
-coef, results = hlcm.estimate(specification, agent_set=households, debuglevel=1)
+coef, results = hlcm.estimate(specification, agent_set=households)
 #hlcm.plot_choice_histograms(capacity=locations.get_attribute("capacity"))
 
 
