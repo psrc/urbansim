@@ -26,25 +26,14 @@ us_path = urbansim.__path__[0]
 from opus_core.storage_factory import StorageFactory
 storage = StorageFactory().get_storage('tab_storage',
     storage_location = os.path.join(us_path, "data/tutorial"))
-# Alternative - sql storage
-#import os
-#from opus_core.storage_factory import StorageFactory
-#db_config = DatabaseServerConfiguration(
-#    host_name = os.environ["MYSQLHOSTNAME"],
-#    user_name = os.environ["MYSQLUSERNAME"],
-#    password = os.environ["MYSQLPASSWORD"],                                
-#)
-#db_server = DatabaseServer(db_config)
-#db = db_server.get_database('mydatabase')
 
-#storage = StorageFactory().get_storage('sql_storage',
-#        storage_location = db)
-from urbansim.datasets.household_dataset import HouseholdDataset
-households = HouseholdDataset(in_storage = storage,
-    in_table_name = "households", id_name="household_id")
+from opus_core.datasets.dataset import Dataset
+households = Dataset(in_storage = storage,
+                         in_table_name = 'households', 
+                         id_name='household_id',
+                         dataset_name='household')
 households.get_attribute_names()
 households.get_id_attribute()
-households.get_attribute("income")
 households.size()
 households.get_attribute("income")
 households.get_attribute_names()
@@ -62,8 +51,7 @@ households.modify_attribute(name="location", data=[0,0], index=[0,1])
 households.get_attribute("location")
 households.get_data_element_by_id(5).location
 
-#households.write_dataset(out_storage=storage,
-#                             out_table_name="households_output")
+#households.write_dataset(out_storage=storage, out_table_name="households_output")
 
 
 households.get_dataset_name()
@@ -91,8 +79,7 @@ specification = EquationSpecification(
 households.add_primary_attribute(data=[1,2,2,2,1,3,3,1,2,1], name="choice_id")
 
 coefficients, other_results = choicemodel.estimate(specification,
-                         households, procedure="opus_core.bhhh_mnl_estimation",
-                         debuglevel=1)
+                         households, procedure="opus_core.bhhh_mnl_estimation")
                          
 #
 # Uncomment to output mycoef.tab

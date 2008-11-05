@@ -6,11 +6,11 @@
 % A copy of the license is included in the section entitled "GNU Free
 % Documentation License".
 
-\chapter{The \package{urbansim} Opus Package}
+\chapter{Tutorial}
 \label{urbansim-tutorial}
 
 \index{tutorial!\package{urbansim}}
-This chapter gives a tutorial on using \package{urbansim} in an interactive mode.
+This chapter gives a tutorial on using \package{opus_core} and \package{urbansim} in an interactive mode.
 Running Python \pythonindex interactively provides a convenient way for both beginners
 and experienced users to experiment with features and try out code.  This
 tutorial is directed mainly to modelers, developers and other Opus users
@@ -18,7 +18,7 @@ who will experiment with single components of the package and develop new
 features, rather than use the system of models as whole.
 
 If necessary, install the supporting software, install Opus, and test
-the installation, as described in Chapter~\ref{chapter:installation}.
+the installation, as described in Appendix~\ref{chapter:installation}.
 
 You can start a Python session by opening a command window and
 typing \verb|python| at the command prompt. Alternatively, the
@@ -56,7 +56,7 @@ household_id   income         persons
 10              15000           5
 \end{verbatim}
 
-In \package{urbansim} datasets are independent from the physical storage of the data. A data storage
+In Opus datasets are independent from the physical storage of the data. A data storage
 is represented by a python object. We create a storage object for the ASCII file \file{households.tab}:
 
  \label{storagepage}
@@ -71,52 +71,20 @@ is represented by a python object. We create a storage object for the ASCII file
 
 \index{Storage!tab}
 The \verb|storage| here specifies that the data
-are stored as an ASCII file in a table format. Alternatively, if the
-table is a MySQL \mysqlindex table called ``households'' stored in a
-database ``mydatabase,'' you could use
+are stored as an ASCII file in a table format. 
+Opus can support many types of storage formats, including formats you define. See Section~\ref{sec:data-storage}
+for more details.
 
-\mysqlindex\index{Storage!sql}
-
-This storage class allows writing and reading to a database. The first step is
-to create a connection to a database. The parameters hostname, username, and
-password to DatabaseServerConfiguration are actually only necessary if you are
-trying to connect to a database that cannot be accessed via the server
-information that you have specified in your environment variables.
-
-\begin{verbatim}
->>> import os
->>> from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
->>> from opus_core.database_management.database_server import DatabaseServer
->>> from opus_core.storage_factory import StorageFactory
->>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
-                              	         username = os.environ["MYSQLUSERNAME"],
-                              	         password = os.environ["MYSQLPASSWORD"],
-                              	         protocol = "mysql")
->>> db = DatabaseServer(config).get_database(database_name = ``mydatabase'')
->>> storage = StorageFactory().get_storage('sql_storage',
-        storage_location = db)
-\end{verbatim}
-
-({\em To do: add an example MySQL file, like household.tab, to play
-around with.})
-
-Opus can support many types of storage formats, including formats you define.
-In addition to ``tab'' and ``mysql'', \mysqlindex formats that come with Opus are ``flt''
-where the data are stored in a binary format, ``xml'' for xml type of data, ``csv'' for ASCII comma delimited type
-and ``dict'' where the data are passed  directly to the data set class (see
-Section \ref{sec:data-storage}).\index{Storage}
-
-Now we can create a household dataset \datasetindex with the \package{urbansim} class \class{HouseholdDataset}, using the created
+Now we create a household dataset \datasetindex with the \package{opus_core} class \class{Dataset} 
+(see Section~\ref{sec:opus-core-datasets}), using the created
 storage object:
 \begin{verbatim}
->>> from urbansim.datasets.household_dataset import HouseholdDataset
->>> households = HouseholdDataset(in_storage = storage,
-                  in_table_name = 'households', id_name='household_id')
+>>> from opus_core.datasets.dataset import Dataset
+>>> households = Dataset(in_storage = storage,
+                         in_table_name = 'households', 
+                         id_name='household_id',
+                         dataset_name='household')
 \end{verbatim}
-
-The \class{HouseholdDataset} class is a child class of \class{Dataset} from the
-module \\\module{opus_core.datasets.dataset}, and thus it can use any of \class{Dataset}'s
-methods (see Sections~\ref{sec:urbansim-datasets} and~\ref{sec:opus-core-datasets}).
 
 \class{Dataset} supports lazy loading. Thus, there are no entries
 loaded for \verb|households| at this moment:
@@ -228,8 +196,9 @@ A summary of data in a dataset \datasetindex can by given by:
 >>> households.summary()
 Attribute name        mean           sd           sum        min     max
 -------------------------------------------------------------------------
-        income      4850.0      4749.56         48500        500   15000
        persons         2.7         1.34            27          1       5
+        income      4850.0      4749.56         48500        500   15000
+       
 
 
 Size: 10  records
@@ -238,7 +207,7 @@ identifiers:
 \end{verbatim}
 
 To add an attribute \attributesindex to the set of households, for example each
-household location, we do
+household's location, we do
 \begin{verbatim}
 >>> households.add_primary_attribute(data=[4,6,9,2,4,8,2,1,3,2], name="location")
 >>> households.get_attribute_names()
@@ -267,7 +236,7 @@ do
 
 In order to store data in one of the supported formats,
 you can use the {\tt storage} object created at the beginning of this section, or create a new one using
-different directory/database:
+a different type of storage:
 
 \datasetindex
 \begin{verbatim}
@@ -275,23 +244,23 @@ different directory/database:
                              out_table_name="households_output")
 \end{verbatim}
 
-\package{urbansim} contains many pre-defined dataset \datasetindex classes, such as \class{GridcellDataset},
-  \class{JobDataset}, \class{ZoneDataset}, \class{FazDataset}, \class{NeighborhoodDataset}, \class{RaceDataset},
-  \class{RateDataset}. Some datasets are described in  Section~\ref{sec:urbansim-datasets},
-  Table~\ref{tab:urbansim-datasets}.
-
-  Each dataset \datasetindex
+Each dataset \datasetindex
   should have a unique dataset \datasetindex name that is used as an identification in
   variable \variablesindex computation (see
-  Section~\ref{sec:variable-names}). Each dataset \datasetindex defined in \package{urbansim}
-   initiates an object of class
-  \class{Dataset} by passing default values, such as a dataset \datasetindex name, name of the
-  unique identifier or a table name and storage of the input data.
+  Section~\ref{sec:variable-names}). 
 
 \begin{verbatim}
 >>> households.get_dataset_name()
 'household'
 \end{verbatim}
+
+The \package{urbansim} package contains many pre-defined dataset \datasetindex classes, such as \class{HouseholdDataset}, \class{GridcellDataset},
+  \class{JobDataset}, \class{ZoneDataset}, \class{FazDataset}, \class{NeighborhoodDataset}, \class{RaceDataset},
+  \class{RateDataset}. Some datasets are described in  Section~\ref{sec:urbansim-datasets},
+  Table~\ref{tab:urbansim-datasets}. They are all children of \class{Dataset} with pre-defined values
+  for some arguments, such as \verb|id_name|, \verb|in_table_name| or \verb|dataset_name|. 
+
+  
 
 %
 \section{Working with Models}
@@ -328,7 +297,8 @@ is a household variable \variablesindex ``persons''.
 The model is initialized by
 \begin{verbatim}
 >>> from opus_core.choice_model import ChoiceModel
->>> choicemodel = ChoiceModel(choice_set=[1,2,3],
+>>> choicemodel = ChoiceModel(
+                       choice_set=[1,2,3],
                        utilities = "opus_core.linear_utilities",
                        probabilities = "opus_core.mnl_probabilities",
                        choices = "opus_core.random_choices")
@@ -353,13 +323,13 @@ a specification:
 >>> specification = EquationSpecification(
       coefficients = array([
         "beta01",      "beta12",         "beta03",    "beta13"
-        		              ]),
+                          ]),
       variables = array([
         "constant","household.persons", "constant", "household.persons"
                         ]),
       equations = array([
            1,              2,                3,             3
-           			   ])
+                    ])
       )
 \end{verbatim}
 Each of the arguments is an array where the $i$th element describes the $i$th
@@ -385,33 +355,35 @@ estimation and a name of the module that implements the actual estimation to
 the method \method{estimate()}:
 \coefficientsindex
 \begin{verbatim}
->>> coefficients, other_results = choicemodel.estimate(specification,
-                         households, procedure="opus_core.bhhh_mnl_estimation",
-                         debuglevel=1)
+>>> coefficients, other_results = choicemodel.estimate(
+                         specification, households, 
+                         procedure="opus_core.bhhh_mnl_estimation")
 \end{verbatim}
 \begin{verbatim}
-Estimating Choice Model (from opus_core.choice_model):
-                                started on Mon Mar 19 19:00:01 2007
+Estimating Choice Model (from opus_core.choice_model): started on 
+                                                    Wed Nov  5 12:04:17 2008
     submodel: -2
     Convergence achieved.
+    Akaike's Information Criterion (AIC):  26.142396805
     Number of Iterations:  144
     ***********************************************
-    Log-likelihood is:            -9.07119837282
+    Log-likelihood is:            -9.07119840248
     Null Log-likelihood is:       -10.9861228867
-    Likelihood ratio index:       0.174303940855
-    Adj. likelihood ratio index:  -0.189791749796
+    Likelihood ratio index:       0.174303938155
+    Adj. likelihood ratio index:  -0.189791752496
     Number of observations:       10
     Suggested |t-value| >         1.51742712939
-    Convergence statistic is:     0.000990051660535
+    Convergence statistic is:     0.000990037670084
     -----------------------------------------------
-    Coeff_names     estimate        std err         t-values
-        beta01      0.432678         3.14438        0.137604
-        beta03      -4.51824         21.7087        -0.208131
-        beta12      0.180115         1.72541         0.10439
-        beta13       1.34052         4.18176        0.320564
+    Coeff_names	estimate	std err		t-values
+        beta01	0.432678	 3.14438	0.137604
+        beta03	-4.51824	 21.7087	-0.208131
+        beta12	0.180115	 1.72541	 0.10439
+        beta13	 1.34052	 4.18176	0.320564
     ***********************************************
-    Elapsed time:  0.41 seconds
-Estimating Choice Model (from opus_core.choice_model): completed.....0.4 sec
+    Elapsed time:  0.064521 seconds
+Estimating Choice Model (from opus_core.choice_model): completed.........0.1 sec
+
 \end{verbatim}
 The estimation module given in the argument \verb|procedure| is a child of
 \class{EstimationProcedure} (see Section~\ref{sec:estimation-procedure}), must
@@ -440,17 +412,16 @@ The coefficients \coefficientsindex that result from the estimation run can be d
 into a simulation run:
 \coefficientsindex
 \begin{verbatim}
->>> choices = choicemodel.run(
-                 specification,  coefficients, households, debuglevel=1)
-Running Choice Model (from opus_core.choice_model):
-                                     started on Mon Mar 19 19:11:23 2007
+>>> choices = choicemodel.run(specification,  coefficients, households)
+Running Choice Model (from opus_core.choice_model): 
+                                            started on Wed Nov  5 12:10:20 2008
     Total number of individuals: 10
-    ChoiceM chunk 1 out of 1.: started on Mon Mar 19 19:11:23 2007
+    ChoiceM chunk 1 out of 1.: started on Wed Nov  5 12:10:20 2008
         Number of agents in this chunk: 10
-    ChoiceM chunk 1 out of 1.: completed.............................0.1 sec
-Running Choice Model (from opus_core.choice_model): completed........0.4 sec
+    ChoiceM chunk 1 out of 1.: completed.................................0.0 sec
+Running Choice Model (from opus_core.choice_model): completed............0.0 sec
 >>> choices
-array([2, 1, 1, 1, 1, 1, 2, 2, 1, 2])
+array([1, 2, 1, 2, 2, 3, 3, 1, 2, 3])
 \end{verbatim}
 The resulting \verb|choices| is an array specifying the choice for each household. We can
 now assign those values to the dataset: \datasetindex
