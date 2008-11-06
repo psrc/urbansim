@@ -818,17 +818,17 @@ that returns a numpy array of
 variable \variablesindex values. The size of that array must correspond to the number of entries in the parent
 dataset. \datasetindex The \method{compute()} method takes an argument called
 \verb|dataset_pool| containing references to the appropriate set of datasets to
-use for computing this variable. The parent dataset \datasetindex can be
-accessed from the \method{compute()} method by \method{self.get_dataset()}.
+use for computing this variable. From the \method{compute()} method, the parent dataset \datasetindex can be
+accessed  by \method{self.get_dataset()}.
 
-If the variable depends on other attributes,they must be listed in the method
+If the variable depends on other attributes, they must be listed in the method
 \method{dependencies()}, which returns a list of all dependent variables and
 attributes in their fully-qualified names (see
 Section~\ref{sec:opus-core-attribute-names} for details on attribute
 specification).
 
 As an example, consider a variable ``is_in_wetland'' for the gridcell dataset
-\verb|locations| from Section~\ref{sec:LCM} and~\ref{sec:RM}. The variable
+\verb|locations| from Sections~\ref{sec:LCM} and~\ref{sec:RM}. The variable
 returns \verb|True| for entries whose percentage of wetland is more than a certain
 threshold, and \verb|False| otherwise. The module \file{is_in_wetland.py},
 containing a class \class{is_in_wetland}, is stored in the directory
@@ -892,7 +892,8 @@ it searches for a file
 {}
 >>> hs = dataset_pool.get_dataset("household")
 >>> dataset_pool.datasets_in_pool()
-{'household': <urbansim.datasets.household_dataset.HouseholdDataset object at 0x197c2f70>}
+{'household': <urbansim.datasets.household_dataset.HouseholdDataset object
+                                                               at 0x197c2f70>}
 >>> hs.size()
 10
 \end{verbatim}
@@ -917,7 +918,7 @@ form and a dataset pool if other datasets are required for this variable:
 >>> locations.compute_variables("urbansim.gridcell.is_in_wetland",
                                   dataset_pool=dataset_pool)
 urbansim.gridcell.is_in_wetland..........................................0.0 sec
-array([1, 0, 0, 1, 0, 1, 0, 0, 0], type=bool8)
+array([ True, False, False,  True, False,  True, False, False, False], dtype=bool)
 \end{verbatim}
 
 The method returns the resulting values of the variable. The
@@ -929,7 +930,7 @@ computed.  In this case it returns values of the last variable in the list.
  attributes must be unique.
 \begin{verbatim}
 >>> locations.get_attribute("is_in_wetland")
-array([1, 0, 0, 1, 0, 1, 0, 0, 0], type=bool8)
+array([ True, False, False,  True, False,  True, False, False, False], dtype=bool)
 \end{verbatim}
 
 \subsection{Interaction Variables}
@@ -937,7 +938,7 @@ array([1, 0, 0, 1, 0, 1, 0, 0, 0], type=bool8)
 
 In order to work with variables \variablesindex that determine an
 interaction between two datasets, \datasetindex there is a subclass of
-\class{Dataset} in \package{opus_core.variables}, called
+\class{Dataset}, called
 \class{InteractionDataset}. Attributes of this class are stored as
 two-dimensional arrays (see Section~\ref{sec:interaction-set} for details).
 
@@ -956,7 +957,7 @@ Thus, an interaction variable \variablesindex for such dataset \datasetindex wil
 directory \file{household_x_gridcell}.
 
 The \class{InteractionDataset} class contains several methods that are useful for
-variable \variablesindex computation which must returns a two-dimensional array. For example, a
+variable \variablesindex computation which must return a two-dimensional array. For example, a
 variable \variablesindex defined as a multiplication of cost and income can be implemented as:
 \variablesindex
 \begin{verbatim}
@@ -986,7 +987,6 @@ Here only the first 5 households and the first three gridcells interact.
 The \method{compute()} method of the interaction variable \variablesindex should return an array of
 size index1 $\times$ index2.
 
-\label{page:compute-interaction}
 \variablesindex \attributesindex
 \begin{verbatim}
 >>> interactions.compute_variables(
@@ -997,6 +997,7 @@ array([[  500000.,   200000.,   600000.],
        [ 1500000.,   600000.,  1800000.],
        [  250000.,   100000.,   300000.]])
 \end{verbatim}
+\label{page:compute-interaction}
 
 \package{urbansim} uses interaction variables \variablesindex mainly in \class{ChoiceModel} classes, where agents
 interact with dataset \datasetindex of choices. The household location choice model object
@@ -1011,37 +1012,33 @@ variables, \variablesindex one of which is an interaction variable: \variablesin
                      coefficients=array(["costcoef", "cti_coef"]))
 >>> # place households
 >>> households.add_primary_attribute(data=[2,8,3,1,5,4,9,7,3,6], name="location")
->>> coef, other_results = hlcm.estimate(
-                               specification, households,
-                               data_objects=dataset_pool._loaded_datasets)
-\end{verbatim}
-\coefficientsindex
-\begin{verbatim}
-Estimating Household Location Choice Model
-                        (from urbansim.models.agent_location_choice_model):
-                                        started on Mon Mar 19 23:06:12 2007
-    Unplace agents for estimation.
+>>> coef, other_results = hlcm.estimate(specification, households)
+Estimating Household Location Choice Model 
+                     (from urbansim.models.household_location_choice_model): 
+                                             started on Thu Nov  6 12:12:47 2008
     urbansim.household_x_gridcell.cost_times_income......................0.0 sec
     submodel: -2
     Convergence achieved.
+    Akaike's Information Criterion (AIC):  39.8199022026
     Number of Iterations:  18
     ***********************************************
-    Log-likelihood is:            -17.9099511981
+    Log-likelihood is:            -17.9099511013
     Null Log-likelihood is:       -21.9722457734
-    Likelihood ratio index:       0.184882993626
-    Adj. likelihood ratio index:  0.093859070963
+    Likelihood ratio index:       0.184882998032
+    Adj. likelihood ratio index:  0.0938590753688
     Number of observations:       10
     Suggested |t-value| >         1.51742712939
-    Convergence statistic is:     0.000302602908201
+    Convergence statistic is:     0.000302603242051
     -----------------------------------------------
     Coeff_names estimate        std err         t-values
       costcoef  -0.00312452     0.00339464      -0.920429
       cti_coef  4.45803e-07     5.34429e-07     0.834168
     ***********************************************
-    Elapsed time:  0.06 seconds
-Estimating Household Location Choice Model
-        (from urbansim.models.agent_location_choice_model): completed...0.1 sec
+    Elapsed time:  0.02 seconds
+Estimating Household Location Choice Model 
+     (from urbansim.models.household_location_choice_model): completed...0.0 sec
 \end{verbatim}
+\coefficientsindex
 \label{page:iv-spec}
 
 %
@@ -1105,7 +1102,6 @@ constructor implemented which takes a string and a number as arguments:
 \numpyindex
 \begin{verbatim}
 from opus_core.variables.variable import Variable
-from numpy import where
 
 class is_near_SSS_if_threshold_is_DDD(Variable):
     def __init__(self, location, number):
@@ -1119,7 +1115,7 @@ class is_near_SSS_if_threshold_is_DDD(Variable):
     def compute(self, dataset_pool):
         distance_to_location = self.get_dataset().get_attribute(
                                         "distance_to_" + self.location)
-        return where(distance_to_location < self.number, True, False)
+        return distance_to_location < self.number
 \end{verbatim}
 We can then invoke the computation for the `cbd' location and different
 thresholds by changing the variable name:
@@ -1135,11 +1131,11 @@ urbansim.gridcell.is_near_SSS_if_threshold_is_DDD...................0.0 sec
 \attributesindex
 \begin{verbatim}
 >>> locations.get_attribute("is_near_cbd_if_threshold_is_2")
-array([0, 0, 0, 1, 0, 1, 0, 0, 0], type=bool8)
+array([False, False, False,  True, False,  True, False, False, False], dtype=bool)
 >>> locations.get_attribute("is_near_cbd_if_threshold_is_4")
-array([0, 0, 0, 1, 0, 1, 0, 0, 1], type=bool8)
+array([False, False, False,  True, False,  True, False, False,  True], dtype=bool)
 >>> locations.get_attribute("is_near_cbd_if_threshold_is_7")
-array([1, 0, 1, 1, 0, 1, 0, 0, 1], type=bool8)
+array([ True, False,  True,  True, False,  True, False, False,  True], dtype=bool)
 \end{verbatim}
 
 If the dataset \datasetindex \verb|locations| would have an attribute \attributesindex
@@ -1156,7 +1152,7 @@ an integer. The method \method{dependencies()} is called from
 before the call of \\
 \method{Variable.__init__()}.
 
-\emph{Note: arguments for variable names will probably be replaced with a
+\emph{Note: Arguments for variable names will probably be replaced with a
   more standard syntax in the future, for example
   \class{is_near(feature='highway', threshhold=2)}.  However, we don't have
   a specific date yet for this change.  We will try to preserve backward

@@ -195,7 +195,7 @@ specification = EquationSpecification(
                           "urbansim.household_x_gridcell.cost_times_income"]),
                      coefficients=array(["costcoef", "cti_coef"]))
 households.add_primary_attribute(data=[2,8,3,1,5,4,9,7,3,6], name="location")
-coef, other_results = hlcm.estimate(specification, households, data_objects=dataset_pool._loaded_datasets)
+coef, other_results = hlcm.estimate(specification, households)
 
 # Versioning
 households.get_version("income")
