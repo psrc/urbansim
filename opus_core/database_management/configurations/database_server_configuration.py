@@ -67,7 +67,10 @@ class DatabaseServerConfiguration(object):
                  password = None,
                  database_configuration = None,
                  test = False,
-                 database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')):
+                 database_server_configuration_file_path = None):
+        
+        if database_server_configuration_file_path is None:
+            database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')
 
         if (protocol is None or test) and host_name is None and user_name is None and password is None:
             if not os.path.exists(database_server_configuration_file_path):
