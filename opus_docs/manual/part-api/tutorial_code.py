@@ -143,10 +143,11 @@ specification = EquationSpecification(
                           variables=array(["constant", "gridcell.distance_to_cbd"]),
                           coefficients=array(["constant", "dcbd_coef"]))
 
-coef, other_results = rm.estimate(specification, locations, "gridcell.cost", procedure="opus_core.estimate_linear_regression")
+coef, other_results = rm.estimate(specification, dataset=locations, 
+                                  outcome_attribute="gridcell.cost", 
+                                  procedure="opus_core.estimate_linear_regression")
 coef.summary()
 
-from opus_core.datasets.dataset import Dataset
 dstorage = StorageFactory().get_storage('dict_storage')
 dstorage.write_table(
     table_name = 'gridcells',

@@ -693,7 +693,7 @@ multidimensional data array and a one-dimensional array of coefficients, \coeffi
 returns a one-dimensional array of the regression outcome.
 
 The \class{linear_regression} module implemented in \package{opus_core} is the default
-value of the \class{RegressionModel} constructor and thus, it can be omitted.
+procedure for the \class{RegressionModel} constructor and thus, it can be omitted.
 
 %
 \subsubsection{Estimation}
@@ -738,16 +738,16 @@ directly used for predicting cost of other locations.
 \coefficientsindex
 \begin{verbatim}
 >>> coef.summary()
-        Coefficient object:
-        size:                 2
-        names:                 ('const', 'distcbdcoef')
-        values:
-        (1114.073486328125, -71.149337768554688)
-        standard errors:
-        (213.75848388671875, 24.999521255493164)
-        t_statistic:
-        (5.2118330001831055, -2.8460280895233154)
-        submodels:                 (-2, -2)
+Coefficient object:
+size: 2
+names: ['constant' 'dcbd_coef']
+values:
+[ 1114.07348633   -71.14933777]
+standard errors:
+[ 213.75848389   24.99952126]
+t_statistic:
+[ 5.211833   -2.84602809]
+submodels: [-2 -2]
 \end{verbatim}
 
 %
@@ -758,17 +758,12 @@ respectively. We create a location dataset \datasetindex using
 a storage type `dict'\index{Storage!dict}.
 This type of storage is useful when we want to pass data directly without storing them on a physical storage media.
 
-%write_dataset conversion error
-%this is out of date - fix it
-
 \begin{verbatim}
 >>> dstorage = StorageFactory().get_storage('dict_storage')
->>> dstorage._write_dataset(out_table_name='gridcells',
-                            values= {'id':array([1,2,3,4]),
-                                     'distance_to_cbd':array([2,4,6,8])
-                                    }
-                             )
->>> from opus_core.datasets.dataset import Dataset
+>>> dstorage.write_table(table_name='gridcells',
+                         table_data= {'id':array([1,2,3,4]),
+                                      'distance_to_cbd':array([2,4,6,8])
+                                    })
 >>> ds = Dataset(in_storage=dstorage, in_table_name='gridcells',
                  id_name='id', dataset_name='gridcell')
 \end{verbatim}
@@ -789,24 +784,6 @@ Running Regression Model (from opus_core.regression_model): completed....0.0 sec
 array([ 971.77478027,  829.47613525,  687.17749023,  544.87878418])
 \end{verbatim}
 As expected, the resulting cost decreases with increasing distance to cbd.
-
-%
-\subsubsection{Specific regression models in urbansim}
-%
-Two specific child classes of the \class{RegressionModel} class are implemented in
-\package{urbansim},  namely \class{LandPriceModel} and \class{ResidentialLandShareModel}.
-Both models should
-be run with a dataset \datasetindex representing a
-specific geography, such as zones, grid cells or parcels.
-\begin{description}
-\item{LandPriceModel}: The outcome variable \variablesindex of
-the regression procedure is a logarithms of land price. The model then updates
-the dataset \datasetindex attributes residential and non residential land value
-(see Section~\ref{sec:land-price-model}).
-\item{ResidentialLandShareModel}: The model updates the dataset \datasetindex attribute
-fraction residential land (see Section ...)
-
-\end{description}
 
 %
 \section{Opus Variables} \index{Variables!Opus}
