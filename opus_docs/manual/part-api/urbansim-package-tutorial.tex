@@ -575,47 +575,45 @@ example, the class \class{urbansim.lottery_choices} for computing choices
 takes into account capacity and forces agents to re-decide, if there is an
 overflow in the locations capacity:
 \begin{verbatim}
->>> from opus_core.resources import Resources
 >>> number_of_agents = "gridcell.number_of_agents(household)"
->>> hlcm2 = HouseholdLocationChoiceModelCreator().get_model(
+>>> hlcm2 = HouseholdLocationChoiceModel(
                          location_set = locations,
                          sampler=None,
                          choices="urbansim.lottery_choices",
                          compute_capacity_flag=True,
-                         run_config=Resources({
-                                "capacity_string":"capacity",
-                                "number_of_agents_string":number_of_agents,
-                                "number_of_units_string":"capacity",
-                                "lottery_max_iterations":10}))
+                         capacity_string="capacity",
+                         number_of_agents_string=number_of_agents,
+                         number_of_units_string="capacity",
+                         run_config={"lottery_max_iterations":10})
 \end{verbatim}
 
 The argument \verb|choices| is the full name of the module in which the choice
 class is implemented. This module
 must contain a class of the same name, i.e.
 \class{lottery_choices} in this case, be a child of \package{opus_core} class \class{Choices}
-(see Section~\ref{sec:choices}) and have a method \method{run()}. The
-argument \verb|run_config| is expected to be of type \class{Resources} and
-contains parameters for the simulation. These are in our example the name of
+(see Section~\ref{sec:choices}) and have a method \method{run()}.  Further arguments define the name of
 the capacity attribute, \attributesindex name of the variable \variablesindex that computes number of agents in
 each location (more about variable \variablesindex names in Section~\ref{sec:variable-names}), name of the
-variable/attribute \attributesindex \variablesindex that determines the total number of units for each location
-and how many times the households can re-decide if there is an overflow.
+variable/attribute \attributesindex \variablesindex that determines the total number of units for each location. 
+The argument \verb|run_config| is a dictionary that contains parameters for the simulation. In this example it contains a value
+of how many times the households can re-decide if there is an overflow.
 
 We run the above model:
 \begin{verbatim}
 >>> seed(1)
 >>> result = hlcm2.run(specification, coefficients, households)
-Running Household Location Choice Model
-                        (from urbansim.models.agent_location_choice_model):
-                                        started on Mon Mar 19 21:09:28 2007
+Running Household Location Choice Model 
+                     (from urbansim.models.household_location_choice_model): 
+                                            started on Wed Nov  5 18:18:58 2008
     Total number of individuals: 10
-    HLCM chunk 1 out of 1.: started on Mon Mar 19 21:09:28 2007
+    HLCM chunk 1 out of 1.: started on Wed Nov  5 18:18:58 2008
         Number of agents in this chunk: 10
+        Available capacity: 15.0 units.
         Number of unplaced agents: 0 (in 4 iterations)
-    HLCM chunk 1 out of 1.: completed....................................0.4 sec
+    HLCM chunk 1 out of 1.: completed....................................0.0 sec
     gridcell.number_of_agents(household).................................0.0 sec
-Running Household Location Choice Model
-        (from urbansim.models.agent_location_choice_model): completed...0.4 sec
+Running Household Location Choice Model 
+     (from urbansim.models.household_location_choice_model): completed...0.0 sec
 >>> hlcm2.plot_choice_histograms(capacity=locations.get_attribute("capacity"))
 \end{verbatim}
 \begin{center}
@@ -627,7 +625,7 @@ Running Household Location Choice Model
 \attributesindex
 \begin{verbatim}
 >>> households.get_attribute("location")
-array([9, 2, 9, 3, 5, 8, 7, 1, 4, 3])
+array([9, 3, 9, 5, 4, 3, 7, 2, 8, 1])
 \end{verbatim}
 Now there is no overflow. Moreover, fourth and sixth locations still have free
 units available, since they are the most expensive places. The agents were `forced'
@@ -641,9 +639,9 @@ different locations which could solve the collision from the previous run.
 Finally, agents that were not
 placed have values smaller equal zero in the ``location'' attribute. \attributesindex
 
-\package{urbansim} implements several location choice models and their creators.
+\package{urbansim} implements several location choice models.
 Figure~\ref{fig:urbansim-model} in Section~\ref{sec:urbansim-models} shows
-the hierarchical structure of models.
+a hierarchical structure of the models.
 
 
 %

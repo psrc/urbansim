@@ -118,19 +118,16 @@ households.get_attribute("location")
 coef, results = hlcm.estimate(specification, agent_set=households)
 #hlcm.plot_choice_histograms(capacity=locations.get_attribute("capacity"))
 
-
-from opus_core.resources import Resources
 number_of_agents = "gridcell.number_of_agents(household)"
-hlcm2 = HouseholdLocationChoiceModelCreator().get_model(
+hlcm2 = HouseholdLocationChoiceModel(
                          location_set = locations,
                          sampler=None,
                          choices="urbansim.lottery_choices",
                          compute_capacity_flag=True,
-                         run_config=Resources({
-                                "capacity_string":"capacity",
-                                "number_of_agents_string":number_of_agents,
-                                "number_of_units_string":"capacity",
-                                "lottery_max_iterations":10}))
+                         capacity_string="capacity",
+                         number_of_agents_string=number_of_agents,
+                         number_of_units_string="capacity",
+                         run_config={"lottery_max_iterations":10})
 seed(1)
 result = hlcm2.run(specification, coefficients, households)
 #coef, results = hlcm2.estimate(specification, agent_set=households, debuglevel=1)
