@@ -54,7 +54,7 @@
       <item row="0" column="1" >
        <widget class="QPushButton" name="createConfig" >
         <property name="text" >
-         <string>Create Config</string>
+         <string>Add Tool</string>
         </property>
        </widget>
       </item>

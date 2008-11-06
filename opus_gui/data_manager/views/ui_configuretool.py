@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configuretool.ui'
 #
-# Created: Fri Oct 17 11:18:35 2008
+# Created: Thu Nov 06 11:36:23 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,6 +51,6 @@ class Ui_ConfigureToolGui(object):
         ConfigureToolGui.setWindowTitle(QtGui.QApplication.translate("ConfigureToolGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.addItem(QtGui.QApplication.translate("ConfigureToolGui", "Select Tool", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("ConfigureToolGui", "Tool Variables", None, QtGui.QApplication.UnicodeUTF8))
-        self.createConfig.setText(QtGui.QApplication.translate("ConfigureToolGui", "Create Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.createConfig.setText(QtGui.QApplication.translate("ConfigureToolGui", "Add Tool", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelConfig.setText(QtGui.QApplication.translate("ConfigureToolGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

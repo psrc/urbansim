@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'newtoolbatch.ui'
 #
-# Created: Fri Oct 17 11:18:34 2008
+# Created: Thu Nov 06 11:36:22 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!

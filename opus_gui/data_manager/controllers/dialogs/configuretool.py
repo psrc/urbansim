@@ -61,6 +61,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                         self.toolTypeSelected)
         self.tooltypearray = []
         self.typeSelection = None
+        self.setWindowTitle(QString("Add and configure tool..."))
 
     def on_createConfig_released(self):
         #print "create pressed"
