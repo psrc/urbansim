@@ -474,13 +474,13 @@ def insert_auto_generated_cache_directory_if_needed(config):
     """    
     Insert an auto generated cache directory with current date-time in cache_directory_root to config.
     Do nothing if 
-    1. 'cache_directory' is in config's keys, and
+    1. 'cache_directory' is in config's keys with non-None value, and
     2. a) the specified cache_directory doesn't exists, or
        b) the specified cache_directory exists, but 'overwrite_cache_directory_if_exists' is set to True
     
     """
     insert_auto_generated_cache_directory = True
-    if config.has_key('cache_directory'):
+    if config.has_key('cache_directory') and config['cache_directory'] is not None:
         if not os.path.exists(config['cache_directory']):
             insert_auto_generated_cache_directory = False
         elif config.has_key('overwrite_cache_directory_if_exists') and config['overwrite_cache_directory_if_exists'] is True:
