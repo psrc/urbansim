@@ -28,7 +28,7 @@ class RegressionModelWithAdditionInitialResiduals(RegressionModel):
     model_name = "Regression Model With Addition of Initial Residuals"
     model_short_name = "RMWAIR"
 
-    def __init__(self, model_configuration=None, regression_procedure="opus_core.linear_regression",
+    def __init__(self, regression_procedure="opus_core.linear_regression",
                   submodel_string=None, outcome_attribute = None,
                   run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None):
         """'outcome_attribute' must be specified in order to compute the residuals.

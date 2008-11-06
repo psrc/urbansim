@@ -33,38 +33,27 @@ class RegressionModel(ChunkModel):
     model_name = "Regression Model"
     model_short_name = "RM"
 
-    def __init__(self, model_configuration=None, regression_procedure="opus_core.linear_regression",
+    def __init__(self, regression_procedure="opus_core.linear_regression",
                   submodel_string=None,
-                  run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None, filter = None):
-        dl = debuglevel
-        if debuglevel is None and model_configuration is not None and 'debuglevel' in model_configuration:
-            dl = self.model_configuration["debuglevel"] # which attribute determines submodels
-        self.debug = DebugPrinter(dl)
+                  run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None, filter = None):
+ 
+        self.debug = DebugPrinter(debuglevel)
 
         self.dataset_pool = self.create_dataset_pool(dataset_pool)
 
-        rp = regression_procedure
-        if regression_procedure is None and model_configuration is not None and 'regression_procedure' in model_configuration:
-            rp = self.model_configuration["regression_procedure"] # which attribute determines submodels
-        self.regression = RegressionModelFactory().get_model(name=rp)
+        self.regression = RegressionModelFactory().get_model(name=regression_procedure)
         if self.regression == None:
             raise StandardError, "No regression procedure given."
 
         self.submodel_string = submodel_string
-        if submodel_string is None and model_configuration is not None and 'submodel_string' in model_configuration:
-            self.submodel_string = self.model_configuration["submodel_string"] # which attribute determines submodels
 
         self.run_config = run_config
-        if run_config is None and model_configuration is not None and 'run_config' in model_configuration:
-            self.run_config = self.model_configuration["run_config"]
         if self.run_config == None:
             self.run_config = Resources()
         if not isinstance(self.run_config,Resources) and isinstance(self.run_config, dict):
             self.run_config = Resources(self.run_config)
 
         self.estimate_config = estimate_config
-        if estimate_config is None and model_configuration is not None and 'estimate_config' in model_configuration:
-            self.estimate_config = self.model_configuration["estimate_config"]
         if self.estimate_config == None:
             self.estimate_config = Resources()
         if not isinstance(self.estimate_config,Resources) and isinstance(self.estimate_config, dict):
