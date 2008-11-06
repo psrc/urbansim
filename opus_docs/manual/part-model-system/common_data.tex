@@ -12,21 +12,16 @@ There are certain tables that would be required in order to run any of the aform
 
 \subsection{households} 
 
-This is a table of households. It contains one record for each household in the modeled region. This information is typically estimated or "synthesized." There are household synthesizers available that can generate the information needed for this table from census data. Usually source data for this table consists of SF1, SF3, CTPP, and PUMS data from the U.S. Census.
+This is a table of households. It contains one record for each household in the modeled region. This information is typically estimated or "synthesized." There are household synthesizers available that can generate the information needed for this table from census data. Usually source data for this table consists of SF1, SF3, CTPP, and PUMS data from the U.S. Census.  These attributes are commonly found in households tables, but any descriptive fields could be used.
 
 \begin{description}
 \item household\_id - unique identifier
 \item building\_id - identifies which building the household lives in.
-  \begin{itemize}
-  \item One way to assign households to buildings is by using a location choice model whereby each household 
-      probabilistically selects a building based on its and the building's characteristics
-   \end{itemize}
 \item persons - number of persons in the household
 \item workers - number of workers in the household
 \item age\_of\_head - the age of the head of household
 \item income - the income of the household as an integer
 \item children - the number of children in the household
-\item cars - the number of cars owned by the household 
 \end{description}
 
 \subsection{jobs} 
@@ -62,7 +57,6 @@ This is a lookup table to give land uses readable names. Land use types could be
 \item land\_use\_type\_id - unique identifier
 \item generic\_land\_use\_type\_id - identifies the more aggregate land use type that this land use type falls into
 \item land\_use\_type\_name - readable name to identify land use type
-\item land\_use\_code - MAG/PAG land use code
 \item land\_use\_type\_description - readable description of the land use type
 \item unit\_name - readable name that is used by the model so that it can interpret what units are used for different land use types: building\_sqft for non-residential and mixed-use buildings, parcel\_sqft for vacant parcels, residential\_units for residential buildings 
 \end{description}
@@ -74,7 +68,6 @@ This is a lookup table for a more general or aggregate level of land use types.
 \begin{description}
 \item generic\_land\_use\_type\_id - unique identifier
 \item generic\_land\_use\_type\_name - readable name that identifies generic land use types
-\item generic\_land\_use\_type\_code - MAG/PAG level 1 land use code 
 \end{description}
 
 \subsection{cities} 
@@ -93,7 +86,6 @@ This table refers to counties within the study area. It could hold any attribute
 \begin{description}
 \item county\_id - unique identifier
 \item county\_name - readable county name
-\item county\_fips - FIPS code for county 
 \end{description}
 
 \subsection{building\_types} 
@@ -112,7 +104,7 @@ This table identifies a typology of building uses. Often this will be the same a
 
 This table represents constraints on new development. There are two parts to this table that are not immediately apparent just by examining the attributes:
 
-\emph{Selection criteria fields} - These fields could be any parcel attribute that the modeler wishes to use to constrain development. Many examples will be geographical in nature: is\_in\_floodplain or city\_id. Other examples could represent other parcel attributes such as ownership\_id. These fields are expandable to include any attribute of a parcel the modeler may want to restrict development by. The same fields must exist in the parcels table for the models to find matches in this table.
+\emph{Selection criteria fields} - These fields could be any parcel attribute that the modeler wishes to use to constrain development. Many examples will be geographical in nature: is\_in\_floodplain or city\_id. Other examples could represent other parcel or gridcell attributes such as ownership\_id. These fields are expandable to include any attribute of a parcel the modeler may want to restrict development by. The same fields must exist in the parcels or gridcells tables for the models to find matches in this table.
 
 \emph{Constraint fields} - These fields indicate the nature of development allowed under a certain plan\_type. The minimum and maximum fields are informed by the constraint\_type field which indicates the unit of measurement of the constraint (e.g. units per acre or FAR). 
 
@@ -126,7 +118,6 @@ The models are designed for the most restrictive constraints to be used in the c
 \item is\_in\_floodplain - allows floodplains to have their own specific development constraints
 \item is\_on\_steep\_slope - allows steep slopes to have their own specific development constraints
 \item is\_in\_fault\_zone - allows fault zones to have their own specific development constraints
-\item is\_in\_archaeological\_area - allows archaeological areas to have their own specific development constraints 
 \item generic\_land\_use\_type\_id - specifies which land use type is allowed
 \item constraint\_type - indicates the unit of measure for the `minimum' and `maximum' fields
 \item minimum - number indicating the minimum number allowed

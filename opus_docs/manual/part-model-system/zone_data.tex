@@ -1,1 +1,21 @@
 \chapter{Zone Data}
+
+The zone based modeling is the newest model system and should be considered experimental at this point.  The zone based model system was itself modeled after that gridcell model system.  Consequently many of the tables are common with it.  Here are tables unique to the zone based model system.
+
+\subsection{pseudo\_buildings} 
+
+This table contains information on what we have termed "pseudo" buildings.  Pseudo buildngs are not real buildings, but are records meant to represent the amount of commercial, governmental, industrial, and residential space in a zone.  There are 4 pseudo building records per zone\_id, 1 each for each of the land uses.  The attributes are updated during the simulation run by the model system.
+
+\begin{description}
+\item pseudo\_building\_id - unique identifier
+\item annual\_growth - this is the amount that this type of building is allowed to grow per simulation year in terms of floor space or residential units
+\item residential\_units - the number of residential units for residential pseudo buildings
+\item zone\_id - the zone in which this pseudo building is in
+\item avg\_value - the average value per unit or job space depending on the building\_type\_id
+\item building\_type\_id - the building type that matches up with the building\_types table
+\item job\_spaces\_capacity - the total number of job spaces allowed in this pseudo building
+\item residential\_units\_capacity - the total number of residential units allowed in this pseudo building
+\item commercial\_job\_spaces - the total number of commercial job spaces currently in this pseudo building
+\item industrial\_job\_spaces - the total number of industrial job spaces currently in this pseudo building
+\item governmental\_job\_spaces - the total number of governmental job spaces currently in this pseudo building
+\end{description}

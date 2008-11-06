@@ -1,12 +1,11 @@
 \chapter{Parcel Data}
 
-\subsubsection{parcels} 
-This table contains attributes about parcels.
+\subsection{parcels} 
+This table contains attributes about parcels.  In general, there will be an identifier in this table for every other level of geography that you may want to aggregate up to.  In this example, there are attributes for zones, cities, counties, census blocks, etc.  Having these identifiers on the parcel makes it easier to aggregate indicators up to higher level geographies.  Any other attributes that one may want to restrict development by, or update throughout a simulation could be stored here as well.
 
 \begin{description}
 \item parcel\_id - unique identifier
 \item zone\_id - id number for the zone that the parcel's centroid falls within
-\item ownership\_type\_id - identifies the category of the parcel owner
 \item land\_use\_type\_id - identifies the land use of the parcel
 \item city\_id - id number for the city that the parcel's centroid falls within
 \item county\_id - id number for the county that the parcel's centroid falls within
@@ -20,13 +19,12 @@ This table contains attributes about parcels.
 \item is\_in\_flood\_plain - indicates whether or not a parcel is in a flood plain
 \item is\_on\_steep\_slope - indicates whether or not a parcel is on a steep slope
 \item is\_in\_fault\_zone - indicates whether or not a parcel is in a fault zone
-\item is\_in\_archaeological\_area - indicates whether or not a parcel is in an archaeological area
 \item centroid\_x - state plane x coordinate of parcel centroid
 \item centroid\_y - state plane y coordinate of parcel centroid
 \item land\_value - value of the land from the assessor 
 \end{description}
 
-\subsubsection{development\_project\_proposals} 
+\subsection{development\_project\_proposals} 
 
 A record in this table, when combined with one or more records in the development\_project\_components table, represents a "known" development project. This table would be populated with projects known to be coming in the future. This table would also be populated during a simulation run for projects that are not yet complete, in other words, projects that are in the middle of developing according to their velocity function. It is entirely possible for a simulation run to happen without pre-populating this table with records.
 
@@ -50,7 +48,7 @@ A record in this table, when combined with one or more records in the developmen
 \item built\_units\_to\_date - the number of residential units built in the current simulation year 
 \end{description}
 
-\subsubsection{development\_project\_proposal\_components} 
+\subsection{development\_project\_proposal\_components} 
 
 A record in this table represents a portion of a development project identified in the development\_project\_proposals table. In some sense a single record here is meant to represent a single building, or part of a building. Therefore individual records here do not necessarily represent single free-standing buildings, although they are mostly treated that way. This table allows for the flexible representation of mixed uses to occur on a parcel. Examples include multiple free-standing buildings with different uses, a single building with multiple uses inside of it (a single record for each use), or further complex representations of mixed use.
 
@@ -71,7 +69,7 @@ A record in this table represents a portion of a development project identified 
 \item residential\_units - the number of residential units in the building component 
 \end{description}
 
-\subsubsection{development\_templates} 
+\subsection{development\_templates} 
 
 This table, along with corresponding records in the development\_template\_components table, represents development templates. This table is roughly equivalent in nature to the development\_projects table. This table is meant to be a repository of development templates to be drawn from when simulating new development and needs to be populated with a number of templates for the modeling system to utilize.
 
@@ -86,7 +84,7 @@ This table, along with corresponding records in the development\_template\_compo
 \item development\_type - a readable name that describes the type of development this record represents (e.g. SFR-parcel, MFR-apartment, MFR-condo, etc.), this field is not used by the model and is there to make the table more readable 
 \end{description}
 
-\subsubsection{development\_template\_components} 
+\subsection{development\_template\_components} 
 
 This table is roughly equivalent to the development\_project\_components table and represents buildings or parts of buildings to be included in a particular development template.
 
@@ -100,7 +98,7 @@ This table is roughly equivalent to the development\_project\_components table a
 \item building\_sqft\_per\_unit - the square footage per residential unit 
 \end{description}
 
-\subsubsection{velocity\_functions} 
+\subsection{velocity\_functions} 
 
 This table is designed to hold the velocity functions that specify the rate at which development is built out.
 
@@ -114,16 +112,7 @@ This table is designed to hold the velocity functions that specify the rate at w
    \end{itemize}
 \end{description}
 
-\subsubsection{building\_quality\_types} 
-
-This table identifies building quality types.
-
-\begin{description}
-\item building\_quality\_type\_id - unique identifier
-\item building\_quality\_name - readable name identifying building quality 
-\end{description}
-
-\subsubsection{refinements} 
+\subsection{refinements} 
 \label{sec:refinements}
 
 This table is required by the refinement model. The entries in this table define refinements to make to an existing simulation run. No fields can be null, if the attribute is not needed put a single quote (') in the field.
@@ -139,17 +128,7 @@ This table is required by the refinement model. The entries in this table define
 \item transaction\_id - if two or more records have matching transaction ids the refinement model will attempt to balance between the refinements 
 \end{description}
 
-\subsubsection{building\_sqft\_per\_job\_by\_zone\_generic\_land\_use\_type\_id}
-
-This table is required to compute the buildout indicators.
-
-\begin{description}
-\item zone\_id - a unique identifier for each zone in your region
-\item building\_sqft\_per\_job\_glu1 - there will be one of these fields for each generic\_land\_use\_type you have, replacing the `1' at the end with the generic\_land\_use\_type
-\item building\_sqft\_per\_job\_glu....n 
-\end{description}
-
-\subsubsection{demolition\_cost\_per\_sqft} 
+\subsection{demolition\_cost\_per\_sqft} 
 
 This table provides information to the developer model about the costs of demolition by building type. These numbers are used to calculate the cost of demolition of existing development so that a more accurate cost of redevelopment can be calculated.
 
@@ -158,9 +137,9 @@ This table provides information to the developer model about the costs of demoli
 \item demolition\_cost\_per\_sqft - cost in dollars per sqft of demolition 
 \end{description}
 
-\subsubsection{building\_sqft\_per\_job} 
+\subsection{building\_sqft\_per\_job} 
 
-This building contains information on the amount of space each job will take in a particular building type, by zone.
+This table contains information on the amount of space each job will take in a particular building type, by zone.
 
 \begin{description}
 \item zone\_id - the zone the record applies to
@@ -168,7 +147,7 @@ This building contains information on the amount of space each job will take in 
 \item building\_sqft\_per\_job - the sqft per job each job will take in a particular building type in a particular zone 
 \end{description}
 
-\subsubsection{buildings} 
+\subsection{buildings} 
 
 This table contains attributes associated with buildings.
 
@@ -181,6 +160,5 @@ This table contains attributes associated with buildings.
 \item residential\_units - the number of residential units in the building
 \item sqft\_per\_unit - the average number of sqft per unit of residential space
 \item year\_built - the year the building was constructed
-\item building\_quality\_type\_id - describes building quality
 \item improvement\_value - the improvement value from the assessor or other source 
 \end{description}
