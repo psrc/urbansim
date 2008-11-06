@@ -1179,8 +1179,7 @@ error, saying that the \package{gridcell} package didn't have a
 \code{distance_to_cbd} attribute.)  Here is a simple example:
 
 \begin{verbatim}
->>> res = locations.compute_variables(["sqrt(gridcell.distance_to_cbd)"])
->>> res
+>>> locations.compute_variables(["sqrt(gridcell.distance_to_cbd)"])
 array([ 2.23606798,  3.16227766,  2.23606798,  1.        ,  4.47213595,
         0.        ,  2.64575131,  2.64575131,  1.73205081])
 \end{verbatim}
@@ -1212,11 +1211,6 @@ from other expressions.  For example, here are some legal expressions:
 
 The name used in an expression can be either a fully-qualified variable
 name, a dataset-qualified variable name, or a primary attribute.
-(Currently the attribute name can also be an un-qualified attribute for an
-existing attribute of the dataset, but support for this may be dropped in
-future versions of Opus.  So we recommend always qualifying the attribute
-name with the name of the dataset in an expression.)
-
 The variable names can include arguments (Section
 \ref{sec:tutorial-numbersinvariables}), \index{arguments}
 so that
@@ -1226,7 +1220,7 @@ for \class{is_near_SSS_if_threshold_is_DDD}.
 \subsection{Unary Functions for Opus Expressions}
 \label{sec:functions-for-opus-expressions}
 
-There are a set of unary functions defined to use in expressions, as
+There is a set of unary functions defined to use in expressions, as
 follows.  These all operate on numpy arrays.
 
 \begin{description}
@@ -1251,13 +1245,17 @@ less than 1 result in 0.  \index{ln_bounded}
   default shift value is 1.)  \index{ln_shifted}
 
 \item[\code{ln_shifted_auto}] If the input values includes values that are
-less than or equal to 0, they are shifted so that that the minimum of the
+less than or equal to 0, they are shifted so that the minimum of the
 shifted values is 1 before taking the log.  Otherwise the log is taken on
 the original values.  \index{ln_shifted_auto}
 
 \item[\code{sqrt}] Returns an array of square roots.  Values less than 0
   result in 0. \index{sqrt}
 
+\item[\code{safe_array_divide}] First three arguments are the nominator, denominator and 
+a constant. The function returns an array of numerator / denominator for all values where denominator is not 0,
+otherwise the constant (default value is 0). An optional fourth argument controls
+the type of the resulting array. The default value is 'float32'.
 \end{description}
 
 In addition, all of the functions in numpy are available.  To avoid name
@@ -1362,8 +1360,7 @@ component has an attribute \verb|cost| with values \verb|[1000, 1200]|.
 Then evaluating
 
 \begin{verbatim}
-household_x_gridcell(compute_variables('urbansim.household.income',
-    dataset_pool=dataset_pool)
+household_x_gridcell.compute_variables('urbansim.household.income')
 \end{verbatim}
 
 will return a 2-d array
@@ -1377,8 +1374,7 @@ will return a 2-d array
 and
 
 \begin{verbatim}
-household_x_gridcell(compute_variables('urbansim.gridcell.cost',
-    dataset_pool=dataset_pool)
+household_x_gridcell.compute_variables('urbansim.gridcell.cost')
 \end{verbatim}
 
 returns
@@ -1392,8 +1388,7 @@ returns
 Then
 \begin{verbatim}
 household_x_gridcell.compute_variables(
-    'urbansim.gridcell.cost*urbansim.household.income',
-    dataset_pool=dataset_pool)
+            'urbansim.gridcell.cost*urbansim.household.income')
 \end{verbatim}
 
 evaluates to
@@ -1469,14 +1464,13 @@ know the assignments of gridcells to zones and of zones to neighborhoods.
 First, we place the data for three neighborhoods and five zones into a dict storage:\index{Storage!dict}
 \begin{verbatim}
 >>> dstorage = StorageFactory().get_storage('dict_storage')
->>> dstorage._write_dataset(out_table_name='neighborhoods',
-                            values={"nbh_id":array([1,2,3])}
-                              )
->>> dstorage._write_dataset(out_table_name='zones',
-                            values={"zone_id":array([1,2,3,4,5]),
-                                    "nbh_id":array([3,3,1,2,1]),
-                                        }
-                              )
+>>> dstorage.write_table(table_name='neighborhoods',
+                         table_data={"nbh_id":array([1,2,3])}
+                         )
+>>> dstorage.write_table(table_name='zones',
+                         table_data={"zone_id":array([1,2,3,4,5]),
+                                     "nbh_id": array([3,3,1,2,1])}
+                         )
 \end{verbatim}
 
 Then, we create the corresponding datasets: \datasetindex
@@ -1528,8 +1522,8 @@ array([ 1.,  1.,  0.,  0.,  0.])
 
 The \method{aggregate} method accepts the following aggregation functions:
 sum, mean, variance, standard_deviation, minimum, maximum,
-center_of_mass. These are functions of the numpy package
-\module{nd_image}.
+center_of_mass. These are functions of the scipy package
+\module{ndimage}.
 
 An aggregation over two or more levels of geography is done by passing a
 third argument into the \class{aggregate} method. It is a list of dataset
@@ -1594,7 +1588,7 @@ capacity for all gridcells can be determined by: \variablesindex
         "total_capacity = alldata.aggregate_all(gridcell.capacity, function=sum)",
         dataset_pool=dataset_pool)
 total_capacity = alldata.aggregate_all(gridcell.capacity, function=sum)....0.0 sec
-array(15.0)
+array([ 15.])
 \end{verbatim}
 In addition to \method{sum}, the \class{aggregate_all} class accepts all
 functions that are accepted by the \class{aggregate} class;
@@ -1660,7 +1654,7 @@ requirements for model classes are:
 \end{enumerate}
 Optionally, it can have a class attribute \attributesindex \verb|model_name|.
 
-Thus, a following code is a model:
+Thus, the following code is a model:
 \begin{verbatim}
 >>> from opus_core.model import Model
 >>> from opus_core.logger import logger
@@ -1708,10 +1702,12 @@ The model can be coded as follows:
         model_name = "my chunk model"
         def run_chunk(self, index, dataset, mean_attribute, variance_attribute, n=1):
             mean_values = dataset.get_attribute_by_index(mean_attribute, index)
-            variance_values = dataset.get_attribute_by_index(variance_attribute, index)
+            variance_values = dataset.get_attribute_by_index(variance_attribute, 
+                                                              index)
             def draw_rn (mean_var, n):
                 return normal(mean_var[0], mean_var[1], size=n)
-            normal_values = apply_along_axis(draw_rn, 0, (mean_values, variance_values), n)
+            normal_values = apply_along_axis(draw_rn, 0, 
+                                             (mean_values, variance_values), n)
             return normal_values.mean(axis=0)
 \end{verbatim}
 The first two arguments of \method{run_chunk()} are obligatory (determined by the parent class),
@@ -1732,12 +1728,12 @@ is $10$ and $5$, respectively.
 >>> from numpy import arange, array
 >>> from opus_core.storage_factory import StorageFactory
 >>> storage = StorageFactory().get_storage('dict_storage')
->>> storage._write_dataset(out_table_name='dataset',
-                           values={'id':arange(100000)+1,
-                                   'means':array(50000*[0]+50000*[10]),
-                                   'variances':array(50000*[1]+50000*[5])
-                                  }
-                         )
+>>> storage.write_table(table_name='dataset',
+                        table_data={'id':arange(100000)+1,
+                                    'means':array(50000*[0]+50000*[10]),
+                                    'variances':array(50000*[1]+50000*[5])
+                                    }
+                        )
 >>> from opus_core.datasets.dataset import Dataset
 >>> mydataset = Dataset(in_storage=storage, in_table_name='dataset',
                         id_name='id', dataset_name='mydataset')
@@ -1773,7 +1769,7 @@ Running my chunk model (from __main__): completed........................3.7 sec
 \end{verbatim}
 The \method{run()} method expects the first two arguments, the remaining ones are optional
 from the parent point of view. The first argument specifies the number of chunks (see
-Section~\ref{sec:models-configuration}). By playing with different values for \verb|nchunks| and
+Section~\ref{sec:chunk-model}). By playing with different values for \verb|nchunks| and
 \verb|n| one can see how quickly one can run out of memory. \index{Memory management!Using
 multiple chunks per model}
 

@@ -1041,7 +1041,8 @@ memory. The class does not have any effect on an \method{estimate()} method.
 {\it Input}:
 \begin{description}
 \item[chunk_specification] - a dictionary specifying how to determine the number
-  of chunks to run the model in (see Section~\ref{sec:models-configuration}).
+  of chunks to run the model in. It must contain either the key 'records_per_chunk'
+  or the key 'nchunks' (see also Section~\ref{sec:resources}).
 \item[dataset] - an object of class \class{Dataset} along whose elements the
   model will be chunked.
 \item[dataset_index] - an index of elements within \verb|dataset| that are to
@@ -1840,8 +1841,8 @@ the agents grouping attribute. Then the class can be used for subsetting any dat
 e.g. by the method \method{get_index_of_my_agents(dataset, index)} which selects those entries from the given index that
 correspond to this group member.
 
-\subsection{GeneralResources, SessionConfiguration, Configuration and Resources}
-\label{sec:resources} \index{Configuration} \index{Resources} \index{GeneralResources}
+\subsection{Configuration classes}
+\label{sec:resources} \index{Configuration} \index{Resources} \index{GeneralResources}\index{ChunkSpecification}
 %
 Opus implements a few classes that are used for configuration of objects.
 \begin{description}
@@ -1855,6 +1856,10 @@ Opus implements a few classes that are used for configuration of objects.
         representation of the user-specified parameters and settings.
 \item[Resources] - it is a child of \class{Configuration}. It has access to the
 \class{SessionConfiguration}.
+\item[ChunkSpecification] - class for configuring chunks used by the \class{ChunkModel} (see 
+Section~\ref{sec:chunk-model}). It is initialized by a dictionary containing either the key 'records_per_chunk' or
+'nchunks' with the appropriate value. Method \method{nchunks()} returns number of chunks. Method \method{chunk_size()}
+returns the number of records in one chunk.
 \end{description}
 
 %%% Local Variables:

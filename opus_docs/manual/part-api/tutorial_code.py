@@ -215,7 +215,7 @@ locations.get_attribute("is_near_cbd_if_threshold_is_4")
 locations.get_attribute("is_near_cbd_if_threshold_is_7")
 
 # Transformations
-res = locations.compute_variables([
+locations.compute_variables([
  "sqrt_distance_to_cbd = sqrt(gridcell.distance_to_cbd)"])
 locations.get_attribute("sqrt_distance_to_cbd")
 
@@ -231,7 +231,7 @@ dstorage.write_table(table_name='neighborhoods',
                       )
 dstorage.write_table(table_name='zones',
                      table_data={"zone_id":array([1,2,3,4,5]),
-                                "nbh_id":array([3,3,1,2,1]),
+                                "nbh_id":  array([3,3,1,2,1]),
                                 }
                       )
 
@@ -249,7 +249,7 @@ aggr_var = "zone.aggregate(urbansim.gridcell.is_near_cbd_if_threshold_is_2, func
 zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
 print 'this %s' % zones.get_attribute(aggr_var)
 
-aggr_var2 = "aggregated_capacity = neighborhood.aggregate(gridcell.capacity, intermediates=[zone], function=sum)"
+aggr_var2 = "neighborhood.aggregate(gridcell.capacity, intermediates=[zone], function=sum)"
 neighborhoods.compute_variables(aggr_var2, dataset_pool=dataset_pool)
 
 neighborhoods.add_primary_attribute(name="is_cbd", data=[0,0,1])
@@ -289,7 +289,8 @@ class MyChunkModel(ChunkModel):
     model_name = "my chunk model"
     def run_chunk(self, index, dataset, mean_attribute, variance_attribute, n=1):
         mean_values = dataset.get_attribute_by_index(mean_attribute, index)
-        variance_values = dataset.get_attribute_by_index(variance_attribute, index)
+        variance_values = dataset.get_attribute_by_index(variance_attribute, 
+                                                         index)
         def draw_rn (mean_var, n):
             return normal(mean_var[0], mean_var[1], size=n)
         normal_values = apply_along_axis(draw_rn, 0, (mean_values, variance_values), n)
