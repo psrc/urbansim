@@ -71,7 +71,7 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
         self.set_model_name(model_name)
         
         spc_tbl_name = model_name + '_specification'
-        coef_tbl_name = model_name + '_coefficients_table'
+        coef_tbl_name = model_name + '_coefficients'
         dataset = self.cboDataset.currentText()
         dep_var = self.cboDependentVariable.currentText()
 
