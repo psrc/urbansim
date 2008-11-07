@@ -270,7 +270,7 @@ class XmlManipulator(object):
         root = self._resolve_root_node(root)
         if root is None: 
             return None
-         # make sure name is valid
+        # make sure name is valid
         if not self._valid_tagname(tagname): 
             return None
         spawn = self._dom_document.createElement(tagname)
