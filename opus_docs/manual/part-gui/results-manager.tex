@@ -1,70 +1,96 @@
-% \begin{figure}[htp]
-% \begin{center}
-% \includegraphics[scale=0.4]{graphics/opus-generate-indicator.png}
-% \end{center}
-% \caption{Generating an Indicator in the Results Manager}
-% \label{fig:opus-generate-indicator}
-% \end{figure}
-
 
 \chapter{The Results Manager}
 
 The Results Manager, corresponding to the Results tab of the GUI, has
 two main responsibilities: to manage simulation runs for this project
-and to allow the interrogation of these simulation results through
-the use of \emph{indicators}. We explore both of these in this
-chapter.
+(Section~\ref{sec:managing-simulation-runs}) and to allow the
+interrogation of these simulation runs through the use of
+\emph{indicators}
+(Section~\ref{sec:interrogating-results-with-indicators}). We explore
+both of these in this chapter.
 
 \section{Managing simulation runs}
+\label{sec:managing-simulation-runs}
 
-[get run info]
-[remove run and delete from harddrive]
-[import run from disk]
+\begin{figure}[tp]
+\begin{center}
+%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
+\end{center}
+\caption{Importing a run from disk that is not showing up as a
+``Simulation run''.}
+\label{fig:results-manager-import-run}
+\end{figure}
 
+The ``Simulation runs'' node captures all
+available simulation runs for this project. For example, when a
+simulation is run from the ``Scenarios-manager'' (see
+chapter~\ref{chap:scenarios-manager}), an entry is made under
+``Simulation runs''. If for some reason a run that you know exists
+for this project is not listed, right-click on 
+``Simulation runs'' and select ``Import run from disk'' (See
+Figure~\ref{fig:results-manager-import-run}). The GUI will try to load
+the missing run and make it available.
+
+A couple operations can be performed on a simulation run. To view
+information about a given run, right-click on the run and select
+''Show details''. To remove all traces of a simulation run,
+including the data on disk, right-click on the run and select
+''Remove run and delete from harddrive''.
 
 \section{Interrogating results with Indicators}
+\label{sec:interrogating-results-with-indicators}
 
-Indicators are variables defined explicitly
-for use as a meaningful measure. Like model variables, they can be
-defined using the domain-specific programming language via the
-``Variable Library'' item in the Tools menu. (XXX: forward pointer to
-indicator chapter). An indicator can then be visualized as either a
-map or as a table (the raw data) in a variety of formats. 
-
-The GUI provides two ways to use indicators to understand what has
-happened in your simulation:
-\begin{enumerate}
-  \item Interactive result exploration
-  \item Batch indicator configuration and execution
-\end{enumerate} 
+Indicators are variables defined explicitly for use as a meaningful
+measure (see Section~\ref{sec:opus-indicators}). Like model variables,
+they can be defined using the domain-specific programming language via
+the ``Variable Library'' accessible through the Tools menu (see
+Chapter~\ref{chap:variable-library}). An indicator can then be
+visualized as either a map or as a table in a variety of
+formats. The GUI provides two ways to use indicators to understand what
+has happened in a simulation run: interactive result exploration
+(Section~\ref{sec:interactive-result-exploration}) and Batch
+indicator configuration and execution
+(Section~\ref{sec:batch-indicator-configuration}).
 
 \subsection{Interactive result exploration}
-
-Often, it is desirable to explore your results in a lightweight
+\label{sec:interactive-result-exploration}
+Often, it is desirable to explore simulation results in a lightweight
 fashion in order to get a basic idea of what happened. You don't
 necessarily want to go through the process of exporting results to a
-GIS mapping tool in order to gain some intuition. 
+GIS mapping tool in order to gain some basic intuitions into spatial
+patterns.
 
-The Opus GUI's \verb#Result Browser#, available from the \verb#tools#
+\begin{figure}[tp]
+\begin{center}
+%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
+\end{center}
+\caption{Using the ``Result browser'' for interactive result
+exploration.}
+\label{fig:results-manager-result-browser}
+\end{figure}
+
+
+The Opus GUI's ``Result Browser'', available from the ``tools''
 menu, allows interactive exploration of simulation results. The Result
 Browser presents a selectable list of available simulation runs, years
 over which those simulations were run, and available indicators. You
 can then configure an indicator visualization by selecting a simulation
 run, a year, and an indicator. To compute and visualize the configured
-indicator, simply press the \verb#generate results# button. The
+indicator, simply press the ``generate results'' button (See
+Figure~\ref{fig:results-manager-result-browser}). The
 indicator will then be computed for the year of the selected simulation
 run. After it is computed, a tab should appear at the bottom of the
-window with the name of the indicator and provide the ability to
-visualize the results as a table or map (using the MatplotLib Python
-module). See the inset tutorial XXX to try out the \verb#Result Browser#.
+window with the name of the indicator. Subtabs allow you to see the
+results as a table or map (using the Matplotlib Python module). 
 
 \fbox{
 \begin{minipage}{.5\linewidth}
 \begin{enumerate}
   \item Open the Results Browser from the Tools menu. Use the
   Results Browser to answer the following questions.
-  \item Just from visual inspection, is there more than one
-  cluster of gridcells with high land value in the Eugene region in 1980 in the baseyear data?
+  \item Just from visual inspection, is there more than one cluster of
+  gridcells with high land value in the Eugene region in 1980 in the
+  baseyear data?
   \item Is this cluster(s) in the same general area as the
   greatest number of jobs in Eugene for the same year of the
   baseyear data?
@@ -74,87 +100,127 @@ module). See the inset tutorial XXX to try out the \verb#Result Browser#.
 
 Two additional aspects of the Result Browser should be mentioned:
 \begin{enumerate}
-  \item If the checkbox \verb#Automatically view indicator# is
+  \item If the checkbox ``Automatically view indicator'' is
   clicked, everytime you change the indicator configuration (i.e.
   select a different simulation run, year, or indicator), the
   indicator will be automatically visualized (as if you pressed the
-  \verb#Generate results# button). 
-  \item The \verb#Export results# button will export the table data
+  ``Generate results'' button). 
+  \item The ``Export results'' button will export the table data
   of the currently configured indicator to a database. This feature
   is not yet implemented. 
 \end{enumerate}
 
 \subsection{Batch indicator configuration and execution}
+\label{sec:batch-indicator-configuration}
 
-The \verb#Result Browser# is good for poking around in the
+The ``Result Browser'' is good for poking around in the
 data. But often you'll want to generate the same
-set of indicators for each of amny runs and you don't want to
+set of indicators for each of many runs and you don't want to
 redefine them every time. Instead, you'd like to configure and save a
 group of them that can be executed on demand on an arbitrary
 simulation run. In the Opus GUI, this functionality is supported with
 \emph{indicator batches}. 
 
-To create a new indicator batch, right-click on the
-\verb#Indicator_batches# node in the \verb#Results tab# and select
-\verb#Add new indicator batch...#. A new batch will be created
-under the Indicator_batches node. You can rename the new batch if you
-want by double-clicking its name and typing in a new one.
+\begin{figure}[tp]
+\begin{center}
+%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
+\end{center}
+\caption{Creating a new indicator batch}
+\label{fig:results-manager-new-batch}
+\end{figure}
 
-A batch is a collection of \verb#Indicator visualization#
+To create a new indicator batch, right-click on the
+ ``Indicator\_batches'' node in the ``Results tab'' and select
+ ``Add new indicator batch...'' (See
+Figure~\ref{fig:results-manager-new-batch}). A new batch will be
+created under the Indicator\_batches node. If desired, you can rename the new
+batch by double-clicking its name and typing in a new one.
+
+A batch is a collection of ``Indicator visualization''
 definitions. Each indicator visualization is a configuration of
 the indicator variable to be used, a visualization style (e.g. map or
 table), and some format options. To add a new indicator visualization
 to the batch, right-click on the respective batch and select
-\verb#Add new indicator visualization...#. A dialog box will
+``Add new indicator visualization...''. A dialog box will
 appear where you can define the visualization. The visualization
-options for an indicator visualzation are discussed in depth later in
-subsection~\ref{sect:indicator-visualization-options}.
+options for an indicator visualzation are discussed in depth later.
 
-You can add as many indicator visualizations to a batch as you want.
-In order to execute an indicator batch on a simulation run,
-right-click on the indicator batch and hover over
- \verb#Run indicator batch on...#. A list of all the available 
- simulations runs will
-appear as a submenu. You can then select the appropriate simulation
-and the indicator visualizations in the batch will be executed over
-all the years of that simulation run. If the resulting indicators are
-tables or maps stored in a file, they can then be found on disk in
-your \verb#OPUSHOME/data/PROJECTNAME/runs/RUNNAME/indicators#
-directory, where \verb#PROJECTNAME# is the name of your project (e.g.
-``eugene\_gridcell'') and \verb#RUNNAME# is the name of the
+You can add as many indicator visualizations to a batch as you want. In
+order to execute an indicator batch on a simulation run, right-click on
+the indicator batch and hover over
+ ``Run indicator batch on...''. A list of all the available simulations
+ runs will
+appear as a submenu. You can then select the appropriate simulation.
+The indicator visualizations in the batch will be executed over all the
+years of that simulation run. If the resulting indicators are tables or
+maps stored in a file, they can then be found on disk in your
+``OPUSHOME/data/PROJECTNAME/runs/RUNNAME/indicators'' directory, where
+``PROJECTNAME'' is the name of your project (e.g.
+ ``eugene\_gridcell'') and ``RUNNAME'' is the name of the
 simulation run that you selected to run the batch on. The indicator
 visualizations configured to write to a database will have produced
 tables in the specified database with the name of the respective
-indicator visualization. 
+indicator visualization.
+
+\fbox{
+\begin{minipage}{.5\linewidth}
+Create, configure, and execute a new indicator batch:
+\begin{enumerate}
+\item Create a
+new indicator batch by right-clicking on the  ``Indicator\_batches'' node
+in the Results tab and selecting the appropriate option. 
+\item Optional: Rename the new
+indicator batch.
+\item Add an indicator visualization configuration to
+that batch. Right-click on your new indicator batch and select  ``Add new
+indicator visualization''.
+\item Configure a Map visualization that contains the 
+{\sf zone\_job\_density} and {\sf zone\_population\_density} indicators for the
+zone dataset.
+\item Close the batch visualization configure dialog.
+\item Right-click on the batch and
+execute your indicator batch on the results of a simulation run.
+\end{enumerate}
+\end{minipage}
+}
 
 
 \subsubsection{Indicator visualization configuration options}
 \label{sect:indicator-visualization-options}
 
-Opus provides a rich variety of ways to visualize indicators and this
-functionality is exposed in the \verb#Indicator visualization# dialog
+
+\begin{figure}[tp]
+\begin{center}
+%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
+\end{center}
+\caption{The batch visualization creation dialog.}
+\label{fig:results-manager-batch-viz}
+\end{figure}
+
+Opus provides a variety of ways to visualize indicators and this
+functionality is exposed in the ``Indicator visualization'' dialog
 box options (e.g. multi-year indicators, exporting to
-databases). Unfortunately, this functionality can sometimes be hard
-to present in an intuitive fashion. This section describes the range
+databases). This section describes the range
 of available options in the Batch indicator visualization dialog
-box, which is separated into three components: ``indicator
-selection'', ``output options'', and ``format options''. 
+box, which is separated into three components:  ``indicator
+selection'',  ``output options'', and  ``format options'' (See
+Figure~\ref{fig:results-manager-batch-viz}). 
 
 \heading{Indicator selection}
 
-The bottom of the dialog box has two list boxes, ``available
-indicators'' and ``indicators in current visualization''. The
-indicators here are those variables from the \verb#Variable Library#
-(XXX reference to variable library section) whose \emph{use} has been
-set to be \emph{indicator} or \emph{both}. Note that the set of
+The bottom of the dialog box has two list boxes,  ``available
+indicators'' and  ``indicators in current visualization''. The
+indicators here are those variables defined in the 
+``Variable Library'' (Chapter~\ref{chap:variable-library}) whose
+\emph{use} has been set to be \emph{indicator} or \emph{both}. Note that the set of
 indicators available is filtered by the currently selected dataset in
-the ``output options'' (described later in this section).
+the  ``output options'' (described later in this section).
 
-By moving an indicator from the ``available indicators'' box to the
-``indicators in current visualization'' box via the ``+'' button, you
+By moving an indicator from the  ``available indicators'' box to the
+ ``indicators in current visualization'' box via the  ``+'' button, you
 include that indicator in this indicator visualization. Likewise, to
 remove an indicator from the visualization, select the indicator in
-the ``indicators in current visualization'' box and press the ``-''
+the  ``indicators in current visualization'' box and press the  ``-''
 button.
 
 
@@ -162,7 +228,7 @@ button.
 
 \emph{Visualization Name}. The base name of any produced
 visualizations. Because you might be producing this visualization for
-different years and different simulation data, more information wil
+different years and different simulation data, more information will
 be appended to this name to ensure uniqueness of the resulting file
 or database table when the visualization is run on some data. 
 
@@ -181,76 +247,96 @@ because a given indicator is valid only for a single dataset.
 
 \heading{Format options for maps}
 
-The Matplotlib map is not intended to replace GIS-based mapping, which
-allows far more control and the overlay of other features for visual
-reference.  It is merely a quick tool to visualize data to get a sense
-of the spatial patterns in it.  In order to support visualization in a
-GIS environment such as ArcGIS or QGIS, the results may be exported to
-a database or geodatabase environment, and the GIS software used to
-create a more interactive and flexible display of the data.
+Map visualizations will produce a map file for every selected
+indicator for every available year when it is executed on a
+simulation run. 
 
+Currently, the only availabe map format is Matplotlib, a Python mapping
+module that quickly produces low-quality images. Note that Matplotlib
+map is not intended to replace GIS-based mapping, which allows far more
+control and the overlay of other features for visual reference.  It is
+merely a quick tool to visualize data to get a sense of the spatial
+patterns in it. In order to support visualization in a GIS environment
+such as ArcGIS or QGIS, the results may be exported to a database or
+geodatabase environment, and the GIS software used to create a more
+interactive and flexible display of the data. See the following section
+for a description of how to export indicator results to a SQL database
+or a DBF file for use in external GIS tools.
 
 \heading{Format options for tables}
 
+There are four different available formats for tables. Each has its
+own parameters that need to be set. Note that the id column for the
+dataset will automatically be included in all outputted tables
+regardless of format.
 
-[export results to database; geodatabase / autoview creation in
-Postgres]
+\emph{Tab-delimited (.tab)}. This will output a file (or multiple
+files) where the values are separated by tabs. There are three
+different modes to choose from that affects how data is split across
+files when the visualization is executed on a simulation run.
+``Output in a single file'' will create single tab file that has a
+column for each selected indicator for each year of the simulation
+run. ``Output in a table for every year'' will create a tab file
+for each year of the simulation run, with each column
+corresponding to a selected indicator. Finally, 
+``Output a table for each indicator'' will create a tab file for
+each selected indicator, where each column
+corresponds to the indicator values of a year of the
+simulation run.
+
+\emph{Fixed-field}. The fixed field format will output a single file
+whose fields are written with fixed width and no delimiters. The file
+contains a column for each selected indicator for each year of the
+simulation run for which the visualization is being created. Format
+info for each column needs to be specified. To specify the format of
+the dataset id column, fill in the ``id\_col'' input field. To
+specify the format of each selected indicator, enter the format in the
+respective row of the ``field format'' column in the  ``indicators in
+current visualization'' box. The field format has two parts, the length
+of the field and the type. Available types are float ( ``f'') and
+integer ( ``i''). Specified field formats follow the pattern  ``10i'' and
+ ``5.2f'', where the latter specifies a float with five leading digits
+with floating point precision carried out to two decimal places.
+
+\emph{SQL database}. This format option can be used to export to an
+arbitrary SQL database. The database server used is that specified in
+the ``Database server connections'' under  ``indicators\_database''
+(see Section~\ref{sec:database-server-connections}). The exported data
+will take the form of a newly created in the specified database (if the database doesn't exist, it will be created
+first). The SQL table will contain a column for every selected
+indicator for every year of the simulation run that it is being
+executed against. The name of the table is a combination of the name of
+the visualization and the name of the simulation run. Additionally,
+if you are exporting to a PostGRES database and have an existing
+spatial table corresponding to the dataset of the visualization, a view
+defining a join over the spatial table and the indicator table will
+automatically be created. This allows you to instantly view the
+indicator results in QGIS. 
+
+\emph{ESRI database}. This option exports the
+indicator data to an ESRI database that can be loaded into ArcMap.
+Simply specify the path to a geodatabase file (.gdb).
 
 
-
-% 
-% \subsection{Generating Indicators}
-% 
-% 
-% 
-% You will need to click the \verb#Simulation data# button and then
-% select the simulation results you want to use.  Notice that the name of
-% the scenario contains a date and time when the run was started.  Once
-% you click on the \verb#Generate results# button, the indicator is
-% computed.  A message is printed to the log, below the button, and a new
-% entry will show up in the results node in the Results Manager tab on
-% the left, as shown in Figure \ref{fig:opus-indicator-2}.
-% 
-% \begin{figure}[htp]
-% \begin{center}
-% \includegraphics[scale=0.4]{graphics/opus-indicator-2.png}
-% \end{center}
-% \caption{Result of Generating an Indicator}
-% \label{fig:opus-indicator-2}
-% \end{figure}
-% 
-% Now that an indicator has been computed, its data is available to
-% visualize or export to another application.  The Results Manager
-% currently supports several ways to visualize an indicator, and these
-% will depend on the nature of the indicator.  The menu for this is shown
-% in Figure \ref{fig:opus-indicator-view-1}.  For example, the indicator
-% that has just been computed is population by gridcell.  It is possible
-% to visualize data on a grid using a simple image map, displayed on the
-% right hand window using the Matplotlib Python library.   If you select
-% the Map (Matplotlib) option on the menu, it will generate a map such as
-% the one shown in Figure \ref{fig:opus-indicator-view-2}.
-% 
-% \begin{figure}[htp]
-% \begin{center}
-% \includegraphics[scale=0.4]{graphics/opus-indicator-view-1.png}
-% \end{center}
-% \caption{View Results for an Indicator}
-% \label{fig:opus-indicator-view-1}
-% \end{figure}
-% 
-% \begin{figure}[htp]
-% \begin{center}
-% \includegraphics[scale=0.4]{graphics/opus-indicator-view-2.png}
-% \end{center}
-% \caption{Matplotlib Map for Population by Gridcell in Eugene-Springfield in 1981}
-% \label{fig:opus-indicator-view-2}
-% \end{figure}
-% 
-% The Matplotlib map is not intended to replace GIS-based mapping, which
-% allows far more control and the overlay of other features for visual
-% reference.  It is merely a quick tool to visualize data to get a sense
-% of the spatial patterns in it.  In order to support visualization in a
-% GIS environment such as ArcGIS or QGIS, the results may be exported to
-% a database or geodatabase environment, and the GIS software used to
-% create a more interactive and flexible display of the data.
-% 
+\fbox{
+\begin{minipage}{.5\linewidth}
+Export the results that were found in the previous tutorial inset
+to a SQL database. 
+\begin{enumerate}
+  \item Make sure that you have configured a database
+server. From the Tools menu, select  ``Database Server Connections''. Check
+to see that the ``indicators\_database\_server" is correctly set up.
+If you don't have a remote database server, make sure that it
+points to a sqlite connection. Close the
+connections dialog box.
+  \item Reconfigure the batch to write to a
+database. Expand the indicator batch that you defined in the prior
+step. Right-click on the visualization and select ``Configure
+visualization''. Change the format to ``Export to SQL database'' and then
+name a database it should write to. Hit OK and then rerun the batch on the
+simulation results from before.
+  \item Launch a database browser and check to see if the proper
+  tables were created. 
+\end{enumerate}
+\end{minipage}
+}
