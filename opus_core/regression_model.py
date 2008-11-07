@@ -35,7 +35,7 @@ class RegressionModel(ChunkModel):
 
     def __init__(self, regression_procedure="opus_core.linear_regression",
                   submodel_string=None,
-                  run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None, filter = None):
+                  run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None):
  
         self.debug = DebugPrinter(debuglevel)
 
@@ -65,7 +65,7 @@ class RegressionModel(ChunkModel):
         self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
-            data_objects=None, run_config=None, initial_values=None, procedure=None, n_simulated_years = None, debuglevel=0):
+            data_objects=None, run_config=None, initial_values=None, procedure=None, debuglevel=0):
         """'specification' is of type EquationSpecification,
             'coefficients' is of type Coefficients,
             'dataset' is of type Dataset,
@@ -75,7 +75,7 @@ class RegressionModel(ChunkModel):
             'data_objects' is a dictionary where each key is the name of an data object
             ('zone', ...) and its value is an object of class  Dataset.
            'run_config' is of type Resources, it gives additional arguments for the run.
-           If 'procedure' is given, if overwrites the regression_procedure of the constructor.
+           If 'procedure' is given, it overwrites the regression_procedure of the constructor.
            'initial_values' is an array of the initial values of the results. It will be overwritten
            by the results for those elements that are handled by the model (defined by submodels in the specification).
            By default the results are initialized with 0.
