@@ -1449,6 +1449,27 @@ The \verb|outcome_attribute| is then flushed to cache and the values are returne
 \subsection{JoinAttributeModificationModel Class}
 %\label{sec:api-jam-model}
 %
+The model modifies an attribute of a dataset for members that are determined by given ids of a second dataset.
+The \method{run()} method takes the following arguments:
+\begin{description}
+\item[dataset] - an object of class \class{Dataset} for which the modification is done.
+\item[secondary_dataset] - an object of class \class{Dataset} used to specify members of \verb|dataset|
+  to be modified.
+\item[index] - index of members of the \verb|secondary_dataset| to be used. If it is None, all members are considered.
+\item[attribute_to_be_modified] - name of an attribute of \verb|dataset| to be modified. If it is None (default), 
+  an attribute of the same name as the id name of \verb|secondary_dataset| is taken.
+\item[value] - constant to be assigned to the selected members. Default value is 0.
+\item[filter] - name of an attribute/variable/expression used for filtering out members of the 
+  \verb|secondary_dataset|. Only members that correspond to value of the filter larger than 0 
+  and are included in \verb|index| are considered. Default is None which means no filtering. 
+\item[dataset_pool] - pool of datasets used in the computation. Default is None.
+\end{description}
+
+\verb|dataset| must contain an attribute of the same name as the id attribute of the \verb|secondary_dataset|,
+here called the 'join attribute'.
+The model finds members of \verb|dataset| for which the values of the join attribute match the values in 
+the \verb|secondary_dataset| (possibly restricted by the \verb|index| and/or \verb|filter|). For all those members
+the attribute \verb|attribute_to_be_modified| is changed to \verb|value|. 
 
 
 \section{Model Components}
