@@ -21,7 +21,7 @@ from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableF
 from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization import ConfigureNewBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.configure_existing_batch_indicator_visualization import ConfigureExistingBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.import_run_dialog import ImportRunDialog
-
+from opus_gui.results_manager.controllers.dialogs.add_indicator_batch import AddIndicatorBatch
 
 # Main Run manager class
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
@@ -75,7 +75,11 @@ class ResultsManagerBase(AbstractManagerBase):
                                                resultsManagerBase = self)            
             
         self.addNewGuiElement(element = self.resultBrowser)
-        
+    
+    def addNewIndicatorBatch(self):
+        window = AddIndicatorBatch(self)
+        window.show()
+                
     def configureExistingIndicatorBatchVisualization(self, selected_index):
         viz_name = selected_index.internalPointer().node().toElement().tagName()
         _, params = self.xml_helper.get_element_attributes(node_name = viz_name,

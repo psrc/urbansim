@@ -57,7 +57,7 @@ class XmlController_Results(XmlController):
 
     def addNewIndicatorBatch(self):
               
-        self.xml_helper.addNewIndicatorBatch(batch_name = 'untitled_indicator_batch')
+        self.mainwindow.resultsManagerBase.addNewIndicatorBatch()
         
 #    def beforeAddIndicatorToBatchShown(self):
 #        #batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
