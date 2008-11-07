@@ -463,14 +463,6 @@ a:int8,b:float32,c:string40
 2,2.18,there
 \end{verbatim}
 
-% The method \method{write_dataset()} writes the data to the file whose name is
-% constructed by appending a to the \verb|out_table_name| entry in
-% the \verb|write_resources| argument to \method{write_dataset()}.
-% \verb|csv_storage| uses the ``csv'' suffix.  \verb|tab_storage| uses the
-% ``tab'' suffix.  \method{write_dataset()} always appends type information to
-% the column names.
-
-
 \subsection{sql_storage}
 \label{sec:sql-storage}
 %
@@ -1088,7 +1080,7 @@ elements should be processed. For example, if this method returns a randomized
 index, the elements passed into \method{run_chunk()} will be processed in
 randomized order.
 
-
+An example of a user-defined \class{ChunkModel} is in Section~\ref{sec:tut-creating-new-model}.
 
 \subsection{ChoiceModel Class}
 \label{sec:choice-model}
@@ -1169,7 +1161,7 @@ and coefficients. \coefficientsindex
    (see Section~\ref{sec:chunk-model}). 
   Default is None, which is equivalent to 1 chunk.
 \item[data_objects] - a dictionary containing additional datasets \datasetindex 
-  needed for computing variables. \variablesindex This argument is obsolete - the datasets should be 
+  needed for computing variables. \variablesindex This argument is obsolete -- the datasets should be 
   included in the \verb|dataset_pool| argument of the constructor.
 \item[run_config] - additional \class{Resources} for controlling the
   simulation run.
@@ -1219,7 +1211,7 @@ a given specification.
   estimation procedure (see Section~\ref{sec:estimation-procedure}). This argument can be also passed via
   \verb|estimate_config| as an entry \verb|'estimation'|. The default value is None.
 \item[data_objects] - a dictionary containing additional datasets \datasetindex
-  needed for computing variables. \variablesindex This argument is obsolete - the datasets should be 
+  needed for computing variables. \variablesindex This argument is obsolete -- the datasets should be 
   included in the \verb|dataset_pool| argument of the constructor.
 \item[estimate_config] - additional \class{Resources} for controlling the
   estimation run.
@@ -1274,9 +1266,10 @@ The class is initialized by passing the following arguments:
 \item[submodel_string] - If model contains submodels, this character string
   specifies what attribute of the observation set determines those submodels.
 \item[run_config] - A collection of additional arguments that control a
-  simulation run. It should be of class \class{Resources}.
+  simulation run. It should be a dictionary or an instance of class \class{Resources}.
 \item[estimate_config] - A collection of additional arguments that control an
-  estimation run. It should be of class \class{Resources}.
+  estimation run. It should be a dictionary or an instance of class \class{Resources}.
+\item[dataset_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 From the argument \verb|regression_procedure| the initialization method
 creates a class attribute \attributesindex \verb|regression|, using
@@ -1299,11 +1292,21 @@ specification and coefficients. \coefficientsindex
   observations the prediction is to be made. If it is not given, the whole
   \verb|dataset| \datasetindex is considered.
 \item[chunk_specification] - a dictionary specifying how to determine the number
-  of chunks to run the model in (see Section~\ref{sec:models-configuration}).
-\item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
-\item[run_config] - additional \class{Resources} for controlling the simulation
+  of chunks to run the model in. It is  passed to the \method{run} method of \class{ChunkModel}
+   (see Section~\ref{sec:chunk-model}).
+\item[data_objects] - a dictionary containing additional datasets \datasetindex
+  needed for computing variables. \variablesindex This argument is obsolete -- the datasets should be 
+  included in the \verb|dataset_pool| argument of the constructor.
+\item[run_config] - additional \class{Resources} (or dictionary) for controlling the simulation
   run.
+\item[initial_values] - an array of initial values of the results. It is of the same size as 
+  \verb|dataset|. Elements that are handled by the model (determined by \verb|index| and specification)
+  will be overwritten by the results. By default, the array is set to zeros.
+\item[procedure] - a fully qualified name of the module/class in
+  which the regression is implemented (see Section~\ref{sec:regression}). 
+  If it is None (default), the value of \verb|regression_procedure| from the constructor is taken. 
+  This argument overwrites the class attribute \verb|regression|.
+
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
@@ -1333,14 +1336,22 @@ a given specification.
   observations will be used for the estimation. If it is not given, the whole
   \verb|dataset| \datasetindex is considered.
 \item[procedure] - a character string giving the fully qualified name of the
-  estimation procedure.
-\item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
-\item[estimate_config] - additional \class{Resources} for controlling the
+  estimation procedure (see Section~\ref{sec:estimation-procedure}). This argument can be also passed via
+  \verb|estimate_config| as an entry \verb|'estimation'|. The default value is None.
+\item[data_objects] - a dictionary containing additional datasets \datasetindex
+  needed for computing variables. \variablesindex This argument is obsolete -- the datasets should be 
+  included in the \verb|dataset_pool| argument of the constructor.
+\item[estimate_config] - additional \class{Resources} (or dictionary) for controlling the
   estimation run.
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
+In addition to \verb|index|, the number of dataset members entering the
+estimation can be controlled by an entry \verb|'estimation_size_agents'| in
+\verb|estimate_config| which should have a value between $0$ and $1$. It gives
+the portion of \verb|index| that will be used in the estimation. If it is less than 1, 
+the indices are randomly sampled.
+
 The method invokes computation of variables \variablesindex given in the specification as well
 as of the outcome attribute. \attributesindex For each submodel, it creates the corresponding
 data matrix and invokes the \verb|run()| method of the module given by the
@@ -1354,8 +1365,30 @@ extracted values.
 
 {\it Output}:~\\[1mm]
 The method returns a tuple of the created \class{Coefficient} object and a
-dictionary with entries for each submodel equals a dictionary returned by the
-\verb|run()| method of \verb|procedure| for that submodel.
+dictionary with one entry for each submodel. 
+Each entry is a dictionary returned by estimation procedure for that submodel.
+
+\subsubsection{Child Class RegressionModelWithInitialResiduals}
+%
+This class impacts only the method \method{run()} (it doesn't change the behaviour of the \method{estimate()} method).
+It computes initial errors of the observations to the predictions (residuals)
+if run for the first time. The error values are added to \verb|dataset| as a primary attribute 
+(with the same name as the outcome attribute adding the prefix '_init_error_').
+Then in any run, the error is added to the outcome. Thus, in order to compute the residuals,
+the outcome attribute must be a known attribute of \verb|dataset| prior to running the model.
+Note that running this model on the same set of observations which were used for the estimation,
+should result in the same outcome as the original values of the outcome attribute.
+
+In addition to all parents arguments, this class requires the argument \verb|outcome_attribute|
+to be passed into the constructor. The following entries of the \verb|run_config| dictionary are accepted:
+\begin{itemize}
+\item 'exclude_missing_values_from_initial_error' - default is False.
+\item 'outcome_attribute_missing_value' - if the above entry is True, this value determines a missing value. Default is 0.
+\item 'exclude_outliers_from_initial_error' - default is False.
+\item 'outlier_is_less_than' - lower bound for excluding outliers from computing residuals.
+\item 'outlier_is_greater_than' - upper bound for excluding outliers from computing residuals.
+\end{itemize}
+
 
 
 \section{Model Components}
