@@ -12,7 +12,7 @@ The model manager tab in the GUI provides the functionality to create models of 
 
 \section{Creating an Allocation Model}
 
-To demonstrate the creation of an Allocation Model in Opus, let us assume that the task at hand is to create a model that allocates home-based jobs to zones.  Home-based jobs are those jobs that are located in properties that are residential in character.  Assume that we have no behavioral information about this problem, other than the insight that home-based jobs are... home-based.  So we can infer that we should probably allocate these jobs to places that have housing (or households).  In allocating these jobs to zones (traffic analysis zones used in the travel model), we can count how many residential units are in each zone, and use this as the weight to allocate the total home-based jobs to zones.  That is, we want to proportionately allocate home-based jobs to zones, weighted by the number of residential units in the zone.  This is equivalent to saying that we want each residential unit to have an equal probability of receiving a home-based job (assuming that we do not have any information to suggest which residential units would be more likely than others to receive such a job).
+To demonstrate the process of creating models in the GUI, let's begin with a simple allocation model, which does not have any parameters to estimate and represents a straightforward model to configure.  Say we want to create a model that allocates home-based jobs to zones, and lack sufficient data to specify a choice model or regression model for this purpose.  Home-based jobs are those jobs that are located in properties that are residential in character.  Assume that we have no behavioral information about this problem, other than the insight that home-based jobs are... home-based.  So we can infer that we should probably allocate these jobs to places that have housing (or households).  In allocating these jobs to zones (traffic analysis zones used in the travel model), we can count how many residential units are in each zone, and use this as the weight to allocate the total home-based jobs to zones.  That is, we want to proportionately allocate home-based jobs to zones, weighted by the number of residential units in the zone.  This is equivalent to saying that we want each residential unit to have an equal probability of receiving a home-based job (assuming that we do not have any information to suggest which residential units would be more likely than others to receive such a job).
 
 The next consideration is the capacity of zones to absorb home-based jobs.  One simplifying assumption we could make is that there is a maximum of one home-based job per residential unit in a zone.  On average, our aggregate information suggests that most residential units do not have a home-based job, so this assumtion should not be constraining.
 
@@ -38,39 +38,22 @@ Capacity Attribute & zone.aggregate(building.residential\_units) \\
 \end{center}
 \end{table}
 
-The capacity to create new allocation models, such as this, is now available in the Opus GUI.  To create this allocation model, or one like it, open a project, like seattle\_parcel, and go to the Model Manager tab.  Open model\_system, and you will see an \emph{allocation\_model\_template}.  Right-click on this and select \emph{Add to current project}, then right-click again and select \emph{Copy Node}.  Assign the name \emph{allocate\_home\_based\_jobs\_model} when prompted for the XML Node Name to create.  Now, edit the values in the run arguments of the newly created node (at the bottom of the models list) to match the values in the table above. Figures \ref{fig:model-allocation-1} and \ref{fig:model-allocation-2} show screenshots of these initial steps in this process.  Figure \ref{fig:model-allocation-1} shows the model template for an allocation model, with fields identified as needing to be filled in by the user. Figure \ref{fig:model-allocation-2} shows the new copy, named and filled in with the actual settings, from the table above. 
+The create new model dialog box (Figure {fig:create-model}) contains several kinds of model templates we could create a model from. One of these is Allocation Model. The capacity to create new allocation models, such as this, is now available in the Opus GUI. Select Allocation Model from the list, and a new dialog box appears, with several fields to fill in.  Fill in the fields with the contents from Table \ref{tab:allocation-model}, and save it.  Once this is done, it will appear in the list of models under the Models section of the Model Manager tab.  It is now a fully enabled model, and can be included in a simulation run.
+
+It should go without saying (but doesn't), that creating models through the GUI, with a few mouse clicks and filling in a few fields in a dialog box, is much, much easier than it has been in the past. One does not need to be an expert software developer in order to create and use interesting and fully functional models in OPUS.
+
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.35]{graphics/create-model-template-allocation.png}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-create-allocation-model-from-template.png}
 \end{center}
-\caption{Template for Allocation Model}
-\label{fig:model-allocation-1}
+\caption{Creating a New Allocation Model from a Template}
+\label{fig:create-allocation-model}
 \end{figure}
-
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[scale=0.35]{graphics/create-allocation-model.png}
-\end{center}
-\caption{Creating Home-Based Employment Allocation Model}
-\label{fig:model-allocation-2}
-\end{figure}
-
-Now the new allocation model exists.  It will still need to be added to a list of models to run in order to actually be executed.  This is done in the Scenario Manager.  Select the models\_to\_run entry under the Seattle\_baseline, and if it is not already editable, right-click and select Add to current project.  Then right-click and select Copy Node, and assign the new model name to it.  For testing purposes, it would be advisable to change the values of all the other models to Skip, and just run the one new model to test it.   After this, you should be able to right-click on the scenario name in the GUI and run the scenario, with the new model actually executing.  This is shown in the screenshot in Figure \ref{fig:model-allocation-3}.
-
-\begin{figure}[htp]
-\begin{center}
-\includegraphics[scale=0.35]{graphics/create-allocation-model-run.png}
-\end{center}
-\caption{Running the Home-Based Employment Allocation Model}
-\label{fig:model-allocation-3}
-\end{figure}
-
-More advanced data handling and preparation is also available for this class of model.  A specific set of extensions has been added for the Maricopa Association of Governments to allow the control totals to be stored in an Excel spreadsheet, and the weight and capacity attributes to be stored in an ESRI Shape file or geodatabase.  These extensions are currently handled in the \emph{prepare for run} method of the model, in Python code, and is not directly available in the GUI.
 
 \section{Creating a Regression Model}
 
-Regression models are simple to specify in the Opus GUI, and can be estimated and simulated within the graphical interface.  We will use as an example the development of a model to predict land values per square foot for all parcels.  Assume we want to create a model that predicts the value of land, per square foot, using the tax assessor valuations of land value and the square footage measures of each parcel available in the assessor data.  Since the outcome is continuous, but truncated at zero and increasing to quite large values, we might want to use a log-transformation of the price per square foot.  This would allow for representing the diminishing returns to larger quantities on some attributes.  We begin, however, with a simple nominal value per square foot, which implies that a unit increase in the amount of an independent variable, adds a constant dollar amount to the value of land per square foot.
+Regression models are also simple to create and specify in the Opus GUI, and can be estimated and simulated within the graphical interface.  We will use as an example the development of a model to predict land values per square foot for all parcels.  Assume we want to create a model that predicts the value of land, per square foot, using the tax assessor valuations of land value and the square footage measures of each parcel available in the assessor data.  Since the outcome is continuous, but truncated at zero and increasing to quite large values, we might want to use a log-transformation of the price per square foot.  This would allow for representing the diminishing returns to larger quantities on some attributes.  We begin, however, with a simple nominal value per square foot, which implies that a unit increase in the amount of an independent variable, adds a constant dollar amount to the value of land per square foot.
 
 The table below summarizes the arguments we would set for creating this model:
 
@@ -84,25 +67,25 @@ Configuration Entry & Node & Value \\
 \midrule
 Model Name & & land\_price\_sqft\_model \\
 Dataset & Run and Estimate & parcel \\
-Specification Table & Prepare for Run & land\_price\_sqft\_model\_specifications \\
-Coefficients Table & Prepare for Run & land\_price\_sqft\_model\_coefficients \\
-Outcome Attribute & Estimate &ln\_price\_sqft = \\ & & ln\_bounded(parcel.land\_value/parcel.parcel\_sqft)  \\
+Dependent Variable & Estimate &ln\_price\_sqft = \\ & & ln\_bounded(parcel.land\_value/parcel.parcel\_sqft)  \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-To create this model in the Opus GUI, you would first make sure that you have made the Model System editable, and then copy the regression model template to a new XML node, which we shall call in this case land\_price\_sqft\_model.  Right-click on the regression\_model\_template, and save the copy as land\_price\_sqft\_model.  Once this new model configuration is created, we need to fill in fields marked as 'fill in' in the value field.  Use the values in the table above to fill in the appropriate values to create a model to predict land values per square foot.  Figure \ref{fig:model-regression-1} shows the fields to be filled in or modified to create this model.
+To create this model in the Opus GUI, right-click again on Models, and select in this case Regression Model to generate a new dialog box for this model template, as shown in Figure \ref{fig:create-regression-model}.
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.4]{graphics/create-regression-model.png}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-create-regression-model-from-template.png}
 \end{center}
-\caption{Create a Regression Model from a Template}
-\label{fig:model-regression-1}
+\caption{Creating a New Regression Model from a Template}
+\label{fig:create-regression-model}
 \end{figure}
 
-Once the correct values have been assigned to the configuration of the new model, we can move to the task of specifying and estimating this model.  For this, we need to move from the model system component of the GUI to the estimation node, below it.  Here again we will see a model\_template.  Copy this template to a new name, to match the name of the model we just created: land\_price\_sqft\_model.  Once this is done, we need to fill in the specification for this model.
+Once the correct values have been assigned to the configuration of the new model, and you click OK on the dialog box, the model is added to the list of models under Models.  If you expand this node by clicking on the plus sign to the left of the new land price model entry, you will see that it contains a specification and a structure node.  Expand the specification node, and you will find some additional detail, including a reference to submodels, and a variables entry.  We will ignore submodels for now -- it is a means of specifying that you would like to specify the model differently for different subsets of the data.  For now we will just apply a single specification to all the data, to keep this a bit simpler.  We can now move to the task of specifying and estimating this model. 
+
+Right-click on the variables node, and it should open a window that is essentially the same as the variables library window you encountered earlier.  The only difference is that in this case, 
 
 \begin{figure}[htp]
 \begin{center}

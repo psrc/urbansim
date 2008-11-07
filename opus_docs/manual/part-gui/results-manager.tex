@@ -56,19 +56,18 @@ indicator will then be computed for the year of the selected simulation
 run. After it is computed, a tab should appear at the bottom of the
 window with the name of the indicator and provide the ability to
 visualize the results as a table or map (using the MatplotLib Python
-module). See the inset tutorial XXX to try out the 
-\verb#Result Browser#.
+module). See the inset tutorial XXX to try out the \verb#Result Browser#.
 
 \fbox{
 \begin{minipage}{.5\linewidth}
 \begin{enumerate}
-  \item \cmd{Open the Results Browser from the Tools menu. Use the
-  Results Browser to answer the following questions.}
-  \item \question{Just from visual inspection, is there more than one
-  cluster of gridcells with high land value in the Eugene region in 1980 in the baseyear data?}
-  \item \question{Is this cluster(s) in the same general area as the
+  \item Open the Results Browser from the Tools menu. Use the
+  Results Browser to answer the following questions.
+  \item Just from visual inspection, is there more than one
+  cluster of gridcells with high land value in the Eugene region in 1980 in the baseyear data?
+  \item Is this cluster(s) in the same general area as the
   greatest number of jobs in Eugene for the same year of the
-  baseyear data?}
+  baseyear data?
 \end{enumerate}
 \end{minipage}
 }
@@ -96,9 +95,9 @@ simulation run. In the Opus GUI, this functionality is supported with
 \emph{indicator batches}. 
 
 To create a new indicator batch, right-click on the
-\verb#Indicator\_batches# node in the \verb#Results tab# and select
+\verb#Indicator_batches# node in the \verb#Results tab# and select
 \verb#Add new indicator batch...#. A new batch will be created
-under the Indicator\_batches node. You can rename the new batch if you
+under the Indicator_batches node. You can rename the new batch if you
 want by double-clicking its name and typing in a new one.
 
 A batch is a collection of \verb#Indicator visualization#
@@ -113,9 +112,10 @@ subsection~\ref{sect:indicator-visualization-options}.
 
 You can add as many indicator visualizations to a batch as you want.
 In order to execute an indicator batch on a simulation run,
-right-click on the indicator batch and hover over 
-\verb#Run indicator batch on...#. A list of all the available
-simulations runs will appear as a submenu. You can then select the appropriate simulation
+right-click on the indicator batch and hover over
+ \verb#Run indicator batch on...#. A list of all the available 
+ simulations runs will
+appear as a submenu. You can then select the appropriate simulation
 and the indicator visualizations in the batch will be executed over
 all the years of that simulation run. If the resulting indicators are
 tables or maps stored in a file, they can then be found on disk in
@@ -140,7 +140,7 @@ of available options in the Batch indicator visualization dialog
 box, which is separated into three components: ``indicator
 selection'', ``output options'', and ``format options''. 
 
-{\bf Indicator selection}
+\bf{Indicator selection}
 
 The bottom of the dialog box has two list boxes, ``available
 indicators'' and ``indicators in current visualization''. The
@@ -158,7 +158,7 @@ the ``indicators in current visualization'' box and press the ``-''
 button.
 
 
-{\bf Output options}
+\bf{Output options}
 
 \emph{Visualization Name}. The base name of any produced
 visualizations. Because you might be producing this visualization for
@@ -179,7 +179,7 @@ this dataset. Most commonly you are choosing a geographic granularity
 when you change the dataset, the set of available indicators changes
 because a given indicator is valid only for a single dataset.
 
-{\bf Format options for maps}
+\bf{Format options for maps}
 
 The Matplotlib map is not intended to replace GIS-based mapping, which
 allows far more control and the overlay of other features for visual
@@ -190,7 +190,7 @@ a database or geodatabase environment, and the GIS software used to
 create a more interactive and flexible display of the data.
 
 
-{\bf Format options for tables}
+\bf{Format options for tables}
 
 
 [export results to database; geodatabase / autoview creation in
