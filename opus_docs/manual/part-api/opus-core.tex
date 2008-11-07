@@ -1390,6 +1390,65 @@ to be passed into the constructor. The following entries of the \verb|run_config
 \item 'outlier_is_greater_than' - upper bound for excluding outliers from computing residuals.
 \end{itemize}
 
+\subsection{SimpleModel Class}
+%\label{sec:api-simple-model}
+%
+This model is an alternative way of computing a variable on a dataset, except that the resulting attribute 
+becomes a primary attribute.
+The \method{run()} method takes the following arguments:
+\begin{description}
+\item[dataset] an object of class \class{Dataset} for which the computation is done.
+\item[expression] - any variable or expression that can be computed on \verb|dataset|.
+\item[outcome_attribute] - name of the outcome attribute. If it is None (default), alias
+of the \verb|expression| is taken.
+\item[dataset_pool] - pool of datasets passed into the computation. Default is None.
+\end{description}
+
+The \method{run()} method computes the given expression on the given dataset. If the \verb|outcome_attribute| already exists
+on the dataset, it is deleted. Results from the computation are assigned to \verb|outcome_attribute| and 
+the attribute is marked as primary. Values of this attribute are returned.
+
+\subsection{AllocationModel Class}
+%\label{sec:api-allocation-model}
+%
+The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions.
+
+The \method{run()} method takes the following arguments:
+\begin{description}
+\item[dataset] - an object of class \class{Dataset} for which the allocation is done.
+\item[outcome_attribute] - name of the resulting attribute.
+\item[weight_attribute] - an attribute/variable/expression of \verb|dataset| which determines weights for the allocation.
+\item[control_totals] - an object of class \class{Dataset} holding data with the total amount of quantity to be allocated.
+\item[current_year] - integer value used for filtering out control totals for the current year. 
+\item[control_total_attribute] - name of the attribute in \verb|control_totals| that specifies the total amount to be allocated.
+  If it is not given, the value of \verb|outcome_attribute| is taken.
+\item[year_attribute] - name of the attribute in \verb|control_totals| on which the filtering 
+of the current year is done. Default is 'year'.
+\item[capacity_attribute] - name of the attribute/variable/expression in \verb|dataset| specifying capacity for each member. 
+  Default is None which means there are no capacity restrictions. 
+\item[add_quantity] - if True and the \verb|outcome_attribute| exists in \verb|dataset|, 
+  the resulting values are added to the current values of 
+    \verb|outcome_attribute|. Default is False.
+\item[dataset_pool] - pool of datasets used in the computation. Default is None.
+\end{description}
+
+In addition to the \verb|year_attribute| and \verb|control_total_attribute|, the \verb|control_totals| dataset 
+can contain other attributes that must be known to the \verb|dataset| (such as a geography), here called 'common' attributes.
+For each row of the \verb|control_totals| that matches the current year,
+the total amount is distributed among members of \verb|dataset| that have the same values of all common attributes as the row.
+The distribution is done using the given weights. 
+If the \verb|capacity_attribute| is given, the algorithm removes any allocations that exceeds the capacity and 
+re-distributes it among remaining members. The resulting values are appended 
+to \verb|dataset| as 
+\verb|outcome_attribute| which is marked as primary.
+If \verb|add_quantity| is True, the resulting values are added to the current values of 
+        \verb|outcome_attribute| if it exists. 
+The \verb|outcome_attribute| is then flushed to cache and the values are returned.
+        
+        
+\subsection{JoinAttributeModificationModel Class}
+%\label{sec:api-jam-model}
+%
 
 
 \section{Model Components}
