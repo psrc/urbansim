@@ -1042,7 +1042,8 @@ memory. The class does not have any effect on an \method{estimate()} method.
 \begin{description}
 \item[chunk_specification] - a dictionary specifying how to determine the number
   of chunks to run the model in. It must contain either the key 'records_per_chunk'
-  or the key 'nchunks' (see also Section~\ref{sec:resources}).
+  or the key 'nchunks'. The method passes it to the constructor of \class{ChunkSpecification} 
+  (see Section~\ref{sec:resources}). None translates to 1 chunk. 
 \item[dataset] - an object of class \class{Dataset} along whose elements the
   model will be chunked.
 \item[dataset_index] - an index of elements within \verb|dataset| that are to
@@ -1164,7 +1165,8 @@ and coefficients. \coefficientsindex
   agents enter the choice process. If it is not given (default), all agents are
   considered.
 \item[chunk_specification] - a dictionary specifying how to determine the number
-  of chunks to run the model in (see Section~\ref{sec:models-configuration}). 
+  of chunks to run the model in. It is  passed to the \method{run} method of \class{ChunkModel}
+   (see Section~\ref{sec:chunk-model}). 
   Default is None, which is equivalent to 1 chunk.
 \item[data_objects] - a dictionary containing additional datasets \datasetindex 
   needed for computing variables. \variablesindex This argument is obsolete - the datasets should be 
@@ -1268,6 +1270,7 @@ The class is initialized by passing the following arguments:
 \begin{description}
 \item[regression_procedure] - a fully qualified name of the module/class in
   which the regression is implemented (see Section~\ref{sec:regression}).
+  The default value is 'opus_core.linear_regression'.
 \item[submodel_string] - If model contains submodels, this character string
   specifies what attribute of the observation set determines those submodels.
 \item[run_config] - A collection of additional arguments that control a
