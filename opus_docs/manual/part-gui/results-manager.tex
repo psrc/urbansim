@@ -12,15 +12,6 @@ both of these in this chapter.
 \section{Managing simulation runs}
 \label{sec:managing-simulation-runs}
 
-\begin{figure}[tp]
-\begin{center}
-%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
-\end{center}
-\caption{Importing a run from disk that is not showing up as a
-``Simulation run''.}
-\label{fig:results-manager-import-run}
-\end{figure}
-
 The ``Simulation runs'' node captures all
 available simulation runs for this project. For example, when a
 simulation is run from the ``Scenarios-manager'' (see
@@ -30,6 +21,15 @@ for this project is not listed, right-click on
 ``Simulation runs'' and select ``Import run from disk'' (See
 Figure~\ref{fig:results-manager-import-run}). The GUI will try to load
 the missing run and make it available.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=.8\textwidth]{part-gui/images/result-manager-import-run-from-disk.png}
+\end{center}
+\caption{Importing a run from disk that is not showing up as a
+``Simulation run''.}
+\label{fig:results-manager-import-run}
+\end{figure}
 
 A couple operations can be performed on a simulation run. To view
 information about a given run, right-click on the run and select
@@ -60,16 +60,6 @@ necessarily want to go through the process of exporting results to a
 GIS mapping tool in order to gain some basic intuitions into spatial
 patterns.
 
-\begin{figure}[tp]
-\begin{center}
-%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
-\end{center}
-\caption{Using the ``Result browser'' for interactive result
-exploration.}
-\label{fig:results-manager-result-browser}
-\end{figure}
-
-
 The Opus GUI's ``Result Browser'', available from the ``tools''
 menu, allows interactive exploration of simulation results. The Result
 Browser presents a selectable list of available simulation runs, years
@@ -82,6 +72,15 @@ indicator will then be computed for the year of the selected simulation
 run. After it is computed, a tab should appear at the bottom of the
 window with the name of the indicator. Subtabs allow you to see the
 results as a table or map (using the Matplotlib Python module). 
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=1.0\textwidth]{part-gui/images/result-manager-result-browser.png}
+\end{center}
+\caption{Using the ``Result browser'' for interactive result
+exploration.}
+\label{fig:results-manager-result-browser}
+\end{figure}
 
 \fbox{
 \begin{minipage}{.5\linewidth}
@@ -121,20 +120,19 @@ group of them that can be executed on demand on an arbitrary
 simulation run. In the Opus GUI, this functionality is supported with
 \emph{indicator batches}. 
 
-\begin{figure}[tp]
-\begin{center}
-%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
-\end{center}
-\caption{Creating a new indicator batch}
-\label{fig:results-manager-new-batch}
-\end{figure}
-
 To create a new indicator batch, right-click on the
  ``Indicator\_batches'' node in the ``Results tab'' and select
  ``Add new indicator batch...'' (See
 Figure~\ref{fig:results-manager-new-batch}). A new batch will be
-created under the Indicator\_batches node. If desired, you can rename the new
-batch by double-clicking its name and typing in a new one.
+created under the Indicator\_batches node.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=.6\textwidth]{part-gui/images/result-manager-add-new-batch.png}
+\end{center}
+\caption{Creating a new indicator batch}
+\label{fig:results-manager-new-batch}
+\end{figure}
 
 A batch is a collection of ``Indicator visualization''
 definitions. Each indicator visualization is a configuration of
@@ -169,8 +167,6 @@ Create, configure, and execute a new indicator batch:
 \item Create a
 new indicator batch by right-clicking on the  ``Indicator\_batches'' node
 in the Results tab and selecting the appropriate option. 
-\item Optional: Rename the new
-indicator batch.
 \item Add an indicator visualization configuration to
 that batch. Right-click on your new indicator batch and select  ``Add new
 indicator visualization''.
@@ -188,15 +184,6 @@ execute your indicator batch on the results of a simulation run.
 \subsubsection{Indicator visualization configuration options}
 \label{sect:indicator-visualization-options}
 
-
-\begin{figure}[tp]
-\begin{center}
-%\includegraphics[scale=0.4]{part-gui/images/result-manager-.png}
-\end{center}
-\caption{The batch visualization creation dialog.}
-\label{fig:results-manager-batch-viz}
-\end{figure}
-
 Opus provides a variety of ways to visualize indicators and this
 functionality is exposed in the ``Indicator visualization'' dialog
 box options (e.g. multi-year indicators, exporting to
@@ -205,6 +192,14 @@ of available options in the Batch indicator visualization dialog
 box, which is separated into three components:  ``indicator
 selection'',  ``output options'', and  ``format options'' (See
 Figure~\ref{fig:results-manager-batch-viz}). 
+
+\begin{figure}[tph]
+\begin{center}
+\includegraphics[width=\textwidth]{part-gui/images/result-manager-batch-viz-config.png}
+\end{center}
+\caption{The batch visualization creation dialog.}
+\label{fig:results-manager-batch-viz}
+\end{figure}
 
 \heading{Indicator selection}
 
