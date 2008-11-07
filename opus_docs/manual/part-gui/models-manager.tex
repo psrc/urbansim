@@ -61,13 +61,13 @@ The table below summarizes the arguments we would set for creating this model:
 \caption{Creating a Land Price per Square Foot Model}
 \label{tab:land-price-sqft-model}
 \begin{center}
-\begin{tabular}{ p{1.3in}  p{1.3in} p{3.0in}  }
+\begin{tabular}{ p{1.3in} p{3.0in}  }
 \toprule[1.5pt]
-Configuration Entry & Node & Value \\
+Configuration Entry  & Value \\
 \midrule
-Model Name & & land\_price\_sqft\_model \\
-Dataset & Run and Estimate & parcel \\
-Dependent Variable & Estimate &ln\_price\_sqft = \\ & & ln\_bounded(parcel.land\_value/parcel.parcel\_sqft)  \\
+Model Name & land\_price\_model \\
+Dataset & gridcell \\
+Dependent Variable  &ln\_land\_value   \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -85,7 +85,7 @@ To create this model in the Opus GUI, right-click again on Models, and select in
 
 Once the correct values have been assigned to the configuration of the new model, and you click OK on the dialog box, the model is added to the list of models under Models.  If you expand this node by clicking on the plus sign to the left of the new land price model entry, you will see that it contains a specification and a structure node.  Expand the specification node, and you will find some additional detail, including a reference to submodels, and a variables entry.  We will ignore submodels for now -- it is a means of specifying that you would like to specify the model differently for different subsets of the data.  For now we will just apply a single specification to all the data, to keep this a bit simpler.  We can now move to the task of specifying and estimating this model. 
 
-Right-click on the variables node, and click on Select Variables, as shown in Figure \ref{fig:specify-regression-1}.  At this point a window should appear as shown in Figure \ref{fig:specify-regression-2} that is essentially the same as the variables library window you encountered earlier.  The only difference is that in this case, there is a column of check-boxes at the left hand side of the window, which you can use to identify the variables you want to include as independent variables, or predictive variables, for this model.  The button at the bottom allows you to accept the selection, which then updates the list of variables in the model specification.  Try adding a constant term, since this is a regression and we need an intercept, or a base value.  Also add a variable like population density.  Now accept the selections.
+Right-click on the variables node, and click on Select Variables, as shown in Figure \ref{fig:specify-regression-1}.  At this point a window should appear as shown in Figure \ref{fig:specify-regression-2} that is essentially the same as the variables library window you encountered earlier.  There is a column of check-boxes at the left hand side of the window which you can use to identify the variables you want to include as independent variables, or predictive variables, for this model.  The button at the bottom allows you to accept the selection, which then updates the list of variables in the model specification.  Try adding a constant term, since this is a regression and we need an intercept, or a base value.  Also add a variable like population density.  Now accept the selections.
 
 
 \begin{figure}[htp]
