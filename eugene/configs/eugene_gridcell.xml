@@ -458,22 +458,6 @@
   <results_manager>
     <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
-      <No_description type="source_data">
-        <run_id hidden="True" type="integer">129</run_id>
-        <run_name hidden="True" type="string">No description</run_name>
-        <cache_directory hidden="True" type="string">/Users/christofferklang/Documents/workspace/Opus/data/eugene_gridcell/runs/2008_10_14_20_30</cache_directory>
-        <start_year hidden="True" type="integer">1981</start_year>
-        <end_year hidden="True" type="integer">1981</end_year>
-        <scenario_name hidden="True" type="string">eugene_gridcell</scenario_name>
-      </No_description>
-      <base_year_data type="source_data">
-        <end_year hidden="True" type="integer">1980</end_year>
-        <start_year hidden="True" type="integer">1980</start_year>
-        <cache_directory hidden="True" type="string">/Users/christofferklang/Documents/workspace/Opus/data/eugene_gridcell/base_year_data</cache_directory>
-        <run_name hidden="True" type="string">base_year_data</run_name>
-        <scenario_name hidden="True" type="string">eugene_gridcell</scenario_name>
-        <run_id hidden="True" type="integer">105</run_id>
-      </base_year_data>
     </Simulation_runs>
   </results_manager>
 </opus_project>
