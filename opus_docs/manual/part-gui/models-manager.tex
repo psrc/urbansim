@@ -85,52 +85,55 @@ To create this model in the Opus GUI, right-click again on Models, and select in
 
 Once the correct values have been assigned to the configuration of the new model, and you click OK on the dialog box, the model is added to the list of models under Models.  If you expand this node by clicking on the plus sign to the left of the new land price model entry, you will see that it contains a specification and a structure node.  Expand the specification node, and you will find some additional detail, including a reference to submodels, and a variables entry.  We will ignore submodels for now -- it is a means of specifying that you would like to specify the model differently for different subsets of the data.  For now we will just apply a single specification to all the data, to keep this a bit simpler.  We can now move to the task of specifying and estimating this model. 
 
-Right-click on the variables node, and it should open a window that is essentially the same as the variables library window you encountered earlier.  The only difference is that in this case, 
+Right-click on the variables node, and click on Select Variables, as shown in Figure \ref{fig:specify-regression-1}.  At this point a window should appear as shown in Figure \ref{fig:specify-regression-2} that is essentially the same as the variables library window you encountered earlier.  The only difference is that in this case, there is a column of check-boxes at the left hand side of the window, which you can use to identify the variables you want to include as independent variables, or predictive variables, for this model.  The button at the bottom allows you to accept the selection, which then updates the list of variables in the model specification.  Try adding a constant term, since this is a regression and we need an intercept, or a base value.  Also add a variable like population density.  Now accept the selections.
+
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.4]{graphics/specify-regression-template.png}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-specify-regression-model-1.png}
 \end{center}
-\caption{Specify a Regression Model from a Template}
-\label{fig:model-regression-2}
+\caption{Specify the New Land Price Model}
+\label{fig:specify-regression-1}
 \end{figure}
 
-A preliminary specification for such a model might include a constant, at a minimum, since we need an intercept for a regression model in general (we don't want to force the assumption that the intercept is at zero).  We might also add, for a very simple specification, an accessibility variable like the generalized cost to the central business district of Seattle.  Another likely candidate would be distance from major highways, or a dummy variable identifying parcels that are very close to a highway.  A specification like this can be easily put into the model, in the GUI, by simply adding expressions into the all\_variables list, and then including the names of these expressions in the submodel list.  Note that if a model applies the same specification to all the data, it has no submodels, and the submodel\_id is set to -2.  We will use this default in this example.  Table \ref{tab:land-price-sqft-model-specification} shows an initial specification for this new model, creating two expressions to add to the model.
-
-
-%\begin{figure}[htp]
-%\begin{center}
-%\includegraphics[scale=0.4]{graphics/specify-regression-template.png}
-%\end{center}
-%\caption{Land Price per Sqft Model Specification}
-%\label{fig:model-regression-3}
-%\end{figure}
-
-\begin{table}[htp]
-\caption{Sample Initial Specification of a Land Price per Square Foot Model}
-\label{tab:land-price-sqft-model-specification}
+\begin{figure}[htp]
 \begin{center}
-\begin{tabular}{ p{1.5in}  p{4.0in}  }
-\toprule[1.5pt]
-Name & Expression \\
-\midrule
-cbd\_time & parcel.disaggregate(zone.travel\_time\_to\_cbd)\\
-hwy300 & parcel.disaggregate(gridcell.distance\_to\_highway)$<$300\\
-\bottomrule
-\end{tabular}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-specify-regression-model-2.png}
 \end{center}
-\end{table}
+\caption{Select Variables for Specification}
+\label{fig:specify-regression-2}
+\end{figure}
 
 
-Once the model specification has been entered, we can add it to the list of models to estimate, and select it as the model to estimate.  This can be done by right-clicking on the regression model template entry in the models to estimate node, assigning the new model name to the copy, and changing its value from skip to estimate.  %The result is shown in Figure \ref{fig:model-regression-4}.
+Once the model specification has been entered, we can estimate the model parameters using Ordinary Least Squares by right-clicking on the land price model and selecting Run Estimation, as shown in Figure \ref{fig:specify-regression-3}. Once this has been clicked, a new tab appears on the right hand side of the main window, to interact with the model estimation.  Click on the start estimation button, and within a few seconds you should see the estimation results appear in this tab, as shown in Figure \ref{fig:specify-regression-4}.
 
-%\begin{figure}[htp]
-%\begin{center}
-%\includegraphics[scale=0.4]{graphics/add-to-models-to-estimate.png}
-%\end{center}
-%\caption{Adding the New Model to the List of Models to Estimate}
-%\label{fig:model-regression-4}
-%\end{figure}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-specify-regression-model-3.png}
+\end{center}
+\caption{Estimate the New Land Price Model}
+\label{fig:specify-regression-3}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-specify-regression-model-4.png}
+\end{center}
+\caption{Estimation Results}
+\label{fig:specify-regression-4}
+\end{figure}
+
+We can see from the results that the constant and population density were both quite statistically significant, and that they explain around 22 percent of the variation in land prices in Eugene.  Clearly this is a toy model, but adding other variables in this way can increase the explanatory power to a quite useful level, and as you can see modifying the specification and estimating the model is not difficult to do.
+
+One other note at this point is that the specification and estimation results are automatically stored, if you request this, as shown in Figure  \ref{fig:save-estimation}.  Once the estimation is done, then, the model is ready to use in a simulation, or predictive mode.  More on this in the Scenario Manager section.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.6]{part-gui/images/model-manager-save-estimation.png}
+\end{center}
+\caption{Save Estimation Results Flag}
+\label{fig:save-estimation}
+\end{figure}
 
 
 \section{Creating a Choice Model}
