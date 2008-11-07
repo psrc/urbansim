@@ -258,6 +258,29 @@ interactive and flexible display of the data. See the following section
 for a description of how to export indicator results to a SQL database
 or a DBF file for use in external GIS tools.
 
+\fbox{
+\begin{minipage}{.5\linewidth}
+Export the results that were found in the previous tutorial inset
+to a SQL database. 
+\begin{enumerate}
+  \item Make sure that you have configured a database
+server. From the Tools menu, select  ``Database Server Connections''. Check
+to see that the ``indicators\_database\_server" is correctly set up.
+If you don't have a remote database server, make sure that it
+points to a sqlite connection. Close the
+connections dialog box.
+  \item Reconfigure the batch to write to a
+database. Expand the indicator batch that you defined in the prior
+step. Right-click on the visualization and select ``Configure
+visualization''. Change the format to ``Export to SQL database'' and then
+name a database it should write to. Hit OK and then rerun the batch on the
+simulation results from before.
+  \item Launch a database browser and check to see if the proper
+  tables were created. 
+\end{enumerate}
+\end{minipage}
+}
+
 \heading{Format options for tables}
 
 There are four different available formats for tables. Each has its
@@ -310,28 +333,26 @@ indicator results in QGIS.
 
 \emph{ESRI database}. This option exports the
 indicator data to an ESRI database that can be loaded into ArcMap.
-Simply specify the path to a geodatabase file (.gdb).
+Simply specify the path to a geodatabase file (.gdb). It is assumed 
+that the geodatabase contains a \verb#Feature Class# corresponding to
+the dataset of the indicator being exported. Once the export is
+successfully completed, the geodatabase will contain a table that 
+contains the indicator result, with a zone\_id and an
+ArcGIS \verb#OBJECTID*# that corresponds to the internal object ids in
+the feature class. It is safe to join the indicator table result with
+the feature class using either the objectid or the zone\_id. See
+Figure~\ref{fig:indicator-population-zone-arcgis} for an example
+exported indicator after following this process. 
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=.8\textwidth]{part-gui/images/result-manager-indicator-population-zone-arcgis.png}
+\end{center}
+\caption{Mapping a Population by Zone Indicator in ESRI ArcMap. Shows the result of
+joining the feature class with the indicator table and generating a thematic map of the populaion by zone, using the zone.acres field to
+normalize the population, resulting in a map of population density per
+acre.}
+\label{fig:indicator-population-zone-arcgis}
+\end{figure}
 
 
-\fbox{
-\begin{minipage}{.5\linewidth}
-Export the results that were found in the previous tutorial inset
-to a SQL database. 
-\begin{enumerate}
-  \item Make sure that you have configured a database
-server. From the Tools menu, select  ``Database Server Connections''. Check
-to see that the ``indicators\_database\_server" is correctly set up.
-If you don't have a remote database server, make sure that it
-points to a sqlite connection. Close the
-connections dialog box.
-  \item Reconfigure the batch to write to a
-database. Expand the indicator batch that you defined in the prior
-step. Right-click on the visualization and select ``Configure
-visualization''. Change the format to ``Export to SQL database'' and then
-name a database it should write to. Hit OK and then rerun the batch on the
-simulation results from before.
-  \item Launch a database browser and check to see if the proper
-  tables were created. 
-\end{enumerate}
-\end{minipage}
-}
