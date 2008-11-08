@@ -1,11 +1,11 @@
 \chapter{The Variable Library}
 \label{chap:variable-library}
 
-\emph{Variables} in Opus and UrbanSim represent quantities of interest.
-These variables can be used in two principal ways: in specifying models and
-in computing indicators to assess simulation results.  For example, a
-\mbox{\tt distance\_to\_highway} variable might be used to help predict land
-values or or household location choices; and a \mbox{\tt population\_density}
+Variables in Opus and UrbanSim represent quantities of interest.  These
+variables can be used in two principal ways: in specifying models and in
+computing indicators to assess simulation results.  For example, a
+\variable{distance_to_highway} variable might be used to help predict land
+values or or household location choices; and a \variable{population_density}
 variable might be used in computing indicators that are useful for
 evaluating simulation results.  The variable library is a repository for
 variables defined in the system that are accessible from the GUI\@.  Since
@@ -65,7 +65,7 @@ definition is in the right-most column.  Note that this definition is
 executable code --- it's not just a description.  Expressions are built up
 as functions and operations applied to existing variables in the library.
 For example, the expression for wetland is defined as
-\mbox{\tt gridcell.percent_wetland>50}.  This defines the creation of a
+\variable{gridcell.percent_wetland>50}.  This defines the creation of a
 true/false, or boolean, variable that is interpreted as 1 if the gridcell
 has more than 50 percent coverage by wetland, 0 otherwise.  Variables are
 array-valued, so we are actually computing an array of true/false values
@@ -79,7 +79,7 @@ that is a log of population density.  We already have a population density
 variable defined by gridcell, so we can just take the log of this value.
 Let's name the variable ln\_population\_density, leave the middle selection
 as ``expression,'' and fill in a simple expression in the definition
-area: \mbox{\tt ln(gridcell.population_density)}.  Note that the dialog box
+area: \variable{ln(gridcell.population_density)}.  Note that the dialog box
 provides two buttons to help you check your new variable.  The check syntax
 button tests whether the expression you have entered passes the Python and
 expression syntax checkers -- in other words, is it syntactically correct.
@@ -99,18 +99,18 @@ be computed on the available data.
 \end{figure}
 
 We just saw an example of using an expression to define the 
-\mbox {\tt ln\_population\_density} variable.  More generally, a new
+\variable{ln_population_density} variable.  More generally, a new
 variable can be defined in terms of existing variables, where these
 existing variables are referenced as a ``qualified name'' consisting of the
 dataset name and the variable name, for example, 
-\mbox{\tt gridcell.population\_density}.  Or our new variable can be used
+\variable{gridcell.population_density}.  Or our new variable can be used
 in yet another definition by writing \emph{its} qualified name: 
-\mbox{\tt gridcell.ln\_population\_density}.
+\variable{gridcell.ln_population_density}.
 
 In building up an expression, we can apply various functions to other
-variables or subexpressions.  The available functions include {\tt ln},
-{\tt exp}, and {\tt sqrt}.  Also, we can use the operators from the numpy
-package, including {\tt + - * / **} (where {\tt **} is exponentiation).
+variables or subexpressions.  The available functions include \code{ln},
+\code{exp}, and \code{sqrt}.  Also, we can use the operators from the numpy
+package, including \code{+ - * / **} (where \code{ **} is exponentiation).
 Again, the expressions are all array-valued, so that 
-\mbox{\tt ln(2*gridcell.population\_density)} is an array, 
+\variable{ln(2*gridcell.population_density)} is an array, 
 consisting of the logs of 2 times the population density of each grid cell.
