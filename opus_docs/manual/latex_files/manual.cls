@@ -3,7 +3,7 @@
 %
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesClass{manual}
+\ProvidesClass{latex_files/manual}
              [1998/03/03 Document class (Python manual)]
 
 \RequirePackage{latex_files/pypaper}

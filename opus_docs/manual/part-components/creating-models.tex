@@ -113,7 +113,6 @@ Recall from Section \ref{sec:discrete-choice} that the standard multinomial logi
 
 \begin{equation}
     P_i = \frac{\mathrm{e}^{V_i}}{\sum_j \mathrm{e}^{V_j}},
-    \label{eq:mnl}
 \end{equation}
 where $j$ is an index over all possible alternatives,
 $V_i = \beta\cdot {x}_i$ is a linear-in-parameters
@@ -121,7 +120,7 @@ function, $x_i$ is a vector of observed, exogenous, independent
 alternative-specific variables that may be interacted with the
 characteristics of the agent making the choice,
 and $\beta$ is a vector of $k$ coefficients
-estimated with the method of maximum likelihood \cite{Greene-2002}.
+estimated with the method of maximum likelihood \cite{greene-2002}.
 
 The multinomial logit model is a very robust and widely used model in practical applications in transportation planning, marketing, and many other fields.  It is easy to compute and is therefore fast enough to use on large-scale computational problems such as residential location choice.  For explanatory purposes, we will focus initially on choice problems with small numbers of alternatives, such as the choice to rent or own a house, or the number of vehicles a household will choose to own.
 

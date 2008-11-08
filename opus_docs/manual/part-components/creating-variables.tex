@@ -2,10 +2,10 @@
 \label{chap:creating-variables}
 
 Opus is implemented in the Python programming language, so we begin
-with a review of the language in Section \ref{sec:python}. Numpy is a numerical library for Python that is used exensively in the
+with a review of the language in Section \ref{sec:python}. Numpy is a numerical library for Python that is used extensively in the
 Opus system, so this is covered in Section \ref{sec:numpy}. Using
 Python and Numpy, many of the Opus Variables are coded as modules, and
-these are explained in Section \ref{sec:variables}.  Finally, a recent
+these are explained in Section \ref{sec:creating-new-variables}.  Finally, a recent
 and extremely valuable addition to the Opus architecture is a small
 language for Opus Expressions, which makes the need to code variables
 as separate modules unnecessary in most cases.  The expression language
@@ -298,7 +298,7 @@ shown in Figure \ref{fig:indicator-ln-emp-pop}.
 % \end{figure}
 
 \section{(advanced) Creating New Opus Variables}
-\label{sec:variables}
+\label{sec:creating-new-variables}
 
 Variables in Opus are Python modules containing a single Python
 \verb#Class# that computes a variable and returns the result.  For
