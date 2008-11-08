@@ -19,8 +19,6 @@
 % restore openright if you want every chapter to start on an odd-numbered
 % page
 
-% ****** additional UrbanSim command definitions here *******
-\newcommand{\variable}[1]{\mbox{\code{#1}}}
 
 \setcounter{secnumdepth}{2}
 
