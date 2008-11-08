@@ -64,7 +64,7 @@ class RunModelThread(QThread):
             print "Success returned from Model"
             
             if self.modelguielement.model.cancelled:
-                self.modelguielement.model.run_manager.abort_run()
+                self.modelguielement.model.run_manager.cancel_run()
             else:
                 if self.batch_name is not None:
                     self.runIndicatorBatch()

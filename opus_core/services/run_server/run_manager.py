@@ -128,7 +128,7 @@ class RunManager(AbstractService):
             
         self.ready_to_run = False
         
-    def abort_run(self):
+    def cancel_run(self):
         self.delete_everything_for_this_run(run_id = self.run_id, cache_directory = self.current_cache_directory)
         
     def restart_run(self, run_id, restart_year,

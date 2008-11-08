@@ -166,7 +166,7 @@ class Ui_SimulationGuiElement(object):
     def retranslateUi(self, SimulationGuiElement):
         SimulationGuiElement.setWindowTitle(QtGui.QApplication.translate("SimulationGuiElement", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnStartModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Start Simulation Run...", None, QtGui.QApplication.UnicodeUTF8))
-        self.pbnRemoveModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Abort Simulation Run", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbnRemoveModel.setText(QtGui.QApplication.translate("SimulationGuiElement", "Cancel Simulation Run", None, QtGui.QApplication.UnicodeUTF8))
         self.lblRun.setText(QtGui.QApplication.translate("SimulationGuiElement", "Run Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.lblBatch.setToolTip(QtGui.QApplication.translate("SimulationGuiElement", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
