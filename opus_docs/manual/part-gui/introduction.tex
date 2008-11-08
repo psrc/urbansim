@@ -1,7 +1,10 @@
-After launching Opus, the main Opus GUI window should be displayed as
-in Figure \ref{fig:opus1}.
+\chapter{Introduction}
 
-The main window contains a section on the left with four tabs in it, labeled \emph{Data Manager}, \emph{Model Manager}, \emph{Scenario Manager}, and \emph{Results Manager}.  Each tab provides a location for configuring and running a variety of tasks, organized into the main functional areas involved in developing and using a simulation model.  
+This section of the documentation provides a tutorial approach to using the new The Graphical Interface (GUI) that has been added to the OPUS system as of version 4.2.  This represents a substantial initiative to make UrbanSim and OPUS more user-friendly and accessible to modelers and model users -- by reducing the need for programming expertise to use the system effectively to build, estimate, and use model systems for a range of applications.  We think the GUI offers a substantial advance in usability, and look forward to user feedback, and contributions from collaborators, to continue building on this foundation.
+
+The Opus GUI can be launched from a start menu in Windows, or from a shell command in Linux or OS X, by running python opus.py in src/opus\_gui.  The GUI is cross-platform compatible, and has been developed using the open source Qt4 library.  Note that screenshots included in this section will be taken from all three platforms, to give a sense of the look and feel of the GUI on each platform.  After launching the GUI from any of these platforms, the main Opus GUI window should be displayed as in Figure \ref{fig:opus1}. 
+
+The organization of the GUI is based on an expectation that the work flow for developing and using models can be effectively organized into tasks that follow an ordering of data management, model management, scenario management, and results management.  The main window of the GUI reflects this work flow expectation, by implementing four tabs in the left-hand panel of the main window labeled \emph{Data Manager}, \emph{Model Manager}, \emph{Scenario Manager}, and \emph{Results Manager}.  Each tab provides a container for configuring and running a variety of tasks, organized into the main functional areas involved in developing and using a simulation model.  
 
 \squishlist
 \item The \emph{Data Manager} organizes the processes related to moving data between the Opus environment and, doing data processing both within Opus, and also remotely in a database or GIS environment.  Opus can use Python to pass data and commands to a database system like Postgres or MS SQL Server, or to a GIS system like ArcGIS or PostGIS.  Tasks can be organized in the Data Manager as scripts, and run as a batch, or alternatively, they may be run interactively.
@@ -10,8 +13,8 @@ The main window contains a section on the left with four tabs in it, labeled \em
 \item The \emph{Results Manager} provides the tools to explore results once one or more scenarios have been simulated.  It integrates an Indicator Framework that makes it possible to generate a variety of indicators, for diagnostic and for evaluation purposes.  It also provides functionality to visualize indicators as charts, maps, and tables, and to export results to other formats for use outside of Opus.
 \squishend
 
-\fbox{
-\begin{minipage}{.5\linewidth}
+%\fbox{
+%\begin{minipage}{.5\linewidth}
 To launch the Opus GUI, you will need to run a python script
 called opus.py in the /opus/src/opus\_gui directory\footnote{Note the
 use of forward slashes in the path.  On most operating systems, and in
@@ -32,12 +35,12 @@ you can also double-click on the opus.py file in the
 However it is launched, it will start from a command shell, and this
 window remains active while Opus is running.  Do not attempt to quit
 this window or Opus will close also.  
-\end{minipage}
+%\end{minipage}
 }
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.4]{graphics/opus1.png}
+\includegraphics[scale=0.4]{part-gui/images/opus-startup.png}
 \end{center}
 \caption{Opus GUI Main Window}
 \label{fig:opus1}

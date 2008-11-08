@@ -53,27 +53,10 @@ It should go without saying (but doesn't), that creating models through the GUI,
 
 \section{Creating a Regression Model}
 
-Regression models are also simple to create and specify in the Opus GUI, and can be estimated and simulated within the graphical interface.  We will use as an example the development of a model to predict land values per square foot for all parcels.  Assume we want to create a model that predicts the value of land, per square foot, using the tax assessor valuations of land value and the square footage measures of each parcel available in the assessor data.  Since the outcome is continuous, but truncated at zero and increasing to quite large values, we might want to use a log-transformation of the price per square foot.  This would allow for representing the diminishing returns to larger quantities on some attributes.  We begin, however, with a simple nominal value per square foot, which implies that a unit increase in the amount of an independent variable, adds a constant dollar amount to the value of land per square foot.
+Regression models are also simple to create and specify in the Opus GUI, and can be estimated and simulated within the graphical interface.  We will use as an example the development of a model to predict land values for gridcells.  Assume we want to create a model that predicts the value of land, using the tax assessor valuations of land value and other attributes we can observe about gridcells.  Since the outcome is continuous, but truncated at zero and increasing to quite large values, we might want to use a log-transformation of the price.  This would allow for representing the diminishing returns to larger quantities on some attributes.  
 
-The table below summarizes the arguments we would set for creating this model:
+To create this model in the Opus GUI, right-click again on Models, and select in this case Regression Model to generate a new dialog box for this model template, as shown in Figure \ref{fig:create-regression-model}.  We just need to provide three arguments in the dialog box - a name to assign to the new model (we will use land\_price\_model), a dataset to contain the dependent variable (gridcell), and the name of the dependent variable (ln_land_value) - which should exist in the base year, or be an expression to compute it from other attributes already in the data.
 
-\begin{table}[htp]
-\caption{Creating a Land Price per Square Foot Model}
-\label{tab:land-price-sqft-model}
-\begin{center}
-\begin{tabular}{ p{1.3in} p{3.0in}  }
-\toprule[1.5pt]
-Configuration Entry  & Value \\
-\midrule
-Model Name & land\_price\_model \\
-Dataset & gridcell \\
-Dependent Variable  &ln\_land\_value   \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-To create this model in the Opus GUI, right-click again on Models, and select in this case Regression Model to generate a new dialog box for this model template, as shown in Figure \ref{fig:create-regression-model}.
 
 \begin{figure}[htp]
 \begin{center}
@@ -83,7 +66,7 @@ To create this model in the Opus GUI, right-click again on Models, and select in
 \label{fig:create-regression-model}
 \end{figure}
 
-Once the correct values have been assigned to the configuration of the new model, and you click OK on the dialog box, the model is added to the list of models under Models.  If you expand this node by clicking on the plus sign to the left of the new land price model entry, you will see that it contains a specification and a structure node.  Expand the specification node, and you will find some additional detail, including a reference to submodels, and a variables entry.  We will ignore submodels for now -- it is a means of specifying that you would like to specify the model differently for different subsets of the data.  For now we will just apply a single specification to all the data, to keep this a bit simpler.  We can now move to the task of specifying and estimating this model. 
+Once the values have been assigned to the configuration of the new model, and you click OK on the dialog box, the model is added to the list of models under Models.  If you expand this node by clicking on the plus sign to the left of the new land price model entry, you will see that it contains a specification and a structure node.  Expand the specification node, and you will find some additional detail, including a reference to submodels, and a variables entry.  We will ignore submodels for now -- it is a means of specifying that you would like to specify the model differently for different subsets of the data.  For now we will just apply a single specification to all the data, to keep this a bit simpler.  We can now move to the task of specifying and estimating this model. 
 
 Right-click on the variables node, and click on Select Variables, as shown in Figure \ref{fig:specify-regression-1}.  At this point a window should appear as shown in Figure \ref{fig:specify-regression-2} that is essentially the same as the variables library window you encountered earlier.  There is a column of check-boxes at the left hand side of the window which you can use to identify the variables you want to include as independent variables, or predictive variables, for this model.  The button at the bottom allows you to accept the selection, which then updates the list of variables in the model specification.  Try adding a constant term, since this is a regression and we need an intercept, or a base value.  Also add a variable like population density.  Now accept the selections.
 
