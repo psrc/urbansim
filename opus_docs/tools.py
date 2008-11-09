@@ -27,6 +27,8 @@ def build(modules, cwd=os.getcwd(), make_index=True):
             # The makeindex command will fail if the module doesn't have an index - so it's important NOT to check 
             # if the result of the system call succeeded.  (The advantage of calling it anyway is that we can just
             # process all of the files with a loop, rather than having separate processing for modules with and without indices.)
+            print "  * Running bibtex"
+            run(["bibtex",module], cwd)
             print "  * Running makeindex"
             run(["makeindex",module+".idx"], cwd, stop_on_error=False)
         # this is ludicrous -- but we need to run pdflatex *twice* -- otherwise the index isn't included in
