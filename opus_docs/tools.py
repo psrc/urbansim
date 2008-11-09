@@ -26,7 +26,7 @@ def build(modules, cwd=os.getcwd(), make_bibliography_and_index=True):
             # We use -interaction=batchmode for all but the last run, so that warnings don't show up in the log.  On the 
             # final run we use -interaction=nonstop so that warnings do show up (allowing CruiseControl to scan for them).
             print "  * Running pdflatex, bibliography and index creation pass"
-            run(["pdflatex","-interaction","nonstopmode",module+".tex"], cwd)
+            run(["pdflatex","-interaction","batchmode",module+".tex"], cwd)
             # The makeindex command will fail if the module doesn't have an index - so it's important NOT to call
             # this if we aren't making an index.
             print "  * Running bibtex"
