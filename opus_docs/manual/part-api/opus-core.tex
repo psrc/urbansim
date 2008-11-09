@@ -273,6 +273,7 @@ methods that would for example modify attributes (such as \method{compute_variab
 
 \subsection{Interaction Sets}
 \label{sec:interaction-set}
+\index{class!InteractionDataset}
 %
 Opus allows the programmer to create a dataset representing
 an interaction between two datasets, \datasetindex by using the class
@@ -332,6 +333,7 @@ An interaction set is automatically created and used in the
 
 \section{Data Storage}
 \label{sec:data-storage}
+\index{class!Storage}
 %
 One of the design elements of Opus is to allow users to choose alternative
 data storage methods depending on their needs, while keeping a consistent
@@ -1013,6 +1015,7 @@ functionality. The classes are described in detail in the next sections.
 \end{figure}
 
 \subsection{Model Class}
+\index{class!Model}
 \class{Model} is the base class for implementing Opus models. It provides an
 automatic logger which prints out information about the model start, end and
 processing time.  Model supports two methods: an obligatory method
@@ -1023,7 +1026,7 @@ can be passed into the \method{run()} and \method{estimate()} methods and
 those can return any values.
 
 \subsection{ChunkModel Class}
-\label{sec:chunk-model} \index{ChunkModel}
+\label{sec:chunk-model} \index{class|ChunkModel}
 \index{Memory management!Using multiple chunks per model}
 
 This class enables running models (i.e. processing the \method{run()} method) in
@@ -1370,6 +1373,7 @@ dictionary with one entry for each submodel.
 Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsubsection{Child Class RegressionModelWithInitialResiduals}
+\index{class!RegressionModelWithInitialResiduals}
 %
 This class impacts only the method \method{run()} (it doesn't change the behaviour of the \method{estimate()} method).
 It computes initial errors of the observations to the predictions (residuals)
@@ -1391,7 +1395,9 @@ to be passed into the constructor. The following entries of the \verb|run_config
 \end{itemize}
 
 \subsection{SimpleModel Class}
-%\label{sec:api-simple-model}
+\label{sec:api-simple-model}
+\index{class|SimpleModel}
+\index{models|simple model}
 %
 This model is an alternative way of computing a variable on a dataset, except that the resulting attribute 
 becomes a primary attribute.
@@ -1409,7 +1415,9 @@ on the dataset, it is deleted. Results from the computation are assigned to \ver
 the attribute is marked as primary. Values of this attribute are returned.
 
 \subsection{AllocationModel Class}
-%\label{sec:api-allocation-model}
+\label{sec:api-allocation-model}
+\index{class|AllocationModel}
+\index{models|allocation model}
 %
 The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions.
 
@@ -1447,7 +1455,8 @@ The \verb|outcome_attribute| is then flushed to cache and the values are returne
         
         
 \subsection{JoinAttributeModificationModel Class}
-%\label{sec:api-jam-model}
+\label{sec:api-jam-model}
+\index{class|JoinAttributeModificationModel}
 %
 The model modifies an attribute of a dataset for members that are determined by given ids of a second dataset.
 The \method{run()} method takes the following arguments:
@@ -1508,9 +1517,9 @@ model components.
 \index{class!Utilities}
 
 The \class{Utilities} class is used for computing utilities in
-discrete choice modeling. In Opus \package{opus_core} there is one
-\class{Utilities} class implemented -- {\bf linear_utilities} --
-that computes linear utilities:
+discrete choice modeling. In \package{opus_core} there is a
+\class{Utilities} class implemented, called {\bf linear_utilities}, \index{class!Utilities|linear_utilities}
+which computes linear utilities:
 \[
 U_{ni} = \sum_{j=1}^J \beta_{ij}x_{nij}\,.
 \]
@@ -1520,14 +1529,26 @@ constants) for each agent and alternative, and $\beta$ is a coefficient \coeffic
 of size $I\times J$. The \verb|run()| method gets a 3-d array of data and a
 2-d array of coefficients \coefficientsindex as arguments and returns a 2-d array of utilities.
 
+A child class of \class{linear_utilities}, called {\bf linear_utilities_diagnose}, 
+\index{class!Utilities|linear_utilities_diagnose} serves analyzing changes in utilities 
+due to changes in the data. For each variable set to its 5\%- and 95\%-quantile, respectively, while keeping
+the remaining variables at their median, it runs the \class{linear_utilities} module. Results 
+are stored in a file. First line of the file corresponds to the 5\%-quantile, second line to the 95\%-quantile,
+and third line contains the difference between lines one and two. The name of the file 
+can be passed to the \method{run()} method in its argument \verb|resources| as a dictionary key
+'utilities_diagnose_file'. Default name is 'util'.
+
+
+
 \subsection{Probabilities Class}
 \label{sec:probabilities}
 \index{class!Probabilities}
 
 The \class{Probabilities} class is an abstract class for computing
 probabilities in the discrete choice modeling framework. Given
-utilities $U$, the Opus \package{opus_core} class {\bf
-mnl_probabilities} computes multinomial logit probabilities:
+utilities $U$, the \package{opus_core} class {\bf
+mnl_probabilities} \index{class!Probabilities|mnl_probabilities}
+computes multinomial logit probabilities:
 \[
 P_{ni} = \frac{e^{U_{ni}}}{\sum_{j} e^{U_{nj}}}\,.
 \]
@@ -1541,13 +1562,13 @@ probabilities (the same shape as utilities).
 
 \class{Choices} is an abstract class for selecting choices according to given
 probabilities in the discrete choice modeling framework. Opus package \package{opus_core} supports
-two classes in this category. {\bf random_choices} returns an index of
+two classes in this category. {\bf random_choices} \index{class!Choices|random_choices} returns an index of
 randomly selected choices, one per observation. The number of alternatives is
 simply derived from the second dimension of the array of probabilities, which
 is passed as argument to the \verb|run()| method. {\bf
-  random_choices_from_index} allows one to define an index array whose
+  random_choices_from_index} \index{class!Choices|random_choices_from_index} allows one to define an index array whose
 elements are returned as the selected choices. This index array should be
-contained in the argument \verb|resources| as an entry \verb|index|. This can be
+contained in the argument \verb|resources| (dictionary) as an entry \verb|index|. This can be
 useful for example if we are not dealing with the whole set of alternatives,
 but rather with a subsampled set.
 
@@ -1580,7 +1601,7 @@ the results of the very last running method is the return value of the
 \index{class!Regression}
 
 The \class{Regression} class is an abstract class for user defined classes
-that can be used in the regression model. The class {\bf linear_regression}
+that can be used in the regression model. The class {\bf linear_regression} \index{class!Regression|linear_regression}
 implemented in \package{opus_core} computes outcome $Y$ as a linear combination of given
 data $X$ and coefficients \coefficientsindex \boldmath $\beta$\unboldmath: $y_n = \sum_{j=1}^J
 \beta_j x_{nj}$. Here, $J$ denotes the number of variables \variablesindex entering the
@@ -1589,16 +1610,27 @@ a 2-d array of data (of size number of observations $\times$ number of
 variables) and a 1-d array of coefficients \coefficientsindex as arguments and returns a 1-d
 array of outcome.
 
+A child class of \class{linear_regression}, called {\bf linear_regression_with_normal_error}, 
+\index{class!Regression|linear_regression_with_normal_error}
+adds normaly distributed random errors to the outcome: $y_n = \sum_{j=1}^J \beta_j x_{nj} + \delta_n$ 
+where $\delta_n \sim N(\mu_n, \sigma_n^2)$. $\mu_n$ and $\sigma_n^2$, respectively, can be passed 
+to the \method{run()} method in its argument \verb|resources| (dictionary) as entries
+'linear_regression_error_mean' and 'linear_regression_error_variance', respectively. Both can be specified either as 
+a single value or as an array of size number of observations.
+By default, $\delta_n \sim N(0, 1)$ for all $n$.
+
+
 \subsection{EstimationProcedure Class}
 \label{sec:estimation-procedure}
 \index{class!EstimationProcedure}
 %
 This class is an abstract class for modules that implement estimation of
 coefficients \coefficientsindex for one of the available models. {\bf bhhh_mnl_estimation}
+\index{class!EstimationProcedure|bhhh_mnl_estimation}\index{BHHH estimation}
 implements the BHHH estimation algorithm for multinomial logit models and can
-be plugged into the \class{ChoiceModel}. It gets a data array (of size number
+be plugged into the \class{ChoiceModel}. As arguments, it gets a data array (of size number
 of observations $\times$ number of alternatives $\times$ number of variables) \variablesindex
-and an object \class{upc_sequence} as arguments. It uses the classes
+and an object \class{upc_sequence}. It uses the classes
 \class{Probabilities} and \class{Utilities} contained in \class{upc_sequence}
 for the maximum likelihood estimation. This assures that if
 \class{bhhh_mnl_estimation} is plugged into the \method{estimate()} method of
@@ -1611,16 +1643,37 @@ $\times$ number of alternatives. For each agent, it contains a 1 on a position
 of the chosen alternative, otherwise 0s. Note that \class{ChoiceModel}
 prepares and passes this matrix automatically.
 
-{\bf estimate_linear_regression} performs a parameters estimation via the
-least squares method. It gets a data array (of size number of observations
+A child class of \class{bhhh_mnl_estimation}, called {\bf bhhh_wesml_mnl_estimation}, 
+\index{class!EstimationProcedure|bhhh_wesml_mnl_estimation}
+implements 
+the Weighted Endogenous Sampling Maximum Likelihood procedure, proposed by Manski, Lerman 1977.
+Here, the data are weighted by correction weights (observation share/sampled share) in order to take into account 
+undersampled or oversampled observations. The correction weights should be implemented
+as a variable. Its fully-qualified name is passed to the \method{run()} method in the argument 
+\verb|resources| (dictionary) as an entry 'wesml_sampling_correction_variable'.
+
+Classes {\bf bhhh_mnl_estimation_with_diagnose} and {\bf bhhh_wesml_mnl_estimation_with_diagnose},
+\index{class!EstimationProcedure|bhhh_mnl_estimation_with_diagnose}
+\index{class!EstimationProcedure|bhhh_wesml_mnl_estimation_with_diagnose}
+respectively, run the estimation of their parent classes, namely
+\class{bhhh_mnl_estimation} and \class{bhhh_wesml_mnl_estimation}, respectively, using 
+the utilities component \class{linear_utilities_diagnose} (see Section~\ref{sec:utilities}).
+
+{\bf estimate_linear_regression} \index{class!EstimationProcedure|estimate_linear_regression}
+performs a parameters estimation via the
+least squares method. As arguments, it gets a data array (of size number of observations
 $\times$ number of variables), \variablesindex an instance of class \class{Regression} (not
-used in this module) and an object \class{Resources} as arguments. The last
+used in this module) and an object \class{Resources}. The last
 argument must contain an entry \verb|outcome| which is a 1-d array of an outcome
 for each observation. This class can be plugged into the
 \class{RegressionModel} which takes care of all arguments.
 
-The estimation modules return a dictionary, with entries \verb|estimators| and
-\verb|standard_errors|. These contain arrays of estimated coefficients \coefficientsindex and their
+{\bf estimate_linear_regression_r} \index{class!EstimationProcedure|estimate_linear_regression_r}
+estimates the parameters using the R function lm. Here, the rpy module is required. It should 
+give the same results as \class{estimate_linear_regression}.
+
+The estimation modules return a dictionary with several entries: Entries \verb|estimators| and
+\verb|standard_errors| contain arrays of estimated coefficients \coefficientsindex and their
 standard errors, respectively. An entry \verb|other_measures| is a dictionary
 which should contain additional measures of the estimates, i.e. their values
 should be arrays of the same size as estimators. The two estimation modules
@@ -1629,6 +1682,15 @@ the dictionary returned by the modules, \verb|other_info|, is a dictionary
 containing additional information about the estimation. Its values don't
 follow any restriction on type and size. Thus, these can be also single values,
 such as likelihood ratio test statistics, degrees of freedom, $R^2$ etc.
+
+Opus also implements a tool for variable selection in linear regression. Class 
+{\bf bma_for_linear_regression_r} uses the R package BMA. 
+It prints out results computed by the R function bic.glm and plots an image of the results.
+The input arguments are identical to those in \class{estimate_linear_regression}. Additionally,
+if the dictionary \verb|resources| contains an entry 'bma_imageplot_filename', the resulting imageplot 
+is stored as a pdf file of that name. 
+The \method{run()} method does not return any value. It should serve users as a tool to select variables 
+which are then plugged into \class{estimate_linear_regression}.
 
 %% \subsection{sampling_toolbox}
 %% \label{sec:samplingtoolbox} The sampling_toolbox is a collection of
@@ -1958,7 +2020,7 @@ the agents grouping attribute. Then the class can be used for subsetting any dat
 e.g. by the method \method{get_index_of_my_agents(dataset, index)} which selects those entries from the given index that
 correspond to this group member.
 
-\subsection{Configuration classes}
+\subsection{Configuration Classes}
 \label{sec:resources} \index{Configuration} \index{Resources} \index{GeneralResources}\index{ChunkSpecification}
 %
 Opus implements a few classes that are used for configuration of objects.
