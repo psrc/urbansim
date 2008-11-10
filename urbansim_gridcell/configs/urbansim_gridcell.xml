@@ -7,6 +7,19 @@
       <number_of_jobs type="variable_definition" dataset="zone" use="both" source="Python class">urbansim.zone.number_of_jobs</number_of_jobs>
       <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
       <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
+      <ln_du dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.residential_units)</ln_du>
+      <ln_duw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units_within_walking_distance</ln_duw>
+      <pcthiwa dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_high_income_households_within_walking_distance</pcthiwa>
+      <wetland dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.percent_wetland&gt;50</wetland>
+      <cbdtrvl dataset="gridcell" source="Python class" type="variable_definition" use="model variable">eugene.gridcell.travel_time_hbw_am_drive_alone_to_220</cbdtrvl>
+      <ln_impval dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(urbansim.gridcell.total_improvement_value)</ln_impval>
+      <pctdevwal dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_developed_within_walking_distance</pctdevwal>
+      <constant dataset="gridcell " source="expression" type="variable_definition" use="model variable">constant</constant>
+      <ln_hwy dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.distance_to_highway)</ln_hwy>
+      <flood dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.percent_floodplain&gt;50</flood>
+      <hwy600 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;600</hwy600>
+      <hwy300 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;300</hwy300>
+      <land_value dataset="gridcell" source="expression" type="variable_definition" use="indicator">gridcell.residential_land_value+gridcell.nonresidential_land_value</land_value>
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
     <dataset_pool_configuration type="class">
