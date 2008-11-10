@@ -1495,9 +1495,10 @@ As the next step, we prepare a dataset pool \index{dataset pool} for the variabl
 that involve more than one dataset. To make things easy, we explicitly insert
 our three datasets into the pool:
 \begin{verbatim}
->>> dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'])
->>> dataset_pool.add_datasets_if_not_included({'gridcell': locations,
-        'zone': zones, 'neighborhood':neighborhoods})
+>>> dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                               datasets_dict={'gridcell': locations,
+                                              'zone': zones, 
+                                              'neighborhood':neighborhoods})
 \end{verbatim}
 An aggregation over one geographical level for the \verb|locations|
 attribute \attributesindex `capacity' can be done by: \variablesindex

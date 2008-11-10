@@ -1497,10 +1497,10 @@ models (child classes of \class{Model}) are themselves model components.
 \begin{figure}[t]
 \begin{center}
 %begin{latexonly}
-\includegraphics[scale=0.8, angle=-90]{images/corecomponents.pdf}
+\includegraphics[scale=0.8]{images/corecomponents.pdf}
 %end{latexonly}
 \caption{\label{fig:model-components}\small Model components in Opus' \package{opus_core}.}
-\htmlonly{\includegraphics[scale=0.8, angle=-90]{images/corecomponents.jpg}}
+\htmlonly{\includegraphics[scale=0.8]{images/corecomponents.jpg}}
 \end{center}
 \end{figure}
 
@@ -1690,7 +1690,8 @@ The input arguments are identical to those in \class{estimate_linear_regression}
 if the dictionary \verb|resources| contains an entry 'bma_imageplot_filename', the resulting imageplot 
 is stored as a pdf file of that name. 
 The \method{run()} method does not return any value. It should serve users as a tool to select variables 
-which are then plugged into \class{estimate_linear_regression}.
+which can be then plugged into \class{estimate_linear_regression}. The module rpy is required 
+when using this component.
 
 %% \subsection{sampling_toolbox}
 %% \label{sec:samplingtoolbox} The sampling_toolbox is a collection of
@@ -1795,36 +1796,64 @@ such specification, called \class{EquationSpecification}.
 
 \subsubsection{Initialization}
 The constructor of \class{EquationSpecification}
-takes the following arguments:
+takes the following arguments (they all have default value None):
 \begin{description}
 \item[variables] - an array of variable \variablesindex names.
 \item[coefficients] - an array  of coefficient \coefficientsindex names.
 \item[equations] - an array of equations.
 \item[submodels] - an array of submodels.
-\item[fixed_values]
-\item[other_fields]
-\item[specification_dict]
+\item[fixed_values] - an array of fixed values. Any non-zero value is considered as a constant value
+  of the corresponding coefficient, i.e. it is not to be estimated.
+\item[other_fields] - a dictionary holding additional columns of the specification table.
+\item[specification_dict] - the specification is specified in a dictionary format (see below). This argument 
+ is considered only if the argument
+  \verb|variables| is None. In such a case, all arguments above are ignored.
 \item[in_storage] - an object of class \class{Storage} for loading
   specification from a storage.
 \item[out_storage] - an object of class \class{Storage} for specification output.
 \end{description}
+
+All arguments are set as class properties.
+
 The arrays \verb|variables| \variablesindex and \verb|coefficients| \coefficientsindex must have the same size.
-If \verb|submodels| and \verb|equations| are not omitted, they too must have
+If \verb|submodels|, \verb|equations| and \verb|fixed_values| are not omitted, they too must have
 the same length as \verb|variables|. \variablesindex It is interpreted as the $i$-th variable \variablesindex
 is connected to the $i$-th coefficient \coefficientsindex in the $i$-th equation (if there are
-any) in the $i$-th submodel (if there are any). Values of \verb|equations| and
+any) in the $i$-th submodel (if there are any). If the $i$-th fixed value is non-zero, the $i$-th coefficient
+is not to be estimated. All entries of \verb|other_fields| must also be of the same size 
+as \verb|variables|.
+Values of \verb|equations| and
 \verb|submodels| should be strictly positive integers. Coefficients \coefficientsindex should
 have different names across equations, i.e. if there would be $i$ and $j$ for
 which the \verb|coefficients[i]==coefficients[j]| \coefficientsindex and
 \verb|equations[i]<>equations[j]| and \verb|submodels[i]==submodels[j]|, it
 would lead to errors when connecting specification and coefficients. \coefficientsindex
 
-All arguments are set as class properties. 
+An alternative way of defining a specification is a dictionary format (passed to the constructor via the argument 
+\verb|specification_dict|).
+Keys of the dictionary are submodels. If there
+is only one submodel, the value $-2$ should be used as key. 
+The value for each submodel entry is a list containing specification for the particular submodel.
+The elements of each list can be defined in one of the following forms:
+\begin{itemize}
+\item a character string specifying a variable in its fully qualified name or as an expression. In such a case, 
+      the coefficient name is determined by the alias of the variable.
+\item a tuple of length 2: variable name as above, and the corresponding coefficient name.
+\item a tuple of length 3: variable name, coefficient name, fixed value of the coefficient (if the 
+                                coefficient should not be estimated).
+\item a dictionary with pairs variable name, coefficient name
+\end{itemize}
+\verb|specification_dict| can contain an entry '_definition_' which should be a list of elements in one of the forms above.
+In such a case, the entries defined for submodels can contain only the variable aliases. The corresponding 
+coefficient names and fixed values (if defined) are taken from the definition section. Examples of specifications in 
+a dictionary format can be found in the unit tests of the \class{EquationSpecification} class.
+
 
 \subsubsection{Loading from and Writing into Storage}
 %
-One can also omit the arguments in the constructor and load the specification
-from a storage, using the method \method{load()}. It takes the following
+If the specification is stored in one of the supported storage formats,
+one can omit all arguments in the constructor and load the specification
+from the storage, using the method \method{load()}. It takes the following
 arguments:
 \begin{description}
 \item[resources] - an object of class \class{Resources}. If the remaining
@@ -1835,18 +1864,17 @@ arguments:
 \item[in_table_name] - name of the table/file where the specification should
   be loaded from.
 \item[variables] - if this argument is given, it serves as a filter for the
-  variables \variablesindex loaded from the store.
+  variables \variablesindex loaded from the storage.
 \end{description}
-For each of the class properties variables, \variablesindex coefficients, \coefficientsindex equations, and
-submodels, respectively, a table column is expected on the storage. The column
-names are given in the \verb|resources| entries \verb|field_variable_name|,
-\verb|field_coefficient_name|, \verb|field_equation_id|, and \verb|field_submodel_id|,
-respectively. Default values are \verb|'variable_name|, \variablesindex \verb|'coefficient_name|, \coefficientsindex
-\verb|'equation_id|, and \verb|'sub_model_id|.
-
-The variables \variablesindex and coefficients \coefficientsindex are stored in the class attributes \attributesindex
-\verb|variables| \variablesindex and \verb|coefficients|. \coefficientsindex Equations and submodels are stored
-only if their maximum value is not negative.
+For each of the class properties variables, \variablesindex coefficients, \coefficientsindex equations,
+submodels, and fixed_values, respectively, a table column is accepted on the storage (the first two are required, 
+the others are optional). The column
+names are given in the \verb|resources| entries 'field_variable_name',
+'field_coefficient_name', 'field_equation_id', 'field_submodel_id', and 'field_fixed_value', 
+respectively. Default values for the column names are \verb|'variable_name'|, 
+\variablesindex \verb|'coefficient_name'|, \coefficientsindex
+\verb|'equation_id'|, \verb|'sub_model_id'|, and \verb|'fixed_value'|, respectively. If the table contains 
+columns of other names, they are loaded into the class attribute other_fields, each as a dictionary entry. 
 
 To store a specification into a storage, use the method
 \method{write(resources, out_storage, out_table_name)}. The behavior is
@@ -1884,18 +1912,17 @@ The constructor takes the following arguments:
 \end{description}
 The arguments are interpreted as the coefficient \coefficientsindex of $i$-th name has the $i$-th
 value, optionally the $i$-th standard error and is used in $i$-th
-submodel. This also applies to \verb|other_measures|. Note that since
+submodel. This also applies to each entry in \verb|other_measures|. Note that since
 equations are not used here, there has to be coefficients \coefficientsindex with different names
 for different equations, defined in the specification.
 
-All arguments are set as class properties. \verb|in_storage| and
-\verb|out_storage| are not used in the constructor.
+All arguments are set as class properties. 
 
 %
 \subsubsection{Loading from and Writing into Storage}
 %
 The method \method{load()} is similar to the one defined in
-\class{EquationSpecification}. It take as arguments:
+\class{EquationSpecification}. It takes the arguments:
 \begin{description}
 \item[resources] - an object of class \class{Resources}. If the remaining
   arguments are given, they will have priority over entries of the same name
@@ -1906,13 +1933,13 @@ The method \method{load()} is similar to the one defined in
   be loaded from.
 \end{description}
 For each of the class properties names, values, standard errors, and
-submodels, respectively, a table column is expected on the storage. There can
-be other fields stored too. The column names are given in the \verb|resources|
-entries \verb|field_coefficient_name|, \coefficientsindex \verb|field_estimate|,
-\verb|field_standard_error|, and \verb|field_submodel_id|, respectively. Default
-values are \verb|variable_name|, \variablesindex \verb|coefficient_name|, \coefficientsindex \verb|equation_id|, and
-\verb|sub_model_id|. If there are other fields in the table, the column names are
-given in the entry \verb|other_fields| which is a list of character strings. The
+submodels, respectively, a table column is expected on the storage. 
+The column names are given in the \verb|resources|
+entries 'field_coefficient_name', \coefficientsindex 'field_estimate',
+'field_standard_error', and 'field_submodel_id', respectively. Default
+values for the column names are \verb|'variable_name'|, \variablesindex \verb|'coefficient_name'|, \coefficientsindex 
+\verb|'equation_id'|, and \verb|'sub_model_id'|. If there are other fields in the table, their column names should be
+given in the entry 'other_fields' of  \verb|resources| which is a list of character strings. The
 default value is \verb|['t_statistic', 'p_value']|.
 
 To store coefficients \coefficientsindex into a storage, use the method
@@ -1933,7 +1960,7 @@ of class \class{Coefficients} and an instance of class
 \class{EquationSpecification} and creates arrays of coefficient \coefficientsindex values,
 standard errors and other measures. The shape of those arrays is such that
 they can be easily combined with data arrays when connecting coefficients \coefficientsindex to
-variable \variablesindex values. In particular they have three dimensions, number of
+variable \variablesindex values. In particular, they have three dimensions, number of
 equations, number of variables \variablesindex and number of submodels.
 
 For working with single submodels, there is a child class of
@@ -1941,7 +1968,7 @@ For working with single submodels, there is a child class of
 \class{SpecifiedCoefficientsFor1Submodel}, \coefficientsindex that is initialized by passing the
 parent object and the submodel number.
 
-Those classes are created and used by the two \package{opus_core} models, regression model
+Those classes are created and used by two \package{opus_core} models, namely regression model
 for computing the regression and the choice model for computing the utilities.
 
 \section{Other Classes}
@@ -1950,7 +1977,7 @@ for computing the regression and the choice model for computing the utilities.
 \label{sec:core-dataset-pool}
 \index{dataset pool}
 %
-A class called \class{DatasetPool} is design to maintain a 'pool' of datasets. It is mainly used when
+A class called \class{DatasetPool} is designed to maintain a 'pool' of datasets. It is mainly used when
 computing variables. Therefore in most cases, it will be only needed if the \class{Dataset} method
 \method{compute_variables()} is used (for which an instance of \class{DatasetPool} is passed as an argument) in order
 to have external datasets available that are required by the various variable implementations
@@ -1962,6 +1989,7 @@ The class is initialized by passing arguments:
 \item[package_order_exception] - a dictionary of exceptions from the \verb|package_order| as pairs dataset name
 and list of packages for that dataset. Default is an empty dictionary.
 \item[storage] - an object of class \class{Storage} that contains data of datasets to be included in pool. Default is \verb|None|.
+\item[datasets_dict] - a dictionary containing pairs of dataset name and dataset object. Default is an empty dictionary.
 \end{description}
 One can add a dataset into the pool using the method \\
 \method{_add_dataset(dataset_name, dataset)}, \\
@@ -1972,8 +2000,8 @@ passing multiple datasets in one dictionary using the method \\
 A dataset can be accessed by the method \\
 \method{get_dataset(dataset_name, dataset_arguments)}\\
  where the second argument is optional.
-If a dataset of the given name is included in the pool, it is returned. Otherwise, the class creates a Dataset object with
-data from the storage that was passed in the initialization. In order to create the appropriate Dataset class, it is searched
+If a dataset of the given name is included in the pool, it is returned. Otherwise, the class creates a Dataset object using
+the storage passed to the constructor. In order to create the appropriate Dataset class, it is searched
 for a module called {\em dataset_name}\verb|_dataset.py| which should contain a class called {\em DatasetName}\verb|Dataset|.
 The \class{DatasetPool} class searches for this module in the directory \file{datasets} of packages given in the initialization argument
 'package_order'.
@@ -2011,15 +2039,15 @@ agents grouping attribute.
 
 The class \class{ModelGroup} is initialized by
 \begin{description}
-\item[dataset] - Object of class \class{Dataset} that is the grouping dataset.
-\item[grouping_attribute] - Name of the grouping attribute.
+\item[dataset] - object of class \class{Dataset} that is the grouping dataset.
+\item[grouping_attribute] - name of the grouping attribute.
 \end{description}
 The class offers useful methods for accessing member names and codes of this group.
 
 The class \class{ModelGroupMember} is initialized by
 \begin{description}
-\item[model_group] - An object of class \class{ModelGroup}.
-\item[member_name] - Name of this specific member. It must be contained in the grouping attribute of 'model_group'.
+\item[model_group] - object of class \class{ModelGroup}.
+\item[member_name] - name of this specific member. It must be contained in the grouping attribute of 'model_group'.
 \end{description}
 A model that uses this class should use the method \method{set_agents_grouping_attribute(attribute)} to set
 the agents grouping attribute. Then the class can be used for subsetting any dataset according to the member codes,
@@ -2027,21 +2055,22 @@ e.g. by the method \method{get_index_of_my_agents(dataset, index)} which selects
 correspond to this group member.
 
 \subsection{Configuration Classes}
-\label{sec:resources} \index{Configuration} \index{Resources} \index{GeneralResources}\index{ChunkSpecification}
+\label{sec:resources} 
 %
 Opus implements a few classes that are used for configuration of objects.
 \begin{description}
-\item[GeneralResources] - it is a python \pythonindex dictionary with some additional methods.
-\item[SessionConfiguration] - a singleton (child of \class{GeneralResources} that is to be configured
+\item[GeneralResources] - \index{GeneralResources} \index{class!GeneralResources} it is a python \pythonindex dictionary with some additional methods.
+\item[SessionConfiguration] - \index{SessionConfiguration} \index{class!SessionConfiguration} a singleton (child of \class{GeneralResources} that is to be configured
         with global settings for a user's session.  Requires parameter
         \verb|in_storage| to not be \verb|None| if creating a new instance, so
         SessionConfiguration knows from where to get the data for any dataset it
         creates.
-\item[Configuration] - it is a child of \class{GeneralResources} that implements a hierarchical
+\item[Configuration] - \index{Configuration}  \index{class!Configuration} 
+  it is a child of \class{GeneralResources} that implements a hierarchical
         representation of the user-specified parameters and settings.
-\item[Resources] - it is a child of \class{Configuration}. It has access to the
+\item[Resources] - \index{Resources} \index{class!Resources} it is a child of \class{Configuration}. It has access to the
 \class{SessionConfiguration}.
-\item[ChunkSpecification] - class for configuring chunks used by the \class{ChunkModel} (see 
+\item[ChunkSpecification] - \index{ChunkSpecification} \index{class!ChunkSpecification} class for configuring chunks used by the \class{ChunkModel} (see 
 Section~\ref{sec:chunk-model}). It is initialized by a dictionary containing either the key 'records_per_chunk' or
 'nchunks' with the appropriate value. Method \method{nchunks()} returns number of chunks. Method \method{chunk_size()}
 returns the number of records in one chunk.

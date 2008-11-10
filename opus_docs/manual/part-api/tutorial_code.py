@@ -239,9 +239,10 @@ dstorage.write_table(table_name='zones',
 neighborhoods = Dataset(in_storage=dstorage, in_table_name='neighborhoods', dataset_name="neighborhood", id_name="nbh_id")
 zones = Dataset(in_storage=dstorage, in_table_name='zones', dataset_name="zone", id_name="zone_id")
 locations.add_primary_attribute(name="zone_id", data=[3,5,2,2,1,1,3,5,3])
-dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'])
-dataset_pool.add_datasets_if_not_included({'gridcell': locations, 'zone': zones,
-                                    'neighborhood':neighborhoods})
+dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                               datasets_dict={'gridcell': locations,
+                                              'zone': zones, 
+                                              'neighborhood':neighborhoods})
 aggr_var = "aggregated_capacity = zone.aggregate(gridcell.capacity)"
 zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
 zones.get_attribute("aggregated_capacity")
