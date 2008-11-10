@@ -40,6 +40,13 @@ successfully'' after it, and the ``Year progress'' bar will say
 \label{fig:scenario-manager-completed-run}
 \end{figure}
 
+This simulation run then is entered into the simulation runs database,
+which can be subsequently inspected via the ``Simulation\_runs'' node in
+the Results Manager (Section \ref{sec:managing-simulation-runs}).
+Indicator results from the simulation can also be generated using other
+tools in the Results Manager (Section
+\ref{sec:interrogating-results-with-indicators}).
+
 That's it for the basics of running a simulation!  However, there are
 various options for selecting, configuring and running a scenario, which
 are described in the following subsections.
@@ -48,14 +55,14 @@ are described in the following subsections.
 \label{sec:controlling-simulation}
 
 Here are the aspects of controlling the simulation run via controls in the
-frame on the right.  The results of the simulation are stored in the data
-directory under the ``Run Name'' (upper right hand part of the pane).  This
-is filled in with a default value consisting of ``run\_'' followed by the
-date and time; edit the field if you'd like to give it a custom name.
-Immediately under that field is a combo box ``Indicator Batch:''.  If you
-have defined and named a batch of indicators that can be run, you can
-select one of these from the list, and the indicators will automatically be
-run at the conclusion of the simulation.  See Section
+frame on the right.  The results of this simulation are entered into the
+simulation runs database under the ``Run Name'' (upper right hand part of
+the pane).  This is filled in with a default value consisting of ``run\_''
+followed by the date and time; edit the field if you'd like to give the run
+a custom name.  Immediately under that field is a combo box ``Indicator
+Batch:''.  If you have defined and named a batch of indicators that can be
+run, you can select one of these from the list, and the indicators will
+automatically be run at the conclusion of the simulation.  See Section
 \ref{sec:batch-indicator-configuration} for information on indicator
 batches.
 
