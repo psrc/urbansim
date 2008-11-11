@@ -9,58 +9,19 @@
 \chapter{Running Simulation and Estimation}
 \label{part:running-simulation}
 %
-The latest incarnation of UrbanSim, UrbanSim 4, is implemented as a
-set of packages in Opus. Package \package{opus_core} provides
-general functionality, \package{urbansim} contains everything around
-land use models, \modelsindex package \package{opus_emme2} is an
-Opus wrapper to the travel model EMME/2.\emmeindex
-
 \section{Running a Simulation}
-%
-\subsection{Support for Production Runs}
-The ``Run Manager'' \runmanagerindex is a set of user functionality
-provided by the \file{run_manager} \runmanagerindex directories in
-the \package{opus_core} and \package{opus_core.services} packages
-provide support for specifying, starting, re-starting, and
-processing ``production`` runs. \index{production runs} Such a
-system is necessary to deal with the long run times for such a model
-\modelsindex system, and the large amount of data each run produces.
-A 30-year simulation of the Puget Sound Regional Council's (PSRC)
-\psrcindex dataset with their EMME/2 \emmeindex travel model, for
-instance, takes about 5 days \index{simulation!run time} to complete
-and creates about 14 GB of cache data. \index{cache!size of}
-\index{simulation!space used by}  These numbers are for a computer
-with dual 3.2 GHz Intel\textregistered{} \intelindex
-Xeon\texttrademark{} \xeonindex processors and 4 GB of RAM running
-Windows XP Professional. \windowstestindex  The PSCS dataset
-\datasetindex contains about 800,000 gridcells, 1.3 million
-households, and 1.8 million jobs in the initial year. Each UrbanSim
-year takes about 1.5 hours to simulate, and each travel model run,
-done every 5 years, takes around 12 hours to simulate.
-
-Here are some of the things Run Manager \runmanagerindex helps us do:
-\begin{itemize}
-  \item Define a run configuration, including what models \modelsindex to run, what years to
-  run, etc.
-  \item Start a production run.
-  \item Monitor the status of all production runs.
-  \item Re-start a production run when something goes wrong.
-  \item Compute indicators on the results of a production run, including runs
-  that are still simulating.
-  \item Inspecting specific dataset values from any year of the simulation,
-  as when diagnosing problems.
-  \item Manage consistency regarding the availability and status of production runs.
-\end{itemize}
-
+% 
 \subsection{Run Management}
 \label{sec:run-manager}
 %
+An alternative way of running a simulation from the GUI (as described in Chapter~\ref{chap:scenarios-manager})
+is to launch it from a command line.
 Opus contains a set of scripts that simplify the
-process of starting and restarting a set of simulation runs.
+process of creating a base year cache, starting, and restarting a set of simulation runs.
 
-At the moment, these scripts are a set of command line applications, or tools, in the
+These scripts are a set of command line applications, or tools, in the
 \file{opus_core/tools} directory.  They use a database as the central
-repository for coordination and context infomation for run managment, by
+repository (by default sqlite) for coordination and context infomation for run managment, by
 default called \verb|services|.  If you don't have this database, create it
 (you need to do this from within the \file{opus_core/tools}
 directory):
@@ -83,16 +44,34 @@ myservices
 All scripts described below print a help message when called with the
 \verb|-h| or \verb|--help| option.
 
+\subsubsection{Create Baseyear Cache}
+\label{sec:run-manager-baseyearcache}
+%
+Opus simulations usually run on data stored in a base year cache.
+If the raw data are stored in a database, 
+one can use an Opus tool to create such base year cache.\baseyearcacheindex 
+The script needs a configuration module passed as an argument. 
+If the module is for example located at
+\file{psrc/configs/subset_configuration.py} under one of the paths found in the
+PYTHONPATH \pythonpathindex environment variable, \environmentvariablesindex the command
+\pythonindex
+\begin{verbatim}
+python create_baseyear_cache.py psrc.configs.subset_configuration
+\end{verbatim}
+caches the database defined in the \verb|subset_configuration| module into a basyear
+cache. \baseyearcacheindex Run this command from 
+the \file{opus_core/tools/} directory. An option \verb|--cache-directory|
+can be used to pass the directory to be cached into. Alternatively, this can be
+specified in the configuration as an entry \verb|'cache_directory'|. See also
+Section~\ref{sec:configuration} for configuration and cache control options.
+
 \subsubsection{Start a simulation using a Python Dictionary Configuration}
 \index{start a simulation}
 
 The configuration for a simulation is specified by a configuration object.
-Previously, a configuration was specified as a Python dictionary, and we
-describe the older option in this section.  We are transitioning toward
-specifying configurations using an xml project file for use with the Opus
-GUI--- see Section \ref{sec:start-simulation-xml} for information on
-starting a simulation using an xml configuration but still from the command
-line.  In both cases, the configuration is used to specify different parts
+Opus supports a configuration defined either as a Python dictionary, or as an xml project file
+(see Section \ref{sec:start-simulation-xml}). This section describes the former.
+In both cases, the configuration is used to specify different parts
 of the simulation, such as the years in which to run UrbanSim, what
 UrbanSim models \modelsindex to run each year, what types of development
 projects exist, how to configure each type of development project,
@@ -100,50 +79,24 @@ etc. See, for instance, the run configuration in
 \verb|seattle_parcel/configs/baseline.py| (Python dictionary version) or
 \verb|seattle_parcel/configs/seattle_parcel.xml| (xml version).
 
-To use the dictionary version of a configuration, the start_run tool
-requires that the referenced configuration Python module either (a) defines
+To use the dictionary version of a configuration, it is required
+that the referenced configuration Python module defines
 a class (e.g. SubsetConfiguration) in a file whose name is
-subset_configuration.py, or (b) defines a run_configuration object that is
-the configuration object.  In the first case, the class name is the
-CamelCase version of the lowercase_with_underscores file name.  \emph{(The
-  preferred method is to define a class.)}
+subset_configuration.py. The class name should be the
+CamelCase version of the lowercase_with_underscores file name.
 
 To start a simulation using a dictionary-based configuration, use the
-script \verb|start_run| with the desired configuration.  First change to 
-the directory \verb|opus_core/tools| and execute:
+script \verb|start_run| with the desired configuration. First, change to 
+the directory \verb|opus_core/tools| and (using for example the configuration from the previous section) execute:
 \begin{verbatim}
 python start_run.py -c psrc.configs.subset_configuration
 \end{verbatim}
 
-Note that the configuration here is specified as it would be in a Python
-``import'' statement.
+Use the \verb|--help| option to see the
+possible command line parameters for \verb|start_run|.
+Also see Section~\ref{sec:run-manager-configuration} for 
+configuring a simulation run.
 
-If the \verb|services| database was created using the \verb|--hostname| and/or
-\verb|--database| option, you will need to include these options in
-\file{start_run.py} as well.  Use the \verb|--help| option to see
-\verb|start_run|'s possible command line parameters.
-
-The \verb|creating_baseyear_cache_configuration| entry in the configuration
-contains the information specifying the location of the baseyear inputs.  
-If \verb|cache_from_mysql| is \verb|True|, the inputs are taken from
-the MySQL database specified in the \verb|input_configuration| entry. 
-Otherwise, the inputs are taken from the baseyear cache specified in the
-\verb|baseyear_cache| entry.  When the inputs are taken from MySQL, they are
-used to create a baseyear cache stored in the directory specified by the
-\verb|cache_directory| entry, or, if that entry is missing, from an directory
-whose name encodes the date-time of the simulation request and is created in the
-directory specified by the \verb|cache_directory_root| entry.  
-
-For large amount of data, copying from MySQL to a baseyear cache takes much
-longer than creating a new baseyear cache from an existing baseyear cache.  
-
-Option \verb|--directory-to-cache| \index{cache!getting input from existing cache}
-can be used to turn off the caching. It takes as argument the directory name
-from which data are copied to the new basyear cache \baseyearcacheindex. With
-the option \verb|--years-to-cache| one can control specific years to be
-copied. The option takes as argument any python \pythonindex expression that returns a list
-of years. These two options overwrite entries in the configuration that control
-this behaviour.
 
 \subsubsection{Start a simulation using an XML Configuration}
 \label{sec:start-simulation-xml}
@@ -161,118 +114,27 @@ Notice that the \verb|-x| option takes a path to the file with the xml
 configuration.  Since xml configurations can hold multiple scenarios, the
 scenario name must also be specified using the \verb|-s| option.
 
-This same xml configuration can also be used with the Opus GUI ---
-documentation on the GUI is forthcoming.
-
-\subsubsection{Restart a simulation}
-\index{restart a simulation}
-If you halt a run or it fails, you can restart it at the beginning of any year.
-To restart the run with \verb|run_id| 42 at the beginning of year 2005, do:
-\pythonindex
-\begin{verbatim}
-python restart_run.py 42 2005
-\end{verbatim}
-Again, options \verb|--hostname| and \verb|--database| must be included
-if non-default values are used.  Note that the above command will delete any
-simulation cache \simulationcacheindex directories for years 2005 onward, since
-this information is no longer valid once the simulation is restarted at the
-beginning of 2005.
-
-If the 2005 travel model failed and you want to restart in 2005 but not re-run
-the UrbanSim models, \modelsindex use the \verb|--skip-urbansim| option:
-\pythonindex
-\begin{verbatim}
-python restart_run.py 42 2005 --skip-urbansim
-\end{verbatim}
-
-If the 2005 travel model succeeded, and thus wrote its output to the 2006
-simulation cache \simulationcacheindex directory, but you need to restart in year 2006, use the
-\verb|--skip-cache-cleanup| option:
-\pythonindex
-\begin{verbatim}
-python restart_run.py 42 2006 --skip-cache-cleanup
-\end{verbatim}
-
-\subsubsection{Create Baseyear Cache}
-\label{sec:run-manager-baseyearcache}
-%
-One can explicitely create a baseyear
-cache \baseyearcacheindex\index{cache!getting input from existing cache} from
-the base year database which can be then used for simulation runs. The script
-needs a configuration module passed as an argument. The services database is
-not used by the script. If the desired module is located at
-\file{psrc/configs/subset_configuration.py} under one of the paths found in the
-PYTHONPATH \pythonpathindex environment variable, \environmentvariablesindex the command
-\pythonindex
-\begin{verbatim}
-python create_baseyear_cache.py psrc.configs.subset_configuration
-\end{verbatim}
-caches the database defined in the \verb|subset_configuration| configuration into a basyear
-cache. \baseyearcacheindex The \file{create_baseyear_cache} file is located in
-the \file{opus_core/tools/} directory, and the above command should be
-run from the same directory. An option \verb|--cache-directory|
-can be used to pass the directory to be cached into. Alternatively, this can be
-specified in the configuration as an entry \verb|'cache_directory'|. See also
-Section~\ref{sec:configuration} for configuration and cache control options.
-
-\subsection{What Happens When Running a Simulation?}
+\subsubsection{What Happens When Running a Simulation?}
 \label{sec:run-manager-tasks}
 Here are the steps that occur when you start a run via the \verb|start_run|
 script:
 
 \begin{itemize}
-  
-\item \index{cache!unrolling development_event_history}\index{Unrolling 
-development_event_history}\index{development_event_history!unrolling} If 
-required, it copies all of the tables from the baseyear database specified by 
-the configuration into the baseyear cache \baseyearcacheindex and then creates a
-set of pre-baseyear \verb|gridcells| tables by unrolling the
-\verb|develoment_event_history| data.
-
-The unrolling processes all records in the \verb|development_event_history| 
-table.  It starts with the most current year of records, and moves backward in 
-time.  For this description, assume that the baseyear is 2000.  The unrolling 
-process first loads the gridcell dataset for year 2000.  For each 
-\verb|develoment_event_history| record with \verb|scheduled_year| for the prior 
-year (e.g. for 1999) it substracts from the gridcells any development by that 
-event (e.g. \verb|residential_units|).  Values that go negative are set to 
-zero.  Once all events for this year have been ``undone'', the unrolling 
-process writes the modified gridcell dataset to the prior year, e.g. to 1999. 
-This process is repreated for each year with data in 
-\verb|develoment_event_history|.
-
-If you only want 10 years of data to be unrolled, only put those years of data
-into your \verb|develoment_event_history| table.
-
-\item Alternatively, it copies files from a previously used baseyear cache into
-the baseyear cache for the current run (including the
-
+\item It copies files from the baseyear cache into
+a cache for the current run.
 \item It adds a row to the \verb|run_activity| table in the \verb|services|
 database, using a new \verb|run_id| value unique to this run. In order to help
 match runs with their cache directory, the name of the cache directory begins
 with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
-
-\item For each year in the set of years specified in the configuration:
+\item For each simulated year:
   \begin{itemize}
-  \item Stores to the cache a pickled version of the configurations for that
-  year.
   \item Forks a new process to run the set of UrbanSim models \modelsindex for this year.
   The set of models \modelsindex to be run is specified by the configuration. Using a
   separate process helps reduce memory usage, \index{Memory!Using separate
   process} and helps reduce the impact of problems such as memory leaks.  This
   process writes a log file named, e.g., \file{year_2003_log.txt}.
-  \item Run the EMME/2 \emmeindex travel model for this year, if specified by the travel
-  model's configuration.  The set of steps to run for the travel model is fully
-  specified by the \verb|'models'| \modelsindex section of the
-  \verb|'travel_model_configuration'|. Typically, it includes a preparation step
-  that prepares travel model inputs from the UrbanSim data, a step that
-  actually runs the travel model, and one or more steps to puts the results of
-  the travel model into the \verb|travel_data| dataset for the current year, so
-  the data is visible to the UrbanSim models \modelsindex in that and following years.  Each
-  model step is done in a separate process.  The log for the running of the
-  model is written to a file named, e.g., \file{emme2_2005_log.txt}. \emmeindex
   \end{itemize}
-  \item The run activity table includes status information about the run.  If
+ \item The run activity table includes status information about the run.  If
   the simulation succeeds, it will add another row to the run activity
   indicating it is done.  If the simulation fails, it will add a row indicating
   that.  The run activity also contains a copy of the configuration, which is
@@ -282,6 +144,20 @@ with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
   \verb|services| database. This table has a single row per run and records the
   row's current state and information.
 \end{itemize}
+
+\subsubsection{Restart a simulation}
+\index{restart a simulation}
+If you halt a run or it fails, you can restart it at the beginning of any year.
+To restart the run with \verb|run_id| 42 at the beginning of year 2005, do:
+\pythonindex
+\begin{verbatim}
+python restart_run.py 42 2005
+\end{verbatim}
+from the \verb|opus_core/tools| directory. Note that the above command will delete any
+simulation cache \simulationcacheindex directories for years 2005 onward, since
+this information is no longer valid once the simulation is restarted at the
+beginning of 2005. One can suppress this behavior using the option \verb|--skip-cache-cleanup|.
+
 
 \section{Configurations}
 \label{sec:configuration}
