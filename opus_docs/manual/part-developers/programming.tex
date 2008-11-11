@@ -20,9 +20,11 @@ and Python coding standards.
 This section provides information on constructing a new Opus project.
 
 An Opus package is a Python package \pythonpackagesindex that conforms to the
-Opus conventions.  In general, we recommend creating your own Opus package
-to contain your configuration information, define new variables for existing
-datasets, define new datasets, define models, etc.  The new package should be 
+Opus conventions.  If you are only creating new child XML configurations and
+modifying them with the GUI, you don't need to make a new package.  However, if
+you're writing Python code to define new variables as Python classes, to define new 
+datasets, or to define new models, then you should construct a new Opus project 
+to hold this code.  The new package should be 
 placed in your workspace, alongside of the Opus and UrbanSim packages such as 
 \package{opus_core} and \package{urbansim}.
 
@@ -60,7 +62,11 @@ Each Opus package may have a different set of files and directories, depending
 upon what is needed. To illustrate what an Opus package may contain, consider
 the \package{psrc} package we created for the Puget Sound Regional
 Council's (PSRC) \psrcindex application
-of UrbanSim.  Here are some of the directories and files it contains:
+of UrbanSim.  Here are some of the directories and files it contains.  (This
+material is in flux --- some
+of these are being superseded by information in the XML configuration file, e.g.\
+the run configurations.)
+
 
 \begin{verbatim}
 county/                         <-- Variables for the county dataset
