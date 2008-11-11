@@ -1,28 +1,88 @@
-\section{Using XML-based Project Configurations}
-\label{chap:using-xml-based-project-configurations}
+\section{XML-based Project Configurations and Inheritance}
+\label{section:xml-inheritance}
 
-Notice that at this point there are no contents in any of the four tabs.  Opus uses a novel approach to dynamically creating and managing content in the GUI by loading, editing, and saving content in the form of XML files.  XML stands for Extensible Markup Language, and is an extension of the HTML markup language used to display web pages.  It is more flexible, and has become widely used to store content in a strucured form.  
+As previously discussed, Opus uses XML-based configuration files to
+flexibly specify the various aspects of a project as well as to specify the
+appearance of the different tabs in the GUI\@.
 
-To add content to the GUI, we will load a \emph{Project}, which is in fact, just an XML file containing configuration information.  From the main menu, load a project from eugene\_gridcell.xml, which is in the default location of opus/project\_configs.  The Opus window should now appear as in Figure \ref{fig:opus2}.
+One configuration (the \emph{child}) can inherit from another configuration
+(the \emph{parent}).  By default, the child inherits all the information
+contained in the project.  However, it can override any information
+inherited from the parent, and add additional information.  This means that
+you can use default projects as parents for another project you want to
+create that is mostly the same as an existing project, but has some changes
+from it.  An XML configuration specifies its parent using the \emph{parent}
+entry under the ``General'' section of the XML\@.  The value of this is the
+name of the XML file that contains the parent configuration.  When
+searching for this file, Opus first looks in the same directory that holds
+the child configuration.  If it's not found there, it expects to find a
+path in the Opus source code tree, starting with the name of a project like
+\package{eugene} or \package{urbansim}.
+
+This works well with the convention that users should create their own
+projects in the \file{opus/project_configs} directory.  You can have
+several configurations in your \file{opus/project_configs} directory, one
+inheriting from the other.  Ultimately, though, one or more of these
+configurations should inherit from a default configuration in the source
+tree.  For example, Figure \ref{fig:eugene-gridcell-xml-default} shows the
+contents of the default project for \file{eugene_gridcell} in
+\file{opus/project_configs}.  This has almost no content of its own, but
+rather inherits almost everything from the default configuration in the
+source tree at \file{eugene/configs/eugene_gridcell.xml}.
 
 \begin{figure}[htp]
 \begin{center}
-\includegraphics[scale=0.52]{part-gui/images/opus-open-project.png}
+\begin{verbatim}
+<opus_project>
+  <general>
+    <description type="string">Minimal user configuration for the Eugene 
+        gridcell project</description>
+    <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
+  </general>
+</opus_project>
+\end{verbatim}
 \end{center}
-\caption{Opus GUI Main Window with eugene-gridcell Project Open}
-\label{fig:opus2}
+\caption{Contents of the default eugene\_gridcell.xml project}
+\label{fig:eugene-gridcell-xml-default}
 \end{figure}
 
-A small section of the eugene\_gridcell.xml file is shown in Figure \ref{fig:opus-xml}.  It is just text, but in a structured format, with nodes corresponding to information that is displayed in the GUI.  Some of the content of the XML provide data used by the GUI to determine how to display information, or what menu items are appropriate to connect to the node in the GUI.
+A small section of the \file{eugene/configs/eugene_gridcell.xml} file is
+shown in Figure \ref{fig:opus-xml}.  It is just text, but in a structured
+format, with nodes corresponding to information that is displayed in the
+GUI.  Some of the content of the XML provide data used by the GUI to
+determine how to display information, or what menu items are appropriate to
+connect to the node in the GUI.  Notice that this project in turn inherits
+from \file{urbansim_gridcell/configs/urbansim_gridcell.xml}.
 
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=0.4]{graphics/opus-xml.png}
 \end{center}
-\caption{An Excerpt from eugene$\_$gridcell.xml}
+\caption{An Excerpt from eugene/configs/eugene\_gridcell.xml}
 \label{fig:opus-xml}
 \end{figure}
 
-Note that one of the first entries in the xml file is a \emph{parent} type, and that this line refers to another xml file named urbansim/gridcell.xml.  This reflects an important aspect of the GUI design: it supports inheritance among projects.  In practical terms for a user, this means that you can use default projects as templates, or parents, for another project you want to create that is mostly the same as an existing project, but has some changes from it.  The new project is called a \emph{child} project, and it inherits all of its information from the \emph{parent}, but can override any aspect it so chooses from the parent.  The parallels with human behavior are pretty obvious!
+To change any of the options in the XML tree you need to be able to edit
+it.  Inherited parts of the XML tree are shown in blue in the left pane in
+the GUI\@.  These can't be edited directly --- they just show inherited
+information.  You can make an inherited portion of the XML tree editable by
+right clicking on it and selecting `Add to curent project.''  This copies
+the inherited information into the local XML tree.  (We saw an example of
+doing this in Section \ref{sec:configuring-scenario}.)
 
-Users will create their own projects in the opus/project\_configs directory.  This will allow them to keep projects localized in one place, and to avoid editing and possibly corrupting one of the projects that are in an Opus package.
+A few details about the ``Add to current project'' command: in Section
+\ref{sec:configuring-scenario}, when we added \code{lastyear} to the
+current project, the containing nodes in the tree (\code{years_to_run} and
+\code{Eugene_baseline}) also turned black, since they needed to be added to
+the current project as well to hold \code{lastyear}.  It's also possible to
+click directly on \code{years_to_run}, or even \code{Eugene_baseline}, and
+add the XML tree under that to the current project.  However, we recommend
+adding just the part you're editing to the current project, and not others.
+(You can always add other parts later.)  The reason is that once a part of
+the tree is added to the current project, the inheritance relation of that
+part with the parent disappears, and changes to the parent won't be
+reflected in the child XML\@.  For example, if you add all of the
+\code{Eugene_baseline} node to the current project, save your
+configuration, and then update the source code, changes to some obscure
+advanced feature in the XML in the parent in the source tree wouldn't show
+up in your configuration.

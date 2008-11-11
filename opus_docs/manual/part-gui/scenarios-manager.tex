@@ -183,19 +183,3 @@ change.  Another possibility is to run only some of the component models.
 To do this, right-click on ``Models to run,'' make it editable by
 selecting ``Add to current project,'' and change the value of the ``Run''
 field to ``Skip'' to skip that component model.
-
-A few details about the ``Add to current project'' command: when you added
-\code{lastyear} to the current project, the containing nodes in the tree
-(\code{years_to_run} and \code{Eugene_baseline}) also turned black, since
-they needed to be added to the current project as well to hold
-\code{lastyear}.  It's also possible to click directly on
-\code{years_to_run}, or even \code{Eugene_baseline}, and add the XML tree
-under that to the current project.  However, we recommend adding just the
-part you're editing to the current project, and not others.  (You can
-always add other parts later.)  The reason is that once a part of the tree
-is added to the current project, the inheritance relation of that part with
-the parent disappears, and changes to the parent won't be reflected in the
-child XML\@.  For example, if you add all of the \code{Eugene_baseline}
-node to the current project, save your configuration, and then update the
-source code, changes to some obscure advanced feature in the XML in the
-parent in the source tree wouldn't show up in your configuration.
