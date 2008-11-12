@@ -180,7 +180,7 @@ via a Python \pythonindex dictionary that then is used to create an instance of 
 
 As described in Sections~\ref{sec:run-manager} and~\ref{sec:running-estimation}, 
 running UrbanSim simulation or estimation is controlled by a user-defined
-configuration. The following code contains a fully specified configuration
+configuration. The following code, \file{baseline.py}, contains a fully specified configuration
 that influences the run management. \runmanagerindex Mandatory entries and default
 values for optional entries are marked in the comments. The actual values for
 the listed entries are only examples.
@@ -205,7 +205,7 @@ class Baseline(Configuration):
           'model_system':'urbansim.model_coordinators.model_system', # mandatory
           'base_year': 2000,   # default: read from table 'base_year' in cache
           'years': (2001, 2030),                                     # mandatory
-          'cache_directory':'d:/urbansim_cache/',	                  # mandatory
+          'cache_directory':'d:/urbansim_cache/',                    # mandatory
           
           'scenario_database_configuration': ScenarioDatabaseConfiguration(
               database_name = 'my_baseyear_database'), # mandatory for simulation
@@ -463,7 +463,7 @@ The value of this controller entry is a dictionary with a few well-defined entri
 If the model in the 'models' entry of the configuration is specified as model group\index{model group}, the controller must contain 
 an entry
 \begin{description}
-\item["group_by_attribute"] Its value is a tuple of a grouping dataset name and grouping attribute (see Sec.~ref{sec:model-group}).
+\item["group_by_attribute"] Its value is a tuple of a grouping dataset name and grouping attribute (see Sec.~\ref{sec:model-group}).
 They define the specific kinds of 
 subsets of agents on which this model can be run. This dataset must be contained in the 
 \verb|datasets_to_preload| entry of the configuration. For example, in the controller of the 
@@ -514,15 +514,17 @@ the simulation. They can be called either by the dataset \datasetindex name, or 
 \code{datasets['{\it name}']}. Also, the \verb|model_configuration| and
 \verb|models_configuration| objects described in
 Section~\ref{sec:models-configuration} can be used in \verb|'arguments'|. Other
-objects that \class{ModelSystem} provides are \verb|sql_storage|
-(\class{Storage} object for the input database), \verb|cache_storage|
+objects that \class{ModelSystem} provides are  \verb|cache_storage|
 (\class{Storage} object for the simulation cache \simulationcacheindex storage
 in the simulated year), \verb|base_cache_storage| \baseyearcacheindex (\class{Storage} object for
 the baseyear cache \baseyearcacheindex storage in the base year),
 \verb|model_resources| (all preloaded datasets as an object of
-\class{Resources}), \verb|year| (simulated year), \verb|resources|
-(Configuration passed into the simulation), \verb|dataset_pool| (object of class \class{DatasetPool} pointing to the current
-dataset pool).  If you are using any class names
+\class{Resources}),  \verb|resources|
+(Configuration passed into the simulation), \verb|datasets| (all preloaded datasets as a dictionary),
+\verb|year| (simulated year), \verb|base_year| (the base year),
+\verb|dataset_pool| (object of class \class{DatasetPool} pointing to the current
+dataset pool), \veb|debuglevel| (integer controlling the amount of output messages).  
+If you are using any class names
 as arguments, you need to make sure, that those classes are known to the
 \class{ModelSystem}, e.g. by putting the appropriate import statement into the
 \verb|'import'| section of the controller.
@@ -543,12 +545,13 @@ run_configuration['models_configuration']['land_price_model']['controller'] = {
         "output": "(specification, coefficients)"
         },
     "run": {
-        "arguments": {"n_simulated_years": "year-resources['base_year']",
+        "arguments": {"n_simulated_years": "year - base_year",
                       "specification": "specification",
                       "coefficients":"coefficients",
                       "dataset": "gridcell",
                       "data_objects": "datasets" ,
-                      "chunk_specification":"{'nchunks':2}"
+                      "chunk_specification":"{'nchunks':2}",
+                      "debuglevel": "debuglevel"
                      }
            }
    }
