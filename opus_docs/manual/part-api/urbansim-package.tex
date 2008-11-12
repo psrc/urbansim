@@ -70,16 +70,12 @@ is the value of \verb|in_table_name|.
 \multicolumn{1}{|c||}{dataset_name} & \multicolumn{1}{c||}{in_table_name (default)}&
 \multicolumn{1}{c|}{id_name (default)} \\\hline\hline
 %
-city* & cities & city_id 
-\\
 building & buildings & building_id 
 \\
 building_type & building_types & building_type_id 
 \\
-control_total (households) & annual_household_control_totals & year 
-\\ 
-control_total (jobs) & annual_employment_control_totals & year, sector_id 
-\\ 
+city* & cities & city_id 
+\\  
 county* & counties & county_id 
 \\
 development_constraint & development_constraints & constraint_id 
@@ -96,7 +92,9 @@ development_type & development_types, & development_type_id
 \\
 & development_type_group_definitions & 
 \\
-employment_sector & sector_id & employment_sectors 
+employment_control_total & annual_employment_control_totals & year, sector_id 
+\\
+employment_sector  & employment_sectors & sector_id
 \\
 employment_sector_group & employment_adhoc_sector_groups & group_id 
 \\
@@ -106,13 +104,15 @@ fazdistrict* & -- & fazdistrict_id
 \\
 gridcell* & gridcells & grid_id 
 \\
-household_characteristic & household_characteristics_for_ht & --
-\\
 household & households & household_id
 \\
-job_building_type & job_building_types & id 
+household_characteristic & household_characteristics_for_ht & --
+\\
+household_control_total & annual_household_control_totals & year 
 \\
 job & jobs & job_id 
+\\
+job_building_type & job_building_types & id 
 \\
 large_area* & large_areas & large_area_id 
 \\
@@ -136,7 +136,9 @@ target_vacancy & target_vacancies & year
 \\
 travel_data & travel_data & from_zone_id, to_zone_id 
 \\
-vacant_land_and_building_type & & 
+urbansim_constant & urbansim_constants & --
+\\
+vacant_land_and_building_type & building_types & building_type_id 
 \\
 zone* & zones & zone_id 
 \\\hline
@@ -152,7 +154,10 @@ zone* & zones & zone_id
 In addition, they are a few interaction sets defined in \package{urbansim},
 listed in Table~\ref{tab:urbansim-interaction-datasets}. The dataset name of
 such interaction set is created automatically from the names of the two
-interacting datasets.
+interacting datasets. Note that for standard usage, there is no need to explicitely define
+an interaction set for every two specific datasets. 
+If a specific definition is not found, Opus framework creates an abstract interaction set
+using the \class{InteractionDataset} in \package{opus_core} (see Section~\ref{sec:interaction-set}).
 
 \begin{table}
 \begin{center}
@@ -176,30 +181,30 @@ Variables \variablesindex predefined in \package{urbansim} are structured accord
 dataset \datasetindex to which they belong. They are implemented in directories of the same
 name as \verb|dataset_name| \datasetindex which is placed in the top directory of
 \package{urbansim}. For example, all gridcell variables \variablesindex are placed in
-``urbansim.gridcell'', all interaction variables \variablesindex of households and
-gridcells are placed in ``urbansim.household_x_gridcell''. All variables \variablesindex
-are defined as children of the Opus \package{opus_core} class \class{Variable} \variablesindex and
-thus they follow the guidelines presented in Section~\ref{sec:opus-variable}.
+\file{urbansim/gridcell}, all interaction variables \variablesindex of households and
+gridcells are placed in \file{urbansim/household_x_gridcell}. All variables \variablesindex
+are defined as children of the \package{opus_core} class \class{Variable} or as expressions in \file{alias.py} file,
+\variablesindex and thus, they follow the guidelines presented in Section~\ref{sec:opus-variable}.
 
 \section{Models}
 \label{sec:urbansim-models}
 \modelsindex
 
 \package{urbansim} has a set of predefined models, \modelsindex each
-of them implemented as a child of one of the core Opus models
+of them implemented as a child of one of the \package{opus_core} models
 \modelsindex described in Section~\ref{sec:opus-core-models}.  They
 are hierarchically structured and a few of them are created using
 specific creators (see Figure~\ref{fig:urbansim-model}).  All
 \package{urbansim} models \modelsindex are placed in
-``urbansim.models''.
+\file{urbansim/models}.
 
 \begin{figure}
 \begin{center}
 %begin{latexonly}
-\includegraphics[scale=0.5, angle=-90]{images/urbansimmodels.pdf}
+\includegraphics[scale=0.5]{images/urbansimmodels.pdf}
 %end{latexonly}
 \caption{\label{fig:urbansim-model}\small Models in \package{urbansim}.}
-\htmlonly{\includegraphics[scale=0.5, angle=-90]{images/urbansimmodels.jpg}}
+\htmlonly{\includegraphics[scale=0.5]{images/urbansimmodels.jpg}}
 \end{center}
 \end{figure}
 
