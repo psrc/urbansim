@@ -158,20 +158,19 @@ simulation cache \simulationcacheindex directories for years 2005 onward, since
 this information is no longer valid once the simulation is restarted at the
 beginning of 2005. One can suppress this behavior using the option \verb|--skip-cache-cleanup|.
 
+\section{Running an Estimation}
+\label{sec:running-estimation}
+
 
 \section{Configurations}
 \label{sec:configuration}
 %
-A run configuration is a specification of what parts to use in the simulation
+A configuration is a specification of what parts to use in the simulation or estimation
 and how to configure each part.  Parts include the list and order of models \modelsindex to
 run, where to get the input values, where to store the output data, what years
 to simulate, what tables to store into the UrbanSim baseyear and simulation
 caches \baseyearcacheindex\simulationcacheindex, etc. Each of these parts in
-turn may be configurable.  The configuration for a travel model, for instance,
-may specify which values to use from the land use models, \modelsindex and what travel model
-results to extract in order to use them in the land use models. \modelsindex
-
-Configurations are used in many places in Opus.  Typically, they are specified
+turn may be configurable. Configurations are used in many places in Opus.  Typically, they are specified
 via a Python \pythonindex dictionary that then is used to create an instance of the
 \class{Configuration} class.
 
@@ -179,131 +178,89 @@ via a Python \pythonindex dictionary that then is used to create an instance of 
 \label{sec:run-manager-configuration}
 %
 
-UrbanSim can be started via the ``Run Manager'' \runmanagerindex (see
-Section~\ref{sec:run-manager}) which is controlled by a user-defined
+As described in Sections~\ref{sec:run-manager} and~\ref{sec:running-estimation}, 
+running UrbanSim simulation or estimation is controlled by a user-defined
 configuration. The following code contains a fully specified configuration
-that influences behaviour of the run manager. \runmanagerindex Mandatory entries and default
+that influences the run management. \runmanagerindex Mandatory entries and default
 values for optional entries are marked in the comments. The actual values for
 the listed entries are only examples.
 
-\emph{Note: we are in the process of splitting the following configuration
-information into separate parts.  Once we are done with that refactoring,
-we will update the documentation to the new arrangement.}
-
-\mysqlhostnameindex\mysqlpasswordindex\baseyearcacheindex
+\baseyearcacheindex
 \begin{verbatim}
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.configuration import Configuration
+from opus_core.database_management.configurations.scenario_database_configuration \
+    import ScenarioDatabaseConfiguration
+from opus_core.database_management.configurations.estimation_database_configuration \
+    import EstimationDatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration \
     import BaseyearCacheConfiguration
-    
 from urbansim.configurations.creating_baseyear_cache_configuration \
     import CreatingBaseyearCacheConfiguration
-
-
-run_configuration = {
-    'model_system':'urbansim.model_coordinators.model_system', # mandatory
-    'description':'baseline with travel model',      # default: 'No description'
-    'cache_directory':'d:/urbansim_cache/',	         # mandatory
-    'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-        # default: 'urbansim_tmp'+random string
-        cache_directory_root = 'd:/urbansim_cache',
-
-        # mandatory
-        cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
-
-        cache_from_mysql = False, # default: True
-
-        # mandatory if 'cache_from_mysql' is False
-        baseyear_cache = BaseyearCacheConfiguration(
-            # mandatory for this block
-            existing_cache_to_copy = 'd:/urbansim_cache/run_397.2006_05_23_18_21',
+    
+class Baseline(Configuration):
+    def __init__(self):
+        config = {
+          'project_name':'urbansim_gridcell',
+          'description':'baseline',  
+          'model_system':'urbansim.model_coordinators.model_system', # mandatory
+          'base_year': 2000,   # default: read from table 'base_year' in cache
+          'years': (2001, 2030),                                     # mandatory
+          'cache_directory':'d:/urbansim_cache/',	                  # mandatory
+          
+          'scenario_database_configuration': ScenarioDatabaseConfiguration(
+              database_name = 'my_baseyear_database'), # mandatory for simulation
+              
+          'estimation_database_configuration': EstimationDatabaseConfiguration(
+              database_name = 'my_estimation_database'), # mandatory for estim.
+              
+          'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
+              default: 'opus_tmp'+random string
+              cache_directory_root = 'd:/urbansim_cache',
+              
+              cache_from_database = False, # default: True
+              
+              # mandatory if 'cache_from_database' is False
+              baseyear_cache = BaseyearCacheConfiguration(
+                 # mandatory for this block
+                 existing_cache_to_copy = 'd:/urbansim_cache/run_397.2006_05_23_18_21',
             
-            # default: all years in 'existing_cache_to_copy'
-            years_to_cache = range(1996,2001)
-            },
-
-        tables_to_cache = [ # default: []
-            'gridcells',
-            'households',
-            'jobs',
-            'zones'
-            ]
-
-        tables_to_cache_nchunks = { # default: each table defaults to 1
-            'gridcells':2,
-            },
-
-        tables_to_copy_to_previous_years = { # default: no copied tables
-            'development_type_groups':1996, # table name and year to put it in
-            'development_types':1996,
-            'development_type_group_definitions':1996,
-            'urbansim_constants': 1996,
-            },
-        ),
+                 # default: all years in 'existing_cache_to_copy'
+                 years_to_cache = range(1996,2001)
+              ),
+              tables_to_cache = [ # default: []
+                      'gridcells', 'households', 'jobs', 'zones'
+                                 ]
+              tables_to_cache_nchunks = { # default: each table defaults to 1
+                      'gridcells':2,
+                   },
+              tables_to_copy_to_previous_years = { # default: no copied tables
+                 'development_type_groups':1996, # table name and year to put it in
+                 'development_types':1996,
+                 'development_type_group_definitions':1996,
+                 'urbansim_constants': 1996,
+                   },
+              unroll_gridcells = True  # default: True
+           ),
+          Configuration.__init__(self, config)
 \end{verbatim}
 
-% long script split into two parts since it won't fit on one page
-
-\begin{verbatim}
-    'input_configuration': DatabaseConfiguration(    # mandatory
-        host_name = os.environ['MYSQLHOSTNAME']      # mandatory
-        user_name = 'urbansim',                      # mandatory
-        password = os.environ['MYSQLPASSWORD'],      # mandatory
-        database_name = 'PSRC_2000_baseyear',        # mandatory
-        )
-    'output_configuration': DatabaseConfiguration(   # default: No output
-                                                     #     configuration
-        host_name = os.environ['MYSQLHOSTNAME']      # mandatory for this block
-        user_name = 'urbansim',                      # mandatory for this block
-        password = os.environ['MYSQLPASSWORD'],      # mandatory for this block
-        database_name = 'PSRC_2000_output',          # mandatory for this block
-        },
-    'base_year': 2000,                               # default: read from table
-                                                     #     'base_year' in
-                                                     #     'db_input_database'
-    'years': (2001, 2030),                           # mandatory
-}
-\end{verbatim}
 The \verb|'model_system'| entry is the full Opus path to the model system that
 will be used by the run manager to run/estimate a set of models.
-
-The \verb|'cache_scenario_database'| entry is the full Opus path to the class to use to
-create a baseyear cache from the baseyear data in the MySQL database.  The
-\verb|'urbansim.model_coordinators.cache_scenario_database'| version creates  both the
-baseyear cache, and unrolls the gridcell data to populate prior years with the
-gridcell dataset (see Section~\ref{sec:run-manager-tasks}).
-
-Entry \verb|'creating_baseyear_cache_configuration'| contains the configuration
-for creating the baseyear cache.
-
-Entry \verb|'cache_directory_root'| is the root directory where data should be
-cached during processing. The actual cache directory is created by adding
-the run number and date-time string to this directory.
-
-The \verb|'input_configuration'| is a DatabaseConfiguration object
-that determines the MySQL \mysqlindex database with the base year
-data.
-
-Entry \verb|'output_configuration'| is a DatabaseConfiguration
-object that determines the MySQL \mysqlindex database into to which
-to write any database tables related to the results of the
-simulation run.  Now that indicators are computed from the attribute
-cache, the output database is only needed if you wish to use the SQL
-indicators.  Before starting the simulation, the run manager will
-remove any tables in the output_database, so be sure it doesn't
-contain information you want to keep.
 
 Entry \verb|'years'| determines for what
 years the simulation should run as a tuple with first and last year to run.
 
-By default, the run manager \runmanagerindex caches all tables from the input database into the
-binary baseyear cache \baseyearcacheindex on which then the simulation runs. If
-only selected tables should be cached, they can be put into
-\verb|'tables_to_cache'|. Note that the simulation itself then does not use the
-database anymore, all data are retreived from baseyear cache \baseyearcacheindex
-and written to the simulation cache \simulationcacheindex.  That means, if the
-entry \verb|'tables_to_cache'| is used, the user must ensure that it contains
-all tables that are used by the simulation.
+Entry \verb|'cache_directory'| is used by the scripts \verb|create_baseyear_cache.py| and 
+\verb|start_estimation.py| only. It is not used for simulations.
+
+Entry \verb|'creating_baseyear_cache_configuration'| contains a configuration
+for creating the simulation cache. Entry \verb|'cache_directory_root'| is the root 
+directory where data should be
+cached during processing. The actual cache directory is created as a subdirectory
+of this location. 
+
+The entry \verb|'tables_to_cache'| is used by the script \verb|create_baseyear_cache.py|. 
+Only tables listed here are cached from database into the baseyear cache.
 
 If a database table is so large that Python \pythonindex runs out of memory when copying it
 to cache, you can reduce memory usage (but increase the time it takes to cache
@@ -311,33 +268,30 @@ the data) by increasing the number of ``chunks'' in which the dataset's \dataset
 attributes are read from the table. \index{Memory management!When caching data
 from input store}\index{Memory management!tables_to_cache_nchunks@\verb|tables_to_cache_nchunks|} By
 default, all attributes of a table are read in a single chunk. Setting the
-\verb|'tables_to_cache_nchunks'| configuration for a model will tell the caching code
+\verb|'tables_to_cache_nchunks'| configuration  will tell the caching code
 to use that many chunks.  For instance, if a dataset has 11 attributes, setting
 \verb|'tables_to_chunk_nchunks'| to 3 will use three chunks loading 4, 4, and 3
 attributes, in each chunk.
 
-For big tables, the caching process can be a very time-consuming task. Often
-the baseyear cache \baseyearcacheindex is available from previous runs. Thus,
-one can set the entry \verb|'cache_from_mysql'| \mysqlindex to False and define the
-\verb|'baseyear_cache'| \baseyearcacheindex block. The directory with the already cached data
+In the \verb|'baseyear_cache'| \baseyearcacheindex block, the directory with the already cached data
 should be put into the entry \verb|existing_cache_to_copy|. The run manager \runmanagerindex then
-copies data from that directory into the baseyear cache \baseyearcacheindex for this run. If you
+copies data from that directory into the simulation cache \baseyearcacheindex for this run. If you
 want to copy only selected years, they can be specified in the entry
 \verb|years_to_cache| as a list of those years; by default all years are
 copied. Note that this behaviour can be alternatively controlled directly from
-the command line (see description of \verb|start_run| in~\ref{sec:run-manager})
+the command line (see \verb|start_run.py -h|)
 which has priority over entries in this configuration.
 
 The \verb|'tables_to_copy_to_previous_years'| entry is used when a
-lag variable needs to compute data for before the base year, and that
-computation requires some of the "invariant" data that was copied from the
-baseyear database into the baseyear cache.  If this is the case, add those
-database tables to the list of tables in the configuration's
-\verb|'tables_to_copy_to_previous_years'| entry, and indicate the year to which
+lag variable needs to compute data for before the base year.  
+If this is the case, add those
+tables to this list, and indicate the year to which
 to copy the tables.  In general, it is safe to copy the tables to the earliest
 year created by the unroll gridcell process.  You can determine what this year
 is by examining the year directories created in your baseyear cache.
-\emph{(Note: we plan to change this to a better design.)}
+
+The entry \verb|unroll_gridcells| is specific to the urbansim gridcell project. 
+It controls if gridcells are unrolled into years before the base year. 
 
 There are several run manager \runmanagerindex configurations in Opus. See for example the
 directory \file{psrc/configs} for configuration of different PSRC \psrcindex runs.
@@ -346,7 +300,7 @@ directory \file{psrc/configs} for configuration of different PSRC \psrcindex run
 \label{sec:model-system-configuration}
 %
 If one would pass the above configuration to the run manager, \runmanagerindex it would perform
-steps as described in Section~\ref{sec:run-manager-tasks}, but no models \modelsindex would
+steps as described in Section~\ref{sec:run-manager-tasks}, but no model \modelsindex would
 be run. The configuration should in addition contain entries that control what
 models, \modelsindex in what order and with what input and output should be run. It
 determines the behaviour of the class \class{ModelSystem}. UrbanSim basic
@@ -355,10 +309,10 @@ configuration of the model \modelsindex system can be found in the file
 
 The set of models \modelsindex to run is specified by the entry ``models''. \modelsindex It is a list of
 user-defined model names. The order in this list also specifies the order in
-which they are run. A production run of UrbanSim consists by default of
+which they are processed. For example, the UrbanSim gridcell project consists by default of
 following models: \modelsindex
 \begin{verbatim}
-run_configuration['models'] = [
+   'models': [
         "prescheduled_events",
         "events_coordinator",
         "residential_land_share_model",
@@ -377,11 +331,11 @@ run_configuration['models'] = [
         "employment_relocation_model", 
        {"employment_location_choice_model": {"group_members": "_all_"}},
         "distribute_unplaced_jobs_model"
-   ]
+       ]
 \end{verbatim}
 Note that the list can contain a particular model multiple times if that model should
 run multiple times within one year, such as the ``events_coordinator'' or
-``residential_land_share_model'' in the above list.
+``residential_land_share_model'' in the list above.
 
 We can also define a situation when the same model should be run on different subsets of 
 a dataset, so called model group\index{model group}. Then we can give the names of the group members to be run, or 
@@ -402,7 +356,7 @@ its list of models \modelsindex is run, instead of the global set of models. \mo
 users to set different set of models \modelsindex for different years, for example an
 additional model can be run only in the first year, or last year.
 
-For each entry in the model \modelsindex lists above there must be a corresponding entry in
+For each entry in the model \modelsindex list there must be a corresponding entry in
 the ``controller'' configuration which specifies how models \modelsindex are initialized,
 what methods to run and what arguments should be passed in. This will be
 described in Section~\ref{sec:model-controller-configuration}.
@@ -410,20 +364,17 @@ described in Section~\ref{sec:model-controller-configuration}.
 Furthermore, the configuration can contain the following entries (the given
 values are defaults set by our system):
 \begin{verbatim}
-{
     'datasets_to_cache_after_each_model':[],
     'flush_variables': False,
     'seed':0,
     'debuglevel':0
-}
 \end{verbatim}
 
 The entry \verb|'datasets_to_cache_after_each_model'| specifies names of datasets \datasetindex that
 are flushed from memory to simulation cache \simulationcacheindex at the end of each model
 run. \index{Memory management!Flushing attributes}\index{Memory management!datasets_to_cache_after_each_model@\verb|datasets_to_cache_after_each_model|} This reduces the memory
 usage, but can increase the run time. We recommend to put datasets in this list
-that contain huge amount of data. E.g. UrbanSim sets this entry to ['gridcell',
-'household', 'job'].
+that contain huge amount of data, e.g.  ['gridcell', 'household', 'job'].
 
 \verb|'flush_variables'| can further decrease the memory usage. \index{Memory management!flush_variables@\verb|flush_variables|} If it is True, after each variable
 computation all dependent variables are flushed to simulation
@@ -432,8 +383,7 @@ Nevertheless, it increases the run-time considerably.
 
 Entry \verb|'seed'| specifies the seed of the random number generator that is set at
 the beginning of each simulated year. It is passed to the \module{numpy} \numpyindex
-function \method{seed()} and therefore it should be a tuple with two integer
-values. If both values are 0, the function generates a pseudo-random seed
+function \method{seed()}. If it is 0, the function generates a pseudo-random seed
 from the current time.
 
 \verb|'debuglevel'| controls the amount of output information.
@@ -441,11 +391,9 @@ from the current time.
 Models \modelsindex usually need various datasets \datasetindex to run with. They are specified in the
 configuration entry \verb|'datasets_to_preload'|. For example,
 \begin{verbatim}
-{
-'datasets_to_preload': {
+    'datasets_to_preload': {
         'gridcell':{"id_name": "grid_id"},
         'household':{}
-}
 \end{verbatim}
 It is a dictionary that has dataset \datasetindex names as keys. Each value is again a
 dictionary with argument-value pairs that are passed to the corresponding
@@ -456,20 +404,19 @@ Section~\ref{sec:model-controller-configuration} for details). One should put
 here all datasets \datasetindex that will be passed as arguments to the model constructors
 or to the model methods to be processed.
 
-If you do not want to make any output to cache, for example in estimation mode, set
+From the preloaded datasets, \class{ModelSystem} creates a dataset pool (accessible
+to the models as \verb|dataset_pool|). Creating this pool is controlled by
+the entry
 \begin{verbatim}
-{
-    'low_memory_mode': False
-}
+    'dataset_pool_configuration': DatasetPoolConfiguration(
+                package_order=['urbansim', 'opus_core'],
+                )
 \end{verbatim}
-This should be only used when you're aware what you're doing.
-It suppresses any cache writing during the processing (after each model, as
-well as at the end of each year) and will not work for a simulation
-over multiple years. Also, the memory usage can increase considerably.
 
 
-\subsection{Models Configuration}
+\subsection{Model Controller Configuration}
 \label{sec:models-configuration}
+\label{sec:model-controller-configuration}
 %
 The run configuration can contain an entry \verb|'models_configuration'| \modelsindex which can
 include any information specific to models \modelsindex or common to a set of models. \modelsindex The
@@ -484,37 +431,12 @@ processing and containing information for this model). See the variable
 \verb|'models_configuration'| \modelsindex in the file \file{urbansim/configs/general_configuration.py} for an
 example how UrbanSim configures models. \modelsindex
 
-If a model is running out of memory, you can add a \verb|'chunk_specification'|
-to that model's configuration. \index{Memory management!Using multiple chunks per model}
-\index{Memory management!chunk_specification@\verb|chunk_specification|} This instructs that model to run in
-multiple chunks, each containing a subset of the records (e.g., agents) to
-process. This specification can either limit the chunk to contain at most a
-given number of records:
-
-\begin{verbatim}
-    'chunk_specification':{
-        'records_per_chunk':300,     # Put at most 300 records in a chunk
-        per chunk },
-\end{verbatim}
-
-or specify the number of chunks to use regardless of the number of records:
-
-\begin{verbatim}
-    'chunk_specification':{
-        'nchunks':10,                # Use 10 chunks
-        },
-\end{verbatim}
-
-\subsection{Model Controller Configuration}
-\label{sec:model-controller-configuration}
-%
 Each model that is included in the configuration entry \verb|'models'| \modelsindex must have a
-controller entry in the \verb|'models_configuration'| \modelsindex entry described in
-Section~\ref{sec:models-configuration}.  More specifically, the model specific
+controller entry in the \verb|'models_configuration'| \modelsindex entry.  More specifically, the model specific
 section of \verb|'models_configuration'| \modelsindex is expected to contain an entry \verb|'controller'|
 for each model. For example, a controller specification for the model
 specified by the name \verb|'land_price_model'| would be contained in\\
-\verb|run_configuration['models_configuration']['land_price_model']['controller']|.
+\verb|config['models_configuration']['land_price_model']['controller']|.
 
 If a model is specified as a model group \index{model group} it is possible to define a member specific controller, called 
 {\em member_name} + '_' + {\em model_name}, e.g. \verb|'home_based_employment_location_choice_model'|.
@@ -638,109 +560,23 @@ and passing it to the model constructor.
 
 \section{Output}
 %
-\subsection{The Output Database}
+\subsection{Exporting the Output Data}
 
 The simulation reads and writes all of its data from the simulation cache.  It 
 does not directly read or write to any database. 
-If you wish to move data from the simulation cache to a MySQL database, use the
+If you wish to move data from the simulation cache to a SQL database, use the
 \verb|do_export_cache_to_sql_database.py| tool located in
 \file{opus_core/tools}. 
 
-\subsection{File-Based
-Cache}\label{cache} \baseyearcacheindex\simulationcacheindex
-
-For a variety of reasons, described below, UrbanSim uses two forms of file-based
-caches:
-\begin{description}
-\item[baseyear cache] \baseyearcacheindex
-Stores the attribute values read from the baseyear
-database.  This includes data for the base year, and data for years before the
-base year (unrolled from data in the baseyear).  This data is not modified
-during the simulation.
-
-\item[simulation cache] \simulationcacheindex
-Stores the attribute values for datasets used during the simulation.
-\end{description}
-While the distinction between the read-only baseyear cache \baseyearcacheindex and read-write
-simulation cache \simulationcacheindex is useful understanding the system, during simulation both
-caches form a single cache that UrbanSim datasets \datasetindex and models \modelsindex mine to gather data
-for the current and prior years.
-
-\subsubsection{Reasons to Use Cache}
-The UrbanSim simulations run on top of a file-based cache.  The initial reason
-for the cache was to improve performance, and has turned out to be very useful for
-many features:
-
-\begin{itemize}
-  \item The cache is much faster to access than the MySQL \mysqlindex database, at least,
-  so using the cache dramatically speeds up our processing.
-  \item In many cases, a simulation will require more data than can fit in RAM.
-  The simulation cache \simulationcacheindex provides a place to store computed
-  or non-computed values so that we only need to keep in memory just enough
-  data for the computation at hand. \index{Memory management!Caching data}
-  \item Lag variables use the baseyear cache \baseyearcacheindex and simulation
-  cache \simulationcacheindex to quickly get data from prior years, often
-  without having to re-compute it.
-  \item When preparing for a simulation, UrbanSim uses the data from lag tables
-  (see~\ref{lag-tables}) in the baseyear to create historical data in the
-  baseyear cache \baseyearcacheindex for years before the base year.  This
-  allows the simulation to run without any distinction between historical and
-  predicted data.
-  \item Lag variables on gridcell data need gridcell information from prior
-  years.  UrbanSim can use the information in the
-  \verb|development_event_history| table to create gridcell data for before the
-  baseyear by ``unrolling'' the development events from before the base year.
-  \item When looking for a primary attribute \primaryattributesindex for a given dataset, \datasetindex Opus
-  looks first in the current year.  If the data is not in that year's cache,
-  Opus automatically looks backward thru prior years until it finds it.  This
-  allows Opus to only store to cache primary attributes \primaryattributesindex in the years in
-  which they are modified, while still getting the performance and memory
-  improvements by using the cache. \index{Memory management!Caching data}
-  \item The information in the simulation cache \simulationcacheindex includes all
-  of the intermediate variable values produced for every year.  This allows us
-  to inspect inspect this data for diagnostic purposes.
-  \item Our indicator framework mines the cache data to produces charts, tables
-  and maps that help to diagnose runs as well as providing input to policy
-  decisions.
-\end{itemize}
-
-
-\subsubsection{What is Written to Cache}
-During a simulation, UrbanSim writes a variety of data to the simulation
-cache. \simulationcacheindex These include:
-\begin{itemize}
-  \item Any dataset \datasetindex attribute read into memory or computed during the year.
-  \item A log file for each year, containing anything written to the UrbanSim
-  logger.
-  \item A log file for the top-level process that runs each year of the
-  simulation.
-  \item Meta-data about the information in the simulation
-  cache, \simulationcacheindex such as the ``version'' of each variable so that
-  we only need to recompute variables \variablesindex when their inputs change.
-\end{itemize}
-
-You can adjust the frequence with which the simulation flushes dataset \datasetindex
-attribute \attributesindex values to the simulation cache: \simulationcacheindex
-
-\begin{itemize}
-  \item After computing each year.  This is always done.
-  \item After computing each model.  Set
-  \verb|'datasets_to_cache_after_each_model'| in the run configuration to
-  a list of dataset \datasetindex names you wish to cache. An empty list (default) causes
-  no caching.
-  \item After computing each variable. \variablesindex Set \verb|'flush_variables'| \variablesindex to \verb|True| in the
-  run configuration.
-\end{itemize}
 
 \subsubsection{Deleting the File-Based Cache}
 
-The \verb|delete_run| script in \file{opus_core/services/run_manager} directory
+The \verb|delete_run| script in \file{opus_core/tools} directory
 provides an easy way to delete cached run data while maintaining the
-consistency of the services database.  This is useful, since a simulation can
-produce multiple gigabytes of data.
+consistency of the services database. 
 
 To delete all data for run with \verb|run_id| 42, and remove that run's
-information from the \verb|available_runs| table in the \verb|services|
+information from the \verb|services|
 database use:
 
 \pythonindex
@@ -758,19 +594,3 @@ For instance, to remove the cached data for years 2001 through 2029 use:
 python delete_run.py --run-id 42 --years-to-delete range(2001,2030)
 \end{verbatim}
 
-\section{Converting the Base Year Data}
-The base year database for the Opus UrbanSim~4 is almost the same as that used
-by UrbanSim~3 (the Java version).  Instructions on converting the database are
-available at
-\mbox{\url{http://www.urbansim.org/opus/opus_manual/docs/scripts/converting_3_to_4.html}}.
-
-\subsection{Lag Tables}\label{lag-tables}
-
-The baseyear database may contain data from before the base year.  If you want
-this data to be available to the simulation, put it into a lag table whose name
-is the same as the non-lag table for that dataset except with \verb|_lag| at the
-end, e.g. \verb|gridcells_lag|, and that contains a \verb|year| column indicating
-the year for each row.  The first step of a simulation run copies this lag
-data into the baseyear cache, \baseyearcacheindex so that it can be accessed by lag variables. \variablesindex
-
-\section{Running an Estimation}
