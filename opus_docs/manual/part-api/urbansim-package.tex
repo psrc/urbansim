@@ -11,14 +11,7 @@
 \section{Introduction}
 
 This chapter describes the different components --- datasets \datasetindex and models \modelsindex ---
-used in a typical application of UrbanSim to simulate different actors and
-processes in the urban environment.  These components are the ones we
-use in the Puget Sound application.  Not all of these component models are required
-to run UrbanSim; however, we hope that researchers and practitioners who want
-to apply UrbanSim 4 to other regions will find this a useful starting point.
-
-As described in Chapter \ref{part-running-simulation}, not all 
-of these component models are required to run UrbanSim ...
+contained in the \package{urbansim} package. 
 
 \section{Datasets}
 \label{sec:urbansim-datasets}
@@ -29,7 +22,20 @@ Opus \package{opus_core} class \class{Dataset} \datasetindex described in
 Section~\ref{sec:opus-core-datasets}. Each dataset \datasetindex sets default values for several
 class properties, such as a name of the unique identifier (\verb|id_name|),
 dataset \datasetindex name (\verb|dataset_name|), \datasetindex \verb|in_table_name| and
-\verb|out_table_name|. 
+\verb|out_table_name|. For example, the following code 
+\begin{verbatim}
+>>> from opus_core.datasets.dataset import Dataset
+>>> households = Dataset(in_storage = storage,
+                         id_name='household_id',
+                         dataset_name='household',
+                         in_table_name='households', 
+                         out_table_name='households')
+\end{verbatim}
+is equivalent to
+\begin{verbatim}
+>>> from urbansim.datasets.household_dataset import HouseholdDataset
+>>> households = HouseholdDataset(in_storage = storage)
+\end{verbatim}
 
 The \package{urbansim} datasets \datasetindex are defined in \verb|urbansim.datasets|. \datasetindex
 We use the following naming convention: For module name we use the dataset 
