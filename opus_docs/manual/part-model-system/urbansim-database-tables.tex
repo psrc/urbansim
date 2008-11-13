@@ -1024,6 +1024,107 @@ minority & boolean & True if the race is a minority  \\
 
 \end{itemize}
 
+\section{Development Constraints and Target Vacancies Tables}
+%
+\subsection{The {\tt development_constraints} table}
+
+This table defines rules that restrict the possible development types a
+developer can create on a particular grid cell.  Each row defines one rule.
+Development is not allowed on any gridcell that matches any of these rules.  A
+gridcell matches a rule if the attribute values for the gridcell match all of
+the values in the rule (rule columns with the value ``-1'' are ignored when
+determining a match).
+
+\begin{tabular}{|l|l|p{3.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline constraint_id & integer & Unique rule identification number  \\
+
+\hline \emph{name-of-a-gridcell-attribute} & integer or float &  Value for this
+attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
+\emph{don't care}) \\
+
+\hline min_units & integer & Minimum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at least this number of residential units. \\
+
+\hline max_units & integer & Maximum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at most this number of residential units. \\
+
+\hline min_commercial_sqft & integer & Minimum number of commercial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of commercial sqft. \\
+
+\hline max_commercial_sqft & integer & Maximum number of commercial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of commercial sqft. \\
+
+\hline min_industrial_sqft & integer & Minimum number of industrial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of industrial sqft. \\
+
+\hline max_industrial_sqft & integer & Maximum number of industrial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of industrial sqft. \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item constraint_id must be a unique positive integer.
+
+\item \emph{name-of-a-gridcell-attribute} is the name of a gridcell attribute,
+e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
+names is determined by the set of numeric column names on the gridcell table.
+
+\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
+equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
+
+\end{itemize}
+
+\subsection{The {\tt target_vacancies} table}
+\label{sec:table-target-vacancies}
+
+The \verb|target_vacancies| table is used by the development project transition
+model~(\ref{sec:development-project-transition-model}). It gives the model information about acceptable vacancy rates. The table
+has one row for each year the simulation runs. Each row gives target values for
+the residential and nonresidential vacancies for that year, which are defined
+below.  Only data after the base year is used.
+
+\begin{tabular}{|l|l|l|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline year & integer & Year of the simulation for which the vacancy
+targets
+apply  \\
+
+\hline target_total_residential_vacancy & float & Ratio of unused residential
+units to total residential units  \\
+
+\hline target_total_non_residential_vacancy & float & Ratio of unused
+nonresidential sqft to total nonresidential sqft  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item There must be exactly one row for each year to be simulated.
+\item target_total_residential_vacancy must be between 0 and 1, inclusive.
+\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\end{itemize}
+
+
 \section{Database Tables about Indicators}
 
 
