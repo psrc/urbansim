@@ -624,7 +624,8 @@ It controls the number of chunks in which the sampling is done for the estimatio
 \label{sec:development-project-lcm}
 \index{Development Project Location Choice Model}
 %
-The Development project location choice model \modelsindex simulates a process where
+The Development project location choice model implemented in the
+\package{urbansim} package \modelsindex simulates a process where
 development projects of a specific type choose locations to be placed into.
 The class \class{DevelopmentProjectLocationChoiceModel} \modelsindex is a child of
 \class{LocationChoiceModel} \modelsindex described in
@@ -636,26 +637,26 @@ The class is initialized by passing the following arguments:
 \begin{description}
 \item[location_set] - A dataset \datasetindex of locations to be chosen from.
 \item[project_type] - A character string determining the type of the projects
-  for this model. \modelsindex
+  for this model, such as 'commercial' or 'residential'. \modelsindex
 \item[units] - A character string giving the name of the attribute \attributesindex that
   determines sizes of projects.
 \item[developable_maximum_unit_variable_full_name] \variablesindex -  A character string determining
-  which Opus variable \variablesindex to use for the maximum developable units.
+  which Opus variable \variablesindex of the location set to use for computing the maximum developable units
+  in each location.
 \item[developable_minimum_unit_variable_full_name] \variablesindex -  A character string determining
-  which Opus variable \variablesindex to use for the minimum developable units.
-\item[model_name] \modelsindex - An optional argument giving the model \modelsindex name.
-\item[+] all remaining arguments from the constructor of
+  which Opus variable \variablesindex of the location set to use for computing the minimum developable units
+  in each location. Default is None which means there is no restriction on the minimum number of units.
+\item[model_name] \modelsindex - An optional argument giving the model \modelsindex name. Default is None.
+\item[...] all remaining arguments from the constructor of
   \class{LocationChoiceModel}. \modelsindex
 \end{description}
-The \verb|location_set| is expected to have a variable \variablesindex
-``developable_minimum_''+\verb|units| and ``developable_maximum_''+\verb|units|
-implemented in the given \verb|opus_package|.
 
+The arguments are set as class properties and the parent constructor is invoked.
 
 \subsubsection{The Run Method}
 %
 {\it Input}:\\[1mm]
-It takes the same arguments as the \method{run()} of its parent: \\
+It takes the same arguments as the \method{run()} method of its parent: \\
 {\bf specification}, {\bf coefficients}, \coefficientsindex {\bf agent_set}, {\bf agents_index},
 {\bf chunk_specification}, {\bf data_objects}, and {\bf run_config}.
 
@@ -681,7 +682,7 @@ reasons reduced to only locations that are developable. No additional
 filtering is done (the model \modelsindex sets the class property \verb|filter| to
 \verb|None|).
 
-The class overwrites the method \verb|get_agents_order()| in a way that it
+The class overwrites its parent's method \verb|get_agents_order()| in a way that it
 sorts the agents according to their sizes in descending order. This means that
 larger projects enter the choice process first.
 
@@ -698,11 +699,10 @@ The \method{estimate()} method is identical to its parent method
 
 \subsubsection{Creators}
 %
-The model \modelsindex can be created using pre-defined creators in \package{urbansim}.
+The model \modelsindex can be created using a pre-defined creator in \package{urbansim}.
 The class\\
 \class{DevelopmentProjectLocationChoiceModelCreator} \modelsindex sets useful default
-values for arguments of the constructor, \verb|run_config| and
-\verb|estimate_config|. The model \modelsindex is by default initialized with:
+values for arguments of the constructor. The model \modelsindex is by default initialized with:
 \begin{description}
 \item[sampler] - ``opus_core.samplers.weighted_sampler''
 \item[utilities] - ``opus_core.linear_utilities''
@@ -714,8 +714,7 @@ values for arguments of the constructor, \verb|run_config| and
 Entries of \verb|run_config| are set as to:
 \begin{verbatim}
 {   "compute_capacity_flag": True,
-    "sample_size_locations": 10,
-    "correct_sampling_bias": False,
+    "sample_size_locations": 30,
     "capacity_string": "urbansim.gridcell.is_developable_for_%s" % units }
 \end{verbatim}
 The variable \variablesindex \verb|units| in the last line is taken from a model \modelsindex configuration
@@ -726,26 +725,16 @@ page~\pageref{page:model-configuration}).
 Entries of \verb|estimate_config| are set as to:
 \begin{verbatim}
 {   "estimation": "opus_core.bhhh_mnl_estimation",
-    "sample_size_locations": 10,
-    "estimation_size_agents": 1.0,
-    "correct_sampling_bias": False  }
+    "sample_size_locations": 30,
+    "estimation_size_agents": 1.0  }
 \end{verbatim}
 
-
-\class{DevelopmentProjectLocationChoiceModelCreator} \modelsindex is used by
-\begin{itemize}
-\item \class{DevelopmentProjectCommercialLocationChoiceModelCreator} \modelsindex
-\item \class{DevelopmentProjectIndustrialLocationChoiceModelCreator} \modelsindex
-\item \class{DevelopmentProjectResidentialLocationChoiceModelCreator} \modelsindex
-\end{itemize}
-which set in addition the appropriate type of projects for which the model \modelsindex
-should run.
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-The production run of UrbanSim is configured with three development project
+This implementation is used only in the gridcell version of UrbanSim.
+The production run is configured with three development project
 types: ``residential'', ``commercial'', and ``industrial''. Thus, there are
 three instances of the model, \modelsindex each initialized with the particular project
 type and a \class{GridcellDataset} as \verb|location_set|.  Each of the models \modelsindex
@@ -777,7 +766,7 @@ set the \verb|sub_model_id| field of the specification and coefficients table to
 \label{sec:development-event-transition-model}
 \index{Development Event Transition Model}
 %
-The model \modelsindex creates for each location a development event, which is a collection
+The model \modelsindex \class{DevelopmentEventTransitionModel} creates for each location a development event, which is a collection
 of development projects of different type (e.g. commercial, residential,
 industrial) for this location. This model \modelsindex is not estimated and contains only a
 method \method{run()}.
@@ -798,7 +787,7 @@ method \method{run()}.
   ordering in the list must correspond to the ordering in \verb|types|.
 \item[year] - an integer indicating for which year this events are
   created. Default value is 0.
-\item[location_id_name] - name of the attribute \attributesindex that determines
+\item[location_id_name] - name of the project attribute \attributesindex that determines
   locations. Default value is ``grid_id''.
 \end{description}
 
@@ -807,7 +796,7 @@ It generates a distinct set of all locations in which at least one project is
 located. It creates a \class{DevelopmentEventDataset} of size of number of those
 locations. It has an attribute \attributesindex given in \verb|location_id_name| with id values
 of the locations. Furthermore, it has all attributes \attributesindex given in the argument
-\verb|units|. Values for each these attributes \attributesindex are the sums of values of the
+\verb|units|. Values for each of these attributes \attributesindex are the sums of values of the
 attribute \attributesindex of the same name in the corresponding project dataset \datasetindex over the
 corresponding locations. It also has an attribute \attributesindex ``scheduled_year'' with the
 same value for each location, namely the one given in the argument
@@ -821,8 +810,8 @@ The model \modelsindex returns an instance of \class{DevelopmentEventDataset}.
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-In a production run of UrbanSim, the \method{run()} method is called by
+The model is only used in the gridcell version of UrbanSim.
+The \method{run()} method is called by
 passing the following arguments:
 \begin{description}
 \item[projects] - A dictionary that results from a run of the Development
@@ -830,11 +819,11 @@ passing the following arguments:
   Development Project Location Choice Models. \modelsindex
 \item[types] - A list of project types for which the Development Project
   Location Choice Model \modelsindex has run, i.e. for which there are projects to be
-  developed.
+  developed. Typically, \verb|['residential', 'commercial', 'industrial']|.
 \item[units] - A list of ``units'' entries from model \modelsindex configuration in
   \file{general_configuration.py} (see page~\pageref{page:model-configuration}) for which the
   Development Project Location Choice Model \modelsindex has run, i.e. that correspond to
-  \verb|types|.
+  \verb|types|. Typically, \verb|['residential_units', 'commercial_sqft', 'industrial_sqft']|.
 \item[year] - The simulated year.
 \end{description}
 
@@ -864,7 +853,13 @@ There is no \method{estimate()} method for this model. \modelsindex
 \end{description}
 
 {\it Algorithm}:\\[1mm]
-
+The method adds/replaces/removes development contained in \verb|development_event_set| 
+to/by/from \verb|location_set|. It updates the location attributes
+given by 'units' of \verb|model_configuration|. The type of change can be given 
+in event set attribute 'type_of_change' as 'A' for add, 'R' for replace and 'D' for delete.
+The default type of change is 'A'. The method also determines a new development type 
+for each location depending on the existing development. 
+ 
 
 {\it Output}:~\\[1mm]
 Returns a tuple of indices of locations that were modified, and indices of
@@ -873,8 +868,8 @@ development events that were processed.
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called using the
+The model is only used in the gridcell version of UrbanSim.
+The method \method{run()} is called using the
 following arguments:
 \begin{description}
 \item[model_configuration] \modelsindex - The model \modelsindex configuration for project types from
