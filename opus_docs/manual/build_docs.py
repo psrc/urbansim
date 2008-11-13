@@ -16,9 +16,8 @@ import os
 import opus_docs.tools
 
 def main():
-    path = os.path.join(opus_docs.__path__[0], "manual")
-    modules = ["opus-userguide"]
-    opus_docs.tools.build(modules, cwd=path, make_bibliography_and_index=True)
+    opus_docs.tools.build(["opus-userguide"],
+                          os.path.join(opus_docs.__path__[0], "manual"))
 
 if __name__ == "__main__":
     main()

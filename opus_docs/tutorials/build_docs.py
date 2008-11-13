@@ -16,9 +16,8 @@ import os
 import opus_docs.tools
 
 def main():
-    path = os.path.join(opus_docs.__path__[0], "tutorials")
-    modules = ["run-eugene-model", "lorenz-curve"]
-    opus_docs.tools.build(modules, cwd=path, make_bibliography_and_index=False)
+    opus_docs.tools.build(["run-eugene-model", "lorenz-curve"],
+                          os.path.join(opus_docs.__path__[0], "tutorials"))
 
 if __name__ == "__main__":
     main()
