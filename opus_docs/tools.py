@@ -13,6 +13,7 @@
 # 
 
 import os
+import sys
 import subprocess
 import re
 
@@ -134,13 +135,19 @@ def check_run(run_result, stop_on_warning=False, warning_fns=[], error_fns=[]):
     for error_fn in error_fns:
         error_msgs += error_fn(run_result)
     if warning_msgs:
-        print "**** Warnings for command: " + str(command)
-        print "\n".join(warning_msgs)
+        sys.stderr.write("**** Warnings for command: ")
+        sys.stderr.write(str(command))
+        sys.stderr.write("\n")
+        sys.stderr.write("\n".join(warning_msgs))
+        sys.stderr.write("\n")
     if error_msgs:
-        print "**** Errors for command: " + str(command)
-        print "\n".join(error_msgs)
+        sys.stderr.write("**** Errors for command: ")
+        sys.stderr.write(str(command))
+        sys.stderr.write("\n")
+        sys.stderr.write(sys.stderr.write("\n".join(error_msgs)))
+        sys.stderr.write("\n")
     if warning_msgs or error_msgs:
-        print "\n**** Command output:"
-        print stdout
+        sys.stderr.write("\n**** Command output:\n")
+        sys.stderr.write(stdout)
     if error_msgs or (stop_on_warning and warning_msgs):
         raise Exception()
