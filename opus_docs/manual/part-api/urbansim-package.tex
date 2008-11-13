@@ -198,125 +198,25 @@ specific creators (see Figure~\ref{fig:urbansim-model}).  All
 \package{urbansim} models \modelsindex are placed in
 \file{urbansim/models}.
 
-\begin{figure}
+\begin{figure}[t]
 \begin{center}
 %begin{latexonly}
 \includegraphics[scale=0.5]{images/urbansimmodels.pdf}
 %end{latexonly}
 \caption{\label{fig:urbansim-model}\small Models in \package{urbansim}.}
-\htmlonly{\includegraphics[scale=0.5]{images/urbansimmodels.jpg}}
+\htmlonly{\includegraphics[scale=0.8]{images/urbansimmodels.jpg}}
 \end{center}
 \end{figure}
 
-\subsection{Overview}
-
 The models \modelsindex to execute when running UrbanSim are determined by the configuration
 (see Section~\ref{sec:model-system-configuration}). Its entry ``models'' \modelsindex is a
-list of character strings that identify the models \modelsindex to run in that order.
-UrbanSim defines following models: \modelsindex
-\begin{description}
-  \tight
-  \item[``land_price_model''] \modelsindex - activates the \verb|LandPriceModel| \modelsindex which
-  predicts residential and non-residential land value (see
-  Section~\ref{sec:land-price-model}).
-  \item[``development_project_transition_model''] \modelsindex - activates the
-  \verb|DevelopmentProjectTransitionModel| \modelsindex which creates projects of different
-  types for development (see
-  Section~\ref{sec:development-project-transition-model}).
-  \item[``residential_development_project_location_choice_model''] \modelsindex - activates
-  the \\ \verb|DevelopmentProjectLocationChoiceModel| \modelsindex for residential projects
-  only. It places the newly created projects of residential type into locations
-  (see Section~\ref{sec:development-project-lcm}).
-  \item[``commercial_development_project_location_choice_model''] \modelsindex - activates
-  the \\ \verb|DevelopmentProjectLocationChoiceModel| \modelsindex for commercial projects
-  only. It places the newly created projects of commercial type into locations
-  (see Section~\ref{sec:development-project-lcm}).
-  \item[``industrial_development_project_location_choice_model''] \modelsindex - activates
-  the \\ \verb|DevelopmentProjectLocationChoiceModel| \modelsindex for industrial projects
-  only. It places the newly created projects of industrial type into locations
-  (see Section~\ref{sec:development-project-lcm}).
-  \item[``development_event_transition_model''] \modelsindex - activates the
-  \verb|DevelopmentEventTransitionModel| \modelsindex which creates development events from
-  given projects (see Section~\ref{sec:development-event-transition-model}) and
-  the \verb|EventsCoordinator| which processes the actual annual development
-  (see Section~\ref{sec:events-coordinator}).
-  \item[``residential_land_share_model''] \modelsindex - activates the
-  \verb|ResidentialLandShareModel| \modelsindex which predicts the fraction of residential
-  land (see Section~\ref{sec:residential-land-share-model}).
-  \item[``household_transition_model''] \modelsindex - activates the
-  \verb|HouseholdTransitionModel| \modelsindex which simulates deaths and births in the
-  population of households (see Section~\ref{sec:household-transition-model}).
-  \item[``employment_transition_model''] \modelsindex - activates the
-  \verb|EmploymentTransitionModel| \modelsindex which simulates creation and loss of jobs
-  (see Section~\ref{sec:employment-transition-model}).
-  \item[``household_relocation_model''] \modelsindex - activates the
-  \verb|AgentRelocationModel| \modelsindex where agents are set to be households. It
-  determines which households will move to another locations in the simulated
-  year (see Section~\ref{sec:agent-relocation-model}).
-  \item[``household_location_choice_model''] \modelsindex - activates the
-  \verb|AgentLocationChoiceModel| \modelsindex where agents are set to be households. It
-  places moving households to another locations (see
-  Section~\ref{sec:agent-lcm}).
-  \item[``employment_relocation_model''] \modelsindex - activates the
-  \verb|AgentRelocationModel| \modelsindex where agents are set to be jobs. It determines
-  which jobs will be moved to another locations in the simulated year (see
-  Section~\ref{sec:agent-relocation-model}).
-  \item[``employment_location_choice_model''] \modelsindex - activates the
-  \verb|AgentLocationChoiceModelMember| \modelsindex where agents are set to those types of jobs
-  that are contained in the table \file{job_building_types}.
-  For each type, it places moving jobs to another locations (see
-  Section~\ref{sec:elcm}). An exception is the type 'governmental' for which the \verb|ScalingJobsModel| is activated
-  (see Section~\ref{sec:scaling-jobs-model}).
-  \item[``distribute_unplaced_jobs_model''] \modelsindex - activates the \verb|DistributeUnplacedJobsModel| \modelsindex which
-  places  all non-placed jobs randomly to another locations (see Section~\ref{sec:distribute-unplaced-jobs-model}).
-\end{description}
+list of character strings that identify the models \modelsindex to run in that order (see for example 
+the list of models for running the gridcell version of UrbanSim on page~\pageref{pg:config-models}).
+As discussed in Section~\ref{sec:model-controller-configuration}, 
+the controller of each model points to one of the model classes shown in Figure~\ref{fig:urbansim-model}
+and configures their inputs and outputs. In the following sections we describe each of the model classes in detail. 
 
-
-%% \subsection{Classifying Models by their Underlying Theory}
-
-%% The models can also be grouped by their theoretical nature:
-
-%% \begin{itemize}
-%% \tight
-%% \item {\bf Accounting Models}
-%%   \begin{itemize}
-%%   \tight
-%%   \item Household transition model
-%%   \item Employment transition model
-%%   \item Development project transition_model
-%%   \item Scaling jobs model
-%%   \end{itemize}
-
-%% \item {\bf Linear Regression Models}
-%%   \begin{itemize}
-%%   \tight
-%%     \item Land price model
-%%     \item Residential land share model
-%%  \end{itemize}
-%% \item {\bf Probabilistic Choice Models}
-%%   \begin{itemize}
-%%   \tight
-%%   \item {\bf Rate Based Models}
-%%     \begin{itemize}
-%%     \tight
-%%     \item Household relocation model
-%%     \item Employment relocation model
-%%     \end{itemize}
-%%   \item {\bf Logit Models}
-%%     \begin{itemize}
-%%     \tight
-%%     \item Household location choice model
-%%     \item Industrial employment location choice model
-%%     \item Commercial employment location choice model
-%%     \item Home-based employment location choice model
-%%     \item Industrial development project location choice model
-%%     \item Commercial development project location choice model
-%%     \item Residential development project location choice model
-%%     \end{itemize}
-%%   \end{itemize}
-%% \end{itemize}
-
-\subsection{Land Price Model}
+\subsection{Land Price Model and Corrected Land Price Model}
 \label{sec:land-price-model} \index{Land Price Model}
 \modelsindex
 %
@@ -338,14 +238,16 @@ The class is initialized by passing the following arguments:
   the regression (applied to both, the \method{run()} and \method{estimate()}
   method). Default value is
   ``urbansim.gridcell.is_in_development_type_group_developable'' which requires an entry 'developable'
-  in the table ``develpment_type_groups'' (\ref{sec:development-tables-type-groups}).
+  in the table ``development_type_groups''. %(\ref{sec:development-tables-type-groups})
+  It also requires that the location set is a gridcell set.
 \item[submodel_string] - If model \modelsindex contains submodels, this character string
   specifies what attribute of the observation set determines those
   submodels. Default value is ``development_type_id''.
 \item[run_config] - A collection of additional arguments that control a
-  simulation run. It should be of class \class{Resources}.
+  simulation run. It should be a python dictionary or of class \class{Resources}.
 \item[estimate_config] - A collection of additional arguments that control an
-  estimation run. It should be of class \class{Resources}.
+  estimation run. It should be a python dictionary or of class \class{Resources}.
+  \item[dataest_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 The constructor sets \verb|filter| as a class attribute \attributesindex and calls the parent
 constructor (see Initialization in Section~\ref{sec:regression-model}).
@@ -404,8 +306,8 @@ The method returns results of \method{estimate()} method of
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the model \modelsindex is
+This model is only used in the gridcell version of UrbanSim.
+For a production run the model \modelsindex is
 initialized with default values of the model \modelsindex
 constructor. The \method{run()} method is called by passing the
 following arguments:
@@ -423,21 +325,23 @@ filtered using a filter passed to the constructor (by default ``urbansim.gridcel
 the Initialization paragraph).
 \end{description}
 
-\subsubsection{Correct Land Values Model}
+\subsubsection{Corrected Land Price Model}
+\index{Corrected Land Price Model}
 \modelsindex
 %
 \index{Correct Land Values Model}
-After the Land Price Model \modelsindex runs at least for 2 years, the production code
-invokes every year a model \modelsindex called \class{CorrectLandValue}. This model \modelsindex makes a
+This child model \modelsindex of \class{LandPriceModel} makes a
 correction of the land value to avoid its declination with development type
 change.
 
-Its \method{run()} method determines those members of \class{dataset} \datasetindex whose
+The \method{run()} method expects an additional argument, \verb|n_simulated_years|,
+which gives the number of years that have been already simulated. If it is larger than 1,
+after running its parent's code, a model \modelsindex called \class{CorrectLandValue} is invoked. 
+This model determines those members of \class{dataset} \datasetindex whose
 development type changed and at the same time have lower total land value when
 comparing to previous simulated year. Values of the attributes \attributesindex
 ``residential_land_value'' and ``nonresidential_land_value'' of these members
-are replaced by values of the same attributes \attributesindex from previous year. The method
-returns an index of the modified \class{dataset} \datasetindex members.
+are replaced by values of the same attributes \attributesindex from previous year.
 
 %
 \subsection{Development Project Transition Model}
@@ -474,8 +378,8 @@ space) is determined by sampling from the projects obtained from the history.
   type. Those entry names are composed from the project type and a character
   string `vacant_variable', e.g. for commercial project type the key for this
   argument is ``commercial_vacant_variable''.  Default values for those
-  entries are ``urbansim.vacant_'' + project type, e.g.
-  ``urbansim.vacant_commercial''.
+  entries are ``urbansim.gridcell.vacant_'' + project type, e.g.
+  ``urbansim.gridcell.vacant_commercial''.
 \end{description}
 
 
@@ -496,7 +400,7 @@ the new dataset \datasetindex as an attribute given in the entry ``units'' of
 \verb|model_configuration| \modelsindex (see below for details). If an attribute \attributesindex called
 project type + ``_improvement_value'' is contained in the \verb|location_set|,
 an average improvement value is computed over all locations and this project
-type and this value is added to each project in the created
+type. This value is then added to each project in the created
 \class{DevelopmentProjectDataset}.  Additionally, an attribute \attributesindex of the same name as
 the unique identifier of \verb|location_set| is added to the
 \class{DevelopmentProjectDataset} and set to 0's (which means that the projects
@@ -524,12 +428,13 @@ used. Entry ``residential'' is a boolean value determining if vacancy of this
 project type should be compared to the residential vacancy rate or not. In the
 latter case, it is compared to the non-residential vacancy rate.
 
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called using the
+
+The model is used in the gridcell version of UrbanSim only. Here,
+the method \method{run()} is called using the
 following arguments:
 \begin{description}
 \item[model_configuration] \modelsindex - The default configuration for project types in
-  \file{general_configuration.py} is \label{page:model-configuration}
+  \file{configs/general_configuration.py} is \label{page:model-configuration}
 \begin{verbatim}
 {
     'development_project_types':{
@@ -598,21 +503,25 @@ The class is initialized by passing the following arguments:
   package in which the module lives. Default value is
   ``urbansim.datasets''. \datasetindex
 \item[filter] - It is either a string specifying an attribute \attributesindex name of the
-  filter, or a 1D/2D array giving the filter directly, or a dictionary
+  filter for filtering out locations to be chosen from, or a 1D/2D array giving the filter directly, or a dictionary
   specifying filter for each submodel. If it is None (default), no filter is
   applied.
 \item[submodel_string] - If model \modelsindex contains submodels, this character string
   specifies what agent's attribute determines those submodels. If it is None
   (default), no division into submodels is applied.
+\item[location_id_string] - A character string giving the fully qualified name of an agent attribute
+  that specifies the location. It is only needed when the attribute is a variable (i.e. not a primary attribute).
+  Default is None.
 \item[run_config] - A collection of additional arguments that control a
   simulation run. It should be of class \class{Resources}.
 \item[estimate_config] - A collection of additional arguments that control an
   estimation run. It should be of class \class{Resources}.
+\item[dataset_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 The method calls the constructor of its parent class. Then, it creates a
 \class{Sampler} object from the argument \verb|sampler| using
 \class{SamplerFactory}. It sets value of the argument \verb|filter| as a class
-property \verb|filter|
+property \verb|filter|.
 
 %
 \subsubsection{The Run Method}
@@ -630,7 +539,7 @@ Section~\ref{sec:choice-model} for more details): \\
 The model \modelsindex is processed in chunks. The \method{run_chunk()} method moves
 the agents out of their locations, i.e. the values of an
 \verb|agent_set| attribute of the same name as the unique identifier of
-\verb|location_set| is set to $-1$ for each agents of the currently processed
+\verb|location_set| is set to $-1$ for each agent of the currently processed
 chunk. If \verb|agent_set| does not have this attribute, \attributesindex it is appended to it.
 
 If an entry ``compute_capacity_flag'' is given in \verb|run_config| and its
@@ -643,18 +552,18 @@ current chunk from their locations, the capacity is influenced by only those
 agents. Each chunk then see the state of the world updated by all previously
 running chunks.
 
-The capacity values are used as weights of locations in the case of sampling.
-They are multiplied by the filter given in the initialization.  The
+By default, the capacity values are used as weights of locations in the case of sampling.
+This can be changed by setting the entry 'weights_for_simulation_string' of \verb|run_config|, 
+which should be a fully-qualified variable name of the location set that determines weights. 
+The weights are multiplied by the filter given in the initialization.  The
 model \modelsindex then invokes sampling of alternatives by calling the
 \method{run()} method of the sampler class, passing the possibly filtered
 weights. The parent class then takes care of creating the interaction set, for
 agents of the corresponding chunk and possibly sampled alternatives and of
-running the \verb|upc_sequence|. If \verb|run_config| includes an entry
-``correct_sampling_bias'' that is set to True, the method performs a bias
-correction for non-uniform sampling in the multinomial logit computation.
+running the \verb|upc_sequence|. 
 
 The location IDs that agents chose in the choice process are stored
-in the \verb|agent_set| attribute specifying the location.
+in the \verb|agent_set| attribute specifying locations.
 
 {\it Output}:\\[1mm]
 The method returns an array of size \verb|agents_index|,
@@ -685,10 +594,7 @@ The weights for sampling alternatives are determined by an optional entry
 attribute/variable \attributesindex\variablesindex name of \verb|location_set|. They are multiplied by the
 given \verb|filter| (if any) and as in the case of the \method{run()} method,
 sampling is performed using those weights. The parent class performs then the
-estimation. If \verb|estimate_config| includes an entry
-``correct_sampling_bias'' that is set to True, the method performs a bias
-correction for non-uniform sampling by adding an appropriate column to the
-data that enter the estimation.
+estimation.
 
 {\it Output}:\\[1mm]
 The method passes the return values of its parent method \method{estimate()},
@@ -703,13 +609,15 @@ dictionary with entries for each submodel equals a dictionary returned by the
 The arguments \verb|run_config| and \verb|estimate_config| are collections of
 parameters that control the \method{run()} and \method{estimate()} method,
 respectively. In addition to the mentioned entries ``compute_capacity_flag'',
-``capacity_string'' and ``correct_sampling_bias'', they can contain entries
+``capacity_string'', ``weights_for_simulation_string'', and ``weights_for_estimation_string'', they can contain entries
 ``sample_proportion_locations'' and ``sample_size_locations''. Both entries
 control the size of sampled alternatives, the first one as a relative number,
 the latter one as an absolute number. The latter one has a priority over the
 first one.
 
-As mentioned above, \verb|estimate_config| can also contain an entry ``weights_for_estimation_string''.
+\verb|estimate_config| can also contain an entry 'chunk_specification_for_estimation',
+which should be an object of class \class{ChunkSpecification} (see Section~\ref{sec:resources}).
+It controls the number of chunks in which the sampling is done for the estimation.
 
 
 \subsection{Development Project Location Choice Model}
