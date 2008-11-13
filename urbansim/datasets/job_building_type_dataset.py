@@ -12,9 +12,9 @@
 # other acknowledgments.
 # 
 
-from urbansim.datasets.dataset import Dataset as UrbansimDataset
+from urbansim.datasets.building_type_dataset import BuildingTypeDataset
 
-class JobBuildingTypeDataset(UrbansimDataset):
+class JobBuildingTypeDataset(BuildingTypeDataset):
     id_name_default = "id"
     in_table_name_default = "job_building_types"
     out_table_name_default = "job_building_types"

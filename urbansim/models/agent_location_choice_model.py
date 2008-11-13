@@ -23,8 +23,8 @@ from numpy import ma
 from opus_core.logger import logger
 
 class AgentLocationChoiceModel(LocationChoiceModel):
-    """Similiar to the LocationChoiceModel. In addition, after a run it checks
-    for overfilled locations and in case of collisions, it runs itself again.
+    """Similar to the LocationChoiceModel. In addition, after a run it checks
+    for over-filled locations and in case of collisions, it runs itself again.
     """
 
     def __init__(self, location_set, model_name, short_name,

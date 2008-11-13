@@ -18,38 +18,24 @@ from numpy import exp, arange, where, isinf
 from opus_core.logger import logger
 
 class LandPriceModel(RegressionModel):
-    """Updates gridcell attributes 'residential_land_value' and 'nonresidential_land_value'
+    """Updates location attributes 'residential_land_value' and 'nonresidential_land_value'
     computed via a regression equation.
     """
     maxfloat32 = 1e+38
     model_name = "Land Price Model"
     model_short_name = "LPM"
 
-#    def get_configuration(self):
-#        return {
-#          "init":{
-#            "regression_procedure":{"default":"opus_core.linear_regression",
-#                                     "type":str},
-#            "filter": {"default":"urbansim.gridcell.is_in_development_type_group_developable",
-#                       "type":str},
-#            "submodel_string":{"default":"development_type_id",
-#                       "type":str},
-#            "run_config":{"default":None, "type":Resources},
-#            "estimate_config":{"default":None, "type":Resources},
-#            "debuglevel": {"default":0, "type":int}},
-#          "run": RegressionModel.get_configuration(self)["run"]
-#            }
 
     def __init__(self, regression_procedure="opus_core.linear_regression",
                  filter = "urbansim.gridcell.is_in_development_type_group_developable",
                  submodel_string = "development_type_id",
                  run_config=None,
                  estimate_config=None,
-                 debuglevel=0):
+                 debuglevel=0, dataset_pool=None):
         self.filter = filter
         if filter is None:
             if run_config is not None and 'filter' in run_config:
-                self.filter = run_config["filter"] # which attribute determines submodels
+                self.filter = run_config["filter"]
             elif estimate_config is not None and 'filter' in estimate_config:
                 self.filter = estimate_config["filter"]
 
@@ -58,7 +44,7 @@ class LandPriceModel(RegressionModel):
                                  submodel_string=submodel_string,
                                  run_config=run_config,
                                  estimate_config=estimate_config,
-                                 debuglevel=debuglevel)
+                                 debuglevel=debuglevel, dataset_pool=dataset_pool)
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
             data_objects=None, run_config=None, debuglevel=0):
