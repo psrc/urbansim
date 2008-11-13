@@ -24,7 +24,6 @@ if __name__=="__main__":
     from urbansim.datasets.household_dataset import HouseholdDataset
     from urbansim.datasets.job_dataset import JobDataset
     from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
-    from urbansim.models.employment_commercial_location_choice_model_creator import EmploymentCommercialLocationChoiceModelCreator
     from opus_core.coefficients import Coefficients
     from opus_core.equation_specification import EquationSpecification
     from opus_core.storage_factory import StorageFactory
