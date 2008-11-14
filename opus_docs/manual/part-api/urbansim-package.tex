@@ -916,7 +916,7 @@ It takes the same arguments as the \method{run()} of its parent: \\
 {\it Algorithm}:\\[1mm]
 The \method{run()} method of \class{RegressionModel} \modelsindex is invoked in order to
 obtain a regression outcome $y$. If the run
-was successful, the resulting quantity $y'$ is computed as
+was successful, the resulting quantity of this model, $y'$, is computed as
 \[
 y' = \frac{e^y}{1+e^y}
 \]
@@ -932,9 +932,9 @@ The method returns $y'$.
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called only if
-the Events Coordinator actually changed any locations.  The following
+The model is used in the gridcell version of UrbanSim only.
+It is called after the Events Coordinator. It processes only those locations 
+that were updated by the Events Coordinator.  The following
 arguments are passed to the run:
 \begin{description}
 \item[specification] -  An
@@ -957,6 +957,15 @@ with data from table ``residential_land_share_model_coefficients''. \coefficient
 creates and removes households to and from given household set according to
 the joint distribution of their characteristics. The total number of
 households is controlled by given annual control totals.
+
+\subsubsection{Initialization}
+%
+The class is initialized by passing the following arguments:
+\begin{description}
+\item[location_id_name] - name of a household attribute that determines locations of households.
+  Default value is 'grid_id'.
+\end{description}
+The argument is set as a class property.
 
 \subsubsection{The Run Method}
 %
@@ -1007,21 +1016,14 @@ the control total for this bin. If the difference $d$ is positive, new
 households are created, if it is negative, households are removed, if it is
 zero, nothing is done.
 
-When creating households, the method samples $d$ bins from the scaled
-characteristics bins that this marginal bin applies to. These represent
-categories to which the $d$ new households belong to. For each new household 
-an existing household from the same category is sampled. Values of all attributes 
+When creating households, the method samples $d$ existing households from all 
+households that belong to that marginal bin. For each sampled household, values of all attributes 
 (except of the id attribute and the location attribute)
-of this existing household are duplicated. If there is no existing household 
-in the category,
-the value of each characteristics is randomly sampled between the category
-minimum and maximum (as an integer value). There are two exceptions:
-characteristics ``age_of_head'' is never smaller than 15. Sampled values of
-the characteristics ``income'' are rounded to the nearest 10. New ids are assigned 
+are duplicated and saved as a new household. New ids are assigned 
 to all new households and their location is set to 'unplaced'.  
 Households are considered as unplaced if their
-attribute \attributesindex given by the class property \verb|location_id_name| (which is by
-default ``grid_id'') is smaller equal zero.
+attribute \attributesindex given by the class property \verb|location_id_name|
+is smaller equal zero.
 
 To remove households, first unplaced households from the bin are removed. If
 the number $n_u$ of those unplaced households is larger than $d$, only $d$
@@ -1032,7 +1034,7 @@ randomly sampled and deleted.
 {\it Output}:~\\[1mm]
 The method returns the total difference between the sizes of the household
 dataset \datasetindex after and before the model \modelsindex run. Thus, a positive value means that in
-total there were more households added than removed, a negative value means
+total, there were more households added than removed, a negative value means
 the opposite.
 
 %
@@ -1094,15 +1096,8 @@ Figure~\ref{fig:htm-example}, it would then determine the number of households
 that belong to each group in terms of their characteristics and compare it
 with the control total for that group. If for example in bin F (shaded area in
 the figure) there are 10 households to be created, the model \modelsindex would randomly
-sample (with replacement) 10 bins from the 3 bins within F (formed by groups
-on the axis ``age_of_head''), weighted by the number of existing households in
-those bins.  These are categories of the 10 new households. Then for each of
-the 10 households it would randomly sample the actual value of each
-characteristics.  For example, for the very front cube of F, it would sample
-income between 0 and $49,999$ (rounded to the nearest 10), number of persons
-between 4 and 8\footnote{When a maximum is set to $\infty$, we replace it by a
-  reasonable maximum for sampling, which is two times the category range.}
-and age of head between 15 and 29.  If the difference between control total
+sample (with replacement) 10 existing households from the 3 bins within F (formed by groups
+on the axis ``age_of_head'') and duplicate them.  If the difference between control total
 and the number of households in F would call for removing households, the
 model \modelsindex would randomly sample households belonging to F regardless to which bin
 within F they belong.
@@ -1110,7 +1105,6 @@ within F they belong.
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
 In a production run of UrbanSim, the model \modelsindex runs with the following arguments:
 \begin{description}
 \item[year] - The current year of the simulation.
