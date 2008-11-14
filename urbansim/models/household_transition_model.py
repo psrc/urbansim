@@ -197,9 +197,10 @@ class HouseholdTransitionModel(Model):
         # sample existing households to copy
         is_hh_in_group = l[self.household_categories]
         consider_hhs_idx = where(is_hh_in_group)[0]
-        sample_from_existing_hhs = sample_replace(consider_hhs_idx, diff)
-        self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
-        
+        if consider_hhs_idx.size > 0:
+            sample_from_existing_hhs = sample_replace(consider_hhs_idx, diff)
+            self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
+        # If there are no households in that category, no new households are created
             
     def _create_households_if_group_empty(self, category, n, group_element, all_characteristics, categories_index, indices_of_group_combinations):
         """This code is not currently used by the model.  It creates households for bins that are empty (i.e. they have no 
