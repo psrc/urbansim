@@ -25,19 +25,18 @@ class TestEstimation(opus_unittest.OpusIntegrationTestCase):
         # open the configuration for seattle_parcel.xml
         seattle_parcel_dir = __import__('seattle_parcel').__path__[0]
         xml_config = XMLConfiguration(os.path.join(seattle_parcel_dir, 'configs', 'seattle_parcel.xml'))
-        estimation_section = xml_config.get_section('model_manager/estimation')
-        estimation_config = estimation_section['estimation_config']
-        for model_name in estimation_config['models_to_estimate']:
-            if type(model_name) == dict:
-                for name, group_members in model_name.items():
-                    er = EstimationRunner(model=name, 
-                                          xml_configuration=xml_config, 
-                                          model_group = group_members['group_members'],
-                                          configuration=None)
-                    er.estimate()
-            else:
-                er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
-                er.estimate()
+
+        for model_name in ['real_estate_price_model', 
+                           'household_location_choice_model']:
+            er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
+            er.estimate()
+        
+        # test run with group members
+        er = EstimationRunner(model='employment_location_choice_model', 
+                                xml_configuration=xml_config, 
+                                model_group = 'home_based',
+                                configuration=None)
+        er.estimate()
        
 if __name__ == "__main__":
     opus_unittest.main()
