@@ -126,7 +126,7 @@
     </Tool_Library>
   </data_manager>
   <model_manager>
-    <model_system type="dictionary">
+    <model_system>
       <estimation_config type="dictionary">
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
           <building choices="Load|Skip" copyable="True" followers="my_dataset" type="dataset">Load</building>
