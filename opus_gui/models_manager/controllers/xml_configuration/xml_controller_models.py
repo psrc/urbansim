@@ -14,8 +14,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
+from PyQt4.QtCore import QString, Qt, SIGNAL
+from PyQt4.QtGui import QIcon, QMenu, QCursor
 
 from opus_gui.models_manager.run.run_estimation import OpusEstimation
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import \
@@ -77,6 +77,7 @@ class XmlController_Models(XmlController):
             self.create_from_template_actions.\
                 append(self.createAction(self.cloneIcon, l, callback))
 
+
     
     def setupModelViewDelegate(self):
         '''switch out the model'''
@@ -113,7 +114,7 @@ class XmlController_Models(XmlController):
 
 
     def runEstimationAction(self):
-        current_element = self.currentItem().internalPointer().node().toElement()
+        current_element = self.currentElement()
         model_name = str(current_element.tagName())
         self.toolboxbase.updateOpusXMLTree()
         newEstimation = OpusEstimation(self,
@@ -148,7 +149,8 @@ class XmlController_Models(XmlController):
         template_node = model_system_node.firstChildElement(template_expected_name)
         
         if template_node.isNull():
-            raise ValueError('Did not find a template for %s. Expected to find template named %s' \
+            raise ValueError('Did not find a template for %s. '
+                             'Expected to find template named %s' \
                         %(model_name, template_expected_name))
 
         # clone the dom node and fetch the information of where we are in the tree
@@ -177,11 +179,12 @@ class XmlController_Models(XmlController):
         
         # show the dialog
         dialog.show()
-        
-        
+
+
     def makeEditableAction(self):
         self.model.makeEditable(self.currentElement())
         self.model.emit(SIGNAL("layoutChanged()"))
+
 
     def processCustomMenu(self, position):
         # grab the item and make sure its valid
@@ -204,6 +207,8 @@ class XmlController_Models(XmlController):
             
         # create menu to populate
         menu = QMenu(self.mainwindow)
+        
+        
 
         # populate menu with model manager specifics
         if element_type == 'model_system':
