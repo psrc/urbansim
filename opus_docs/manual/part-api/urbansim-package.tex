@@ -974,8 +974,7 @@ The argument is set as a class property.
 \item[year] - an integer indicating the simulated year.
 \item[household_set] - an instance of \class{Dataset} \datasetindex that contains some
   specific attributes \attributesindex (see description of the algorithm bellow).
-\item[control_totals] - an instance of \class{ControlTotalDataset} initiated for
-  the dataset ``household''. It must have at least attributes \attributesindex
+\item[control_totals] - an instance of \class{HousehldControlTotalDataset}. It must have at least attributes \attributesindex
   ``total_number_of_households'' and ``year'' which give the control totals
   for specific years. Optionally, it can contain other attributes \attributesindex whose
   combinations determine groups for the control totals.  These are e.g.
@@ -1111,8 +1110,7 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
 \item[household_set] - A \class{HouseholdDataset} object created with data from
   table ``households'' (see Section~\ref{sec:household-tables}
   for the table structure).
-\item[control_totals] - A \class{ControlTotalDataset} object inititated with the
-  argument \verb|what=|``household'' that reads data from table
+\item[control_totals] - A \class{HouseholdControlTotalDataset} object  that reads data from table
   ``annual_household_control_totals'' (see Section~\ref{sec:household-tables}
   for the table structure).
 \item[characteristics] - A \class{HouseholdCharacteristicDataset} object created
@@ -1164,6 +1162,17 @@ The algorithm is a simplification of the Household Transition Model. \modelsinde
 no scaled characteristics and the only marginal characteristics are sector
 identifiers.
 
+\subsubsection{Initialization}
+%
+The class is initialized by passing the following arguments:
+\begin{description}
+\item[location_id_name] - name of a household attribute that determines locations of households.
+  Default value is 'grid_id'.
+\item[variable_package] - Opus package where various sector variables are located (see below). 
+  Default is 'urbansim'.
+\item[dataset_pool] - dataset pool passed to variable computation. Default is None. 
+\end{description}
+The arguments are set as class properties.
 \subsubsection{The Run Method}
 %
 {\it Input}:
@@ -1171,8 +1180,8 @@ identifiers.
 \item[year] - an integer indicating the simulated year.
 \item[job_set] - an instance of \class{Dataset} \datasetindex that contains some
   specific attributes \attributesindex (see description of the algorithm bellow).
-\item[control_totals] - an instance of \class{ControlTotalDataset} initiated for
-  the dataset ``employment''. It must have at least attributes \attributesindex ``sector_id'',
+\item[control_totals] - an instance of \class{EmploymentControlTotalDataset}. 
+  It must have at least attributes \attributesindex ``sector_id'',
   ``total_home_based_employment'', ``total_non_home_based_employment'' and
   ``year'' which specify the annual control totals per sector and employment
   type.  The unique identifier of this dataset \datasetindex should be ``year'' and
@@ -1182,9 +1191,9 @@ identifiers.
 building types of jobs. It must contain an attribute 'home_based' determining which 
 of the building types are home based (see ``job_building_types'' in~\ref{sec:employment-tables}).
  \item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+  needed for computing variables. Default is None. \variablesindex
 \item[resources] - additional \class{Resources} for controlling the
-  simulation run. The argument is not used in this version of the model. \modelsindex
+  simulation run. Default is None. The argument is not used in this version of the model. \modelsindex
 \end{description}
 
 
@@ -1194,8 +1203,8 @@ The \verb|job_set| is required to have a primary attribute \primaryattributesind
 The algorithm invokes a computation of variables \variablesindex
 ``is_in_employment_sector_$n$_home_based'' and
 ``is_in_employment_sector_$n$_non_home_based'' implemented in the package
-given by the class property \verb|variable_package| \variablesindex (by default
-``urbansim''). $n$ in the variable \variablesindex names is the sector id. If you use
+given by the class property \verb|variable_package|. 
+$n$ in the variable \variablesindex names is the sector id. If you use
 the default \package{urbansim} implementation of those variables, \variablesindex they require
 a primary attributes \primaryattributesindex ``home_based'' of the dataset \verb|job_building_types|
 and a primary attribute ``sector_id'' of \verb|job_set|. Each job is set to be home based if its building 
@@ -1224,8 +1233,7 @@ $d_h$ ($d_{nh}$) jobs are randomly sampled for deletion. If $n_{h_u}$
 ($n_{nh_u}$) is smaller than $d_h$ ($d_{nh}$), then $d_h-n_{h_u}$
 ($d_{nh}-n_{nh_u}$) jobs from the set of placed jobs of that sector are
 randomly sampled and deleted. Jobs are considered as unplaced if their
-attribute \attributesindex given by the class property \verb|location_id_name| (which is by
-default ``grid_id'') is smaller equal zero.
+attribute \attributesindex given by the class property \verb|location_id_name| is smaller equal zero.
 
 {\it Output}:~\\[1mm]
 The method returns the total difference between the sizes of the job
@@ -1236,15 +1244,13 @@ the opposite.
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
 In a production run of UrbanSim, the model \modelsindex runs with the following arguments:
 \begin{description}
 \item[year] - The current year of the simulation.
 \item[job_set] - A \class{JobDataset} object created with data from
   table ``jobs'' (see Section~\ref{sec:employment-tables}
   for the table structure).
-\item[control_totals] - A \class{ControlTotalDataset} object initiated with the
-  argument \verb|what=|``employment'' that reads data from table
+\item[control_totals] - A \class{EmploymentControlTotalDataset} object  that reads data from table
   ``annual_employment_control_totals'' (see
   Section~\ref{sec:employment-tables} for the table structure).
 \item[job_building_types] - A \class{JobBuildingTypeDataset} created with data from table 
