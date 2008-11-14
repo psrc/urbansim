@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import SIGNAL, QString
 from PyQt4.QtXml import QDomDocument, QDomNode
 
 from opus_core.tests import opus_unittest
@@ -229,9 +229,17 @@ class XmlManipulator(object):
         The method also accepts a single QDomElement as 
         [element_or_tuple_of_elements].
         '''
-        if not isinstance(element_or_tuple_of_elements, (list, tuple)):
-            element_or_tuple_of_elements = (element_or_tuple_of_elements,)
-        for element in element_or_tuple_of_elements:
+        element_tuple = element_or_tuple_of_elements
+        if not isinstance(element_tuple, (list, tuple)):
+            element_tuple = (element_tuple,)
+        if text is None:
+            text = ''
+        if not isinstance(text, (QString, str)):
+            print('Warning: Got non string argument to set_text(). \n'
+                  'Converted value is "%s"'%(str(text)))
+            text = str(text)
+            
+        for element in element_tuple:
             text_node = self._get_child_text_node(element)
             if not text_node: # insert new text as first child
                 text_node = self._dom_document.createTextNode(text)
@@ -394,6 +402,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
     
     def setUp(self):
         from opus_gui.abstract_manager.models.xml_item import XmlItem
+        from opus_core.configurations.xml_configuration import XMLVersion
         
         class Dummy: pass
         class DummyModel(object):
@@ -402,7 +411,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 self.domDocument = dd
                 tb = Dummy()
                 tb.opus_core_xml_configuration = Dummy()
-                tb.opus_core_xml_configuration.xml_version = 1.1
+                tb.opus_core_xml_configuration.xml_version = XMLVersion('4.1.0')
                 self.mainwindow.toolboxBase = tb
                 self._rootItem = XmlItem(dd, dd.documentElement(), None)
                 self._rootItem.initAsRootItem()
@@ -419,8 +428,8 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 from PyQt4.QtCore import QRegExp
                 return QRegExp("[a-zA-Z_:][-a-zA-Z0-9._:]*").exactMatch(tag)
             def makeEditable(self, node): pass
-                
-         
+
+
         ctrl = Dummy()
         ctrl.view = None
         doc = QDomDocument()
@@ -438,7 +447,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         
         
     def test_xml_version(self):
-        self.assertAlmostEqual(self.xml.xml_version, 1.1)
+        self.assertEqual(self.xml.xml_version, '4.1.0')
         
     
     def test_get(self):
@@ -500,6 +509,8 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.assertEqual(self.xml.get_text(e1), 'quick and easy')
         self.assertEqual(self.xml.get_text(e2), 'quick and easy')
         self.assertEqual(self.xml.get_text(e3), 'quick and easy')
+        # set with non text argument
+        self.xml.set_text(5, e1)
         
         self._restore_xml_tree()
         
