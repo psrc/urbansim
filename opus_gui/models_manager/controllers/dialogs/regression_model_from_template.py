@@ -43,10 +43,7 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
         model_variables = self.xml_helper.get_available_model_variables(attributes = ['dataset'])
         self.model_variables = {}
         
-        #TODO: this does not return any model_vars for any data sets
-        # except gridcell?
-        
-        # self.cboDependentVariable.clear()
+        self.cboDependentVariable.clear()
         for indicator in model_variables:            
             name = indicator['name']
             dataset = indicator['dataset']
@@ -56,9 +53,10 @@ class RegressionModelFromTemplateDialog(ModelFromTemplateDialogBase):
                 self.cboDependentVariable.addItem(QString(name))                
 
     def _setup_co_dataset_name(self):
-        '''collect avaiable datasets and populate the combobox'''
+        '''collect available datasets and populate the combobox'''
         available_datasets = self.xml_helper.get_available_datasets()
 
+        self.cboDataset.clear()
         for dataset in available_datasets:
             self.cboDataset.addItem(QString(dataset))
 
