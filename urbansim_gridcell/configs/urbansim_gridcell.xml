@@ -31,7 +31,7 @@
   </general>
   <model_manager>
 	                        
-  <default_model_configurations type="dictionary">
+  <default_models type="dictionary">
 	  <development_project_types parser_action="execute" type="class" cloneable="True">
 	    <Class_name hidden="True" type="string">DevelopmentProjectTypesConfigurationCreator</Class_name>
 	    <Class_path hidden="True" type="string">urbansim.configurations.development_project_types_configuration_creator</Class_path>
@@ -70,7 +70,7 @@
 	      <project_type type="string">residential</project_type>
 	      <coefficients_table type="string">residential_development_location_choice_model_coefficients</coefficients_table>
 	      <specification_table type="string">residential_development_location_choice_model_specification</specification_table>
-	      <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+	      <default_args parser_action="include" type="path">model_manager/default_models/development_project_location_choice_defaults</default_args>
 	    </controller>
 	  </residential_development_project_location_choice_model>
 	  <commercial_development_project_location_choice_model type="dictionary">
@@ -80,7 +80,7 @@
 	      <project_type type="string">commercial</project_type>
 	      <coefficients_table type="string">commercial_development_location_choice_model_coefficients</coefficients_table>
 	      <specification_table type="string">commercial_development_location_choice_model_specification</specification_table>
-	      <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+	      <default_args parser_action="include" type="path">model_manager/default_models/development_project_location_choice_defaults</default_args>
 	    </controller>
 	  </commercial_development_project_location_choice_model>
 	  <industrial_development_project_location_choice_model type="dictionary">
@@ -90,7 +90,7 @@
 	      <project_type type="string">industrial</project_type>
 	      <coefficients_table type="string">industrial_development_location_choice_model_coefficients</coefficients_table>
 	      <specification_table type="string">industrial_development_location_choice_model_specification</specification_table>
-	      <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+	      <default_args parser_action="include" type="path">model_manager/default_models/development_project_location_choice_defaults</default_args>
 	    </controller>
 	  </industrial_development_project_location_choice_model>
 	  <development_project_location_choice_defaults parser_action="only_for_includes" type="dictionary">
@@ -361,7 +361,7 @@
 	      <input_index type="string">brm_index</input_index>
 	    </controller>
 	  </building_location_choice_model>
-	</default_model_configurations>       
+	</default_models>       
                       
   </model_manager>
   <scenario_manager>
@@ -478,7 +478,7 @@
         </others>
       </model_system>
       <model_configurations config_name="models_configuration" type="dictionary">
-        <configurations parser_action="include" type="path">model_manager/default_model_configurations</configurations>
+        <configurations parser_action="include" type="path">model_manager/default_models</configurations>
       </model_configurations>
       <advanced type="category">
         <datasets_to_cache_after_each_model type="selectable_list">
