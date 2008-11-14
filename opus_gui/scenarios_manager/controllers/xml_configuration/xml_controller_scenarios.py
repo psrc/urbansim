@@ -248,6 +248,7 @@ class XmlController_Scenarios(XmlController):
         from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 
         model_elements = []
+        available_model_names = []
         
         if self.xml.xml_version >= '4.2.0':
             elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
@@ -257,7 +258,7 @@ class XmlController_Scenarios(XmlController):
             # we can't fetch by type in old xml versions, so grab everything
             # that is under model_manager/model_system and filter out hidden
             # elements (such as templates). Note that this doesn't guarantee
-            # that we only get models, but it's the best possible guess
+            # that we only get models, but it's probably our best guess
             root = self.model.domDocument.documentElement()
             model_system = self.xml_helper.get_sub_element_by_path(root, 'model_manager/model_system')
             model_nodes = model_system.childNodes()
@@ -266,12 +267,20 @@ class XmlController_Scenarios(XmlController):
                 if not model_node.isNull() and not \
                     model_node.attribute('hidden').toLower() == QString('true'):
                     model_elements.append(model_node)
+                    
+
+
+        #TODO: remove this part when default model configurations is gone from
+        # xml files
+        def_models = self.xml.get('model_manager/default_models')
+        if def_models:
+            def_model_names = [e.tagName() for e in self.xml.children(def_models)]
+            map(available_model_names.append, def_model_names)
         
-        available_models = []
-        for model in model_elements:
-            model_name = model.nodeName()
-            available_models.append(model_name)
-        return available_models
+        model_names = [e.tagName() for e in model_elements]
+        map(available_model_names.append, model_names)
+
+        return available_model_names
 
     def addModel(self, scenario_index, model_name):
         spawn = self.model.domDocument.createElement(model_name)
