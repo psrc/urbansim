@@ -14,8 +14,9 @@
 
 import copy, os, pprint
 from numpy import array
-from xml.etree.cElementTree import ElementTree, tostring
+from xml.etree.cElementTree import ElementTree, tostring, SubElement
 from opus_core.configuration import Configuration
+
 
 class XMLConfiguration(object):
     """
@@ -47,7 +48,7 @@ class XMLConfiguration(object):
         self.parent_map = None
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
-        self.xml_version = 1.0
+        self.xml_version = XMLVersion()
         self.initialize_from_xml_file(is_parent)
         
     def initialize_from_xml_file(self, is_parent=False):
@@ -142,7 +143,7 @@ class XMLConfiguration(object):
         If the model_name argument is given, also parse overriding 
         configurations for that specific model."""
         # grab general configuration for estimations
-        if self.xml_version > 1.0:
+        if self.xml_version >= '4.2.0':
             config_section = self.get_section('model_manager/model_system')
         else:
             config_section = self.get_section('model_manager/estimation')
@@ -158,7 +159,7 @@ class XMLConfiguration(object):
         # get the configuration overrides for the model
         changes_dict = {}
         
-        if self.xml_version > 1.0:
+        if self.xml_version >= '4.2.0':
             # look for a models to run list in prepare for estimate            
             models_to_run = []
             models_to_run_node = \
@@ -195,7 +196,7 @@ class XMLConfiguration(object):
         all_vars.sort()
 
         # look for list of submodels
-        if self.xml_version > 1.0:
+        if self.xml_version >= '4.2.0':
             submodel_list = self.get_section('model_manager/model_system/' + 
                                              model_name + '/specification/')
         else:
@@ -264,10 +265,10 @@ class XMLConfiguration(object):
         # set the parser to this files xml version
         version_node = self.tree.getroot().find('xml_version')
         if version_node is not None:
-            self.xml_version = self._convert_node_to_data(version_node)
+            self.xml_version = XMLVersion(version_node.text)
         else:
-            # files w/o specified version gets treated as 1.0
-            self.xml_version = 1.0 
+            # files w/o specified version gets treated as 0.0.0
+            self.xml_version = XMLVersion()
 
         for p in self._get_parent_trees():
             self._merge_parent_elements(p, '')
@@ -481,11 +482,10 @@ class XMLConfiguration(object):
             return self._convert_dictionary_to_data(node)
         elif type_name in ['model_template', 'estimation_template']:
             return None
-        # type = 'model' was changed to 'model_choice' from xml version 1.0 
-        # and up.
+        # type = 'model' was changed to 'model_choice' from xml version 1.1 
         elif type_name == 'model':
-            if self.xml_version > 1:
-                return self._convert_model_to_data(node)
+            if self.xml_version >= '4.2.0':
+                return self._convert_model_to_dict(node)
             else:
                 return self._convert_custom_type_to_data(node, "Skip")
         elif type_name=='category_with_special_keys':
@@ -577,29 +577,30 @@ class XMLConfiguration(object):
             self._add_to_dict(child, result_dict)
         return result_dict
     
-    def _convert_model_to_data(self, node):
-        '''translate from new structure to old and convert to dict'''
-        # everything that was under the subnodes of a model was merged into a 
-        # subnode (A) called <structure>. 
-        # The dict wants to have this information divided these items into three 
-        # categories; <name>, <arguments>, and <output> located directly under (A)
-        # everything that is not <name> or <output> should be under <arguments>
+    def _convert_model_to_dict(self, node):
+        '''translate from new structure to old and convert to dict
+        The conversion is so far to move everything from /structure up one level
+        and to append a node named 'arguments' to some of the subnodes of 
+        /structure'''
         structure_node = node.find('structure')
-        if structure_node == None:
-            return {}
-        model_dict = {} # final model dict
+        if structure_node == None: # invalid format of model node
+            raise StandardError('Invalid model structure: '
+                  'Model %s is missing subnode "structure"' %node.tag)
+        model_dict = {}
         for subnode in structure_node:
-            # import is special, treat as a dictionary
-            if subnode.tag == 'import':
-                model_dict['import'] = self._convert_dictionary_to_data(subnode)
-            else:
-                subnode_dict = {'arguments': {}}
-                for category_item in subnode:
-                    if category_item.tag in ['name', 'output']:
-                        self._add_to_dict(category_item, subnode_dict)
-                    else: # put under 'arguments'
-                        self._add_to_dict(category_item, subnode_dict['arguments'])
-                model_dict[subnode.tag] = subnode_dict
+            # append 'arguments' to some nodes
+            if subnode.tag in ['init', 'run', 'prepare_for_run', 
+                               'estimate', 'prepare_for_estimate']:
+                subnode_struct = {'arguments':{}}
+                # everything but 'name' and 'output' should be under arguments
+                for arg_node in subnode:
+                    if not arg_node.tag in ['name', 'output']:
+                        self._add_to_dict(arg_node, subnode_struct['arguments'])
+                    else:
+                        self._add_to_dict(arg_node, subnode_struct)
+                model_dict[subnode.tag] = subnode_struct
+            else: # other nodes should stay in node root
+                model_dict[subnode.tag] = self._convert_node_to_data(subnode)
         return model_dict
         
     def _convert_dictionary_with_special_keys_to_data(self, node):
@@ -1174,7 +1175,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config5 = XMLConfiguration(f5)
         self.assertRaises(ValueError, config5.get_run_configuration, 'test_scenario')
         
-    def test_convert_model_to_data(self):
+    def test_convert_model_to_dict(self):
         # new structure with type='model'
         f_new = os.path.join(self.test_configs, 'new_model_struct.xml')
         # old structure with type='dictionary'
@@ -1182,7 +1183,60 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # should translate to exactly the same dict
         new_conf = XMLConfiguration(f_new).get_section('model_manager/model_system')['regmodel']
         old_conf = XMLConfiguration(f_old).get_section('model_manager/model_system')['regmodel']
-        self.assertEquals(old_conf, new_conf)
+        self.assertDictsEqual(old_conf, new_conf)
                 
+
+class XMLVersion(object):
+    '''Small help class to enable easy version comparision between versions'''
+    major = stable = minor = 0
+    
+    def __init__(self, version_string = '0.0.0'):
+        version_parts = version_string.split('.')
+        if not len(version_parts) == 3:
+            print('Warning: Version strings should be passed as three numbers '
+                  'separated by dots. Like this: "4.2.0"')
+            return
+        try:
+            self.major = int(version_parts[0])
+            self.stable = int(version_parts[1])
+            self.minor = int(version_parts[2])
+        except ValueError:
+            print('Invalid number found in version string "%s"' %version_string)
+            return
+        
+    def __str__(self):
+        return ('%d.%d.%d' %(self.major, self.stable, self.minor))
+    
+    def __cmp__(self, other):
+        if isinstance(other, str):
+            other = XMLVersion(other)
+        if self.major > other.major: return 1
+        if self.major < other.major: return -1
+        if self.stable > other.stable: return 1
+        if self.stable < other.stable: return -1
+        if self.minor > other.minor: return 1
+        if self.minor < other.minor: return -1
+        return 0
+
+class XMLVersionTests(opus_unittest.OpusTestCase):
+    
+    def test_version_compare(self):
+        v1 = XMLVersion('4.2.0')
+        v2 = XMLVersion('4.2.2')
+        v3 = XMLVersion('4.2.0')
+        self.assertTrue(v1 < v2)
+        self.assertFalse(v1 > v2)
+        self.assertTrue(v1 == v3)
+        self.assertTrue(v2 > '4.2.1')
+        
+    def test_version_string(self):
+        v1 = XMLVersion('4.2')
+        v2 = XMLVersion('jibberish')
+        v3 = XMLVersion('4.3.2.3.3.2.1.3')
+        self.assertTrue(v1 == '0.0.0')
+        self.assertTrue(v2 == '0.0.0')
+        self.assertTrue(v3 == '0.0.0')
+
+
 if __name__ == '__main__':
     opus_unittest.main()
