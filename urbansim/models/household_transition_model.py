@@ -191,38 +191,20 @@ class HouseholdTransitionModel(Model):
                 self.remove_households = concatenate((self.remove_households, non_placed, sample_noreplace(sample_array,
                                                                                    max(0,abs(diff)-size_non_placed))))
             if diff > 0: # households to be created
-                self._create_households(diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations)
+                self._create_households(diff, l)
             
-    def _create_households(self, diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations):
-        # number of existing households in each category
-        distribution = number_of_households_in_categories[indices_of_group_combinations] 
-        if distribution.size == 0:
-            return
-        if distribution.sum() <= 0: # if there are no households of these categories, the distribution is uniform
-            distr = ones((distribution.size,))
-        else:
-            distr = distribution
-        # sample categories
-        sample_array = probsample_replace(arange(distr.size), diff,
-                                          prob_array=distr/float(distr.sum())) # indices of chosen bins
-        number_of_new_households_in_categories = array(ndimage_sum(ones((diff,)), labels=sample_array+1,
-                                                                index = arange(self.number_of_combinations)+1)).astype(int32)
-        non_zero_categories = where(number_of_new_households_in_categories > 0)[0]
+    def _create_households(self, diff, l):
         # sample existing households to copy
         is_hh_in_group = l[self.household_categories]
-        for icat in range(non_zero_categories.size):
-            if distribution[non_zero_categories[icat]] > 0:
-                consider_hhs_idx = where(logical_and(is_hh_in_group, self.household_categories == indices_of_group_combinations[non_zero_categories[icat]]))[0]
-                if consider_hhs_idx.size > 0:
-                    sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[non_zero_categories[icat]])
-                    self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
-                else:
-                    self._create_households_if_group_empty(non_zero_categories[icat], number_of_new_households_in_categories[non_zero_categories[icat]], group_element, all_characteristics, categories_index, indices_of_group_combinations)
-            else:
-                self._create_households_if_group_empty(non_zero_categories[icat], number_of_new_households_in_categories[non_zero_categories[icat]], group_element, all_characteristics, categories_index, indices_of_group_combinations)
+        consider_hhs_idx = where(is_hh_in_group)[0]
+        sample_from_existing_hhs = sample_replace(consider_hhs_idx, diff)
+        self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
+        
             
     def _create_households_if_group_empty(self, category, n, group_element, all_characteristics, categories_index, indices_of_group_combinations):
-        """This code is only used if there are no households in one category."""
+        """This code is not currently used by the model.  It creates households for bins that are empty (i.e. they have no 
+            existing households).
+        """
         # assign location id (unplaced) and household_id
         self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
                               -1 * ones((n,), dtype=self.new_households[self.location_id_name].dtype.type)))
