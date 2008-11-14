@@ -188,13 +188,15 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         cache_directory = self.model.config['cache_directory']
         indicator_type = str(self.diagnostic_indicator_type.currentText())
         
+        params = {'indicators':[indicator_name]}
         if indicator_type == 'table':
             indicator_type = 'tab'
+            params['output_type'] = 'tab'
         else:
             indicator_type = 'matplotlib_map'
 
         visualizations = [
-            (indicator_type, str(dataset_name), {'indicators':[indicator_name]})
+            (indicator_type, str(dataset_name), params)
         ]
 
         self.batch_processor = BatchProcessor(

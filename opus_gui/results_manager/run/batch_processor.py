@@ -61,7 +61,8 @@ class BatchProcessor(object):
         if visualization_type == 'tab':
             output_type = str(params['output_type'])
             args['output_type'] = output_type
-            args['name'] = params['name']
+            if 'name' in params:
+                args['name'] = params['name']
             if output_type == 'fixed_field':
                 list_str = str(params['fixed_field_specification'])[1:-1]
                 spec = [i.strip()[1:-1] for i in list_str.split(',')]
