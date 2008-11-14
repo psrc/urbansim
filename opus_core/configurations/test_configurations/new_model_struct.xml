@@ -1,5 +1,5 @@
 <opus_project>
-  <xml_version parser_action="skip" type="float"> 1.1 </xml_version>
+  <xml_version parser_action="skip" type="float"> 4.2.0 </xml_version>
   <general>
     <project_name type="string">test_project</project_name>
   </general>
