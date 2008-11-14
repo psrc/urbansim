@@ -100,26 +100,18 @@ class HouseholdTransitionModel(Model):
         self.household_set.load_dataset_if_not_loaded(attributes = all_characteristics) # prevents from lazy loading to save runtime
         idx_shape = []
         number_of_combinations=1
-        marginal_char_idx = []
-        nonmarginal_char_idx = []
-        i=0
-        for attr in all_characteristics:
+        num_attributes=len(all_characteristics)
+        for iattr in range(num_attributes):
+            attr = all_characteristics[iattr]
             max_bins = self.arrays_from_categories[attr].max()+1
             idx_shape.append(max_bins)
             number_of_combinations=number_of_combinations*max_bins
             if attr not in self.new_households.keys():
                 self.new_households[attr] = array([], dtype=self.household_set.get_data_type(attr, float32))
-            if attr in self.marginal_characteristic_names:
-                marginal_char_idx.append(i)
-            else:
-                nonmarginal_char_idx.append(i)
-            i+=1
 
         self.number_of_combinations = int(number_of_combinations)
-        self.marginal_char_idx = array(marginal_char_idx)
-        self.nonmarginal_char_idx = array(nonmarginal_char_idx)
         idx_tmp = indices(tuple(idx_shape))
-        num_attributes=len(all_characteristics)
+        
         categories_index = zeros((self.number_of_combinations,num_attributes))
 
         for i in range(num_attributes): #create indices of all combinations
@@ -142,25 +134,30 @@ class HouseholdTransitionModel(Model):
                                                                                array(all_characteristics)[where_error])
                 raise KeyError, msg
 
-        # the next array must be a copy of the household values, otherwise, it changes the original values
-        values_array = reshape(array(self.household_set.get_attribute(all_characteristics[0])), (self.household_set.size(),1))
-        if num_attributes > 1:
-            for attr in all_characteristics[1:]:
-                values_array = concatenate((values_array, reshape(array(self.household_set.get_attribute(attr)),
-                                                                  (self.household_set.size(),1))), axis=1)
-        for i in range(values_array.shape[1]):
-            if values_array[:,i].max() > 10000:
-                values_array[:,i] = values_array[:,i]/10
-            values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
+        if num_attributes > 0:
+            # the next array must be a copy of the household values, otherwise, it changes the original values
+            values_array = reshape(array(self.household_set.get_attribute(all_characteristics[0])), (self.household_set.size(),1))
+            if num_attributes > 1:
+                for attr in all_characteristics[1:]:
+                    values_array = concatenate((values_array, reshape(array(self.household_set.get_attribute(attr)),
+                                                                      (self.household_set.size(),1))), axis=1)
+            for i in range(values_array.shape[1]):
+                if values_array[:,i].max() > 10000:
+                    values_array[:,i] = values_array[:,i]/10
+                values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
+    
+            # determine for each household to what category it belongs to
+            self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
+    
+            number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
+                                                                    labels=self.household_categories+1,
+                                                                    index = arange(self.number_of_combinations)+1))
+        else:
+            # no marginal characteristics; consider just one group
+            self.household_categories = zeros(self.household_set.size(), dtype='int32')
+            number_of_households_in_categories = array([self.household_set.size()])
 
-        # determine for each household to what category it belongs to (includes marginal and scaled characteristics)
-        self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
-
-        number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
-                                                                labels=self.household_categories+1,
-                                                                index = arange(self.number_of_combinations)+1))
-
-        g=arange(self.marginal_char_idx.size)
+        g=arange(num_attributes)
 
         #iterate over marginal characteristics
         for group in groups:
@@ -171,15 +168,14 @@ class HouseholdTransitionModel(Model):
             group_element = self.control_totals_for_this_year.get_data_element_by_id(id)
             total = group_element.total_number_of_households
             for i in range(g.size):
-                g[i] = eval("group_element."+self.arrays_from_categories.keys()[self.marginal_char_idx[i]])
+                g[i] = eval("group_element."+self.arrays_from_categories.keys()[i])
             if g.size <= 0:
                 l = ones((number_of_households_in_categories.size,))
             else:
-                l = categories_index[:,self.marginal_char_idx[0]] == g[0]
-                for i in range(1,self.marginal_char_idx.size):
-                    l = logical_and(l, categories_index[:,self.marginal_char_idx[i]] == g[i])
+                l = categories_index[:,0] == g[0]
+                for i in range(1,num_attributes):
+                    l = logical_and(l, categories_index[:,i] == g[i])
             # l has 1's for combinations of this group
-            indices_of_group_combinations = where(l)[0]
             number_in_group = array(ndimage_sum(number_of_households_in_categories, labels=l, index = 1))
             diff = int(total - number_in_group)
             if diff < 0: # households to be removed
@@ -202,44 +198,6 @@ class HouseholdTransitionModel(Model):
             self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
         # If there are no households in that category, no new households are created
             
-    def _create_households_if_group_empty(self, category, n, group_element, all_characteristics, categories_index, indices_of_group_combinations):
-        """This code is not currently used by the model.  It creates households for bins that are empty (i.e. they have no 
-            existing households).
-        """
-        # assign location id (unplaced) and household_id
-        self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
-                              -1 * ones((n,), dtype=self.new_households[self.location_id_name].dtype.type)))
-        # assign marginal characteristics
-        for attr in self.marginal_characteristic_names:
-            value = eval("group_element."+attr)
-            if attr in self.scaled_characteristic_names: # sample from min-max range
-                # get minimum and maximum for this attribute category
-                min_max = self.arrays_from_categories_mapping[attr][value]
-                self._sample_from_min_max_range(n, attr, min_max[0], min_max[1])
-            else: # attribute is not in the characteristics dataset
-                self.new_households[attr]=concatenate((self.new_households[attr],
-                                       (resize(array([value], dtype=self.new_households[attr].dtype), n))))
-
-        # iterate over non-marginal characteristics
-        for i in self.nonmarginal_char_idx:
-            attr = all_characteristics[i]
-            # get minima and maxima for this attribute
-            min_max = self.arrays_from_categories_mapping[attr][categories_index[indices_of_group_combinations[category],i]]
-            self._sample_from_min_max_range(n, attr, min_max[0], min_max[1])
-
-    def _sample_from_min_max_range(self, n, attribute, min_value, max_value):
-        if min_value == max_value: 
-            self.new_households[attribute]=concatenate((self.new_households[attribute],
-                   (resize(array([min_value], dtype=self.new_households[attribute].dtype), n))))
-        else: #sample
-            if (attribute == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
-                rn = sample_replace(arange(max(15,int(min_value)),min(int(max_value),100)+1), n)
-            elif attribute == "income": # min and max are 10th of the real values; TODO: get these from config
-                rn = sample_replace(arange(int(10*min_value),int(10*max_value)+1,10), n)
-            else:
-                rn = sample_replace(arange(int(min_value),int(max_value)+1), n)
-            self.new_households[attribute]=concatenate((self.new_households[attribute],
-                                       rn.astype(self.new_households[attribute].dtype)))
 
     def create_arrays_from_categories(self, household_set):
         # cleanup in case there was a previous run
@@ -253,40 +211,6 @@ class HouseholdTransitionModel(Model):
 
         mins = self.characteristics.get_attribute("min").astype(int32)
         maxs = self.characteristics.get_attribute("max").astype(int32)
-        for attr in self.scaled_characteristic_names:
-            idx = where(self.all_categories == attr)[0]
-            maximal_of_min = mins[idx].max()
-            this_min = mins[idx].min()
-            max_from_data = maximal_of_min
-            if household_set.size() > 0:
-                max_from_data = household_set.get_attribute(attr).max()
-                if max_from_data > maximal_of_min:
-                    # -1 in maximum is replaced by maximum from the data
-                    maxs[idx[where(maxs[idx] < 0)]] = max_from_data
-            if max_from_data <= maximal_of_min:
-                # there is no maximum in the data for the largest category,
-                # therefore determine the absolute maximum from the average bin range
-                if idx.size == 1:
-                    category_range = maximal_of_min - this_min
-                else:
-                    category_range = (maximal_of_min - this_min)/(idx.size-1)
-                maxs[idx[where(maxs[idx] < 0)]] = maximal_of_min + 2*category_range
-
-            if maximal_of_min > 10000: # applies for income (internally it is divided by 10, modulo is added to the mins)
-                maxs[idx] = maxs[idx]/10
-                modulo = mins[idx] % 10
-                mins[idx] = where(modulo > 0, mins[idx]/10 + 1, mins[idx]/10)
-
-            max_of_attr = maxs[idx].max()
-            self.arrays_from_categories[attr] = resize(array([-1], dtype='int32'), int(max_of_attr)+1)
-            self.arrays_from_categories_mapping[attr] = zeros((idx.size,2))
-            sortidx = mins[idx].argsort() # the categories must be sorted
-            j=0
-            for i in idx[sortidx]:
-                self.arrays_from_categories[attr][mins[i]:(maxs[i]+1)] = j
-                self.arrays_from_categories_mapping[attr][j,:] = array([mins[i], maxs[i]])
-                j+=1
-
         for attr in self.marginal_characteristic_names:
             if attr not in self.scaled_characteristic_names:
                 bins = self.control_totals_for_this_year.get_attribute(attr)
@@ -296,6 +220,41 @@ class HouseholdTransitionModel(Model):
                 max_of_attr = unique_bins.max()
                 self.arrays_from_categories[attr] = zeros((max_of_attr+1,))
                 self.arrays_from_categories[attr][unique_bins] = unique_bins
+            else:
+                idx = where(self.all_categories == attr)[0]
+                maximal_of_min = mins[idx].max()
+                this_min = mins[idx].min()
+                max_from_data = maximal_of_min
+                if household_set.size() > 0:
+                    max_from_data = household_set.get_attribute(attr).max()
+                    if max_from_data > maximal_of_min:
+                        # -1 in maximum is replaced by maximum from the data
+                        maxs[idx[where(maxs[idx] < 0)]] = max_from_data
+                if max_from_data <= maximal_of_min:
+                    # there is no maximum in the data for the largest category,
+                    # therefore determine the absolute maximum from the average bin range
+                    if idx.size == 1:
+                        category_range = maximal_of_min - this_min
+                    else:
+                        category_range = (maximal_of_min - this_min)/(idx.size-1)
+                    maxs[idx[where(maxs[idx] < 0)]] = maximal_of_min + 2*category_range
+    
+                if maximal_of_min > 10000: # applies for income (internally it is divided by 10, modulo is added to the mins)
+                    maxs[idx] = maxs[idx]/10
+                    modulo = mins[idx] % 10
+                    mins[idx] = where(modulo > 0, mins[idx]/10 + 1, mins[idx]/10)
+    
+                max_of_attr = maxs[idx].max()
+                self.arrays_from_categories[attr] = resize(array([-1], dtype='int32'), int(max_of_attr)+1)
+                self.arrays_from_categories_mapping[attr] = zeros((idx.size,2))
+                sortidx = mins[idx].argsort() # the categories must be sorted
+                j=0
+                for i in idx[sortidx]:
+                    self.arrays_from_categories[attr][mins[i]:(maxs[i]+1)] = j
+                    self.arrays_from_categories_mapping[attr][j,:] = array([mins[i], maxs[i]])
+                    j+=1
+
+
 
     def prepare_for_run(self, storage, **kwargs):
         from urbansim.datasets.control_total_dataset import ControlTotalDataset
