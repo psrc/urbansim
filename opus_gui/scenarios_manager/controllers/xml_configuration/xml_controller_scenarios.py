@@ -186,8 +186,7 @@ class XmlController_Scenarios(XmlController):
                 return
 
             # version specific settings
-            xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
-            model_choice_name = "model_choice" if xml_version > 1.0 else "model" 
+            model_choice_name = "model" if self.xml.xml_version < '4.2.0' else "model_choice"
 
             # create and populate menu based on the node element
             menu = QMenu(self.mainwindow)
@@ -247,11 +246,10 @@ class XmlController_Scenarios(XmlController):
     def getAvailableModels(self):
         ''' return a list of names for available models in the project'''
         from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
-        
-        xml_version = xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
+
         model_elements = []
         
-        if xml_version > 1.0:
+        if self.xml.xml_version >= '4.2.0':
             elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
                                                   attribute='type', value='model')
             model_elements = [e[0] for e in elements]
@@ -276,12 +274,11 @@ class XmlController_Scenarios(XmlController):
         return available_models
 
     def addModel(self, scenario_index, model_name):
-        xml_version = xml_version = self.model.mainwindow.toolboxBase.opus_core_xml_configuration.xml_version
         spawn = self.model.domDocument.createElement(model_name)
         spawn_text = self.model.domDocument.createTextNode('Run')
         spawn.appendChild(spawn_text)
         spawn.setAttribute('choices', 'Run|Skip')
-        type_name = 'model_choice' if xml_version > 1.0 else 'model'
+        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0' else 'model'
         spawn.setAttribute('type', type_name)
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
