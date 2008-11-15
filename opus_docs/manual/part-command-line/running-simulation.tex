@@ -266,7 +266,7 @@ If a database table is so large that Python \pythonindex runs out of memory when
 to cache, you can reduce memory usage (but increase the time it takes to cache
 the data) by increasing the number of ``chunks'' in which the dataset's \datasetindex
 attributes are read from the table. \index{Memory management!When caching data
-from input store}\index{Memory management!tables_to_cache_nchunks@\verb|tables_to_cache_nchunks|} By
+from input store}\index{Memory management!tables_to_cache_nchunks@\texttt{tables_to_cache_nchunks}} By
 default, all attributes of a table are read in a single chunk. Setting the
 \verb|'tables_to_cache_nchunks'| configuration  will tell the caching code
 to use that many chunks.  For instance, if a dataset has 11 attributes, setting
@@ -372,11 +372,11 @@ values are defaults set by our system):
 
 The entry \verb|'datasets_to_cache_after_each_model'| specifies names of datasets \datasetindex that
 are flushed from memory to simulation cache \simulationcacheindex at the end of each model
-run. \index{Memory management!Flushing attributes}\index{Memory management!datasets_to_cache_after_each_model@\verb|datasets_to_cache_after_each_model|} This reduces the memory
+run. \index{Memory management!Flushing attributes}\index{Memory management!datasets_to_cache_after_each_model@\texttt{datasets_to_cache_after_each_model}} This reduces the memory
 usage, but can increase the run time. We recommend to put datasets in this list
 that contain huge amount of data, e.g.  ['gridcell', 'household', 'job'].
 
-\verb|'flush_variables'| can further decrease the memory usage. \index{Memory management!flush_variables@\verb|flush_variables|} If it is True, after each variable
+\verb|'flush_variables'| can further decrease the memory usage. \index{Memory management!flush_variables@\texttt{flush_variables}} If it is True, after each variable
 computation all dependent variables are flushed to simulation
 cache \simulationcacheindex, regardless to what dataset \datasetindex the variables belong to.
 Nevertheless, it increases the run-time considerably.
