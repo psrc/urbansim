@@ -989,8 +989,8 @@ The argument is set as a class property.
   \class{HouseholdCharacteristicDataset} that specifies grouping of
   characteristics.  It must have three attributes: \attributesindex ``characteristic'', ``min''
   and ``max''.  Values of the ``characteristic'' attribute \attributesindex should match the
-  names of the existing optional attributes of \verb|control_totals|, but they
-  can be also other names. ``min'' and ``max'' determine group boundaries for
+  names of the existing optional attributes of \verb|control_totals|. 
+  ``min'' and ``max'' determine group boundaries for
   each characteristics (for details see Section
   ``household_characteristics_for_ht'' in~\ref{sec:household-tables-char-for-ht}). If
   there is a characteristics missing that is contained in
@@ -1002,9 +1002,8 @@ The argument is set as a class property.
 
 {\it Algorithm}:~\\[1mm]
 The optional attributes in \verb|control_totals| are called 'marginal'
-characteristics, the remaining characteristics from the dataset \datasetindex
-\verb|characteristics| are called 'scaled' characteristics. The given
-\verb|household_set| must contain the union of the marginal and scaled
+characteristics. The given
+\verb|household_set| must contain the marginal
 characteristics as its primary attributes. \primaryattributesindex
 
 The combination of all marginal characteristics and the grouping within each
@@ -1022,7 +1021,9 @@ are duplicated and saved as a new household. New ids are assigned
 to all new households and their location is set to 'unplaced'.  
 Households are considered as unplaced if their
 attribute \attributesindex given by the class property \verb|location_id_name|
-is smaller equal zero.
+is smaller equal zero. If there are no existing households a the marginal bin,
+no households for that bin are created. Note that this can lead to a mismatch 
+between the control totals and the number of households. 
 
 To remove households, first unplaced households from the bin are removed. If
 the number $n_u$ of those unplaced households is larger than $d$, only $d$
@@ -1041,21 +1042,10 @@ the opposite.
 %
 Consider the following example. We have two marginal characteristics defined
 in the control totals - persons and income. The dataset \datasetindex \verb|characteristics|
-defines three categories - persons (3 groups), income (2 groups) and age of
-head (3 groups). A combination of those groups divides the space of households
-characteristics into 18 groups in total, as shown in
-Figure~\ref{fig:htm-example}.
+defines two categories - persons (3 groups) and income (2 groups). 
+A combination of those groups divides the space of households
+characteristics into 6 groups in total.
 
-\begin{figure}
-\begin{center}
-%begin{latexonly}
-\includegraphics[scale=0.5, angle=-90]{images/htmexample.pdf}
-%end{latexonly}
-\caption{\label{fig:htm-example}\small Example of dividing household
-  characteristics into bins.}
-\htmlonly{\includegraphics[scale=0.5, angle=-90]{images/htmexample.jpg}}
-\end{center}
-\end{figure}
 
 The table for the control totals dataset can be
 defined as follows:
@@ -1080,26 +1070,21 @@ persons               2          4
 persons               4         -1
 income                0      49999
 income            50000         -1
-age_of_head           0         29
-age_of_head          30         49
-age_of_head          50         -1
 \end{verbatim}
 Note that $-1$ stands for $\infty$. The values in the control totals table
 denotes the index (starting from 0) of the particular group within the
 characteristics table. E.g. the first line in the control totals table refers
 to the persons group $[0,2]$ and income group $[0,49999]$.
 
-The model \modelsindex iterates over bins defined by the marginal characteristics. In this
-case, it would iterate over the 6 groups marked by A,B,C,D,E,F in
-Figure~\ref{fig:htm-example}, it would then determine the number of households
-that belong to each group in terms of their characteristics and compare it
-with the control total for that group. If for example in bin F (shaded area in
-the figure) there are 10 households to be created, the model \modelsindex would randomly
-sample (with replacement) 10 existing households from the 3 bins within F (formed by groups
-on the axis ``age_of_head'') and duplicate them.  If the difference between control total
-and the number of households in F would call for removing households, the
-model \modelsindex would randomly sample households belonging to F regardless to which bin
-within F they belong.
+The model \modelsindex iterates over the 6 bins defined by the marginal characteristics. 
+For each of them, it determines the number of households
+that belong to that group in terms of their characteristics and compares it
+with the control total for that group. If for example in one of the bins 
+there are 10 households to be created, the model \modelsindex would randomly
+sample (with replacement) 10 existing households from that bin and duplicate them.  
+If the difference between control total
+and the number of households in a bin would call for removing households, the
+model \modelsindex would randomly sample households belonging to that bin and delete them.
 
 \subsubsection{Model Configuration}
 \modelsindex
@@ -1123,10 +1108,12 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
 %
 \begin{description}
 \item{Problem:} The resulting number of households after running the model is different than the control totals. 
-\item{Possible cause:} 
+\item{One possible cause:} 
 There is a mismatch between data in the control totals table and the characteristics table. 
 For example, the indexing of groups in the control totals table starts with 1 instead of 0. Check 
 carefully these two tables.
+\item{Other possible cause:} 
+There are no existing households for some of the combinations of characteristics. 
 \item{Problem:} In the first simulation year the model deletes and creates a large amount of households.
 \item{Cause:} The distribution of the actual households characteristics in the base year is very different 
 from the control totals. Consider the example above and suppose that the actual number of households in the base year in the 
@@ -1137,13 +1124,13 @@ As a result, even if the total number of households changed only by 5100 househo
 to 745100 in year 2006), there were 414900 households deleted and 420000 new households created, which is far more 
 than the half of all households.
 \item{Problem:} The model fails with an \code{KeyError}.
-\item{Possible cause:} Some households contain values that do not fit in any of the groups given by the marginal and 
-scaled characteristics. Check especially categories where you have non-zero minima or finite maxima. For example,
+\item{Possible cause:} Some households contain values that do not fit in any of the groups given by the marginal characteristics. 
+Check especially categories where you have non-zero minima or finite maxima. For example,
 one has the number 18 as minimum for ``age_of_head'' in the characteristics table, but the households table contains 
 records with smaller values than 18. The model must be able to put each household into one of the defined groups.
 \item{Problem:} The model fails with an error about a missing attribute.
-\item{Cause:} There are marginal or scaled characteristics that are not contained in the households table.
-Compare the control totals table and the characteristics table to the attributes of households.
+\item{Cause:} There are marginal characteristics that are not contained in the households table.
+Compare the control totals table to the attributes of households.
 \end{description}
 
 %
@@ -1158,8 +1145,8 @@ from given job set according to a job distribution over employment sectors.
 The total number of jobs is controlled by given annual control totals. It
 distinguishes between home based and non-home based jobs.
 
-The algorithm is a simplification of the Household Transition Model. \modelsindex There are
-no scaled characteristics and the only marginal characteristics are sector
+The algorithm is similar to the Household Transition Model. \modelsindex 
+Here, the only marginal characteristics are sector
 identifiers.
 
 \subsubsection{Initialization}
@@ -1287,7 +1274,8 @@ The class is initialized by passing the following arguments:
 \begin{description}
 \item[probabilities] - A fully qualified name of the module that implements
   computing relocation probabilities. The module should be a child of the
-  \package{opus_core} class \class{Probabilities}.
+  \package{opus_core} class \class{Probabilities} (see Section~\ref{sec:probabilities}). 
+  Default is None.
 \item[choices] - A fully qualified name of the module that implements choosing
   agents for relocation according to given probabilities. The module should be
   a child of the \package{opus_core} class \class{Choices}.  Default value is
@@ -1298,10 +1286,11 @@ The class is initialized by passing the following arguments:
 \item[model_name] \modelsindex - Name of the model. \modelsindex Default value is ``Agent Relocation
   Model''. \modelsindex
 \end{description}
-The initialization method creates a class attribute \attributesindex \verb|upc_sequence|, using
+If the \verb|probabilities| argument is givven, 
+the initialization method creates a class attribute \attributesindex \verb|upc_sequence|, using
 the passed arguments \verb|probabilities| and \verb|choices|. It is an object
 of class \class{upc_sequence} where the utilities component is set to None
-(see Section~\ref{sec:upc-sequence}).
+(see Section~\ref{sec:upc-sequence}). All arguments are set as class properties. 
 
 %
 \subsubsection{The Run Method}
@@ -1310,12 +1299,12 @@ of class \class{upc_sequence} where the utilities component is set to None
 \begin{description}
 \item[agent_set] - A \class{Dataset} \datasetindex object containing agents to be relocated.
 \item[resources] - An instance of class \class{Resources} which is a
-  collection of additional arguments and objects that will be passed to the
+  collection of additional arguments and objects to be passed to the
   \verb|upc_sequence| run.
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
-The method appends \verb|agent_set| into \verb|resources| and invokes the
+If the class attribute \verb|upc_sequence| exists, the method appends \verb|agent_set| into \verb|resources| and invokes the
 \method{run()} method of \verb|upc_sequence|, passing \verb|resources| as
 argument. The \verb|upc_sequence| runs the probabilities component and the
 choices component and it is expected to return an array of zeros for agents
@@ -1323,7 +1312,8 @@ not to be relocated, and ones for agent to be relocated. The distinct values
 of indices of the ``to be relocated'' agents joined with indices of all
 unplaced agents is the resulting array of agents to be relocated. As unplaced
 agents are considered agents that have value smaller equal 0 for the attribute \attributesindex
-given in \verb|location_id_name| passed to the constructor.
+given in \verb|location_id_name| passed to the constructor. If there is no \verb|upc_sequence|,
+the resulting array corresponds to indices of unplaced agents only. 
 
 {\it Output}:~\\[1mm]
 The method returns the resulting array of indices of all agents to be
@@ -1351,7 +1341,6 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:
 \begin{itemize}
 \item To run a {\bf Household Relocation Model} \modelsindex in a production run, the
   \class{HouseholdRelocationModelCreator} \modelsindex is used to create an instance of the
