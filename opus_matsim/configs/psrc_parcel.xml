@@ -1,0 +1,442 @@
+<opus_project>
+  <general>
+    <description type="string">PSRC Parcel Project</description>
+    <project_name hidden="True" type="string">psrc_parcel</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <advanced type="category">
+      <dataset_pool_configuration type="class">
+        <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['psrc_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
+      </dataset_pool_configuration>
+    </advanced>
+    <available_datasets type="list">['building','parcel','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+  </general>
+  <model_manager>
+    <estimation type="dictionary">
+      <save_estimation_results choices="True|False" type="boolean">False</save_estimation_results>
+      <real_estate_price_model type="model_estimation">
+        <agriculture type="submodel">
+          <submodel_id type="integer">1</submodel_id>
+          <variables type="variable_list">constant, inugb, lnemp20da, lnsqft</variables>
+        </agriculture>
+        <civil type="submodel">
+          <description type="string">Civil and Quasi-Public</description>
+          <submodel_id type="integer">2</submodel_id>
+          <variables type="variable_list">constant, is_pre_1940, ln_invfar, lnemp10wa, lnempden</variables>
+        </civil>
+        <commercial type="submodel">
+          <submodel_id type="integer">3</submodel_id>
+          <variables type="variable_list">constant, art600, art300, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp20tw, lnemp10wa, lnempden, inugb, hbwavgtmda</variables>
+        </commercial>
+        <government type="submodel">
+          <submodel_id type="integer">7</submodel_id>
+          <variables type="variable_list">constant, art600, inugb, ln_bldgage, lnemp20tw, lngcdacbd, lnlotsqft, lnsqft</variables>
+        </government>
+        <hospital type="submodel">
+          <description type="string">Hospital, Convalescent Center</description>
+          <submodel_id type="integer">9</submodel_id>
+          <variables type="variable_list">constant, ln_bldgage, lngcdacbd, lnlotsqft, lnsqft</variables>
+        </hospital>
+        <industrial type="submodel">
+          <submodel_id type="integer">10</submodel_id>
+          <variables type="variable_list">constant, hbwavgtmda, inugb, ln_bldgage, ln_invfar, lnemp20tw, lnemp20wa, lnempden, lngcdacbd, lnsqft</variables>
+        </industrial>
+        <mining type="submodel">
+          <submodel_id type="integer">12</submodel_id>
+          <variables type="variable_list">constant, lnavginc</variables>
+        </mining>
+        <mobile_home_park type="submodel">
+          <submodel_id type="integer">13</submodel_id>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnsqft, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp30tw, lnemp20tw, lnavginc, lnempden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </mobile_home_park>
+        <apartment type="submodel">
+          <description type="string">Multi-Family Residential (Apartment)</description>
+          <submodel_id type="integer">14</submodel_id>
+          <variables type="variable_list">constant, art300, hwy200, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp10da, lnemp30tw, lnemp20tw, lnemp10wa, lnemp20wa, lnavginc, lnempden, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </apartment>
+        <condominium type="submodel">
+          <description type="string">Condominium Residential</description>
+          <submodel_id type="integer">15</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art600, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnempden, lnpopden</variables>
+        </condominium>
+        <office type="submodel">
+          <submodel_id type="integer">18</submodel_id>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp10da, lnemp10wa, lnavginc, lnempden, inugb, hbwavgtmda</variables>
+        </office>
+        <park_and_open_space type="submodel">
+          <submodel_id type="integer">19</submodel_id>
+          <variables type="variable_list">constant, art300, ln_invfar</variables>
+        </park_and_open_space>
+        <parking type="submodel">
+          <submodel_id type="integer">20</submodel_id>
+          <variables type="variable_list">constant, hwy200, ln_invfar, lnemp30da, lnempden</variables>
+        </parking>
+        <single_family_residential type="submodel">
+          <submodel_id type="integer">24</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art300, art600, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </single_family_residential>
+        <transportation type="submodel">
+          <description type="string">Transportation, Communication, Public Utilities</description>
+          <submodel_id type="integer">25</submodel_id>
+          <variables type="variable_list">constant, inugb, ln_invfar, lnemp30tw, lngcdacbd, lnlotsqft</variables>
+        </transportation>
+        <vacant_developable type="submodel">
+          <submodel_id type="integer">26</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art300, lnavginc, lnemp10da, lnemp10wa, lnempden, lngcdacbd</variables>
+        </vacant_developable>
+        <warehousing type="submodel">
+          <submodel_id type="integer">28</submodel_id>
+          <variables type="variable_list">constant, lnempden, lngcdacbd</variables>
+        </warehousing>
+        <mixed_use type="submodel">
+          <submodel_id type="integer">30</submodel_id>
+          <variables type="variable_list">constant, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20tw, inugb, hbwavgtmda</variables>
+        </mixed_use>
+      </real_estate_price_model>
+      <estimation_config type="dictionary">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string">none</database_name>
+        </estimation_database_configuration>
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">2000</base_year>
+        <years type="tuple">
+          <firstyear type="integer">2000</firstyear>
+          <lastyear type="integer">2000</lastyear>
+        </years>
+      </estimation_config>
+      <household_location_choice_model copyable="True" type="model_estimation">
+        <submodel copyable="True" type="submodel">
+          <description type="string">No submodel</description>
+          <submodel_id type="integer">-2</submodel_id>
+          <variables type="variable_list">ln_residential_units</variables>
+        </submodel>
+      </household_location_choice_model>
+      <employment_location_choice_model copyable="True" type="model_estimation">
+        <home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </home_based>
+        <non_home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </non_home_based>
+      </employment_location_choice_model>
+      <model_parameters type="dictionary">
+        <real_estate_price_model type="dictionary">
+          <abbreviation type="string">REPM</abbreviation>
+          <full_name type="string">real_estate_price_model</full_name>
+        </real_estate_price_model>
+        <household_location_choice_model type="dictionary">
+          <abbreviation type="string">HLCM</abbreviation>
+          <full_name type="string">household_location_choice_model</full_name>
+        </household_location_choice_model>
+      </model_parameters>
+    </estimation>
+    <travel_model_configuration type="dictionary">
+      <travel_model_input_file_writer type="string">psrc_parcel.travel_model_input_file_writer</travel_model_input_file_writer>
+      <matrix_variable_map type="dictionary">
+        <bank1 type="dictionary">
+          <au1tim type="string">am_single_vehicle_to_work_travel_time</au1tim>
+          <au2tim type="string">am_double_vehicle_to_work_travel_time</au2tim>
+          <au3tim type="string">am_threeplus_vehicle_to_work_travel_time</au3tim>
+          <biketm type="string">am_bike_to_work_travel_time</biketm>
+          <walktm type="string">am_walk_time_in_minutes</walktm>
+          <atrtwa type="string">am_total_transit_time_walk</atrtwa>
+          <avehda type="string">am_pk_period_drive_alone_vehicle_trips</avehda>
+          <ambike type="string">am_biking_person_trips</ambike>
+          <amwalk type="string">am_walking_person_trips</amwalk>
+          <atrnst type="string">am_transit_person_trip_table</atrnst>
+          <au1cos type="string">single_vehicle_to_work_travel_cost</au1cos>
+          <au1dis type="string">single_vehicle_to_work_travel_distance</au1dis>
+          <lsum1 type="string">logsum_hbw_am_income_1</lsum1>
+          <lsum2 type="string">logsum_hbw_am_income_2</lsum2>
+          <lsum3 type="string">logsum_hbw_am_income_3</lsum3>
+          <lsum4 type="string">logsum_hbw_am_income_4</lsum4>
+        </bank1>
+        <bank2 type="dictionary">
+          <mf91 type="string">md_vehicle_miles_traveled</mf91>
+          <nweuda type="string">nweuda</nweuda>
+          <nweus2 type="string">nweus2</nweus2>
+          <nweus3 type="string">nweus3</nweus3>
+          <nweutw type="string">nweutw</nweutw>
+          <nweubk type="string">nweubk</nweubk>
+          <nweuwk type="string">nweuwk</nweuwk>
+        </bank2>
+        <bank3 type="dictionary">
+          <mf91 type="string">pm_ev_ni_vehicle_miles_traveled</mf91>
+        </bank3>
+      </matrix_variable_map>
+      <node_matrix_variable_map type="dictionary" />
+      <reports_to_copy type="list">[]</reports_to_copy>
+      <export_macros type="dictionary">
+        <tazvmt1.mac type="dictionary">
+          <bank type="string">bank1</bank>
+          <scenario type="integer">-1</scenario>
+          <path type="string">export_macros</path>
+        </tazvmt1.mac>
+        <tazvmt2.mac type="dictionary">
+          <bank type="string">bank2</bank>
+          <scenario type="integer">-1</scenario>
+          <path type="string">export_macros</path>
+        </tazvmt2.mac>
+        <tazvmt3.mac type="dictionary">
+          <bank type="string">bank3</bank>
+          <scenario type="integer">-1</scenario>
+          <path type="string">export_macros</path>
+        </tazvmt3.mac>
+        <tveha.mac type="dictionary">
+          <bank type="string">bank1</bank>
+          <scenario type="integer">-1</scenario>
+          <path type="string">export_macros</path>
+        </tveha.mac>
+        <tvehrpt.mac type="dictionary">
+          <bank type="string">bank1</bank>
+          <scenario type="integer">-1</scenario>
+          <path type="string">export_macros</path>
+        </tvehrpt.mac>
+      </export_macros>
+      <locations_to_disaggregate type="list">['parcel', 'building']</locations_to_disaggregate>
+      <models type="selectable_list">
+        <opus_emme2.models.get_cache_data_into_emme2 choices="Run|Skip" type="model">Run</opus_emme2.models.get_cache_data_into_emme2>
+        <opus_emme2.models.run_travel_model choices="Run|Skip" type="model">Run</opus_emme2.models.run_travel_model>
+        <opus_emme2.models.run_export_macros choices="Run|Skip" type="model">Run</opus_emme2.models.run_export_macros>
+        <opus_emme2.models.get_emme2_data_into_cache choices="Run|Skip" type="model">Run</opus_emme2.models.get_emme2_data_into_cache>
+      </models>
+      <years_to_run key_name="year" type="category_with_special_keys">
+        <run_description type="dictionary">
+          <year type="integer">2000</year>
+          <bank type="list">['2000_06']</bank>
+          <emme2_batch_file_name type="string" />
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2005</year>
+          <bank type="list">['2005_06']</bank>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2010</year>
+          <bank type="list">['2010_06']</bank>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2015</year>
+          <bank type="list">['2015_06']</bank>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2020</year>
+          <bank type="list">['2020_06']</bank>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2025</year>
+          <bank type="list">['2025_06']</bank>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2030</year>
+          <bank type="list">['2030_06']</bank>
+        </run_description>
+      </years_to_run>
+    </travel_model_configuration>
+  </model_manager>
+  <scenario_manager>
+    <PSRC_baseline copyable="True" executable="True" type="scenario">
+      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+      <base_year type="integer">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2002</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <model_template choices="Run|Skip" copyable="True" type="model">Skip</model_template>
+        <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>
+        <expected_sale_price_model choices="Run|Skip" type="model">Run</expected_sale_price_model>
+        <development_proposal_choice_model choices="Run|Skip" type="model">Run</development_proposal_choice_model>
+        <building_construction_model choices="Run|Skip" type="model">Run</building_construction_model>
+        <household_transition_model choices="Run|Skip" type="model">Run</household_transition_model>
+        <employment_transition_model choices="Run|Skip" type="model">Run</employment_transition_model>
+        <household_relocation_model choices="Run|Skip" type="model">Run</household_relocation_model>
+        <household_location_choice_model choices="Run|Skip" type="model">Run</household_location_choice_model>
+        <employment_relocation_model choices="Run|Skip" type="model">Run</employment_relocation_model>
+        <employment_location_choice_model choices="Run|Skip" type="model">Run<group_members type="string">non_home_based</group_members>
+        </employment_location_choice_model>
+        <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Run</distribute_unplaced_jobs_model>
+      </models_to_run>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs</scenario_runs_directory>
+        <baseyear_cache type="class">
+          <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</existing_cache_to_copy>
+        </baseyear_cache>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <advanced type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+            <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+            <database_name type="string">psrc_2000_parcel_baseyear_data</database_name>
+          </baseyear_database_configuration>
+          <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+          <tables_to_cache type="selectable_list">
+            <households choices="Cache|Skip" type="table">Cache</households>
+            <buildings choices="Cache|Skip" type="table">Cache</buildings>
+            <parcels choices="Cache|Skip" type="table">Cache</parcels>
+            <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
+            <zones choices="Cache|Skip" type="table">Cache</zones>
+            <jobs choices="Cache|Skip" type="table">Cache</jobs>
+            <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+            <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
+            <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
+            <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+            <building_types choices="Cache|Skip" type="table">Cache</building_types>
+            <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+            <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+            <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+            <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+            <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+            <non_home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_coefficients>
+            <non_home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_specification>
+            <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+            <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+            <real_estate_price_model_coefficients choices="Cache|Skip" type="table">Cache</real_estate_price_model_coefficients>
+            <real_estate_price_model_specification choices="Cache|Skip" type="table">Cache</real_estate_price_model_specification>
+            <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+            <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
+            <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+            <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+            <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
+            <land_use_types choices="Cache|Skip" type="table">Cache</land_use_types>
+            <generic_land_use_types choices="Cache|Skip" type="table">Cache</generic_land_use_types>
+            <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+            <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+            <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+            <development_templates choices="Cache|Skip" type="table">Cache</development_templates>
+            <development_template_components choices="Cache|Skip" type="table">Cache</development_template_components>
+            <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
+            <building_sqft_per_job choices="Cache|Skip" type="table">Cache</building_sqft_per_job>
+            <fazes choices="Cache|Skip" type="table">Cache</fazes>
+            <fazes choices="Cache|Skip" type="table">Cache</fazes>
+            <demolition_cost_per_sqft choices="Cache|Skip" type="table">Cache</demolition_cost_per_sqft>
+            <constant_taz_columns choices="Cache|Skip" type="table">Cache</constant_taz_columns>
+          </tables_to_cache>
+          <tables_to_cache_nchunks type="dictionary">
+            <parcels type="integer">1</parcels>
+          </tables_to_cache_nchunks>
+        </advanced>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <zone choices="Load|Skip" type="dataset">Load</zone>
+          <household choices="Load|Skip" type="dataset">Load</household>
+          <building choices="Load|Skip" type="dataset">Load</building>
+          <parcel choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </parcel>
+          <person choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </person>
+          <development_template choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </development_template>
+          <development_template_component choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </development_template_component>
+          <job choices="Load|Skip" type="dataset">Load</job>
+          <building_type choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </building_type>
+          <travel_data choices="Load|Skip" type="dataset">Load</travel_data>
+          <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+        </datasets_to_preload>
+      </advanced>
+      <travel_model_configuration type="dictionary">
+        <travel_model_base_directory type="string">baseline_travel_model_psrc_2008</travel_model_base_directory>
+        <emme2_batch_file_name type="string">MODEL1-0.BAT</emme2_batch_file_name>
+        <models type="selectable_list">
+          <opus_emme2.models.get_cache_data_into_emme2 choices="Run|Skip" type="model">Skip</opus_emme2.models.get_cache_data_into_emme2>
+          <opus_emme2.models.run_travel_model choices="Run|Skip" type="model">Skip</opus_emme2.models.run_travel_model>
+          <opus_emme2.models.run_export_macros choices="Run|Skip" type="model">Skip</opus_emme2.models.run_export_macros>
+          <opus_emme2.models.get_emme2_data_into_cache choices="Run|Skip" type="model">Skip</opus_emme2.models.get_emme2_data_into_cache>
+        </models>
+      </travel_model_configuration>
+    </PSRC_baseline>
+    <PSRC_TM_skims copyable="True" executable="True" type="scenario">
+      <parent type="scenario_name">PSRC_baseline</parent>
+      <base_year type="integer">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2005</firstyear>
+        <lastyear type="integer">2006</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <model_template choices="Run|Skip" copyable="True" type="model">Skip</model_template>
+        <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>
+        <expected_sale_price_model choices="Run|Skip" type="model">Skip</expected_sale_price_model>
+        <development_proposal_choice_model choices="Run|Skip" type="model">Skip</development_proposal_choice_model>
+        <building_construction_model choices="Run|Skip" type="model">Skip</building_construction_model>
+        <household_transition_model choices="Run|Skip" type="model">Skip</household_transition_model>
+        <employment_transition_model choices="Run|Skip" type="model">Skip</employment_transition_model>
+        <household_relocation_model choices="Run|Skip" type="model">Skip</household_relocation_model>
+        <household_location_choice_model choices="Run|Skip" type="model">Skip</household_location_choice_model>
+        <employment_relocation_model choices="Run|Skip" type="model">Skip</employment_relocation_model>
+        <employment_location_choice_model choices="Run|Skip" type="model">Skip<group_members type="string">non_home_based</group_members>
+        </employment_location_choice_model>
+        <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Skip</distribute_unplaced_jobs_model>
+      </models_to_run>
+      <travel_model_configuration type="dictionary">
+        <travel_model_base_directory type="string">baseline_travel_model_psrc_2008</travel_model_base_directory>
+        <emme2_batch_file_name type="string">MODEL1-0.BAT</emme2_batch_file_name>
+        <models type="selectable_list">
+          <opus_emme2.models.get_cache_data_into_emme2 choices="Run|Skip" type="model">Skip</opus_emme2.models.get_cache_data_into_emme2>
+          <opus_emme2.models.run_travel_model choices="Run|Skip" type="model">Skip</opus_emme2.models.run_travel_model>
+          <opus_emme2.models.run_export_macros choices="Run|Skip" type="model">Run</opus_emme2.models.run_export_macros>
+          <opus_emme2.models.get_emme2_data_into_cache choices="Run|Skip" type="model">Run</opus_emme2.models.get_emme2_data_into_cache>
+        </models>
+        <years_to_run key_name="year" type="category_with_special_keys">
+          <run_description type="dictionary">
+            <year type="integer">2005</year>
+            <bank type="list">['2006_v1.0aTG']</bank>
+          </run_description>
+        </years_to_run>
+      </travel_model_configuration>
+    </PSRC_TM_skims>
+  </scenario_manager>
+  <results_manager>
+    <Indicator_batches setexpanded="True" type="group" />
+    <Simulation_runs setexpanded="True" type="all_source_data">
+      <base_year_data type="source_data">
+        <scenario_name hidden="True" type="string">psrc_parcel</scenario_name>
+        <run_id hidden="True" type="integer">1</run_id>
+        <cache_directory hidden="True" type="string">/urbansim_cache/psrc_parcel/base_year_data</cache_directory>
+        <end_year hidden="True" type="integer">2000</end_year>
+        <start_year hidden="True" type="integer">2000</start_year>
+        <run_name hidden="True" type="string">base_year_data</run_name>
+      </base_year_data>
+    </Simulation_runs>
+  </results_manager>
+</opus_project>
