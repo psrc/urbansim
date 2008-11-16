@@ -15,8 +15,8 @@ pre {
 	border-top: solid 1px #CCC;
 	border-bottom: solid 1px #CCC;
 	padding: 2px;
-        font-family: 'Lucida Sans Unicode', verdana, arial;
-        font-size: 80%;
+	font-family: 'Lucida Sans Unicode', verdana, arial;
+	font-size: 80%;
 }
 
 a:link {
@@ -28,9 +28,18 @@ a.breadcrumb {
 }
 
 h1, h2, h3, h4, h5, h6 {
-        font-family: arial, 'Lucida Sans Unicode', verdana;
-        margin-top: 50px;
-        margin-bottom: 5px;
+font-family: arial, 'Lucida Sans Unicode', verdana;
+	margin-top: 50px;
+	margin-bottom: 5px;
+}
+
+h3 {
+	margin-top: 1.5em;
+}
+
+h4, h5, h6 {
+	margin-top: 1.2em;
+	font-size: 90%;
 }
 
 .hideonlocal {

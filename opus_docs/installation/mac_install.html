@@ -14,46 +14,25 @@
   <body>
     <!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
     <table border="0" cellspacing="0" width="100%">
-
-
       <tbody>
-
-
-	<tr>
-
-
-	  <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105" alt="urbansim logo"></a></td>
-
-
-	</tr>
-
-
-	<tr>
-
-
-	  <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a> &gt;
-	    Installing on Macintosh</td>
-
-
-	</tr>
-
-
-	
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105" alt="urbansim logo"></a></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a> &gt;
+        Installing on Mac</td>
+    </tr>
       </tbody>
     </table>
-
-
     <!-- HEAD BANNER ENDS HERE -->
     
-    <br>
-
     <h1>
-      Installing Opus &amp; UrbanSim on Macintosh OS X
+      Installing Opus &amp; UrbanSim on Mac OS X
     </h1>
     <font size=4></font>
     <p>
       The following instructions are for installing Opus and UrbanSim
-      on&nbsp;Macintosh OS X. The directions have been tested with Macintosh OS X
+      on&nbsp;Mac OS X. The directions have been tested with Mac OS X
       Leopard (10.5) with an Intel processor.
     </p>
 
@@ -62,48 +41,36 @@
     </p>
     
     
-    <br>
     <ol>
-      <li>
-	<a href="#python">Installing Python</a>
-      </li>
-      <li>
-	(optional) <a href="#mysql">Installing MySQL</a>
-      </li>
-      <li>
-	<a href="#libraries">Installing Python libraries</a>
-      </li>
-      <li>
-	<a href="#opus">Installing Opus and UrbanSim</a>
-      </li>
-      <li>
-	<a href="#environment">Defining Environment Variables for Opus and
-	  UrbanSim</a>
-      </li>
-      <li>
-	<a href="#test">Testing your installation</a>
-      </li>
+      <li><a href="#python">Installing Python</a></li>
+      <li><a href="#mysql">Installing MySQL</a> (optional)</li>
+      <li><a href="#libraries">Installing Python libraries and Qt</a></li>
+      <li><a href="#opus">Installing Opus and UrbanSim</a></li>
+      <li><a href="#environment">Defining Environment Variables for Opus and UrbanSim</a></li>
+      <li><a href="#test">Testing your installation</a></li>
     </ol>
+
+
     <h2>
-      Step 1: <a name=python>Installing Python</a>&nbsp;
+      Step 1: <a name=python>Installing Python</a>
     </h2>
     <p>
       Opus and UrbanSim are implemented in Python, making heavy use of external
       numerical Python packages and other software. The version used in this guide
-      is 2.5.1. If you use OS X Leopard, this version is already installed and you
+      is 2.5.1. If you use OS X Leopard (10.5), this version is already installed and you
       can skip to the next section. If you are using an earlier version of OS X
-      however, you'll need to update.
+      however, you'll need to update Python.
     </p>
 
     <p>
       The <a href="http://www.python.org">official Python
-	website</a>
+    website</a>
       includes <a href="http://www.python.org/doc/">documentation</a>,
       <a href="http://www.python.org/download/">downloads</a>, and
       much more. Go to
       the <a href="http://www.python.org/download/">download
-	section</a> and get the latest version of Python 2 (at the
-      time of writing 2.5.2) for Macintosh OS X. This is an
+    section</a> and get the latest version of Python 2.5 (at the
+      time of writing 2.5.2) for Mac OS X. This is an
       installer that works on both PPC and Intel
       Macs. Double-click on the image to mount it, then
       double-click on the MacPython.mpkg package icon to
@@ -114,19 +81,20 @@
       When you install a newer version of Python, the installer will put it earlier
       on the search path so that it will be found instead of the preinstalled one.
       You can still get to the old version via
-      <tt>/Usr/bin/python</tt>. We don't
-      recommend that you simply delete the old version, since some other
-      applications may still rely on it.
+      <tt>/usr/bin/python</tt>. We recommend that you keep the old version, since other
+      applications may rely on it.
     </p>
+
+
     <h2>
-      (optional) Step 2: <a name=mysql>Installing MySQL</a>
+      Step 2 (optional): <a name=mysql>Installing MySQL</a>
     </h2>
     <p>
       MySQL is an efficient, open-source SQL database. You don't need it to run the
       basic Eugene tutorial, although for serious use with your own dataset you will
       want a database of some sort. We are steadily reducing the dependencies on the
       particular database used with the goal of allowing Opus and UrbanSim to be
-      used with any SQL database, but for now MySQL is probably your best option.<br>
+      used with any SQL database, but for now MySQL is probably your best option.
     </p>
     <p>
       If you use MySQL you can either have a local copy or run on a shared server.
@@ -137,170 +105,196 @@
     </p>
     <ol>
       <li>
-	Choose which version of MySQL to use, and download the binary installer for
-	your version of the OS and processor type from
-	<a href="http://dev.mysql.com/downloads/">MySQL Downloads</a>.
+    Choose which version of MySQL to use, and download the binary installer for
+    your version of the OS and processor type from
+    <a href="http://dev.mysql.com/downloads/">MySQL Downloads</a>.
       </li>
       <li>
-	Install and configure MySQL.
+    Install and configure MySQL.
       </li>
     </ol>
-    <br>
     <p>
       In addition to MySQL itself, you might get the
       <a href="http://www.mysql.com/products/tools/query-browser/">MySQL Query
-	Browser</a> for prowling around in UrbanSim databases using a graphical
+    Browser</a> for prowling around in UrbanSim databases using a graphical
       interface, and the
       <a href="http://www.mysql.com/products/tools/administrator/">MySQL
-	Administrator</a>. These are both available as binaries.
+    Administrator</a>. These are both available as binaries.
     </p>
     <p>
       See the <a href="mysqlinstall.4.1.html">Opus/UrbanSim MySQL Installation and
-	Configuration Page</a> for additional specific configuration steps. &nbsp;This
+    Configuration Page</a> for additional specific configuration steps. &nbsp;This
       page is written for Windows, but is straightforward to use for the Mac as
       well.
     </p>
+
+
     <h2>
       Step 3: <a name=libraries>Installing Python Libraries and Qt</a>
     </h2>
-    <h2>
-      <a name=libraries></a>
-    </h2>
+
     <h3>
       3.1 Prerequisites
     </h3>
+    
+    <p>
     In order to install some of the packages, you'll need to compile the library
     from source. If you haven't already done so, you can install the optional Xcode
-    package on one of the Install Disks that came with your Mac (for Leopard it's
+    package on one of the Install Disks that came with your Mac (for Mac OS X Leopard (10.5) it's
     Install Disk 2). You'll find the installation file named
     <tt>XcodeTools-<i>version</i>.mpkg</tt>
     inside the <tt>Xcode Tools</tt> folder on
-    the installation disc.<br>
+    the installation disc.
+    </p>
     <p>
       If you have an older Mac, you may need to get a more up-to-date version of
       Xcode Tools than the one that came on your Install Disk. In particular if you
       get C compiler errors (such as not being able to find 'include' files), this
       may be the problem. To fix it, get the latest version of Xcode Tools from the
       <a href="http://developer.apple.com/tools/download/">Apple Tools Download
-	page</a>. You'll need to register (it's free) and login. A warning about the
+    page</a>. You'll need to register (it's free) and login. A warning about the
       file size; it's over 900 MB.
     </p>
+    <p>
     Unfortunately Xcode doesn't come with a Fortran compiler, which is needed to
     build the SciPy package. You can download the GNU Fortran compiler
     <a href="http://r.research.att.com/gfortran-4.2.3.dmg">here</a>.
-    The installation should be straightforward.<br>
-    <br>
+    The installation should be straightforward.
+    </p>
+    
+    <p>
     You can make a quick check that the compilers are installed by typing the commands
-
+    </p>
+    
     <pre>
       $ gcc --version
       $ gfortran --version</pre>
 
-    and make sure that you get version information and not command not found errors.<br>
-    <br>
+    <p>
+    and make sure that you get version information and not command not found errors.
+    </p>
+    
     <h3>
-      3.2 Installing the required packages<br>
+      3.2 Installing the required packages
     </h3>
     <p>
       We strongly recommend that you use Easy Install. EasyInstall is a Python
       module that can download, build (if necessary) and install Python packages
       with minimal user interaction. For more on Easy Install,
       <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK
-	webpage</a>.
+    webpage</a>.
     </p>
 
+    <p>
     To install it; download
     <a href="http://peak.telecommunity.com/dist/ez_setup.py">ez_setup.py</a> to your
-    computer. Open a Terminal and locate the directory the file is in. Then type<br>
+    computer. Open a Terminal and locate the directory the file is in. Then type
+    </p>
     <pre>
-      $ python ez_setup.py</pre>
+      $ sudo python ez_setup.py</pre>
     <p>
       If you are running a version of OS X earlier than 10.5, such as 10.4.9,
       download and install the following
     </p>
     <ul>
-      <li>
-	<b>pytz</b> from
-	<a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page
-	  on pythonmac.org</a>.
-      </li>
-      <li>
-	<b>python-dateutil</b>, also from
-	<a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.
-      </li>
+      <li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.</li>
+      <li><b>python-dateutil</b>, also from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</li>
     </ul>
-    <br>
-    If you are running OSX 10.5 (Leopard), the two packages above are not necessary.
-
+    
+    <p>
+    If you are running Mac OS X Leopard (10.5), the two packages above are not necessary.
+    </p>
+    
+    <p>
     Install <a href="http://numpy.scipy.org/">NumPy</a>,
     <a href="http://www.scipy.org/">SciPy</a>,
     <a href="http://matplotlib.sourceforge.net/">MatPlotLib</a>,
     <a href="http://www.sqlalchemy.org/">SQLAlchemy</a> and
     <a href="http://elixir.ematia.de/trac/wiki">Elixir</a> by
-    typing the following commands in a Terminal window:<br>
+    typing the following commands in a Terminal window:
+    </p>
+    
     <pre>
-      $ easy_install numpy
-      $ easy_install scipy
-      $ easy_install matplotlib
-      $ easy_install SQLAlchemy
-      $ easy_install Elixir</pre>
-
+      $ sudo easy_install numpy
+      $ sudo easy_install scipy
+      $ sudo easy_install matplotlib
+      $ sudo easy_install SQLAlchemy
+      $ sudo easy_install Elixir</pre>
+    
+    <p>
     If for some reason <tt>easy_install</tt>
     fails to install any of the above packages, or if you do not want to use
     <tt>easy_install</tt>; you can click the
     package names to go to their homepage and follow the instructions on how to
-    install them manually.<br>
-    <br>
+    install them manually.
+    </p>
+    
+    <h3>3.3 Installing semi-optional packages</h3>
+    
+    <p>There are some packages that may or may not be needed depending on your setup.</p>
+    
+    <h4>Using R</h4>
+    <p>
     If you are using R, install <b>RPy</b>
     (<a href="http://rpy.sourceforge.net/">http://rpy.sourceforge.net/</a>).&nbsp;
     This is a Python interface for the statistical programming language R (tested
     with version 0.4.6).
-    <ul>
-      <li>
-	If you need to use .dbf files (for example, those produced by ArcGIS),
-	install <b>dbfpy</b> (you can get it from
-	<a href="http://sourceforge.net/projects/dbfpy">here</a>).
-      </li>
-    </ul>
-    <br>
-    <div style=TEXT-ALIGN:left>
-      If you are using a MySQL as a database, go ahead and install
-      <b>MySQL-python</b>. Unfortunately the current version (1.2.2) has some issues
-      with building on Leopard, so you can't install it using
-      <tt>easy_install</tt>, since some source
-      files need to be modified in order for it to build on OSX.<br>
-      <br>
-    </div>
-    To install it, go to the sourceforge page for
-    <a href="http://sourceforge.net/projects/mysql-python">MySQL-python</a> and
-    download the tarball. Then follow the steps provided
-    <a href="http://www.keningle.com/?p=11">here</a> in order to be
-    able to build and install the package. Note that MySQL should be installed
-    before you install the MySQL-python package.<br>
-    You may need to put /usr/local/mysql/bin into your path before installing
-    mysql-python to avoid getting an error.<br>
+    </p>
 
+    <h4>Reading DBF files</h4> 
     <p>
-      You may get the following error after building and installing MySQL-python
-      1.2.2 on 10.3.9: <i><br>
-	ImportError: dlcompat: dyld:
-	/Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python
-	can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib (No
-	such file or directory, errno = 2)</i><br>
+    If you need to use .dbf files (for example, those produced by ArcGIS),
+    install <b>dbfpy</b> (you can get it from
+    <a href="http://sourceforge.net/projects/dbfpy">here</a>).
+    </p>
+    
+    <h4>Using MySQL</h4>
+    <p>    
+    If you are using a MySQL as a database, go ahead and install
+    <b>MySQL-python</b>. Unfortunately the current version (1.2.2) has some issues
+    with building on Mac OS X Leopard (10.5), so you can't install it using
+    <tt>easy_install</tt>, since some source
+    files need to be modified in order for it to build on Mac OS X.
+    </p>
+    
+    <p>
+      To install it, go to the sourceforge page for
+      <a href="http://sourceforge.net/projects/mysql-python">MySQL-python</a> and
+      download the tarball. Then follow the steps provided
+      <a href="http://www.keningle.com/?p=11">here</a> in order to be
+      able to build and install the package. Note that MySQL should be installed
+      before you install the MySQL-python package.
+      You may need to put /usr/local/mysql/bin into your path before installing
+      mysql-python to avoid getting an error.
+    </p>
+    
+    <p>
+    You may get the following error after building and installing MySQL-python
+    1.2.2 on 10.3.9:
+    </p>
+      
+    <blockquote><i>
+    ImportError: dlcompat: dyld:
+    /Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python
+    can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib (No
+    such file or directory, errno = 2)
+    </i></blockquote>
+    
+    <p>
       This may happen because the library it is looking for is in
       /usr/local/mysql/lib/, and not in a subfolder called mysql. Moving the files
       or creating aliases should fix the problem.
     </p>
 
-    <h3>Step 3.3 Installing Trolltech QT and bindings for Python</h3>
+    <h3>Step 3.4 Installing Trolltech QT and bindings for Python</h3>
     
     <p>
       Finally install the QT framework from Trolltech, and PyQt which is the Python
       bindings for it. PyQt also requires SIP to be installed before you can build
-      it. Instructions on how to do this follows.<br>
+      it. Instructions on how to do this follows.
     </p>
     
-    <p><b>Download packages</b></p>
+    <h4>Download packages</h4>
    
     <p>
       Download QT
@@ -312,50 +306,51 @@
       (make sure you download the Mac versions). Unzip the files into a folder of
       your choice (eg
       <tt>/Home/<i>yourname</i>/tmp</tt>)
-      and locate it in a Terminal.<br>
+      and locate it in a Terminal.
     </p>
 
-    <p><b>Building QT</b></p>
+    <h4>Building QT</h4>
 
     <p>
-      This is straightforward although it takes a long time:<br>
+      This is straightforward although it takes a long time:
       <pre>
-	$ cd
-	$ qt-mac-opensource-src-<i>version</i>/
-	$ sudo make install </pre>
+    $ cd
+    $ qt-mac-opensource-src-<i>version</i>/
+    $ sudo make install </pre>
      </p>
 
-    <p><b>Building SIP</b></p>
+    <h4>Building SIP</h4>
     <p>
       You need to tell setup script where to put the package files:
       <pre>
-	$ cd sip-<i>version</i>/
-	$ python configure.py -d /Library/Python/2.5/site-packages
-	$ make
-	$ sudo make install </pre>
+    $ cd sip-<i>version</i>/
+    $ python configure.py -d /Library/Python/2.5/site-packages
+    $ make
+    $ sudo make install </pre>
       
       where <tt>/Library/Python/2.5/site-packages</tt>
       is the path to your Python site-packages directory. Change this if your
       site-packages are in a different location.
     </p>
 
-    <p><b>Building PyQt</b></p>
+    <h4>Building PyQt</h4>
     
     <p>
       Similarly, you need to provide the path to your Python site-packages directory.
       This build also takes a long time.
-      <br>
+      
       <pre>
-	$ cd PyQt-mac-gpl-4.4.3/
-	$ python configure.py -d /Library/Python/2.5/site-packages
-	$ make
-	$ sudo make install </pre>
+    $ cd PyQt-mac-gpl-4.4.3/
+    $ python configure.py -d /Library/Python/2.5/site-packages
+    $ make
+    $ sudo make install </pre>
       
       The process is similar on Tiger/10.4, but seems to vary from user to user for
       reasons we haven't been able to pin down.
       <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This
-	page</a> has been useful to some users.
+    page</a> has been useful to some users.
     </p>
+    
     
     <h2>
       Step 4: <a name="opus">Installing Opus and UrbanSim</a>
@@ -371,7 +366,7 @@
       First, get a hold of the sample data. This is provided in a zip file that
       contains both the sample data for Eugene and Seattle projects, template
       configurations for running simulations using these projects, and a directory
-      in which to insert the source code.<br>
+      in which to insert the source code.
     </p>
 
     <p>
@@ -394,7 +389,7 @@
     <h3>Step 4.2 Downloading the source code</h3>
     <p>
       To get the code, the best way is to use subversion to check it out directly
-      from the repository.<br>
+      from the repository.
     </p>
     (a note for you modeler types,
     <a href="http://subversion.tigris.org/">subversion</a> in this context is the name
@@ -403,15 +398,15 @@
     easy to update to newer versions of Opus/UrbanSim and merge in any changes
     you've made. &nbsp;You can also request any particular version of the code from
     subversion. &nbsp;However, you do have to have a subversion client installed on
-    your machine.<br>
-    <br>
-    There are numerous ways to check out the code, but we list two ways here.<br>
+    your machine.
+    
+    There are numerous ways to check out the code, but we list two ways here.
     <p><b>
       Option 1: Getting Opus and UrbanSim using a command line interface to
       subversion
     </b></p>
     <p>
-      First, make sure you have a subversion client installed. If you have Leopard,
+      First, make sure you have a subversion client installed. If you have Mac OS X Leopard (10.5),
       there should be one already installed. Otherwise (or if you want to update
       your version), you can get one from
       <a href="http://subversion.tigris.org/project_packages.html">here</a>.&nbsp;
@@ -449,10 +444,11 @@
     </b></p>
     This is the best option if you'll be doing software development. &nbsp;See
     <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for
-    details.<br>
+    details.
+
+
     <h2>
-      <a name=Step_5:_Defining_Environment_Variables_></a>Step 5:
-      <a name=environment>Defining Environment Variables</a>&nbsp;
+      Step 5: <a name=environment>Defining Environment Variables for Opus and UrbanSim</a>
     </h2>
     <p>
       UrbanSim requires the following environment variables.&nbsp; The first tells
@@ -464,54 +460,54 @@
 
     <ul>
       <li>
-	<b>PYTHONPATH</b> - This environment variable tells Python where to look for
-	files outside of Python's 'site-packages' directory (which is the default
-	location for Python installers). Change PYTHONPATH to include the path to
-	the directory containing the packages opus_core, urbansim, and so forth,
-	that you downloaded in Step 4, e.g. <tt>/Users/yourname/opus/src</tt>.
+    <b>PYTHONPATH</b> - This environment variable tells Python where to look for
+    files outside of Python's 'site-packages' directory (which is the default
+    location for Python installers). Change PYTHONPATH to include the path to
+    the directory containing the packages opus_core, urbansim, and so forth,
+    that you downloaded in Step 4, e.g. <tt>/Users/yourname/opus/src</tt>.
       </li>
       <li>
-	<b>OPUS_HOME</b> - The Opus home directory (surprise). This includes
-	subdirectories with sample data for Eugene and Seattle projects, output from
-	runs, template configurations for running simulations using these projects,
-	and probably your source code and documentation. This is the directory you
-	downloaded from the zip file and installed in Step 4. So if you put this
-	unzipped directory just in your home directory, set this variable to <tt>/Users/yourname/opus</tt>.
+    <b>OPUS_HOME</b> - The Opus home directory (surprise). This includes
+    subdirectories with sample data for Eugene and Seattle projects, output from
+    runs, template configurations for running simulations using these projects,
+    and probably your source code and documentation. This is the directory you
+    downloaded from the zip file and installed in Step 4. So if you put this
+    unzipped directory just in your home directory, set this variable to <tt>/Users/yourname/opus</tt>.
       </li>
     </ul>
-    <br>
+    
     Optionally, depending on what you are using and where you store your data, you might want to set these variables as well.
     <ul>
       <li>
-	<b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample
-	data and caches of data for particular runs. It defaults to the <tt>data</tt>
-	subdirectory under <tt>OPUS_HOME</tt>, so if you leave the data at the default location
-	from the zip file, don't set this variable.
+    <b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample
+    data and caches of data for particular runs. It defaults to the <tt>data</tt>
+    subdirectory under <tt>OPUS_HOME</tt>, so if you leave the data at the default location
+    from the zip file, don't set this variable.
       </li>
 
       <li>
-	<b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used for
-	running unit tests that use MySQL. These tests use the MySQL database
-	hostname described by this environment variable. If this environment
-	variable is not defined, unit tests that expect this database server will
-	not run, but will instead print a warning message.
+    <b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used for
+    running unit tests that use MySQL. These tests use the MySQL database
+    hostname described by this environment variable. If this environment
+    variable is not defined, unit tests that expect this database server will
+    not run, but will instead print a warning message.
       </li>
       <li>
-	<b>MYSQLHOSTNAME</b> - The name of the MySQL server. Use
-	<font face="Courier New" size=2>localhost</font> for the MySQL server on the
-	same computer.&nbsp;
+    <b>MYSQLHOSTNAME</b> - The name of the MySQL server. Use
+    <font face="Courier New" size=2>localhost</font> for the MySQL server on the
+    same computer.&nbsp;
       </li>
       <li>
-	<b>MYSQLUSERNAME</b> - This should have the MySQL user name to be used for
-	querying the UrbanSim database. In the lab, we use the MySQL username
-	"urbansim" as a convenient way to allow sharing scripts among all the lab
-	members. (Note that MySQL user names are independent of login names.)&nbsp;
+    <b>MYSQLUSERNAME</b> - This should have the MySQL user name to be used for
+    querying the UrbanSim database. In the lab, we use the MySQL username
+    "urbansim" as a convenient way to allow sharing scripts among all the lab
+    members. (Note that MySQL user names are independent of login names.)&nbsp;
       </li>
       <li>
-	<b>MYSQLPASSWORD</b> - The password for the MySQL user name given above.<br>
+    <b>MYSQLPASSWORD</b> - The password for the MySQL user name given above.
       </li>
     </ul>
-    <br>
+    
     How to set these environment variables depends on how you intend to use Opus and
     UrbanSim. One way is to set the variables globally in OS X, and the way to do
     that is via an XML file
@@ -565,8 +561,10 @@
       <tt>PYTHONPATH</tt> to include opus on a
       per project basis if you don't want session-wide settings. You should note
       that you'll only be able to start Opus and UrbanSim from the IDE if you decide
-      to do it this way.<br>
+      to do it this way.
     </p>
+
+
     <h2>
       Step 6: <a name=test>Testing your installation</a>
     </h2>
@@ -574,3 +572,8 @@
       Follow <a href="test_install.html">these instructions</a> to test your
       installation.
     </p>
+
+</body>
+
+</html>
+
