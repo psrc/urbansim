@@ -89,7 +89,7 @@ update annual_household_control_totals set total_number_of_households = total_nu
         for command in command_list:
             command = command.strip()
             logger.log_status(command)
-            db_server.DoQuery(command)
+            db_server.execute(command)
         logger.log_status('\n* %s created successfully! *' % output_db_name)
 
 

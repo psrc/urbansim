@@ -101,12 +101,12 @@ queries = [
 # Copies all tables that are a complete copy
 for i in tables_to_copy:
     query = "CREATE TABLE %s.%s SELECT * FROM %s.%s;" % (output_db, i, input_db, i)
-    dbserver.DoQuery(query)
+    dbserver.execute(query)
     print 'Finished copying %s...' % (i)
 
 # Creates all tables that are a subset of the original data
 for i in queries:
-    dbserver.DoQuery(i)
+    dbserver.execute(i)
     print 'Finished:  %s' % (i)
 
 

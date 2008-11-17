@@ -58,8 +58,8 @@ if __name__ == "__main__":
         print "WARNING: run_id %s exists in run_activity. Use --force to override." % options.run_id
         sys.exit()
     elif options.force:
-        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % options.run_id)
-    
+        run_manager.services_db.execute(
+               run_manager.services_db.delete(run_manager.services_db.c.run_id == options.run_id))
     run_manager.add_row_to_history(options.run_id, config, "started")
     
     

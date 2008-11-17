@@ -141,8 +141,9 @@ if __name__ == "__main__":
             else:
                 this_end_year = end_year
         urbansim_resources['years'] = (this_start_year, this_end_year)
-            
-        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)        
+    
+        run_manager.services_db.execute(
+               run_manager.services_db.delete(run_manager.services_db.c.run_id == run_id))
         run_manager.add_row_to_history(run_id, urbansim_resources, "started")
         
         try:

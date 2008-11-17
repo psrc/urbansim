@@ -120,7 +120,7 @@ class GenerateDBSubsetByCityOrCounty(object):
         for command in command_list:
             command = command.strip()
             logger.log_status(command)
-            db_server.DoQuery(command)
+            db_server.execute(command)
             
         logger.log_status(output_db_name + ' created successfully!')
          
