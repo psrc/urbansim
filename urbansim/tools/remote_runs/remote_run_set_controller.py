@@ -183,8 +183,10 @@ class RemoteRunSet(RemoteRun):
             config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = config_update.get('existing_cache_to_copy', 
                                                                 config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy)
         self.prepare_cache_and_communication_path(config)
-        self.get_run_manager().services_db.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-        self.get_run_manager().add_row_to_history(self.run_id, config, "started")
+        run_manager = self.get_run_manager()
+        run_manager.services_db.execute(
+               run_manager.services_db.delete(run_manager.services_db.c.run_id == self.run_id))
+        run_manager.add_row_to_history(self.run_id, config, "started")
         
     def set_environment_for_this_run(self, server, run_id):
         self.run_id = run_id

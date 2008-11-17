@@ -34,7 +34,7 @@ def opusRun(progressCB,logCB,params):
 
     # Do Query
     logCB("Running Query...\n")
-    opus_db.DoQuery(query)
+    opus_db.execute(query)
     
     # Finish up
     logCB("Closing database connection\n")

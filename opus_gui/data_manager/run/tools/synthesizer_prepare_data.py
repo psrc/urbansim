@@ -42,8 +42,8 @@ def opusRun(progressCB,logCB,params):
 #    Processes/ methods to be called at the beginning of the pop_synthesis process 
     
 # Identifying the number of housing units to build the Master Matrix
-    opus_db.DoQuery('select * from housing_pums')
-    housing_units = dbc.rowcount
+    housing_units = opus_db.execute('select count(*) from housing_pums').fetchone()[0]
+
     ti = time.clock()
 # Identifying the control variables for the households, gq's, and persons
     hhld_control_variables = adjusting_pums_joint_distribution.choose_control_variables(opus_db, 'hhld')

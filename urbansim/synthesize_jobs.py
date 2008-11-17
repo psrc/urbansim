@@ -111,9 +111,9 @@ class SynthesizeJobs(object):
         jobs_table_data = self._create_jobs_table_data(dist, sector,
                                           building_types_and_ids_and_home_based)
         
-        output_database.DoQuery('USE %(out_db)s' % {'out_db':output_db_name})
+        output_database.execute('USE %(out_db)s' % {'out_db':output_db_name})
         
-        output_database.DoQuery("""
+        output_database.execute("""
             CREATE TABLE %(jobs_out)s (
                 JOB_ID INT AUTO_INCREMENT, PRIMARY KEY(JOB_ID),
                 GRID_ID INT, HOME_BASED INT, SECTOR_ID INT, BUILDING_TYPE INT);
@@ -147,17 +147,17 @@ class SynthesizeJobs(object):
                                            output_body[:-2], 
                                            output_postfix)
 
-                output_database.DoQuery(output_query)
+                output_database.execute(output_query)
                 
             
             ### TODO: 
-#        output_database.DoQuery("""
+#        output_database.execute("""
 #            CREATE TABLE %(grid_out)s SELECT * FROM %(in_db)s.%(grid)s
 #            """ % {'grid_out':gridcells_output_table_name,
 #                   'in_db':input_db_name,
 #                   'grid':gridcells_table_name})
 #       
-#        output_database.DoQuery("""
+#        output_database.execute("""
 #        
 #            SELECT g.GRID_ID, COUNT, BUILDING_TYPE, COMMERCIAL_SQFT, INDUSTRIAL_SQFT
 #            FROM washtenaw_baseyear.gridcells AS g,
@@ -583,7 +583,7 @@ class SynthesizeJobs(object):
 #        building_type = [1, 2]
 #        building_types = len(building_type)
 #        
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(data)s 
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES
 #            (%(zone_val)s, %(ag_val)s, 0, 0, 0, 0, 0, 0, 0);
@@ -591,7 +591,7 @@ class SynthesizeJobs(object):
 #                   'zone_val':zone_val,
 #                   'ag_val':ag_val})
 #       
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED,
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (0, 0, %(ag_sector)s, 0, 0, 0, %(b1)s),
@@ -613,7 +613,7 @@ class SynthesizeJobs(object):
 #    
 #    
 #    def test_get_building_type_proportion_by_zone_single_grid(self):
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS,
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (1, 1000, 1, 1, 1, 1);
@@ -634,7 +634,7 @@ class SynthesizeJobs(object):
 #    
 #    # TODO: Fix problems with Decimals & re-enable
 #    #def test_get_building_type_proportion_by_zone_multiple_grids(self):
-#        #self.input_db.DoQuery("""
+#        #self.input_db.execute("""
 #            #INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS,
 #                #GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            #(1, 1000, 1, 0, 1, 2),
@@ -663,7 +663,7 @@ class SynthesizeJobs(object):
 #     
 #    # TODO: Fix problems with Decimals & re-enable
 #    #def test_get_building_type_proportion_by_zone_multiple_zones(self):
-#        #self.input_db.DoQuery("""
+#        #self.input_db.execute("""
 #            #INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS,
 #                #GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            #(1, 1000, 1, 0, 1, 2),
@@ -902,19 +902,19 @@ class SynthesizeJobs(object):
 #        """
 #        Test that the correct output database is created.
 #        """
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(data)s 
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES
 #            (1, 2, 3, 4, 5, 6, 7, 8, 9);
 #            """ % {'data':self.data})
 #       
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED,
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (1, 2, 3, 4, 5, 6, 1);
 #            """ % {'jobs':self.jobs})
 #       
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS,
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (2, 1, 3, 4, 5, 6);
@@ -923,7 +923,7 @@ class SynthesizeJobs(object):
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #    
 #        try:
-#            self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#            self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #        except: self.fail('Database %s was not created.' % self.out_db)
 #       
 #       
@@ -931,19 +931,19 @@ class SynthesizeJobs(object):
 #        """
 #        Test that the output table exists, as expected.
 #        """
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(data)s 
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES
 #            (1, 1, 2, 2, 2, 2, 2, 2, 2);
 #            """ % {'data':self.data})
 #       
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED,
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (1, 1, 1, 0, 0, 0, 1);
 #            """ % {'jobs':self.jobs})
 #       
-#        self.input_db.DoQuery("""
+#        self.input_db.execute("""
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, COMMERCIAL_SQFT,
 #                GOVERNMENTAL_SQFT, INDUSTRIAL_SQFT, RESIDENTIAL_UNITS) VALUES
 #            (1, 1, 1, 0, 0, 0);
@@ -951,7 +951,7 @@ class SynthesizeJobs(object):
 #    
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #    
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #        
 #        try:
 #            results = self.input_db.GetResultsFromQuery("""
@@ -966,19 +966,19 @@ class SynthesizeJobs(object):
 ##        """
 ##        Test that the output table exists, as expected.
 ##        """
-##        self.input_db.DoQuery("""
+##        self.input_db.execute("""
 ##            INSERT INTO $$.%(data)s 
 ##                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES
 ##            (1, 1, 1, 1, 1, 1, 1, 1, 1);
 ##            """ % {'data':self.data})
 ##       
-##        self.input_db.DoQuery("""
+##        self.input_db.execute("""
 ##            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED,
 ##                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 ##            (1, 1, 1, 0, 0, 0, 1);
 ##            """ % {'jobs':self.jobs})
 ##       
-##        self.input_db.DoQuery("""
+##        self.input_db.execute("""
 ##            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS,
 ##                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 ##            (1, 1, 1, 0, 0, 0);
@@ -986,7 +986,7 @@ class SynthesizeJobs(object):
 ##    
 ##        SynthesizeJobs().synthesize_employment_data(self.config)
 ##    
-##        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+##        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 ##        
 ##        try:
 ##            results = self.input_db.GetResultsFromQuery("""
@@ -1007,21 +1007,21 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    0,    0,    0,    0,      0,    0,    0,     1   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        insert_job_query = """
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (    1,     1000,    8,     0,    0,    0,    3    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    0,    0,    0,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        expected_output = [
 #            ['JOB_ID', 'GRID_ID', 'HOME_BASED', 'SECTOR_ID', 'BUILDING_TYPE'],
@@ -1030,7 +1030,7 @@ class SynthesizeJobs(object):
 #    
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #    
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #        
 #        results = self.input_db.GetResultsFromQuery("""
 #            SELECT * FROM %(jobs_out)s
@@ -1054,21 +1054,21 @@ class SynthesizeJobs(object):
 ##                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 ##            (    100,    0,    0,    0,    0,      0,    0,    0,     1   );
 ##            """ % {'data':self.data}
-##        self.input_db.DoQuery(insert_data_query)
+##        self.input_db.execute(insert_data_query)
 ##        
 ##        insert_job_query = """
 ##            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
 ##                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 ##            (    1,     1000,    8,     0,    0,    0,    3    );
 ##            """ % {'jobs':self.jobs}
-##        self.input_db.DoQuery(insert_job_query)
+##        self.input_db.execute(insert_job_query)
 ##        
 ##        insert_gridcell_query = """
 ##            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, COMMERCIAL_SQFT, 
 ##                GOVERNMENTAL_SQFT, INDUSTRIAL_SQFT, RESIDENTIAL_UNITS) VALUES
 ##            (    1000,    100,    0,    0,    1,    0    );
 ##            """ % {'grid':self.gridcells}
-##        self.input_db.DoQuery(insert_gridcell_query)
+##        self.input_db.execute(insert_gridcell_query)
 ##        
 ##        expected_output = [
 ##            ['GRID_ID', 'ZONE_ID', 'RESIDENTIAL_UNITS', 'COMMERCIAL_SQFT', 
@@ -1079,7 +1079,7 @@ class SynthesizeJobs(object):
 ##    
 ##        SynthesizeJobs().synthesize_employment_data(self.config)
 ##    
-##        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+##        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 ##        
 ##        results = self.input_db.GetResultsFromQuery("""
 ##            SELECT * FROM %(grid_out)s
@@ -1100,21 +1100,21 @@ class SynthesizeJobs(object):
 ##                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 ##            (    100,    0,    0,    0,    0,      0,    0,    0,     1   );
 ##            """ % {'data':self.data}
-##        self.input_db.DoQuery(insert_data_query)
+##        self.input_db.execute(insert_data_query)
 ##        
 ##        insert_job_query = """
 ##            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
 ##                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 ##            (    1,     1000,    8,     0,    0,    0,    3    );
 ##            """ % {'jobs':self.jobs}
-##        self.input_db.DoQuery(insert_job_query)
+##        self.input_db.execute(insert_job_query)
 ##        
 ##        insert_gridcell_query = """
 ##            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, COMMERCIAL_SQFT, 
 ##                GOVERNMENTAL_SQFT, INDUSTRIAL_SQFT, RESIDENTIAL_UNITS) VALUES
 ##            (    1000,    100,    0,    0,    1,    0    );
 ##            """ % {'grid':self.gridcells}
-##        self.input_db.DoQuery(insert_gridcell_query)
+##        self.input_db.execute(insert_gridcell_query)
 ##        
 ##        expected_output = [
 ##            ['GRID_ID', 'ZONE_ID', 'RESIDENTIAL_UNITS', 'COMMERCIAL_SQFT', 
@@ -1125,7 +1125,7 @@ class SynthesizeJobs(object):
 ##    
 ##        SynthesizeJobs().synthesize_employment_data(self.config)
 ##    
-##        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+##        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 ##        
 ##        results = self.input_db.GetResultsFromQuery("""
 ##            SELECT * FROM %(grid_out)s
@@ -1143,7 +1143,7 @@ class SynthesizeJobs(object):
 #        try:
 #            SynthesizeJobs().synthesize_employment_data(self.config)
 #            
-#            self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#            self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            results = self.input_db.GetResultsFromQuery(
 #                'SELECT COUNT(*) FROM %(jobs_out)s' 
 #                % {'jobs_out':self.jobs_output})
@@ -1161,7 +1161,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    0,    0,    0,    0,      0,    0,    0,     0   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = [0]
 #        
@@ -1170,18 +1170,18 @@ class SynthesizeJobs(object):
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (    1,     1000,    1,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1199,7 +1199,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    5,    3,    3,    3,      3,    3,    3,     3   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([5])
 #        
@@ -1208,18 +1208,18 @@ class SynthesizeJobs(object):
 #                SIC, IMPUTE_FLAG, BUILDING_TYPE) VALUES
 #            (    1,     1000,    1,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    2    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1237,7 +1237,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    16,    20,     24,    28,    32,    36   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([4+8+16+20+24+28+32+36])
 #        
@@ -1253,18 +1253,18 @@ class SynthesizeJobs(object):
 #            (    7,     1000,    7,     0,    0,    0,    1    ),
 #            (    8,     1000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1282,7 +1282,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    16,    20,     24,   999,    32,    36   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([4+8+16+20+24+0+32+36])
 #        
@@ -1297,18 +1297,18 @@ class SynthesizeJobs(object):
 #            (    7,     1000,    7,     0,    0,    0,    1    ),
 #            (    8,     1000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1326,7 +1326,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    12,    16,    20,   24,    28,    32   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([4+8+12+16+20+24+28+32])
 #        
@@ -1342,7 +1342,7 @@ class SynthesizeJobs(object):
 #            (    7,     2000,    7,     0,    0,    0,    1    ),
 #            (    8,     2000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
@@ -1350,11 +1350,11 @@ class SynthesizeJobs(object):
 #            (    1000,    100,    1,    1,    1,    1    ),
 #            (    2000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1372,7 +1372,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    0,    0,    0,    0,   0,    0,    0   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([4+0+0+0+0+0+0+0])
 #        
@@ -1384,18 +1384,18 @@ class SynthesizeJobs(object):
 #            (    3,     1000,    1,     0,    0,    0,    3    ),
 #            (    4,     1000,    1,     0,    0,    0,    4    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1413,7 +1413,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    2,    0,    0,    0,    0,   0,    0,    0   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        expected_output = array([2+0+0+0+0+0+0+0])
 #        
@@ -1425,18 +1425,18 @@ class SynthesizeJobs(object):
 #            (    3,     1000,    1,     0,    0,    0,    3    ),
 #            (    4,     1000,    1,     0,    0,    0,    4    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
 #                GOVERNMENTAL_SQFT, COMMERCIAL_SQFT, INDUSTRIAL_SQFT) VALUES
 #            (    1000,    100,    1,    1,    1,    1    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        get_job_results = (
 #            'SELECT COUNT(*) FROM %(jobs_out)s' % {'jobs_out':self.jobs_output})
@@ -1454,7 +1454,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    12,    16,    20,   24,    28,    32   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        insert_job_query = """
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
@@ -1468,7 +1468,7 @@ class SynthesizeJobs(object):
 #            (    7,     2000,    7,     0,    0,    0,    1    ),
 #            (    8,     2000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
@@ -1476,11 +1476,11 @@ class SynthesizeJobs(object):
 #            (    1000,    100,    100,    100,    100,    100    ),
 #            (    2000,    100,    100,    100,    100,    100    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        query = ("""
 #            select * from
@@ -1512,7 +1512,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    12,    16,    20,   24,    28,    32   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        insert_job_query = """
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
@@ -1526,7 +1526,7 @@ class SynthesizeJobs(object):
 #            (    7,     2000,    7,     0,    0,    0,    1    ),
 #            (    8,     2000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
@@ -1534,11 +1534,11 @@ class SynthesizeJobs(object):
 #            (    1000,    100,    100,    100,    100,    100    ),
 #            (    2000,    100,    100,    100,    100,    100    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        query = ("""
 #            select * from (
@@ -1569,7 +1569,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    12,    16,    20,   24,    28,    32   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        insert_job_query = """
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
@@ -1583,7 +1583,7 @@ class SynthesizeJobs(object):
 #            (    7,     2000,    7,     0,    0,    0,    1    ),
 #            (    8,     2000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
@@ -1591,11 +1591,11 @@ class SynthesizeJobs(object):
 #            (    1000,    100,    100,    100,    100,    100    ),
 #            (    2000,    100,    100,    100,    100,    100    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        query = ("""
 #            select * from (
@@ -1626,7 +1626,7 @@ class SynthesizeJobs(object):
 #                (taz, ag, mfg, tcu, whl, rtl, fire, srv, pub) VALUES 
 #            (    100,    4,    8,    12,    16,    20,   24,    28,    32   );
 #            """ % {'data':self.data}
-#        self.input_db.DoQuery(insert_data_query)
+#        self.input_db.execute(insert_data_query)
 #        
 #        insert_job_query = """
 #            INSERT INTO $$.%(jobs)s (JOB_ID, GRID_ID, SECTOR_ID, HOME_BASED, 
@@ -1640,7 +1640,7 @@ class SynthesizeJobs(object):
 #            (    7,     2000,    7,     0,    0,    0,    1    ),
 #            (    8,     2000,    8,     0,    0,    0,    1    );
 #            """ % {'jobs':self.jobs}
-#        self.input_db.DoQuery(insert_job_query)
+#        self.input_db.execute(insert_job_query)
 #        
 #        insert_gridcell_query = """
 #            INSERT INTO $$.%(grid)s (GRID_ID, ZONE_ID, RESIDENTIAL_UNITS, 
@@ -1648,11 +1648,11 @@ class SynthesizeJobs(object):
 #            (    1000,    100,    100,    100,    100,    100    ),
 #            (    2000,    100,    100,    100,    100,    100    );
 #            """ % {'grid':self.gridcells}
-#        self.input_db.DoQuery(insert_gridcell_query)
+#        self.input_db.execute(insert_gridcell_query)
 #        
 #        SynthesizeJobs().synthesize_employment_data(self.config)
 #        
-#        self.input_db.DoQuery('USE %(out)s' % {'out':self.out_db})
+#        self.input_db.execute('USE %(out)s' % {'out':self.out_db})
 #            
 #        query = ("""
 #            select * from (

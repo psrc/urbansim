@@ -33,20 +33,20 @@ def opusRun(progressCB,logCB,params):
 
     #create database if it doesn't already exist
     
-    opus_db.DoQuery('''Create Table housing_pums ( pumano int, hhpumsid int,
+    opus_db.execute('''Create Table housing_pums ( pumano int, hhpumsid int,
                                    hhid int, hhtype int, 
                                    childpresence int, hhldtype int, 
                                    hhldsize int, hhldinc int,
                                    groupquarter int )''')
-    opus_db.DoQuery('''load data local infile '%s/housing_pums.dat' into table housing_pums'''%(path))
+    opus_db.execute('''load data local infile '%s/housing_pums.dat' into table housing_pums'''%(path))
     
-    opus_db.DoQuery('''Create Table person_pums ( pumano int, hhpumsid int,
+    opus_db.execute('''Create Table person_pums ( pumano int, hhpumsid int,
                                   hhid int, personid int,
                                   gender int, age int, 
                                   race int, employment int )''')
-    opus_db.DoQuery('''load data local infile '%s/person_pums.dat' into table person_pums''' %(path))
+    opus_db.execute('''load data local infile '%s/person_pums.dat' into table person_pums''' %(path))
 
-    opus_db.DoQuery('''Create Table housing_marginals ( county int, pumano int,
+    opus_db.execute('''Create Table housing_marginals ( county int, pumano int,
                                          tract int, bg int,
                                          hhtotal int, childpresence1 int,
                                          childpresence2 int, hhldtype1 int,
@@ -61,9 +61,9 @@ def opusRun(progressCB,logCB,params):
                                          hhldinc6 int, hhldinc7 int,
                                          hhldinc8 int, groupquarter1 int, 
                                          groupquarter2 int )''')
-    opus_db.DoQuery('''load data local infile '%s/housing_marginals.dat' into table housing_marginals'''%(path))
+    opus_db.execute('''load data local infile '%s/housing_marginals.dat' into table housing_marginals'''%(path))
 
-    opus_db.DoQuery('''Create Table person_marginals ( county int, pumano int,
+    opus_db.execute('''Create Table person_marginals ( county int, pumano int,
                                         tract int, bg int,
                                         gender1 int, gender2 int,
                                         age1 int, age2 int, 
@@ -77,13 +77,13 @@ def opusRun(progressCB,logCB,params):
                                         race7 int, employment1 int,
                                         employment2 int, employment3 int,
                                         employment4 int )''')
-    opus_db.DoQuery('''load data local infile '%s/person_marginals.dat' into table person_marginals'''%(path))
+    opus_db.execute('''load data local infile '%s/person_marginals.dat' into table person_marginals'''%(path))
 # Figure out a way to automate this process based on the number of hhtypes and the independent tables must only contain variables corresponding 
 # to the particular housing type
     hhld_variables = 'childpresence, hhldtype, hhldsize, hhldinc'
     gq_variables = 'groupquarter'
-    opus_db.DoQuery('''create table hhld_pums select pumano, hhpumsid, hhid, %s from housing_pums where hhtype = 1'''%(hhld_variables))
-    opus_db.DoQuery('''create table gq_pums select pumano, hhpumsid, hhid, %s from housing_pums where hhtype = 2'''%(gq_variables))
+    opus_db.execute('''create table hhld_pums select pumano, hhpumsid, hhid, %s from housing_pums where hhtype = 1'''%(hhld_variables))
+    opus_db.execute('''create table gq_pums select pumano, hhpumsid, hhid, %s from housing_pums where hhtype = 2'''%(gq_variables))
     #dbc.close()
     #db.commit()
     #db.close()

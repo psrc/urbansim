@@ -28,6 +28,8 @@ from getpass import getuser
 from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists, _makedirs
 import paramiko
 
+from sqlalchemy.sql import select, delete
+
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
         GenericOptionGroup.__init__(self, usage="python %prog [options]",
@@ -320,10 +322,10 @@ class RemoteRun:
                 raise RuntimeError, "run failed: %s." % msg
             
             time.sleep(60)
-
         
     def update_services_database(self, run_manager, run_id, config):
-        run_manager.services_db.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
+        run_manager.services_db.execute(
+               run_manager.services_db.delete(run_manager.services_db.c.run_id == run_id))
         run_manager.add_row_to_history(run_id, config, "started")
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):

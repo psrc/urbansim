@@ -107,7 +107,7 @@ def drop_table(table_name, dbname, schema):
     db = OpusDatabase(dbserverconfig, dbname)
     query = 'DROP TABLE %s.%s' % (schema, table_name)
     try:
-        db.DoQuery(query)
+        db.execute(query)
         logCB('DROPPED TABLE %s \n' % table_name)
     except:
         return
