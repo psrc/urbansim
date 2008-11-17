@@ -98,14 +98,17 @@ class OpusDatabase(object):
         self.metadata = None
         gc.collect()
 
-    def execute(self, query, recurse = True):
+    def execute(self, *args, **kwargs):
+        recurse = kwargs.pop('recurse', False)
+
         try:
-            return self.engine.execute(query)
+            return self.engine.execute(*args, **kwargs)
         except:
             if recurse:
                 self.close()
                 self.open()
-                self.execute(query, recurse = False)
+                kwargs['recurse'] = True
+                self.execute(*args, **kwargs)
             else:
                 raise
             
