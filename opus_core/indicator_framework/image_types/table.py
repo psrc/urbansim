@@ -16,7 +16,7 @@ from opus_core.logger import logger
 import os, re, sys, time, traceback
 from copy import copy
 
-from numpy import newaxis, concatenate, rank
+from numpy import newaxis, concatenate, rank, transpose
 
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.storage_factory import StorageFactory
@@ -94,7 +94,10 @@ class Table(AbstractIndicator):
         if id_attribute.size == 1 and rank(results) == 1:
             results = concatenate((id_attribute, results))[:, newaxis]
         else:
-            results = concatenate((id_attribute[newaxis,:], results))
+            if rank(id_attribute) == 1:
+                results = concatenate((id_attribute[newaxis,:], results))
+            else:
+                results = concatenate((transpose(id_attribute), results))
 
         attribute_vals = {}
         cols = []
