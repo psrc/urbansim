@@ -294,64 +294,46 @@
       it. Instructions on how to do this follows.
     </p>
     
-    <h4>Download packages</h4>
-   
     <p>
-      Download QT
-      <a href="http://trolltech.com/developer/downloads/qt/mac">here</a>,
-      SIP
-      <a href="http://www.riverbankcomputing.co.uk/software/sip/download">here</a>
-      and PyQt
-      <a href="http://www.riverbankcomputing.co.uk/software/pyqt/download">here</a>
-      (make sure you download the Mac versions). Unzip the files into a folder of
-      your choice (eg
-      <tt>/Home/<i>yourname</i>/tmp</tt>)
-      and locate it in a Terminal.
-    </p>
-
+      <i>Note:</i>  The installation process for Mac OS X Tiger (10.4) is similar as to the one described here, but seems to vary from user to user for reasons we haven't been able to pin down.
+      <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This
+    page</a> has been useful to some users.
+    
     <h4>Building QT</h4>
+   
+    <p>The <a href="http://trolltech.com/downloads/opensource/appdev/mac-os-cpp">&quot;Qt for Open Source C++ development on Mac OS&quot; page</a> has both source and binary distributions available.</p>
+    
+    <p>The binary distribution is under &quot;Additional downloads&quot;, and contains a standard Mac OS X installation package.</p>
+    
+    <p>Alternatively, you can install from source.  There are <a href="http://doc.trolltech.com/4.4/install-mac.html">instructions on the Qt site</a> for doing this.  The simple version is to unpack the source, and do:
 
-    <p>
-      This is straightforward although it takes a long time:
-      <pre>
-    $ cd
-    $ qt-mac-opensource-src-<i>version</i>/
+    <pre>
+    $ cd <i>path/to/</i>qt-mac-opensource-src-<i>version</i>
     $ sudo make install </pre>
-     </p>
+
+    <p>Note that this build will take a while.</p>
 
     <h4>Building SIP</h4>
     <p>
-      You need to tell setup script where to put the package files:
-      <pre>
-    $ cd sip-<i>version</i>/
+      First, get the SIP source from its <a href="http://www.riverbankcomputing.co.uk/software/sip/download">download page</a>.  Unpack it somewhere, and then build it using the following, optionally replacing <tt>/Library/Python/2.5/site-packages</tt> with the path to your Python site-packages directory:
+    <pre>
+    $ cd <i>path/to/</i>sip-<i>version</i>
     $ python configure.py -d /Library/Python/2.5/site-packages
     $ make
     $ sudo make install </pre>
-      
-      where <tt>/Library/Python/2.5/site-packages</tt>
-      is the path to your Python site-packages directory. Change this if your
-      site-packages are in a different location.
-    </p>
 
     <h4>Building PyQt</h4>
-    
-    <p>
-      Similarly, you need to provide the path to your Python site-packages directory.
-      This build also takes a long time.
-      
-      <pre>
-    $ cd PyQt-mac-gpl-4.4.3/
+
+    <p>First, get PyQt from its <a href="http://www.riverbankcomputing.co.uk/software/pyqt/download">download page</a>.  Be sure to get the Mac version.  Unpack it somewhere, and then build it using the following, optionally replacing <tt>/Library/Python/2.5/site-packages</tt> with the path to your Python site-packages directory:
+    </p>
+    <pre>
+    $ cd <i>path/to/</i>PyQt-mac-gpl-4.4.3
     $ python configure.py -d /Library/Python/2.5/site-packages
     $ make
     $ sudo make install </pre>
-      
-      The process is similar on Tiger/10.4, but seems to vary from user to user for
-      reasons we haven't been able to pin down.
-      <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This
-    page</a> has been useful to some users.
-    </p>
-    
-    
+
+    <p>Note that this build will take a while.</p>
+          
     <h2>
       Step 4: <a name="opus">Installing Opus and UrbanSim</a>
     </h2>
