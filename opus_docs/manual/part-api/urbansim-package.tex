@@ -1367,7 +1367,7 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \end{itemize}
 
 %
-\subsection{Agent Location Choice Model}
+\subsection{Agent Location Choice Model and Its Child Classes}
 \modelsindex
 %
 \label{sec:agent-lcm}
@@ -1375,8 +1375,35 @@ There are two pre-defined creators in \package{urbansim}. Their method
 
 The class \class{AgentLocationChoiceModel} \modelsindex is a child
 of \class{LocationChoiceModel} \modelsindex described in
-Section~\ref{sec:location-choice-model}. \modelsindex It extends the
-parent class only in one way: It puts the parent method
+Section~\ref{sec:location-choice-model}. It can deal with exceeded capacity of locations.
+
+\subsubsection{Initialization}
+%
+In addition to its parents' arguments {\bf location_set}, {\bf sampler}, {\bf utilities}, {\bf probabilities}, 
+{\bf choices}, {\bf interaction_pkg}, {\bf filter}, {\bf submodel_string}, {\bf location_id_string}, 
+{\bf run_config}, {\bf estimate_config}, and {\bf dataset_pool}, it takes arguments:
+\begin{description}
+\item[model_name] - character string giving the name of the model.
+\item[short_name] - character string giving an abreviation of the model name which is used 
+only by the model logger.
+\item[variable_package] - Opus package used for computing variables/expressions given in \verb|run_config|
+end \verb|estimate_config|. Default is 'urbansim'.
+\end{description}
+
+The constructor completes any unqualified variable \variablesindex names given in 
+arguments, \verb|run_config| and \verb|estimate_config| to fully-qualified
+names, by using the dataset name of the given \verb|location_set| and  \verb|variable_package|.
+Then the parent constructor is called.
+
+\subsubsection{The Run Method}
+%
+{\it Input:}\\[1mm]
+In addition to its parents' arguments {\bf specification}, {\bf coefficients}, \coefficientsindex {\bf agent_set}, {\bf agents_index},
+{\bf chunk_specification}, {\bf data_objects}, and {\bf run_config}, it accepts:
+\begin{description}
+\item[maximum_runs] - maximum number of iterations (see the algorithm below). Default is 10.
+\end{description}
+The method puts the parent method
 \method{run()} into a loop which is repeated whenever there is an
 overflow in the capacity after the last run. This behavior is
 activated only if the ``compute_capacity_flag'' entry of
@@ -1390,14 +1417,10 @@ computed and the difference in their values determines the
 overfilled locations. If there are any such locations, an
 appropriate number of agents (from the set given by
 \verb|agents_index|) are removed from their locations and the parent
-\method{run()} method is called again. By default, the maximum number of
-iterations is 10. This can be changed by passing argument \verb|maximum_runs| 
-into the \method{run()} method.
+\method{run()} method is called again. The number of such iterations is
+given by the argument \verb|maximum_runs|.
 
-The model \modelsindex also completes any unqualified variable \variablesindex names given in constructor
-arguments, \verb|run_config| and \verb|estimate_config| to fully-qualified
-names, by using the dataset name of the given \verb|location_set| and package passed to the constructor 
-in the argument \verb|variable_package| (default is ``urbansim'').
+
 
 \subsubsection{Creators}
 The model can be created using pre-defined creators in \package{urbansim}.
