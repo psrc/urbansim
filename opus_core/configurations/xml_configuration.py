@@ -14,8 +14,9 @@
 
 import copy, os, pprint
 from numpy import array
-from xml.etree.cElementTree import ElementTree, tostring, SubElement
+from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
+from opus_core.configurations.xml_version import XmlVersion
 
 
 class XMLConfiguration(object):
@@ -48,7 +49,7 @@ class XMLConfiguration(object):
         self.parent_map = None
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
-        self.xml_version = XMLVersion()
+        self.xml_version = XmlVersion()
         self.initialize_from_xml_file(is_parent)
         
     def initialize_from_xml_file(self, is_parent=False):
@@ -265,10 +266,10 @@ class XMLConfiguration(object):
         # set the parser to this files xml version
         version_node = self.tree.getroot().find('xml_version')
         if version_node is not None:
-            self.xml_version = XMLVersion(version_node.text)
+            self.xml_version = XmlVersion(version_node.text)
         else:
             # files w/o specified version gets treated as 0.0.0
-            self.xml_version = XMLVersion()
+            self.xml_version = XmlVersion()
 
         for p in self._get_parent_trees():
             self._merge_parent_elements(p, '')
@@ -478,7 +479,7 @@ class XMLConfiguration(object):
             return array(eval(node.text))
         elif type_name in ['dictionary', 'category', 'submodel', 
                            'model_system', 'configuration','model_estimation',
-                           'submodel_equation']:
+                           'submodel_equation', 'scenario']:
             return self._convert_dictionary_to_data(node)
         elif type_name in ['model_template', 'estimation_template']:
             return None
@@ -1184,58 +1185,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         new_conf = XMLConfiguration(f_new).get_section('model_manager/model_system')['regmodel']
         old_conf = XMLConfiguration(f_old).get_section('model_manager/model_system')['regmodel']
         self.assertDictsEqual(old_conf, new_conf)
-                
-
-class XMLVersion(object):
-    '''Small help class to enable easy version comparision between versions'''
-    major = stable = minor = 0
-    
-    def __init__(self, version_string = '0.0.0'):
-        version_parts = version_string.split('.')
-        if not len(version_parts) == 3:
-            print('Warning: Version strings should be passed as three numbers '
-                  'separated by dots. Like this: "4.2.0"')
-            return
-        try:
-            self.major = int(version_parts[0])
-            self.stable = int(version_parts[1])
-            self.minor = int(version_parts[2])
-        except ValueError:
-            print('Invalid number found in version string "%s"' %version_string)
-            return
-        
-    def __str__(self):
-        return ('%d.%d.%d' %(self.major, self.stable, self.minor))
-    
-    def __cmp__(self, other):
-        if isinstance(other, str):
-            other = XMLVersion(other)
-        if self.major > other.major: return 1
-        if self.major < other.major: return -1
-        if self.stable > other.stable: return 1
-        if self.stable < other.stable: return -1
-        if self.minor > other.minor: return 1
-        if self.minor < other.minor: return -1
-        return 0
-
-class XMLVersionTests(opus_unittest.OpusTestCase):
-    
-    def test_version_compare(self):
-        v1 = XMLVersion('4.2.0')
-        v2 = XMLVersion('4.2.2')
-        v3 = XMLVersion('4.2.0')
-        self.assertTrue(v1 < v2)
-        self.assertFalse(v1 > v2)
-        self.assertTrue(v1 == v3)
-        self.assertTrue(v2 > '4.2.1')
-        
-    def test_version_string(self):
-        v1 = XMLVersion('4.2')
-        v2 = XMLVersion('jibberish')
-        v3 = XMLVersion('4.3.2.3.3.2.1.3')
-        self.assertTrue(v1 == '0.0.0')
-        self.assertTrue(v2 == '0.0.0')
-        self.assertTrue(v3 == '0.0.0')
 
 
 if __name__ == '__main__':
