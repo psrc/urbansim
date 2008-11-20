@@ -1307,12 +1307,14 @@ of class \class{upc_sequence} where the utilities component is set to None
 If the class attribute \verb|upc_sequence| exists, the method appends \verb|agent_set| into \verb|resources| and invokes the
 \method{run()} method of \verb|upc_sequence|, passing \verb|resources| as
 argument. The \verb|upc_sequence| runs the probabilities component and the
-choices component and it is expected to return an array of zeros for agents
+choices component. It is expected to return an array of zeros for agents
 not to be relocated, and ones for agent to be relocated. The distinct values
 of indices of the ``to be relocated'' agents joined with indices of all
 unplaced agents is the resulting array of agents to be relocated. As unplaced
 agents are considered agents that have value smaller equal 0 for the attribute \attributesindex
-given in \verb|location_id_name| passed to the constructor. If there is no \verb|upc_sequence|,
+given in \verb|location_id_name| passed to the constructor. 
+
+If there is no \verb|upc_sequence|,
 the resulting array corresponds to indices of unplaced agents only. 
 
 {\it Output}:~\\[1mm]
@@ -1388,13 +1390,14 @@ computed and the difference in their values determines the
 overfilled locations. If there are any such locations, an
 appropriate number of agents (from the set given by
 \verb|agents_index|) are removed from their locations and the parent
-\method{run()} method is called again. The maximum number of
-iterations is 10.
+\method{run()} method is called again. By default, the maximum number of
+iterations is 10. This can be changed by passing argument \verb|maximum_runs| 
+into the \method{run()} method.
 
 The model \modelsindex also completes any unqualified variable \variablesindex names given in constructor
 arguments, \verb|run_config| and \verb|estimate_config| to fully-qualified
-names, by using the dataset name of the given \verb|location_set| and package
-``urbansim''.
+names, by using the dataset name of the given \verb|location_set| and package passed to the constructor 
+in the argument \verb|variable_package| (default is ``urbansim'').
 
 \subsubsection{Creators}
 The model can be created using pre-defined creators in \package{urbansim}.
