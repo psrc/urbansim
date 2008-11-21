@@ -79,6 +79,11 @@ def opusHelp():
            'the TARGET and leave all other options on their default values, then click "Run Request", \n' \
            'and download the resulting .csv file.\n' \
            'You will use the .csv file as the input to the pums_id_to_bg_id_file_path parameter in this tool.\n' \
+           '\n' \
+           'You will also need to remove the field names (first two lines) from the .csv file, and also \n' \
+           'do a "find and replace" on the decimal point an replace it with nothing.  The block group ids \n' \
+           'should not have any decimal points in them when imported into the database.\n' \
+           '\n' \
            'PREREQUISITE TO RUNNING THIS TOOL:\n' \
            ' - download a geographic correspondence table from the instructions above\n' \
            '\n'
