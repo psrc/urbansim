@@ -68,3 +68,18 @@ def opusRun(progressCB,logCB,params):
     opus_db.close()
     logCB('Finished running queries.\n')
     progressCB(100)
+    
+def opusHelp():
+    help = 'This tool will import the data necessary to add a PUMA id to the marginals tables.\n' \
+           '\n' \
+           'You will need to download a geographic correspondence table for your state from the \n' \
+           'Missouri Census Data Center at http://mcdc2.missouri.edu/websas/geocorr2k.html \n' \
+           '\n' \
+           'Simply choose your state, Census Block Group 2000 for the source, PUMA for 5% samples for \n' \
+           'the TARGET and leave all other options on their default values, then click "Run Request", \n' \
+           'and download the resulting .csv file.\n' \
+           'You will use the .csv file as the input to the pums_id_to_bg_id_file_path parameter in this tool.\n' \
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - download a geographic correspondence table from the instructions above\n' \
+           '\n'
+    return help 

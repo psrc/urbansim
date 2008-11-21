@@ -93,3 +93,22 @@ def opusRun(progressCB,logCB,params):
     opus_db.close()
     logCB('Finished running queries.\n')
     progressCB(100)
+    
+def opusHelp():
+    help = 'This tool will import the raw Census SF3 data necessary\n' \
+           'to create the marginals for the synthesizer algorithm.\n' \
+           '\n' \
+           'You will need to download the following tables for each county you wish to synthesize from the \n' \
+           'factfinder download center at http://factfinder.census.gov/servlet/DownloadDatasetServlet?_lang=en \n' \
+           '\n' \
+           'P6, P8, P9, P10, P14, and P43\n' \
+           'Once you have downloaded those detailed tables for each county, you will need to eliminate.\n' \
+           'some fields from the file: GEO_ID2, SUMLEVEL, and GEO_NAME\n' \
+           'You will also need to delete the first two lines of the file (no field names in the file) and \n' \
+           'turn the file into a comma delimited file rather than pipe delimited.  The easiest way to do this \n' \
+           'is to use a spreadsheet application like Microsoft Excel.  You may also need to concatenate \n' \
+           'each county together into the csv file.\n' \
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - download SF3 data from factfinder.census.gov and follow the directions above\n' \
+           '\n'
+    return help    

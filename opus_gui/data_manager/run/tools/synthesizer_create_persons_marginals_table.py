@@ -90,3 +90,13 @@ def opusRun(progressCB,logCB,params):
     opus_db.close()
     logCB('Finished running queries.\n')
     progressCB(100)
+    
+def opusHelp():
+    help = 'This tool will create the person marginals table necessary to\n' \
+           'run the synthesizer algorithm.\n' \
+           '\n' \
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - run the import_sf3_raw_data_to_db tool\n' \
+           ' - run the import_pums_id_to_bg_id_to_db tool\n' \
+           '\n'
+    return help 

@@ -53,4 +53,15 @@ def opusRun(progressCB,logCB,params):
     pums.insert_pp_records(pums_pp_table_name, raw_pums_file_path)
     progressCB(100)
     logCB('Operation lasted %f minutes\n'%((time.time() - start)/60))
-    
+
+
+def opusHelp():
+    help = 'This tool will import the raw ASCII PUMS data to your database.\n' \
+           '\n' \
+           'Go to http://www2.census.gov/census_2000/datasets/PUMS/FivePercent/\n' \
+           'and download the large ASCII file from your respective state.\n' \
+           'and use it as the input to the "raw_pums_file_path" parameter in this tool.\n' \
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - download raw PUMS ASCII data from the above website.\n' \
+           '\n'
+    return help

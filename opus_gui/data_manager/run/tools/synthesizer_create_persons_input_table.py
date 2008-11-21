@@ -202,3 +202,13 @@ def opusRun(progressCB,logCB,params):
 def get_random_index_name():
     letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     return 'indx_' + ''.join(Random().sample(letters, 8))
+
+def opusHelp():
+    help = 'This tool will create the persons table necessary to run\n' \
+           'the synthesizer algorithm.\n' \
+           '\n' \
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - run the import_raw_pums_data_to_db tool\n' \
+           ' - run the delete_empty_households_from_raw_pums_data tool\n' \
+           '\n'
+    return help    

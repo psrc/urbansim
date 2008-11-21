@@ -44,8 +44,10 @@ def opusRun(progressCB,logCB,params):
     logCB('Finished running query\n')
     
 def opusHelp():
-    help = 'This tool will execute a raw SQL query on a database connection.\n' \
+    help = 'This tool will delete empty households from the raw pums data table\n' \
+           'created with the import_raw_pums_data_to_db_tool.\n' \
            '\n' \
-           'database_name: the name of the database or Postgres schema\n' \
-           'query: The SQL query to run'
+           'PREREQUISITE TO RUNNING THIS TOOL:\n' \
+           ' - run the import_raw_pums_data_to_db_tool\n' \
+           '\n'
     return help
