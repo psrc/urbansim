@@ -22,12 +22,9 @@ def opusRun(progressCB,logCB,params):
         param_dict[str(key)] = str(val)
     
     # get parameter values
-    create_hh_table = param_dict['create_hh_table']
-    pums_hh_table_name = param_dict['pums_hh_table_name']
-    insert_hh_records = param_dict['insert_hh_records']
-    create_pp_table = param_dict['create_pp_table']
-    pums_pp_table_name = param_dict['pums_pp_table_name']
-    insert_pp_records = param_dict['insert_pp_records']
+
+    pums_hh_table_name = 'raw_pums_hh_data'
+    pums_pp_table_name = 'raw_pums_pp_data'
     raw_pums_file_path = param_dict['raw_pums_file_path']
     database_server_connection = param_dict['database_server_connection']
     database_name = param_dict['database_name']
@@ -42,21 +39,18 @@ def opusRun(progressCB,logCB,params):
     # Main application routine:
     start = time.time()
     pums = raw_pums_data_processor(username, password, hostname, database_name, db_type, raw_pums_file_path)
-    if create_hh_table == 'y':
-        logCB('Creating PUMS households table...\n')
-        pums.create_hh_table(pums_hh_table_name)
-        progressCB(3)
-    if create_pp_table == 'y':
-        logCB('Creating PUMS persons table...\n')
-        pums.create_pp_table(pums_pp_table_name)
-        progressCB(50)
-    if insert_hh_records == 'y':
-        logCB('Inserting household records...\n')
-        pums.insert_hh_records(pums_hh_table_name, raw_pums_file_path)
-        progressCB(53)
-    if insert_pp_records == 'y':
-        logCB('Inserting person records...\n')
-        pums.insert_pp_records(pums_pp_table_name, raw_pums_file_path)
-        progressCB(100)
+
+    logCB('Creating PUMS households table...\n')
+    pums.create_hh_table(pums_hh_table_name)
+    progressCB(3)
+    logCB('Creating PUMS persons table...\n')
+    pums.create_pp_table(pums_pp_table_name)
+    progressCB(50)
+    logCB('Inserting household records...\n')
+    pums.insert_hh_records(pums_hh_table_name, raw_pums_file_path)
+    progressCB(53)
+    logCB('Inserting person records...\n')
+    pums.insert_pp_records(pums_pp_table_name, raw_pums_file_path)
+    progressCB(100)
     logCB('Operation lasted %f minutes\n'%((time.time() - start)/60))
     

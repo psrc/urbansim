@@ -27,8 +27,8 @@ def opusRun(progressCB,logCB,params):
     # get parameter values
     database_name = param_dict['database_name']
     database_server_connection = param_dict['database_server_connection']
-    raw_pums_persons_table_name = param_dict['raw_pums_persons_table_name']
-    raw_pums_households_table_name = param_dict['raw_pums_households_table_name']
+    raw_pums_persons_table_name = 'raw_pums_pp_data'
+    raw_pums_households_table_name = 'raw_pums_hh_data'
     
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
     opus_db = OpusDatabase(database_server_configuration=dbs_config, database_name=database_name)
@@ -61,98 +61,124 @@ def opusRun(progressCB,logCB,params):
     progressCB(5)
     
     logCB("Updating values...\n")
+
+    index_name = get_random_index_name()
     opus_db.execute("""
-            update pp_temp as p, raw_pums_hh as h
+            alter table pp_temp add index %s(SERIALNO);    
+                    """ % (index_name))
+
+    opus_db.execute("""
+            update pp_temp as p, raw_pums_hh_data as h
             set p.pumano = h.PUMA5
             where p.SERIALNO = h.SERIALNO;
             """)
+
     opus_db.execute("""
             update pp_temp
             set hhpumsid = SERIALNO;
             """)
     index_name = get_random_index_name()
+
     opus_db.execute("""
             alter table pp_temp add index %s(hhpumsid);
             """ % (index_name))
     index_name = get_random_index_name()
+
     opus_db.execute("""
             alter table housing_pums add index %s(hhpumsid);
             """ % (index_name))
+
     opus_db.execute("""
             update pp_temp as p, housing_pums as h
             set p.hhid = h.hhid
             where p.hhpumsid = h.hhpumsid; 
             """)
+
     opus_db.execute("""
             update pp_temp
             set personid = PNUM;
             """)
+
     opus_db.execute("""
             update pp_temp
             set gender = SEX;
             """)
+
     opus_db.execute("""
             update pp_temp
             set age = AGE_PUMS;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 1
             where WHITE = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 2
             where BLACK = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 3
             where AIAN = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 4
             where ASIAN = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 5
             where NHPI = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 6
             where OTHER = 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set race = 7
             where NUMRACE > 1;
             """)
+
     opus_db.execute("""
             update pp_temp
             set employment = 1
             where ESR = '0';
             """)
+
     opus_db.execute("""
             update pp_temp
             set employment = 2
             where ESR='1' OR ESR='2' OR ESR='4' OR ESR='5';
             """)
+
     opus_db.execute("""
             update pp_temp
             set employment = 3
             where ESR = '3';
             """)
+
     opus_db.execute("""
             update pp_temp
             set employment = 4
             where ESR = '6';
             """)
+
     opus_db.execute("""
             drop table if exists person_pums;
             """)
+
     opus_db.execute("""
             create table person_pums
             select

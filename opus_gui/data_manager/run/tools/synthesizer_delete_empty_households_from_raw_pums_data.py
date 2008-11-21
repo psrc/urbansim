@@ -25,7 +25,7 @@ def opusRun(progressCB,logCB,params):
     # get parameter values
     database_name = param_dict['database_name']
     database_server_connection = param_dict['database_server_connection']
-    households_table_name = param_dict['households_table_name']
+    households_table_name = 'raw_pums_hh_data'
     
     query = "DELETE h.* FROM %s AS h WHERE h.persons = '00' IS NULL" % (households_table_name)
 

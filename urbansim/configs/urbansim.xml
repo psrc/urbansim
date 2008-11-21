@@ -311,36 +311,6 @@
         <import_raw_pums_data_to_db type="tool_file">
           <name type="tool_name">synthesizer_import_raw_pums_data_to_db</name>
           <params type="param_template">
-            <create_hh_table>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </create_hh_table>
-            <pums_hh_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </pums_hh_table_name>
-            <insert_hh_records>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </insert_hh_records>
-            <create_pp_table>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </create_pp_table>
-            <pums_pp_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </pums_pp_table_name>
-            <insert_pp_records>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type type="string">string</type>
-              <default type="string">y</default>
-            </insert_pp_records>
             <raw_pums_file_path>
               <required choices="Required|Optional" type="string">Required</required>
               <type type="file_path">file_path</type>
@@ -358,8 +328,8 @@
             </database_name>
           </params>
         </import_raw_pums_data_to_db>
-        <delete_empty_household_records type="tool_file">
-          <name type="tool_name">synthesizer_delete_empty_household_records</name>
+        <delete_empty_households_from_raw_pums_data type="tool_file">
+          <name type="tool_name">synthesizer_delete_empty_households_from_raw_pums_data</name>
           <params type="param_template">
             <database_server_connection>
               <required choices="Required|Optional" type="string">Required</required>
@@ -371,13 +341,8 @@
               <type choices="string" type="string">string</type>
               <default type="string"/>
             </database_name>
-            <households_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type choices="string" type="string">string</type>
-              <default type="string"/>
-            </households_table_name>
           </params>
-        </delete_empty_household_records>
+        </delete_empty_households_from_raw_pums_data>
         <create_households_input_table type="tool_file">
           <name type="tool_name">synthesizer_create_households_input_table</name>
           <params type="param_template">
@@ -391,11 +356,6 @@
               <type choices="string" type="string">string</type>
               <default type="string"/>
             </database_name>
-            <raw_pums_households_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type choices="string" type="string">string</type>
-              <default type="string"/>
-            </raw_pums_households_table_name>
           </params>
         </create_households_input_table>
         <create_persons_input_table type="tool_file">
@@ -411,58 +371,78 @@
               <type choices="string" type="string">string</type>
               <default type="string"/>
             </database_name>
-            <raw_pums_persons_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type choices="string" type="string">string</type>
-              <default type="string"/>
-            </raw_pums_persons_table_name>
-            <raw_pums_households_table_name>
-              <required choices="Required|Optional" type="string">Required</required>
-              <type choices="string" type="string">string</type>
-              <default type="string"/>
-            </raw_pums_households_table_name>
           </params>
         </create_persons_input_table>
-        <create_tables type="tool_file">
-          <name type="tool_name">synthesizer_create_tables</name>
+        <import_sf3_raw_data_to_db type="tool_file">
+          <name type="tool_name">synthesizer_import_sf3_raw_data_to_db</name>
           <params type="param_template">
             <database_server_connection>
               <required choices="Required|Optional" type="string">Required</required>
               <type type="db_connection_hook">db_connection_hook</type>
-              <default></default>
+              <default/>
             </database_server_connection>
-            <project_name>
-                <required choices="Required|Optional" type="string">Required</required>
-                <type choices="string" type="string">string</type>
-                <default type="string"></default>
-            </project_name>
-            <path>
-                <required choices="Required|Optional" type="string">Required</required>
-                <type choices="file_path" type="string">file_path</type>
-                <default type="string"></default>
-            </path>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
+            <raw_sf3_file_path>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="file_path">file_path</type>
+              <default type="file_path"/>
+            </raw_sf3_file_path>
           </params>
-        </create_tables>    
-        <prepare_data type="tool_file">
-          <name type="tool_name">synthesizer_prepare_data</name>
+        </import_sf3_raw_data_to_db>
+        <import_pums_id_to_bg_id_to_db type="tool_file">
+          <name type="tool_name">synthesizer_import_pums_id_to_bg_id_to_db</name>
           <params type="param_template">
             <database_server_connection>
               <required choices="Required|Optional" type="string">Required</required>
               <type type="db_connection_hook">db_connection_hook</type>
-              <default></default>
+              <default/>
             </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
+            <pums_id_to_bg_id_file_path>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="file_path">file_path</type>
+              <default type="file_path"/>
+            </pums_id_to_bg_id_file_path>
           </params>
-        </prepare_data> 
-        <synthesizer_demo type="tool_file">
-          <name type="tool_name">synthesizer_demo</name>
+        </import_pums_id_to_bg_id_to_db>
+        <create_households_marginals_table type="tool_file">
+          <name type="tool_name">synthesizer_create_households_marginals_table</name>
           <params type="param_template">
             <database_server_connection>
               <required choices="Required|Optional" type="string">Required</required>
               <type type="db_connection_hook">db_connection_hook</type>
-              <default></default>
+              <default/>
             </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
           </params>
-        </synthesizer_demo>
+        </create_households_marginals_table>
+        <create_persons_marginals_table type="tool_file">
+          <name type="tool_name">synthesizer_create_persons_marginals_table</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default/>
+            </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
+          </params>
+        </create_persons_marginals_table>
       </synthesizer_tools>
       <opus_data_import_export_tools type="tool_group" setexpanded="True">
         <sql_data_to_opus_tool type="tool_file">

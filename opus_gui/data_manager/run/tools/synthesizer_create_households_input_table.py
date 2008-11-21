@@ -25,7 +25,7 @@ def opusRun(progressCB,logCB,params):
     # get parameter values
     database_name = param_dict['database_name']
     database_server_connection = param_dict['database_server_connection']
-    raw_pums_households_table_name = param_dict['raw_pums_households_table_name']
+    raw_pums_households_table_name = 'raw_pums_hh_data'
 
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
     opus_db = OpusDatabase(database_server_configuration=dbs_config, database_name=database_name)
