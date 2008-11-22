@@ -112,6 +112,7 @@ class OpusDatabase(object):
             else:
                 raise
             
+    '''Deprecated: DO NOT USE'''
     def DoQuery(self, query):
         """
         Executes an SQL statement that changes data in some way.

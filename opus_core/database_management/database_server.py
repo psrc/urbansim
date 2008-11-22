@@ -79,6 +79,8 @@ class DatabaseServer(object):
     def execute(self, query):
         return self.engine.execute(query)
         
+        
+    '''Deprecated: DO NOT USE'''
     def DoQuery(self, query):
         """
         Executes an SQL statement that changes data in some way.
