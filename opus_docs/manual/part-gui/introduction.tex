@@ -10,35 +10,51 @@ applications.  We think the GUI offers a substantial advance in usability,
 and look forward to user feedback, and contributions from collaborators, to
 continue building on this foundation.
 
-If you haven't already, please install Opus and UrbanSim on your machine.
-Installation instructions are in Appendix~\ref{appendix:installation}.
+Before starting the tutorial, please install Opus and UrbanSim on your
+machine if you haven't already.  Installation instructions are in
+Appendix~\ref{appendix:installation}.
 
 \section{Main Features}
 
 The GUI is cross-platform compatible, and has been developed using the open
-source Qt4 library.  Note that screenshots included in this section will be
-taken from all three platforms, to give a sense of the look and feel of the
-GUI on each platform.  After launching the GUI from any of these platforms,
-the main Opus GUI window should be displayed as in Figure
-\ref{fig:opus1-linux} or \ref{fig:opus1-mac}.
+source Qt4 library and the PyQt Python interface to it.  Screenshots
+included in this section will be taken from all three platforms, to give a
+sense of the look and feel of the GUI on each platform.  After launching
+the GUI from any of these platforms, the main Opus GUI window should be
+displayed as in Figure \ref{fig:opus1-linux} or \ref{fig:opus1-mac}.
 
 The organization of the GUI is based on an expectation that the work flow
 for developing and using models can be effectively organized into tasks
 that follow an ordering of data management, model management, scenario
 management, and results management.  The main window of the GUI reflects
 this work flow expectation, by implementing four tabs in the left-hand
-panel of the main window labeled \emph{Data Manager}, \emph{Model Manager},
-\emph{Scenario Manager}, and \emph{Results Manager}.  Each tab provides a
-container for configuring and running a variety of tasks, organized into
-the main functional areas involved in developing and using a simulation
-model.
+panel of the main window labeled \emph{Data}, \emph{Models},
+\emph{Scenarios}, and \emph{Results}, plus a \emph{General} tab.  Each of
+the four tabs provides a container for configuring and running a variety of
+tasks, organized into the main functional areas involved in developing and
+using a simulation model.
 
 \squishlist
-\item The \emph{Data Manager} organizes the processes related to moving data between the Opus environment and, doing data processing both within Opus, and also remotely in a database or GIS environment.  Opus can use Python to pass data and commands to a database system like Postgres or MS SQL Server, or to a GIS system like ArcGIS or PostGIS.  Tasks can be organized in the Data Manager as scripts, and run as a batch, or alternatively, they may be run interactively.
-\item The \emph{Model Manager} organizes the work of developing, configuring, and estimating the parameters of models, and of combining models into a model system.
-\item The \emph{Scenario Manager} organizes the tasks related to configuring a scenario of input assumptions, and to interact with a run management system to actually run simulations on scenarios.  Tools to monitor and interact with a running simulation are provided here.
-\item The \emph{Results Manager} provides the tools to explore results once one or more scenarios have been simulated.  It integrates an Indicator Framework that makes it possible to generate a variety of indicators, for diagnostic and for evaluation purposes.  It also provides functionality to visualize indicators as charts, maps, and tables, and to export results to other formats for use outside of Opus.
-\squishend
+\item The \emph{Data} tab organizes the processes related to moving data
+  between the Opus environment and, doing data processing both within Opus,
+  and also remotely in a database or GIS environment.  Opus can use Python
+  to pass data and commands to a database system like Postgres or MS SQL
+  Server, or to a GIS system like ArcGIS or PostGIS.  Tasks can be
+  organized in the Data Manager as scripts, and run as a batch, or
+  alternatively, they may be run interactively.
+\item The \emph{Models} tab organizes the work of developing, configuring,
+  and estimating the parameters of models, and of combining models into a
+  model system.
+\item The \emph{Scenarios} tab organizes the tasks related to configuring a
+  scenario of input assumptions, and to interact with a run management
+  system to actually run simulations on scenarios.  Tools to monitor and
+  interact with a running simulation are provided here.
+\item The \emph{Results} tab provides the tools to explore results once one
+  or more scenarios have been simulated.  It integrates an Indicator
+  Framework that makes it possible to generate a variety of indicators, for
+  diagnostic and for evaluation purposes.  It also provides functionality
+  to visualize indicators as charts, maps, and tables, and to export
+  results to other formats for use outside of Opus.  \squishend
 
 To launch the Opus GUI, you will need to run a python script called
 \file{opus.py} in the \file{/opus/src/opus\_gui} directory.\footnote{Note
@@ -59,7 +75,7 @@ file in the \file{/opus/src/opus\_gui} directory to launch the GUI.
 
 However it is launched, it will start from a command shell, and this
 window remains active while Opus is running.  Do not attempt to quit
-this window or Opus will close also.  
+this window until after exiting the Opus GUI, or Opus will close also.  
 
 \begin{figure}[htp]
 \begin{center}
@@ -80,7 +96,7 @@ this window or Opus will close also.
 \section{Introduction to XML-based Project Configurations}
 \label{sec:intro-to-xml-based-project-configurations}
 
-Notice that at this point there are no contents in any of the four tabs.
+Notice that at this point there are no contents in any of the tabs.
 Opus uses XML-based configuration files to flexibly specify the various
 aspects of a project.  In addition, the appearance of the different tabs is
 also driven from the XML configuration files, so that different parts of
