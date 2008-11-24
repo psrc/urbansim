@@ -579,14 +579,11 @@ class XMLConfiguration(object):
         return result_dict
     
     def _convert_model_to_dict(self, node):
-        '''translate from new structure to old and convert to dict
-        The conversion is so far to move everything from /structure up one level
-        and to append a node named 'arguments' to some of the subnodes of 
-        /structure'''
+        '''translate from xml structure to dictionary configuration.'''
         structure_node = node.find('structure')
         if structure_node == None: # invalid format of model node
-            raise StandardError('Invalid model structure: '
-                  'Model %s is missing subnode "structure"' %node.tag)
+            raise StandardError('XML Error: Invalid Model structure: '
+                  'Model %s is missing a "structure" tag' %node.tag)
         model_dict = {}
         for subnode in structure_node:
             # append 'arguments' to some nodes
@@ -600,7 +597,18 @@ class XMLConfiguration(object):
                     else:
                         self._add_to_dict(arg_node, subnode_struct)
                 model_dict[subnode.tag] = subnode_struct
-            else: # other nodes should stay in node root
+            elif subnode.tag == 'import' and self.xml_version >= '4.2.1-beta1':
+                # dicts wants module (with path) as key and class name as value
+                try:
+                    model_module = subnode.find("module").text
+                    model_classname = subnode.find("classname").text
+                    model_dict['import'] = {model_module: model_classname}
+                except AttributeError:
+                    print('Error: Import tag should have two child nodes;'
+                          'module and classpath. Model "%s" will not work '
+                          'correctly.' %node.tag)
+                    model_dict['import'] = None
+            else: # just put it in the dict
                 model_dict[subnode.tag] = self._convert_node_to_data(subnode)
         return model_dict
         
