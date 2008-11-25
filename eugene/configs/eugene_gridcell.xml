@@ -2,7 +2,7 @@
   <xml_version>4.2.0</xml_version>
   <general>
     <description type="string">Sample Eugene project</description>
-    <project_name flags="hidden" hidden="True" type="string">eugene_gridcell</project_name>
+    <project_name hidden="True" type="string">eugene_gridcell</project_name>
     <parent type="file">urbansim_gridcell/configs/urbansim_gridcell.xml</parent>
     <dataset_pool_configuration type="class">
       <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
