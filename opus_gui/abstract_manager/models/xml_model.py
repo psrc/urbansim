@@ -51,8 +51,9 @@ class XmlModel(QAbstractItemModel):
         self._rootItem = XmlItem(self.domDocument, self.xmlRoot, None)
         # Loop through the first level children and init them as a root item
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
-            current = self.xmlRoot.childNodes().item(x)
-            if current.nodeType() == QDomNode.ElementNode:
+            current = self.xmlRoot.childNodes().item(x).toElement()
+            if not current.isNull() and \
+                current.attribute('hidden').toLower() != QString('true'):
                 _rootItemSub = XmlItem(self.domDocument,current, self._rootItem)
                 _rootItemSub.initAsRootItem()
                 self._rootItem.childItems.append(_rootItemSub)
