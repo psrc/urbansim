@@ -67,7 +67,8 @@ class DatabaseServerConfiguration(object):
                  password = None,
                  database_configuration = None,
                  test = False,
-                 database_server_configuration_file_path = None):
+                 database_server_configuration_file_path = None,
+                 sqlite_db_path = None):
         
         if database_server_configuration_file_path is None:
             database_server_configuration_file_path = os.path.join(os.environ['OPUS_HOME'], 'settings', 'database_server_configurations.xml')
@@ -113,6 +114,7 @@ class DatabaseServerConfiguration(object):
         if (self.password is None or self.password=='') and 'SQLPASSWORD' in os.environ:
             self.password = os.environ['SQLPASSWORD']
 
+        self.sqlite_db_path = sqlite_db_path
                 
     def __repr__(self):
         return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 

@@ -18,8 +18,12 @@ from opus_core.logger import logger
 
 class SqliteServerManager(AbstractDatabaseEngineManager):
     
-    def __init__(self):
-        self.server_path = os.path.join(os.environ['OPUS_HOME'], 'local_databases')
+    def __init__(self, sqlite_db_path = None):
+        if sqlite_db_path is None:
+            self.server_path = os.path.join(os.environ['OPUS_HOME'], 'local_databases')
+        else:
+            self.server_path = sqlite_db_path
+            
         self.schema_path = os.path.join(self.server_path, self._get_default_database())
         self.os = None
         try:

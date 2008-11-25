@@ -47,7 +47,7 @@ class OpusDatabase(object):
         elif self.protocol == 'mysql':
             self.protocol_manager = MySQLServerManager()
         elif self.protocol == 'sqlite':
-            self.protocol_manager = SqliteServerManager()
+            self.protocol_manager = SqliteServerManager(database_server_configuration.sqlite_db_path)
         elif self.protocol == 'mssql':
             self.protocol_manager = MSSQLServerManager()
             
