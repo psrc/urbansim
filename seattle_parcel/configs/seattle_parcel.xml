@@ -274,22 +274,6 @@
   <results_manager>
     <Indicator_batches setexpanded="True" type="group"/>
     <Simulation_runs setexpanded="True" type="all_source_data">
-      <Run_2008_08_22_17_05 type="source_data">
-        <cache_directory hidden="True" type="string">/urbansim_cache/seattle_parcel/runs/run_2.2008_08_22_17_05</cache_directory>
-        <start_year hidden="True" type="integer">2001</start_year>
-        <end_year hidden="True" type="integer">2002</end_year>
-        <scenario_name hidden="True" type="string">seattle_parcel</scenario_name>
-        <run_name hidden="True" type="string">Run_2008_08_22_17_05</run_name>
-        <run_id hidden="True" type="integer">2</run_id>
-      </Run_2008_08_22_17_05>
-      <base_year_data type="source_data">
-        <start_year hidden="True" type="integer">2000</start_year>
-        <end_year hidden="True" type="integer">2000</end_year>
-        <run_id hidden="True" type="integer">1</run_id>
-        <run_name hidden="True" type="string">base_year_data</run_name>
-        <scenario_name hidden="True" type="string">seattle_parcel</scenario_name>
-        <cache_directory hidden="True" type="string">/urbansim_cache/seattle_parcel/base_year_data</cache_directory>
-      </base_year_data>
     </Simulation_runs>
   </results_manager>
 </opus_project>
