@@ -186,7 +186,7 @@ class XmlController_Scenarios(XmlController):
                 return
 
             # version specific settings
-            model_choice_name = "model" if self.xml.xml_version < '4.2.0' else "model_choice"
+            model_choice_name = "model" if self.xml.xml_version < '4.2.0-beta0' else "model_choice"
 
             # create and populate menu based on the node element
             menu = QMenu(self.mainwindow)
@@ -250,7 +250,7 @@ class XmlController_Scenarios(XmlController):
         model_elements = []
         available_model_names = []
         
-        if self.xml.xml_version >= '4.2.0':
+        if self.xml.xml_version >= '4.2.0-beta1':
             elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
                                                   attribute='type', value='model')
             model_elements = [e[0] for e in elements]
@@ -287,7 +287,18 @@ class XmlController_Scenarios(XmlController):
         spawn_text = self.model.domDocument.createTextNode('Run')
         spawn.appendChild(spawn_text)
         spawn.setAttribute('choices', 'Run|Skip')
-        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0' else 'model'
+        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0-beta1' else 'model'
         spawn.setAttribute('type', type_name)
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
+        
+    def update_models_to_run_list(self):
+        '''Check each model in the models to run list to be present in the model
+        configuration tab'''
+        # go through each of the scenarios and check if they have a 
+        # models_to_run entry
+        
+        # if they do, check that all the models in that list are in the 
+        # available_models list
+        pass
+        
