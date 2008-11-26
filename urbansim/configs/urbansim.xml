@@ -19,8 +19,8 @@
         </specification>
         <structure type="dictionary">
           <import type="dictionary">
-            <module>opus_core.simple_model</module>
-            <classname>SimpleModel</classname>
+            <module type="string">opus_core.simple_model</module>
+            <classname type="string">SimpleModel</classname>
           </import>
           <init type="dictionary">
             <name type="string">SimpleModel</name>
@@ -41,7 +41,8 @@
       <choice_model_template copyable="True" hidden="True" type="model_template">
         <structure type="dictionary">
           <import type="dictionary">
-            <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
+            <module type="string">opus_core.choice_model</module>
+            <classname type="string">ChoiceModel</classname>
           </import>
           <init type="dictionary">
             <name type="string">ChoiceModel</name>
@@ -123,7 +124,8 @@
         </specification>
         <structure type="dictionary">
           <import type="dictionary">
-            <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
+            <module type="string">opus_core.regression_model</module>
+            <classname type="string">RegressionModel</classname>
           </import>
           <init type="dictionary">
             <name type="string">RegressionModel</name>
@@ -184,7 +186,8 @@
         </specification>
         <structure type="dictionary">
           <import type="dictionary">
-            <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
+            <module type="string">opus_core.allocation_model</module>
+            <classname type="string">AllocationModel</classname>
           </import>
           <init type="dictionary">
             <name type="string">AllocationModel</name>
@@ -224,7 +227,8 @@
         </specification>
         <structure type="dictionary">
           <import type="dictionary">
-            <urbansim.models.agent_location_choice_model type="string">AgentLocationChoiceModel</urbansim.models.agent_location_choice_model>
+            <module type="string">urbansim.models.agent_location_choice_model</module>
+            <classname type="string">AgentLocationChoiceModel</classname>
           </import>
           <init type="dictionary">
             <name type="string">AgentLocationChoiceModel</name>
