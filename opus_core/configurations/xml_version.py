@@ -47,7 +47,15 @@ class XmlVersion(object):
             return
 
     def __str__(self):
-        return ('%d.%d.%d' %(self.major, self.stable, self.minor))
+        beta_string = 'Beta#: %d' %self.beta
+        if self.beta < 0:
+            beta_string = 'Stable'
+        return ('%d.%d.%d (%s)' %(self.major, self.stable, 
+                                  self.minor, beta_string))
+        
+    def is_beta(self):
+        '''returns true if this version string is a beta string'''
+        return self.beta != -1
     
     def __cmp__(self, other):
         if isinstance(other, str): # enable comparison with strings
@@ -59,8 +67,16 @@ class XmlVersion(object):
         if self.stable < other.stable: return -1
         if self.minor > other.minor: return 1
         if self.minor < other.minor: return -1
-        if self.beta > other.beta: return 1
-        if self.beta < other.beta: return -1
+        # beta strings with same major, stable and minor as stables are 'less'
+        if self.is_beta() and (not other.is_beta()):
+            return -1
+        elif (not self.is_beta()) and other.is_beta():
+            return 1
+        elif self.is_beta() and other.is_beta():
+            # compare by beta number
+            if self.beta > other.beta: return 1
+            if self.beta < other.beta: return -1
+        # everything equal
         return 0
     
     def _print_format(self):
@@ -77,16 +93,14 @@ class XmlVersionTests(opus_unittest.OpusTestCase):
         self.assertTrue(v1 == v3)
         self.assertTrue(v2 > '4.2.1')
         
-        self.assertTrue(XmlVersion('1.0.0-beta3') > '1.0.0')
+        # betas are previous to stables, so beta3 should be greater than 
+        # the stable version (which doesn't have beta suffix)
+        self.assertTrue(XmlVersion('1.0.0-beta3') < '1.0.0')
         self.assertTrue(XmlVersion('1.0.0-beta2') > '1.0.0-beta1')
         
         
     def test_version_string(self):
-        v1 = XmlVersion('4.2')
-        v2 = XmlVersion('jibberish')
-        v3 = XmlVersion('4.3.2.3.3.2.1.3')
-        v4 = XmlVersion('1.0.0-beta') # left out beta revision number
-        self.assertTrue(v1 == '0.0.0')
-        self.assertTrue(v2 == '0.0.0')
-        self.assertTrue(v3 == '0.0.0')
-        self.assertTrue(v4 == '0.0.0')
+        self.assertTrue(XmlVersion('4.2') == '0.0.0')
+        self.assertTrue(XmlVersion('jibberish') == '0.0.0')
+        self.assertTrue(XmlVersion('4.3.2.3.3.2.1.3'))
+        self.assertTrue(XmlVersion('1.0.0-beta') == '0.0.0')
