@@ -144,7 +144,7 @@ class XMLConfiguration(object):
         If the model_name argument is given, also parse overriding 
         configurations for that specific model."""
         # grab general configuration for estimations
-        if self.xml_version >= '4.2.0':
+        if self.xml_version >= '4.2.0-beta1':
             config_section = self.get_section('model_manager/model_system')
         else:
             config_section = self.get_section('model_manager/estimation')
@@ -160,7 +160,7 @@ class XMLConfiguration(object):
         # get the configuration overrides for the model
         changes_dict = {}
         
-        if self.xml_version >= '4.2.0':
+        if self.xml_version >= '4.2.0-beta1':
             # look for a models to run list in prepare for estimate            
             models_to_run = []
             models_to_run_node = \
@@ -197,7 +197,7 @@ class XMLConfiguration(object):
         all_vars.sort()
 
         # look for list of submodels
-        if self.xml_version >= '4.2.0':
+        if self.xml_version >= '4.2.0-beta1':
             submodel_list = self.get_section('model_manager/model_system/' + 
                                              model_name + '/specification/')
         else:
@@ -485,7 +485,7 @@ class XMLConfiguration(object):
             return None
         # type = 'model' was changed to 'model_choice' from xml version 1.1 
         elif type_name == 'model':
-            if self.xml_version >= '4.2.0':
+            if self.xml_version >= '4.2.0-beta1':
                 return self._convert_model_to_dict(node)
             else:
                 return self._convert_custom_type_to_data(node, "Skip")
@@ -597,7 +597,7 @@ class XMLConfiguration(object):
                     else:
                         self._add_to_dict(arg_node, subnode_struct)
                 model_dict[subnode.tag] = subnode_struct
-            elif subnode.tag == 'import' and self.xml_version >= '4.2.1-beta1':
+            elif subnode.tag == 'import' and self.xml_version >= '4.2.0-beta1':
                 # dicts wants module (with path) as key and class name as value
                 try:
                     model_module = subnode.find("module").text
