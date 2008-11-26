@@ -13,6 +13,7 @@
 #
 
 from opus_core.class_factory import ClassFactory 
+from opus_core.logger import logger
 
 class VisualizationFactory:
 
@@ -42,6 +43,12 @@ class VisualizationFactory:
             class_name = class_names[visualization_type],
             arguments=kwargs)
         
-        return visualization.visualize(
-           indicators_to_visualize = indicators_to_visualize,
-           computed_indicators = computed_indicators, *args)
+        try:
+            visualization = visualization.visualize(
+               indicators_to_visualize = indicators_to_visualize,
+               computed_indicators = computed_indicators, *args)
+        except: 
+            logger.log_error('Could not create the %s visualization for %s'%(visualization_type, module_composed_name))
+            visualization = None
+            
+        return visualization

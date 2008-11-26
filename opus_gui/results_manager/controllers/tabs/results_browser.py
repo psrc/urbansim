@@ -242,6 +242,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         for i in indicators:
             if i['name'] ==QString(indicator_name):
                 dataset = str(i['dataset'])
+                break
             
         if dataset is None:
             raise Exception('Could not find dataset for indicator %s'%indicator_name)
@@ -319,13 +320,17 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 #                map_widget = self.tabMap
 #                tab_widget = self.tabTable
             
-        if not map_widget or not tab_widget: return
+#        if not map_widget or not tab_widget: return
         
         self.tabMap = map_widget
         self.tabTable = tab_widget
+ 
+        if self.tabTable:
+            new_tab.addTab(self.tabTable, "Table")
         
-        new_tab.addTab(self.tabTable, "Table")
-        new_tab.addTab(self.tabMap, "Map")
+        if self.tabMap:           
+
+            new_tab.addTab(self.tabMap, "Map")
         
         
         self.already_browsed[key] = (tab_widget, map_widget)  
@@ -355,39 +360,39 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                             self.runErrorFromThread)
             runThread.start()
         else:
-            if swap:
-                (map_widget, tab_widget) = self.queued_results[1]
-                
-#                self.swap_visualizations(map_widget, tab_widget)
-                name = '%s/%s/%s'%key
-        #        self.swap_visualizations(map_widget, tab_widget)
-                self.add_visualization(map_widget = map_widget, tab_widget = tab_widget, name = name)
+#            if swap:
+#                (map_widget, tab_widget) = self.queued_results[1]
+#                
+##                self.swap_visualizations(map_widget, tab_widget)
+#                name = '%s/%s/%s'%key
+#        #        self.swap_visualizations(map_widget, tab_widget)
+#                self.add_visualization(map_widget = map_widget, tab_widget = tab_widget, name = name)
                     
             self.queued_results = None
                 
             self.generating_results = False
             self.pbnGenerateResults.setText(QString('Results Generated'))
             
-    def swap_visualizations(self, map_widget, tab_widget):
-        cur_index = self.twVisualizations.currentIndex()
-        
-        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabTable))
-        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabMap))
-        self.tabMap = None
-        self.tabTable = None
-                
-        self.tabMap = map_widget
-        self.tabTable = tab_widget
-        
-        self.twVisualizations.addTab(self.tabTable, "")
-        self.twVisualizations.addTab(self.tabMap, "")
-                
-        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabTable), QString('Table'))
-        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
-        #self.tabMap.show()
-        #self.tabTable.show()
-        
-        self.twVisualizations.setCurrentIndex(cur_index)
+#    def swap_visualizations(self, map_widget, tab_widget):
+#        cur_index = self.twVisualizations.currentIndex()
+#        
+#        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabTable))
+#        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabMap))
+#        self.tabMap = None
+#        self.tabTable = None
+#                
+#        self.tabMap = map_widget
+#        self.tabTable = tab_widget
+#        
+#        self.twVisualizations.addTab(self.tabTable, "")
+#        self.twVisualizations.addTab(self.tabMap, "")
+#                
+#        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabTable), QString('Table'))
+#        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
+#        #self.tabMap.show()
+#        #self.tabTable.show()
+#        
+#        self.twVisualizations.setCurrentIndex(cur_index)
     
     def removeElement(self):
         return True

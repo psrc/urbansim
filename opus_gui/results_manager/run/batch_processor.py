@@ -117,7 +117,8 @@ class BatchProcessor(object):
                 
                 viz_args = self._get_viz_args(visualization_type, params, indicators)
                 self.visualizer.run(args = viz_args, cache_directory = self.cache_directory)
-                self.visualizations.append((visualization_type, self.visualizer.get_visualizations()))
+                if self.visualizer.get_visualizations() != []:
+                    self.visualizations.append((visualization_type, self.visualizer.get_visualizations()))
             
             succeeded = True
         except:

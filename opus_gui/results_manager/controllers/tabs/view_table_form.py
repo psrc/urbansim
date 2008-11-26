@@ -53,7 +53,7 @@ class ViewTableForm(QWidget):
                         
         keys = primary_keys + [key for key in table_data.keys() 
                                    if key not in primary_keys]
-        num_rows = len(table_data[keys[0]])
+        num_rows = min(len(table_data[keys[0]]), limit)
         num_cols = len(keys)
         
         self.tableWidget.clear()

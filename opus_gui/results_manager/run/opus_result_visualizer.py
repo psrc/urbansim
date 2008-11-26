@@ -58,7 +58,7 @@ class OpusResultVisualizer(object):
     
     def _visualize(self, args, cache_directory = None):
             
-        self.visualizations = {}
+        self.visualizations = []
         indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(toolboxBase = self.toolboxBase)
         
@@ -151,6 +151,9 @@ class OpusResultVisualizer(object):
                                   indicators_to_visualize = indicators_to_visualize.keys(), 
                                   computed_indicators = indicators_to_visualize, 
                                   visualization_type = viz_type, **viz_args)
+
+        if self.visualizations is None:
+            self.visualizations = []
     
     def get_visualizations(self):
         return self.visualizations
