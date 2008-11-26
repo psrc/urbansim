@@ -378,8 +378,6 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     
             self.twAvailableIndicators.setItem(last_row,0,item)
     
-            for k,v in indicator.items():
-                print k,v
             item = QTableWidgetItem()
             item.setText(indicator['value'])
             self.twAvailableIndicators.setItem(last_row,1,item)
