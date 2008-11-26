@@ -40,10 +40,10 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             viz_type = str(cur_vals['visualization_type'])
 
             if viz_type in ['table_per_year', 'table_per_attribute']:
-                viz_type = 'tab'           
+                viz_type = 'Table'           
             elif viz_type not in ['Map']:
                 viz_type = self._get_inverse_type_mapper()[viz_type]
-            prev_viz_type = viz_type
+            prev_viz_type = QString(viz_type)
         else:
             prev_viz_type = QString('Table')
             
