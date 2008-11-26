@@ -50,10 +50,11 @@ class OpusGuiThread(QThread):
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
 
     def finishedCallback(self,success):
-        if success:
-            logger.log_note("Success returned from results")
-        else:
-            logger.log_warning("Error returned from results")
+#        if success:
+#            logger.log_note("Success returned from results")
+#        else:
+#            logger.log_warning("Error returned from results")
+        logger.log_note('Results finished.')
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
     def errorCallback(self,errorMessage):
