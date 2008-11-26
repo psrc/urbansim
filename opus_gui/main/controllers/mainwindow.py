@@ -265,6 +265,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
         
+        ###T: removing these until they serve a purpose
+        self.menuUtilities.removeAction(self.actionPython_View)
+        #self.menuUtilities.removeAction(self.actionLog_View)
+        self.menuUtilities.removeAction(self.actionEditor_View)
 
         
     def getDbConnectionNames(self):
