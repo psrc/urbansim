@@ -361,18 +361,16 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 to_table_widget.setItem(last_row, 1, QTableWidgetItem())
                 
         from_table_widget.removeRow(row)        
-                
+
     def on_pbnRemoveIndicator_released(self):
         row = self.twIndicatorsToVisualize.currentRow()
-        from_table_widget = self.twIndicatorsToVisualize
-        to_table_widget = self.twAvailableIndicators
         
-        cur_item = from_table_widget.item(row, 0)
+        cur_item = self.twIndicatorsToVisualize.item(row, 0)
         if cur_item is not None:
             value = QString(cur_item.text())
             
             item = QTableWidgetItem(value) #need to create new item because QT deletes object
-            last_row = to_table_widget.rowCount()
+            last_row = self.twAvailableIndicators.rowCount()
             indicator = self.indicators[value]
             new_row = QTableWidgetItem()
             self.twAvailableIndicators.setRowCount(last_row + 1)
@@ -380,15 +378,17 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     
             self.twAvailableIndicators.setItem(last_row,0,item)
     
-            item = QTableWidgetItem()
-            item.setText(indicator['dataset'])
-            self.twAvailableIndicators.setItem(last_row,1,item)
-        
+            for k,v in indicator.items():
+                print k,v
             item = QTableWidgetItem()
             item.setText(indicator['value'])
-            self.twAvailableIndicators.setItem(last_row,2,item)  
+            self.twAvailableIndicators.setItem(last_row,1,item)
+        
+#            item = QTableWidgetItem()
+#            item.setText(indicator['value'])
+#            self.twAvailableIndicators.setItem(last_row,2,item)  
                 
-        from_table_widget.removeRow(row)      
+        self.twIndicatorsToVisualize.removeRow(row)      
 #        if self.twIndicatorsToVisualize.rowCount() == 0:
 #            self.dataset_name = None
         
