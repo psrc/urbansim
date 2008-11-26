@@ -417,10 +417,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.latest_project_file_name = fileName
             self.updateProjectHistoryNode()
             self.saveGuiConfig()
-                        
-        title = self.toolboxBase.project_name
 
-        #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxBase.runManagerTree.toolboxbase.xml_file).filePath())
+        # assemble a title consisting of file name and project name
+        import os
+        xml_file_name = config.split(os.sep)[-1]
+        title = '%s (file: %s)' %(self.toolboxBase.project_name, xml_file_name)
         self.setWindowTitle(self.application_title + " - " + QString(title))
 #        if config:
         self.resultsManagerBase.scanForRuns()    
