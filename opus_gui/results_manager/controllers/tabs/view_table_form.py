@@ -13,7 +13,7 @@
 
 from PyQt4.QtCore import QString, Qt, QSize
 from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, \
-                        QTableWidget, QTableWidgetItem
+                        QTableWidget, QTableWidgetItem, QMessageBox
 
 
 from opus_core.storage_factory import StorageFactory
@@ -82,6 +82,9 @@ class ViewTableForm(QWidget):
                 self.tableWidget.setItem(i,j,item)
                 j += 1
             if i > limit:
+                msg = 'The table %s has been truncated to %i rows because of memory limitations.'%(visualization.table_name,limit)
+                msg += ' If you want to view all the results, open the following file\n%s'%visualization.get_file_path()
+                QMessageBox.warning(self.mainwindow,'Warning', QString(msg))
                 break
         
         
