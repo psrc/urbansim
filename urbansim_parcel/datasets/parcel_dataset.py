@@ -43,14 +43,17 @@ class ParcelDataset(UrbansimDataset):
         """
         calculate the min and max development capacity given by constraints.
         modelled from the method of gridcell
+        
+        -1 is a magic number. -1 in minimum/maximum column of constraints dataset is interpreted as 
+        unconstrained i.e. minimum = 0, maximum=positive infinite
 
         if consider_constraints_as_rules is True, nothing is allowed to be built unless it is specified.  
-        It interprets -1 in minimum/maximum as unconstrained and not allowing any development if not 
-        specified in development_constraints table,
+        not allowing any development if not specified in development_constraints table, that is,  
+        minimum and maximum default to 0. 
         
-        else if consider_constraints_as_rules is False, anything can be built unless it is disallowed explicity.  
-        It interprets any number in minimum/maximum as it is, i.e. -1 or any negative value as not allowing any 
-        development and allowing any development if not specified in development_constriant
+        else if consider_constraints_as_rules is False, anything can be built unless it is disallowed explicity.
+        allowing any development if not specified in development_constriant, i.e. minimum and maximum default to -1 
+        and is intrepreted as minimum = 0, and maximum = positive infinite. 
         
         """
         if (self.development_constraints <> None) and (not recompute_flag):
