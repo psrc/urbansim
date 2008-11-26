@@ -560,7 +560,7 @@ class ResultsManagerXMLHelper:
         runs = run_manager.get_run_info(resources = True, status = 'done')
         run_manager.close()
 
-
+        added_runs = []
         for run_id, run_name, run_description, processor_name, run_resources in runs:
             cache_directory = run_resources['cache_directory']
             if cache_directory in existing_cache_directories or \
@@ -576,6 +576,9 @@ class ResultsManagerXMLHelper:
                                              run_id = run_id,
                                              temporary = False)
             existing_cache_directories[cache_directory] = 1
+            added_runs.append(cache_directory)
+        return added_runs
+        
             
 
     def set_text_child_value(self, element, text):

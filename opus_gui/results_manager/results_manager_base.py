@@ -28,6 +28,10 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.run_manager import RunManager
 from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import QString
+
+
 class ResultsManagerBase(AbstractManagerBase):  
     
     def __init__(self, mainwindow):
@@ -45,7 +49,12 @@ class ResultsManagerBase(AbstractManagerBase):
         run_manager.clean_runs()
         run_manager.close()
             
-        self.xml_helper.update_available_runs()
+        added_runs = self.xml_helper.update_available_runs()
+        if added_runs != []:
+            run_data = '\n'.join(added_runs)
+            msg = 'The following simulation runs have been automatically added to the results manager:\n\n%s'%run_data
+            QMessageBox.information(self.mainwindow,'Simulation runs added', QString(msg))        
+                
                 
     def _get_run_manager(self):
         config = ServicesDatabaseConfiguration()
