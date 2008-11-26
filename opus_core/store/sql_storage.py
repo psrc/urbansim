@@ -26,7 +26,11 @@ try:
     from sqlalchemy.databases.mssql import MSString as MicrosoftString
 except:
     pass
-    
+
+try:
+    from sqlalchemy.databases.mssql import AdoMSNVarchar
+except:
+    pass    
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
@@ -209,6 +213,7 @@ class sql_storage(Storage):
         
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
 
+        #mysql specific column types
         try:
             if isinstance(column_type, MSBigInteger):
                 return dtype('int64')
@@ -217,6 +222,13 @@ class sql_storage(Storage):
             if isinstance(column_type, MSChar):
                 return dtype('S')
         except: pass
+        
+        #mssql specific column types
+        try:
+            if isinstance(column_type, AdoMSNVarchar):
+                return dtype('S') 
+        except:
+            pass
         
         if isinstance(column_type, Integer):
             return dtype('i')
