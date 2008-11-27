@@ -63,6 +63,8 @@ class ToolboxBase(object):
         self.gui_configuration_file = os.path.join(gui_directory, 'gui_config.xml')
         if not os.path.exists(self.gui_configuration_file):
             self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
+            
+        self.project_name = None
 
         self.gui_configuration_doc = QDomDocument()
         self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
@@ -166,6 +168,7 @@ class ToolboxBase(object):
 
 
     def close_controllers(self):
+        '''close all manager trees'''
         # Try to remove all the old trees...
         if self.generalManagerTree != None:
             generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
