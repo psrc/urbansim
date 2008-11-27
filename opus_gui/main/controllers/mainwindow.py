@@ -85,7 +85,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         application_title_dict = get_child_values(parent = application_options_node,
                                              child_names = ['application_title'])
         self.application_title = application_title_dict['application_title']
-        self.setWindowTitle(self.application_title)
+        # self.setWindowTitle(self.application_title)
+        self.updateWindowTitle()
 
         # Loading settings from gui configuration xml file regarding font sizes
         try:
@@ -384,6 +385,22 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.setWindowTitle('Database Server Connections')
         wnd.show()
         self.changeFontSize()
+        
+    def updateWindowTitle(self, dirty = False):
+        '''update the window title to reflect the state of the project'''
+        # assemble a title consisting of file name and project name
+        app_name = self.application_title
+        proj_name = self.toolboxBase.project_name
+        file_name  = self.toolboxBase.xml_file
+        if file_name:
+            file_name = file_name.split(os.sep)[-1] # only use filename
+        title = app_name
+        if proj_name:
+            if dirty:
+                title = '%s - (*) %s - [file: %s]' %(app_name, proj_name, file_name)
+            else:
+                title = '%s - %s - [file: %s]' %(app_name, proj_name, file_name)
+        self.setWindowTitle(title)
     
     def openConfig(self, config=None):
         # config should be a path to an .xml config file
@@ -408,21 +425,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Check for cancel
             if len(fd) == 0:
                 return
-            fileName = QString(fd)
+            config = QString(fd)
             fileNameInfo = QFileInfo(QString(fd))
             fileNameBaseName = fileNameInfo.completeBaseName()
             # Open the file and add to the Run tab...
-            self.toolboxBase.openXMLTree(fileName)
+            self.toolboxBase.openXMLTree(config)
             # Add the project file's path to the title bar
-            self.latest_project_file_name = fileName
+            self.latest_project_file_name = config
             self.updateProjectHistoryNode()
             self.saveGuiConfig()
 
-        # assemble a title consisting of file name and project name
-        import os
-        xml_file_name = config.split(os.sep)[-1]
-        title = '%s (file: %s)' %(self.toolboxBase.project_name, xml_file_name)
-        self.setWindowTitle(self.application_title + " - " + QString(title))
 #        if config:
         self.resultsManagerBase.scanForRuns()    
         self.actLaunchResultBrowser.setEnabled(True)
@@ -441,6 +453,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionSave_Project_As_2.setEnabled(True)
         self.changeFontSize()
 
+        self.updateWindowTitle()
 
     def saveConfig(self):
         try:
@@ -553,7 +566,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self._saveOrDiscardChanges()
         self.toolboxBase.close_controllers()
         
-        self.setWindowTitle(self.application_title)
+#        self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
 
@@ -565,6 +578,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionClose_Project.setEnabled(False)
         self.actionSave_Project_2.setEnabled(False)
         self.actionSave_Project_As_2.setEnabled(False)
+        
+        self.toolboxBase.project_name = None
+        self.updateWindowTitle()
         
     def closeEvent(self, event):
         # Check to see if there are changes to the current project, if a project is open
