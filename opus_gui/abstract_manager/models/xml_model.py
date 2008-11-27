@@ -319,16 +319,12 @@ class XmlModel(QAbstractItemModel):
         return len(parentItem.childItems)
 
     def markAsDirty(self):
-        if self.dirty == False:
-            wintitle = self.parentObj.windowTitle().replace(" - ", " -*")
-            self.parentObj.setWindowTitle(wintitle)
         self.dirty = True
+        self.parentObj.updateWindowTitle(self.dirty)
 
     def markAsClean(self):
-        if self.dirty == True:
-            wintitle = self.parentObj.windowTitle().replace("*", " ")
-            self.parentObj.setWindowTitle(wintitle)
         self.dirty = False
+        self.parentObj.updateWindowTitle(self.dirty)
         
     def isDirty(self):
         return self.dirty
