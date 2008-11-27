@@ -247,7 +247,7 @@ The class is initialized by passing the following arguments:
   simulation run. It should be a python dictionary or of class \class{Resources}.
 \item[estimate_config] - A collection of additional arguments that control an
   estimation run. It should be a python dictionary or of class \class{Resources}.
-  \item[dataest_pool] - A pool of datasets needed for computation of variables. Default is None.
+  \item[dataset_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 The constructor sets \verb|filter| as a class attribute \attributesindex and calls the parent
 constructor (see Initialization in Section~\ref{sec:regression-model}).
@@ -1595,7 +1595,7 @@ The model is initialized by passing the following arguments:
 \item[group_member] - An object of class \class{ModelGroupMember} (see~\ref{sec:model-group}). Default is \verb|None|.
 \item[agents_grouping_attribute] - The agents grouping attribute. Default is 'job.building_type'.
 \item[filter] - A fully-qualified variable name for filtering out a subset of locations to place jobs in. Default is None.
-\item[dataset_pool] - A pool of dataset used for computing variables. Default is None.
+\item[dataset_pool] - A pool of datasets used for computing variables. Default is None.
 \end{description}
 All arguments are set as class properties.
 
