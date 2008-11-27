@@ -320,11 +320,11 @@ class XmlModel(QAbstractItemModel):
 
     def markAsDirty(self):
         self.dirty = True
-        self.parentObj.updateWindowTitle(self.dirty)
+        self.parentObj.updateWindowTitle()
 
     def markAsClean(self):
         self.dirty = False
-        self.parentObj.updateWindowTitle(self.dirty)
+        self.parentObj.updateWindowTitle()
         
     def isDirty(self):
         return self.dirty
