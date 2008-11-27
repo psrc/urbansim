@@ -432,12 +432,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             fileNameBaseName = fileNameInfo.completeBaseName()
             # Open the file and add to the Run tab...
             self.toolboxBase.openXMLTree(config)
-            # Add the project file's path to the title bar
-            self.latest_project_file_name = config
-            self.updateProjectHistoryNode()
-            self.saveGuiConfig()
 
-#        if config:
+        # update latest project config
+        self.latest_project_file_name = config
+        self.updateProjectHistoryNode()
+        self.saveGuiConfig()
+
         self.resultsManagerBase.scanForRuns()    
         self.actLaunchResultBrowser.setEnabled(True)
         self.actionEdit_all_variables.setEnabled(True)
@@ -448,7 +448,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         if self.all_variables is not None:
             self.all_variables.close()
-            
 
         self.actionClose_Project.setEnabled(True)
         self.actionSave_Project_2.setEnabled(True)
@@ -498,9 +497,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             indentSize = 2
             opus_core_xml_configuration.update(str(domDocument.toString(indentSize)))
             opus_core_xml_configuration.save_as(str(fileName))
-            # update 'latest project'
-            self.latest_project_file_name = fileName_file_name = fileName
-            self.updateProjectHistoryNode()
             # mark all trees as clean
             self.toolboxBase.runManagerTree.model.markAsClean()
             self.toolboxBase.dataManagerTree.model.markAsClean()
@@ -509,6 +505,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxBase.modelManagerTree.model.markAsClean()
             self.toolboxBase.resultsManagerTree.model.markAsClean()
             self.toolboxBase.generalManagerTree.model.markAsClean()
+            # reopen the file that was just saved to make it the active one
+            self.openConfig(fileName)
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage) 
@@ -766,7 +764,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #get the project history node from xml
         proj_hist_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
         nodesToSave = {"previous_project":str(self.latest_project_file_name),
-                       "open_latest_project_on_start":str(self.open_latest_project)}
+                       "":str(self.open_latest_project)}
         #go through the children of the project history node and set the value accordingly
         node = proj_hist_node.firstChild()
         while not node.isNull():
