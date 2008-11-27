@@ -132,7 +132,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
         self.actionSave_Project_2.setShortcut(QString('Ctrl+S'))
         self.actionSave_Project_As_2.setShortcut(QString('Ctrl+Shift+S'))
-        self.actionClose_Project.setShortcut(QString('Ctrl+C'))
+        self.actionClose_Project.setShortcut(QString('Ctrl+W'))
         self.actionEdit_all_variables.setShortcut(QString('Ctrl+V'))
         self.actLaunchResultBrowser.setShortcut(QString('Ctrl+R'))
         self.actionDatabaseSettings.setShortcut(QString('Ctrl+D'))
@@ -516,42 +516,26 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         Checks for changes to the currently open project (if any)
         and prompts user to save or discard changes.
         """
-        saveBeforeOpen = QMessageBox.Discard
-        if self.toolboxBase.resultsManagerTree and self.toolboxBase.resultsManagerTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxBase.modelManagerTree and self.toolboxBase.modelManagerTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxBase.runManagerTree and self.toolboxBase.runManagerTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxBase.dataManagerTree and self.toolboxBase.dataManagerTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxBase.generalManagerTree and self.toolboxBase.generalManagerTree.model.isDirty():
-            saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                            "Current project contains changes... \nShould we save or discard those changes?",
-                                            QMessageBox.Discard,QMessageBox.Save)
-
-        if saveBeforeOpen == QMessageBox.Save:
-            self.saveConfig()
-        else:
-            #if we have an existing tree we need to remove the dirty bit since we are discarding
-            if self.toolboxBase.runManagerTree:
-                self.toolboxBase.runManagerTree.model.markAsClean()
-            if self.toolboxBase.dataManagerTree:
-                self.toolboxBase.dataManagerTree.model.markAsClean()
-            if self.toolboxBase.modelManagerTree:
-                self.toolboxBase.modelManagerTree.model.markAsClean()
-            if self.toolboxBase.resultsManagerTree:
-                self.toolboxBase.resultsManagerTree.model.markAsClean()
-            if self.toolboxBase.generalManagerTree:
-                self.toolboxBase.generalManagerTree.model.markAsClean()
+        if self.toolboxBase.projectIsDirty():
+            doSave = QMessageBox.Discard
+            question = ('Current project contains changes.\n'
+                        'Do you want to save or discard those changes?')
+            buttons = (QMessageBox.Discard,QMessageBox.Save)
+            doSave = QMessageBox.question(self, "Warning", question, *buttons)
+            if doSave == QMessageBox.Save:
+                self.saveConfig()
+            else:
+                #if we have an existing tree we need to remove the dirty bit since we are discarding
+                if self.toolboxBase.runManagerTree:
+                    self.toolboxBase.runManagerTree.model.markAsClean()
+                if self.toolboxBase.dataManagerTree:
+                    self.toolboxBase.dataManagerTree.model.markAsClean()
+                if self.toolboxBase.modelManagerTree:
+                    self.toolboxBase.modelManagerTree.model.markAsClean()
+                if self.toolboxBase.resultsManagerTree:
+                    self.toolboxBase.resultsManagerTree.model.markAsClean()
+                if self.toolboxBase.generalManagerTree:
+                    self.toolboxBase.generalManagerTree.model.markAsClean()
 
     def closeConfig(self):
         """
@@ -585,8 +569,25 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.updateWindowTitle()
         
     def closeEvent(self, event):
+        '''called just before the window is closed.
+        ask users if they want to save their changes (or cancel the closing)'''
         # Check to see if there are changes to the current project, if a project is open
-        self._saveOrDiscardChanges()
+        if self.toolboxBase.projectIsDirty():
+            doSave = QMessageBox.Discard
+            question = ('Do you want to save your changes '
+                        'before quitting?')
+            buttons = (QMessageBox.Cancel,
+                       QMessageBox.Discard,
+                       QMessageBox.Save)
+            doSave = QMessageBox.question(self, "Unsaved changes", 
+                                          question, 
+                                          *buttons)
+            if doSave == QMessageBox.Save:
+                self.saveConfig()
+            elif doSave == QMessageBox.Cancel:
+                # dont quit
+                event.ignore()
+                return
         # Save application geometry on shut down
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))
