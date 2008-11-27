@@ -488,7 +488,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             if len(fd) == 0:
                 return
             fileName = QString(fd)
-
+            # append xml extension if no extension was given
+            if not fileName.endsWith('.xml') and len(fileName.split('.')) == 1:
+                fileName = fileName + '.xml'
             domDocument = self.toolboxBase.doc
             opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
             indentSize = 2
