@@ -533,7 +533,7 @@ class ResultsManagerXMLHelper:
         if datapath is None:
             datapath = os.path.join(os.environ.get('OPUS_HOME'), 'data')
         data_directory = os.path.join(datapath, project_name)
-        if not os.path.exists(data_directory): return
+        if not os.path.exists(data_directory): return []
         baseyear_directory = os.path.join(data_directory, 'base_year_data')
         
         years = []
