@@ -165,7 +165,19 @@ class ToolboxBase(object):
                 print "Error reading the %s configuration file" % (xml_file)
         else:
             print "There was an error removing the old config"
-
+            
+            
+    def projectIsDirty(self):
+        '''returns true if any of the managers is dirty'''
+        managers = [self.resultsManagerTree, 
+            self.modelManagerTree,
+            self.runManagerTree,
+            self.dataManagerTree,
+            self.generalManagerTree]
+        for manager in managers:
+            if manager and manager.model.isDirty():
+                return True
+        return False
 
     def close_controllers(self):
         '''close all manager trees'''
