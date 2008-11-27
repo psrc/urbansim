@@ -386,17 +386,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.show()
         self.changeFontSize()
         
-    def updateWindowTitle(self, dirty = False):
+    def updateWindowTitle(self):
         '''update the window title to reflect the state of the project'''
         # assemble a title consisting of file name and project name
         app_name = self.application_title
         proj_name = self.toolboxBase.project_name
         file_name  = self.toolboxBase.xml_file
-        if file_name:
-            file_name = file_name.split(os.sep)[-1] # only use filename
-        title = app_name
-        if proj_name:
-            if dirty:
+        dirty_flag = self.toolboxBase.projectIsDirty()
+
+        if file_name is not None:
+            file_name = file_name.split(os.sep)[-1]
+        title = app_name # default to only app name
+        if proj_name: # proj_name is None when no project is loaded
+            if dirty_flag:
                 title = '%s - (*) %s - [file: %s]' %(app_name, proj_name, file_name)
             else:
                 title = '%s - %s - [file: %s]' %(app_name, proj_name, file_name)
