@@ -1190,6 +1190,10 @@ calling the \verb|run()| method of the \verb|upc_sequence| attribute \attributes
 (see~\ref{sec:upc-sequence}) and passing the data matrix and the coefficients \coefficientsindex
 for the corresponding submodel.
 
+If \verb|run_config| contains the entry 'demand_string' having a character string value, 
+an aggregated demand for each choice is computed and stored as an additional attribute (of that name)
+of the choice dataset.
+
 {\it Output}:~\\[1mm]
 The method returns an array of size \verb|agents_index|, representing the
 choices that agents (elements of \verb|agent_set| determined by

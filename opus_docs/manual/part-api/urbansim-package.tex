@@ -1367,7 +1367,7 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \end{itemize}
 
 %
-\subsection{Agent Location Choice Model and Its Child Classes}
+\subsection{Agent Location Choice Model}
 \modelsindex
 %
 \label{sec:agent-lcm}
@@ -1421,41 +1421,52 @@ appropriate number of agents (from the set given by
 given by the argument \verb|maximum_runs|.
 
 
+\subsection{Household Location Choice Model}
+\index{Household Location Choice Model}
+%
+This model (class \class{HouseholdLocationChoiceModel}) is an Agent Location Choice Model that makes default settings
+of various arguments usable in the context of households
+choosing their locations. The model is initiated with the arguments and their default values
+listed below. They are either directly passed to the constructor of the parent or packed into 
+the \verb|run_config| and/or
+\verb|estimate_config| arguments under appropriate names.
+\begin{description}
+\item[location_set] - no default value
+\item[sampler] - "opus_core.samplers.weighted_sampler"
+\item[utilities] - "opus_core.linear_utilities" 
+\item[choices] - "opus_core.random_choices"
+\item[probabilities] - "opus_core.mnl_probabilities"
+\item[estimation] - "opus_core.bhhh_mnl_estimation"
+\item[capacity_string] - "vacant_residential_units"
+\item[estimation_weight_string] - "residential_units" 
+\item[simulation_weight_string] - None. If this argument is None, weights are proportional to the capacity.
+\item[number_of_agents_string] - "number_of_households"
+\item[number_of_units_string] - "residential_units"            
+\item[sample_proportion_locations] - None
+\item[sample_size_locations] - 30 
+\item[estimation_size_agents] - 1.0 
+\item[compute_capacity_flag] - True 
+\item[filter] - None
+\item[submodel_string] - None 
+\item[location_id_string] - None
+\item[demand_string] - None. If this argument is not None, the aggregated demand for locations 
+  are stored in this attribute (see description of the \method{run} method in Section~\ref{sec:choice-model}).
+\item[run_config] - None.
+\item[estimate_config] - None
+\item[dataset_pool] - None
+\item[variable_package] - "urbansim"
+\end{description}
 
-\subsubsection{Creators}
-The model can be created using pre-defined creators in \package{urbansim}.
-They set useful default values for arguments of the
-\class{AgentLocationChoiceModel} \modelsindex constructor, \verb|run_config| and
-\verb|estimate_config|, depending on what model \modelsindex they create. In a production run we use one creator, namely the
-{\bf HouseholdLocationChoiceModelCreator}. \modelsindex  It uses all default
-  values of the \class{LocationChoiceModel} \modelsindex constructor and sets
-  \verb|run_config| to:
-\begin{verbatim}
-{   "compute_capacity_flag": True,
-    "sample_size_locations": 30,
-    "correct_sampling_bias": False,
-    "capacity_string": "vacant_residential_units",
-    "number_of_agents_string": "number_of_households",
-    "number_of_units_string": "residential_units"  }
-\end{verbatim}
-Entries of \verb|estimate_config| are set as to:
-\begin{verbatim}
-{   "estimation": "opus_core.bhhh_mnl_estimation",
-    "sample_size_locations": 30,
-    "estimation_size_agents": 1.0,
-    "correct_sampling_bias": False,
-    "weights_for_estimation_string": "residential_units" }
-\end{verbatim}
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-The {\bf HouseholdLocationChoiceModelCreator} passes a
-\class{GridcellDataset} object that was (possibly) used and modified by the
-development models \modelsindex to the constructor of \class{AgentLocationChoiceModel} \modelsindex as
-the argument {\bf location_set}. Additionally, it overwrites the default
-value of {\bf choices} with ``urbansim.lottery_choices'' (see
+Our gridcell version of UrbanSim configures the Household Location Choice Model with a 
+\class{GridcellDataset} passed as
+argument {\bf location_set} of the constructor. The zone version uses here a \class{ZoneDataset} object
+and the parcel version uses a \class{BuildingDataset}.
+Additionally, in all versions the default
+value of {\bf choices} is overwritten by ``urbansim.lottery_choices'' (see
 Section~\ref{sec:urbansim-choices}).
 
 The following arguments are passed to
@@ -1467,7 +1478,7 @@ The following arguments are passed to
   table ``household_location_choice_model_coefficients''. \modelsindex
 \item[agent_set] - A \class{HouseholdDataset} object used in Household Relocation
   Model. \modelsindex
-\item[agents_index] - Results of Household Relocation Model. \modelsindex Make sure this model is turned on 
+\item[agents_index] - Results of Household Relocation Model. \modelsindex Make sure that model is turned on 
 when running Household Location Choice Model.
 \end{description}
 
@@ -1485,7 +1496,8 @@ for running the parent class with different subsets of the agents.
 %
 The class is initialized by passing the following arguments:
 \begin{description}
-\item[group_member] - An object of class \class{ModelGroupMember} determining for which member is this model initialized.
+\item[group_member] - An object of class \class{ModelGroupMember} (see Section~\ref{sec:model-group}) 
+  determining for which member is this model initialized.
 \item[location_set] - A dataset of locations.
 \item[agents_grouping_attribute] - An attribute of the agent set that is used for classifying agents into the member groups. 
 \end{description}
@@ -1494,70 +1506,80 @@ Other arguments of the parent class can be passed.
 \subsubsection{The Run and Estimate Methods}
 %
 For both methods, the agents that correspond to the given member are selected and the model is run/estimated only
-on those agents. 
+on those agents. The return array of the \method{run()} method contains -1 for agents that do not belong to the group.
 
-The \method{prepare_for_estimate} appends the member name as prefix in front of the specification and coefficients tables.
+The \method{prepare_for_estimate} method appends the member name as prefix in front of the specification and coefficients tables.
 
 \subsection{Employment Location Choice Model}
 \modelsindex
 \label{sec:elcm} \index{Employment Location Choice Model}
 %
-The class \class{EmploymentLocationChoiceModel} is a child of \class{AgentLocationChoiceModelMember}\index{model group}. 
-It is initialized by arguments (see also their default values):
-\begin{verbatim}
-    group_member, 
-    location_set, 
-    agents_grouping_attribute = 'job.building_type',
-    sampler = "opus_core.samplers.weighted_sampler", 
-    utilities = "opus_core.linear_utilities", 
-    choices = "opus_core.random_choices", 
-    probabilities = "opus_core.mnl_probabilities", 
-    estimation = "opus_core.bhhh_mnl_estimation", 
-    capacity_string = "vacant_SSS_job_space",
-    estimation_weight_string = "total_number_of_possible_SSS_jobs",
-    number_of_agents_string = "number_of_SSS_jobs",
-    number_of_units_string = "total_number_of_possible_SSS_jobs",
-    sample_proportion_locations = None, 
-    sample_size_locations = 30, 
-    estimation_size_agents = 1.0, 
-    compute_capacity_flag = True, 
-    correct_sampling_bias = False,
-    filter = None,
-    submodel_string = "sector_id", 
-    location_id_string = None,
-    demand_string = None, 
-    run_config = None, 
-    estimate_config=None, 
-    debuglevel=0, 
-    dataset_pool=None):
-\end{verbatim}
-
-The initialization procedure replaces any occurence of the string 'SSS' in 'capacity_string', 'estimation_weight_string',
-'number_of_agents_string', 'number_of_units_string', and 'demand_string' by the name of the group member. Then it places 
-the arguments appropriately into 'run_config' and 'estimate_config' and calls its parent's constructor.
+The class \class{EmploymentLocationChoiceModel} is a child of \class{AgentLocationChoiceModelMember}\index{model group}.
+Its default settings
+of various arguments makes the model usable in the context of jobs choosing their locations.
+It is initialized by the following arguments and default values:
+\begin{description}
+\item[group_member] - no default value
+\item[location_set] - no default value
+\item[agents_grouping_attribute] - 'job.building_type'
+\item[sampler] - "opus_core.samplers.weighted_sampler"
+\item[utilities] - "opus_core.linear_utilities" 
+\item[choices] - "opus_core.random_choices"
+\item[probabilities] - "opus_core.mnl_probabilities"
+\item[estimation] - "opus_core.bhhh_mnl_estimation"
+\item[capacity_string] - "vacant_SSS_job_space"
+\item[estimation_weight_string] - "total_number_of_possible_SSS_jobs"
+\item[simulation_weight_string] - None. If this argument is None, weights are proportional to the capacity.
+\item[number_of_agents_string] - "number_of_SSS_jobs"
+\item[number_of_units_string] - "total_number_of_possible_SSS_jobs"          
+\item[sample_proportion_locations] - None
+\item[sample_size_locations] - 30 
+\item[estimation_size_agents] - 1.0 
+\item[compute_capacity_flag] - True 
+\item[filter] - None
+\item[submodel_string] - "sector_id"
+\item[location_id_string] - None
+\item[demand_string] - None. If this argument is not None, the aggregated demand for locations 
+  are stored in this attribute (see description of the \method{run} method in Section~\ref{sec:choice-model}).
+\item[run_config] - None.
+\item[estimate_config] - None
+\item[dataset_pool] - None
+\item[variable_package] - "urbansim"
+\end{description}
+The initialization procedure replaces any occurence of the string 'SSS' in the various arguments
+by the name of the group member. For example, if the group member corresponds to the 'commercial' building type of jobs,
+the value of argument \verb|capacity_string| would be converted to "vacant_commercial_job_space".
+Arguments are then either directly passed to the constructor of the parent or packed into 
+the \verb|run_config| and/or
+\verb|estimate_config| arguments under appropriate names.
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-In the production run of UrbanSim, this model is called by default for members 'commercial', 'industrial', and 'home_based'
- (if these names are contained in the table \file{job_building_types}). 
- The following arguments are passed to the constructors of models for all members:
+In the gridcell and zone version of UrbanSim, this model is called by default for members 'commercial', 
+'industrial', and 'home_based'.
+In the parcel version, we use only the group member 'non_home_based'. Note that 
+these names must be contained in the table \file{job_building_types}. 
+
+The following arguments are passed to the constructors of models for all members:
 \begin{description}
-\item[location_set] - A \class{GridcellDataset} object.
+\item[location_set] - A \class{GridcellDataset} object in the gridcell project, \class{ZoneDataset} in the zone project,
+  and \class{BuildingDataset} in the parcel project.
 \item[choices] - 'urbansim.lottery_choices'
 \end{description}
-The default submodel_string is `sector_id', which associates submodels with the employment sectors defined in the table \file{employment_sectors}.  Additionally, the member 'home_based' overwrites the arguments {\bf estimation_weight_string} by the value 'residential_units' 
-and {\bf number_of_units_string} also by the value 'residential_units'.
+The default submodel_string is `sector_id', which associates submodels with the employment sectors defined in the table \file{employment_sectors}.  
+Additionally, the member 'home_based' overwrites the arguments {\bf estimation_weight_string} by the value 'residential_units' 
+and {\bf number_of_units_string} by the value 'residential_units'.
 
-The \method{run()} method is called with the following arguments:
+In all versions, the \method{run()} method is called with the following arguments:
 \begin{description}
 \item[specification] - Uses data from
   ``\%s_employment_location_choice_model_specification'' where \%s is replaced by the member name.
 \item[coefficients] \coefficientsindex - Uses data from ``\%s_employment_location_choice_model_coefficients'' 
     where \%s is replaced by the member name. \coefficientsindex\modelsindex
 \item[agent_set] - A \class{JobDataset} object used in Employment Relocation Model. \modelsindex
-\item[agents_index] - Results of Employment Relocation Model \modelsindex.
+\item[agents_index] - Results of Employment Relocation Model \modelsindex. Make sure that model is turned on 
+when running Employment Location Choice Model.
 \end{description}
  
 \subsection{Scaling Jobs Model}
@@ -1566,13 +1588,16 @@ The \method{run()} method is called with the following arguments:
 \label{sec:scaling-jobs-model} \index{Scaling Jobs Model}
 %
 The class \class{ScalingJobsModel} \modelsindex locates jobs to locations according to the
-distribution of jobs sectors in locations. \index{model group}
+distribution of job sectors in locations. \index{model group}
 \subsubsection{Initialization}
 The model is initialized by passing the following arguments:
 \begin{description}
 \item[group_member] - An object of class \class{ModelGroupMember} (see~\ref{sec:model-group}). Default is \verb|None|.
 \item[agents_grouping_attribute] - The agents grouping attribute. Default is 'job.building_type'.
+\item[filter] - A fully-qualified variable name for filtering out a subset of locations to place jobs in. Default is None.
+\item[dataset_pool] - A pool of dataset used for computing variables. Default is None.
 \end{description}
+All arguments are set as class properties.
 
 \subsubsection{The Run Method}
 %
@@ -1580,52 +1605,56 @@ The model is initialized by passing the following arguments:
 \begin{description}
 \item[location_set] - an instance of \class{Dataset} containing the set of all
   locations for locating jobs.
-\item[agent_set] - an instance of \class{Dataset} containing the set of all
+\item[agent_set] - an instance of \class{Dataset} containing the set of
   jobs. It must have an attribute \attributesindex ``sector_id'' and attribute \attributesindex of the same name
   as the unique identifier of the \verb|location_set|.
 \item[agents_index] - indices of members of the \verb|agent_set| for which the
-  model \modelsindex runs. If it is None, the whole \verb|agent_set| is considered.
+  model \modelsindex runs. If it is None (default), the whole \verb|agent_set| is considered.
 \item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+  needed for computing variables. \variablesindex Default is None.
 \item[resources] - additional \class{Resources} for controlling the
-  simulation run. The argument is not used in this version of the model. \modelsindex
+  simulation run. The argument is not used in this version of the model. Default is None.
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
-The \verb|location_set| is expected to have implemented variable
-\variablesindex ``number_of_jobs_of_sector_$n$'' in the package
+The \verb|location_set| is expected to have the variable
+\variablesindex ``number_of_jobs_of_sector_$n$'' implemented in the package
 given by the class property \verb|variable_package| (default is
 ``urbansim'').  $n$ is an integer giving sector IDs.
 
 The method filters out jobs that are supposed to be located using \verb|agents_index| and 
-the 'membership' of jobs given by 'group_member'. (If 'group_member' is \verb|None| the group membership is ignored.)
-Then it determines distinct sectors of those jobs and their count in each of
+the 'membership' of jobs given by 'group_member'. If 'group_member' is \verb|None| the group membership is ignored.
+If the class property \verb|filter| is given, it uses that variable for selecting a subset of
+locations that will be further considered. Only those locations are taken where 
+the value of the filter attribute is larger than 0. 
+The method then determines distinct sectors of the considered jobs and their count in each of
 these sectors. It iterates over those sectors. In each iteration it
 randomly samples (with replacement) the desired count of locations
 weighted by the number of existing jobs of that sector in each
 location. If there are no existing jobs in that sector, it samples
-with equal weights for all locations.  It then modifies the location
+with equal weights for all considered locations.  It then modifies the location
 attribute \attributesindex of the job set by storing the sampled
 location IDs.
 
 {\it Output}:~\\[1mm]
 The method returns an array of the new locations, i.e. of size
-\verb|agents_index|. For entries in verb|agents_index| that do not belong to this group member, the values are -1.
+\verb|agents_index|. For entries in \verb|agents_index| that do not belong to this group member, the values are -1.
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
-{\em Configuration for Production Run}:\\[1mm]
-In the production run of UrbanSim, the model is run for group member 'governmental' (if this name is included
-in the table \file{job_building_types}).
+In the gridcell and zone version of UrbanSim, the model is run for group member 'governmental'. Note that this name must be included
+in the table \file{job_building_types}. We don't call this model directly in the parcel version, but use its child class 
+\class{DistributeUnplacedJobsModel} only (see Section~\ref{sec:distribute-unplaced-jobs-model}).
+
 The \method{run()} method is called with
 the following arguments:
 \begin{description}
-\item[location_set] - A \class{GridcellDataset} object that was (possibly) used
-  and modified by the development models. \modelsindex
+\item[location_set] - A \class{GridcellDataset} object in the gridcell project; a \class{ZoneDataset} in the zone project.
 \item[agent_set] - A \class{JobDataset} object used in Employment Relocation
   Model. \modelsindex
-\item[agents_index] - Results of Employment Relocation Model. \modelsindex
+\item[agents_index] - Results of Employment Relocation Model. Make sure that model is turned on 
+when running Scaling Jobs Model.
 \end{description}
 
 
@@ -1636,7 +1665,24 @@ the following arguments:
 %
 This model is a child of the \class{ScalingJobsModel}. It determines all unplaced jobs, i.e.
  jobs with location identifier smaller equal 0. Then it calls the parent model on those jobs, setting 
- 'group_member' to \verb|None|.
+ 'group_member' to \verb|None|. The \method{run()} method accepts an additional argument 
+ {\bf agents_filter} which is a fully-qualified variable name of the agent set. It allows for additional filtering 
+ of jobs to be processed.
+
+\subsubsection{Model Configuration}
+% 
+The model is run for jobs that were not placed by 
+any of the Employment Location Choice Models nor by the Scaling Jobs Model. 
+In all versions of UrbanSim, we pass an object of class \class{JobDataset} as {\bf agent_set} 
+argument to the \method{run()} method. In the gridcell and zone version, respectively, the {\bf location_set} argument 
+is set to an object of \class{GridcellDataset} and \class{ZoneDataset}, respectively.
+
+In the parcel project, the {\bf location_set} argument is set to an object of \class{BuildingDataset}. 
+Furthermore, the argument {\bf agents_filter} is set to 'urbansim.job.is_in_employment_sector_group_scalable_sectors' 
+and the constructor argument {\bf filter} is set to 'urbansim_parcel.building.is_governmental'. In this case, the model
+is used for placing governmental jobs into governmental buildings.
+
+The argument {\bf agents_index} is set to None for all projects. 
 
 \section{Model Components}
 \modelsindex
@@ -1659,8 +1705,8 @@ Section~\ref{sec:household-tables}. The \method{run()} method iterates over
 households and using the rate set, for each household it determines from the
 values of required primary attributes \primaryattributesindex ``age_of_head'' and ``income'' the
 probability of relocation. It returns a 1D array of those probabilities. The
-household set and rate set are expected to be contained in the argument
-\verb|resources| of the \method{run()} method.
+household set and rate set, respectively, are expected to be contained in the argument
+\verb|resources| of the \method{run()} method under the keys 'household' and 'rate', respectively.
 
 \subsubsection{employment_relocation_probabilities}
 %
@@ -1671,9 +1717,9 @@ for ``annual_relocation_rates_for_jobs'' in
 Section~\ref{sec:employment-tables}. The \method{run()} method iterates over
 jobs and using the rate set, for each job it determines from the values of
 required primary attribute \primaryattributesindex ``sector_id'' the probability of relocation. It
-returns a 1D array of those probabilities. The job set and rate set are
+returns a 1D array of those probabilities. The job set and rate set, respectively, are
 expected to be contained in the argument \verb|resources| of the
-\method{run()} method.
+\method{run()} method under the keys 'job' and 'rate', respectively.
 
 %
 \subsection{Choices Classes}
