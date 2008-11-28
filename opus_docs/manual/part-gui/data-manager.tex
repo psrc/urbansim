@@ -2,7 +2,18 @@
 The Data Manager has two primary purposes, each reflected in the sub-tabs.  One tab, the Opus Data tab, is for browsing, viewing, and exporting data from the Opus data cache.  The other tab, the Tools tab, is a place for storing and executing various tools provided by the Opus community or tools you have written.
 
 \section{Opus Data Tab}
-The Opus Data tab is a file browser that defaults to the folder in which your project creates data.  For instance, if you installed to c:/opus, and you are opening the Eugene sample project at c:/opus/project_configs/eugene_gridcell.xml, the data folder for this project is c:/opus/data/eugene_gridcell.  That is the folder that this view starts at.  Any subfolders and files are displayed in the tree view.  See Figure \ref{fig:opusdatatab}.
+
+The Opus Data tab is a file browser that defaults to the folder in which
+your project creates data.  This folder name is composed from the default 
+location for the Opus files, followed by \file{data}, followed by the project
+name.  The project name for the \file{eugene_gridcell_default.xml} project is
+``eugene\_gridcell.'' (This is given in the ``project\_name'' element in the xml.)
+Thus, if you installed to
+\file{c:/opus}, and you are opening the Eugene sample project at
+\file{c:/opus/project_configs/eugene_gridcell_default.xml}, the data folder
+for this project is \file{c:/opus/data/eugene_gridcell}.  That is the
+folder that this view starts at.  Any subfolders and files are displayed in
+the tree view.  See Figure \ref{fig:opusdatatab}.
 
 \begin{figure}[htp]
 \begin{center}
@@ -12,7 +23,15 @@ The Opus Data tab is a file browser that defaults to the folder in which your pr
 \label{fig:opusdatatab}
 \end{figure}
 
-There could be any number of subfolders here, but by default you will find a 'base_year_data' folder, and a 'runs' folder.  The base_year_data folder will normally contain an Opus 'database' folder.  An Opus database folder is any folder containing Opus 'datasets.'  Often Opus database folders are titled with a year, such as 2000.  Opus datasets are folders containing Opus 'data arrays.'  Opus datasets are equivalent to the tables in a database.  Opus data arrays are equivalent to the columns in a table, and are simply numpy arrays that have been written to disk in a binary format.  See Figure \ref{fig:db-dataset-array}.
+There could be any number of subfolders here, but by default you will find
+a \file{base_year_data} folder, and a \file{runs} folder.  The
+base_year_data folder will normally contain an Opus \file{database} folder.
+An Opus database folder is any folder containing Opus \file{datasets}.
+Often Opus database folders are titled with a year, such as 2000.  Opus
+datasets are folders containing Opus `data arrays.'  Opus datasets are
+equivalent to the tables in a database.  Opus data arrays are equivalent to
+the columns in a table, and are simply numpy arrays that have been written
+to disk in a binary format.  See Figure \ref{fig:db-dataset-array}.
 
 \begin{figure}[htp]
 \begin{center}
@@ -22,7 +41,16 @@ There could be any number of subfolders here, but by default you will find a 'ba
 \label{fig:db-dataset-array}
 \end{figure}
 
-The Opus data arrays are referred to throughout the documentation as 'primary attributes.'  Primary attributes are the actual data columns in a dataset.  Computed attributes are attributes computed from primary attributes via expressions.  For instance, if a parcels dataset contained the primary attributes population and area, a computed attribute called population_density could be computed by using the expression 'population_density = population/area'.  Once this expression is typed up and stored in your project in the Variable Library, it can be used in a model and would be computed as needed.  See the section on expressions elsewhere in this documentation to learn more details about expressions.
+The Opus data arrays are referred to throughout the documentation as
+`primary attributes.'  Primary attributes are the actual data columns in a
+dataset.  Computed attributes are attributes computed from primary
+attributes via expressions.  For instance, if a parcels dataset contained
+the primary attributes population and area, a computed attribute called
+population_density could be computed by using the expression
+\variable{population_density = population/area}.  Once this expression is
+entered and stored in your project in the Variable Library, it can be used
+in a model and would be computed as needed.  See Section
+\ref{sec:expressions} on expressions for more details on expressions.
 
 \subsection{Viewing and Browsing an Opus Data table}
 To view and browse the contents of an Opus dataset, right-click a data table, then select 'View Dataset'.  This will bring up a new tab on the right-hand side of the Opus GUI window that will display some summary statistics about the dataset, and a table view of the raw data that can be browsed and sorted by clicking the column name.  See Figure \ref{view-and-browse} for an example of browsing a data table.

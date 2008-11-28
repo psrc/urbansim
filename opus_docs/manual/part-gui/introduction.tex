@@ -107,20 +107,24 @@ flexible, and has become widely used to store content in a structured form.
 
 Let's add add content to the GUI by loading a \emph{Project}, which is in
 fact, just an XML file containing configuration information.  From the main
-menu, load a project from \file{eugene_gridcell.xml}, which is in the
-default location of \file{opus/project_configs}.  The project name is shown
-in the title bar of the window.  The Opus window should now appear as in
-Figure \ref{fig:opus2}.  The project name has an asterisk in front of it
-(as in Figure \ref{fig:opus2}) if the project has unsaved changes.  Your
-project may well be marked as having unsaved changes immediately on opening
-it, since the GUI automatically scans for simulation runs on startup and
-enters those in a section of the XML configuration.
+menu, load a project from \file{eugene_gridcell_default.xml}, which is in
+the default location of \file{opus/project_configs}.  The project name and
+the file name are shown in the title bar of the window.  The Opus window
+should now appear as in Figure \ref{fig:opus2}.  In this case the project
+name is ``eugene\_gridcell'' and the file name is
+\file{eugene_gridcell_default.xml}.  The project name has an asterisk in
+front of it (as in Figure \ref{fig:opus2}) if the project has unsaved
+changes.  Your project may well be marked as having unsaved changes
+immediately on opening it, since the GUI automatically scans for simulation
+runs on startup and enters those in a section of the XML configuration.
+(The GUI will notify you via a popup window if it adds runs to the
+configuration.)
 
 \begin{figure}[htp]
 \begin{center}
 \includegraphics[scale=0.52]{part-gui/images/opus-open-project.png}
 \end{center}
-\caption{Opus GUI Main Window with eugene-gridcell Project Open}
+\caption{Opus GUI main window with the eugene\_gridcell project open}
 \label{fig:opus2}
 \end{figure}
 
@@ -138,13 +142,15 @@ directory.  This will allow them to keep projects localized in one place,
 and to avoid editing and possibly corrupting one of the projects that are
 in an Opus package in the source code tree.
 
-In fact, the \file{eugene_gridcell.xml} configuration that we just opened
-(in the default location of \file{opus/project_configs}) initially contains
-almost no information of its own --- virtually everything is inherited from
-a parent configuration.  As you edit and augment this configuration, more
-information will be stored in the configuration.  It can be saved to disk
-at any time using the ``Save'' or ``Save as \ldots'' commands on the
-``File'' menu.
+In fact, the \file{eugene_gridcell_default.xml} configuration that we just
+opened initially contains almost no information of its own --- virtually
+everything is inherited from a parent configuration.  As you edit and
+augment this configuration, more information will be stored in the
+configuration.  It can be saved to disk at any time using the ``Save'' or
+``Save as \ldots'' commands on the ``File'' menu.  We suggest saving the
+configuration under a new name, say \file{my_eugene_gridcell.xml}, and
+working from that, so that if you want to start over at some point
+\file{eugene_gridcell_default.xml} will still be there in its original state.
 
 There is more information on XML-based project configurations later in this part
 in Chapter \ref{chapter:xml-inheritance}, but the above information

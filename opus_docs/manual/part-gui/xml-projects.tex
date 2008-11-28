@@ -25,19 +25,19 @@ several configurations in your \file{opus/project_configs} directory, one
 inheriting from the other.  Ultimately, though, one or more of these
 configurations should inherit from a default configuration in the source
 code tree in \file{opus/src}.  For example, Figure
-\ref{fig:eugene-gridcell-xml-default} shows the contents of the default
-project for \file{eugene_gridcell} in \file{opus/project_configs}.  This
+\ref{fig:eugene-gridcell-xml-default} shows the contents of the
+\file{eugene_gridcell_default.xml} project in \file{opus/project_configs}.  This
 has almost no content of its own, but rather inherits everything but the
-description from the default configuration in the source code tree at
+description from the parent configuration in the source code tree at
 \file{eugene/configs/eugene_gridcell.xml}.
 
 \begin{figure}[htp]
 \begin{center}
 \begin{verbatim}
 <opus_project>
+  <xml_version>4.2.0-beta1</xml_version>
   <general>
-    <description type="string">Minimal user configuration for the Eugene 
-                               gridcell project</description>
+    <description type="string">Minimal user configuration for the Eugene gridcell project</description>
     <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
   </general>
 </opus_project>
@@ -92,7 +92,7 @@ advanced feature in the XML in the parent in the source tree wouldn't show
 up in your configuration.
 
 When you first start up the GUI and open a project, we suggested starting
-with the default \file{eugene_gridcell.xml} configuration.  You can use the
+with the default \file{eugene_gridcell_default.xml} configuration.  You can use the
 ``Save as'' command to save it under a new file name, and in that way keep
 multiple configurations in your \file{opus/project_configs} directory.  You
 can change the parent of a configuration by editing its parent field under
