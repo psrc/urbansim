@@ -12,6 +12,7 @@
 # other acknowledgments.
 # 
 
+import os, sys
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
@@ -27,55 +28,38 @@ class RunTravelModel(AbstractTravelModel):
         
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        emme2_batch_file_path = self.get_emme2_batch_file_path(year)
-        emme2_dir, emme2_batch_file_name = os.path.split(emme2_batch_file_path)
-        logger.log_status('Using emme2 dir %s for year %d' % (emme2_dir, year))
-        os.chdir(emme2_dir)
-        if output_file is None:
-            log_file_path = os.path.join(self.config['cache_directory'], 'emme2_%d_log.txt' % year)
-        else:
-            log_file_path = output_file
+        travel_model_configuration = config['travel_model_configuration']
+        for key in travel_model_configuration:
+            logger.log_status( " key: " + key.__str__() )
         
-        cmd = """%(system_cmd)s"%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
-                'system_cmd': self.config['travel_model_configuration'].get('system_command', 'cmd /c '),
-                'emme2_batch_file_name':emme2_batch_file_path, 
-                'log_file_path':log_file_path,
-                } 
-        logger.log_status('Running command %s' % cmd)
+        matsim_config_filename = travel_model_configuration['matsim_config_filename']
+        
+        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
+                'opus_home': os.environ['OPUS_HOME'],
+                'vmargs': "-Xmx2000m",
+                'classpath': "/home/nagel/eclipse/matsim-trunk/classes:jar/MATSim_r3885.jar",
+#                'javaclass': "org.matsim.run.Matsim4Urbansim",
+                'javaclass': "playground.kai.urbansim.Test",
+                'matsim_config_file': matsim_config_filename } 
+        
+# FIXME: (after debugging is finished): 
+# (1) replace *.jar by something more up to date
+# (2) rm reference to "/home/nagel/eclipse/matsim-trunk/classes"
+
+# TODO:
+# - configuration can be made more flexible
+        
+        logger.log_status('Running command %s' % cmd ) 
+        
         cmd_result = os.system(cmd)
         if cmd_result != 0:
-            error_msg = "Emme2 Run failed. Code returned by cmd was %d" % (cmd_result)
+            error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
             raise StandardError(error_msg)        
-
-#        tm_config = config['travel_model_configuration']
-#	
-#        #Get config params
-#        visum_dir, fileName = tm_config[year]['version']
-#	visum_version_number = tm_config['visum_version_number']
-#        
-#        #Startup Visum
-#        Visum = load_version_file(visum_dir, fileName)
-#
-#        #Load procedure file and execute
-#        parFileName = tm_config[year]['procedure_file']	
-#        try:
-#	    Visum.Procedures.Open(parFileName)
-#	    Visum.Procedures.Execute()
-#        except Exception:
-#	    error_msg = "Loading and executing procedures file failed"
-#	    raise StandardError(error_msg)
-#
-#	#Save version file
-#	#This saves over the existing version file
-#        try:
-#        	Visum.SaveVersion(fileName)
-#        except Exception:
-#        	error_msg = "Saving version file failed"
-#        	raise StandardError(error_msg)
         
         logger.end_block()
-	    
+
+# called from the framework via main!	    
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass

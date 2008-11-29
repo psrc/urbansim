@@ -12,23 +12,52 @@
 # other acknowledgments.
 # 
 
+import os
+
 #from opus_core.session_configuration import SessionConfiguration
-from opus_core.resources import Resources
+#from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from matsim_functions import load_version_file
+#from matsim_functions import load_version_file
 #from opus_core.variables.variable_name import VariableName
-from opus_core.storage_factory import StorageFactory
-from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from numpy import ravel, ones, array, repeat, newaxis
+#from opus_core.storage_factory import StorageFactory
+#from urbansim.datasets.travel_data_dataset import TravelDataDataset
+#from numpy import ravel, ones, array, repeat, newaxis
+from opus_core.export_storage import ExportStorage
+from opus_core.store.flt_storage import flt_storage
+from opus_core.store.csv_storage import csv_storage
+
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
+       Essentially a variant of do_export_csv_to_cache.py.
     """
 
     def get_travel_data_from_travel_model(self, config, year, zone_set):
         """
         """
+        logger.start_block('Starting GetMatsimDataIntoCache.get_travel_data...')
+        
+        cache_path = config['cache_directory'] + '/' + year.__str__()
+        logger.log_status( " cache_path: " + cache_path ) ;
+        
+        input_directory = os.environ['OPUS_HOME'].__str__() + "/matsim/tmp"
+        logger.log_status(" input_directory: " + input_directory )
+        
+        cache_storage = flt_storage(storage_location = cache_path)
+        in_storage = csv_storage(storage_location = input_directory)
+
+        
+        try:
+            ExportStorage().export_dataset(
+                dataset_name = 'travel_data',
+                in_storage = in_storage, 
+                out_storage = cache_storage,
+            )
+        finally:
+            logger.end_block()
+            
+                    
         raise NotImplementedError, "data path from matsim to urbansim not implemented"
 
 #        tm_config = config['travel_model_configuration']
@@ -80,19 +109,20 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 #
 #        travel_data_set.size()
 #        return travel_data_set
-#        
-#if __name__ == "__main__":
-#    try: import wingdbstub
-#    except: pass
-#    from optparse import OptionParser
-#    from opus_core.file_utilities import get_resources_from_file
-#    parser = OptionParser()
-#    parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
-#                      help="Name of file containing resources")
-#    parser.add_option("-y", "--year", dest="year", action="store", type="int",
-#                      help="Year in which to 'run' the travel model")
-#    (options, args) = parser.parse_args()
-#    resources = Resources(get_resources_from_file(options.resources_file_name))
-#
-#    logger.enable_memory_logging()
-#    GetVisumDataIntoCache().run(resources, options.year)
+
+# this is needed since it is called from opus via "main":        
+if __name__ == "__main__":
+    try: import wingdbstub
+    except: pass
+    from optparse import OptionParser
+    from opus_core.file_utilities import get_resources_from_file
+    parser = OptionParser()
+    parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
+                      help="Name of file containing resources")
+    parser.add_option("-y", "--year", dest="year", action="store", type="int",
+                      help="Year in which to 'run' the travel model")
+    (options, args) = parser.parse_args()
+    resources = Resources(get_resources_from_file(options.resources_file_name))
+
+    logger.enable_memory_logging()
+    GetVisumDataIntoCache().run(resources, options.year)

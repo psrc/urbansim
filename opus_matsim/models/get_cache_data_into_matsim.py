@@ -12,11 +12,17 @@
 # other acknowledgments.
 # 
 
-from opus_core.session_configuration import SessionConfiguration
+import os
+
+#from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
-from opus_core.variables.variable_name import VariableName
+#from opus_core.variables.variable_name import VariableName
+from opus_core.export_storage import ExportStorage
+from opus_core.store.flt_storage import flt_storage
+from opus_core.store.tab_storage import tab_storage
+
 
 class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
     """Get needed data from UrbanSim cache into inputs for travel model.
@@ -28,81 +34,40 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         logger.log_status("...")
         
         cache_path = config['cache_directory'] + '/' + year.__str__()
-        print( " cache_path: " + cache_path ) ;
+        logger.log_status( " cache_path: " + cache_path ) ;
         
-        output_directory = "/home/nagel/tmp"
-
-        import os
-        from opus_core.export_storage import ExportStorage
-        from opus_core.store.flt_storage import flt_storage
-        from opus_core.store.tab_storage import tab_storage
-
+        output_directory = os.environ['OPUS_HOME'].__str__() + "/matsim/tmp"
+        logger.log_status(" output_directory: " + output_directory )
+        
+        logger.log_warning("would be good to empty out tmp directory")
+#        try: os.removedirs( output_directory )
+#        except: pass
+        
+        try: os.mkdir( output_directory )
+        except: pass
+        
         in_storage = flt_storage(storage_location = cache_path)
 
         out_storage = tab_storage(storage_location = output_directory)
 
-        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
+        # this would export everything, which is not needed:
+#        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
+
+        logger.log_warning("disabling export to speed up debugging; fix before deployment")
+
+#        ExportStorage().export_dataset('persons', in_storage, out_storage)
+#        ExportStorage().export_dataset('jobs', in_storage, out_storage)
+        ExportStorage().export_dataset('buildings', in_storage, out_storage)
+#        ExportStorage().export_dataset('parcels', in_storage, out_storage)
+#        ExportStorage().export_dataset('households', in_storage, out_storage )
+        
+        # this is NOT needed:
+#        ExportStorage().export_dataset('travel_data', in_storage, out_storage )
    
-
-#	GetCacheDataIntoTravelModel.run(self, config, year) 
-#	# this will call self.create_travel_model_input_file and compute variables for data transfer
-#	zone_set = SessionConfiguration().get_dataset_from_pool('zone')
-#	
-#	tm_config = config['travel_model_configuration']
-#	attribute_names = [ VariableName(v).get_alias() for v in tm_config["urbansim_to_tm_variables"]]
-#	       
-#        # -- Start Visum Specific Code -- #
-#        
-#        #Get config params
-#	visum_dir, fileName = tm_config[year]['version']
-#	visum_version_number = tm_config['visum_version_number']
-#	
-#        #Startup Visum
-#        Visum = load_version_file(visum_dir, fileName, visum_version_number)
-#	
-#        #Set zone attributes in Visum
-#	try:
-#	    for attrName in attribute_names:
-#		tempData = zone_set.get_attribute(attrName).tolist()
-#		#attribute must be defined in the version file
-#		if self.__attributeExists(Visum, attrName):
-#		    #is h.SetMulti case-sensitive?
-#		    #can h.SetMulti accept a numpy array?
-#		    h.SetMulti(Visum.Net.Zones, attrName, tempData)
-#		else:
-#		    #2 = float, 4 = num decimal places
-#		    Visum.Net.Zones.AddUserDefinedAttribute(attrName, attrName, attrName, 2, 4) 	
-#		    h.SetMulti(Visum.Net.Zones, attrName, tempData)
-#	except Exception:
-#		error_msg = "Setting zone attribute " + attrName + " failed"
-#		raise StandardError(error_msg)
-#
-#	#Save version file
-#	#This saves over the existing version file
-#	try:
-#		Visum.SaveVersion(fileName)
-#	except Exception:
-#		error_msg = "Saving version file failed"
-#		raise StandardError(error_msg)
-
         logger.end_block()
-	    
-#    def create_travel_model_input_file(self, config, year, zone_set, dataset_pool):
-#	zone_set.compute_variables(config['travel_model_configuration']['urbansim_to_tm_variables'], 
-#				   dataset_pool=dataset_pool)
-#    
-#    
-#    def __attributeExists(self, Visum, attributeName):
-#	"""Visum function to check if attributeName exists for Zones
-#	"""
-#	
-#        for attr in Visum.Net.Zones.Attributes.GetAll:
-#	    if str(attr.ID).upper() == attributeName.upper():
-#		return True
-#	return False
 
 
-# the following is needed, since it is called as "main" from the framework.  Don't know why ...    
+# the following is needed, since it is called as "main" from the framework ...  
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
