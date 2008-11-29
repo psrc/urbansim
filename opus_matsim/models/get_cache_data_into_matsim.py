@@ -36,11 +36,11 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         cache_path = config['cache_directory'] + '/' + year.__str__()
         logger.log_status( " cache_path: " + cache_path ) ;
         
-        output_directory = os.environ['OPUS_HOME'].__str__() + "/matsim/tmp"
+        output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" output_directory: " + output_directory )
         
         logger.log_warning("would be good to empty out tmp directory")
-#        try: os.removedirs( output_directory )
+#        try: os.removedirs( output_directory ) # careful this may do something that we don't want
 #        except: pass
         
         try: os.mkdir( output_directory )
@@ -53,7 +53,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         # this would export everything, which is not needed:
 #        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
 
-        logger.log_warning("disabling export to speed up debugging; fix before deployment")
+        logger.log_error("disabling export to speed up debugging; fix before deployment")
 
 #        ExportStorage().export_dataset('persons', in_storage, out_storage)
 #        ExportStorage().export_dataset('jobs', in_storage, out_storage)

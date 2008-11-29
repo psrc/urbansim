@@ -39,7 +39,7 @@ class RunTravelModel(AbstractTravelModel):
                 'vmargs': "-Xmx2000m",
                 'classpath': "/home/nagel/eclipse/matsim-trunk/classes:jar/MATSim_r3885.jar",
 #                'javaclass': "org.matsim.run.Matsim4Urbansim",
-                'javaclass': "playground.kai.urbansim.Test",
+                'javaclass': "playground.kai.urbansim.Matsim4Urbansim",
                 'matsim_config_file': matsim_config_filename } 
         
 # FIXME: (after debugging is finished): 

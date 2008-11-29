@@ -16,7 +16,7 @@
           <year type="integer">2001</year>
         </run_description>
       </years_to_run>
-      <matsim_config_filename type="file">opus_matsim/configs/seattle_matsim.xml</matsim_config_filename>
+      <matsim_config_filename type="file">matsim_config/seattle_matsim.xml</matsim_config_filename>
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>

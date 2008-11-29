@@ -41,7 +41,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         cache_path = config['cache_directory'] + '/' + year.__str__()
         logger.log_status( " cache_path: " + cache_path ) ;
         
-        input_directory = os.environ['OPUS_HOME'].__str__() + "/matsim/tmp"
+        input_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" input_directory: " + input_directory )
         
         cache_storage = flt_storage(storage_location = cache_path)
