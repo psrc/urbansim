@@ -13,6 +13,7 @@
 # 
 
 import os
+import sys
 
 #from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
@@ -39,7 +40,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" output_directory: " + output_directory )
         
-        logger.log_warning("would be good to empty out tmp directory")
+        print >> sys.stderr, "would be good to empty out tmp directory"
 #        try: os.removedirs( output_directory ) # careful this may do something that we don't want
 #        except: pass
         
