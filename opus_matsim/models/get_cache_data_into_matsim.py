@@ -53,13 +53,14 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         # this would export everything, which is not needed:
 #        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
 
-        logger.log_error("disabling export to speed up debugging; fix before deployment")
+#        logger.log_error("disabling export to speed up debugging; fix before deployment")
+# too dangerous if you switch between scenarios
 
-#        ExportStorage().export_dataset('persons', in_storage, out_storage)
-#        ExportStorage().export_dataset('jobs', in_storage, out_storage)
+        ExportStorage().export_dataset('persons', in_storage, out_storage)
+        ExportStorage().export_dataset('jobs', in_storage, out_storage)
         ExportStorage().export_dataset('buildings', in_storage, out_storage)
-#        ExportStorage().export_dataset('parcels', in_storage, out_storage)
-#        ExportStorage().export_dataset('households', in_storage, out_storage )
+        ExportStorage().export_dataset('parcels', in_storage, out_storage)
+        ExportStorage().export_dataset('households', in_storage, out_storage )
         
         # this is NOT needed:
 #        ExportStorage().export_dataset('travel_data', in_storage, out_storage )
