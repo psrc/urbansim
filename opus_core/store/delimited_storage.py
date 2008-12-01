@@ -163,7 +163,11 @@ class delimited_storage(Storage):
             for row in reader:
                 for i in range(len(row)):
                     if i in index_map:
-                        result[i].append(row[i])
+                        if available_column_types[i] == 'b1':
+                            result[i].append(row[i] == 'True')
+                        else:
+                            result[i].append(row[i])
+
                     
             table = {}
             for index in index_map:
