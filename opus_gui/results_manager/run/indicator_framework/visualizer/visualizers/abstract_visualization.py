@@ -88,7 +88,13 @@ class Visualization(object):
                       attributes,
                       primary_keys,
                       years):
+        
 
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
+        
         attribute_data = {}
         id_subsets = {}
         old_key_to_index_map = dict([(year,{}) for year in years])
@@ -108,7 +114,7 @@ class Visualization(object):
                                                   year = year)
                 data_subset[col_name] = table_data[col]
             for key in primary_keys:                    
-                id_subset[key] = list(table_data[key])
+                id_subset[key] = table_data[key]
                 
             num_rows = len(id_subset[id_subset.keys()[0]])
 
@@ -133,10 +139,11 @@ class Visualization(object):
         
         for key in primary_keys:
             new_data[key] = array(default_array)
-        
+
         for col_names in attribute_data.values():
             for col_name in col_names:
-                new_data[col_name] = array(default_array)
+                dtype = col_names[col_name].dtype.type
+                new_data[col_name] = array(default_array, dtype = dtype)
 
         for i in range(len(keys)):
             key = keys[i]
