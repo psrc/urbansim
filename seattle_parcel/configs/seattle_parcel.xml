@@ -188,46 +188,48 @@
           <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
           <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
           <tables_to_cache type="selectable_list">
-            <households choices="Cache|Skip" type="table">Cache</households>
-            <buildings choices="Cache|Skip" type="table">Cache</buildings>
-            <parcels choices="Cache|Skip" type="table">Cache</parcels>
-            <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
-            <zones choices="Cache|Skip" type="table">Cache</zones>
-            <jobs choices="Cache|Skip" type="table">Cache</jobs>
-            <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
-            <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
-            <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
-            <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
-            <building_types choices="Cache|Skip" type="table">Cache</building_types>
-            <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
-            <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
-            <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
-            <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
-            <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
-            <non_home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_coefficients>
-            <non_home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_specification>
-            <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
-            <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
-            <real_estate_price_model_coefficients choices="Cache|Skip" type="table">Cache</real_estate_price_model_coefficients>
-            <real_estate_price_model_specification choices="Cache|Skip" type="table">Cache</real_estate_price_model_specification>
+            <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
             <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
             <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
-            <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
-            <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
             <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
-            <land_use_types choices="Cache|Skip" type="table">Cache</land_use_types>
-            <generic_land_use_types choices="Cache|Skip" type="table">Cache</generic_land_use_types>
-            <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
-            <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
-            <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
-            <development_templates choices="Cache|Skip" type="table">Cache</development_templates>
-            <development_template_components choices="Cache|Skip" type="table">Cache</development_template_components>
-            <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
             <building_sqft_per_job choices="Cache|Skip" type="table">Cache</building_sqft_per_job>
-            <fazes choices="Cache|Skip" type="table">Cache</fazes>
-            <fazes choices="Cache|Skip" type="table">Cache</fazes>
-            <demolition_cost_per_sqft choices="Cache|Skip" type="table">Cache</demolition_cost_per_sqft>
+            <building_types choices="Cache|Skip" type="table">Cache</building_types>
+            <buildings choices="Cache|Skip" type="table">Cache</buildings>
+            <cities choices="Cache|Skip" type="table">Cache</cities>
             <constant_taz_columns choices="Cache|Skip" type="table">Cache</constant_taz_columns>
+            <counties choices="Cache|Skip" type="table">Cache</counties>
+            <demolition_cost_per_sqft choices="Cache|Skip" type="table">Cache</demolition_cost_per_sqft>
+            <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
+            <development_template_components choices="Cache|Skip" type="table">Cache</development_template_components>
+            <development_templates choices="Cache|Skip" type="table">Cache</development_templates>
+            <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+            <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+            <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+            <fazes choices="Cache|Skip" type="table">Cache</fazes>
+            <generic_land_use_types choices="Cache|Skip" type="table">Cache</generic_land_use_types>
+            <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
+            <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+            <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+            <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+            <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+            <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+            <households choices="Cache|Skip" type="table">Cache</households>
+            <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+            <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+            <jobs choices="Cache|Skip" type="table">Cache</jobs>
+            <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
+            <land_use_types choices="Cache|Skip" type="table">Cache</land_use_types>
+            <large_areas choices="Cache|Skip" type="table">Cache</large_areas>
+            <non_home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_coefficients>
+            <non_home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_specification>
+            <parcels choices="Cache|Skip" type="table">Cache</parcels>
+            <persons choices="Cache|Skip" type="table">Cache</persons>
+            <real_estate_price_model_coefficients choices="Cache|Skip" type="table">Cache</real_estate_price_model_coefficients>
+            <real_estate_price_model_specification choices="Cache|Skip" type="table">Cache</real_estate_price_model_specification>
+            <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+            <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+            <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+            <zones choices="Cache|Skip" type="table">Cache</zones>
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
