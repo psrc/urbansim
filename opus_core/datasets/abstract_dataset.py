@@ -309,12 +309,21 @@ class AbstractDataset(object):
         maxy = int(ma.maximum.reduce(y))
         if attribute is not None:
             attribute_data = self.get_attribute(attribute)
+        type = attribute_data.dtype.type
+#        if type == dtype('b1'):
+#            attribute_data = attribute_data.astype('int32')
+#            type = attribute_data.dtype.type
+            
         minz = ma.minimum(attribute_data)
         minx = int(ma.minimum.reduce(x))
         miny = int(ma.minimum.reduce(y))
         difx = maxx-minx
         dify = maxy-miny
-        type = attribute_data.dtype.type
+        
+        cell_size = (difx+1) * (dify+1)
+        if cell_size > 10000000:
+            logger.log_warning('The size of the 2d array is extraodinarily large (%i). You may run out of memory')
+            
         two_d_array = resize(array([minz-1], dtype=type), (difx+1, dify+1))
         # fill the array with the proper values
         two_d_array[x-minx, y-miny] = ma.filled(attribute_data,minz-1)[:]
@@ -1221,6 +1230,10 @@ class AbstractDataset(object):
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
         
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
         
         if name not in self.get_known_attribute_names():
             self.compute_variables([name])
