@@ -90,7 +90,7 @@ class XmlController_Scenarios(XmlController):
     def runModel(self):
         '''Run the selected model'''
         if not self.validate_models_to_run_list(True):
-            return
+            pass # return when default models are fixed
         # Update the XMLConfiguration copy of the XML tree before running the model
         self.toolboxbase.updateOpusXMLTree()
         modelToRun = self.currentIndex.internalPointer().node().nodeName()
