@@ -283,15 +283,23 @@ class AbstractDataset(object):
         """
         if not self.get_id_name():
             self._create_hidden_id()
-        id_array = self.get_attribute(self.get_id_name()[0])
-        if len(self.get_id_name()) > 1:
-            array_size = id_array.size
-            id_array = reshape(id_array,(array_size,1))
-            for id in self.get_id_name()[1:]:
-                id_array=concatenate((id_array, reshape(self.get_attribute(id), (array_size,1))),
-                                     axis=1)
-        return id_array
+        return self.get_multiple_attributes(self.get_id_name())
     
+    def get_multiple_attributes(self, attribute_names):
+        """Return a 2D array of (dataset size x number of attributes). attribute_names must be a list or array of attribute names."""
+        lnames = len(attribute_names)
+        if lnames <= 0:
+            return array([])
+        result = self.get_attribute(attribute_names[0])
+        if lnames == 1:
+            return result
+        array_size = result.size
+        result = reshape(result, (array_size,1))
+        for name in attribute_names[1:]:
+            result=concatenate((result, self.get_attribute_as_column(name)),
+                                     axis=1)
+        return result
+        
     def get_2d_attribute(self, attribute=None, attribute_data=None, coordinate_system=None):
         """Returns an 2d array of the attribute given. If no attribute is given, attribute_data must be provided.
         If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names, 
@@ -505,6 +513,14 @@ class AbstractDataset(object):
 #        return [key for key in self.attribute_boxes.keys() if self.attribute_boxes[key].get_type() == AttributeType.PRIMARY]
         return self._primary_attribute_names
 
+    def get_non_id_primary_attribute_names(self):
+        """Return a list of primary attribute names that are not unique identifiers."""
+        names = self.get_primary_attribute_names()
+        for name in self.get_id_name():
+            if name in names:
+                names.remove(name)
+        return names
+    
     def get_computed_attribute_names(self):
         """ Return names of all computed attributes.
         """
@@ -823,14 +839,16 @@ class AbstractDataset(object):
                                                                          'u':0,
                                                                          'f':-1.0}
         
-        id_name = dataset.get_id_name()[0]
-        if join_attribute == None:
-            join_attribute = id_name
-
+        id_name = dataset.get_id_name()
+        jattr = join_attribute
+        if jattr == None:
+            jattr = id_name
+        if not isinstance(jattr, list):
+            jattr = [jattr]
         if not isinstance(name, list):
             name = [name]
         ID_NOT_FOUND = -1
-        idx = dataset.try_get_id_index(self.get_attribute(join_attribute).astype(int32), ID_NOT_FOUND)
+        idx = dataset.try_get_id_index(self.get_multiple_attributes(jattr).astype(int32), ID_NOT_FOUND)
         idx_found = idx <> ID_NOT_FOUND
         lname = len(name)
         for iattr in range(lname):
