@@ -165,6 +165,8 @@ class delimited_storage(Storage):
                     if i in index_map:
                         if available_column_types[i] == 'b1':
                             result[i].append(row[i] == 'True')
+                        elif available_column_types[i] == 'f4':
+                            result[i].append(float(row[i]))
                         else:
                             result[i].append(row[i])
 
