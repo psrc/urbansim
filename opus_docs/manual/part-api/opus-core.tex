@@ -995,7 +995,8 @@ The \method{aggregate}, \method{disaggregate}, and \method{number_of_agents}
 methods are defined on \class{DummyDataset}, so that they can be used in
 expressions.
 
-\section{Models} \index{Models}
+\section{Models} 
+\index{models!opus_core models}
 \label{sec:opus-core-models}
 
 The \package{opus_core} package offers a few simple models that can serve as parent classes
@@ -1089,7 +1090,7 @@ An example of a user-defined \class{ChunkModel} is in Section~\ref{sec:tut-creat
 \subsection{ChoiceModel Class}
 \label{sec:choice-model}
 \index{class!ChoiceModel}
-\index{models!choice model}
+\index{models!opus_core models!choice model}
 %
 This class implements a functionality of a discrete choice model, an approach
 widely used in land use and transportation modeling. In principal, a set of
@@ -1254,7 +1255,7 @@ Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsection{RegressionModel Class}
 \index{class!RegressionModel}
-\index{models!regression model}
+\index{models!opus_core models!regression model}
 %
 \label{sec:regression-model}
 The \class{RegressionModel} class implements a model based on a regression
@@ -1272,11 +1273,11 @@ The class is initialized by passing the following arguments:
   which the regression is implemented (see Section~\ref{sec:regression}).
   The default value is 'opus_core.linear_regression'.
 \item[submodel_string] - If model contains submodels, this character string
-  specifies what attribute of the observation set determines those submodels.
+  specifies what attribute of the observation set determines those submodels. Default is None.
 \item[run_config] - A collection of additional arguments that control a
-  simulation run. It should be a dictionary or an instance of class \class{Resources}.
+  simulation run. It should be a dictionary or an instance of class \class{Resources}. Default is None.
 \item[estimate_config] - A collection of additional arguments that control an
-  estimation run. It should be a dictionary or an instance of class \class{Resources}.
+  estimation run. It should be a dictionary or an instance of class \class{Resources}. Default is None.
 \item[dataset_pool] - A pool of datasets needed for computation of variables. Default is None.
 \end{description}
 From the argument \verb|regression_procedure| the initialization method
@@ -1378,6 +1379,7 @@ Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsubsection{Child Class RegressionModelWithInitialResiduals}
 \index{class!RegressionModelWithInitialResiduals}
+\label{page:regression-model-with-initial-residuals}
 %
 This class impacts only the method \method{run()} (it doesn't change the behaviour of the \method{estimate()} method).
 It computes initial errors of the observations to the predictions (residuals)
@@ -1401,7 +1403,7 @@ to be passed into the constructor. The following entries of the \verb|run_config
 \subsection{SimpleModel Class}
 \label{sec:api-simple-model}
 \index{class!SimpleModel}
-\index{models!simple model}
+\index{models!opus_core models!simple model}
 %
 This model is an alternative way of computing a variable on a dataset, except that the resulting attribute 
 becomes a primary attribute.
@@ -1421,7 +1423,7 @@ the attribute is marked as primary. Values of this attribute are returned.
 \subsection{AllocationModel Class}
 \label{sec:api-allocation-model}
 \index{class!AllocationModel}
-\index{models!allocation model}
+\index{models!opus_core models!allocation model}
 %
 The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions.
 
@@ -1488,6 +1490,7 @@ the attribute \verb|attribute_to_be_modified| is changed to \verb|value|.
 \section{Model Components}
 %
 \label{sec:model-components}
+\index{model!opus_core model components}
 Opus models are designed in a highly modular way. It allows to easily change
 model behavior by exchanging components the model is composed from.
 
@@ -1519,10 +1522,11 @@ model components.
 \subsection{Utilities Class}
 \label{sec:utilities}
 \index{class!Utilities}
-
+\index{utilities}
 The \class{Utilities} class is used for computing utilities in
 discrete choice modeling. In \package{opus_core} there is a
 \class{Utilities} class implemented, called {\bf linear_utilities}, \index{class!Utilities!linear_utilities}
+\index{utilities!linear utilities}
 which computes linear utilities:
 \[
 U_{ni} = \sum_{j=1}^J \beta_{ij}x_{nij}\,.
@@ -1546,12 +1550,12 @@ can be passed to the \method{run()} method in its argument \verb|resources| as a
 
 \subsection{Probabilities Class}
 \label{sec:probabilities}
-\index{class!Probabilities}
+\index{class!Probabilities} \index{probabilities}
 
 The \class{Probabilities} class is an abstract class for computing
 probabilities in the discrete choice modeling framework. Given
 utilities $U$, the \package{opus_core} class {\bf
-mnl_probabilities} \index{class!Probabilities!mnl_probabilities}
+mnl_probabilities} \index{class!Probabilities!mnl_probabilities}\index{probabilities!MNL probabilities}
 computes multinomial logit probabilities:
 \[
 P_{ni} = \frac{e^{U_{ni}}}{\sum_{j} e^{U_{nj}}}\,.
@@ -1602,10 +1606,11 @@ the results of the very last running method is the return value of the
 
 \subsection{Regression Class}
 \label{sec:regression}
-\index{class!Regression}
+\index{class!Regression}\index{regression}
 
 The \class{Regression} class is an abstract class for user defined classes
-that can be used in the regression model. The class {\bf linear_regression} \index{class!Regression!linear_regression}
+that can be used in the regression model. The class {\bf linear_regression} 
+\index{class!Regression!linear_regression} \index{regression!linear regression}
 implemented in \package{opus_core} computes outcome $Y$ as a linear combination of given
 data $X$ and coefficients \coefficientsindex \boldmath $\beta$\unboldmath: $y_n = \sum_{j=1}^J
 \beta_j x_{nj}$. Here, $J$ denotes the number of variables \variablesindex entering the
@@ -1626,11 +1631,11 @@ By default, $\delta_n \sim N(0, 1)$ for all $n$.
 
 \subsection{EstimationProcedure Class}
 \label{sec:estimation-procedure}
-\index{class!EstimationProcedure}
+\index{class!EstimationProcedure}\index{estimation}
 %
 This class is an abstract class for modules that implement estimation of
 coefficients \coefficientsindex for one of the available models. {\bf bhhh_mnl_estimation}
-\index{class!EstimationProcedure!bhhh_mnl_estimation}\index{BHHH estimation}
+\index{class!EstimationProcedure!bhhh_mnl_estimation}\index{BHHH estimation}\index{estimation!BHHH estimation}
 implements the BHHH estimation algorithm for multinomial logit models and can
 be plugged into the \class{ChoiceModel}. As arguments, it gets a data array (of size number
 of observations $\times$ number of alternatives $\times$ number of variables) \variablesindex
@@ -1724,7 +1729,7 @@ heavy use of this component in the \package{urbansim} package for creating sampl
 alternative set for agents in \class{ChoiceModel}.
 
 \subsubsection{Weighted Sampling}
-\index{class!weighted_sampling}
+\index{class!Sampler!weighted_sampling}
 \index{weighted sampling}
 
 {\bf weighted_sampling} is a child class of \class{Sampler} class.
@@ -1750,7 +1755,7 @@ the above arguments to the run method.
 \end{description}
 
 \subsubsection{Stratified Sampling}
-\index{class!stratified_sampling}
+\index{class!Sampler!stratified_sampling}
 \index{stratified sampling}
 
 {\bf stratified_sampling} is a child class of \class{Sampler} class.
@@ -1791,7 +1796,7 @@ the index within the sampled index indicating the chosen choice.
 %
 \subsection{Specification}
 \index{Specification}
-\index{class!EquationSpecification}
+\index{class!EquationSpecification}\index{model!specification}
 %
 \label{sec:specification}
 Often, models are specified by a set of variables. \variablesindex These are connected to a
@@ -1889,7 +1894,7 @@ used, the method stores values $-2$ in those columns.
 \subsection{Coefficients}
 \coefficientsindex
 \label{sec:coefficients}
-\index{class!Coefficients}
+\index{class!Coefficients}\index{model!coefficients}
 %
 Coefficients \coefficientsindex can be managed by the class \class{Coefficients}. \coefficientsindex Its behavior
 is similar to the one of \class{EquationSpecification}.
@@ -1979,7 +1984,7 @@ for computing the regression and the choice model for computing the utilities.
 %
 \subsection{Dataset Pool}
 \label{sec:core-dataset-pool}
-\index{dataset pool}
+\index{dataset pool}\index{class!DatasetPool}
 %
 A class called \class{DatasetPool} is designed to maintain a 'pool' of datasets. It is mainly used when
 computing variables. Therefore in most cases, it will be only needed if the \class{Dataset} method
@@ -2013,7 +2018,7 @@ The \class{DatasetPool} class searches for this module in the directory \file{da
 \subsection{ModelGroup and ModelGroupMember}
 %
 \label{sec:model-group}
-\index{model group}
+\index{model group}\index{class!ModelGroup}
 %
 These two classes are designed to be used in models that are considered as model groups, i.e. models that are to be run
 multiple times, each time on different subsets of one dataset.
@@ -2048,7 +2053,7 @@ The class \class{ModelGroup} is initialized by
 \end{description}
 The class offers useful methods for accessing member names and codes of this group.
 
-The class \class{ModelGroupMember} is initialized by
+The class \class{ModelGroupMember}\index{class!ModelGroupMember}\index{model group member} is initialized by
 \begin{description}
 \item[model_group] - object of class \class{ModelGroup}.
 \item[member_name] - name of this specific member. It must be contained in the grouping attribute of 'model_group'.
