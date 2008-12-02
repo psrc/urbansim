@@ -23,31 +23,30 @@ class RunTravelModel(AbstractTravelModel):
     """
 
     def run(self, config, year):
-        """
+        """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
+        is correctly set and the matsim tarfile was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
+        be problems with the java version.
         """
         
         logger.start_block("Starting RunTravelModel.run(...)")
         
         travel_model_configuration = config['travel_model_configuration']
-        for key in travel_model_configuration:
-            logger.log_status( " key: " + key.__str__() )
-        
+
+        # The default config file name
         matsim_config_filename = travel_model_configuration['matsim_config_filename']
         
-        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
+        # over-written if there is a specific config file name for the year:
+        if travel_model_configuration[year]['matsim_config_filename']:
+            matsim_config_filename = travel_model_configuration[year]['matsim_config_filename']
+        
+        
+        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(year)i""" % {
                 'opus_home': os.environ['OPUS_HOME'],
                 'vmargs': "-Xmx2000m",
-                'classpath': "/home/nagel/eclipse/matsim-trunk/classes:jar/MATSim_r3885.jar",
-#                'javaclass': "org.matsim.run.Matsim4Urbansim",
-                'javaclass': "playground.kai.urbansim.Matsim4Urbansim",
-                'matsim_config_file': matsim_config_filename } 
-        
-# FIXME: (after debugging is finished): 
-# (1) replace *.jar by something more up to date
-# (2) rm reference to "/home/nagel/eclipse/matsim-trunk/classes"
-
-# TODO:
-# - configuration can be made more flexible
+                'classpath': "classes:jar/MATSim.jar",
+                'javaclass': "playground.run.Matsim4Urbansim",
+                'matsim_config_file': matsim_config_filename, 
+                'year': year } 
         
         logger.log_status('Running command %s' % cmd ) 
         

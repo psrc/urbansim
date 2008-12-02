@@ -40,7 +40,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" output_directory: " + output_directory )
         
-        print >> sys.stderr, "would be good to empty out tmp directory"
+        print >> sys.stderr, "\nwould be good to empty out tmp directory\n"
 #        try: os.removedirs( output_directory ) # careful this may do something that we don't want
 #        except: pass
         
@@ -54,9 +54,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         # this would export everything, which is not needed:
 #        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
 
-#        logger.log_error("disabling export to speed up debugging; fix before deployment")
-# too dangerous if you switch between scenarios
-
+#        print >> sys.stderr, "\nexport disabled to speed up debugging; FATAL when scenario is changed!!\n" ;
         ExportStorage().export_dataset('persons', in_storage, out_storage)
         ExportStorage().export_dataset('jobs', in_storage, out_storage)
         ExportStorage().export_dataset('buildings', in_storage, out_storage)
