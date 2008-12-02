@@ -26,7 +26,7 @@ from urbansim.datasets.travel_data_dataset import TravelDataDataset
 #from opus_core.export_storage import ExportStorage
 #from opus_core.store.flt_storage import flt_storage
 from opus_core.store.csv_storage import csv_storage
-
+from opus_core.store.attribute_cache import AttributeCache
 
 class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
     """Class to copy travel model results into the UrbanSim cache.
@@ -48,7 +48,11 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         table_name = "travel_data"
         travel_data_set = TravelDataDataset( in_storage=in_storage, in_table_name=table_name )
 
-        return travel_data_set
+        cache_storage = AttributeCache().get_flt_storage_for_year(year)
+        existing_travel_data_set = TravelDataDataset( in_storage=cache_storage, in_table_name=table_name )
+        existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names())
+        
+        return existing_travel_data_set
 
 
 # this is needed since it is called from opus via "main":        
