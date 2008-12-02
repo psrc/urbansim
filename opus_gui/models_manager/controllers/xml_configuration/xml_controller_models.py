@@ -78,7 +78,6 @@ class XmlController_Models(XmlController):
                 append(self.createAction(self.cloneIcon, l, callback))
 
 
-    
     def setupModelViewDelegate(self):
         '''switch out the model'''
         self.model = XmlModel_Models(self, self.toolboxbase.doc, self.mainwindow,
@@ -124,10 +123,11 @@ class XmlController_Models(XmlController):
 
 
     def removeNode(self):
-        #print "Remove Node Pressed"
         self.model.removeRow(self.currentItem().internalPointer().row(),
                                             self.model.parent(self.currentItem()))
         self.model.emit(SIGNAL("layoutChanged()"))
+        # re-validate the models to run lists
+        self.toolboxbase.runManagerTree.validate_models_to_run_list()
 
 
     def cloneNode(self):
@@ -153,7 +153,8 @@ class XmlController_Models(XmlController):
                              'Expected to find template named %s' \
                         %(model_name, template_expected_name))
 
-        # clone the dom node and fetch the information of where we are in the tree
+        # clone the dom node and fetch the information of 
+        # where we are in the tree
         clone = template_node.cloneNode()
         
         # select dialog based on model name
@@ -170,12 +171,13 @@ class XmlController_Models(XmlController):
         elif model_name == 'regression model':
             dialog = RegressionModelFromTemplateDialog(*dialog_args)
         elif model_name == 'allocation model':
-            dialog = AllocationModelFromTemplateDialog(*dialog_args)                                            
+            dialog = AllocationModelFromTemplateDialog(*dialog_args)
         elif model_name == 'agent location choice model':
             dialog = AgentLocationChoiceModelFromTemplateDialog(*dialog_args)
         
         if not dialog:
-            raise NotImplementedError('dialog for template %s not yet implemented' %model_name)
+            raise NotImplementedError('dialog for template %s '
+                                      'not yet implemented' %model_name)
         
         # show the dialog
         dialog.show()
@@ -207,8 +209,6 @@ class XmlController_Models(XmlController):
             
         # create menu to populate
         menu = QMenu(self.mainwindow)
-        
-        
 
         # populate menu with model manager specifics
         if element_type == 'model_system':
