@@ -50,8 +50,20 @@ class XmlManipulator(object):
 
         if not resolved_root:
             print 'Warning: Could not resolve root from %s' %str(root)
-        # ensure that the root is not inherited
         return resolved_root
+
+# TODO: create a test case for this
+    def _hidden(self, element):
+        '''returns true if the given element is hidden (has hidden=True)'''
+        # check if this is hidden
+        if element is None or element.isNull():
+            return False
+        # check if any nodes above this one is hidden (makes this hidden too)
+        if self._hidden(element.parentNode()):
+            return True
+        # finally check if this one is actually hidden
+        return self.get_attrib('hidden', element) and \
+                self.get_attrib('hidden', element).lower() == 'true'
             
             
     def _get_child_text_node(self, element):
@@ -67,7 +79,7 @@ class XmlManipulator(object):
     def _item_for_element(self, element):
         '''determine the item for a given element node by reverse lookup.
         return None if one could not be found'''
-        if element is None or element.isNull(): # cannot continue further
+        if element is None or element.isNull():
             return None 
         # check if this is the root
         root_item = self._model._rootItem
@@ -125,7 +137,7 @@ class XmlManipulator(object):
         absolute root of the project is used.
         '''
         root = self._resolve_root_node(root)
-        if not root:
+        if root is None:
             return None
         
         # grab the subtree element and return it
@@ -219,8 +231,12 @@ class XmlManipulator(object):
             for attribute, value in attrib_dict.items():
                 if self._valid_tagname(attribute):
                     element.setAttribute(attribute, str(value))
+            # since we modified the element, make it part of this project
             self._model.makeEditable(element)
-    
+        # make sure that the data is marked as dirty if appropriate
+        if element_or_tuple_of_elements: 
+            self._controller.model.markAsDirty()
+
     def set_text(self, text, element_or_tuple_of_elements):
         '''
         Set the text value of an element to [text]
@@ -246,7 +262,11 @@ class XmlManipulator(object):
                 element.insertBefore(text_node, QDomNode())
             else:
                 text_node.setNodeValue(text)
+            # add to project
             self._model.makeEditable(element)
+        # make sure that the data is marked as dirty
+        if element_tuple:
+            self._controller.model.markAsDirty()
         
     
     def children(self, element = None):
@@ -293,6 +313,8 @@ class XmlManipulator(object):
         if not item is None and update_gui is True:
             item.refresh()
             self._model.emit(SIGNAL('layoutChanged()'))
+        # mark model as dirty since we changed it's data
+        self._controller.model.markAsDirty()
         return spawn
     
     
@@ -302,10 +324,17 @@ class XmlManipulator(object):
         if not self.get_attrib('inherited', element) is None:
             print "Warning: Can't remove inherited elements"
             return
-        # locate item by reverse lookup from element and delete row
-        item = self._item_for_element(element)
-        parent_index = self._item_to_index(item)
-        self._model.removeRow(item.row(), parent_index)
+        # for hidden nodes, we remove it manually
+        # visible nodes must go through the models remove row
+        if self._hidden(element):
+            element.parentNode().removeChild(element)
+            # mark model as dirty since we changed it's data
+            self._controller.model.markAsDirty()
+        else:
+            # locate item by reverse lookup from element and delete row
+            item = self._item_for_element(element)
+            parent_index = self._item_to_index(item)
+            self._model.removeRow(item.row(), parent_index)
         
         
     def rename(self, tagname, element):
@@ -319,6 +348,8 @@ class XmlManipulator(object):
         if not element.isNull():
             element.setTagName(tagname)
             self._model.makeEditable(element)
+            # mark model as dirty since we changed it's data
+            self._controller.model.markAsDirty()
         else:
             print 'Could not rename node %s' %element
         
@@ -417,6 +448,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 self._rootItem.initAsRootItem()
                 self.xmlRoot = dd.documentElement().\
                     firstChildElement('leveltwo')
+                self.markAsDirty = lambda: ()
             # create fake abstract model methods that are used
             def createIndex(self, row, col, parent): pass
             def removeRow(self, row, parent_node): pass
