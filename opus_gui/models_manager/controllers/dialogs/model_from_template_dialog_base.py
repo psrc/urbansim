@@ -118,6 +118,8 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         new_model_element.removeAttribute('hidden')
         new_model_element.setAttribute('type', QString('model'))
         self.model_manager_model.insert_model(new_model_element)
+        # update models to run lists
+        self.mainwindow.toolboxBase.runManagerTree.validate_models_to_run_list()
         
     def setup_node(self):
         # code that sets the specific template variables goes here
