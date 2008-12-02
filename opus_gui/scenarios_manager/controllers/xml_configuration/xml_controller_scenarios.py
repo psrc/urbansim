@@ -20,11 +20,18 @@ from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QKeySequence
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 
-from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
+
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlView
+from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
+from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
 
 class XmlController_Scenarios(XmlController):
     def __init__(self, toolboxbase, parentWidget): 
+        # need to be defined before XmlController init
+        self.missingModelIcon = QIcon(':/Images/Images/cog_missing.png')
+        
         XmlController.__init__(self, toolboxbase = toolboxbase, 
                                xml_type = 'scenario_manager', 
                                parentWidget = parentWidget) 
@@ -41,9 +48,8 @@ class XmlController_Scenarios(XmlController):
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-        self.modelIcon = QIcon(":/Images/Images/cog.png")
 
-        self.actAddModel = self.createAction(self.addIcon,"Add Model...",self.addModel)
+        self.actAddModel = self.createAction(self.makeEditableIcon,"Add Model...",self.addModel)
         self.actRemoveModel = self.createAction(self.removeIcon,"Remove This Model",self.removeNode)
         self.actRunModel = self.createAction(self.acceptIcon,"Run This Scenario",self.runModel)
         self.actOpenXMLFile = self.createAction(self.calendarIcon,"Open XML File",self.openXMLFile)
@@ -56,6 +62,19 @@ class XmlController_Scenarios(XmlController):
         self.actMoveNodeDown = self.createAction(self.arrowDownIcon,"Move Model Down",self.moveNodeDown)
 
         self.xml_helper = ResultsManagerXMLHelper(self.toolboxbase)
+        self.validate_models_to_run_list()
+        
+        
+    def setupModelViewDelegate(self):
+        '''switch out the model'''
+        self.model = XmlModel_Scenarios(self, self.toolboxbase.doc, self.mainwindow,
+              self.toolboxbase.configFile, self.xmlType, True)
+        # we need to tell the model what icon to use for missing models since
+        # that's not defined in the default icon list
+        self.model.missing_model_icon = self.missingModelIcon
+        self.view = XmlView(self.mainwindow)
+        self.delegate = XmlItemDelegate(self.view)
+
 
     def checkIsDirty(self):
         if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
@@ -69,6 +88,9 @@ class XmlController_Scenarios(XmlController):
             return False
 
     def runModel(self):
+        '''Run the selected model'''
+        if not self.validate_models_to_run_list(True):
+            return
         # Update the XMLConfiguration copy of the XML tree before running the model
         self.toolboxbase.updateOpusXMLTree()
         modelToRun = self.currentIndex.internalPointer().node().nodeName()
@@ -175,6 +197,8 @@ class XmlController_Scenarios(XmlController):
                self.view.indexAt(position).column() == 0:
             self.currentColumn = self.view.indexAt(position).column()
             self.currentIndex = self.view.indexAt(position)
+            # select the scenario in the list to highlight it
+            self.view.setCurrentIndex(self.view.indexAt(position))
             parentElement = None
             parentIndex = self.currentIndex.model().parent(self.currentIndex)
             if parentIndex and parentIndex.isValid():
@@ -292,13 +316,53 @@ class XmlController_Scenarios(XmlController):
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
         
-    def update_models_to_run_list(self):
+    def validate_models_to_run_list(self, display_warning = False):
         '''Check each model in the models to run list to be present in the model
-        configuration tab'''
+        configuration tab. If display_warning is True, a popup warning with the 
+        missing models is displayed. No warning is displayed if all models are 
+        present.
+        Returns True if all models are present, False otherwise.
+        '''
+        print 'Begin debug for update_models_to_run_list'
         # go through each of the scenarios and check if they have a 
         # models_to_run entry
-        
-        # if they do, check that all the models in that list are in the 
-        # available_models list
-        pass
-        
+        xml = self.xml
+        manager_root = xml.manager_root()
+        scenarios = [child for child in xml.children(manager_root) if \
+                     xml.get_attrib('type', child) == 'scenario']
+        existing_model_names = [model.tagName() for model in \
+                                xml.children('/model_manager/model_system') \
+                                if xml.get_attrib('type', model) == 'model']
+        for scenario in scenarios:
+            models_to_run_section = xml.get('models_to_run', scenario)
+            if not models_to_run_section:
+                continue # no models_to_run section
+            models_to_run = xml.children(models_to_run_section)
+            if not models_to_run: 
+                continue # no models in models_to_run
+            missing_models = []
+            for model in models_to_run:
+                # compare by tagName (model name)
+                if not model.tagName() in existing_model_names:
+                    # set missing model flag
+                    item = xml._item_for_element(model)
+                    if item:
+                        item.is_missing_model = True
+                    missing_models.append(model)
+                else:
+                    # clear missing model flag
+                    item = xml._item_for_element(model)
+                    if item:
+                        item.is_missing_model = False
+            # handle result of the validation
+            if missing_models:
+                if display_warning:
+                    msg = ("The following models are listed to run, but they are "
+                           "not part of this (or any inherited) project.\n")
+                    for model in missing_models:
+                        msg = msg + '    %s\n' %model.tagName()
+                        item = xml._item_for_element(model)
+                    QMessageBox.error(self, 'Error - Missing models', msg)
+                return False
+            else:
+                return True
