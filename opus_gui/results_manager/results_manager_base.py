@@ -54,6 +54,7 @@ class ResultsManagerBase(AbstractManagerBase):
             run_data = '\n'.join(added_runs)
             msg = 'The following simulation runs have been automatically added to the results manager:\n\n%s'%run_data
             QMessageBox.information(self.mainwindow,'Simulation runs added', QString(msg))        
+            self.toolboxBase.resultsManagerTree.model.markAsDirty()
                 
                 
     def _get_run_manager(self):
