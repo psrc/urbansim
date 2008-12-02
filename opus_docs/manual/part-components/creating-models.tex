@@ -130,19 +130,34 @@ We now turn to a tutorial for creating models of some of these types using the O
 
 
 \section{Interactive Estimation and Diagnostics}
-PLEASE NOTE the seattle_parcel sample data used here is for demonstration of functionality only and one should not read into the results too much.  Because it is a small subset taken from the PSRC project datasets, estimating models with certain specification may give peculiar results (e.g. SE and t-values equal -1.#IND or -1.#INF) due to insufficient number of observations, collinearity, and/or outliers in data.  Once estimation resulted in this kind of results, they cannot be saved or exported to a sql database, or viewed in OPUS GUI.
+
+{\bf Please note:} the seattle\_parcel sample data used in the following
+description is only to demonstrate functionality.  One should not read too
+much into the results, since seattle\_parcel is a small subset taken from
+the PSRC project datasets to make its size more manageable.  In particular,
+estimating models with certain specifications may give peculiar results,
+such as SE and t-values equal to \verb|-1.#IND| or \verb|-1.#INF| due to
+an insufficient number of observations, collinearity, or outliers in the
+data.  Estimation results that include erroneous results such as these
+cannot saved or exported to a sql database, or viewed in the OPUS GUI\@.
 
 \subsection{Estimation of a Regression Model}
 
-In this section, we take up the topic of estimating and diagnosing models interactively, from the command line.  Eventually the functions described here will be available in the Graphical User Interface, but as of now they are only available from the interactive command mode.
+In this section, we take up the topic of estimating and diagnosing models
+interactively, from the command line.  Eventually the functions described
+here will be available in the Graphical User Interface, but as of now they
+are only available from the interactive command mode.
 
-Assume we want to estimate the real estate price model in the seattle\_parcel project, which includes submodels to separately specify the model for each general land use type.  If you are using a computer with the Windows operating system, open a command shell, and type the following:
+Assume we want to estimate the real estate price model in the
+seattle\_parcel project, which includes submodels to separately specify the
+model for each general land use type.  If you are using a computer with the
+Windows operating system, open a command shell, and type the following:
 
 \begin{lstlisting}
 python -i c:\opus\src\urbansim\tools\start_estimation.py -x c:\opus\project_configs\seattle_parcel.xml -m real_estate_price_model
 \end{lstlisting}
 
-Depending on exactly what the specification is, the result would look something like the listing below:\\
+Depending on exactly what the specification is, the result would look something like the lsting below:\\
 
 \begin{lstlisting}
 (clipped results)
