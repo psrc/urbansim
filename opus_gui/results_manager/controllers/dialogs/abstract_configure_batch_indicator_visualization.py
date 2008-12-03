@@ -23,11 +23,17 @@ from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.tab
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_core.logger import logger
 
+
+MAPPABLE_DATASETS = ['gridcell', 'zone', 'faz', 'large_area', 'city', 'county']
+
+
 class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatchIndicatorVisualization):
     def __init__(self, resultManagerBase):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
 
         QDialog.__init__(self, resultManagerBase.mainwindow, flags)
+        self.mainwindow = resultManagerBase.mainwindow
+        
         self.setModal(True)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase
@@ -211,6 +217,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         if self.dataset_name != dataset:
             self.dataset_name = QString(str(dataset))
             self._setup_indicators()
+            
+        map_pos = self.cboVizType.findText(QString('Map'))
+        if self.dataset_name not in MAPPABLE_DATASETS and map_pos > -1:
+            self.cboVizType.removeItem(map_pos)
+            self._setup_co_viz_type()
+        elif self.dataset_name in MAPPABLE_DATASETS and map_pos == -1:
+            self.cboVizType.addItem(QString('Map'))
+            self._setup_co_viz_type()            
 
                            
     def _get_type_mapper(self):
@@ -325,12 +339,6 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         elif output_type == 'ESRI database':
             self.lblOption1.setText(QString('Path:'))
             self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))    
-        
-    def on_buttonBox_accepted(self):
-        self.close()
-
-    def on_buttonBox_rejected(self):
-        self.close()
 
     def on_pbn_set_storage_location_released(self):
         start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')

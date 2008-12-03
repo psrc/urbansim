@@ -15,6 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString
+from PyQt4.QtGui import QMessageBox
 
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.xml_helper_methods import get_child_values, ResultsManagerXMLHelper
@@ -88,15 +89,24 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
         
     def on_buttonBox_accepted(self):    
         viz_params = self._get_viz_spec(convert_to_node_dictionary = False)
+        close = True
         if viz_params is not None:
-            viz_name = str(self.leVizName.text()).replace('DATASET',viz_params['dataset_name']).replace(' ','_')
+            dataset_name = viz_params['dataset_name']
+            viz_type = viz_params['visualization_type']
+            if viz_type == 'matplotlib_map' and dataset_name == 'parcel':
+                msg = 'Cannot create a Matplotlib map for parcel dataset. Please plot at a higher geographic aggregation or export to an external GIS tool.'
+                close = False
+                QMessageBox.warning(self.mainwindow,'Warning', QString(msg))
+            else:
+                viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
+                
+                xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
+                xml_helper.update_dom_node(index = self.selected_index, 
+                                           new_base_node_name = viz_name, 
+                                           children_to_update = viz_params)
             
-            xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
-            xml_helper.update_dom_node(index = self.selected_index, 
-                                       new_base_node_name = viz_name, 
-                                       children_to_update = viz_params)
-            
-        self.close()
+        if close: 
+            self.close()
 
     def on_buttonBox_rejected(self):
         self.close()
