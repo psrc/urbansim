@@ -37,9 +37,25 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" output_directory: " + output_directory )
         
-        # creating an empty tmp directory:
-        shutil.rmtree( output_directory, ignore_errors = True )
-        os.mkdir( output_directory )
+        # an experienced python programmer could replace this by a loop :-)  for filename in {'parcels',...) ...
+        try: os.unlink( output_directory + "/parcels.tab" )
+        except: pass
+        try: os.unlink( output_directory + "/households.tab" )
+        except: pass
+        try: os.unlink( output_directory + "/persons.tab" )
+        except: pass
+        try: os.unlink( output_directory + "/buildings.tab" )
+        except: pass
+        try: os.unlink( output_directory + "/parcels.tab" )
+        except: pass
+        
+        try: os.unlink( output_directory + "/parcels-cleaned.tab" )
+        except: pass
+        try: os.unlink( output_directory + "/travel_data.csv" )
+        except: pass
+
+        try: os.mkdir( output_directory )
+        except: pass
         
         in_storage = flt_storage(storage_location = cache_path)
         out_storage = tab_storage(storage_location = output_directory)
