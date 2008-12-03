@@ -62,7 +62,7 @@ def create_travel_model_configuration(travel_model_dir_name,
             "lsum3" : 'logsum_hbw_am_income_3',
             "lsum4" : 'logsum_hbw_am_income_4',
             
-#            'mf91':'am_vehicle_miles_traveled',
+            'mf91':'am_vehicle_miles_traveled',
 #
 #            'hbwdap':'hbw_daily_drive_alone_person_trip_table',
 #            'hbws2p':'hbw_daily_share_ride2_person_trip_table',
