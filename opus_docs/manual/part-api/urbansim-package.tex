@@ -1113,15 +1113,65 @@ when running Employment Location Choice Model.
 \end{description}
  
 %
-
 \subsection{Building Location Choice Model}
 \label{sec:BLCM}
 \index{Building Location Choice Model}\index{models!urbansim models!building location choice model}
-\index{class!BuildingLocationChoiceModel}
-{\it To be documented.}
-
-
 %
+The class \class{BuildingLocationChoiceModel} \index{class!BuildingLocationChoiceModel} 
+is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{class!AgentLocationChoiceModelMember}
+Its default settings
+of various arguments makes the model usable in the context of buildings choosing their locations.
+It is an alternative model to the Development Project Location Choice Model \index{Development Project Location Choice Model}
+(see Section~\ref{sec:development-project-lcm}) and it is tailored for the case when locations are single parcels.
+It should be run in combination with the Building Transition Model (see Section~\ref{sec:building-transition-model}).\index{Building Transition Model}
+It is initialized by the following arguments and default values:
+\begin{description}
+\item[group_member] - no default value
+\item[location_set] - no default value. An object of class \class{ParcelDataset} is recommended to be passed here.
+\item[agents_grouping_attribute] - "building.building_type_id"
+\item[sampler] - "opus_core.samplers.weighted_sampler"
+\item[utilities] - "opus_core.linear_utilities" 
+\item[choices] - "urbansim.first_agent_first_choices"
+\item[probabilities] - "opus_core.mnl_probabilities"
+\item[estimation] - "opus_core.bhhh_mnl_estimation"
+\item[capacity_string] - "is_developable_for_buildings_UNITS"
+\item[estimation_weight_string] - None
+\item[developable_maximum_unit_variable] - "developable_maximum_buildings_UNITS",
+\item[developable_minimum_unit_variable] - "developable_minimum_UNITS". None means that there are no minimum restrictions.
+\item[number_of_agents_string] - "buildings_SSS_space"
+\item[number_of_units_string] - "total_maximum_development_SSS"          
+\item[sample_proportion_locations] - None
+\item[sample_size_locations] - 30 
+\item[estimation_size_agents] - 1.0 
+\item[compute_capacity_flag] - True 
+\item[filter] - "developable_maximum_buildings_UNITS"
+\item[submodel_string] - "size_category_SSS"
+\item[location_id_string] - None
+\item[nrecords_per_chunk_for_estimation_sampling] = 1000
+\item[run_config] - None.
+\item[estimate_config] - None
+\item[dataset_pool] - None
+\item[variable_package] - "urbansim"
+\end{description}
+The initialization procedure replaces any occurence of the string 'SSS' in the various arguments
+by the name of the group member. For example, if the group member corresponds to the 'commercial' type of buildings,
+the value of argument \verb|submodel_string| would be converted to "size_category_commercial".
+The group member object must have an attribute 'units'. Its value is used for replacing all occurences of
+'UNITS' in the arguments. For example, if the member units value is 'commercial_sqft', 
+the value of argument \verb|capacity_string| would be replaced by  'is_developable_for_buildings_commercial_sqft'.
+The various attribute names are also transformed to fully-qualified names (using the name of the location dataset and 
+\verb|variable_package|). 
+Arguments are then either directly passed to the constructor of the parent or packed into 
+the \verb|run_config| and/or
+\verb|estimate_config| arguments under appropriate names.
+%
+
+\subsubsection{The Run Method}
+%
+The \method{run()} method only differs from its parent in a way of constructing the array of weights 
+for sampling locations. It is a 2-d array of ones and zeros, where one corresponds to locations
+where the particular building would fit into.
+
 %
 \subsection{Household Transition Model}
 %
@@ -1657,8 +1707,19 @@ the base year cache storage.
 \label{sec:building-transition-model}
 \index{Building Transition Model}\index{models!urbansim models!building transition models}
 %
-\index{class!BuildingTransitionModel}
-{\it To be documented.}
+
+The model (implemented in the class \class{BuildingTransitionModel}) \index{class!BuildingTransitionModel}
+creates buildings in order to match the desired vacancy rates. 
+It is an alternative model to the Development Project Transition Model\index{Development Project Transition Model}
+described in Section~\ref{sec:development-project-transition-model}. The process of creating buildings is done 
+per building types, e.g.  'industrial' or
+'commercial'.  The distribution of building sizes is determined by sampling from 
+the projects obtained from the history.
+
+\subsubsection{The Run Method}
+%
+{\it To be finished.}
+
 
 
 %
