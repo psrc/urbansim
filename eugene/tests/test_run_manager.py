@@ -35,6 +35,7 @@ from sqlalchemy.sql import select, func
 ###       delete_run_tests back into opus_core.
 
 config_template = """<opus_project>
+  <xml_version>4.2.0-beta1</xml_version>
   <general>
     <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
     </general>
@@ -50,7 +51,7 @@ config_template = """<opus_project>
   </scenario_manager>
 </opus_project>
 """
-    
+
 def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     """Runs model system with a single model (for speed).
     Sets the .resources property of the caller before starting the run.
