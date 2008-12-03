@@ -7,10 +7,11 @@
   <model_manager>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <opus_matsim.models.get_cache_data_into_matsim choices="Run|Skip" type="model_choice">Skip</opus_matsim.models.get_cache_data_into_matsim>
+        <opus_matsim.models.get_cache_data_into_matsim choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_cache_data_into_matsim>
         <opus_matsim.models.run_travel_model choices="Run|Skip" type="model_choice">Run</opus_matsim.models.run_travel_model>
         <opus_matsim.models.get_matsim_data_into_cache choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_matsim_data_into_cache>
       </models>
+      <sampling_rate type="float">0.01</sampling_rate>
       <matsim_config_filename type="file">matsim_config/seattle_matsim_0.xml</matsim_config_filename>
       <years_to_run key_name="year" type="category_with_special_keys">
         <run_description type="dictionary">
