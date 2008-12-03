@@ -1512,8 +1512,9 @@ space) is determined by sampling from the projects obtained from the history.
   type. Those entry names are composed from the project type and a character
   string `vacant_variable', e.g. for commercial project type the key for this
   argument is ``commercial_vacant_variable''.  Default values for those
-  entries are ``urbansim.gridcell.vacant_'' + project type, e.g.
-  ``urbansim.gridcell.vacant_commercial''.
+  entries are ``urbansim.gridcell.vacant_{\it units}'' where {\it units} is
+  given in the entry ``units'' of \verb|model_configuration| (see below for details), e.g.
+  ``urbansim.gridcell.vacant_commercial_sqft''.
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
@@ -1711,15 +1712,58 @@ the base year cache storage.
 The model (implemented in the class \class{BuildingTransitionModel}) \index{class!BuildingTransitionModel}
 creates buildings in order to match the desired vacancy rates. 
 It is an alternative model to the Development Project Transition Model\index{Development Project Transition Model}
-described in Section~\ref{sec:development-project-transition-model}. The process of creating buildings is done 
-per building types, e.g.  'industrial' or
+described in Section~\ref{sec:development-project-transition-model}, tailored to the case when 
+the geography unit is a parcel. The process of creating buildings is done 
+per building type, e.g.  'industrial' or
 'commercial'.  The distribution of building sizes is determined by sampling from 
-the projects obtained from the history.
+existing buildings.
 
 \subsubsection{The Run Method}
 %
-{\it To be finished.}
+{\it Input}:
+%
+\begin{description}
+\item[building_set] - An object of class \class{Dataset} holding data about existing buildings.
+\item[building_types_table] - An object of class \class{Dataset} holding data about building types.
+  It must have attributes ``name'', ``is_residential'' and ``units''.
+\item[vacancy_table] - A \class{Dataset} object that must have attribute 
+  ``year'' as the unique identifier. Furthermore, it should contain attributes 
+  ``target_total_\%s_vacancy'' where \%s stands for a building type contained
+  in the column ``name'' of the \verb|building_types_table|.
+  Those attributes give vacancy rates for specific building types and years.
+\item[year] - Simulated year.
+\item[location_set] - A \class{Dataset} object on which vacancies will be
+  determined. We recommend to use a parcel dataset.
+\item[building_categories] - A dictionary where keys are building types 
+and values are arrays of categories of building sizes. Default is None.
+\item[dataset_pool] - A pool of dataset used for computation of variables. Default is None.
+\item[resources] - A \class{Resources} object for additional arguments. It can
+  contain names of variables that compute the current vacancies per building
+  type. Those entry names are composed from the building type and a character
+  string `_vacant_variable', e.g. for commercial building type the key for this
+  argument is ``commercial_vacant_variable''.  Default values for those
+  entries are ``urbansim.{\it location_set_name}.vacant_{\it building_type}_units_from_buildings'' for residential buildings, 
+  or ``urbansim.{\it location_set_name}.vacant_{\it building_type}_sqft_from_buildings'' for non-residential buildings, e.g.
+  ``urbansim.parcel.vacant_commercial_sqft_from_buildings''.
+\end{description}
 
+{\it Algorithm}:~\\[1mm]
+For each building type given in
+the \verb|building_types_table| (in column ``name''), the method obtains current vacancy in each
+location (from a variable of \verb|location_set| called 
+``urbansim.{\it location_set_name}.buildings_{\it building_type}_space'' and the overall vacancy computed 
+using variable given in the \verb|resources| entry ``{\it building_type}_vacant_variable''). By comparing
+the rate with the target vacancy rate, it determines if there is a need for
+development and how many units should be developed. If there are units to be
+developed, a sample from the existing buildings of that building type is taken, so that their
+sum of units gives approximately the desired number of units to be developed. 
+The name of the building set attribute that specifies units is given in the \verb|building_types_table| 
+(in column ``units''). Copies of these sampled buildings (with modified attribute giving their location
+and modified unique identifier) 
+are added to the existing set of buildings.
+
+{\it Output}:~\\[1mm]
+The method returns the difference between the number of buildings before and after running this model.
 
 
 %
