@@ -26,11 +26,14 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
     """
     model_name = "Regional Development Project Transition Model"
     
-    def run( self, model_configuration, vacancy_table, history_table, year, location_set, resources=None ):
+    def run( self, model_configuration, vacancy_table, history_table, year, 
+             location_set, resources=None):
         large_area_ids = vacancy_table.get_attribute("large_area_id")
         locations_large_area_ids = location_set.compute_variables("washtenaw.%s.large_area_id" % location_set.get_dataset_name())
         unique_large_areas = unique_values(large_area_ids)
-        self._compute_vacancy_variables(location_set, model_configuration, resources)
+        self._compute_vacancy_variables(location_set, 
+                                        model_configuration['development_project_types'], 
+                                        resources)
 
         projects = {}
         for area in unique_large_areas:
@@ -54,7 +57,8 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
                 #create projects
                 if should_develop_units > 0:
                     project_dataset = self._create_projects(should_develop_units, project_type, history_table,
-                                                                   locations_for_this_area, units_sum, model_configuration, 
+                                                                   locations_for_this_area, units_sum, 
+                                                                   model_configuration['development_project_types'], 
                                                                    resources)
                     project_dataset.add_attribute(array(project_dataset.size()*[area]), "large_area_id", 
                                                   metadata=AttributeType.PRIMARY)
