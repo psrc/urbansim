@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QKeySequence
+from PyQt4.QtGui import QIcon, QMenu, QCursor, QMessageBox
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
@@ -89,8 +89,8 @@ class XmlController_Scenarios(XmlController):
 
     def runModel(self):
         '''Run the selected model'''
-        if not self.validate_models_to_run_list(True):
-            pass # return when default models are fixed
+#        if not self.validate_models_to_run_list(True):
+#            pass # use return when default models are fixed
         # Update the XMLConfiguration copy of the XML tree before running the model
         self.toolboxbase.updateOpusXMLTree()
         modelToRun = self.currentIndex.internalPointer().node().nodeName()
@@ -166,6 +166,7 @@ class XmlController_Scenarios(XmlController):
         #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
+        self.validate_models_to_run_list()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeUp(self):
@@ -185,6 +186,7 @@ class XmlController_Scenarios(XmlController):
         model = self.currentIndex.model()
         window = CloneNodeGui(self, clone,parentIndex,model)
         window.show()
+        self.validate_models_to_run_list()
 
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
