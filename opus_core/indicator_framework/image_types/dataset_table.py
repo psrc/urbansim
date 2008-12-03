@@ -42,8 +42,9 @@ class DatasetTable(AbstractIndicator):
 
         AbstractIndicator.__init__(self, source_data, dataset_name,
                                    attributes, years, operation, name,
-                                   storage_location, can_write_to_db = True)
-
+                                   storage_location=storage_location, 
+                                   can_write_to_db = True)
+                
         self.output_type = output_type
         kwargs = {}
         if self.output_type == 'sql':
