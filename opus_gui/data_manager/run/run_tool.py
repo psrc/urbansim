@@ -87,6 +87,7 @@ class OpusTool(object):
                 self.startingCallback()
             success = opusRun(self.progressCallback,self.logCallback,self.toolVars)
             if self.finishedCallback != None:
+                self.progressCallback(100)
                 self.finishedCallback(success)
         except ImportError:
             print "Error importing ",self.toolInclude
