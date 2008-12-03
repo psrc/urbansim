@@ -61,19 +61,26 @@ class DevelopmentProjectTransitionModel( Model ):
             return return_value_if_denominator_is_zero
         return type(numerator) / denominator
 
-    def run( self, models_configuration, vacancy_table, history_table, year, location_set, development_models, resources=None ):
+    def run( self, models_configuration, vacancy_table, history_table, year, location_set, development_models = None, resources=None ):
         # development_models is a list of existing development models in the 
         # project from which we can extract additional data about the various 
         # project types.
         dev_project_types = {}
-        for dev_proj_model in development_models:
-            # extract information from the dev model's init function arguments
-            model_conf = models_configuration[dev_proj_model]
-            proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
-            dev_project_types[proj_type] = {}
-            dev_project_types[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
-            dev_project_types[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
-            dev_project_types[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+        if development_models is None:
+            # fall back on old behaviour and assume that models_configuration 
+            # have a 'default_model_configurations' section
+            dev_project_types = models_configuration['development_project_types']
+        else:
+            # use the new format and import from the actual development models_configuration
+            for dev_proj_model in development_models:
+                # extract information from the dev model's init function arguments
+                model_conf = models_configuration[dev_proj_model]
+                proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
+                dev_project_types[proj_type] = {}
+                dev_project_types[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+                dev_project_types[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
+                dev_project_types[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+
         self.pre_check( location_set, vacancy_table, dev_project_types)
         target_residential_vacancy_rate, target_non_residential_vacancy_rate = self._get_target_vacancy_rates(vacancy_table, year)
         self._compute_vacancy_variables(location_set, dev_project_types, resources)
