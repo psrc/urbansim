@@ -76,11 +76,19 @@ class DevelopmentEventTransitionModel(Model):
         debug.print_debug("Number of events: " + str(grid_ids_for_any_project.size), 3)
         return eventset
 
-    def prepare_for_run(self, dev_projects, model_configuration):
+    def prepare_for_run(self, dev_projects, development_models, models_configuration):
+        dev_project_types = {}
+        for dev_proj_model in development_models:
+            # extract information from the dev model's init function arguments
+            model_conf = models_configuration[dev_proj_model]
+            proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
+            dev_project_types[proj_type] = {}
+            dev_project_types[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+        
         all_project_types = []
         all_project_units = []
-        for project_type in model_configuration['development_project_types']:
+        for project_type in dev_project_types:
             if dev_projects[project_type] is not None:
                 all_project_types.append(project_type)
-                all_project_units.append(model_configuration['development_project_types'][project_type]['units'])
+                all_project_units.append(dev_project_types[project_type]['units'])
         return  (all_project_types, all_project_units)
