@@ -170,7 +170,7 @@
           </init>
           <run type="dictionary">
             <output type="string">dptm_results</output>
-            <development_models type="list">[]</development_models>
+            <development_models type="list">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</development_models>
             <!-- hack to get model system to pass the models configuration to the run method  -->
             <models_configuration type="string" hidden="True">models_configuration</models_configuration>
             <vacancy_table type="string">target_vacancy</vacancy_table>
