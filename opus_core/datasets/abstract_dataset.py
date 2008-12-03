@@ -515,7 +515,7 @@ class AbstractDataset(object):
 
     def get_non_id_primary_attribute_names(self):
         """Return a list of primary attribute names that are not unique identifiers."""
-        names = self.get_primary_attribute_names()
+        names = copy.copy(self.get_primary_attribute_names())
         for name in self.get_id_name():
             if name in names:
                 names.remove(name)
