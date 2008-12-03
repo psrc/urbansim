@@ -1,52 +1,70 @@
 <opus_project>
-  <xml_version>4.2.0</xml_version>
+  <xml_version>4.2.0-beta1</xml_version>
   <general>
-    <description type="string">Minimal user configuration for the Seattle parcel project</description>
+    <description type="string">Seattle parcel project with travel model</description>
     <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
     </general>
   <model_manager>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <opus_matsim.models.get_cache_data_into_matsim choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_cache_data_into_matsim>
+        <opus_matsim.models.get_cache_data_into_matsim choices="Run|Skip" type="model_choice">Skip</opus_matsim.models.get_cache_data_into_matsim>
         <opus_matsim.models.run_travel_model choices="Run|Skip" type="model_choice">Run</opus_matsim.models.run_travel_model>
         <opus_matsim.models.get_matsim_data_into_cache choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_matsim_data_into_cache>
       </models>
+      <matsim_config_filename type="file">matsim_config/seattle_matsim_0.xml</matsim_config_filename>
       <years_to_run key_name="year" type="category_with_special_keys">
         <run_description type="dictionary">
           <year type="integer">2001</year>
         </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2002</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2003</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2004</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2005</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2006</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2007</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2008</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2009</year>
+        </run_description>
+        <run_description type="dictionary">
+          <year type="integer">2010</year>
+        </run_description>
       </years_to_run>
-      <matsim_config_filename type="file">matsim_config/seattle_matsim.xml</matsim_config_filename>
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
     <Seattle_baseline copyable="True" executable="True" type="scenario">
+      <years_to_run config_name="years" type="tuple">
+        <lastyear type="integer">2001</lastyear>
+      </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <real_estate_price_model choices="Run|Skip" type="model_choice">Skip</real_estate_price_model>
         <expected_sale_price_model choices="Run|Skip" type="model_choice">Skip</expected_sale_price_model>
         <development_proposal_choice_model choices="Run|Skip" type="model_choice">Skip</development_proposal_choice_model>
         <building_construction_model choices="Run|Skip" type="model_choice">Skip</building_construction_model>
-        <household_transition_model choices="Run|Skip" type="model_choice">Skip</household_transition_model>
         <employment_transition_model choices="Run|Skip" type="model_choice">Skip</employment_transition_model>
-        <household_relocation_model choices="Run|Skip" type="model_choice">Run</household_relocation_model>
+        <household_relocation_model choices="Run|Skip" type="model_choice">Skip</household_relocation_model>
         <household_location_choice_model choices="Run|Skip" type="model_choice">Skip</household_location_choice_model>
         <employment_relocation_model choices="Run|Skip" type="model_choice">Skip</employment_relocation_model>
         <employment_location_choice_model choices="Run|Skip" type="model_choice">Skip<group_members type="string">non_home_based</group_members>
         </employment_location_choice_model>
-        <distribute_unplaced_jobs_model choices="Run|Skip" type="model_choice">Run</distribute_unplaced_jobs_model>
-      </models_to_run>
+        </models_to_run>
       </Seattle_baseline>
   </scenario_manager>
   <results_manager>
-    <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
-      <base_year_data type="source_data">
-        <end_year hidden="True" type="integer">2000</end_year>
-        <run_name hidden="True" type="string">base_year_data</run_name>
-        <cache_directory hidden="True" type="string">/home/nagel/opus_home/data/seattle_parcel/base_year_data</cache_directory>
-        <run_id hidden="True" type="integer">1</run_id>
-        <start_year hidden="True" type="integer">2000</start_year>
-        <scenario_name hidden="True" type="string">seattle_parcel</scenario_name>
-      </base_year_data>
-    </Simulation_runs>
   </results_manager>
 </opus_project>

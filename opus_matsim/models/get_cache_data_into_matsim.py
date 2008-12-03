@@ -12,17 +12,15 @@
 # other acknowledgments.
 # 
 
-import os
-import sys
-
-#from opus_core.session_configuration import SessionConfiguration
-from opus_core.resources import Resources
-from opus_core.logger import logger
-from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
-#from opus_core.variables.variable_name import VariableName
 from opus_core.export_storage import ExportStorage
+from opus_core.logger import logger
+from opus_core.resources import Resources
 from opus_core.store.flt_storage import flt_storage
 from opus_core.store.tab_storage import tab_storage
+from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
+import os
+import shutil
+import sys
 
 
 class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
@@ -32,7 +30,6 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
 
     def run(self, config, year):
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
-        logger.log_status("...")
         
         cache_path = config['cache_directory'] + '/' + year.__str__()
         logger.log_status( " cache_path: " + cache_path ) ;
@@ -40,30 +37,19 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status(" output_directory: " + output_directory )
         
-        print >> sys.stderr, "\nwould be good to empty out tmp directory\n"
-#        try: os.removedirs( output_directory ) # careful this may do something that we don't want
-#        except: pass
-        
-        try: os.mkdir( output_directory )
-        except: pass
+        # creating an empty tmp directory:
+        shutil.rmtree( output_directory, ignore_errors = True )
+        os.mkdir( output_directory )
         
         in_storage = flt_storage(storage_location = cache_path)
-
         out_storage = tab_storage(storage_location = output_directory)
 
-        # this would export everything, which is not needed:
-#        ExportStorage().export(in_storage=in_storage, out_storage=out_storage)
-
-#        print >> sys.stderr, "\nexport disabled to speed up debugging; FATAL when scenario is changed!!\n" ;
         ExportStorage().export_dataset('persons', in_storage, out_storage)
         ExportStorage().export_dataset('jobs', in_storage, out_storage)
         ExportStorage().export_dataset('buildings', in_storage, out_storage)
         ExportStorage().export_dataset('parcels', in_storage, out_storage)
         ExportStorage().export_dataset('households', in_storage, out_storage )
         
-        # this is NOT needed:
-#        ExportStorage().export_dataset('travel_data', in_storage, out_storage )
-   
         logger.end_block()
 
 

@@ -11,6 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
+from opus_core.variables.attribute_type import AttributeType
 
 import os, sys
 
@@ -37,8 +38,9 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         """
         """
         logger.log_status('Starting GetMatsimDataIntoCache.get_travel_data...')
-        print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, Urbansim does not truly merge them"
-        print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
+#        print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, Urbansim does not truly merge them"
+#        print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
+        # solved 3dec08 by hana
         
         input_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
         logger.log_status("input_directory: " + input_directory )
@@ -50,7 +52,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 
         cache_storage = AttributeCache().get_flt_storage_for_year(year)
         existing_travel_data_set = TravelDataDataset( in_storage=cache_storage, in_table_name=table_name )
-        existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names())
+        existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)
         
         return existing_travel_data_set
 
