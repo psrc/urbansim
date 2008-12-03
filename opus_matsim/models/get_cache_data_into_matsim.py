@@ -13,11 +13,21 @@
 # 
 
 from opus_core.export_storage import ExportStorage
-from opus_core.logger import logger
-from opus_core.resources import Resources
 from opus_core.store.flt_storage import flt_storage
 from opus_core.store.tab_storage import tab_storage
+
+from opus_core.logger import logger
+from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
+from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.indicator_framework.core.source_data import SourceData
+from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.logger import logger
+from numpy import zeros, arange
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.variables.attribute_type import AttributeType
+from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
+from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 import os
 import shutil
 import sys
@@ -28,47 +38,65 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
        Essentially a variant of opus_core/tools/do_export_cache_to_tab_delimited_files.py
     """
 
-    def run(self, config, year):
+    #def run(self, config, year):
+
+    def create_travel_model_input_file(self, config, year, *args, **kwargs):
+        """"""
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
+
+        #GetCacheDataIntoTravelModel.run(self, config, year)
         
-        cache_path = config['cache_directory'] + '/' + year.__str__()
-        logger.log_status( " cache_path: " + cache_path ) ;
+        persons = SessionConfiguration().get_dataset_from_pool('person')
+        if not 'matsim_flag' in persons.get_known_attribute_names():
+            ## add matsim_flag for persons proportion to the sampling rate
+            persons_size = persons.size()
+            sampling_rate = config['travel_model_configuration']['sampling_rate']
+            matsim_flag = zeros(persons_size, dtype='int32')
+            sampled_person_index = sample_noreplace( arange(persons_size), 
+                                                     int(sampling_rate * persons_size), 
+                                                     return_indices=True )
+            matsim_flag[sampled_person_index] = 1
+            persons.add_attribute(matsim_flag, 'matsim_flag', metadata=AttributeType.PRIMARY)
+            persons.flush_attribute('matsim_flag')
+        
+        source_data = SourceData(
+            cache_directory = config['cache_directory'],
+            years = [year],
+            dataset_pool_configuration = DatasetPoolConfiguration(
+                package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim','opus_core'],
+                ),
+        )            
         
         output_directory = os.environ['OPUS_HOME'].__str__() + "/opus_matsim/tmp"
-        logger.log_status(" output_directory: " + output_directory )
         
-        # an experienced python programmer could replace this by a loop :-)  for filename in {'parcels',...) ...
-        try: os.unlink( output_directory + "/parcels.tab" )
-        except: pass
-        try: os.unlink( output_directory + "/households.tab" )
-        except: pass
-        try: os.unlink( output_directory + "/persons.tab" )
-        except: pass
-        try: os.unlink( output_directory + "/buildings.tab" )
-        except: pass
-        try: os.unlink( output_directory + "/parcels.tab" )
-        except: pass
+        export_indicators = [
+            DatasetTable(
+                attributes = [
+                    'resid_x_coord = person.disaggregate(parcel.x_coord_sp, intermediates=[building, household])',
+                    'resid_y_coord = person.disaggregate(parcel.y_coord_sp, intermediates=[building, household])',
+                    'workp_x_coord = person.disaggregate(parcel.x_coord_sp, intermediates=[building, job])',
+                    'workp_y_coord = person.disaggregate(parcel.y_coord_sp, intermediates=[building, job])',
+                    'person.employment_status',
+                    'person.matsim_flag',
+                    ],
+                dataset_name = 'person',
+                exclude_condition = 'person.matsim_flag==0',
+                storage_location = output_directory,
+                source_data = source_data,
+                output_type = 'tab',
+                name = 'exported_indicators',
+                )
+        ]
         
-        try: os.unlink( output_directory + "/parcels-cleaned.tab" )
-        except: pass
-        try: os.unlink( output_directory + "/travel_data.csv" )
-        except: pass
-
-        try: os.mkdir( output_directory )
-        except: pass
         
-        in_storage = flt_storage(storage_location = cache_path)
-        out_storage = tab_storage(storage_location = output_directory)
-
-        ExportStorage().export_dataset('persons', in_storage, out_storage)
-        ExportStorage().export_dataset('jobs', in_storage, out_storage)
-        ExportStorage().export_dataset('buildings', in_storage, out_storage)
-        ExportStorage().export_dataset('parcels', in_storage, out_storage)
-        ExportStorage().export_dataset('households', in_storage, out_storage )
         
-        logger.end_block()
-
-
+        IndicatorFactory().create_indicators(
+             indicators = export_indicators,
+             display_error_box = False, 
+             show_results = False)
+                
+        logger.end_block()        
+        
 # the following is needed, since it is called as "main" from the framework ...  
 if __name__ == "__main__":
     try: import wingdbstub
