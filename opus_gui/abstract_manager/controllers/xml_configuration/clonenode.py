@@ -41,6 +41,8 @@ class CloneNodeGui(QDialog, Ui_CloneNodeGui):
             self.model.insertRow(self.model.rowCount(self.parentNode),
                                  self.parentNode,
                                  self.clone)
+            # update models to run list
+            self.xml_controller.toolboxbase.runManagerTree.validate_models_to_run_list()
             self.model.emit(SIGNAL("layoutChanged()"))
         else:
             # TODO: Send up an error
@@ -76,4 +78,9 @@ class RenameNodeGui(CloneNodeGui):
         element = self.node.toElement()
         element.setTagName(name)
         self.xml_controller.model.emit(SIGNAL('layoutChanged()'))
+        # re-validate the models_to_run lists since now we may have a 
+        # invalid name.
+        #TODO: Actually updating the models in the models_to_run lists would 
+        # be a better idea
+        self.xml_controller.toolboxbase.runManagerTree.validate_models_to_run_list()
         self.close()
