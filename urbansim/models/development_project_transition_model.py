@@ -61,7 +61,7 @@ class DevelopmentProjectTransitionModel( Model ):
             return return_value_if_denominator_is_zero
         return type(numerator) / denominator
 
-    def run( self, models_configuration, vacancy_table, history_table, year, location_set, development_models = None, resources=None ):
+    def run( self, models_configuration, vacancy_table, history_table, year, location_set, resources=None, development_models = None):
         # development_models is a list of existing development models in the 
         # project from which we can extract additional data about the various 
         # project types.
