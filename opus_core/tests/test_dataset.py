@@ -309,5 +309,33 @@ class TestDataset(opus_unittest.OpusTestCase):
         
         ds.compute_one_variable_with_unknown_package("attr1_times_2", package_order=["opus_core"])
         
+    def test_join_datasets_with_2_ids(self):
+        from numpy import ma
+        storage = StorageFactory().get_storage('dict_storage')
+        
+        storage.write_table(
+            table_name='data1',
+            table_data={
+                'id1':array([2,4,2]),
+                'id2':array([1,2,3]),
+                'attr1':array([4,7,1]),
+                'attr2':array([100,0,1000]),
+                }
+            )
+        storage.write_table(
+            table_name='data2',
+            table_data={
+                'id1':array([4,2,2]),
+                'id2':array([2,3,1]),
+                'attr1':array([50,60,70])
+                }
+            )
+        
+        ds1 = Dataset(in_storage=storage, in_table_name='data1', id_name=['id1', 'id2'], dataset_name='data1')
+        ds2 = Dataset(in_storage=storage, in_table_name='data2', id_name=['id1', 'id2'], dataset_name='data2')
+        ds1.join(ds2, 'attr1')
+        self.assertEqual(ma.allequal(ds1.get_attribute('attr1'), array([70,50,60])), True)
+        self.assertEqual(ma.allequal(ds1.get_attribute('attr2'), array([100,0,1000])), True)
+        
 if __name__ == "__main__":
     opus_unittest.main()
