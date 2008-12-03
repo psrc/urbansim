@@ -25,6 +25,8 @@ class Map(AbstractIndicator):
                  years = None, operation = None, name = None,
                  scale = None,
                  storage_location = None):
+        if dataset_name == 'parcel':
+            raise Exception('Cannot create a Matplotlib map for parcel dataset. Please plot at a higher geographic aggregation')
         AbstractIndicator.__init__(self, source_data, dataset_name, 
                                    [attribute], years, operation, name,
                                    storage_location)

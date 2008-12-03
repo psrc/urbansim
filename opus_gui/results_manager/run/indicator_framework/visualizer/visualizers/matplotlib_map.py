@@ -136,6 +136,8 @@ class MatplotlibMap(Visualization):
             if computed_indicator.source_data != source_data:
                 raise Exception('result templates in indicator batch must all be the same.')
             dataset_name = computed_indicator.indicator.dataset_name
+            if dataset_name == 'parcel':
+                raise Exception('Cannot create a Matplotlib map for parcel dataset. Please plot at a higher geographic aggregation')
             if dataset_name not in dataset_to_attribute_map:
                 dataset_to_attribute_map[dataset_name] = []
             dataset_to_attribute_map[dataset_name].append(name)
