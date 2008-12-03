@@ -61,35 +61,45 @@ class DevelopmentProjectTransitionModel( Model ):
             return return_value_if_denominator_is_zero
         return type(numerator) / denominator
 
-    def run( self, models_configuration, vacancy_table, history_table, year, location_set, resources=None, development_models = None):
+    def run( self, models_configuration, vacancy_table, history_table, year, 
+             location_set, resources = None,  development_models = None, 
+             model_configuration = None):
         # development_models is a list of existing development models in the 
         # project from which we can extract additional data about the various 
         # project types.
-        dev_project_types = {}
+        dev_model_configs = {}
         if development_models is None:
-            # fall back on old behaviour and assume that models_configuration 
-            # have a 'default_model_configurations' section
-            dev_project_types = models_configuration['development_project_types']
+            # fall back on old behavior and assume that either 
+            # models_configuration or model_configuration have a 
+            # 'default_model_configurations' section
+            conf = None
+            if model_configuration is not None and \
+               'development_project_types' in model_configuration:
+                    conf = model_configuration['development_project_types']
+            else:
+                conf = models_configuration['development_project_types']
+            dev_model_configs = conf
         else:
-            # use the new format and import from the actual development models_configuration
+            # use the new format and import from external development 
+            # model's configurations
             for dev_proj_model in development_models:
-                # extract information from the dev model's init function arguments
+                # extract information from the dev model's init() arguments
                 model_conf = models_configuration[dev_proj_model]
                 proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
-                dev_project_types[proj_type] = {}
-                dev_project_types[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
-                dev_project_types[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
-                dev_project_types[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+                dev_model_configs[proj_type] = {}
+                dev_model_configs[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+                dev_model_configs[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
+                dev_model_configs[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
 
-        self.pre_check( location_set, vacancy_table, dev_project_types)
+        self.pre_check( location_set, vacancy_table, dev_model_configs)
         target_residential_vacancy_rate, target_non_residential_vacancy_rate = self._get_target_vacancy_rates(vacancy_table, year)
-        self._compute_vacancy_variables(location_set, dev_project_types, resources)
+        self._compute_vacancy_variables(location_set, dev_model_configs, resources)
         projects = {}
-        for project_type in dev_project_types:
+        for project_type in dev_model_configs:
             # determine current-year vacancy rates
             vacant_units_sum = location_set.get_attribute(self.variable_for_vacancy[project_type]).sum()
             units_sum = float( location_set.get_attribute(self.units_variable[project_type]).sum() )
-            if dev_project_types[project_type]['residential']:
+            if dev_model_configs[project_type]['residential']:
                 target_vacancy_rate = target_residential_vacancy_rate
             else:
                 target_vacancy_rate = target_non_residential_vacancy_rate
@@ -107,7 +117,7 @@ class DevelopmentProjectTransitionModel( Model ):
             #create projects
             if should_develop_units > 0:
                 projects[project_type] = self._create_projects(should_develop_units, project_type, history_table,
-                                                               location_set, units_sum, dev_project_types, resources)
+                                                               location_set, units_sum, dev_model_configs, resources)
                 projects[project_type].add_submodel_categories()
             else:
                 projects[project_type] = None
@@ -118,13 +128,13 @@ class DevelopmentProjectTransitionModel( Model ):
         target_non_residential_vacancy_rate = vacancy_table.get_data_element_by_id( year ).target_total_non_residential_vacancy
         return target_residential_vacancy_rate, target_non_residential_vacancy_rate
     
-    def _compute_vacancy_variables(self, location_set, dev_project_types, resources):
+    def _compute_vacancy_variables(self, location_set, dev_model_configs, resources):
         compute_resources = Resources(resources)
         compute_resources.merge({"debug":self.debug})
         self.units_variable = {}
         self.variable_for_vacancy = {}
-        for project_type in dev_project_types:
-            self.units_variable[project_type] =  dev_project_types[project_type]['units']
+        for project_type in dev_model_configs:
+            self.units_variable[project_type] =  dev_model_configs[project_type]['units']
             self.variable_for_vacancy[project_type] = compute_resources.get(
                                     "%s_vacant_variable" % project_type,
                                     "urbansim.%s.vacant_%s" % (location_set.get_dataset_name(),
@@ -132,13 +142,13 @@ class DevelopmentProjectTransitionModel( Model ):
             location_set.compute_variables([self.variable_for_vacancy[project_type]],
                                         resources = compute_resources)
             
-    def _create_projects(self, should_develop_units, project_type, history_table, location_set, units_sum, dev_project_types,
+    def _create_projects(self, should_develop_units, project_type, history_table, location_set, units_sum, dev_model_configs,
                          resources=None):
         average_improvement_value = None
         if (project_type+"_improvement_value") in location_set.get_known_attribute_names():
             average_improvement_value = self.safe_divide(
                 location_set.get_attribute(project_type+"_improvement_value" ).sum(), units_sum)
-        categories = dev_project_types[project_type]['categories']
+        categories = dev_model_configs[project_type]['categories']
         history_values = history_table.get_attribute(self.units_variable[project_type])
         type_code_values = history_table.get_change_type_code_attribute(self.units_variable[project_type])
         # take only non-zero history values and those that don't represent demolished buildings 
@@ -287,59 +297,59 @@ class DPTMTests(StochasticTestCase):
         from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
         # fake development project models
                 
-        dev_models = {
-           'residential_model':{
-                'controller':{
-                    'init':{
-                        'arguments':{
-                            'project_type':'residential',
-                            'residential':True,
-                            'units':'residential_units'
-                        }
-                    },
-                    'prepare_for_estimate':{
-                        'arguments':{
-                            'categories':[1, 2, 3, 5, 10, 20]
-                        }
-                    }
-                }
-            },
-            'commercial_model':{
-                'controller':{
-                    'init':{
-                        'arguments':{
-                            'project_type':'commercial',
-                            'residential':False,
-                            'units': 'commercial_sqft'
-                        }
-                    },
-                    'prepare_for_estimate':{
-                        'arguments': {
-                            'categories':[1000, 2000, 5000, 10000]
-                        }
-                    }
-                }
-            },
-            'industrial_model':{
-                'controller':{
-                    'init':{
-                        'arguments':{
-                            'project_type':'industrial',
-                            'residential':False,
-                            'units':'industrial_sqft'
-                        }
-                    },
-                    'prepare_for_estimate':{
-                        'arguments':{
-                            'categories':[1000, 2000, 5000, 10000]
-                        }
-                    }
+        #dev_models = {
+           #'residential_model':{
+                #'controller':{
+                    #'init':{
+                        #'arguments':{
+                            #'project_type':'residential',
+                            #'residential':True,
+                            #'units':'residential_units'
+                        #}
+                    #},
+                    #'prepare_for_estimate':{
+                        #'arguments':{
+                            #'categories':[1, 2, 3, 5, 10, 20]
+                        #}
+                    #}
+                #}
+            #},
+            #'commercial_model':{
+                #'controller':{
+                    #'init':{
+                        #'arguments':{
+                            #'project_type':'commercial',
+                            #'residential':False,
+                            #'units': 'commercial_sqft'
+                        #}
+                    #},
+                    #'prepare_for_estimate':{
+                        #'arguments': {
+                            #'categories':[1000, 2000, 5000, 10000]
+                        #}
+                    #}
+                #}
+            #},
+            #'industrial_model':{
+                #'controller':{
+                    #'init':{
+                        #'arguments':{
+                            #'project_type':'industrial',
+                            #'residential':False,
+                            #'units':'industrial_sqft'
+                        #}
+                    #},
+                    #'prepare_for_estimate':{
+                        #'arguments':{
+                            #'categories':[1000, 2000, 5000, 10000]
+                        #}
+                    #}
                     
-                }
-            }
-        }
+                #}
+            #}
+        #}
 
-        self.models_configuration = dev_models #AbstractUrbansimConfiguration()['models_configuration']
+        self.models_configuration = AbstractUrbansimConfiguration()['models_configuration']
 
     def test_no_development_with_zero_target_vacancy( self ):
         """If the target vacany ratest are 0%, then no development should occur and thus,
@@ -366,7 +376,6 @@ class DPTMTests(StochasticTestCase):
                            self.dataset_pool.get_dataset('development_event_history'),
                            2000,
                            self.dataset_pool.get_dataset('gridcell'),
-                           self.models_configuration.keys(),
                            resources=self.compute_resources)
 
         self.assertEqual( results['residential'], None,
@@ -395,7 +404,6 @@ class DPTMTests(StochasticTestCase):
                            self.dataset_pool.get_dataset('development_event_history'),
                            2001,
                            self.dataset_pool.get_dataset('gridcell'),
-                           self.models_configuration.keys(),
                            resources=self.compute_resources )
 
         """20000 residential units should've been added because current ratio of
@@ -433,7 +441,6 @@ class DPTMTests(StochasticTestCase):
                            self.dataset_pool.get_dataset('development_event_history'),
                            2001,
                            self.dataset_pool.get_dataset('gridcell'),
-                           self.models_configuration.keys(),
                            resources=self.compute_resources)
 
         """20000 residential units should've been added because current ratio of
@@ -528,7 +535,6 @@ class DPTMTests(StochasticTestCase):
                                dataset_pool.get_dataset('development_event_history'),
                                2000,
                                self.dataset_pool.get_dataset('gridcell'),
-                               self.models_configuration.keys(),
                                resources=Resources({"household":dataset_pool.get_dataset('household'),
                                                     "job":dataset_pool.get_dataset('job'),
                                                     "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
@@ -625,7 +631,6 @@ class DPTMTests(StochasticTestCase):
                            dataset_pool.get_dataset('development_event_history'),
                            2000,
                            dataset_pool.get_dataset('gridcell'),
-                           self.models_configuration.keys(),
                            resources=Resources({"household":dataset_pool.get_dataset('household'),
                                                 "job":dataset_pool.get_dataset('job'),
                                                 "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
