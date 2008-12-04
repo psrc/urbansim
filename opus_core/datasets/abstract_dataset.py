@@ -296,7 +296,7 @@ class AbstractDataset(object):
         array_size = result.size
         result = reshape(result, (array_size,1))
         for name in attribute_names[1:]:
-            result=concatenate((result, self.get_attribute_as_column(name)),
+            result=concatenate((result, reshape(self.get_attribute(name), (array_size,1))),
                                      axis=1)
         return result
         
