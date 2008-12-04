@@ -15,7 +15,7 @@
 from opus_core.misc import DebugPrinter, unique_values
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from opus_core.model import Model
-from numpy import where, ones, zeros, array, int32, concatenate
+from numpy import where, ones, zeros, array, int32, concatenate #@UnresolvedImport
 from opus_core.storage_factory import StorageFactory
 
 
@@ -76,19 +76,46 @@ class DevelopmentEventTransitionModel(Model):
         debug.print_debug("Number of events: " + str(grid_ids_for_any_project.size), 3)
         return eventset
 
-    def prepare_for_run(self, dev_projects, development_models, models_configuration):
-        dev_project_types = {}
-        for dev_proj_model in development_models:
-            # extract information from the dev model's init function arguments
-            model_conf = models_configuration[dev_proj_model]
-            proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
-            dev_project_types[proj_type] = {}
-            dev_project_types[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
-        
+    def prepare_for_run(self, dev_projects, development_models = None, 
+                        models_configuration = None, model_configuration = None):
+        """
+        dev_projects: output from development projects
+        development_models: list of development models to get project data from
+        model[s]_configuration: configuration objects used to get data for
+                                development project models. The singular
+                                model_configuration is used when 
+                                development_models is None, otherwise the plural 
+                                models_configuration is used.
+        """
+        # argument check
+        if development_models is not None and models_configuration is None:
+            raise StandardError('Configurations that pass a list of development'
+                                ' models (argument: "development_models") must '
+                                'also pass a reference to the entire models '
+                                'configuration (argument: "models_'
+                                'configuration") note: plural model[s].')
+
+        dev_model_configs = {}
+        if development_models is None: # assume this means that we use old conf
+            # try to get a reference to the external information for development
+            # project types
+            try:
+                dev_model_configs = model_configuration['development_project_types']
+            except:
+                dev_model_configs = models_configuration['development_project_types']
+        else:
+            # pull in information from the specified development project models
+            for dev_proj_model in development_models:
+                model_conf = models_configuration[dev_proj_model]
+                proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
+                dev_model_configs[proj_type] = {}
+                dev_model_configs[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+                dev_model_configs[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
+                dev_model_configs[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+
         all_project_types = []
         all_project_units = []
-        for project_type in dev_project_types:
-            if dev_projects[project_type] is not None:
-                all_project_types.append(project_type)
-                all_project_units.append(dev_project_types[project_type]['units'])
+        for project_type in dev_model_configs:
+            all_project_types.append(project_type)
+            all_project_units.append(dev_model_configs[project_type]['units'])
         return  (all_project_types, all_project_units)

@@ -18,9 +18,9 @@ from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.development_project_dataset import DevelopmentProjectDataset
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 from opus_core.model import Model
-from numpy.random import randint
+from numpy.random import randint #@UnresolvedImport
 from opus_core.logger import logger
-from numpy import arange, array, zeros, ones, float32, int32, concatenate, logical_and
+from numpy import arange, array, zeros, ones, float32, int32, concatenate, logical_and #@UnresolvedImport
 
 class DevelopmentProjectTransitionModel( Model ):
     """
@@ -64,26 +64,33 @@ class DevelopmentProjectTransitionModel( Model ):
     def run(self, vacancy_table, history_table, year, 
              location_set, resources = None,  development_models = None, 
              models_configuration = None, model_configuration = None):
-        # development_models is a list of existing development models in the 
-        # project from which we can extract additional data about the various 
-        # project types.
+        """
+        Defining the development project types can be done in two ways;
+        either by using a small part of configuration located under
+        'development_project_types' that lists only the needed information
+        OR: they can be defined as part of the development project models.
+        Configurations that pass the development_models argument assume to 
+        use the latter method.
+        """
+        # check that we get the correct arguments
+        if development_models is not None and models_configuration is None:
+            raise StandardError('Configurations that pass a list of development'
+                                ' models (argument: "development_models") must '
+                                'also pass a reference to the entire models '
+                                'configuration (argument: "models_'
+                                'configuration") note: plural model[s].')
+
         dev_model_configs = {}
-        if development_models is None:
-            # fall back on old behavior and assume that either 
-            # models_configuration or model_configuration have a 
-            # 'default_model_configurations' section
-            conf = None
-            if model_configuration is not None and \
-               'development_project_types' in model_configuration:
-                    conf = model_configuration['development_project_types']
-            else:
-                conf = models_configuration['development_project_types']
-            dev_model_configs = conf
+        if development_models is None: # assume this means that we use old conf
+            # try to get a reference to the external information for development
+            # project types
+            try:
+                dev_model_configs = model_configuration['development_project_types']
+            except:
+                dev_model_configs = models_configuration['development_project_types']
         else:
-            # use the new format and import from external development 
-            # model's configurations
+            # pull in information from the specified development project models
             for dev_proj_model in development_models:
-                # extract information from the dev model's init() arguments
                 model_conf = models_configuration[dev_proj_model]
                 proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
                 dev_model_configs[proj_type] = {}
