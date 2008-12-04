@@ -29,7 +29,6 @@ class DevelopmentProjectLocationChoiceModelCreator(object):
     def get_model(self, 
                   project_type,
                   location_set,
-#                  model_configuration,
                   sampler = "opus_core.samplers.weighted_sampler", 
                   utilities = "opus_core.linear_utilities", 
                   choices = "urbansim.first_agent_first_choices", 
@@ -41,6 +40,7 @@ class DevelopmentProjectLocationChoiceModelCreator(object):
                   compute_capacity_flag = True, 
                   filter = "",
                   submodel_string = "size_category", 
+                  model_configuration = None,
                   location_id_string = None,
                   run_config = None, 
                   estimate_config = None, 
@@ -49,9 +49,11 @@ class DevelopmentProjectLocationChoiceModelCreator(object):
                   developable_maximum_unit_variable_full_name = '',
                   developable_minimum_unit_variable_full_name = '',
                   residential = False):
-#        units = model_configuration['units']
-#        developable_maximum_unit_variable_full_name = model_configuration['developable_maximum_unit_variable_full_name']
-#        developable_minimum_unit_variable_full_name = model_configuration['developable_minimum_unit_variable_full_name']
+        
+        if model_configuration is not None:
+            units = model_configuration['units']
+            developable_maximum_unit_variable_full_name = model_configuration['developable_maximum_unit_variable_full_name']
+            developable_minimum_unit_variable_full_name = model_configuration['developable_minimum_unit_variable_full_name']
         
         default_capacity_attribute = "urbansim.gridcell.is_developable_for_%s" % units
         default_filter = "urbansim.gridcell.developable_%s" % units
