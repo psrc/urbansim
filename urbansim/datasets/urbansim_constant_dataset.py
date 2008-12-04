@@ -36,7 +36,7 @@ class UrbansimConstantDataset(Dataset):
                         table_data = data)
         Dataset.__init__(self, in_storage = storage, 
                            in_table_name='urbansim_constants',
-                           id_name = [])
+                           id_name = [], dataset_name='urbansim_constant')
         
     def summary(self, output=logger):
         output.write("UrbanSim constant dataset")
@@ -91,6 +91,22 @@ class Tests(opus_unittest.OpusTestCase):
         self.assert_(urbansim_constant['young_age']==30, msg = "Wrong constant value.")
         self.assert_(isscalar(urbansim_constant['young_age']), msg = "Constant  is an array.")
         
+    def test_expression(self):
+        dataset_pool = DatasetPool(package_order=['urbansim'],
+                                   storage=AttributeCache())
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='dataset',
+            table_data={
+                "id":array([1,2,3,4]), 
+                "year":array([1968,1989,1750,0]) # absolute_min_year = 1800
+                }
+            )
+        
+        ds = Dataset(in_storage=storage, in_table_name='dataset', id_name="id")
+        # This does not work but should
+        #result = ds.compute_variables(['is_correct_year = dataset.year >= urbansim_constant.absolute_min_year'], dataset_pool=dataset_pool)
+        #self.assertEqual(ma.allequal(result, array([1,1,0,0])), True)
         
 if __name__ == '__main__':
     opus_unittest.main()
