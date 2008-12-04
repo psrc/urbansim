@@ -48,7 +48,7 @@ class euclidean_distance_from_home_to_work(Variable):
         
         distance = ( sqrt( (relative_x[gridcells.try_get_id_index(home_grid_id.ravel())] - relative_x[gridcells.try_get_id_index(workplace_grid_id.ravel())])**2 \
                          + (relative_y[gridcells.try_get_id_index(home_grid_id.ravel())] - relative_y[gridcells.try_get_id_index(workplace_grid_id.ravel())])**2 
-                          ) * constants.get('cell_size') ).reshape(home_grid_id.shape)
+                          ) * constants['cell_size'] ).reshape(home_grid_id.shape)
         distance[index_missing_value] = self.default_value
         
         return distance
