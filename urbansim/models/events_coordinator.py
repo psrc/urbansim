@@ -12,14 +12,13 @@
 # other acknowledgments.
 # 
 
-from numpy import array, logical_and, logical_or, zeros, where, arange, concatenate, clip
-from numpy import ma
+from numpy import array, logical_and, logical_or, zeros, where, arange, clip #@UnresolvedImport
+from numpy import ma #@UnresolvedImport
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.development_type_dataset import DevelopmentTypeDataset
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from opus_core.storage_factory import StorageFactory
-from opus_core.misc import unique_values
 from opus_core.model import Model
 from opus_core.logger import logger
 
@@ -29,86 +28,89 @@ class EventsCoordinator(Model):
     model_name = "events_coordinator"
 
     def _set_development_types_for_sqft_and_units(self, location_set, development_type_set, index=None):
-         """Figure out what development type a gridcell is.
-         This decision is based on the number of units and the square feet in the gridcell. 
-         Each development type has a range of unit and square feet values corresponding to it.
-         GridcellDataset's attribute development_type_id is modified to reflect this change. 
-         """
-         #TODO this development_type assignment scheme is ad-hoc; may only work for PSRC sheme
-
-         #if there is no match, assign to default_devtype
-         default_devtype = 24
-         
-         location_set.load_dataset_if_not_loaded(attributes=["residential_units", "industrial_sqft", 
-                                               "commercial_sqft", "governmental_sqft"])
-         
-         #because of lazy loading, to get development_type_set.size() we may need to access an array first
-         min_units = development_type_set.get_attribute("min_units")
-         max_units = development_type_set.get_attribute("max_units")
-         min_sqft = development_type_set.get_attribute("min_sqft")
-         max_sqft = development_type_set.get_attribute("max_sqft")
-         ids = development_type_set.get_attribute("development_type_id")
-         
-         if index is None:
-             index = arange(location_set.size())
-         
-         units = location_set.get_attribute_by_index("residential_units", index)
-         location_set.compute_variables("urbansim.%s.non_residential_sqft" % location_set.get_dataset_name())
-         nonres_sqft = location_set.get_attribute_by_index("non_residential_sqft", index)
-         com_sqft = location_set.get_attribute_by_index("commercial_sqft", index)
-         ind_sqft = location_set.get_attribute_by_index("industrial_sqft", index) 
-         gov_sqft = location_set.get_attribute_by_index("governmental_sqft", index) 
-         
-         gridcell_dev_type = zeros((index.size,)) + default_devtype # set to the default value of 24
-         
-         # go through the developmenttypes and assign them to the gridcells
-         development_type_set.compute_variables(["urbansim.development_type.is_in_development_type_group_residential",
-                                                 "urbansim.development_type.is_in_development_type_group_mixed_use",
-                                                 "urbansim.development_type.is_in_development_type_group_commercial",
-                                                 "urbansim.development_type.is_in_development_type_group_industrial",
-                                                 "urbansim.development_type.is_in_development_type_group_governmental"
-                                                 ])
-         #name_list1 = ['R1','R2','R3','R4','R5','R6','R7','R8','M1','M2','M3','M4','M5','M6','M7','M8']
-         # devtypes in development type group residential apply the following rules
-         for dt_index in where(logical_or(development_type_set.get_attribute("is_in_development_type_group_residential"), 
-                                          development_type_set.get_attribute("is_in_development_type_group_mixed_use")))[0]:
-             where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
-                                     logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
-                                     )
-             gridcell_dev_type[where_this_type] = ids[dt_index]
-         
-         #name_list2 = ['C1','C2','C3']
-         # devtypes in in development type group commercial apply the following rules
-         for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_commercial"))[0]:
-             where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
-                                     logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
-                                     )
-             gridcell_dev_type[where_this_type] = ids[dt_index]
-         
-         #name_list3 = ['I1','I2','I3']
-         # devtypes in in development type group industrial apply the following rules
-         for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_industrial"))[0]:
-             where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
-                                     logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
-                                     )
-             gridcell_dev_type[where_this_type] = ids[dt_index]
-
-         #name_list4 = ['GV']
-         # devtypes in in development type group governmental apply the following rules
-         for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_governmental"))[0]:
-             where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
-                                     logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
-                                     )
-             gridcell_dev_type[where_this_type] = ids[dt_index]
-         
-
-         #if gridcell's devtype is larger than 24, keep it unchanged
-         undevelopable_index = where(location_set.get_attribute('development_type_id')[index] > default_devtype)[0]
-         gridcell_dev_type[undevelopable_index] = location_set.get_attribute('development_type_id')[index][undevelopable_index]
-
-         location_set.set_values_of_one_attribute("development_type_id", gridcell_dev_type, index=index)
+        """Figure out what development type a gridcell is.
+        This decision is based on the number of units and the square feet in the gridcell. 
+        Each development type has a range of unit and square feet values corresponding to it.
+        GridcellDataset's attribute development_type_id is modified to reflect this change. 
+        """
+        #TODO this development_type assignment scheme is ad-hoc; may only work for PSRC sheme
+   
+        #if there is no match, assign to default_devtype
+        default_devtype = 24
+        
+        location_set.load_dataset_if_not_loaded(attributes=["residential_units", "industrial_sqft", 
+                                              "commercial_sqft", "governmental_sqft"])
+        
+        #because of lazy loading, to get development_type_set.size() we may need to access an array first
+        min_units = development_type_set.get_attribute("min_units")
+        max_units = development_type_set.get_attribute("max_units")
+        min_sqft = development_type_set.get_attribute("min_sqft")
+        max_sqft = development_type_set.get_attribute("max_sqft")
+        ids = development_type_set.get_attribute("development_type_id")
+        
+        if index is None:
+            index = arange(location_set.size())
+        
+        units = location_set.get_attribute_by_index("residential_units", index)
+        location_set.compute_variables("urbansim.%s.non_residential_sqft" % location_set.get_dataset_name())
+        nonres_sqft = location_set.get_attribute_by_index("non_residential_sqft", index)
+        # these are unused?
+        com_sqft = location_set.get_attribute_by_index("commercial_sqft", index)
+        ind_sqft = location_set.get_attribute_by_index("industrial_sqft", index) 
+        gov_sqft = location_set.get_attribute_by_index("governmental_sqft", index) 
+        
+        gridcell_dev_type = zeros((index.size,)) + default_devtype # set to the default value of 24
+        
+        # go through the developmenttypes and assign them to the gridcells
+        development_type_set.compute_variables(["urbansim.development_type.is_in_development_type_group_residential",
+                                                "urbansim.development_type.is_in_development_type_group_mixed_use",
+                                                "urbansim.development_type.is_in_development_type_group_commercial",
+                                                "urbansim.development_type.is_in_development_type_group_industrial",
+                                                "urbansim.development_type.is_in_development_type_group_governmental"
+                                                ])
+        #name_list1 = ['R1','R2','R3','R4','R5','R6','R7','R8','M1','M2','M3','M4','M5','M6','M7','M8']
+        # devtypes in development type group residential apply the following rules
+        for dt_index in where(logical_or(development_type_set.get_attribute("is_in_development_type_group_residential"), 
+                                         development_type_set.get_attribute("is_in_development_type_group_mixed_use")))[0]:
+            where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
+                                    logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
+                                    )
+            gridcell_dev_type[where_this_type] = ids[dt_index]
+        
+        #name_list2 = ['C1','C2','C3']
+        # devtypes in in development type group commercial apply the following rules
+        for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_commercial"))[0]:
+            where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
+                                    logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
+                                    )
+            gridcell_dev_type[where_this_type] = ids[dt_index]
+        
+        #name_list3 = ['I1','I2','I3']
+        # devtypes in in development type group industrial apply the following rules
+        for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_industrial"))[0]:
+            where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
+                                    logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
+                                    )
+            gridcell_dev_type[where_this_type] = ids[dt_index]
+   
+        #name_list4 = ['GV']
+        # devtypes in in development type group governmental apply the following rules
+        for dt_index in where(development_type_set.get_attribute("is_in_development_type_group_governmental"))[0]:
+            where_this_type = where(logical_and(min_units[dt_index] <= units, units <= max_units[dt_index]) * 
+                                    logical_and(min_sqft[dt_index] <= nonres_sqft, nonres_sqft <= max_sqft[dt_index])
+                                    )
+            gridcell_dev_type[where_this_type] = ids[dt_index]
+        
+   
+        #if gridcell's devtype is larger than 24, keep it unchanged
+        undevelopable_index = where(location_set.get_attribute('development_type_id')[index] > default_devtype)[0]
+        gridcell_dev_type[undevelopable_index] = location_set.get_attribute('development_type_id')[index][undevelopable_index]
+   
+        location_set.set_values_of_one_attribute("development_type_id", gridcell_dev_type, index=index)
           
-    def run(self, model_configuration, location_set, development_event_set, development_type_set, current_year):
+    def run(self, model_configuration, location_set, development_event_set, 
+            development_type_set, current_year, development_models = None,
+            models_configuration = None):
         """Modify locations to reflect these development events, including
         updating their development_type value. 
         Returns tuple of (indices of locations that were modified,
@@ -120,7 +122,27 @@ class EventsCoordinator(Model):
 
         improvement_values_to_change = {}
         attributes_to_change = []
-        project_type_config = model_configuration['development_project_types']
+        # determine which way the development model configurations are specified
+        project_type_config = {}
+        if development_models is None:
+            # find out which conf list to use
+            if 'development_project_types' in model_configuration:
+                conf = model_configuration
+            else:
+                conf = models_configuration
+            project_type_config = conf['development_project_types']
+        else:
+            # extract project type configs from list of development project
+            # models (by name)
+            for dev_proj_model in development_models:
+                # extract information from the dev model's init() arguments
+                model_conf = models_configuration[dev_proj_model]
+                proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
+                project_type_config[proj_type] = {}
+                project_type_config[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+                project_type_config[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
+                project_type_config[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+        
         for project_type in project_type_config:
             units_variable = project_type_config[project_type]['units']
             if units_variable in development_event_set.get_primary_attribute_names():
