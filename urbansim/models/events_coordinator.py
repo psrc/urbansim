@@ -108,9 +108,9 @@ class EventsCoordinator(Model):
    
         location_set.set_values_of_one_attribute("development_type_id", gridcell_dev_type, index=index)
           
-    def run(self, model_configuration, location_set, development_event_set, 
-            development_type_set, current_year, development_models = None,
-            models_configuration = None):
+    def run(self, location_set, development_event_set, 
+            development_type_set, current_year, model_configuration = None,
+            development_models = None, models_configuration = None):
         """Modify locations to reflect these development events, including
         updating their development_type value. 
         Returns tuple of (indices of locations that were modified,
@@ -148,8 +148,8 @@ class EventsCoordinator(Model):
             if units_variable in development_event_set.get_primary_attribute_names():
                 attributes_to_change.append(units_variable)
                 improvement_values_to_change[units_variable] = '%s_improvement_value' % project_type
-
-        return self.process_events(model_configuration, location_set, development_event_set, 
+        model_conf = models_configuration or model_configuration
+        return self.process_events(model_conf, location_set, development_event_set, 
                                                              development_type_set,
                                                              attributes_to_change, improvement_values_to_change, 
                                                              current_year)
@@ -324,8 +324,8 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         dev_events_set = self._create_simple_development_event_set()
         dev_types_set = self._create_simple_development_types_set()
         
-        EventsCoordinator().run(self.model_configuration, 
-                                gridcell_set, dev_events_set, dev_types_set, 2000)
+        EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000,
+                                model_configuration = self.model_configuration)
 
         self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [4, 1, 12, 20]))) 
         self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [3, 12, 0, 4])))
@@ -373,7 +373,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         dev_types_set = self._create_simple_development_types_set()
         
-        EventsCoordinator().run(self.model_configuration, gridcell_set, dev_events_set, dev_types_set, 2000)
+        EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000, model_configuration = self.model_configuration)
         
         return gridcell_set.get_attribute("residential_units")
         
@@ -405,7 +405,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         dev_types_set = self._create_simple_development_types_set()
         
-        EventsCoordinator().run(self.model_configuration, gridcell_set, dev_events_set, dev_types_set, 2000)
+        EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000, model_configuration = self.model_configuration)
                                 
         self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 0, 20]))) 
         
@@ -442,7 +442,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         dev_types_set = self._create_simple_development_types_set()
         
-        EventsCoordinator().run(self.model_configuration, gridcell_set, dev_events_set, dev_types_set, 2000)
+        EventsCoordinator().run(gridcell_set, dev_events_set, dev_types_set, 2000, model_configuration = self.model_configuration)
                                 
         self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 6, 20])))
         self.assert_(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [30, 102, 0, 3])))
