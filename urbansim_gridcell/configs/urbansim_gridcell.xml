@@ -61,7 +61,9 @@
             <location_set type="string">gridcell</location_set>
             <current_year type="string">year</current_year>
             <development_event_set type="string">development_events</development_event_set>
-            <model_configuration type="string">model_configuration</model_configuration>
+            <development_models type="list">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</development_models>
+            <!-- hack to get model system to pass the models configuration to the run method  -->
+            <models_configuration type="string" hidden="True">models_configuration</models_configuration>
           </run>
         </structure>
       </events_coordinator>
