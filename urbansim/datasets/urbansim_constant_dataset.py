@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import array
+from numpy import array, isscalar
 from opus_core.datasets.dataset import Dataset
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
@@ -28,8 +28,8 @@ class UrbansimConstantDataset(Dataset):
         self.constants_dict = Constants(**kwargs)
         data = {}
         for attr, value in self.constants_dict.iteritems():
-            new_value = array([value])
-            if new_value.size == 1:
+            if isscalar(value):
+                new_value = array([value])
                 data[attr] = new_value
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name = 'urbansim_constants', # whatever name

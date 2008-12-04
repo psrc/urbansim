@@ -413,7 +413,8 @@ class AbstractDataset(object):
         """ Deletes all computed attributes, incl. metadata.
         """
         for attr in self.get_computed_attribute_names():
-            self.delete_one_attribute(attr)
+            if not attr in self.get_id_name():
+                self.delete_one_attribute(attr)
             
     ##################################################################################
     ## Methods for deleting rows
@@ -587,7 +588,8 @@ class AbstractDataset(object):
         """
         logger.log_status("Flushing %s" % self.get_dataset_name())
         for attribute_name in self.get_attributes_in_memory():
-            self._do_flush_attribute(attribute_name)
+            if not(attribute_name in self.get_id_name() and self._is_hidden_id()):
+                self._do_flush_attribute(attribute_name)
         gc.collect()
 
     def load_and_flush_dataset(self):
