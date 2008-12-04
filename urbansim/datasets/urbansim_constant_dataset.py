@@ -12,33 +12,49 @@
 # other acknowledgments.
 #
 
+from numpy import array
 from opus_core.datasets.dataset import Dataset
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
-
 from urbansim.constants import Constants
 from urbansim.data.test_cache_configuration import TestCacheConfiguration
 
-class UrbansimConstantDataset(Constants):
+class UrbansimConstantDataset(Dataset):
 
     def __init__(self, **kwargs):
-        Constants.__init__(self, **kwargs)
+        self.constants_dict = Constants(**kwargs)
+        data = {}
+        for attr, value in self.constants_dict.iteritems():
+            new_value = array([value])
+            if new_value.size == 1:
+                data[attr] = new_value
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name = 'urbansim_constants', # whatever name
+                        table_data = data)
+        Dataset.__init__(self, in_storage = storage, 
+                           in_table_name='urbansim_constants',
+                           id_name = [])
         
-    def get_attribute(self, x):
-        # look up the attribute and return it in a list of length 1
-        return [self[x]]
-
     def summary(self, output=logger):
         output.write("UrbanSim constant dataset")
 
-
+    def __getitem__(self, name):
+        if name in self.get_known_attribute_names():
+            return self.get_attribute(name)[0]
+        return self.constants_dict[name]
+    
+    def get_income_range_for_type(self, income_type):
+        return self.constants_dict.get_income_range_for_type(income_type)
+        
 import os
 from opus_core.tests import opus_unittest
-
 from opus_core.opus_package_info import package
+from opus_core.datasets.dataset_pool import DatasetPool
+
+from numpy import array, isscalar
 
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -58,6 +74,23 @@ class Tests(opus_unittest.OpusTestCase):
         urbansim_constant = UrbansimConstantDataset(in_storage=AttributeCache())
         self.assertEqual(urbansim_constant['absolute_max_year'], 3000)
         self.assertAlmostEqual(urbansim_constant['acres'], 150*150*0.0002471, 6)
-
+        self.assert_(urbansim_constant["walking_distance_footprint"].ndim == 2)
+        
+    def testLoadTable(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name = 'urbansim_constants',
+            table_data = {
+                'young_age':array([30,])
+            }
+        )
+        dataset_pool = DatasetPool(package_order=['urbansim'],
+                                   storage=storage)
+        urbansim_constant = dataset_pool.get_dataset('urbansim_constant')
+        self.assert_('young_age' in urbansim_constant.get_primary_attribute_names(), msg = "Some constants are missing.")
+        self.assert_(urbansim_constant['young_age']==30, msg = "Wrong constant value.")
+        self.assert_(isscalar(urbansim_constant['young_age']), msg = "Constant  is an array.")
+        
+        
 if __name__ == '__main__':
     opus_unittest.main()

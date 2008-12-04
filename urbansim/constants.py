@@ -159,28 +159,3 @@ class Constants(dict):
         for key in self.keys():
             self[key.upper()]=self[key]
 
-from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-
-from numpy import array, isscalar
-
-
-class ConstantsTests(opus_unittest.OpusTestCase):
-    def testLoadTable(self):
-        storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(
-            table_name = 'urbansim_constants',
-            table_data = {
-                'young_age':array([30,])
-            }
-        )
-        dataset_pool = DatasetPool(package_order=['urbansim'],
-                                   storage=storage)
-        urbansim_constant = dataset_pool.get_dataset('urbansim_constant')
-        self.assert_('young_age' in urbansim_constant.keys(), msg = "Some constants are missing.")
-        self.assert_(urbansim_constant['young_age']==30, msg = "Wrong constant value.")
-        self.assert_(isscalar(urbansim_constant['young_age']), msg = "Constant  is an array.")
-
-if __name__=='__main__':
-    opus_unittest.main()
-
