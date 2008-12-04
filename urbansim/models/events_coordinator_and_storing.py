@@ -17,9 +17,9 @@ from opus_core.datasets.dataset import DatasetSubset
 from opus_core.store.attribute_cache import AttributeCache
 
 class EventsCoordinatorAndStoring(EventsCoordinator):
-    def run(self, model_configuration, location_set, development_event_set, *args, **kwargs):
+    def run(self, location_set, development_event_set, *args, **kwargs):
         changed_indices, processed_development_event_indices = \
-                        EventsCoordinator.run(self, model_configuration, location_set, 
+                        EventsCoordinator.run(self, location_set, 
                                                development_event_set, *args, **kwargs)
         if development_event_set is not None:
             subset = DatasetSubset(development_event_set, processed_development_event_indices)
