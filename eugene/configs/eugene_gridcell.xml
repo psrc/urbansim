@@ -45,7 +45,7 @@
       <base_year type="integer">1980</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">1981</firstyear>
-        <lastyear type="integer">1981</lastyear>
+        <lastyear type="integer">1982</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <prescheduled_events choices="Run|Skip" type="model_choice">Run</prescheduled_events>
