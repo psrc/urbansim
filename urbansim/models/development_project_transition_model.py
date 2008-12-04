@@ -61,9 +61,9 @@ class DevelopmentProjectTransitionModel( Model ):
             return return_value_if_denominator_is_zero
         return type(numerator) / denominator
 
-    def run( self, models_configuration, vacancy_table, history_table, year, 
+    def run(self, vacancy_table, history_table, year, 
              location_set, resources = None,  development_models = None, 
-             model_configuration = None):
+             models_configuration = None, model_configuration = None):
         # development_models is a list of existing development models in the 
         # project from which we can extract additional data about the various 
         # project types.
@@ -371,12 +371,15 @@ class DPTMTests(StochasticTestCase):
             )
 
         dptm = DevelopmentProjectTransitionModel()
-        results = dptm.run(self.models_configuration,
-                           self.dataset_pool.get_dataset('target_vacancy'),
-                           self.dataset_pool.get_dataset('development_event_history'),
-                           2000,
-                           self.dataset_pool.get_dataset('gridcell'),
-                           resources=self.compute_resources)
+        args = {'models_configuration': self.models_configuration,
+                'vacancy_table': self.dataset_pool.get_dataset('target_vacancy'),
+                'history_table': self.dataset_pool.get_dataset('development_event_history'),
+                'year': 2000,
+                'location_set': self.dataset_pool.get_dataset('gridcell'),
+                'resources': self.compute_resources
+                }
+
+        results = dptm.run(**args)
 
         self.assertEqual( results['residential'], None,
                          "No residential units should've been added/developed" )
@@ -399,12 +402,14 @@ class DPTMTests(StochasticTestCase):
             )
 
         dptm = DevelopmentProjectTransitionModel()
-        results = dptm.run(self.models_configuration,
-                           self.dataset_pool.get_dataset('target_vacancy'),
-                           self.dataset_pool.get_dataset('development_event_history'),
-                           2001,
-                           self.dataset_pool.get_dataset('gridcell'),
-                           resources=self.compute_resources )
+        args = {'models_configuration': self.models_configuration,
+        'vacancy_table': self.dataset_pool.get_dataset('target_vacancy'),
+        'history_table': self.dataset_pool.get_dataset('development_event_history'),
+        'year': 2001,
+        'location_set': self.dataset_pool.get_dataset('gridcell'),
+        'resources': self.compute_resources
+        }
+        results = dptm.run(**args)
 
         """20000 residential units should've been added because current ratio of
         10000 unoccupied / 20000 total = 0.5, and target residential vacancy rate
@@ -436,12 +441,14 @@ class DPTMTests(StochasticTestCase):
             )
 
         dptm = DevelopmentProjectTransitionModel()
-        results = dptm.run(self.models_configuration,
-                           self.dataset_pool.get_dataset('target_vacancy'),
-                           self.dataset_pool.get_dataset('development_event_history'),
-                           2001,
-                           self.dataset_pool.get_dataset('gridcell'),
-                           resources=self.compute_resources)
+        args = {'models_configuration': self.models_configuration,
+        'vacancy_table': self.dataset_pool.get_dataset('target_vacancy'),
+        'history_table': self.dataset_pool.get_dataset('development_event_history'),
+        'year': 2001,
+        'location_set': self.dataset_pool.get_dataset('gridcell'),
+        'resources': self.compute_resources
+        }
+        results = dptm.run(**args)
 
         """20000 residential units should've been added because current ratio of
         10000 unoccupied / 20000 total = 0.5, and target residential vacancy rate
@@ -530,15 +537,18 @@ class DPTMTests(StochasticTestCase):
             dataset_pool = DatasetPool(package_order=['urbansim'],
                                        storage=storage)
             dptm = DevelopmentProjectTransitionModel()
-            results = dptm.run(self.models_configuration,
-                               dataset_pool.get_dataset('target_vacancy'),
-                               dataset_pool.get_dataset('development_event_history'),
-                               2000,
-                               self.dataset_pool.get_dataset('gridcell'),
-                               resources=Resources({"household":dataset_pool.get_dataset('household'),
-                                                    "job":dataset_pool.get_dataset('job'),
-                                                    "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
-                                                    'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')}) )
+            args = {
+                'models_configuration': self.models_configuration,
+                'vacancy_table': dataset_pool.get_dataset('target_vacancy'),
+                'history_table': dataset_pool.get_dataset('development_event_history'),
+                'year': 2000,
+                'location_set': self.dataset_pool.get_dataset('gridcell'),
+                'resources': Resources({"household":dataset_pool.get_dataset('household'),
+                                "job":dataset_pool.get_dataset('job'),
+                                "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
+                                'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')})
+            }
+            results = dptm.run(**args)
             self.assertEqual( results['commercial'], None,
                              "No commercial_sqft should've been added/developed." )
             return results
@@ -624,17 +634,19 @@ class DPTMTests(StochasticTestCase):
 
         dataset_pool = DatasetPool(package_order=['urbansim'],
                                    storage=storage)
-
         dptm = DevelopmentProjectTransitionModel()
-        results = dptm.run(self.models_configuration,
-                           dataset_pool.get_dataset('target_vacancy'),
-                           dataset_pool.get_dataset('development_event_history'),
-                           2000,
-                           dataset_pool.get_dataset('gridcell'),
-                           resources=Resources({"household":dataset_pool.get_dataset('household'),
-                                                "job":dataset_pool.get_dataset('job'),
-                                                "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
-                                                'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')}) )
+        args = {
+            'models_configuration': self.models_configuration,
+            'vacancy_table': dataset_pool.get_dataset('target_vacancy'),
+            'history_table': dataset_pool.get_dataset('development_event_history'),
+            'year': 2000,
+            'location_set': self.dataset_pool.get_dataset('gridcell'),
+            'resources': Resources({"household":dataset_pool.get_dataset('household'),
+                            "job":dataset_pool.get_dataset('job'),
+                            "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
+                            'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')})
+        }
+        results = dptm.run(**args)
 
         number_of_new_residential_units = results['residential'].get_attribute( 'residential_units' ).sum()
         self.assertEqual( number_of_new_residential_units, 20000,
