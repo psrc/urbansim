@@ -115,7 +115,9 @@ class DevelopmentEventTransitionModel(Model):
 
         all_project_types = []
         all_project_units = []
+                    
         for project_type in dev_model_configs:
-            all_project_types.append(project_type)
-            all_project_units.append(dev_model_configs[project_type]['units'])
+            if dev_projects[project_type] is not None:
+                all_project_types.append(project_type)
+                all_project_units.append(dev_model_configs[project_type]['units'])
         return  (all_project_types, all_project_units)
