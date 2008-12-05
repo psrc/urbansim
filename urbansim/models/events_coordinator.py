@@ -116,40 +116,50 @@ class EventsCoordinator(Model):
         Returns tuple of (indices of locations that were modified,
         indices of development events that were processed).
         """
+        # argument check to resolve configuration of development project types
+        if development_models is not None and models_configuration is None:
+            raise StandardError('Configurations that pass a list of development'
+                                ' models (argument: "development_models") must '
+                                'also pass a reference to the entire models '
+                                'configuration (argument: "models_'
+                                'configuration") note: plural model[s].')
+
+        dev_model_configs = {}
+        model_config_used = None
+        if development_models is None: # assume this means that we use old conf
+            # try to get a reference to the external information for development
+            # project types
+            try: 
+                dev_model_configs = model_configuration['development_project_types']
+                model_config_used = model_configuration
+            except:
+                dev_model_configs = models_configuration['development_project_types']
+                model_config_used = models_configuration
+        else:
+            # pull in information from the specified development project models
+            model_config_used = models_configuration
+            for dev_proj_model in development_models:
+                model_conf = model_config_used[dev_proj_model]
+                proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
+                dev_model_configs[proj_type] = {}
+                dev_model_configs[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
+                dev_model_configs[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
+                dev_model_configs[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
+
         # need to load first before using development_event_set.size()
         if not development_event_set or (development_event_set.size() == 0): 
             return array([], dtype='int32'), array([], dtype='int32')
 
         improvement_values_to_change = {}
         attributes_to_change = []
-        # determine which way the development model configurations are specified
-        project_type_config = {}
-        if development_models is None:
-            # find out which conf list to use
-            if 'development_project_types' in model_configuration:
-                conf = model_configuration
-            else:
-                conf = models_configuration
-            project_type_config = conf['development_project_types']
-        else:
-            # extract project type configs from list of development project
-            # models (by name)
-            for dev_proj_model in development_models:
-                # extract information from the dev model's init() arguments
-                model_conf = models_configuration[dev_proj_model]
-                proj_type = model_conf['controller']['init']['arguments']['project_type'].strip('\'"')
-                project_type_config[proj_type] = {}
-                project_type_config[proj_type]['units'] = model_conf['controller']['init']['arguments']['units'].strip('\'"')
-                project_type_config[proj_type]['residential'] = model_conf['controller']['init']['arguments']['residential']
-                project_type_config[proj_type]['categories'] = model_conf['controller']['prepare_for_estimate']['arguments']['categories']
-        
-        for project_type in project_type_config:
-            units_variable = project_type_config[project_type]['units']
+
+        for project_type in dev_model_configs:
+            units_variable = dev_model_configs[project_type]['units']
             if units_variable in development_event_set.get_primary_attribute_names():
                 attributes_to_change.append(units_variable)
                 improvement_values_to_change[units_variable] = '%s_improvement_value' % project_type
-        model_conf = models_configuration or model_configuration
-        return self.process_events(model_conf, location_set, development_event_set, 
+                
+        return self.process_events(model_config_used, location_set, development_event_set, 
                                                              development_type_set,
                                                              attributes_to_change, improvement_values_to_change, 
                                                              current_year)
