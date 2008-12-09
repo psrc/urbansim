@@ -285,17 +285,17 @@ class AbstractDataset(object):
             self._create_hidden_id()
         return self.get_multiple_attributes(self.get_id_name())
     
-    def get_multiple_attributes(self, attribute_names):
-        """Return a 2D array of (dataset size x number of attributes). attribute_names must be a list or array of attribute names."""
-        lnames = len(attribute_names)
+    def get_multiple_attributes(self, names):
+        """Return a 2D array of (dataset size x number of attributes). names must be a list or array of attribute names."""
+        lnames = len(names)
         if lnames <= 0:
             return array([])
-        result = self.get_attribute(attribute_names[0])
+        result = self.get_attribute(names[0])
         if lnames == 1:
             return result
         array_size = result.size
         result = reshape(result, (array_size,1))
-        for name in attribute_names[1:]:
+        for name in names[1:]:
             result=concatenate((result, reshape(self.get_attribute(name), (array_size,1))),
                                      axis=1)
         return result
