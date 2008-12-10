@@ -448,6 +448,41 @@
             </database_name>
           </params>
         </create_persons_marginals_table>
+        <create_tables type="tool_file">
+          <name type="tool_name">synthesizer_create_tables</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default/>
+            </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
+            <pums_path>
+           	  <required choices="Required|Optional" type="string">Required</required>
+           	  <type type="dir_path">dir_path</type>
+           	  <default/>
+            </pums_path>
+          </params>
+        </create_tables>
+        <prepare_data type="tool_file">
+          <name type="tool_name">synthesizer_prepare_data</name>
+          <params type="param_template">
+            <database_server_connection>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type type="db_connection_hook">db_connection_hook</type>
+              <default/>
+            </database_server_connection>
+            <database_name>
+              <required choices="Required|Optional" type="string">Required</required>
+              <type choices="string" type="string">string</type>
+              <default type="string"/>
+            </database_name>
+          </params>
+        </prepare_data>
       </synthesizer_tools>
       <opus_data_import_export_tools type="tool_group" setexpanded="True">
         <sql_data_to_opus_tool type="tool_file">
