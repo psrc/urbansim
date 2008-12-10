@@ -350,12 +350,10 @@ class Tests(StochasticTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=0.00001), True)
 
     def test_same_distribution_after_business_addition_and_subtraction_control_for_jobs(self):
-        """Add 1,750 new businesses of sector 1 and 1000 businesses of sector 2.
-        Test that the total number of businesses in each sector after the addition matches the totals specified
-        in annual_business_control_totals.
-        Ensure that the number of unplaced businesses after the addition is exactly 2,750 because this model
-        is not responsible for placing jobs, only for creating them.
-        NOTE: unplaced businesses are indicated by building_id <= 0
+        """Add new businesses of sector 1 and sector 2. Subtract all businesses of sector 15. The model
+        is adding and subtracting businesses while controlling for total number of jobs.
+        Test that the total number of jobs in each sector after the modification matches the totals specified
+        in annual_jobs_control_totals.
         """
         storage = StorageFactory().get_storage('dict_storage')
 
