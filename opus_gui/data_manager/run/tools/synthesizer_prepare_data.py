@@ -41,19 +41,19 @@ def opusRun(progressCB,logCB,params):
     
     #begin inherited code...
 
-#    Processes/ methods to be called at the beginning of the pop_synthesis process 
+    #    Processes/ methods to be called at the beginning of the pop_synthesis process 
     dbc = db.cursor()
 
-# Identifying the number of housing units to build the Master Matrix
+    # Identifying the number of housing units to build the Master Matrix
     dbc.execute('select * from housing_pums')
     housing_units = dbc.rowcount
     ti = time.clock()
-# Identifying the control variables for the households, gq's, and persons
+    # Identifying the control variables for the households, gq's, and persons
     hhld_control_variables = adjusting_pums_joint_distribution.choose_control_variables(db, 'hhld')
     gq_control_variables = adjusting_pums_joint_distribution.choose_control_variables(db, 'gq')
     person_control_variables = adjusting_pums_joint_distribution.choose_control_variables(db, 'person')
 
-# Identifying the number of categories within each control variable for the households, gq's, and persons
+    # Identifying the number of categories within each control variable for the households, gq's, and persons
     hhld_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'hhld', hhld_control_variables))
     gq_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'gq', gq_control_variables))
     person_dimensions = numpy.asarray(adjusting_pums_joint_distribution.create_dimensions(db, 'person', person_control_variables))
@@ -71,33 +71,33 @@ def opusRun(progressCB,logCB,params):
     print 'Uniqueid\'s created in %.4f' %(time.clock()-ti)
     ti = time.clock()
     
-# Populating the Master Matrix	
+    # Populating the Master Matrix
     populated_matrix = psuedo_sparse_matrix.populate_master_matrix(db, 0, housing_units, hhld_dimensions, 
                                                                                                gq_dimensions, person_dimensions)
     print 'Frequency Matrix Populated in %.4f' %(time.clock()-ti)
     ti = time.clock()
 
-# Sparse representation of the Master Matrix    
+    # Sparse representation of the Master Matrix    
     ps_sp_matrix = psuedo_sparse_matrix.psuedo_sparse_matrix(db, populated_matrix, 0)
     print 'Psuedo Sparse Representation of the Frequency Matrix created in %.4f' %(time.clock()-ti)
     ti = time.clock()
-#______________________________________________________________________
-#Creating Index Matrix
+    #______________________________________________________________________
+    #Creating Index Matrix
     index_matrix = psuedo_sparse_matrix.generate_index_matrix(db, 0)
     print 'Index matrix created in %.4f' %(time.clock()-ti)
     ti = time.clock()
     dbc.close()
-#______________________________________________________________________
-# creating synthetic_population tables in MySQL
+    #______________________________________________________________________
+    # creating synthetic_population tables in MySQL
     drawing_households.create_synthetic_attribute_tables(db)
 
-# Total PUMS Sample x composite_type adjustment for hhld    
+    # Total PUMS Sample x composite_type adjustment for hhld    
     adjusting_pums_joint_distribution.create_joint_dist(db, 'hhld', hhld_control_variables, hhld_dimensions, 0, 0, 0)
 
-# Total PUMS Sample x composite_type adjustment for gq    
+    # Total PUMS Sample x composite_type adjustment for gq    
     adjusting_pums_joint_distribution.create_joint_dist(db, 'gq', gq_control_variables, gq_dimensions, 0, 0, 0)
 
-# Total PUMS Sample x composite_type adjustment for person    
+    # Total PUMS Sample x composite_type adjustment for person    
     adjusting_pums_joint_distribution.create_joint_dist(db, 'person', person_control_variables, person_dimensions, 0, 0, 0)
 
 #
