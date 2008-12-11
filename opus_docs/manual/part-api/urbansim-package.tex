@@ -843,6 +843,9 @@ values for arguments of the constructor. The model is by default initialized wit
 \item[choices] - ``urbansim.first_agent_first_choices'' (see
   Section~\ref{sec:urbansim-choices})
 \item[submodel_string] - ``size_capacity''
+\item[filter] - \verb|''urbansim.gridcell.developable_%s'' % units|
+% \item[units] - `` '' (empty string)
+\item[residential] - False, project type is not of residential type
 \end{description}
 Entries of \verb|run_config| are set as to:
 \begin{verbatim}
@@ -1792,6 +1795,13 @@ There is no \method{estimate()} method for this model.
 \item[development_type_set] - an object of class \class{DevelopmentTypeDataset}.
 \item[current_year] - an integer value determining the year of events by
   which the locations are updated.
+\item[models_configuration] - a \class{Configuration} object
+  that is used with development_models to determines project
+  types and settings for each type.  This argument is
+  alternative to model_configuration.
+\item[development_models] - a list of development project
+  location choice model names defined in models
+  configuration
 \end{description}
 
 {\it Algorithm}:\\[1mm]
