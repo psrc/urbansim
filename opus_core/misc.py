@@ -114,6 +114,12 @@ def opus_path_for_variable_from_module_path(file_path):
     # return opus_path
     return '.'.join((package_name, dataset_name, variable_name))
 
+def read_dataset_from_flt(dataset_name, file_path='.'):
+    """Reads a dataset from a binary storage. Return a dictionary with attribute names as keys and data arrays as values."""
+    from opus_core.store.file_flt_storage import file_flt_storage
+    storage = file_flt_storage(file_path)
+    return storage.load_table(dataset_name)
+    
 def write_to_file(filename, data, byteorder=DEFAULT_BYTEORDER):
     """Writes float data to a file."""
     byteswap_if_needed(data, byteorder)
