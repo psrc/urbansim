@@ -1,10 +1,10 @@
 \chapter{Creating Variables in Opus}
 \label{chap:creating-variables}
 
-Opus is implemented in the Python programming language, so we begin
-with a review of the language in Section \ref{sec:python}. Numpy is a numerical library for Python that is used extensively in the
-Opus system, so this is covered in Section \ref{sec:numpy}. Using
-Python and Numpy, many of the Opus Variables are coded as modules, and
+Opus is implemented in the Python programming language, so we provide
+a review of the language in Section \ref{sec:python}. Numpy is a numerical library for Python that is used extensively in the
+Opus system, and is covered in Section \ref{sec:numpy}. Using
+Python and Numpy, many of the Opus Variables are coded as modules (a module is a Python program stored as a file), and
 these are explained in Section \ref{sec:creating-new-variables}.  Finally, a recent
 and extremely valuable addition to the Opus architecture is a small
 language for Opus Expressions, which makes the need to code variables
@@ -17,10 +17,11 @@ is the subject of Section \ref{sec:expressions}.
 \label{sec:expressions}
 \index{expressions}
 
-Opus uses Python and Numpy to create variables to be used in models.  These are generally coded in Python modules as
+Opus uses Python and Numpy to create variables to be used in models.  These are often coded in Python modules as
 described in the preceding section.  However, in order to make the use of variables simpler for users to access, a new
 \emph{expression language} has been created for Opus
-that allows variables to be defined with a relatively simple and concise syntax.  
+that allows variables to be defined with a relatively simple and concise syntax.  In fact, at this point, many of the variables that
+have been previously implemented as modules could be replaces by simpler one-line expressions using this language.
 
 The syntax consists of using Numpy operations and methods, operating on Opus variables and primary data.  All of the Numpy operators are available, and work in the same way for expressions, including \verb#+ -  * / **#, where ** is an exponential function: a**3 returns a to the power of 3.
 
@@ -68,7 +69,7 @@ Note that for both aggregate and disaggregate methods, the first element, preced
 
 A list of expressions can be stores in an \verb#aliases.py# file within a package and dataset directory.  This provides an efficient means to organize and store many expressions in a single location.  Below are some of the aliases in the urbansim\_parcel/parcel/aliases.py module that demonstrate some of the expressions in actual use in the model system.\\
 
-\begin{lstlisting}
+%\begin{lstlisting}
 "used_land_area = (parcel.aggregate(building.land_area, function=sum)).astype(int32)",
 "vacant_land_area = parcel.parcel_sqft - urbansim_parcel.parcel.used_land_area",
 "unit_name = parcel.disaggregate(land_use_type.unit_name)",
@@ -85,7 +86,7 @@ A list of expressions can be stores in an \verb#aliases.py# file within a packag
 "number_of_households = parcel.aggregate(urbansim_parcel.building.number_of_households)",
 "population = parcel.aggregate(urbansim_parcel.building.population)",
 "travel_time_to_cbd = parcel.disaggregate(gridcell.travel_time_to_cbd)",       
-\end{lstlisting}
+%\end{lstlisting}
 
 \section{Opus Indicators}
 \label{sec:opus-indicators}

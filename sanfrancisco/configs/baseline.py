@@ -31,10 +31,10 @@ class Baseline(GeneralConfiguration):
             'description':'San Francisco baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'e:/urbansim_cache/sanfrancisco',
+                cache_directory_root = r'/Volumes/Data/opus/data/sanfrancisco/runs',
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'e:/urbansim_cache/sanfrancisco/cache_source',
+                    existing_cache_to_copy = r'/Volumes/Data/opus/data/sanfrancisco/base_year_cache',
                     ),                
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
