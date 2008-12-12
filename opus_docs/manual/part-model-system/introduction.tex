@@ -1,8 +1,8 @@
 \chapter{UrbanSim Models and Data Structures}
 
-\section{Data Structures in UrbanSim}
+\section{Geographic Units of Analysis in UrbanSim Models}
 UrbanSim has evolved over several years, and so have the data
-structures used in it.  Until 2005, most applications used a data structure based on a grid overlaid on the study area.  Most UrbanSim applications to date have used this approach to structuring the data.  Various limitations of the gridcell approach led to the more recent adoption of a parcel-based data structure.  This section explains the fundamental differences in these data structures, and assesses their relative merits.  Both are still used and supported approaches, though the advantages of the parcel approach are fairly significant.  We begin with an overview of the three different data structures that UrbanSim now supports: gridcells, parcels, and zones.
+structures used in it.  Until 2005, most applications used a geographic framework based on a grid overlaid on the study area.  Most UrbanSim applications to date have used this approach to structuring the data.  Various limitations of the gridcell approach led to the more recent adoption of a parcel-based data and spatial structure.  This section explains the fundamental differences in these data structures, and assesses their relative merits.  Both are still used and supported approaches, though the advantages of the parcel approach are fairly significant.  We begin with an overview of the three different data structures that UrbanSim now supports: gridcells, parcels, and zones.
 
 %In this chapter, the Puget Sound model application is used extensively as the basis for the description, in order to make the discussion more tangible\footnote{This does not restrict the generalizability of the results, since the model has been widely adapted to multiple metropolitan areas in North America, Europe and Asia.}.  The study area for the Puget Sound model, now being brought into operational use by the Puget Sound Regional Council (PSRC), is the Central Puget Sound, consisting of King, Kitsap, Pierce and Snohomish Counties in Washington, as shown in Figure \ref{fig:puget-sound}.
 
@@ -14,7 +14,6 @@ structures used in it.  Until 2005, most applications used a data structure base
 %\label{fig:puget-sound}
 %\end{figure}
 
-\subsection{Gridcell-based Data Structure}
 
 The gridcell-based approach to developing the data for UrbanSim, as the name suggests, begins with the decision of a resolution to use for a grid to overlay the study area.  There is no definitively correct grid cell resolution, and a pragmatic choice of 150 meters by 150 meters was chosen in early UrbanSim
 applications, mainly as a compromise between the high level of resolution desired, and the increased computational demands made by higher resolution data.
@@ -32,19 +31,43 @@ to use raster processing efficiently, as is done in image processing or raster G
 \label{fig:gridcells}
 \end{figure}
 
-Each gridcell contains approximately 5 1/2 acres, at a resolution of 150 meters.  In order to prepare the data for UrbanSim, parcel maps were overlaid in the GIS on a vector representation of gridcells, and the contents of the parcel (housing, etc)  allocated to the gridcells in proportion to the amount of its land area falling within each gridcell.  The fragments of the real estate components created in this way were then aggregated into a composite at the cell level.  UrbanSim then operates on the gridcell-level data.  In order to better reflect the contents of the grid cells, which are clearly not homogeneous in their composition, building objects were created to allow at least different types of real estate in a cell to be represented by different types of buildings.  Households and jobs were then associated with buildings, and buildings with gridcells, as shown in Figure \ref{fig:grid-data-model}.
+Each gridcell contains approximately 5 1/2 acres, at a resolution of 150 meters.  In order to prepare the data for UrbanSim, parcel maps were overlaid in the GIS on a vector representation of gridcells, and the contents of the parcel (housing, etc)  allocated to the gridcells in proportion to the amount of its land area falling within each gridcell.  The fragments of the real estate components created in this way were then aggregated into a composite at the cell level.  UrbanSim then operates on the gridcell-level data.  In order to better reflect the contents of the grid cells, which are clearly not homogeneous in their composition, building objects were created to allow at least different types of real estate in a cell to be represented by different types of buildings.  Households and jobs were then associated with buildings, and buildings with gridcells, as shown in Figure \ref{fig:flexible-geographies}.
 
-\begin{figure}[htp]
-\center \resizebox{0.3
-\textwidth}{!}{\includegraphics{graphics/grid-data-model.png}}
-\caption{Core of Gridcell-based UrbanSim Data Model} \label{fig:grid-data-model}
-\end{figure}
+%\begin{figure}[htp]
+%\center \resizebox{0.3
+%\textwidth}{!}{\includegraphics{graphics/grid-data-model.png}}
+%\caption{Core of Gridcell-based UrbanSim Data Model} \label{fig:grid-data-model}
+%\end{figure}
 
 The main disadvantage of the gridcell data structure has already been mentioned: it requires unnaturally splitting the underlying parcel information and
 recombining it in ways that create artificial representations of the data.  This problem also makes it difficult to apply information on development regulations
 from general plans, since those are also based on polygons, and in fact, apply to parcels.
 
-\subsection{Parcel-based Data Structure}
+\begin{figure}
+\centering
+\subfigure[gridcell] % caption for subfigure a
+{
+    \label{fig:a}
+    \includegraphics[width=4cm]{graphics/grid-data-model.png}
+}
+\hspace{1cm}
+\subfigure[parcel] % caption for subfigure b
+{
+    \label{fig:b}
+    \includegraphics[width=4cm]{graphics/data-model-parcel.png}
+}
+\hspace{1cm}
+\subfigure[zone] % caption for subfigure b
+{
+    \label{fig:c}
+    \includegraphics[width=4cm]{graphics/data-model-zone.png}
+}
+\caption{Flexible Geographic Units for UrbanSim}
+\label{fig:flexible-geographies} % caption for the whole figure
+\end{figure}
+
+
+
 
 To address some of the limitations of the gridcell-based data structure, recent development of UrbanSim has adopted a data structure based on parcels.
 The parcel-based UrbanSim application uses a data model that reflects parcels, buildings, households and jobs as the
@@ -52,15 +75,14 @@ primary objects and units of analysis.  Households and jobs
 choose locations by selecting a specific building, which is associated with a specific parcel.
 Real estate development is based on development projects occurring on specific parcels.  In the most recent extensions of the Puget Sound model,
 persons have been added to the data model, and workers are associated with specific jobs.  These data relationships
-are shown in Figure \ref{fig:data-model-2}.
+are shown in Figure \ref{fig:flexible-geographies}, and make clear that only the link of buildings to a geographic unit is changed.
 
-\begin{figure*}[ht]
-\center \resizebox{0.3
-\textwidth}{!}{\includegraphics{graphics/data-model-2.png}}
-\caption{Core of Parcel-based UrbanSim Data Model} \label{fig:data-model-2}
-\end{figure*}
+%\begin{figure*}[ht]
+%\center \resizebox{0.3
+%\textwidth}{!}{\includegraphics{graphics/data-model-2.png}}
+%\caption{Core of Parcel-based UrbanSim Data Model} \label{fig:data-model-2}
+%\end{figure*}
 
-\subsection{Zone-based Data Structure}
 
 Given the available flexibility in configuring models in OPUS, an alternative data structure can be readily substituted for parcel or gridcell based data.  For example, locations could be defined by zones used in the travel model, to make them consistent with current-generation zone-based travel models.  This approach can also be used to create a rather simple model system using less geographic detail.  For example, an application in Paris used Communes, or administrative areas roughly equivalent to traffic analysis zones in number (approximately 1300).
 
@@ -81,7 +103,7 @@ By using the same data structure for households, jobs and buildings, the only ch
 
 \section{UrbanSim Model Components}
 
-The overall architecture of the UrbanSim model system is depicted in Figure \ref{fig:urbansim-overview}.
+The overall architecture of the UrbanSim model system is depicted in Figure \ref{fig:urbansim-overview}.  
 
 
 \begin{figure}[htp]

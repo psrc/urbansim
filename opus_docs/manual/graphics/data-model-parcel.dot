@@ -1,0 +1,6 @@
+digraph untitled
+	{
+		household -> building;
+		job -> building;
+		building -> parcel;
+	}
