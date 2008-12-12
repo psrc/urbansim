@@ -184,3 +184,102 @@ likely to be adopted regional transportation plan, accompanied by the most likel
 \item Development Constraints: a set of rules that interpret the general plan codes, to indicate the allowed land use types and density ranges on each parcel.
 \squishend
 
+\section{Discrete Choice Models}
+\label{sec:discrete-choice}
+
+UrbanSim makes extensive use of models of individual choice.  
+A pathbreaking approach to modeling individual actions using discrete
+choice models emerged in the 1970's, with the pioneering work of
+McFadden on Random Utility Maximization theory
+\cite{mcfadden-1974,mcfadden-1981}. This approach derives a model of
+the probability of choosing among a set of available alternatives
+based on the characteristics of the chooser and the attributes of
+the alternative, and proportional to the relative utility that the
+alternatives generate for the chooser. Maximum likelihood and
+simulated maximum likelihood methods have been developed to estimate
+the parameters of these choice models from data on revealed or
+stated preferences, using a wide range of structural specifications
+(see \cite{train-book-2003}). Early application of these models were
+principally in the transportation field, but also included work on
+residential location choices
+\cite{quigley-eer-1976,lerman-trr-1977,mcfadden-1978}, and
+on residential mobility \cite{clark-vanlierop-1986}.
+
+Let us begin with an example of a simple model of households choosing among
+alternative locations in the housing market, which we index by
+$i$. For each agent, we assume that each alternative $i$ has
+associated with it a utility $U_i$ that can be separated into a
+systematic part and a random part:
+\begin{equation}
+    U_i = V_i + \epsilon_i,
+    \label{eq:utility}
+\end{equation}
+%$V_i = \vk{\beta}\cdot\vk{x}_i$
+where $V_i = \beta\cdot {x}_i$ is a linear-in-parameters
+function, $\beta$ is a vector of $k$ estimable coefficients,
+$x_i$ is a vector of observed, exogenous, independent
+alternative-specific variables that may be interacted with the
+characteristics of the agent making the choice, and $\epsilon_i$
+is an unobserved random term. Assuming the unobserved term in
+(\ref{eq:utility}) to be distributed with a Gumbel distribution
+leads to the  widely used multinomial logit model
+\cite{mcfadden-1974,mcfadden-1981}:
+\begin{equation}
+    P_i = \frac{\mathrm{e}^{V_i}}{\sum_j \mathrm{e}^{V_j}},
+    \label{eq:mnl}
+\end{equation}
+where $j$ is an index over all possible alternatives. The
+estimable coefficients of (\ref{eq:mnl}), $\beta$, are
+estimated with the method of maximum likelihood (see for example
+\cite{greene-2002}).
+
+The denominator of the equation for the choice model has a particular
+significance as an evaluation measure.  The log of this denominator
+is called the \emph{logsum}, or composite utility, and it summarizes
+the utility across all the alternatives.  In the context of a choice of
+mode between origins and destinations, for example, it would summarize
+the utility (disutility) of travel, considering all the modes connecting the
+origins and destinations.  It has theoretical appeal as an evaluation
+measure for this reason.  In fact, the logsum from the mode choice
+model can be used as a measure of accessibility.
+
+\begin{figure}[htp]
+\center
+ \includegraphics[width=6.5in]
+ {graphics/ChoiceProcess.png}
+\caption{Computation Process in UrbanSim Choice Models}
+\label{fig:choiceprocess}
+\end{figure}
+
+Choice models are implemented in UrbanSim in a modular way, to allow flexible specification of models
+to reflect a wide variety of choice situations.  Figure \ref{fig:choiceprocess} shows the process both in the form
+of the equations to be computed, and from the perspective of the tasks implemented as methods in software.
+
+For each model component within the UrbanSim model system, the
+choice process proceeds as shown in Figure
+\ref{fig:choiceprocess}. The first steps of the model read the
+relevant model specifications and data.  Then a choice set is
+constructed for each chooser.  Currently this is done using random
+sampling of alternatives, which has been shown to generate consistent, though not
+efficient, estimates of model parameters \cite{ben-akiva-lerman-1987}.
+
+The choice step in this algorithm warrants further explanation.  Choice models predict choice probabilities, not choices.
+In order to predict choices given the predicted probabilities, we require an algorithm to select a specific choice outcome.
+A tempting approach would be to select the alternative with the maximum probability, but unfortunatelty this strategy
+would have the effect of selecting only the dominant outcome, and less frequent alternatives would be completely
+eliminated.  In a mode choice model, for illustration, the transit mode would disappear, since the probability of choosing
+an auto mode is almost always higher than that of choosing transit.  Clearly this is not a desirable or realistic outcome.
+In order to address this problem, the choice algorithm used for choice models uses a sampling approach.  As illustrated in Figure
+\ref{fig:choiceprocess}, a choice outcome can be selected by sampling a random number from the uniform distribution in the range
+0 to 1, and comparing this random draw to the cumulative probabilities of the alternatives.  Whichever alternative the sampled
+random number falls within is the alternative that is selected as the `chosen' one.  This algorithm has the property that it
+preserves in the distribution of choice outcomes a close approximation of the original probability distribution, especially
+as the sample size of choosers becomes larger.
+
+One other choice context is worth noting.  In some situations, the availability of alternatives may be constrained.  If the limit on availability
+is entirely predictable, such as a budget constraint eliminating expensive options, or a zero-car household being unable to use the drive-alone
+mode, this is straightforward to handle, by eliminating the alternatives from the choice set for those choosers.  In other situations, however, the
+solution is not so straightforward.  In the case where alternatives may be unavailable because many other agents wish to choose them, the problem
+is that the alternative may be unavailable due to the endogenous congestion of alternatives.  The effect of this is potentially significant, since it
+may cause parameters estimated in a choice model to confuse, or confound, the effects of preferences with the effects of constraints.  Fortunately,
+an estimation method has been developed to account for this problem \cite{depalma-jue-2007}.
