@@ -60,194 +60,42 @@ are shown in Figure \ref{fig:data-model-2}.
 \caption{Core of Parcel-based UrbanSim Data Model} \label{fig:data-model-2}
 \end{figure*}
 
+\subsection{Zone-based Data Structure}
+
+Given the available flexibility in configuring models in OPUS, an alternative data structure can be readily substituted for parcel or gridcell based data.  For example, locations could be defined by zones used in the travel model, to make them consistent with current-generation zone-based travel models.  This approach can also be used to create a rather simple model system using less geographic detail.  For example, an application in Paris used Communes, or administrative areas roughly equivalent to traffic analysis zones in number (approximately 1300).
+
+By using the same data structure for households, jobs and buildings, the only change needed for a zone-based model system is to assign locations to buildings at a coarser level of detail, such as the zone.  This retains all of the accounting systems in the UrbanSim model: households and jobs are still located in buildings, and buildings can be added to zones.  But this approach would give up considerable detail for analyzing development locations and capacity constraints due to zoning or land use plans. For testing purposes, a zone-based model system has been implemented in UrbanSim and is being prepared for access via the GUI.
 
 %Data from the four counties that comprise the Central Puget Sound - King, Kitsap, Pierce, and Snohomish, shown in Figure \ref{fig:puget-sound} - were assembled to create a year 2000 database\footnote{2001 parcel data were obtained from the assessor files for each county, since there are considerable lags in updating these data
 %and also due to some significant gaps in the 2000 data from Snohomish County}.  Over 1.2 million parcels are represented in the UrbanSim database
 %for the Puget Sound, containing over 1 million buildings, almost 1.4 million residential units, and over 1 billion square feet of non-residential space.  Individual building records were separately obtained from two of the counties (King and Snohomish), and were created from
 %the parcel data attributes for the other two counties.  Attributes of the core datasets are shown in Table \ref{tab:parcel-attributes}. Attributes of the core datasets are shown in Table \ref{tab:parcel-attributes}.
 
-\begin{table}
-\caption{Attributes of Core Datasets Used in Puget Sound Parcel-based UrbanSim Application}
-%\addlinespace
-\label{tab:parcel-attributes}
-\begin{tabular}{p{3cm}p{2.8cm}p{2.7cm}p{2.5cm}p{2.5cm}}
-\toprule
-Parcels & Buildings & Households    & Persons & Jobs \\
-\midrule
-parcel\_id  & non\_residential\_sqft    & household\_id & person\_id & job\_id \\
-tax\_exempt\_flag & year\_built & income    & household\_id & sector\_id\\
-parcel\_sqft\_in\_gis & parcel\_id  & persons    & member\_id & join\_flag\\
-x\_coord\_sp &  land\_area  & workers & relate & sqft\\
-y\_coord\_sp    & building\_quality\_id & children &    age & taz\_est\\
-x\_coord\_utm   & improvement\_value    & building\_size    & sex & building\_type\\
-y\_coord\_utm   & stories   & tenure    & edu & building\_id\\
-grid\_id    & tax\_exempt   & race\_id & age\_of\_head  \\
-zone\_id    & building\_type\_id    & employment\_status & race\_id &\\
-census\_block   &  building\_id & building\_id & work\_at\_home &\\
-city\_id    & template\_id  & & earning & \\
-county\_id   &  sqft\_per\_unit & & job\_id & \\
-id\_parcel  & & & &\\
-id\_plat & & & &\\
-is\_inside\_urban\_growth\_boundary & & & & \\
-residential\_units  & & & & \\
-plan\_type\_id & & & &\\
-plan\_type\_description & & & &\\
-num\_building\_records & & & &\\
-GenericLandUse1 & & & &\\
-land\_use\_type\_id & & & &\\
-land\_value & & & &\\
-parcel\_sqft & & & &\\
-faz\_id & & & &\\
-large\_area\_id & & & &\\
-zipcode & & & &\\
-zip\_id & & & &\\
-\bottomrule
-\end{tabular}
-\end{table}
+%\begin{figure*}
+%\center \resizebox{0.9
+%\textwidth}{!}{\includegraphics{graphics/geographic-relationships.png}}
+%\caption{Spatial Relationships Among Core UrbanSim Entities} \label{fig:geographic-relationships}
+%\end{figure*}
 
 
-
-This data structure includes a representation of each individual person, household, job, building and parcel
-in the entire metropolitan area, and their associations, meaning, for example, which building each household occupies, and which parcel each building
-is on.  This is a `microsimulation' data structure, and makes it straightforward to model choices or changes in the status of any individual agent or
-object.  It also makes it possible to summarize output from the model with a great deal of flexibility.  A spatial hierarchy is also used in the data
-model to allow aggregation and disaggregation of information across multiple spatial levels.  Parcels are associated with zones (used in the travel
-model), gridcells, Forecast Analysis Zones (FAZ), Large Areas (districts used for analysis of results), census blocks, cities, counties, and zip codes.  This
-means that it is straightforward to aggregate or query information such as how many households of each income are in each zone, for example, or what
-the employment density is within a FAZ.  We can also use these spatial relationships to assign information about travel conditions, predicted by the travel
-model on a zone to zone basis, with households, jobs, and locations by using the zone level of geography.  These relationships are shown in Figure
-\ref{fig:geographic-relationships}.
-
-\begin{figure*}
-\center \resizebox{0.9
-\textwidth}{!}{\includegraphics{graphics/geographic-relationships.png}}
-\caption{Spatial Relationships Among Core UrbanSim Entities} \label{fig:geographic-relationships}
-\end{figure*}
-
-The land use and building type coding systems used by each of the counties were not consistent
-with each other, so a more general classification was created that would allow the use of a uniform typology across the region.  These land use
-types are shown in Table \ref{tab:landuse}.  Buildings are classified also, using a generic building type that approximates the generic lans use type (they cannot be identical, since there are more land uses to describe vacant land and other uses), along with a somewhat more detailed building type.  A profile
-of buildings in the Puget Sound database, and their classification, is shown in Table \ref{tab:buildings}.
-
-
-
-\begin{table}
-\begin{center}
-\caption{Generic Land Use Codes}
-%\addlinespace
-\label{tab:landuse}
-\begin{tabular}{{l}p{3.5cm}}
-\toprule
-1   & single\_family\_residential\\
-2   & multi\_family\_residential\\
-3   & office\\
-4   & commercial\\
-5   & industrial\\
-6   & mixed\_use\\
-7   & government\\
-8   & other\\
-9   & no code\\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}
-\begin{center}
-\caption{Building Types and Characteristics in Central Puget Sound}
-%\addlinespace
-\label{tab:buildings}
-\begin{tabular}{p{1cm}p{3cm}p{2cm}{r}{r}{r}}
-\toprule
-Building Type Id    & Description   & Generic Building Type & Frequency & Residential Units &   Non-res Sqft (000) \\
-\midrule
-1   & Agriculture   & other & 1,702 & 4 & 6,923\\
-2   & Civic and Quasi-Public &  government  & 2,574 & 212   & 26,821\\
-3   & Commercial    & commercial    & 19,272    & 2,181 & 210,751\\
-4   & Condo Residential & multi-family residential &    9,829   & 132,678   & 0\\
-5   & Government    & government    & 847   & 72    & 71,410\\
-6   & Group Quarters    & other &   391 & 6,893 & 3,856\\
-7   & Hospital / Convalescent Center    & government    & 715   & 118   & 21,407\\
-8   & Industrial    & industrial    & 3,783 & 85    & 91,254\\
-9   & Military &    government  & 10    & 4 & 32\\
-10  & Mixed-Use & mixed-use & 529   & 1,562 & 2,580\\
-11  & Mobile Home   & single family residential & 26,691    & 26,691    & 0\\
-12  & Multi-Family Residential  & multi-family residential  & 45,215    & 317,612   & 52,784\\
-13  & Office    & office    & 10,713    & 1,434 & 193,696\\
-14  & Outbuilding   & other  & 37,789   & 519   & 29,312\\
-15  & Park and Open Space   & other &   7 & 0   & 564\\
-16  & Parking   & other & 1,043 & 150   & 25,606\\
-17  & Recreation &  other   & 1,407 & 2,138 & 12,560\\
-18  & School    & other &   2,678   & 192   & 57,487\\
-19  & Single Family Residential & single family residential & 818,703   & 893,328   & 992\\
-20  & Transportation Communication Utilities    & industrial    & 1,319 & 199   & 10,389\\
-21  & Warehousing   & industrial    & 10,138    & 756   & 228,374\\
-22  & No Code   & other &   13,788  & 3,864 & 8,681\\
-\midrule
-Total & & & 1,009,143   & 1,390,692 &   1,055,489\\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-
-The parcel and building data used in UrbanSim allow for representation of mixed use development, with multiple buildings per parcel.  Representation
-of a single mixed use building can be accommodated by using two building components, each of a single use, and both associated with the same
-parcel.
-
-\section{Interface with Travel Model}
-
-UrbanSim takes several key inputs as exogenous, meaning that these
-are input assumptions that are not predicted directly by UrbanSim.  Two of these are
-from external model systems: a macroeconomic model to predict
-future macroeconomic conditions such as population and employment
-by sector, and a travel demand model system to predict travel
-conditions such as congested times and composite utilities of
-travel between each interchange.  The latter is loosely coupled to
-UrbanSim, with land use predictions input to the external travel
-models, and travel conditions input to subsequent annual
-iterations of the UrbanSim land use model system.
-
-The travel models in widespread use in Metropolitan Planning Organizations are
-almost all traditional four-step travel models.  The first model in the process
-is the trip generation model, and this uses zonal population and employment
-characteristics.  When UrbanSim is connected to a travel model system,
-it generates a summary of the household and job data to a zone level, in order
-to create the summary input data needed by the travel model.
-
-When the travel model completes the fourth step of traffic assignment to a
-transportation network, it can produce `skims' from zone to zone that summarize
-key model predictions, such as:
-
-\squishlist
-\item   Travel time by mode by time of day by purpose
-\item Trips by mode by time of day by purpose
-\item   Composite utility of travel using all modes by purpose
-\item Generalized costs (time + time equivalent of tolls) by purpose
-\item Logsums, or composite utilities\footnote{See section \ref{sec:discrete-choice} for an explanation of this measure.}, from the mode choice model, by purpose and time of day
-\squishend
-
-These skims can be combined with the spatial information in UrbanSim regarding the location of households and jobs, to produce
-a variety of accessibility measures, which in turn can influence UrbanSim models of residential location, workplace location, employment
-location, real estate prices, and real estate development.  Figure \ref{fig:TMinterface} summarizes the interactions between UrbanSim and
-the travel model system.
-
-\begin{figure*}[ht]
-\center \resizebox{0.5
-\textwidth}{!}{\includegraphics{graphics/travel-model-interface.png}}
-\caption{UrbanSim - Travel Model Interface} \label{fig:TMinterface}
-\end{figure*}
-
-In some applications, such as the San Francisco model, the travel model system is based on a more sophisticated activity-based
-framework, and UrbanSim is interfaced in a similar way. In the future, potential exists to more closely integrate UrbanSim with
-Activity-based models that are moving from research into practice.
 
 \section{UrbanSim Model Components}
+
+The overall architecture of the UrbanSim model system is depicted in Figure \ref{fig:urbansim-overview}.
+
+
+\begin{figure}[htp]
+\center
+ \includegraphics[width=6.5in]
+ {graphics/urbansim-overview.png}
+\caption{Overview of UrbanSim Model System}
+\label{fig:urbansim-overview}
+\end{figure}
 
 The models used in the parcel version of UrbanSim differ in some obvious respects from the earlier gridcell versions, and these are summarized in Table \ref{tab:components-parcel}.  In addition to the substitution of parcels for gridcells as the unit of analysis, the real estate development model was completely restructured to take advantage of the availability of parcel geography in representing actual development projects - which do vary in size and shape in the real world, in ways that were difficult to reconcile with gridcell geography.  The parcel based model specifications also have recently added models to predict the choice of workers to be home-based (normally work from home), and a workplace choice model for workers who are not home-based.  This allows for the first time the more appropriate handling of the prediction of commuting behavior as a long-term outcome of where a household chooses to live, and where the workers in the household have jobs, and allows the removal of the home-based-work trip distribution model from the set of behaviors predicted by the travel model on a daily basis.
 
 \begin{table}[htp]
-\caption{Specification of UrbanSim Model Components}
+\caption{Specification of UrbanSim Model Components Using Parcel Data Structure}
 \label{tab:components-parcel}
 %\begin{tabular*}{6in}{@{\extracolsep{\fill}}  p{5cm} | p{.2cm} | p{2cm} | p{2.5cm} | p{2cm} | }
 \begin{tabular}{p{4.5cm} p{3.4cm}p{3.4cm}p{3.3cm}}
@@ -270,10 +118,12 @@ Real Estate Price & Parcel & Price Per Square Foot & Multiple Regression \\
 \end{table}
 
 
-In the remainder of this chapter, the components of the current parcel version of UrbanSim,
-as applied in the Puget Sound application, are described in some detail in terms of their
+In the remainder of this chapter, the components of the current version of UrbanSim
+are described in some detail in terms of their
 structure and algorithms.  Since many (but not all) of these models are based on a discrete choice framework,
-a brief explanation of the common basis for these models is presented first.
+a brief explanation of the common basis for these models is presented first.  Where model specifications
+vary by geographic basis (e.g. gridcell or parcel), deviations are described.  First, the common underpinnings
+of many of the models, discrete choice models, is presented as an overview.
 
 \subsection{Discrete Choice Models}
 \label{sec:discrete-choice}
@@ -1011,5 +861,52 @@ For these reasons, support for three kinds of events has been
 incorporated into the system: development events, employment
 events, and policy events.
 
+
+\section{Interface with Travel Model}
+
+UrbanSim takes several key inputs as exogenous, meaning that these
+are input assumptions that are not predicted directly by UrbanSim.  Two of these are
+from external model systems: a macroeconomic model to predict
+future macroeconomic conditions such as population and employment
+by sector, and a travel demand model system to predict travel
+conditions such as congested times and composite utilities of
+travel between each interchange.  The latter is loosely coupled to
+UrbanSim, with land use predictions input to the external travel
+models, and travel conditions input to subsequent annual
+iterations of the UrbanSim land use model system.
+
+The travel models in widespread use in Metropolitan Planning Organizations are
+almost all traditional four-step travel models.  The first model in the process
+is the trip generation model, and this uses zonal population and employment
+characteristics.  When UrbanSim is connected to a travel model system,
+it generates a summary of the household and job data to a zone level, in order
+to create the summary input data needed by the travel model.
+
+When the travel model completes the fourth step of traffic assignment to a
+transportation network, it can produce `skims' from zone to zone that summarize
+key model predictions, such as:
+
+\squishlist
+\item   Travel time by mode by time of day by purpose
+\item Trips by mode by time of day by purpose
+\item   Composite utility of travel using all modes by purpose
+\item Generalized costs (time + time equivalent of tolls) by purpose
+\item Logsums, or composite utilities\footnote{See section \ref{sec:discrete-choice} for an explanation of this measure.}, from the mode choice model, by purpose and time of day
+\squishend
+
+These skims can be combined with the spatial information in UrbanSim regarding the location of households and jobs, to produce
+a variety of accessibility measures, which in turn can influence UrbanSim models of residential location, workplace location, employment
+location, real estate prices, and real estate development.  Figure \ref{fig:TMinterface} summarizes the interactions between UrbanSim and
+the travel model system.
+
+\begin{figure*}[ht]
+\center \resizebox{0.5
+\textwidth}{!}{\includegraphics{graphics/travel-model-interface.png}}
+\caption{UrbanSim - Travel Model Interface} \label{fig:TMinterface}
+\end{figure*}
+
+In some applications, such as the San Francisco model, the travel model system is based on a more sophisticated activity-based
+framework, and UrbanSim is interfaced in a similar way. In the future, potential exists to more closely integrate UrbanSim with
+Activity-based models that are moving from research into practice.
 
 
