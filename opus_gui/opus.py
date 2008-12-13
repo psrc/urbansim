@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, SIGNAL, SLOT
-from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QApplication, QIcon
 
 # General system includes
 import sys
@@ -32,6 +32,10 @@ def main(argv):
     app.setOrganizationName("CUSPA")
     app.setOrganizationDomain("urbansim.org")
     app.setApplicationName("OPUS")
+
+    # Set application icon
+    applicationIcon = QIcon(":/Images/Images/new-logo-medium.png")
+    app.setWindowIcon(applicationIcon)
 
     # Set the app style
     #app.setStyle(QString("plastique"))
