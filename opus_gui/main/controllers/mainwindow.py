@@ -60,7 +60,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         for i in range(2,-1,-1):
             self.tabWidget.removeTab(i)
-        
+
         self.thread().setPriority(QThread.HighestPriority)
 
         # This is the output for stdout
@@ -71,10 +71,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Loading startup options from gui configuration xml file
         startup_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('startup_options').item(0)
-        splash_pix = get_child_values(parent = startup_node, 
+        splash_pix = get_child_values(parent = startup_node,
                                  child_names = ['splash_logo'])
-
-        splash_pix = os.path.join('main','views','Images',str(splash_pix['splash_logo']))
+        # get image from ../views/Images/<splashimage>
+        images_path = os.path.split(os.path.abspath(__file__))[0] # path to file
+        # cd ../views/Images
+        images_path = images_path.split(os.sep)[:-1]  + ['views', 'Images']
+        images_path = os.sep.join(images_path) # merge back to path
+        splash_pix = os.path.join(images_path, str(splash_pix['splash_logo']))
         self.splashPix = QPixmap(QString(splash_pix))
         self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
         self.splash = QSplashScreen(self.splashPixScaled)
@@ -92,28 +96,28 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         try:
             #font settings
             font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-            
+
             self.menu_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['menu_font_size'])['menu_font_size'])
             self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
             self.general_text_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['general_text_font_size'])['general_text_font_size'])
-            
-            
+
+
         except:
             #font settings
             self.toolboxBase.reemit_reinit_default_gui_configuration_file()
             font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-            
+
             self.menu_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['menu_font_size'])['menu_font_size'])
             self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
             self.general_text_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['general_text_font_size'])['general_text_font_size'])
-        
-        #loading settings from gui xml regarding previous project   
+
+        #loading settings from gui xml regarding previous project
         try:
             prev_proj_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
             self.latest_project_file_name = QString(get_child_values(parent = prev_proj_node,
@@ -126,7 +130,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxBase.reemit_reinit_default_gui_configuration_file()
             self.updateFontSettingsNode()
             self.saveGuiConfig()
-            
+
         self.splitter.setSizes([400,500])
 
         self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
@@ -137,7 +141,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actLaunchResultBrowser.setShortcut(QString('Ctrl+R'))
         self.actionDatabaseSettings.setShortcut(QString('Ctrl+D'))
         self.actionPreferences.setShortcut(QString('Ctrl+P'))
-        
+
         # Play with the project and config load/save
         QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
         QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
@@ -151,12 +155,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionPreferences, SIGNAL("triggered()"), self.openPreferences)
         # Database Settings
         QObject.connect(self.actionDatabaseSettings, SIGNAL("triggered()"), self.openDatabaseSettings)
-        
+
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
-        
+
         # QGIS References are removed for the time being...
         #Add map tab
         #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
@@ -169,7 +173,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actLaunchResultBrowser, SIGNAL("triggered()"), self.openResultBrowser)
         #Add log tab
         QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
-        
+
 #        QObject.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.tab_changed)
 
         self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
@@ -189,7 +193,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.resultsManagerBase = ResultsManagerBase(self)
         self.resultsManagerBase.setGui(self)
-        
+
         self.modelsManagerBase = ModelsManagerBase(self)
         self.modelsManagerBase.setGui(self)
 
@@ -214,14 +218,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorOpenFileButton.setObjectName("editorOpenFileButton")
             self.editorOpenFileButton.setText(QString("Open File"))
             QObject.connect(self.editorOpenFileButton, SIGNAL("released()"),
-                            self.editorOpenFileButton_released)        
+                            self.editorOpenFileButton_released)
             self.editorButtonWidgetLayout.addWidget(self.editorOpenFileButton)
             # Save File
             self.editorSaveFileButton = QPushButton(self.editorButtonWidget)
             self.editorSaveFileButton.setObjectName("editorSaveFileButton")
             self.editorSaveFileButton.setText(QString("Save File"))
             QObject.connect(self.editorSaveFileButton, SIGNAL("released()"),
-                            self.editorSaveFileButton_released)        
+                            self.editorSaveFileButton_released)
             self.editorButtonWidgetLayout.addWidget(self.editorSaveFileButton)
             # Save As File
             self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
@@ -230,11 +234,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Gray out for now until implemented
             self.editorSaveAsFileButton.setDisabled(True)
             QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
-                            self.editorSaveAsFileButton_released)        
+                            self.editorSaveAsFileButton_released)
             self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
             self.tab_editorView.layout().addWidget(self.editorButtonWidget)
             QObject.connect(self.editorStuff, SIGNAL("textChanged()"),
-                            self.editorStuffTextChanged)        
+                            self.editorStuffTextChanged)
             self.editorDirty = False
 
         except ImportError:
@@ -262,16 +266,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setFocus()
 
         self.all_variables = None
-                
+
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
-        
+
         ###T: removing these until they serve a purpose
         self.menuUtilities.removeAction(self.actionPython_View)
         #self.menuUtilities.removeAction(self.actionLog_View)
         self.menuUtilities.removeAction(self.actionEditor_View)
 
-        
+
     def getDbConnectionNames(self):
         '''
         Returns a list of the names of database connections available in the
@@ -298,10 +302,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def editAllVariables(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
-        
+
         self.all_variables.setModal(True)
         self.all_variables.show()
-            
+
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
 
@@ -311,15 +315,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.resultsManagerBase.removeGuiElement(guiElement = widget)
         elif widget in self.scenariosManagerBase.guiElements:
             self.resultsManagerBase.removeGuiElement(guiElement = widget)
-        else: 
+        else:
             self.tabWidget.removeTab(self.tabWidget.currentIndex())
         try:
             widget.hide()
         except:
             pass
         # Do something with the widget if we need to...
-        
-        
+
+
 
 
     def openMapTab(self):
@@ -341,7 +345,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openResultBrowser(self):
         self.resultsManagerBase.add_result_browser()
-        
+
     def openEditorTab(self):
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
@@ -349,7 +353,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tabWidget.insertTab(0,self.tab_editorView,
                                      QIcon(":/Images/Images/table_lightning.png"),"Editor View")
             self.tabWidget.setCurrentWidget(self.tab_editorView)
-        
+
 
     def openLogTab(self):
         if self.tabWidget.indexOf(self.tab_logView) == -1:
@@ -358,7 +362,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tabWidget.insertTab(0,self.tab_logView,
                                      QIcon(":/Images/Images/table.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
-        
+
 
 
     def openAbout(self):
@@ -374,7 +378,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.setModal(True)
         wnd.show()
         self.changeFontSize()
-    
+
     def openDatabaseSettings(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         #wnd = UrbansimDatabaseSettingsGUI(self, flags)
@@ -385,7 +389,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.setWindowTitle('Database Server Connections')
         wnd.show()
         self.changeFontSize()
-        
+
     def updateWindowTitle(self):
         '''update the window title to reflect the state of the project'''
         # assemble a title consisting of file name and project name
@@ -403,7 +407,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             else:
                 title = '%s - %s - [file: %s]' %(app_name, proj_name, file_name)
         self.setWindowTitle(title)
-    
+
     def openConfig(self, config=None):
         # config should be a path to an .xml config file
 
@@ -438,10 +442,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.updateProjectHistoryNode()
         self.saveGuiConfig()
 
-        self.resultsManagerBase.scanForRuns()    
+        self.resultsManagerBase.scanForRuns()
         self.actLaunchResultBrowser.setEnabled(True)
         self.actionEdit_all_variables.setEnabled(True)
-        
+
         self.scenariosManagerBase.removeAllElements()
         self.resultsManagerBase.removeAllElements()
         self.modelsManagerBase.removeAllElements()
@@ -461,7 +465,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             domDocument = self.toolboxBase.doc
             opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
             indentSize = 2
-            
+
             data = str(domDocument.toString(indentSize))
 
             opus_core_xml_configuration.update(data)
@@ -475,7 +479,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxBase.generalManagerTree.model.markAsClean()
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
-            QMessageBox.warning(self, 'Warning', errorMessage) 
+            QMessageBox.warning(self, 'Warning', errorMessage)
 
     def saveConfigAs(self):
         try:
@@ -509,7 +513,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.openConfig(fileName)
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
-            QMessageBox.warning(self, 'Warning', errorMessage) 
+            QMessageBox.warning(self, 'Warning', errorMessage)
 
     def _saveOrDiscardChanges(self):
         """
@@ -546,12 +550,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             configFile = self.toolboxBase.runManagerTree.model.configFile
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
-            QMessageBox.warning(self, 'Warning', errorMessage) 
+            QMessageBox.warning(self, 'Warning', errorMessage)
 
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
         self.toolboxBase.close_controllers()
-        
+
 #        self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
@@ -564,10 +568,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actionClose_Project.setEnabled(False)
         self.actionSave_Project_2.setEnabled(False)
         self.actionSave_Project_As_2.setEnabled(False)
-        
+
         self.toolboxBase.project_name = None
         self.updateWindowTitle()
-        
+
     def closeEvent(self, event):
         '''called just before the window is closed.
         ask users if they want to save their changes (or cancel the closing)'''
@@ -579,8 +583,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             buttons = (QMessageBox.Cancel,
                        QMessageBox.Discard,
                        QMessageBox.Save)
-            doSave = QMessageBox.question(self, "Unsaved changes", 
-                                          question, 
+            doSave = QMessageBox.question(self, "Unsaved changes",
+                                          question,
                                           *buttons)
             if doSave == QMessageBox.Save:
                 self.saveConfig()
@@ -659,38 +663,38 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorStatusLabel.setText(wintitle)
         self.editorDirty = True
         self.editorSaveFileButton.setEnabled(True)
-    
-    
+
+
     def changeFontSize(self):
         #menubar...
         menuFontSizeFamily = self.menubar.findChildren(QMenu)
         menuFontSizeFamily.append(self.menubar)
         menuActionFontSizeFamily = self.menubar.findChildren(QAction)
-        
+
         #main tabs...
         regexp = QRegExp(".*tabbar$")
         toolbox = self.findChild(QWidget, "toolBox")
         tabwidget = self.findChild(QWidget, "tabWidget")
-        
+
         mainTabsFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[1],
                                   tabwidget.findChildren(QWidget, regexp)[0]]
-        
+
         #subtabs...
         subtabFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[0]]
-        
+
         #set of widgets that shouldn't have their font changed
         omit = self.findChildren(QSpinBox)
         omit2 = []
         for omition in omit:
             omit2.extend(omition.findChildren(QWidget))
         omit.extend(omit2)
-        
+
         widgetChildren = self.findChildren(QWidget)
         filter(lambda widge: widge not in menuActionFontSizeFamily and
                 widge not in menuFontSizeFamily and
                 widge not in mainTabsFontSizeFamily,
                 widgetChildren)
-            
+
         def fontSizeChange(qw, fontsize):
             qw.font().setPointSize(fontsize)
             try:
@@ -698,7 +702,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 qw.update()
             except:
                 return
-        
+
         map(lambda qw: fontSizeChange(qw,self.general_text_font_size),
             widgetChildren)
         map(lambda qw: fontSizeChange(qw,self.menu_font_size),
@@ -710,16 +714,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.updateGeometry()
         self.update()
 
-    
+
     def getMenuFontSize(self):
         return self.menu_font_size
-     
+
     def setMenuFontSize(self, pointSize):
-        self.menu_font_size = pointSize 
-    
+        self.menu_font_size = pointSize
+
     def getMainTabsFontSize(self):
         return self.main_tabs_font_size
-    
+
     def setMainTabsFontSize(self, pointSize):
         self.main_tabs_font_size = pointSize
 
@@ -728,13 +732,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def setGeneralTextFontSize(self, pointSize):
         self.general_text_font_size = pointSize
-    
+
     def getOpenLatestProject(self):
         return self.open_latest_project
 
     def setOpenLatestProject(self, open_latest_project):
         self.open_latest_project = open_latest_project
-        
+
 
     def updateFontSettingsNode(self):
         #get the font settings node from xml
@@ -757,9 +761,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                             textNode = children.item(x).toText()
                             # Finally set the text node value
                             textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
-                        
+
             node = node.nextSibling()
-            
+
     def updateProjectHistoryNode(self):
         #get the project history node from xml
         proj_hist_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
@@ -791,4 +795,4 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxBase.save_gui_configuration_file()
         except:
             errorInfo = formatExceptionInfo(custom_message = 'Unexpected error saving the gui config')
-            self.errorCallback(errorInfo)  
+            self.errorCallback(errorInfo)
