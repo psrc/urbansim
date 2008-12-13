@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -28,13 +28,13 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
 
 class XmlController_Scenarios(XmlController):
-    def __init__(self, toolboxbase, parentWidget): 
+    def __init__(self, toolboxbase, parentWidget):
         # need to be defined before XmlController init
         self.missingModelIcon = QIcon(':/Images/Images/cog_missing.png')
-        
-        XmlController.__init__(self, toolboxbase = toolboxbase, 
-                               xml_type = 'scenario_manager', 
-                               parentWidget = parentWidget) 
+
+        XmlController.__init__(self, toolboxbase = toolboxbase,
+                               xml_type = 'scenario_manager',
+                               parentWidget = parentWidget)
 
         self.currentColumn = None
         self.currentIndex = None
@@ -63,8 +63,8 @@ class XmlController_Scenarios(XmlController):
 
         self.xml_helper = ResultsManagerXMLHelper(self.toolboxbase)
         self.validate_models_to_run_list()
-        
-        
+
+
     def setupModelViewDelegate(self):
         '''switch out the model'''
         self.model = XmlModel_Scenarios(self, self.toolboxbase.doc, self.mainwindow,
@@ -99,7 +99,7 @@ class XmlController_Scenarios(XmlController):
                              self.toolboxbase.xml_file,
                              modelToRun)
         self.mainwindow.scenariosManagerBase.addNewSimulationElement(model = newModel)
-    
+
     def openXMLFile(self):
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
@@ -223,29 +223,29 @@ class XmlController_Scenarios(XmlController):
                 menu.addSeparator()
                 menu.addAction(self.actEditXMLFileGlobal)
                 menu.addAction(self.actEditXMLFileLocal)
-                
+
             elif domElement.attribute(QString("type")) == model_choice_name:
                 menu.addAction(self.actRemoveModel)
                 menu.addAction(self.actMoveNodeUp)
                 menu.addAction(self.actMoveNodeDown)
-                
+
             elif domElement.attribute("config_name") == QString("models"):
                 # decide which scenario to add models to
                 scenario_index = self.currentIndex
-                
+
                 # build a submenu with models
                 models_submenu = QMenu(menu)
                 models_submenu.setTitle('Add model to run')
                 available_models = self.getAvailableModels()
                 for model in available_models:
                     callback = lambda x=model: self.addModel(scenario_index, x)
-                    models_submenu.addAction(self.createAction(self.addIcon, 
+                    models_submenu.addAction(self.createAction(self.addIcon,
                                                                model, callback))
                 menu.addMenu(models_submenu)
-            
+
             # TODO: Implement
             # self.add_default_actions(domElement, menu)
-            
+
             if menu:
                 # Last minute chance to add items that all menus should have
                 if domElement.hasAttribute(QString("inherited")):
@@ -268,14 +268,14 @@ class XmlController_Scenarios(XmlController):
             if not menu.isEmpty():
                 menu.exec_(QCursor.pos())
         return
-    
+
     def getAvailableModels(self):
         ''' return a list of names for available models in the project'''
         from opus_gui.results_manager.xml_helper_methods import elementsByAttributeValue
 
         model_elements = []
         available_model_names = []
-        
+
         if self.xml.xml_version >= '4.2.0-beta1':
             elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
                                                   attribute='type', value='model')
@@ -293,7 +293,7 @@ class XmlController_Scenarios(XmlController):
                 if not model_node.isNull() and not \
                     model_node.attribute('hidden').toLower() == QString('true'):
                     model_elements.append(model_node)
-                    
+
 
 
         #TODO: remove this part when default model configurations is gone from
@@ -302,7 +302,7 @@ class XmlController_Scenarios(XmlController):
         if def_models:
             def_model_names = [e.tagName() for e in self.xml.children(def_models)]
             map(available_model_names.append, def_model_names)
-        
+
         model_names = [e.tagName() for e in model_elements]
         map(available_model_names.append, model_names)
 
@@ -317,16 +317,15 @@ class XmlController_Scenarios(XmlController):
         spawn.setAttribute('type', type_name)
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
-        
+
     def validate_models_to_run_list(self, display_warning = False):
         '''Check each model in the models to run list to be present in the model
-        configuration tab. If display_warning is True, a popup warning with the 
-        missing models is displayed. No warning is displayed if all models are 
+        configuration tab. If display_warning is True, a popup warning with the
+        missing models is displayed. No warning is displayed if all models are
         present.
         Returns True if all models are present, False otherwise.
         '''
-        print 'Begin debug for update_models_to_run_list'
-        # go through each of the scenarios and check if they have a 
+        # go through each of the scenarios and check if they have a
         # models_to_run entry
         xml = self.xml
         manager_root = xml.manager_root()
@@ -340,7 +339,7 @@ class XmlController_Scenarios(XmlController):
             if not models_to_run_section:
                 continue # no models_to_run section
             models_to_run = xml.children(models_to_run_section)
-            if not models_to_run: 
+            if not models_to_run:
                 continue # no models in models_to_run
             missing_models = []
             for model in models_to_run:
