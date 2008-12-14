@@ -12,11 +12,12 @@
 # other acknowledgments.
 # 
 
-import os, sys
-from opus_core.session_configuration import SessionConfiguration
-from opus_core.resources import Resources
 from opus_core.logger import logger
+from opus_core.resources import Resources
+from opus_core.session_configuration import SessionConfiguration
 from travel_model.models.abstract_travel_model import AbstractTravelModel
+import os
+import sys
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
@@ -40,12 +41,13 @@ class RunTravelModel(AbstractTravelModel):
             matsim_config_filename = travel_model_configuration[year]['matsim_config_filename']
         
         
-        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(year)i""" % {
+        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s --year=%(year)i --samplingRate=%(sampling_rate)f""" % {
                 'opus_home': os.environ['OPUS_HOME'],
                 'vmargs': "-Xmx2000m",
                 'classpath': "classes:jar/MATSim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim",
-                'matsim_config_file': matsim_config_filename, 
+                'matsim_config_file': os.path.join( os.environ['OPUS_HOME'], "opus_matsim", matsim_config_filename), 
+                'sampling_rate': config['travel_model_configuration']['sampling_rate'],
                 'year': year } 
         
         logger.log_status('Running command %s' % cmd ) 
@@ -54,6 +56,8 @@ class RunTravelModel(AbstractTravelModel):
         if cmd_result != 0:
             error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
+            logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the opus_matsim root,")
+            logger.log_error("  which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         
         logger.end_block()

@@ -1,0 +1,137 @@
+<opus_project>
+  <xml_version>4.2.0-beta1</xml_version>
+  <general>
+    <description type="string">Sample Seattle project</description>
+    <project_name hidden="True" type="string">seattle_parcel</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <advanced type="category">
+      <dataset_pool_configuration hidden="True" type="class">
+        <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
+      </dataset_pool_configuration>
+    </advanced>
+<!--     <available_datasets type="list">['building','parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets> -->
+  </general>
+  <model_manager>
+    <model_system setexpanded="True" type="model_system">
+      <estimation_config type="configuration">
+        <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+<!--         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory> -->
+        <cache_directory type="directory">seattle_parcel/base_year_data</cache_directory>
+<!--         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">dummy/base_year_data</cache_directory> -->
+        <estimation_database_configuration type="class">
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string">none</database_name>
+        </estimation_database_configuration>
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['seattle_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">2000</base_year>
+        <years type="tuple">
+          <firstyear type="integer">2000</firstyear>
+          <lastyear type="integer">2000</lastyear>
+        </years>
+      </estimation_config>
+    </model_system>
+    <travel_model_configuration type="dictionary">
+      <models type="selectable_list">
+<!--         <opus_matsim.tests.generate_test_data choices="Run|Skip" type="model_choice">Run</opus_matsim.tests.generate_test_data> -->
+        <opus_matsim.models.get_cache_data_into_matsim choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_cache_data_into_matsim>
+        <opus_matsim.tests.run_dummy_travel_model choices="Run|Skip" type="model_choice">Run</opus_matsim.tests.run_dummy_travel_model>
+        <opus_matsim.models.get_matsim_data_into_cache choices="Run|Skip" type="model_choice">Run</opus_matsim.models.get_matsim_data_into_cache>
+      </models>
+      <sampling_rate type="float">0.01</sampling_rate>
+      <matsim_config_filename type="file">opus_matsim/matsim_config/seattle_matsim_0.xml</matsim_config_filename>
+      <years_to_run key_name="year" type="category_with_special_keys">
+        <run_description type="dictionary">
+          <year type="integer">2001</year>
+        </run_description>
+      </years_to_run>
+    </travel_model_configuration>
+  </model_manager>
+  <scenario_manager>
+    <Seattle_baseline copyable="True" executable="True" type="scenario">
+      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+      <base_year type="integer">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2001</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <prescheduled_events choices="Run|Skip" type="model_choice">Run</prescheduled_events>
+      </models_to_run>
+<!--       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory> -->
+      <cache_directory type="directory">seattle_parcel/base_year_data</cache_directory>
+<!--       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">dummy/base_year_data</cache_directory> -->
+      <creating_baseyear_cache_configuration type="class">
+        <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/runs</scenario_runs_directory>
+<!--         <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">dummy/runs</scenario_runs_directory> -->
+        <baseyear_cache type="class">
+          <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+<!--           <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</existing_cache_to_copy> -->
+          <existing_cache_to_copy type="directory">seattle_parcel/base_year_data</existing_cache_to_copy>
+<!--           <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">dummy/base_year_data</existing_cache_to_copy> -->
+        </baseyear_cache>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <advanced type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+            <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+            <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
+          </baseyear_database_configuration>
+          <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+          <tables_to_cache_nchunks type="dictionary">
+            <parcels type="integer">1</parcels>
+          </tables_to_cache_nchunks>
+        </advanced>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+<!--         <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model> -->
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <zone choices="Load|Skip" type="dataset">Load</zone>
+          <household choices="Load|Skip" type="dataset">Load</household>
+          <building choices="Load|Skip" type="dataset">Load</building>
+          <parcel choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </parcel>
+          <person choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </person>
+          <development_template choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </development_template>
+          <development_template_component choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </development_template_component>
+          <job choices="Load|Skip" type="dataset">Load</job>
+          <building_type choices="Load|Skip" type="dataset">Load
+             <package_name type="string">urbansim_parcel</package_name>
+          </building_type>
+          <travel_data choices="Load|Skip" type="dataset">Load</travel_data>
+          <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+        </datasets_to_preload>
+      </advanced>
+    </Seattle_baseline>
+  </scenario_manager>
+  <results_manager>
+  </results_manager>
+</opus_project>
