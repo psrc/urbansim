@@ -6,7 +6,7 @@
 % A copy of the license is included in the section entitled "GNU Free
 % Documentation License".
 
-\chapter{UrbanSim Database Tables}
+\chapter{Data for UrbanSim Applications}
 \label{chapter:urbansim-database-tables}
 
 %\emph{\Large Note: This section does not yet represent UrbanSim 4.}
@@ -26,6 +26,51 @@ database.
 \item[output database] -- optional repository for simulation results.
 \end{description}
 
+At the moment, UrbanSim supports several database servers.  The one that has been most thoroughly 
+used and tested is the MySQL \mysqlindex database server.  Support has been added for Postgres, 
+SQLite, and Microsoft SQL Server, though the Microsoft SQL Server interface has some differences
+from the other database platforms that limit it in some ways.  We advise using MySQL or Postgres as
+ DBMS options for production use with OPUS and UrbanSim.
+
+Note that OPUS can now also read and write data in ESRI Geodatabases, which is quite valuable for 
+data preparation and geoprocessing.  At this point, however, the ESRI proprietary interface does
+not appear to have robust performance, and we recommend that large projects consider moving
+data into MySQL or Postgres for operational use.  We are beginning to provide more extensive
+support for using PostGIS, a spatial extension to Postgres (and similar in some ways to the role of
+SDE for ESRI Geodatabases), as a means of obtaining rapid data access, editing, geoprocessing
+and visualization.  Postgis data can also be accessed from ESRI Geodatabases, making this
+a more universally viable option.
+
+\section{Data Requirements for OPUS and UrbanSim}
+It is important to recognize that the data needed for a model system are dependent on the models and their
+specifications.  OPUS is a general software platform for implementing models.  One could implement a wide
+array of models in OPUS, and their needs for data would be dictated by those models.  For example, one
+could create an OPUS project with one model, that implements a simple gravity model for locating households,
+and uses only a zonal table with constraints, a zone-to-zone travel time table, and a set of control totals as
+inputs.  In such a case, the data requirements would be only those tables required by the gravity model.
+
+UrbanSim is an evolving set of models, some of which have been adapted to different data structures and
+geographic units of analysis, such as gridcells, parcels, buildings and zones.  Each of these models, depending
+on how the user specifies the model, creates its own data requirements.  Documenting a universal set of 
+data requirements for all UrbanSim users is therefore not possible.  Over the years, examples of data used
+in an existing UrbanSim example project has been used by new users as a blueprint for developing their
+own databases using local data.  But it became clear that the boundary between data that was essential and
+data that was optional was not at all clear to users.
+
+Some data in a standard UrbanSim application database is generic, and some contains data used to store
+overall system information for an application, for example \emph{urbansim_constants}.  This table, developed
+for use with the gridcell versions of UrbanSim, contains information such as the point of origin of the grid,
+its cell size, thresholds to be considered for spatial queries of what is to be considered 'within-walking-distance'.
+In the more recent parcel application of UrbanSim, this table is still retained, mainly because a grid can still
+be used with a parcel model system, by cross-referencing parcels and gridcells, and some variables still can
+make use of the spatial queries.  So in this case, the table is needed, even though it may not be used specifically
+by a model.  Dependencies of this sort will gradually be eliminated from the system, as all of these kinds of
+configurations will be accommodated within the GUI.
+
+In the sections that follow we attempt to organize a presentation of tables that are commonly used in UrbanSim
+applications, and to cluster or identify those tables that are more specific to one or another configuration of
+UrbanSim, such as a gridcell-based application, or one based on parcels.
+
 \section{Input Database Design: Baseyear and Scenario Databases}
 \label{urbansim-database-tables-baseyear-scenario-db}
 
@@ -38,9 +83,6 @@ first step is to copy the baseyear data into the baseyear cache. \baseyearcachei
 simulation then reads all of its baseyear information from the baseyear cache \baseyearcacheindex
 and writes all results to the simulation cache. \simulationcacheindex Data is only written to the
 output database when specified (currently done manually).
-
-At the moment, UrbanSim only supports the MySQL \mysqlindex database server (we will be
-adding support for other database servers).
 
 A \emph{baseyear} database contains a snapshot of the base
 information defining the initial state before the UrbanSim
@@ -177,6 +219,12 @@ database types map onto a single Python type.  The result is that
 when written back to the database, the column types may change from
 that of the input database table.
 
+In the versions of UrbanSim after 4.0, we have integrated a database
+interface library, SQLAlchemy, which standardizes the interfaces to
+multiple database plaforms (MySQL, Postgres, SQLite, MS SQL, etc),
+providing a more consistent translation of data and queries to the
+platform-specific requirements. 
+
 \section{What Tables are Used in UrbanSim?}
 %
 Most database tables are optional. The required set of tables is determined by the set of models configured for
@@ -217,9 +265,9 @@ specification tables. The schemas are:
 
 \subsection{Specification table}
 
-\begin{tabular}{|l|l|p{4.5in}|}
+\begin{tabular}{llp{4.5in}}
 
-\hline
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\\hline 
 variable_name \variablesindex & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
 coefficient_name \coefficientsindex & varchar & Name of a coefficient connected to this variable.\\\hline
@@ -273,9 +321,9 @@ It can be used for estimating additional parameters.
 
 \subsection{Coefficient table}
 
-\begin{tabular}{|l|l|p{4.5in}|}
+\begin{tabular}{llp{4.5in}}
 
-\hline
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 
 \hline
@@ -314,13 +362,16 @@ UrbanSim.   \\
 \section{Database Tables about Employment}
 \label{sec:employment-tables}
 
+This section contains table descriptions that relate to employment.  They should be general whether using a gridcell or a parcel or a zone-based 
+application, with the exception of what the location-id is that the jobs table links to.
+
 \subsection{The {\tt annual_employment_control_totals} table}
 
 This table gives total target quantities of employment, by sector, by
 home-based, and by year for each simulated year.
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 
 \hline
@@ -350,8 +401,8 @@ years.
 
 This table is only used by the Employment Relocation Choice Model. \modelsindex
 
-\begin{tabular}{|l|l|p{4in}|}
-\hline
+\begin{tabular}{llp{4in}}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 sector_id & integer &  Index into the \verb|employment_sectors| table   \\
@@ -372,8 +423,8 @@ job_relocation_probability & float & Probability that a job in this sector will 
 An EmploymentSector is a logical category of employment, such as
 ``automobile_sales'' or ``shipping''. Each row defines one EmploymentSector.
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 sector_id & integer & Unique identifier  \\
@@ -395,8 +446,8 @@ name & varchar & Unique name of the Sector  \\
 Each row defines one EmploymentAdHocSectorGroup, but not the group's membership
 - the memberships are defined in the \verb|employment_adhoc_sector_group_definitions| table.
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 group_id & integer & Unique identifier  \\
@@ -423,7 +474,7 @@ sectors ``automobile_sales'' and id=6 ``trucking'', these tables would be:
 \begin{center}
 \begin{tabular}{c}
 
-\begin{tabular}{|l|l|}
+\begin{tabular}{ll}
 \multicolumn{2}{c}{\tt|employment_adhoc_sector_groups|}\\
 \hline
 group_id & name \\
@@ -436,7 +487,7 @@ group_id & name \\
 
 \\ \\
 
-\begin{tabular}{|l|l|}
+\begin{tabular}{ll}
 \multicolumn{2}{c}{\tt|employment_adhoc_sector_group_definitions|}\\
 \hline
 sector_id & group_id \\
@@ -499,8 +550,8 @@ EmploymentSectorAdHocGroup. Each row defines one ``belongs to'' relationship (a
 particular EmploymentSector ``belongs to'' a particular
 EmploymentSectorAdHocGroup).
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 sector_id & integer & Index into the \verb|employment_sectors| table  \\
@@ -515,12 +566,12 @@ group_id & integer & Index into the \verb|employment_adhoc_sector_groups| table 
 \item The combination of sector_id+group_id must be unique
 \end{itemize}
 
-\subsection{The {\tt jobs} table}
+\subsection{The {\tt jobs} table used in Gridcell-based Applications}
 
 One row per job in the region.
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 job_id & integer & Unique identifier  \\
@@ -545,14 +596,46 @@ since all baseyear jobs must be placed)
 \item Building type code must be a valid id in the \verb|job_building_types| table.
 \end{itemize}
 
+\subsection{The {\tt jobs} table used in Parcel-based Applications}
+
+One row per job in the region.
+
+\begin{tabular}{lll}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+job_id & integer & Unique identifier  \\
+\hline
+building_id & integer & Building  this job exists in; zero if currently not assigned to a building  \\
+\hline
+%home_based & boolean & True if home-based  \\
+%\hline
+sector_id & integer & Sector this job belongs to  \\\hline
+building_type & integer & building type code \\ \hline
+sqft & integer & Square Feet used by job \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item building_id must be a valid id in the \verb|building| table (may not be zero,
+since all baseyear jobs must be placed)
+\item job_id must be unique and greater than zero
+\item sector_id must be a valid id in the \verb|employment_sectors| table
+%\item If home_based = false, then this job's grid_id must correspond to a
+%non-vacant cell whose development_type_id has a positive entry in the \verb|sqft_for_non_home_based_jobs| table.
+\item Building type code must be a valid id in the \verb|job_building_types| table.
+\end{itemize}
+
+
 \subsection{The {\tt job_building_types} table}
 
 A table of building types for jobs.  It is used to determine the members
 of the Employment Location Choice Model groups, and is used by the Employment
 Transition Model.
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 id & integer & Unique identifier  \\
@@ -569,8 +652,8 @@ home_based & boolean & True if home-based  \\
 \end{itemize}
 
 Example:\\[2mm]
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 id & name & home_based \\\hline
 1 & commercial & 0 \\\hline
 2 & governmental & 0  \\\hline
@@ -594,8 +677,8 @@ head, or size of household.  Each attribute is a column.  The table's key is all
 attributes other than total_number_of_households.  It must
 contain a row for each attribute and each simulated year.
 
-\begin{tabular}{|l|l|p{4in}|}
-\hline
+\begin{tabular}{llp{4in}}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 year & integer & Year for the total  \\
@@ -645,8 +728,8 @@ will not be modified.
 As an example, the following table is valid for a simulation of year 2005, with two races (id=1 and id=2) and
 households with number of persons $=1$, $2$ and $3$.
 
-\begin{tabular}{|l|l|l|l|}
-\hline
+\begin{tabular}{llll}
+%\hline
 year &race_id &persons &total_number_of_households \\
 \hline
 2005 &1 &1 &2500 \\
@@ -696,9 +779,13 @@ characteristics will relocate within the time span of one year. They do not
 alter from year to year. This table is only used by the Household Relocation
 Choice Model. \modelsindex
 
+An alternative approach would be to implement a relocation choice model
+as a choice model, and specify and estimate it using a combination of household
+and location characteristics.  This could be linked with the location choice model,
+or done as a joint model.  This remains to be done in future development.
 
-\begin{tabular}{|l|l|p{4in}|}
-\hline
+\begin{tabular}{llp{4in}}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 age_min & integer & The minimum age for which this probability is valid.  \\
@@ -732,8 +819,8 @@ infinity in the two-dimensional space produced by age and income).
 As an example, this table:
 
 
-\begin{tabular}{|l|l|l|l|l|}
-\hline
+\begin{tabular}{lllll}
+%\hline
 age_min &age_max &income_min &income_max &probability_of_relocating \\
 \hline
 0 &2 &0 &4999 &0.5 \\
@@ -766,9 +853,16 @@ Would produce a space like this:\\
 One row per household in the region. All people in the region belong to exactly
 one household.
 
+Note that the table below, which is from a gridcell-based application,  also works for
+a parcel-based application with only one exception: the gridcell identifier column
+should be replaced by a building id.  Also, the household synthesizer that has been
+recently contributed by ASU is being integrated into the GUI, and will provide more
+flexibility in deciding on the specific household attributes to be generated in this
+table.
 
-\begin{tabular}{|l|l|l|}
-\hline
+
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 household_id & integer & Unique identifier  \\
@@ -836,8 +930,8 @@ If a characteristic is used in the table {\tt annual_household_control_totals}
 For example the table can contain the following
 characteristics:
 
-\begin{tabular}{|l|p{2in}|p{3in}|}
-\hline
+\begin{tabular}{lp{2in}p{3in}}
+%\hline
 \textbf{Characteristic}
 &\textbf{Characteristic Definition}
 &\textbf{Bin Definitions}
@@ -871,8 +965,8 @@ workers &Number of employed people in household & \emph{user-configurable}
 The table has the following structure:
 
 
-\begin{tabular}{|l|l|p{4.9in}|}
-\hline
+\begin{tabular}{llp{4.9in}}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 characteristic & varchar & See above for examples  \\
@@ -899,32 +993,32 @@ max & integer & Maximum value for this bin for this characteristic; -1 means inf
 As an example, this table: &defines these bins:\\
 
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 characteristic & min & max \\
-\hline
+%\hline
 income &0 &4999 \\
-\hline
+%\hline
 income &5000 &14999 \\
-\hline
+%\hline
 income &15000 &-1 \\
-\hline
+%\hline
 age_of_head &0 &-1 \\
-\hline
+%\hline
 children &0 &0 \\
-\hline
+%\hline
 children &1 &-1 \\
-\hline
+%\hline
 workers &0 &0 \\
-\hline
+%\hline
 workers &1 &-1 \\
-\hline
+%\hline
 cars &0 &0 \\
-\hline
+%\hline
 cars &1 &2 \\
-\hline
+%\hline
 cars &3 &-1 \\
-\hline
+%\hline
 
 \end{tabular}
 
@@ -935,43 +1029,43 @@ cars &3 &-1 \\
 \begin{tabular}{rl}
 income:  &
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 0..4,999 &5,000..14,999 &15,000..+infinity \\
-\hline
+%\hline
 \end{tabular}
 
 \\
 age_of_head:  &
 
-\begin{tabular}{|l|}
-\hline
+\begin{tabular}{l}
+%\hline
 0..+infinity \\
-\hline
+%\hline
 \end{tabular}
 
 \\
 children:  &
-\begin{tabular}{|l|l|}
-\hline
+\begin{tabular}{ll}
+%\hline
 0 &1..+infinity \\
-\hline
+%\hline
 \end{tabular}
 
 \\
 workers:  &
-\begin{tabular}{|l|l|}
-\hline
+\begin{tabular}{ll}
+%\hline
 0 &1..+infinity \\
-\hline
+%\hline
 \end{tabular}
 
 \\
 cars:  &
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 0 &1..2 &3..+infinity \\
-\hline
+%\hline
 \end{tabular}
 
 \end{tabular}
@@ -1005,8 +1099,8 @@ cars:  &0
 One row per race.
 
 
-\begin{tabular}{|l|l|l|}
-\hline
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 race_id & integer & Unique identifier  \\
@@ -1024,326 +1118,46 @@ minority & boolean & True if the race is a minority  \\
 
 \end{itemize}
 
-\section{Development Constraints and Target Vacancies Tables}
-%
-\subsection{The {\tt development_constraints} table}
 
-This table defines rules that restrict the possible development types a
-developer can create on a particular grid cell.  Each row defines one rule.
-Development is not allowed on any gridcell that matches any of these rules.  A
-gridcell matches a rule if the attribute values for the gridcell match all of
-the values in the rule (rule columns with the value ``-1'' are ignored when
-determining a match).
 
-\begin{tabular}{|l|l|p{3.5in}|}
 
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 
-\hline constraint_id & integer & Unique rule identification number  \\
-
-\hline \emph{name-of-a-gridcell-attribute} & integer or float &  Value for this
-attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
-\emph{don't care}) \\
-
-\hline min_units & integer & Minimum number of residential units for a gridcell.
-A development project may only be placed on this gridcell if it will result in
-this gridcell containing at least this number of residential units. \\
-
-\hline max_units & integer & Maximum number of residential units for a gridcell.
-A development project may only be placed on this gridcell if it will result in
-this gridcell containing at most this number of residential units. \\
-
-\hline min_commercial_sqft & integer & Minimum number of commercial
-sqft. for a gridcell.  A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at least this number of commercial sqft. \\
-
-\hline max_commercial_sqft & integer & Maximum number of commercial
-sqft. for a gridcell. A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at most this number of commercial sqft. \\
-
-\hline min_industrial_sqft & integer & Minimum number of industrial
-sqft. for a gridcell.  A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at least this number of industrial sqft. \\
-
-\hline max_industrial_sqft & integer & Maximum number of industrial
-sqft. for a gridcell. A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at most this number of industrial sqft. \\
-
-\hline
-\end{tabular}
-
-\begin{itemize}
-\tight
-\item constraint_id must be a unique positive integer.
-
-\item \emph{name-of-a-gridcell-attribute} is the name of a gridcell attribute,
-e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
-names is determined by the set of numeric column names on the gridcell table.
-
-\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
-equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
-
-\end{itemize}
-
-\subsection{The {\tt target_vacancies} table}
-\label{sec:table-target-vacancies}
-
-The \verb|target_vacancies| table is used by the development project transition
-model~(\ref{sec:development-project-transition-model}). It gives the model information about acceptable vacancy rates. The table
-has one row for each year the simulation runs. Each row gives target values for
-the residential and nonresidential vacancies for that year, which are defined
-below.  Only data after the base year is used.
-
-\begin{tabular}{|l|l|l|}
-
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-
-\hline year & integer & Year of the simulation for which the vacancy
-targets
-apply  \\
-
-\hline target_total_residential_vacancy & float & Ratio of unused residential
-units to total residential units  \\
-
-\hline target_total_non_residential_vacancy & float & Ratio of unused
-nonresidential sqft to total nonresidential sqft  \\
-
-\hline
-\end{tabular}
-
-\begin{itemize}
-\tight
-\item There must be exactly one row for each year to be simulated.
-\item target_total_residential_vacancy must be between 0 and 1, inclusive.
-\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
-\end{itemize}
-
-
-\section{Database Tables about Indicators}
-
-
-The following tables contains cached values for the indicator computations.
-There is a separate table for each indicator/geography type pair. For a given
-indicator and geography type, nnn is the short name for the indicator, and ggg
-is the geography_type_title for the geography type. The short name for the
-indicator is the same as its xml file name (just the name, not the .xml
-extension). For example, cache_employment_region contains cached values for the
-employment in the 'region' geography, while cache_employment_counties contains
-cached values for the employment in the geography named 'counties'. Note that
-these cache tables have exactly the same layout as the 'result' table defined
-by the SQL to compute each indicator.
-
-\subsubsection{cache_nnn_ggg}
-
-For indicators without subtypes the table is as follows:
-
-\begin{tabular}{|l|l|p{3.9in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-year & integer & Year  \\
-\hline
-geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
-\hline
-indicator_value & double & The value of the indicators for the given year/geography_id pair.  \\
-\hline
-
-\end{tabular}
-
-\subsubsection{cache_nnn_ggg}
-
-For indicators with subtypes, the table is the same except for an additional
-column for the subtype:
-
-\begin{tabular}{|l|l|p{3.9in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-year & integer & Year  \\
-\hline
-geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
-\hline
-subtype & integer & Subtype  \\
-\hline
-indicator_value & double & The value of the indicators for the given year/geography_id/subtype tuple.  \\
-\hline
-
-\end{tabular}
-
-\section{Other Database Tables}
-\label{sec:other-db-tables}
-
-
-\subsection{The {\tt base_year} table}
-
-
-One row only.
-
-
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-year & integer & Year of base data  \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item year must be \textgreater{}= 1900.
-
-\end{itemize}
-
-\subsection{The {\tt cities} table}
-
-
-One row only.
-
-
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-city_id & integer & Unique identifier  \\
-\hline
-city_name & varchar & \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item city_id must be unique and greater than zero.
-
-\end{itemize}
-
-\subsection{The {\tt counties} table}
-
-
-One row per county.
-
-
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-county_id & integer & Unique identifier  \\
-\hline
-county_name & varchar & \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item county_id must be unique and greater than zero.
-
-\end{itemize}
-
-\subsection{The {\tt input_scenario_information} table}
-
-
-Description of the scenario used to create this output data.
-
-
-\begin{tabular}{|l|l|p{3.6in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-urbansim_build_number & varchar & The version of UrbanSim used to create this output database.  \\
-\hline
-scenario_database_url & varchar & The scenario database used to create this output database.  \\
-\hline
-run_date & varchar &  The date and time the simulation was run (actually, when the simulation began) to create this output database.  \\
-\hline
-description & varchar & \emph{(optional) }
-Human readable description  \\
-\hline
-
-\end{tabular}
-
-
-\subsection{The {\tt scenario_information} table}
-\label{urbansim-database-tables-scenario-inforamtion}
-
-Description of the scenario.
-
-
-\begin{tabular}{|l|l|p{3.9in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline description & varchar & \emph{(optional) }
-Human readable description  \\
-\hline
-parent_database_url & varchar & The name of the next database in the chain of scenario databases.  \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item parent_database_url must be empty in the baseyear database.
-
-\end{itemize}
-
-\subsection{The {\tt urbansim_constants} table}
-
-Constants needed for calculations made by the various models. \modelsindex
-
-
-A single row with one column per constant.
-
-
-\begin{tabular}{|l|l|p{3.4in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-cell_size & float &  Width and height of each grid cell in units  \\
-\hline
-units & varchar &  Units of measurement, eg. ``meters'' or ``feet''  \\
-\hline
-walking_distance_circle_radius & float &  Walking distance in meters, e.g., 600 m, R in the descriptions  \\
-\hline
-young_age & integer &  Max age for a person to be considered young  \\
-\hline
-property_value_to_annual_cost_ratio & float &  Ratio of the total property value to an annual rent for that property  \\
-\hline
-low_income_fraction & float &  Fraction of the total number of households considered to have low incomes, e.g., 0.1   \\
-\hline
-mid_income_fraction & float &  Fraction of the total number of households considered to have mid-level incomes, e.g., 0.5   \\
-\hline
-near_arterial_threshold & float &  Line distance from the centroid of a cell to an arterial for it to be considered nearby, e.g., 300. NearArterialThreshold in description.   \\
-\hline
-near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300. NearHighwayThreshold in description.   \\
-\hline
-percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. \attributesindex So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
-\hline
-recent_years & integer &  Maximum number of years to look back when considering recent transitions. For example, if recent_years = 3, then the value commercial_sqft_recently_added in the \verb|gridcells| table would refer to the number of square feet of commercial space built in the last 3 years.   \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item cell_size must be greater than zero
-\item units must be one of the following: meters, feet, miles, kilometers.
-\item walking_distance_circle_radius must be greater than zero and \textless{}= absolute_max_distance
-\item walking_distance_circle_radius must result in less than 250 grid cells within walking distance
-\item young_age must be greater than zero and \textless{}= absolute_max_person_age
-\item property_value_to_annual_cost_ratio must be greater than zero
-\item low_income_fraction must be between 0 and 1
-\item mid_income_fraction must be between 0 and 1
-\item mid_income_fraction + low_income_fraction must be at most 1.
-\item near_arterial_threshold must be greater than zero and \textless{}= absolute_max_distance
-\item near_highway_threshold must be greater than zero and \textless{}= absolute_max_distance
-\item percent_coverage_threshold must be between zero and 100. Note that this value is exclusive; for example, if the value is set to 45 and a grid cell is 45\% covered by roads, the cell will not be considered to be ``covered'' by roads.
-\item recent_years must be \textgreater{} 0 and \textless{}= absolute_max_recent_years
-
-\end{itemize}
 
 \section{Database Tables about Transportation Analysis Zones}
+
+\subsection{The {\tt zones} table}
+
+Traffic analysis zones are geographic regions. In UrbanSim, these zones are
+rasterized by the grid cells (the zones are distorted to fit to cell boundaries
+and thus will have rough or stair-stepped edges).
+
+In practice, the zones table often includes other columns, depending upon the
+needs for your models.  These data should be updated with the results of any
+travel model \modelsindex run with whatever attributes are needed.
+
+\begin{tabular}{llp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline zone_id & integer & Unique identifier  \\
+
+\hline travel_time_to_airport & integer & Units: Minutes  \\
+
+\hline travel_time_to_cbd & integer & Units: Minutes  \\
+
+\hline faz_id & integer & \emph{(optional) } Foreign key of the FAZ (forecast
+analysis zone) containing this zone.   \\
+
+\hline
+\end{tabular}
+
+\begin{itemize} \tight
+\item zone_id must be unique and greater than zero
+\item travel_time_to_airport must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
+\item travel_time_to_cbd must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
+
+\end{itemize}
+
+
 
 \subsection{The {\tt travel_data} table}
 
@@ -1379,8 +1193,8 @@ from converting between floating point and integer representations.
 These data should be updated with the results of any travel model \modelsindex run.
 
 
-\begin{tabular}{|l|l|p{4in}|}
-\hline
+\begin{tabular}{llp{4in}}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 from_zone_id & integer &  xref=''\#Zones'' ``From'' traffic analysis zone   \\
@@ -1448,37 +1262,225 @@ If you have positive logsum values, subtract the maximum logsum value from all
 logsums in your table. This will correctly shift the logsums so that non are
 greater than zero.
 
-\subsection{The {\tt zones} table}
+\section{Other Database Tables}
+\label{sec:other-db-tables}
 
-Traffic analysis zones are geographic regions. In UrbanSim, these zones are
-rasterized by the grid cells (the zones are distorted to fit to cell boundaries
-and thus will have rough or stair-stepped edges).
 
-In practice, the zones table often includes other columns, depending upon the
-needs for your models.  These data should be updated with the results of any
-travel model \modelsindex run with whatever attributes are needed.
+\subsection{The {\tt base_year} table}
 
-\begin{tabular}{|l|l|p{3.5in}|}
-\hline
+
+One row only.
+
+
+\begin{tabular}{lll}
+%\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline zone_id & integer & Unique identifier  \\
-
-\hline travel_time_to_airport & integer & Units: Minutes  \\
-
-\hline travel_time_to_cbd & integer & Units: Minutes  \\
-
-\hline faz_id & integer & \emph{(optional) } Foreign key of the FAZ (forecast
-analysis zone) containing this zone.   \\
-
 \hline
+year & integer & Year of base data  \\
+\hline
+
 \end{tabular}
 
 \begin{itemize} \tight
-\item zone_id must be unique and greater than zero
-\item travel_time_to_airport must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
-\item travel_time_to_cbd must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
+\item year must be \textgreater{}= 1900.
 
 \end{itemize}
+
+\subsection{The {\tt cities} table}
+
+
+One row only.
+
+
+\begin{tabular}{lll}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+city_id & integer & Unique identifier  \\
+\hline
+city_name & varchar & \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item city_id must be unique and greater than zero.
+
+\end{itemize}
+
+\subsection{The {\tt counties} table}
+
+
+One row per county.
+
+
+\begin{tabular}{lll}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+county_id & integer & Unique identifier  \\
+\hline
+county_name & varchar & \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item county_id must be unique and greater than zero.
+
+\end{itemize}
+
+\subsection{The {\tt input_scenario_information} table}
+
+
+Description of the scenario used to create this output data.
+
+
+\begin{tabular}{llp{3.6in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+urbansim_build_number & varchar & The version of UrbanSim used to create this output database.  \\
+\hline
+scenario_database_url & varchar & The scenario database used to create this output database.  \\
+\hline
+run_date & varchar &  The date and time the simulation was run (actually, when the simulation began) to create this output database.  \\
+\hline
+description & varchar & \emph{(optional) }
+Human readable description  \\
+\hline
+
+\end{tabular}
+
+
+\subsection{The {\tt scenario_information} table}
+\label{urbansim-database-tables-scenario-inforamtion}
+
+Description of the scenario.
+
+
+\begin{tabular}{llp{3.9in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline description & varchar & \emph{(optional) }
+Human readable description  \\
+\hline
+parent_database_url & varchar & The name of the next database in the chain of scenario databases.  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item parent_database_url must be empty in the baseyear database.
+
+\end{itemize}
+
+\section{UrbanSim Constants}
+\subsection{The {\tt urbansim_constants} table}
+
+Constants needed for calculations made by the various models. \modelsindex
+
+
+A single row with one column per constant.
+
+
+\begin{tabular}{llp{3.4in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+cell_size & float &  Width and height of each grid cell in units  \\
+\hline
+units & varchar &  Units of measurement, eg. ``meters'' or ``feet''  \\
+\hline
+walking_distance_circle_radius & float &  Walking distance in meters, e.g., 600 m, R in the descriptions  \\
+\hline
+young_age & integer &  Max age for a person to be considered young  \\
+\hline
+property_value_to_annual_cost_ratio & float &  Ratio of the total property value to an annual rent for that property  \\
+\hline
+low_income_fraction & float &  Fraction of the total number of households considered to have low incomes, e.g., 0.1   \\
+\hline
+mid_income_fraction & float &  Fraction of the total number of households considered to have mid-level incomes, e.g., 0.5   \\
+\hline
+near_arterial_threshold & float &  Line distance from the centroid of a cell to an arterial for it to be considered nearby, e.g., 300. NearArterialThreshold in description.   \\
+\hline
+near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300. NearHighwayThreshold in description.   \\
+\hline
+percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. \attributesindex So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
+\hline
+recent_years & integer &  Maximum number of years to look back when considering recent transitions. For example, if recent_years = 3, then the value commercial_sqft_recently_added in the \verb|gridcells| table would refer to the number of square feet of commercial space built in the last 3 years.   \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item cell_size must be greater than zero
+\item units must be one of the following: meters, feet, miles, kilometers.
+\item walking_distance_circle_radius must be greater than zero and \textless{}= absolute_max_distance
+\item walking_distance_circle_radius must result in less than 250 grid cells within walking distance
+\item young_age must be greater than zero and \textless{}= absolute_max_person_age
+\item property_value_to_annual_cost_ratio must be greater than zero
+\item low_income_fraction must be between 0 and 1
+\item mid_income_fraction must be between 0 and 1
+\item mid_income_fraction + low_income_fraction must be at most 1.
+\item near_arterial_threshold must be greater than zero and \textless{}= absolute_max_distance
+\item near_highway_threshold must be greater than zero and \textless{}= absolute_max_distance
+\item percent_coverage_threshold must be between zero and 100. Note that this value is exclusive; for example, if the value is set to 45 and a grid cell is 45\% covered by roads, the cell will not be considered to be ``covered'' by roads.
+\item recent_years must be \textgreater{} 0 and \textless{}= absolute_max_recent_years
+
+\end{itemize}
+
+\section{Database Tables about Indicators}
+
+
+The following tables contains cached values for the indicator computations.
+There is a separate table for each indicator/geography type pair. For a given
+indicator and geography type, nnn is the short name for the indicator, and ggg
+is the geography_type_title for the geography type. The short name for the
+indicator is the same as its xml file name (just the name, not the .xml
+extension). For example, cache_employment_region contains cached values for the
+employment in the 'region' geography, while cache_employment_counties contains
+cached values for the employment in the geography named 'counties'. Note that
+these cache tables have exactly the same layout as the 'result' table defined
+by the SQL to compute each indicator.
+
+\subsubsection{cache_nnn_ggg}
+
+For indicators without subtypes the table is as follows:
+
+\begin{tabular}{llp{3.9in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+year & integer & Year  \\
+\hline
+geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
+\hline
+indicator_value & double & The value of the indicators for the given year/geography_id pair.  \\
+\hline
+
+\end{tabular}
+
+\subsubsection{cache_nnn_ggg}
+
+For indicators with subtypes, the table is the same except for an additional
+column for the subtype:
+
+\begin{tabular}{llp{3.9in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+year & integer & Year  \\
+\hline
+geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
+\hline
+subtype & integer & Subtype  \\
+\hline
+indicator_value & double & The value of the indicators for the given year/geography_id/subtype tuple.  \\
+\hline
+
+\end{tabular}
+
 
 %%% Local Variables:
 %%% mode: latex
