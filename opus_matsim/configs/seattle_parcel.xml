@@ -37,6 +37,7 @@
         <development_proposal_choice_model choices="Run|Skip" type="model_choice">Skip</development_proposal_choice_model>
         <building_construction_model choices="Run|Skip" type="model_choice">Skip</building_construction_model>
         <employment_transition_model choices="Run|Skip" type="model_choice">Skip</employment_transition_model>
+        <household_transition_model choices="Run|Skip" type="model_choice">Skip</household_transition_model>
         <household_relocation_model choices="Run|Skip" type="model_choice">Skip</household_relocation_model>
         <household_location_choice_model choices="Run|Skip" type="model_choice">Skip</household_location_choice_model>
         <employment_relocation_model choices="Run|Skip" type="model_choice">Skip</employment_relocation_model>
