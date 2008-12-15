@@ -2,10 +2,11 @@
 \title{Using \matsim\ as a travel model plugin to \urbansim}
 \author{Kai Nagel}
 
-\usepackage[letterpaper]{geometry}
+\usepackage[letterpaper,top=2cm,bottom=2.5cm]{geometry}
 \usepackage{color}
 \usepackage{soul}
 \usepackage{hyperref}
+\usepackage[sf]{titlesec}
 
 \def\matsim{MATSim}
 \def\urbansim{UrbanSim}
@@ -18,19 +19,46 @@
 
 \maketitle
 
+\section{A thing to note before you start}
+
+There are two OPUS roots:
+\begin{itemize}
+
+\item The OPUS \textbf{source code directory root}.  This is where all
+the python code is.
+
+\item The OPUS \textbf{data directory root}.  This is where all the
+data is.  This one is where \verb#OPUS_HOME# points to.
+
+\end{itemize}
+\emph{IMPORTANT: Make sure at every step that you do not confuse these
+two.}  Unfortunately, as of now, there are \verb$opus_matsim$
+directories starting from either of these two.\footnote{%
+%
+Might think about renaming one of them.
+%
+}
+
+Regarding OPUS-\matsim-integration:
+\begin{itemize}
+
+\item \verb$<opus-src-root>/opus_matsim$ contains additions on the
+OPUS side (i.e.\ python and related)
+
+\item \verb$OPUS_HOME/opus_matsim$ contains \matsim\ material (i.e.\
+Java plus \matsim-specific input files)
+
+\end{itemize}
+
 \section{Getting started}
 
 \begin{enumerate}
 
-\item Note: There is the opus source tree, and the opus data directory.
-The first is where all the python code it; the second is where
-\verb#OPUS_HOME# points to.
-
 \item Download \verb#opus_matsim-yyyy-mm-dd-hhmm.tgz# from
 
-\url{https://fgvsp01.vsp.tu-berlin.de/repos/shared-svn/public/scratch/opus_matsim/}
+\url{http://fgvsp01.vsp.tu-berlin.de/scratch/opus_matsim/}
 
-and move it into \verb#OPUS_HOME#.
+\item Move it into \verb#OPUS_HOME#.
 
 \item Go into \verb#OPUS_HOME# and type
 \begin{verbatim}
@@ -44,26 +72,26 @@ subdirectories
   matsim_config [[matsim config files]]
   bin           [[binaries]]
   classes       [[java classes that go beyond standard matsim]]
-  jar           [[empty]]
+  jar           [[*.jar files; lib directory with more *.jar files]]
 \end{verbatim}
 
-\item Download \verb$MATSim_libs_rXXXX.zip$ and
-\verb$MATSIM_rYYYY.jar$ from www.matsim.org, on the ``nightly builds''
-www page (currently: \url{http://matsim.org/files/builds}; some
-background info on \url{http://matsim.org/downloads/nightly}), and
-move it into \verb$OPUS_HOME/opus_matsim/jar/$ .
-
-\item Go into \verb$OPUS_HOME/opus_matsim/jar$ and type
-\begin{verbatim}
-  unzip MATSim_libs_rXXXX.zip
-  ln -s MATSim_rYYYY.jar MATSim.jar
-\end{verbatim}
-Afterwards, you should have
-\begin{verbatim}
-   .../opus_matsim/jar/MATSim.jar  [[as symbolic link]]
-   .../opus_matsim/jar/MATSim_rYYYY.jar
-   .../opus_matsim/jar/libs/...    [[lots of *.jar files]]
-\end{verbatim}
+% \item Download \verb$MATSim_libs_rXXXX.zip$ and
+% \verb$MATSIM_rYYYY.jar$ from www.matsim.org, on the ``nightly builds''
+% www page (currently: \url{http://matsim.org/files/builds}; some
+% background info on \url{http://matsim.org/downloads/nightly}), and
+% move it into \verb$OPUS_HOME/opus_matsim/jar/$ .
+% 
+% \item Go into \verb$OPUS_HOME/opus_matsim/jar$ and type
+% \begin{verbatim}
+%   unzip MATSim_libs_rXXXX.zip
+%   ln -s MATSim_rYYYY.jar MATSim.jar
+% \end{verbatim}
+% Afterwards, you should have
+% \begin{verbatim}
+%    .../opus_matsim/jar/MATSim.jar  [[as symbolic link]]
+%    .../opus_matsim/jar/MATSim_rYYYY.jar
+%    .../opus_matsim/jar/libs/...    [[lots of *.jar files]]
+% \end{verbatim}
 
 \item Go into the opus source tree, into \verb$opus_matsim/tests$, and
 python-run \verb$tests.py$.
@@ -340,6 +368,18 @@ psrc/seattle has specific python functions that eventually use some of
 the travel model output.
 
 \end{itemize}
+
+\section{Notes}
+
+Security exception w/ svn.
+
+Download from svn does not untar
+
+really do ONE package
+
+spanning tree not in tgz file
+
+
 
 
 \end{document}
