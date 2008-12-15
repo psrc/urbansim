@@ -219,7 +219,7 @@ their departure.  The demographic transition model is analogous in
 form to the employment transition model described above.
 
 
-\subsection{Employment Relocation Choice Model}
+\subsection{Employment Relocation Model}
 
 Employment relocation and location choices are made by firms.
 However, in the current version of UrbanSim, we use individual
@@ -228,7 +228,7 @@ that businesses are making individual choices about the location
 of each job, and are not constrained to moving an entire
 establishment.
 
-The Employment Relocation Choice Model predicts the probability that jobs
+The Employment Relocation Model predicts the probability that jobs
 of each type will move from their current location or stay during
 a particular year. This is a transitional change that could
 reflect job turnover by employees, layoffs, business relocations
@@ -265,10 +265,10 @@ by annual mobility rates directly observed over a recent period
 for each sector.
 
 
-\subsection{Household Relocation Choice Model}
+\subsection{Household Relocation Model}
 
-The Household Relocation Choice Model is similar in form to the Employment
-Relocation Choice Model described above.  The same algorithm is used, but
+The Household Relocation Model is similar in form to the Employment
+Relocation Model described above.  The same algorithm is used, but
 with rates or coefficients applicable to each household type.  For
 households, mobility probabilities are estimated from the Census
 Current Population Survey, which provides a national database on
@@ -276,16 +276,19 @@ which annual mobility rates are computed by type of household.
 This will reflect differential mobility rates for renters and
 owners, and households at different life stages.
 
-Application of the Household Relocation Choice Model requires subtracting
+Application of the Household Relocation Model requires subtracting
 mover households by type from the housing stock by building, and
 adding them to the pool of new households by type estimated in the
-Demographic Transition Model. In the database, this is
-accomplished by setting the location field for the moving
-households to a null value.  The combination of new and moving
+Demographic Transition Model. The combination of new and moving
 households serves as a population of households to be located by
 the Household Location Choice Model. Housing vacancy is updated as
 movers are subtracted, making the housing available for occupation
 in the household location and housing type choice model.
+
+An alternative approach would be to implement a relocation model
+as a choice model, and specify and estimate it using a combination of household
+and location characteristics.  This could be linked with the location choice model,
+or done as a joint model.  This remains to be done in future development.
 
 
 \subsection{Employment Location Choice Model}
