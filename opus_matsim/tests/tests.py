@@ -12,14 +12,15 @@
 # other acknowledgments.
 #
 
-from numpy import array
+from opus_core.logger import logger
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 from opus_core.tests import opus_unittest
+from shutil import rmtree
 import opus_matsim
 import os
-import sys
+import tempfile
 
 # doing the testing separately since it seems easier to combine the three modules into one test
 
@@ -28,24 +29,53 @@ import sys
 
 class Tests(opus_unittest.OpusTestCase):
     
+    def setUp(self):
+        print "entering setUp"
+#        self.config = TestDatabaseConfiguration(database_name = 'eugene_services_test')
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+        print "leaving setUp"
+
+    def tearDown(self):
+        print "entering tearDown"
+        # Turn off the logger, so we can delete the cache directory.
+        logger.disable_all_file_logging()
+#        db_server = DatabaseServer(self.config)
+#        db_server.drop_database('eugene_services_test')
+#        db_server.close()
+        print "leaving tearDown"
+
+    def cleanup_test_run(self):
+        print "entering cleanup_test_run"
+#        cache_dir = self.resources['cache_directory']
+#        if os.path.exists(cache_dir):
+#            rmtree(cache_dir)
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir)
+        print "leaving cleanup_test_run"
+        
     def test_run(self):
         
         config_location = os.path.join(opus_matsim.__path__[0], 'configs')
         print "location: ", config_location
-        config = XMLConfiguration( os.path.join(config_location,"test.xml")).get_run_configuration("Seattle_baseline")
-#        config = XMLConfiguration( os.path.join(config_location,"eugene_gridcell.xml")).get_run_configuration("Eugene_baseline")
+        run_config = XMLConfiguration( os.path.join(config_location,"test.xml")).get_run_configuration("Seattle_baseline")
+#        run_config = XMLConfiguration( os.path.join(config_location,"eugene_gridcell.xml")).get_run_configuration("Eugene_baseline")
         
-        insert_auto_generated_cache_directory_if_needed(config)
+        run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
+
+        insert_auto_generated_cache_directory_if_needed(run_config)
         
         run_manager = RunManager(ServicesDatabaseConfiguration())
         
-        run_manager.setup_new_run(cache_directory = config['cache_directory'],configuration = config)
+        run_manager.setup_new_run(cache_directory = run_config['cache_directory'],
+                                  configuration = run_config)
         
-        run_manager.run_run(config, run_as_multiprocess = True )
+        run_manager.run_run(run_config, run_as_multiprocess = True )
         
-        print >> sys.stderr, "should remove the output directory after run"
-        
+
         self.assert_(True)
+        
+        self.cleanup_test_run()
+
         
 if __name__ == "__main__":
     opus_unittest.main()
