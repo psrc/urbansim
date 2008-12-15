@@ -186,7 +186,7 @@
                         <coefficients hidden="True" type="string">coefficients</coefficients>
                         <dataset type="string">parcel</dataset>
                         <data_objects hidden="True" type="string">datasets</data_objects>
-                        <run_config type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':20.0855, 'outlier_is_greater_than': 1096.63})</run_config>
+                        <run_config type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':3, 'outlier_is_greater_than': 7})</run_config>
                     </run>
                     <prepare_for_estimate type="dictionary">
                         <name hidden="True" type="string">prepare_for_estimate</name>
