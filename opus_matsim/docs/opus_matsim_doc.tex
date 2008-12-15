@@ -5,6 +5,7 @@
 \usepackage[letterpaper]{geometry}
 \usepackage{color}
 \usepackage{soul}
+\usepackage{hyperref}
 
 \def\matsim{MATSim}
 \def\urbansim{UrbanSim}
@@ -27,7 +28,7 @@ The first is where all the python code it; the second is where
 
 \item Download \verb#opus_matsim-yyyy-mm-dd-hhmm.tgz# from
 
-\verb$https://fgvsp01.vsp.tu-berlin.de/repos/shared-svn/public/scratch/opus_matsim/$
+\url{https://fgvsp01.vsp.tu-berlin.de/repos/shared-svn/public/scratch/opus_matsim/}
 
 and move it into \verb#OPUS_HOME#.
 
@@ -48,8 +49,8 @@ subdirectories
 
 \item Download \verb$MATSim_libs_rXXXX.zip$ and
 \verb$MATSIM_rYYYY.jar$ from www.matsim.org, on the ``nightly builds''
-www page (currently: \verb$http://matsim.org/files/builds$; some
-background info on \verb$http://matsim.org/downloads/nightly$), and
+www page (currently: \url{http://matsim.org/files/builds}; some
+background info on \url{http://matsim.org/downloads/nightly}), and
 move it into \verb$OPUS_HOME/opus_matsim/jar/$ .
 
 \item Go into \verb$OPUS_HOME/opus_matsim/jar$ and type
@@ -98,7 +99,8 @@ buttons.
 
 \section{Configuration on the OPUS side}
 
-The relevant section is in \verb$travel_model_configuration$.
+Look at \verb$seattle_parcel.xml$. The relevant section is in
+\verb$travel_model_configuration$.
 
 The first part is
 {\tiny
@@ -159,9 +161,9 @@ It seems to me that the above configuration commands can be
 
 \section{Configuring \matsim}
 
-\matsim\ is now configured by modifying the \matsim\ config files, as
-described above.  This is regular \matsim\ set-up and described
-elsewhere (seach in \verb$matsim.org$).  
+\matsim\ is configured by modifying the \matsim\ config files, which
+are referenced as described above.  This is regular \matsim\ set-up
+and described elsewhere (seach in \url{matsim.org}).
 
 Noteworthy are the following items:
 \begin{itemize}
