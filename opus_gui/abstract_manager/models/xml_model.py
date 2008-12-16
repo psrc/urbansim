@@ -13,13 +13,16 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel, QString, QRegExp
+from PyQt4.QtCore import Qt, QVariant, SIGNAL, QModelIndex, QAbstractItemModel
+from PyQt4.QtCore import QString, QRegExp
 from PyQt4.QtGui import QColor, QIcon, QStyle, QMessageBox
 from PyQt4.QtXml import QDomNode, QDomDocument
 from PyQt4.Qt import qApp
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
 
+# node types that are on-off selectable items
+__boolean_node_types__ = ('model_choice', 'table', 'dataset', 'variable')
 
 class XmlModel(QAbstractItemModel):
     def __init__(self, parentTree, document, mainwindow, configFile, xmlType, editable, addIcons=True):
@@ -173,9 +176,12 @@ class XmlModel(QAbstractItemModel):
         return 2
 
     def data_handler(self, index, role):
-        '''allow inheriting classes to be able to just override specific parts
-        of data(). Return QVariant() to fall back on default handler'''
-        return QVariant() # not handled
+        '''
+            Offers a way for inheriting models to override the data method on a
+            case to case basis. If this methods returns an empty QVariant() then
+            the we fall back on the default data method.
+        '''
+        return QVariant()
 
     def data(self, index, role):
         if not index.isValid():
@@ -188,88 +194,96 @@ class XmlModel(QAbstractItemModel):
 
         # Get the item associated with the index
         item = index.internalPointer()
-        domNode = item.node()
-        if domNode.isNull():
+        element = item.node().toElement()
+        if element.isNull():
             return QVariant()
-        # Handle ElementNodes
-        if domNode.isElement():
-            domElement = domNode.toElement()
-            if domElement.isNull():
-                return QVariant()
-            if index.column() == 0:
-                if role == Qt.DecorationRole:
-                    #return QVariant(self.database)
-                    return QVariant(self.iconFromType(domElement.attribute(QString("type"))))
-                elif role == Qt.DisplayRole:
-                    return QVariant(domElement.tagName())
-                elif role == Qt.BackgroundRole:
-                    if domElement.hasAttribute(QString("temporary")) and \
-                           domElement.attribute(QString("temporary")) == QString("True"):
-                        return QVariant(QColor(Qt.cyan))
-                    else:
-                        return QVariant(QColor(Qt.white))
-                elif role == Qt.ForegroundRole:
-                    if domElement.hasAttribute(QString("inherited")):
-                        return QVariant(QColor(Qt.blue))
-                    else:
-                        return QVariant(QColor(Qt.black))
-                else:
-                    return QVariant()
-            #elif index.column() == 1:
-            #    if role == Qt.DecorationRole:
-            #        return QVariant()
-            #    elif role == Qt.DisplayRole:
-            #        return QVariant(domElement.attribute(QString("type")))
-            #    else:
-            #        return QVariant()
-            elif index.column() == 1:
-                if role == Qt.DecorationRole:
-                    return QVariant()
-                elif role == Qt.DisplayRole:
-                    if domElement.hasAttribute(QString("type")) and \
-                           domElement.attribute(QString("type")) == QString("password"):
-                        return QVariant(QString("*********"))
-                    elif domNode.hasChildNodes():
-                        children = domNode.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                return QVariant(children.item(x).nodeValue())
-                        return QVariant()
-                    else:
-                        return QVariant()
-                elif role == Qt.ForegroundRole:
-                    if domElement.hasAttribute(QString("inherited")):
-                        return QVariant(QColor(Qt.blue))
-                    else:
-                        return QVariant(QColor(Qt.black))
-                else:
-                    return QVariant()
-            else:
-                #We have a problem... should only be 2 columns
-                print "Wrong number of columns"
-                return QVariant()
-        else:
-            print "Node is not handled yet in the OpusDataModel - ", str(domNode.nodeType())
+        # get the node type for easy access
+        element_type = element.attribute("type")
+
+        # handle coloring of inherited nodes
+        if role == Qt.ForegroundRole:
+            if element.hasAttribute("inherited"):
+                return QVariant(QColor(Qt.blue))
+            return QVariant() # -- fall back on default color
+
+        # Interpret nodes in column one
+        if index.column() == 0:
+            if role == Qt.DecorationRole:
+                return QVariant(self.iconFromType(element.attribute("type")))
+            elif role == Qt.DisplayRole:
+                return QVariant(element.tagName())
+            elif role == Qt.BackgroundRole:
+                if element.attribute("temporary").toLower() == "true":
+                    return QVariant(QColor(Qt.cyan))
+                return QVariant(QColor(Qt.white))
             return QVariant()
+        # column two
+        elif index.column() == 1:
+            if role == Qt.DisplayRole: # don't display passwords in clear text
+                if element_type == "password":
+                    return QVariant(QString("*********"))
+                if element_type in __boolean_node_types__:
+                    # do_choice = element.attribute("choices").split('|')[0]
+                    # return QVariant(do_choice)
+                    return QVariant()
+                # TODO replace following with with xml manip
+                if not element.hasChildNodes():
+                    return QVariant()
+                children = element.childNodes()
+                for idx in xrange(0, children.count()):
+                    if children.item(idx).isText():
+                        return QVariant(children.item(idx).nodeValue())
+                # didn't find a text child
+                return QVariant()
+            elif role == Qt.CheckStateRole:
+                if element_type in __boolean_node_types__:
+                    # if element.hasAttribute("inherited"):
+                    #    return QVariant()
+
+                    # this is based on that the first one of the two options is
+                    # the 'yes - do it' option and the other one is skip
+                    # TODO -- update this when we have type="selectable"
+                    choices = element.attribute("choices").split('|')
+                    if element.firstChild().nodeValue() == choices[0]:
+                        return QVariant(Qt.Checked)
+                    return QVariant(Qt.Unchecked)
+            # unhandled role
+            return QVariant()
+        # unexpected column number
+        raise RuntimeError("Unexpected request to draw column number: %s "
+                           "in XmlModel.data" %index.column())
+
 
     def flags(self, index):
-
         if not index.isValid():
             return Qt.ItemIsEnabled
         if not self.editable:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-        # check for inherited nodes
+        # inherited nodes are not editable
         element = index.internalPointer().domNode.toElement()
-        if not element.isNull():
-            if element.hasAttribute(QString("inherited")):
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        if not element.isNull() and element.hasAttribute(QString("inherited")):
+            if element.attribute("type").toLower() in __boolean_node_types__:
+                # enable clicking the checkboxes also for inherited nodes
+                return (Qt.ItemIsEnabled | Qt.ItemIsSelectable |
+                        Qt.ItemIsUserCheckable)
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-        # editable, non inherited items are only editable in second column
-        if index.column() == 1:
+        # read only items in first column
+        if index.column() == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+        # editable items in second column
+        elif index.column() == 1:
+            # represent boolean choices (selectables) as check boxes
+            if element.attribute("type").toLower() in __boolean_node_types__:
+                return (Qt.ItemIsEnabled | Qt.ItemIsSelectable |
+                        Qt.ItemIsUserCheckable)
+            # other items are just editable
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        else: # unknown column
+            raise RuntimeError("Unexpected request to draw column number: %s "
+                               "in XmlModel.flags" %index.column())
 
 
     def headerData(self, section, oreientation, role):
@@ -371,59 +385,68 @@ class XmlModel(QAbstractItemModel):
                 return parentElement.tagName()
         return ''
 
-    def validateTagName(self,tag):
+    def validateTagName(self, tag):
         regex = QRegExp("[a-zA-Z_:][-a-zA-Z0-9._:]*")
         return regex.exactMatch(tag)
 
-    def setData(self,index,value,role):
+    def setData(self, index, value, role):
         if not index.isValid():
             return False
-        if role != Qt.EditRole:
-            return False
-        #print "ModelView setData %s" % (value.toString())
+
         # Get the item associated with the index
-        item = index.internalPointer()
-        domNode = item.node()
-        if index.column() == 0:
-            if domNode.isElement() and self.validateTagName(value.toString()):
-                domElement = domNode.toElement()
-                if not domElement.isNull():
-                    # Check if the value has changed... only update if there is a change
-                    # print "Original - " + domElement.tagName()
-                    # print "New - " + value.toString()
-                    if domElement.tagName() != value.toString():
-                        domNodePath = self.domNodePath(domNode)
-                        domElement.setTagName(value.toString())
-                        if not self.isTemporary(domElement):
+        element = index.internalPointer().node().toElement()
+        if element.isNull():
+            return False
+        # only allow editing in second column
+        if index.column() != 1:
+            return False
+
+        # user clicking on a checkbox
+        if role == Qt.CheckStateRole and \
+        element.attribute('type').toLower() in __boolean_node_types__:
+            # ask the users if they want to make inherited nodes local first
+            if element.hasAttribute('inherited'):
+                p = self.mainwindow
+                t = 'Editing inherited node'
+                q = ("'%s' is inherited from a parent project. \n\n"
+                     "Do you want to make this node part the current project?"%
+                      element.tagName())
+                b = (QMessageBox.Yes, QMessageBox.No)
+                ans = QMessageBox.question(p, t, q, *b)
+                if ans == QMessageBox.Yes:
+                    self.makeEditable(element)
+                else:
+                    return False
+                del p, t, q, b, ans
+
+            choices = element.attribute("choices").split('|')
+            if value.toInt()[0] == Qt.Checked:
+                value = choices[0]
+            else:
+                value = choices[1]
+
+        # TODO replace with xml manip
+        if element.hasChildNodes():
+            children = element.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    if children.item(x).nodeValue() != value:
+                        children.item(x).setNodeValue(QString(value))
+                        if not self.isTemporary(children.item(x)):
                             self.markAsDirty()
                             self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
-                            # Now check if it was inherited and the original should
-                            # be added back in
-                            self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
-            else:
-                QMessageBox.warning(self.mainwindow,"Warning","Invalid Tag Name for XML Node... Please try again")
-        elif index.column() == 1:
-            if domNode.hasChildNodes():
-                children = domNode.childNodes()
-                for x in xrange(0,children.count(),1):
-                    if children.item(x).isText():
-                        if children.item(x).nodeValue() != value.toString():
-                            children.item(x).setNodeValue(QString(value.toString()))
-                            if not self.isTemporary(children.item(x)):
-                                self.markAsDirty()
-                                self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
-            else:
-                #print "New text node to be added"
-                # We need to add a text node since it was blank
-                if value.toString() != QString(""):
-                    newText = self.domDocument.createTextNode(QString(value.toString()))
-                    domNode.appendChild(newText)
-                    if not self.isTemporary(newText):
-                        self.markAsDirty()
-                        self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
+        else:
+            # print "New text node to be added"
+            # We need to add a text node since it was blank
+            if value.toString() != QString(""):
+                newText = self.domDocument.createTextNode(QString(value.toString()))
+                element.appendChild(newText)
+                if not self.isTemporary(newText):
+                    self.markAsDirty()
+                    self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
         return True
 
-    def makeEditable(self,node):
+    def makeEditable(self, node):
         # Strip the inherited attribute down the tree
         self.stripAttributeDown('inherited',node)
         # if we are not a temporary node then we need to also strip up
@@ -736,4 +759,3 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
 
 if __name__ == '__main__':
     opus_unittest.main()
-
