@@ -31,17 +31,13 @@ class Tests(opus_unittest.OpusTestCase):
     
     def setUp(self):
         print "entering setUp"
-#        self.config = TestDatabaseConfiguration(database_name = 'eugene_services_test')
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         print "leaving setUp"
 
     def tearDown(self):
         print "entering tearDown"
-        # Turn off the logger, so we can delete the cache directory.
-        logger.disable_all_file_logging()
-#        db_server = DatabaseServer(self.config)
-#        db_server.drop_database('eugene_services_test')
-#        db_server.close()
+#        # Turn off the logger, so we can delete the cache directory.
+#        logger.disable_all_file_logging()
         print "leaving tearDown"
 
     def cleanup_test_run(self):
@@ -61,7 +57,8 @@ class Tests(opus_unittest.OpusTestCase):
 #        run_config = XMLConfiguration( os.path.join(config_location,"eugene_gridcell.xml")).get_run_configuration("Eugene_baseline")
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
-        run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = os.path.join(opus_matsim.__path__[0], 'data', 'seattle_parcel', 'base_year_data')
+        run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = os.path.join(opus_matsim.__path__[0], 'tests', 'seattle_parcel', 'base_year_data')
+
         insert_auto_generated_cache_directory_if_needed(run_config)
         
         run_manager = RunManager(ServicesDatabaseConfiguration())
