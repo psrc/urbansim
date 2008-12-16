@@ -38,7 +38,7 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         # parent window for the dialog box
         self.mainwindow = mainwindow
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
-                Qt.WindowMaximizeButtonHint
+                Qt.WindowMaximizeButtonHint | Qt.Sheet
         QDialog.__init__(self, self.mainwindow, flags)
         self.setupUi(self)
 
