@@ -19,9 +19,8 @@ import os
 
 
 
-
 class GenerateTestData(object):
-    """
+    """ I don't think this is used anywhere
     """
 
     def run(self, config, year, *args, **kwargs):

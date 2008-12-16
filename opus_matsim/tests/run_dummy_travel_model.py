@@ -19,7 +19,7 @@ from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 
 class RunDummyTravelModel(AbstractTravelModel):
-    """Run a dummy travel model.
+    """Run a dummy travel model.  This is used in the test, where this is run in lieu of the Java code.
     """
 
     def run(self, config, year):

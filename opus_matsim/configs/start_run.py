@@ -25,6 +25,8 @@ from opus_core.services.run_server.run_manager import RunManager, insert_auto_ge
 
 #class StartRunOptionGroup(GenericOptionGroup):
 class StartRunOptionGroup(object):
+    """ Helper class to start model from an xml config file. 
+    """
 
     config = XMLConfiguration("opus_matsim/configs/seattle_parcel.xml").get_run_configuration("Seattle_baseline")
     
