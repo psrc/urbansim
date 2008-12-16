@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 from PyQt4.QtCore import SIGNAL, QString
 from PyQt4.QtXml import QDomDocument, QDomNode
@@ -24,7 +24,7 @@ class XmlManipulator(object):
         self._model = xml_controller.model
         self._view = xml_controller.view
         self._dom_document = self._model.domDocument
-        
+
         self._absolute_xml_root = self._dom_document.documentElement()
         self.xml_version = self._model.mainwindow.toolboxBase.\
             opus_core_xml_configuration.xml_version
@@ -64,8 +64,8 @@ class XmlManipulator(object):
         # finally check if this one is actually hidden
         return self.get_attrib('hidden', element) and \
                 self.get_attrib('hidden', element).lower() == 'true'
-            
-            
+
+
     def _get_child_text_node(self, element):
         '''search the child nodes of the element for a text node and return it
         or None if no such nodes was found'''
@@ -74,18 +74,18 @@ class XmlManipulator(object):
             if child_nodes.item(x).isText():
                 return child_nodes.item(x)
         return None
-    
-    
+
+
     def _item_for_element(self, element):
         '''determine the item for a given element node by reverse lookup.
         return None if one could not be found'''
         if element is None or element.isNull():
-            return None 
+            return None
         # check if this is the root
         root_item = self._model._rootItem
         if element == root_item.node():
             return root_item
-        
+
         # check if we can get the parent item
         parent_item = self._item_for_element(element.parentNode())
         if not parent_item is None:
@@ -95,15 +95,15 @@ class XmlManipulator(object):
                     return child
             return None # could not find element in childs
         return None # no parent item found
-    
-    
+
+
     def _item_to_index(self, item):
         '''convert a given item to a QModelIndex()'''
         if item is None:
             return None
         return self._model.createIndex(item.row(), 0, item.parent())
-    
-    
+
+
     def _valid_tagname(self, tagname):
         '''check that tagname is a valid tag name for a xml node
         otherwise print a warning message'''
@@ -111,35 +111,35 @@ class XmlManipulator(object):
             print 'Warning: "%s" is not valid as tag name or attribute' %tagname
             return False
         return True
-        
-    
+
+
 
 #    ==========================================
 #     PUBLIC METHODS
 #    ==========================================
 
-    
+
     def manager_root(self):
         '''
-        Return the manager root element (QDomElement) for the xml controller 
+        Return the manager root element (QDomElement) for the xml controller
         that holds this XmlManipulator instance.
-            For example: models_manager.xml_controller.xml.manager_root() 
+            For example: models_manager.xml_controller.xml.manager_root()
             returns the root xml element for the Models Manager tab.
         '''
         return self._model.xmlRoot
-    
-    
+
+
     def get(self, element_or_path, root = None):
         '''
         Lookup for QDomElements. [element_or_path] is either the tag for the
         element to fetch, or a path to that element (including the tag).
-        The path (and tag) is relative to [root]. If [root] is None, the 
+        The path (and tag) is relative to [root]. If [root] is None, the
         absolute root of the project is used.
         '''
         root = self._resolve_root_node(root)
         if root is None:
             return None
-        
+
         # grab the subtree element and return it
         path_steps = element_or_path.split('/')
         current_element = root
@@ -153,28 +153,28 @@ class XmlManipulator(object):
                     return None
 
         return current_element
-    
-    
+
+
     def get_attrib(self, attribute_name, element):
         '''
-        Returns the value (as a string) of attribute [attribute_name] from 
+        Returns the value (as a string) of attribute [attribute_name] from
         [element]. If no such attribute or element exists, the method returns
         None.
         '''
         if not element.hasAttribute(attribute_name):
             return None
         return element.attribute(attribute_name)
-    
-    
+
+
     def get_all(self, tag_or_attrib_dict, root_or_tuple):
         '''
-        Get a tuple of all QDomElements that matches the criteria in 
-        [tag_or_attrib_dict]. If [tag_or_attrib_dict] is a string, matches are 
+        Get a tuple of all QDomElements that matches the criteria in
+        [tag_or_attrib_dict]. If [tag_or_attrib_dict] is a string, matches are
         based on tag names. If it's a dictionary matches are based on attributes
-        In the latter, dictionary keys are used for attribute names and 
+        In the latter, dictionary keys are used for attribute names and
         dictionary values are used for attributes values.
         if [root_or_tuple] is a QDomNode, the child nodes of it is used as list
-        to look for matches. If [root_or_tuple] is a tuple, it is assumed to 
+        to look for matches. If [root_or_tuple] is a tuple, it is assumed to
         contain a list of QDomElement to match against.
         '''
         elements = root_or_tuple
@@ -198,11 +198,11 @@ class XmlManipulator(object):
                 if element.attribute(attribute) != value:
                     add_this_element = False
                     break
-            if add_this_element: 
+            if add_this_element:
                 matchlist.append(element)
         return tuple(matchlist)
-    
-    
+
+
     def get_text(self, element, strip_white_space = True):
         '''
         Get the text value for [element].
@@ -216,15 +216,16 @@ class XmlManipulator(object):
                 return text_node.nodeValue().trimmed()
             return text_node.nodeValue()
         return None
-    
-    
+
+
     def set_attrib(self, attrib_dict, element_or_tuple_of_elements):
         '''
-        Sets attributes of elements. If [element_or_tuple_of_elements] is a 
+        Sets attributes of elements. If [element_or_tuple_of_elements] is a
         list (or tuple), it is assumed to be a list of QDomElement for which to
-        set the attributes in [attrib_dict]. The method also accepts a single 
+        set the attributes in [attrib_dict]. The method also accepts a single
         QDomElement as [element_or_tuple_of_elements].
         '''
+        # make sure we have a tuple
         if not isinstance(element_or_tuple_of_elements, (list, tuple)):
             element_or_tuple_of_elements = (element_or_tuple_of_elements,)
         for element in element_or_tuple_of_elements:
@@ -234,15 +235,16 @@ class XmlManipulator(object):
             # since we modified the element, make it part of this project
             self._model.makeEditable(element)
         # make sure that the data is marked as dirty if appropriate
-        if element_or_tuple_of_elements: 
+        if element_or_tuple_of_elements:
             self._controller.model.markAsDirty()
+
 
     def set_text(self, text, element_or_tuple_of_elements):
         '''
         Set the text value of an element to [text]
-        If [element_or_tuple_of_elements] is a list or tuple, it's assumed to 
-        be a list of QDomElement and the text value is set for each of them. 
-        The method also accepts a single QDomElement as 
+        If [element_or_tuple_of_elements] is a list or tuple, it's assumed to
+        be a list of QDomElement and the text value is set for each of them.
+        The method also accepts a single QDomElement as
         [element_or_tuple_of_elements].
         '''
         element_tuple = element_or_tuple_of_elements
@@ -254,7 +256,7 @@ class XmlManipulator(object):
             print('Warning: Got non string argument to set_text(). \n'
                   'Converted value is "%s"'%(str(text)))
             text = str(text)
-            
+
         for element in element_tuple:
             text_node = self._get_child_text_node(element)
             if not text_node: # insert new text as first child
@@ -267,8 +269,8 @@ class XmlManipulator(object):
         # make sure that the data is marked as dirty
         if element_tuple:
             self._controller.model.markAsDirty()
-        
-    
+
+
     def children(self, element = None):
         '''
         Return a tuple consisting of all child QDomElement's of [element].
@@ -283,8 +285,8 @@ class XmlManipulator(object):
             childlist.append(child)
             child = child.nextSiblingElement()
         return tuple(childlist)
-    
-    
+
+
     def create(self, tagname, root = None, update_gui=True, first_item = True):
         '''
         Creates a new QDomElement named [tagname] and inserts it under [root]
@@ -296,10 +298,10 @@ class XmlManipulator(object):
         If first_item is True the new element is inserted directly under [root]
         '''
         root = self._resolve_root_node(root)
-        if root is None: 
+        if root is None:
             return None
         # make sure name is valid
-        if not self._valid_tagname(tagname): 
+        if not self._valid_tagname(tagname):
             return None
         spawn = self._dom_document.createElement(tagname)
         if first_item:
@@ -316,8 +318,8 @@ class XmlManipulator(object):
         # mark model as dirty since we changed it's data
         self._controller.model.markAsDirty()
         return spawn
-    
-    
+
+
     def delete(self, element):
         '''Deletes [element] (and all it's child nodes) and updates the GUI.'''
         # removing inherited nodes messes things up
@@ -335,11 +337,11 @@ class XmlManipulator(object):
             item = self._item_for_element(element)
             parent_index = self._item_to_index(item)
             self._model.removeRow(item.row(), parent_index)
-        
-        
+
+
     def rename(self, tagname, element):
         '''
-        Renames the tag for [element] to [tagname] if the [tagname] is a 
+        Renames the tag for [element] to [tagname] if the [tagname] is a
         valid XML tag name
         '''
         if not self._valid_tagname(tagname):
@@ -352,8 +354,8 @@ class XmlManipulator(object):
             self._controller.model.markAsDirty()
         else:
             print 'Could not rename node %s' %element
-        
-        
+
+
     def selected(self):
         '''
         Get the currently selected element in the Manager Tree Widget or None
@@ -366,12 +368,12 @@ class XmlManipulator(object):
         if selected.isNull():
             return None
         return selected
-    
-    
+
+
     def element_at(self, position):
         '''
         Get the QDomElement at position (QPoint)
-        Use in methods callback methods such as processCustomMenu where the 
+        Use in methods callback methods such as processCustomMenu where the
         argument is a QPoint.
         '''
         selected = self._view.itemAt(position)
@@ -381,8 +383,8 @@ class XmlManipulator(object):
         if selected.isNull():
             return None
         return selected
-    
-    
+
+
     def refresh(self, element = None):
         '''
         Forces the GUI to reinsert element and all each item in it's entire
@@ -396,10 +398,10 @@ class XmlManipulator(object):
         item.refresh()
         self._model.emit(SIGNAL('layoutChanged()'))
 
-                
-    
+
+
 class XmlManipulatorTester(opus_unittest.OpusTestCase):
-    
+
     xml = '''
         <opus_project>
           <levelone>
@@ -419,22 +421,22 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
           </levelthree>
         </opus_project>
     '''
-    
+
     def _tuple_to_tagnames(self, element_tuple):
         '''helper method to both test for correct type (tuple)
         and convert a sequence of elements to a sequence of tagnames'''
         if not isinstance(element_tuple, tuple):
             raise TypeError('Error: Should have got tuple.')
         return tuple([e.tagName() for e in element_tuple])
-    
+
     def _restore_xml_tree(self):
         '''restore the test xml tree to original state'''
         self.xml._dom_document = self.original_doc_tree.cloneNode(True)
-    
+
     def setUp(self):
         from opus_gui.abstract_manager.models.xml_item import XmlItem
         from opus_core.configurations.xml_configuration import XmlVersion
-        
+
         class Dummy: pass
         class DummyModel(object):
             def __init__(self, dd):
@@ -469,24 +471,24 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         # backup original so we can restore it
         self.original_doc_tree = doc.cloneNode(True)
         ctrl.model = DummyModel(doc)
-        
+
         self.root = doc.documentElement()
         self.xml = XmlManipulator(ctrl)
-        
-        
+
+
     def tearDown(self):
         pass
-        
-        
+
+
     def test_xml_version(self):
         self.assertEqual(self.xml.xml_version, '4.1.0')
-        
-    
+
+
     def test_get(self):
         # test implicit root
-        self.assertEqual(self.xml.get('levelone'), 
+        self.assertEqual(self.xml.get('levelone'),
                          self.xml.get('levelone', self.root))
-        
+
         # correct path handling, all of these should resolve to the same node
         one = self.xml.get('levelone/child1')
         lead = self.xml.get('/levelone/child1')
@@ -497,33 +499,33 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.assertTrue(self.xml.get('i/dont/exist/') is None)
         self.assertTrue(self.xml.get('levelone', QDomNode()) is None)#false root
         self.assertTrue(self.xml.get('////complete_nonsense///') is None)
-        
-    
+
+
     def test_get_all(self):
-        all_tests = self._tuple_to_tagnames(self.xml.get_all({'type':'test'}, 
+        all_tests = self._tuple_to_tagnames(self.xml.get_all({'type':'test'},
                                                              self.root))
         self.assertEqual(all_tests, ('leveltwo', 'levelthree'))
-        
-        all_children = self._tuple_to_tagnames(self.xml.get_all({}, 
+
+        all_children = self._tuple_to_tagnames(self.xml.get_all({},
                                                                 self.root))
         self.assertEqual(all_children, ('levelone', 'leveltwo', 'levelthree'))
-        
-        all_get_me = self._tuple_to_tagnames(self.xml.get_all('get_me', 
+
+        all_get_me = self._tuple_to_tagnames(self.xml.get_all('get_me',
                                                     self.xml.get('levelthree')))
         self.assertEqual(all_get_me, ('get_me', 'get_me', 'get_me'))
-        
-        
+
+
     def test_get_text(self):
         l1 = self.xml.get('levelone')
         l2 = self.xml.get('leveltwo')
         l3 = self.xml.get('levelthree')
         # no text --> none
         self.assertTrue(self.xml.get_text(l1) is None)
-        # test for white space preserving  
+        # test for white space preserving
         self.assertEqual(self.xml.get_text(l2, False), 'sole text\n          ')
         # default should be to strip ws
         self.assertEqual(self.xml.get_text(l3), 'text and nodes')
-        
+
 
     def test_set_text(self):
         e1 = self.xml.get('levelone')
@@ -543,10 +545,10 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.assertEqual(self.xml.get_text(e3), 'quick and easy')
         # set with non text argument
         self.xml.set_text(5, e1)
-        
+
         self._restore_xml_tree()
-        
-        
+
+
     def test_delete(self):
         # must have functional model to test
         pass
@@ -569,7 +571,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.assertTrue(not_created is None)
         self.assertTrue(self.xml.get('invalid name', root) is None)
         self.assertTrue(self.xml.create('validname', QDomNode()) is None)
-        
+
     def test_rename(self):
         l2 = self.xml.get('leveltwo')
         self.assertTrue(l2.tagName() == 'leveltwo')
@@ -577,8 +579,8 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.assertTrue(l2.tagName() == 'renamed')
 
         self._restore_xml_tree()
-        
-        
+
+
     def test_set_attrib(self):
         some_attributes = {'a1':1, 'a2':('list', 'of', 'items'), 'a3':'string'}
         has_all_attributes = lambda x: \
@@ -594,29 +596,29 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         self.xml.set_attrib(some_attributes, (l1, l2))
         self.assertTrue(has_all_attributes(l1))
         self.assertTrue(has_all_attributes(l2))
-        
+
         self._restore_xml_tree()
-        
-    
+
+
     def test_get_attrib(self):
         l3 = self.xml.get('levelthree')
         atr_val = self.xml.get_attrib('type', l3)
         self.assertEqual(atr_val, 'test')
         self.assertTrue(self.xml.get_attrib('dontexist', l3) is None)
-        
-        
+
+
     def test_get_manager_root(self):
         # manager root for test object is set to be 'leveltwo'
         self.assertEqual(self.xml.manager_root().tagName(), 'leveltwo')
-        
-        
+
+
     def test_item_for_element(self):
         child2_item = self.xml._model._rootItem.childItems[0].childItems[1]
         child2_element = self.xml.get('levelone/child2')
-        self.assertEqual(child2_item, 
+        self.assertEqual(child2_item,
                          self.xml._item_for_element(child2_element))
         self.assertTrue(self.xml._item_for_element(QDomNode()) is None)
         # check that hidden nodes dont get returned as items
         hidden = self.xml.get('levelthree')
         self.assertTrue(self.xml._item_for_element(hidden) is None)
-        
+
