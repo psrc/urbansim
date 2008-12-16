@@ -122,29 +122,15 @@ class Constants(dict):
         """ Maximum building age = 3,000
         """
         self["absolute_max_building_age"] = self["absolute_max_year"] - self["absolute_min_year"]
-        """ Maximum distance we might be interested in (using the same units as
-        in GridInfo) = 1,000,000
-        """
-        self["absolute_max_distance"] = 1000000
         """ Maximum travel time = 1440
         """
         self["absolute_max_travel_time"] = 60 * 24
-        """ Maximum household size = 50
-        """
-        self["absolute_max_household_size"] = 50
-        """ Maximum person age = 127
-        """
-        self["absolute_max_person_age"] = 127
         """ Maximum population we might be interested in = 50,000,000
         """
         self["absolute_max_population"] = 50000000
         """ The maximum number of subcells in a grid cell = 121
         """
         self["absolute_max_subcells"] = 121
-        """ The maximum value for the number of years to look back when
-        considering recent transitions in the Developer Model.
-        """
-        self["absolute_max_recent_years"] = 20
 
         self["industrial_code"] = self._industrial_code
         self.industrial_code = self["industrial_code"]
