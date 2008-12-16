@@ -421,17 +421,18 @@ class XmlModel(QAbstractItemModel):
 
             choices = element.attribute("choices").split('|')
             if value.toInt()[0] == Qt.Checked:
-                value = choices[0]
+                value = QVariant(choices[0])
             else:
-                value = choices[1]
+                value = QVariant(choices[1])
 
         # TODO replace with xml manip
+        value = value.toString() # convert value to string
         if element.hasChildNodes():
             children = element.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     if children.item(x).nodeValue() != value:
-                        children.item(x).setNodeValue(QString(value))
+                        children.item(x).setNodeValue(value)
                         if not self.isTemporary(children.item(x)):
                             self.markAsDirty()
                             self.emit(SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)"),index,index)
