@@ -1,20 +1,20 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
-# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and  
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, SIGNAL
+from PyQt4.QtCore import QString, SIGNAL
 from PyQt4.QtGui import QIcon, QMenu, QCursor
 
 from opus_gui.models_manager.run.run_estimation import OpusEstimation
@@ -37,8 +37,8 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.models_manager.models.xml_model_models import XmlModel_Models
 
 class XmlController_Models(XmlController):
-    
-    def __init__(self, toolboxbase, parentWidget): 
+
+    def __init__(self, toolboxbase, parentWidget):
         XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'model_manager', \
                                    parentWidget = parentWidget)
 
@@ -47,7 +47,7 @@ class XmlController_Models(XmlController):
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-        
+
         self.actRunEstimation = self.createAction(self.applicationIcon, \
             "Run Estimation", self.runEstimationAction)
         self.actRemoveNode = self.createAction(self.removeIcon, \
@@ -56,10 +56,10 @@ class XmlController_Models(XmlController):
             "Add to current project", self.makeEditableAction)
         self.actCloneNode = self.createAction(self.cloneIcon, \
             "Duplicate Node", self.cloneNode)
-        
+
         cb = lambda x=None:RenameNodeGui(self, self.currentElement()).show()
         self.actRenameNode = self.createAction(self.makeEditableIcon, \
-            "Rename Node", cb) 
+            "Rename Node", cb)
         self.actCreateModelFromTemplate = self.createAction(self.cloneIcon, \
             "Create model from template", self.createModelFromTemplate)
         self.actSelectVariables = self.createAction(self.applicationIcon, \
@@ -88,13 +88,13 @@ class XmlController_Models(XmlController):
 
     def currentItem(self):
         return self.view.currentIndex()
-    
+
     def currentElement(self):
         return self.currentItem().internalPointer().node().toElement()
-   
+
     def selectVariablesCallback(self, returnList, returnString):
         print returnString
-        
+
     def selectVariables(self):
         AllVariablesSelectGui(self.mainwindow,
                               callback=self.selectVariablesCallback,
@@ -143,27 +143,27 @@ class XmlController_Models(XmlController):
         # the method selects wich element node to clone by mapping the
         #  model_name to a node element in the tree
         template_expected_name = QString(model_name).replace(' ', '_').append('_template')
-        
+
         # look for the template node under the model_system child node
         model_system_node = self.model.xmlRoot.firstChildElement('model_system')
         template_node = model_system_node.firstChildElement(template_expected_name)
-        
+
         if template_node.isNull():
             raise ValueError('Did not find a template for %s. '
                              'Expected to find template named %s' \
                         %(model_name, template_expected_name))
 
-        # clone the dom node and fetch the information of 
+        # clone the dom node and fetch the information of
         # where we are in the tree
         clone = template_node.cloneNode()
-        
+
         # select dialog based on model name
         model_name = QString(model_name).toLower()
         dialog = None
-        
+
         # all dialog have the same arguments, so we just specify them once
         dialog_args = (self.mainwindow, clone, self.model)
-        
+
         if model_name == 'simple model':
             dialog = SimpleModelFromTemplateDialog(*dialog_args)
         elif model_name == 'choice model':
@@ -174,11 +174,11 @@ class XmlController_Models(XmlController):
             dialog = AllocationModelFromTemplateDialog(*dialog_args)
         elif model_name == 'agent location choice model':
             dialog = AgentLocationChoiceModelFromTemplateDialog(*dialog_args)
-        
+
         if not dialog:
             raise NotImplementedError('dialog for template %s '
                                       'not yet implemented' %model_name)
-        
+
         # show the dialog
         dialog.show()
 
@@ -197,16 +197,16 @@ class XmlController_Models(XmlController):
         item = self.view.indexAt(position) # get object at mouse coord
         if not item.isValid():
             return
-        
+
         # make the item the current item in the model
         self.view.setCurrentIndex(index)
-        
+
         domElement = item.internalPointer().node().toElement()
         if domElement.isNull():
             return
-        
+
         element_type = domElement.attribute('type').toLower()
-            
+
         # create menu to populate
         menu = QMenu(self.mainwindow)
 
@@ -217,27 +217,28 @@ class XmlController_Models(XmlController):
             for act in self.create_from_template_actions:
                 submenu.addAction(act)
             menu.addMenu(submenu)
-            
+
 #        if element_type in ['model', 'submodel', 'model_system']:
         if element_type == 'model':
             menu.addAction(self.actRunEstimation)
-            
+
         menu.addSeparator()
-        # add generic menu items
-        if element_type in ['model', 'submodel']:
-            menu.addAction(self.actRenameNode)
 
         if domElement.hasAttribute(QString("inherited")):
-            # inherited items should be copied into this project before 
+            # inherited items have to be copied into this project before
             # we allow manipulating
             menu.addAction(self.actMakeEditable)
         else:
-            if domElement.attribute("copyable").toLower() == QString("true"):
+            if element_type in ['model', 'submodel']:
+                menu.addAction(self.actRenameNode)
+
+            if domElement.attribute("copyable").toLower() == "true" or \
+            element_type in ['model', 'submodel']:
                 menu.addAction(self.actCloneNode)
 
-            elif element_type == QString("variable_list"):
+            if element_type == "variable_list":
                 menu.addAction(self.actSelectVariables)
-            
+
             # select which nodes that are removable
             if element_type in ['model', 'submodel', 'submodel_equation']:
                 menu.addAction(self.actRemoveNode)
