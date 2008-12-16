@@ -56,7 +56,7 @@
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
-    <Seattle_baseline copyable="True" executable="True" type="scenario">
+    <Test copyable="True" executable="True" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -130,7 +130,7 @@
           <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
         </datasets_to_preload>
       </advanced>
-    </Seattle_baseline>
+    </Test>
   </scenario_manager>
   <results_manager>
   </results_manager>

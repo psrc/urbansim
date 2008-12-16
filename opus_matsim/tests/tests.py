@@ -50,15 +50,21 @@ class Tests(opus_unittest.OpusTestCase):
         print "leaving cleanup_test_run"
         
     def test_run(self):
-        
+ 
+        # The paths work as follows: opus_matsim.__path__ is the path of the opus_matsim python module.  So we can use that
+        # as anchor ...
         config_location = os.path.join(opus_matsim.__path__[0], 'configs')
         print "location: ", config_location
-        run_config = XMLConfiguration( os.path.join(config_location,"test.xml")).get_run_configuration("Seattle_baseline")
-#        run_config = XMLConfiguration( os.path.join(config_location,"eugene_gridcell.xml")).get_run_configuration("Eugene_baseline")
+        run_config = XMLConfiguration( os.path.join(config_location,"test.xml")).get_run_configuration("Test")
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
-        run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = os.path.join(opus_matsim.__path__[0], 'tests', 'seattle_parcel', 'base_year_data')
+        run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = \
+            os.path.join(opus_matsim.__path__[0], 'tests', 'testdata', 'base_year_data')
+
+        # insert_auto_generated_cache_directory... does things I don't understand.  Need to do the following to obtain consistent
+        # behavior independent from the file root:
         run_config['cache_directory'] = None
+        
         insert_auto_generated_cache_directory_if_needed(run_config)
         run_manager = RunManager(ServicesDatabaseConfiguration())
     
@@ -70,7 +76,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         self.assert_(True)
         
-        #self.cleanup_test_run()
+        self.cleanup_test_run()
 
         
 if __name__ == "__main__":
