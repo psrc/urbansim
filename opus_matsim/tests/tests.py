@@ -53,9 +53,9 @@ class Tests(opus_unittest.OpusTestCase):
  
         # The paths work as follows: opus_matsim.__path__ is the path of the opus_matsim python module.  So we can use that
         # as anchor ...
-        config_location = os.path.join(opus_matsim.__path__[0], 'configs')
+        config_location = os.path.join(opus_matsim.__path__[0], 'tests')
         print "location: ", config_location
-        run_config = XMLConfiguration( os.path.join(config_location,"test.xml")).get_run_configuration("Test")
+        run_config = XMLConfiguration( os.path.join(config_location,"test_config.xml")).get_run_configuration("Test")
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
         run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = \
