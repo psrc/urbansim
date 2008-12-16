@@ -63,9 +63,9 @@ class XmlModel(QAbstractItemModel):
             # Add some icons
             self.folderIcon = QIcon()
             self.bookmarkIcon = QIcon()
-            
+
             self.app = qApp
-            
+
             self.acceptIcon = QIcon(":/Images/Images/accept.png")
             self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
             self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
@@ -103,7 +103,7 @@ class XmlModel(QAbstractItemModel):
             self.toolSetIcon = QIcon(":/Images/Images/folder_wrench.png")
             self.toolConfigIcon = QIcon(":/Images/Images/wrench.png")
             self.toolFileIcon = QIcon(":/Images/Images/wrench_orange.png")
-            
+
             self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
             self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
                                       QIcon.Normal, QIcon.Off)
@@ -171,21 +171,21 @@ class XmlModel(QAbstractItemModel):
     def columnCount(self, parent):
         #return 1
         return 2
-    
+
     def data_handler(self, index, role):
         '''allow inheriting classes to be able to just override specific parts
         of data(). Return QVariant() to fall back on default handler'''
-        return QVariant() # not handled 
+        return QVariant() # not handled
 
     def data(self, index, role):
         if not index.isValid():
             return QVariant()
-        
+
         # check if the data_handler cares about this index
         data_handler = self.data_handler(index, role)
         if data_handler != QVariant():
             return data_handler
-        
+
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
@@ -258,16 +258,16 @@ class XmlModel(QAbstractItemModel):
             return Qt.ItemIsEnabled
         if not self.editable:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-         
+
         # check for inherited nodes
         element = index.internalPointer().domNode.toElement()
         if not element.isNull():
             if element.hasAttribute(QString("inherited")):
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-        # editable, non inherited items are only editable in second column  
+        # editable, non inherited items are only editable in second column
         if index.column() == 1:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
@@ -325,10 +325,10 @@ class XmlModel(QAbstractItemModel):
     def markAsClean(self):
         self.dirty = False
         self.parentObj.updateWindowTitle()
-        
+
     def isDirty(self):
         return self.dirty
-    
+
     def isTemporary(self,node):
         nodeElement = node.toElement()
         if not nodeElement.isNull():
@@ -338,9 +338,9 @@ class XmlModel(QAbstractItemModel):
                 else:
                     return False
         return False
-        
+
     def checkIfInheritedAndAddBackToTree(self,nodePath,parentIndex):
-        # print "Checking if inherited: %s" % (nodePath) 
+        # print "Checking if inherited: %s" % (nodePath)
         opus_core_xml_configuration = self.parentTree.toolboxbase.opus_core_xml_configuration
         indentSize = 2
         opus_core_xml_configuration.update(str(self.domDocument.toString(indentSize)))
@@ -591,13 +591,13 @@ class XmlModel(QAbstractItemModel):
     def create_node(self, document, name, type, value='', choices=None, temporary=False, flags=None, hidden=None):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString('type'),QString(type))
-        
+
         if value != '':
             if type == 'list':
                 newText = document.createTextNode(QString(str(value)))
             else:
                 newText = document.createTextNode(QString(value))
-            newNode.appendChild(newText)        
+            newNode.appendChild(newText)
         if choices is not None:
             newNode.setAttribute(QString('choices'), QString(choices))
         if temporary is True:
@@ -656,17 +656,17 @@ class FakeToolbox(object): pass
 class OpusDataModelTests(opus_unittest.OpusTestCase):
     def setUp(self):
         from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
-        
+
         try:
             from PyQt4.QtGui import QApplication
             self.app = QApplication([],True)
         except:
             self.app = None
             return
-            
+
         # find the opus gui directory
         opus_gui_dir = __import__('opus_gui').__path__[0]
-        
+
         self.test_xml = """
 <opus_project>
   <data_manager>
@@ -710,7 +710,7 @@ class OpusDataModelTests(opus_unittest.OpusTestCase):
     </Tool_Library>
   </data_manager>
 </opus_project>"""
-        
+
         self.qDomDocument = QDomDocument()
         self.qDomDocument.setContent(QString(self.test_xml))
         self.fakeToolbox = FakeToolbox()
