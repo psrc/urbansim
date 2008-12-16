@@ -61,7 +61,7 @@ class Tests(opus_unittest.OpusTestCase):
 #        run_config = XMLConfiguration( os.path.join(config_location,"eugene_gridcell.xml")).get_run_configuration("Eugene_baseline")
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
-
+        run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = os.path.join(opus_matsim.__path__[0], 'data', 'seattle_parcel', 'base_year_data')
         insert_auto_generated_cache_directory_if_needed(run_config)
         
         run_manager = RunManager(ServicesDatabaseConfiguration())
