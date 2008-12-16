@@ -36,11 +36,6 @@
       Leopard (10.5) with an Intel processor.
     </p>
 
-    <p>
-      If you are very familiar with building packages from source and are familiar with using a shell, you can read the <a href="mac_install_brief.html">brief version</a> of this document. The brief version only lists the essentials for downloading and installing Opus and UrbanSim.
-    </p>
-    
-    
     <ol>
       <li><a href="#python">Installing Python</a></li>
       <li><a href="#mysql">Installing MySQL</a> (optional)</li>
@@ -435,9 +430,7 @@
     <p>
       UrbanSim requires the following environment variables.&nbsp; The first tells
       the Python interpreter where to find the Opus/UrbanSim code. The second tells
-      the GUI where to find your cached data and configurations. The remaining
-      variables describe how to connect to MySQL -- leave those four out if you
-      aren't installing MySQL.
+      the GUI where to find your cached data and configurations.
     </p>
 
     <ul>
@@ -458,35 +451,13 @@
       </li>
     </ul>
     
-    Optionally, depending on what you are using and where you store your data, you might want to set these variables as well.
+    Optionally, depending on what you are using and where you store your data, you might want to set this variable as well.
     <ul>
       <li>
     <b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample
     data and caches of data for particular runs. It defaults to the <tt>data</tt>
     subdirectory under <tt>OPUS_HOME</tt>, so if you leave the data at the default location
     from the zip file, don't set this variable.
-      </li>
-
-      <li>
-    <b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used for
-    running unit tests that use MySQL. These tests use the MySQL database
-    hostname described by this environment variable. If this environment
-    variable is not defined, unit tests that expect this database server will
-    not run, but will instead print a warning message.
-      </li>
-      <li>
-    <b>MYSQLHOSTNAME</b> - The name of the MySQL server. Use
-    <font face="Courier New" size=2>localhost</font> for the MySQL server on the
-    same computer.&nbsp;
-      </li>
-      <li>
-    <b>MYSQLUSERNAME</b> - This should have the MySQL user name to be used for
-    querying the UrbanSim database. In the lab, we use the MySQL username
-    "urbansim" as a convenient way to allow sharing scripts among all the lab
-    members. (Note that MySQL user names are independent of login names.)&nbsp;
-      </li>
-      <li>
-    <b>MYSQLPASSWORD</b> - The password for the MySQL user name given above.
       </li>
     </ul>
     
@@ -503,11 +474,12 @@
       &lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
       "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
       &lt;plist version="1.0"&gt;
-      &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;
+      
+      &lt;key&gt;PYTHONPATH&lt;/key&gt;
       &lt;string&gt;localhost&lt;/string&gt;
 
-      &lt;key&gt;MYSQLHOSTNAMEFORTESTS&lt;/key&gt;
-      &lt;string&gt;localhost&lt;/string&gt;
+      &lt;key&gt;OPUS_HOME&lt;/key&gt;
+      &lt;string&gt;/Users/yourname/opus&lt;/string&gt;
       
       &lt;/dict&gt;
       &lt;/plist&gt; </pre>

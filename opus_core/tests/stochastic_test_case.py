@@ -34,21 +34,16 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
     """
     def run_stochastic_test(self, file_path, function, expected_results,
                             number_of_iterations, significance_level=0.01, type="poisson", transformation=None,
-                            log_results=True, expected_to_fail=False, number_of_tries=5):
+                            expected_to_fail=False, number_of_tries=5):
         """
         For each test, run the given function for the specified number_of_iterations.
         Uses different test statistics to determine whether the produced results are
         within the specified significance_level of the expected_results.
-        If log_results is True, and if the operating system environment variable
-        MYSQLSTOCHASTICTESTLOGGER is set, log the results to the stochastic_test_case
-        table in the MySQL database on the host MYSQLSTOCHASTICTESTLOGGER.  Nothing
-        is logged if log_results is False or if the environment variable isn't set.
         Finally, since the stochastic test will fail every once in a while, run the whole
         test up to number_of_tries times, until either it succeeds or it fails too many times.
         """
         self.file_path = file_path
         self.type = type
-        self.log_results = log_results
         self.expected_to_fail = expected_to_fail
         for i in range(number_of_tries):
             if type == "normal":
@@ -67,83 +62,11 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         # failed too many times -- show the last message
         self.fail(msg)
 
-
-    def _log_results(self, prob, number_of_iterations, significance_level, transformation, K, LRTS=-9999):
-        """If we are logging results, and if the environment variable
-        MYSQLSTOCHASTICTESTLOGGER is set, record each run in a database table
-        so we can track the number of successes & failures of stochastic tests.
-        Record which model, which test, number_of_iterations, significance_level,
-        success/failure.  Save to a new row in a database table.
-        The database access is wrapped with a try/catch block, so if the hostname
-        is wrong, the MySQL user name doesn't exist, or whatever, the request to
-        log the results is ignored.
-        """
-        if not self.log_results:
-            return
-        if not os.environ.has_key('MYSQLSTOCHASTICTESTLOGGER'):
-            return
-        #
-        # The DB is only used to log the results, so if we aren't doing that,
-        # we don't need a connection to the DB
-        #
-        try:
-            from MySQLdb import escape_string
-        except ImportError, e:
-            return
-
-        self.file_path = escape_string(self.file_path)
-
-        sql = """insert into test_results
-        (datetime, host_name, file_path, method_name, significance_level, number_of_iterations, statistic,
-        transformation, probability, success, expected_to_fail, K, LRTS)
-        values (
-        '%(datetime)s',
-        '%(host_name)s',
-        '%(file_path)s',
-        '%(method_name)s',
-        %(significance_level)f,
-        %(number_of_iterations)d,
-        '%(statistic)s',
-        '%(transformation)s',
-        %(probability)f,
-        %(success)i,
-        %(expected_to_fail)i,
-        %(K)f,
-        %(LRTS)f
-        )""" % {
-            'datetime':strftime("%Y-%m-%d %H:%M:%S", localtime()), # time.time()
-            'host_name':get_host_name(),
-            'file_path':self.file_path,
-            'method_name': get_test_method_name(self),
-            'significance_level':significance_level,
-            'number_of_iterations':number_of_iterations,
-            'statistic':self.type,
-            'transformation':transformation,
-            'probability':prob,
-            'success':prob >= significance_level,
-            'expected_to_fail':self.expected_to_fail,
-            'K':K,
-            'LRTS':LRTS,
-            }
-        config = DatabaseServerConfiguration(
-            protocol = 'mysql',
-            host_name = os.environ['MYSQLSTOCHASTICTESTLOGGER'],
-            user_name = os.environ['MYSQLUSERNAME'],
-            password = os.environ['MYSQLPASSWORD'],
-            )
-        try:
-            db_server = DatabaseServer(config)
-            db = db_server.get_database('stochastic_test_case')
-            db.DoQuery(sql)
-        except:
-            pass
-
     def _run_stochastic_test_normal(self, function, expected_results,
                             number_of_iterations, significance_level=0.01, transformation="sqrt"):
         K, LRTS, prob = self.compute_stochastic_test_normal(function, expected_results,
                             number_of_iterations, significance_level, transformation)
         logger.log_status("Stochastic Test Normal: LRTS=" + str(LRTS) + ", df=", str(K), " p=" + str(prob))
-        self._log_results(prob, number_of_iterations, significance_level, transformation, K, LRTS)
         return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
     def compute_stochastic_test_normal(self, function, expected_results,
@@ -189,7 +112,6 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         prob = chisqprob(LRTS, K)
         #print LRTS, prob
         logger.log_status("Stochastic Test Poisson: LRTS=" + str(LRTS) + ", df=", str(K), ", p=" + str(prob))
-        self._log_results(prob, number_of_iterations, significance_level, transformation, K, LRTS)
         return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
     def _run_stochastic_test_pearson(self, function, expected_results,
@@ -206,7 +128,6 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         #print pearson, prob
         logger.log_status("Stochastic Test: Pearson Chi^2=" + str(pearson) + ", df=",
                            str(K*number_of_iterations),", p=" + str(prob))
-        self._log_results(prob, number_of_iterations, significance_level, transformation, K)
         return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
     def chi_square_test_with_known_mean(self, function, mean, variance, number_of_iterations, significance_level=0.01, number_of_tries=5):

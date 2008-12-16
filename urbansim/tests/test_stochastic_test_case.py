@@ -86,14 +86,12 @@ class Test(StochasticTestCase):
             return result_more_attractive
             
         expected_results = array(ngrids/2*[nhouseholds*0.71/(ngrids/2)])
-        self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="pearson", transformation=None,
-                                 log_results=False)
+        self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="pearson", transformation=None)
 
         # Make sure it fails when expected distribution is different from actual.
         expected_results = array(ngrids/2*[nhouseholds*0.61/(ngrids/2)])
         try:
-            self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="poisson", transformation=None,
-                                     log_results=False)
+            self.run_stochastic_test(__file__, inner_loop, expected_results, 10, type="poisson", transformation=None)
         except AssertionError:
             pass
            

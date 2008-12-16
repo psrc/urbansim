@@ -245,30 +245,13 @@ to <tt>~/opus</tt>.</li>
 caches of data for particular runs.  It defaults to the <tt>data</tt> subdirectory under <tt>OPUS_HOME</tt>,
 so if you leave the data at the default location from the zip file, don't set this variable.</li>
 
-  <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
-    for running unit tests that use MySQL. These tests use the MySQL database
-	hostname described by this environment variable.  If this environment
-	variable is not defined, unit tests that expect this database server
-	will not run, but will instead print a warning message.</li>
-
-  <li><b>MYSQLHOSTNAME</b> - The name of the MySQL server. Use <font face="Courier New" size="2">localhost</font>
-    for the MySQL server on the same computer.&nbsp;</li>
-
-  <li><b>MYSQLUSERNAME</b> - This should have the MySQL user name to be used for
-    querying the UrbanSim database. In the lab, we use the MySQL username &ldquo;urbansim&rdquo;
-    as a convenient way to allow sharing scripts among all the lab members.
-    (Note that MySQL user names are independent of login names.)&nbsp;</li>
-
-  <li><b>MYSQLPASSWORD</b> - The password for the MySQL user name given
-    above.&nbsp;</li>
-
 </ul>
 
 <p>The most convenient way is to set the environment variables in your .bashrc/.cshrc
 file. The syntax depends on the type of shell you use. For example you would
 insert the following lines into .bashrc:</p>
 
-<pre>export MYSQLHOSTNAME=localhost<br>export MYSQLUSERNAME=urbansim<br>export MYSQLPASSWORD=thesecretpassword</pre>
+<pre>export OPUS_HOME=~/opus</pre>
 
 <h2>Step 5: <a name="test">Test your installation</a></h2>
 

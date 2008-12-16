@@ -174,14 +174,6 @@ class (e.g. MyClassTests) is found outside of the
 
 For more examples, check out the files in the \package{opus_core} package.
 
-\subsection{Unit Tests that Use MySQL}
-%
-The convention for database tests that use MySQL is to use the MySQL database
-server described by the MYSQLHOSTNAMEFORTESTS, MYSQLUSERNAME 
-and MYSQLPASSWORD environment variables.  If you do not have these environment
-variables defined, unit tests that expect this database server 
-will not run, but will print a warning message.
-
 \subsection{Writing Unit Tests for a Variable}
 %
 By convention, there are a set of ``unit tests'' for every Opus variable
@@ -223,7 +215,7 @@ easier to diagnose the problem.
 \index{Unit tests!stochastic} \index{Stochastic unit tests}
 Testing stochastic systems presents challenges for the traditional unit
 testing framework, since in general either the tests are trivial, or else
-they will sometimes fail.  A recent research project developed a
+they will sometimes fail.  A research project by our group developed a
 methodology to put stochastic unit tests on a firm statistical basis, and
 this is now used in writing such tests in Opus and UrbanSim.  See
 Hana {\v{S}}ev\v{c}\'{\i}kov\'{a}, Alan Borning, David Socha, and
@@ -234,19 +226,12 @@ July 2006 (available from
 \url{http://www.urbansim.org/papers/sevcikova-issta-2006.pdf}).
 
 A result of this is that, indeed, such stochastic unit tests may fail, even
-though the underlying code is correct.  In that case, just run the test
-again.
-
-Within the UrbanSim project, we have been continuing to gather data on when
-the stochastic unit tests fail, as fodder for a possible followup research
-paper on this topic.  To help with this, UrbanSim project members have been
-asked to set the system environment variable
-\index{Environment variables!MYSQLSTOCHASTICTESTLOGGER}
-\index{MYSQLSTOCHASTICTESTLOGGER}
-\verb|MYSQLSTOCHASTICTESTLOGGER| to the
-host name for the UrbanSim SQL Server, where a table accumulates this
-information.  For everyone else, just ignore this environment variable ---
-if it doesn't exist, the system won't attempt to log the information.
+though the underlying code is correct.  This formerly resulted in a 
+periodic failure, which would go away when we ran the test again.  To automate
+this process, the \method{run_stochastic_test} method in the
+\class{StochasticTestCase} class now includes a keyword parameter \code{number_of_tries}
+with a default value of 5, which simply tries again that number of times.  Since
+introducing the \code{number_of_tries} parameter this issue has not come up
 
 \section{Programming by Contract}
 \label{sec:programming-by-contract}
