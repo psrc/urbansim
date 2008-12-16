@@ -14,6 +14,11 @@ commercial_improvement_value is the total value of all commercial buildings in
 this grid cell. The use of ``improvement'' indicates that buildings are
 considered ``improvements'' over the grid cell's land value.
 
+Attributes that are marked as optional are only required by specific variables. Thus,
+if they are needed or not depends on model specifications.
+Attributes that are NOT marked as optional are used by various models. In some situations,
+(e.g. by skiping specific models) some of those attributes may not be required. 
+
 \begin{tabular}{p{2in}lp{3.5in}}
 %\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
@@ -24,13 +29,13 @@ commercial_sqft & integer & The sum of the square footage of buildings that are 
 \hline
 development_type_id & integer & Index into the Development Types table  \\
 \hline
-distance_to_arterial & float &  Units: \verb|urbansim_constants|.units \\
+distance_to_arterial & float &  \emph{(optional) } Units: \verb|urbansim_constants|.units \\
 \hline
-distance_to_highway & float &  Units: \verb|urbansim_constants|.units \\
+distance_to_highway & float &  \emph{(optional) } Units: \verb|urbansim_constants|.units \\
 \hline
-governmental_sqft & integer & \\
+governmental_sqft & integer & The sum of the square footage of buildings that are classified as governmental\\
 \hline
-industrial_sqft & integer & \\
+industrial_sqft & integer & The sum of the square footage of buildings that are classified as industrial\\
 \hline
 commercial_improvement_value & integer & See description, above  \\
 \hline
@@ -57,26 +62,26 @@ plan_type_id & integer & An id indicating the plan type of the grid cell  \\
 percent_agricultural_protected_land & integer & \emph{(optional) }
 \\
 \hline
-percent_water & integer & Percentage of this cell covered by water  \\
+percent_water & integer & \emph{(optional) } Percentage of this cell covered by water  \\
 \hline
-percent_stream_buffer & integer & Percentage of this cell covered by stream buffer  \\
+percent_stream_buffer & integer & \emph{(optional) } Percentage of this cell covered by stream buffer  \\
 \hline
-percent_floodplain & integer & Percentage of this cell covered by flood plain  \\
+percent_floodplain & integer & \emph{(optional) } Percentage of this cell covered by flood plain  \\
 \hline
-percent_wetland & integer & Percentage of this cell covered by wetland  \\
+percent_wetland & integer & \emph{(optional) } Percentage of this cell covered by wetland  \\
 \hline
-percent_slope & integer & Percentage of this cell covered by slope  \\
+percent_slope & integer & \emph{(optional) } Percentage of this cell covered by slope  \\
 \hline
-percent_open_space & integer & Percentage of this cell covered by open space  \\
+percent_open_space & integer & \emph{(optional) } Percentage of this cell covered by open space  \\
 \hline
-percent_public_space & integer & Percentage of this cell covered by public space  \\
+percent_public_space & integer & \emph{(optional) } Percentage of this cell covered by public space  \\
 \hline
-percent_roads & integer & Percentage of this cell covered by roads  \\
+percent_roads & integer & \emph{(optional) } Percentage of this cell covered by roads  \\
 \hline
 percent_undevelopable & integer & \emph{(optional) }
 \\
 \hline
-is_outside_urban_growth_boundary & boolean & \\
+is_outside_urban_growth_boundary & boolean & \emph{(optional) } \\
 \hline
 is_state_land & boolean & \emph{(optional) }
 \\
@@ -95,9 +100,9 @@ is_inside_tribal_land & boolean & \emph{(optional) }
 \hline
 zone_id & integer & Traffic analysis zone that contains this grid cell's centroid  \\
 \hline
-city_id & integer & City this Grid Cell belongs to  \\
+city_id & integer & \emph{(optional) } City this grid cell belongs to  \\
 \hline
-county_id & integer & County this Grid Cell belongs to  \\
+county_id & integer & \emph{(optional) } County this grid cell belongs to  \\
 \hline
 fraction_residential_land & float & Fraction of residential land in this cell  \\
 \hline
@@ -112,34 +117,15 @@ total_undevelopable_sqft & integer & \emph{(optional) }
 
 \begin{itemize} \tight
 \item fraction_residential_land must be between 0 and 1
-\item commercial_sqft must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_sqft
+\item commercial_sqft, governmental_sqft and residential_units must be \textgreater{}= 0
 \item development_type_id must be a valid index in the \verb|development_types|
 table
-\item distance_to_arterial must be \textgreater{}= 0 and \textless{}=
-absolute_max_distance
-\item distance_to_highway must be \textgreater{}= 0 and \textless{}=
-absolute_max_distance
-\item industrial_sqft must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_sqft
-\item governmental_sqft must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_sqft
+\item distance_to_arterial,  distance_to_highway must be \textgreater{}= 0
 \item grid_id must be unique and \textgreater{} 0
-\item industrial_sqft must be \textgreater{}= 0
-\item commercial_improvement_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item industrial_improvement_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item governmental_improvement_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item nonresidential_land_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item residential_improvement_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item residential_land_value must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_dollars
-\item residential_units must be must be \textgreater{}= 0 and \textless{}=
-absolute_max_cell_residential_units
+\item commercial_improvement_value,  industrial_improvement_value, residential_improvement_value, 
+and governmental_improvement_value 
+must be \textgreater{}= 0 
+\item nonresidential_land_value and residential_land_value must be \textgreater{}= 0
 \item relative_x,relative_y coordinate pairs must be unique, and
 \textgreater{}= 1.
 \item The relative_x and relative_y columns are measured in grid cell units.
@@ -154,24 +140,17 @@ are labeled with grid_id, relative_x, relative_y):
 
 \end{tabular}
 
-\item year_built must be less than or equal to the start date of the scenario,
-and must be between absolute_min_year and absolute_max_year
+\item year_built must be less than or equal to the start date of the scenario and larger 
+than absolute_min_year which can be defined in the \verb|urbansim_constants| table (default is 1800).
 \item plan_type must be a valid index in the \verb|plan_types| table
-\item percent_water must be between 0 and 100
-\item percent_stream_buffer must be between 0 and 100
-\item percent_floodplain must be between 0 and 100
-\item percent_wetland must be between 0 and 100
-\item percent_slope must be between 0 and 100
-\item percent_open_space must be between 0 and 100
-\item percent_public_space must be between 0 and 100
-\item percent_roads must be between 0 and 100
+\item All percent_* attributes must be between 0 and 100
 \item zone_id must be a valid id in the \verb|zones| table
 \item city_id must be a valid index into the \verb|cities| table or zero if
 there is no city
 \item county_id must be a valid index into the \verb|counties| table or zero if
 there is no county
-\item gridcells with any households on them (i.e., households.grid_id =
-gridcell.grid_id), then the gridcell.residential_units must be greater than 0
+\item For gridcells with any households on them (i.e., household.grid_id =
+gridcell.grid_id), the gridcell.residential_units must be greater than 0.
 \end{itemize}
 
 \subsection{The {\tt plan_types} table}
@@ -195,8 +174,8 @@ name & varchar & Unique name of the Plan Type  \\
 
 \begin{itemize} \tight
 \item plan_type_id must be unique, greater than zero, and less than or equal to 9999.
-\item We recommend that plan_type_ids start at 1 and be sequential.
-\item name must be unique. We recommend that names follow the style guide.
+We recommend that plan_type_id start at 1 and be sequential.
+\item name must be unique.
 
 \end{itemize}
 
@@ -204,14 +183,14 @@ name & varchar & Unique name of the Plan Type  \\
 \section{Database Tables about Development Types}
 \label{sec:development-tables}
 
-\emph{Note: tables about development types are no longer needed, 
-even for gridcell-based projects, since the
-real estate development model that used them, which was based on modeling
-a transition from one development type to another, has been replaced
-in the gridcell applications with a real estate development project location
-choice model.  The descriptions in this section are retained in the documentation 
-mainly to include this disclaimer, and for readers that need access to the older
-information}.
+%\emph{Note: tables about development types are no longer needed, 
+%even for gridcell-based projects, since the
+%real estate development model that used them, which was based on modeling
+%a transition from one development type to another, has been replaced
+%in the gridcell applications with a real estate development project location
+%choice model.  The descriptions in this section are retained in the documentation 
+%mainly to include this disclaimer, and for readers that need access to the older
+%information}.
 
 
 \emph{Development types} are used to classify a grid cell according to the
@@ -235,6 +214,7 @@ definitions.
 
 \subsection{The {\tt development_types} table}
 
+This table is used by the Events Coordinator (see Section~\ref{sec:events-coordinator}).
 Each row defines one development type.
 
 \begin{tabular}{lll}
@@ -300,8 +280,7 @@ empty for no non-overlapping-group.  \\
 \item name must be unique. The required development type groups must be lower
 case with underscores between words e.g. high_density_residential. We recommend
 that all names follow this style.
-\item names and non_overlapping_groups names must not contain spaces.
-\item names and non_overlapping_groups names must be lower-case.
+\item names and non_overlapping_groups names must not contain spaces must be lower-case.
 \item Development types must not overlap across the groups in the same
 non_overlapping_groups.
 \end{itemize}
@@ -310,13 +289,10 @@ The set of required development type groups and non-overlapping-groups is
 determined by the set of variables used by the models being estimated or
 simulated.  Thus, there is no way to a-priori specify which development type
 groups will be needed for your application of UrbanSim. There are two exceptions:
-First, the model Events Coordinator is internally using groups 'residential', 'mixed_use', 'commercial',
+First, the model Events Coordinator (\ref{sec:events-coordinator}) is internally using groups 'residential', 'mixed_use', 'commercial',
 'industrial', and 'governmental'. Second, the Land Price Model (\ref{sec:land-price-model}) is using by default a filter
 that requires a group called 'developable'. Therefore, if you do not change this settings, make sure your
 table contain these entries.
-
-UrbanSim requires some non-overlapping-groups and requires those to have
-certain groups within them, though they may have additional groups as well.
 
 \subsection{The {\tt development_type_group_definitions} table}
 
@@ -330,7 +306,7 @@ development type group).
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 
 \hline
-development_type_id & integer & Index into the development_types table  \\
+development_type_id & integer & Index into the \verb|development_types| table  \\
 \hline
 group_id & integer & Index into the \verb|development_type_groups| table  \\
 \hline
@@ -372,7 +348,7 @@ in the future. For any given year, it is possible to schedule any number of
 changes to the attributes of any number of gridcells. Each change represents
 that addition, subtruction or replacement of the specified number of sqft, residential units, and
 improvement values.  For example, if
-GridCell 23 is to grow by 200 residential units in 2008 (an apartment building
+grid cell 23 is to grow by 200 residential units in 2008 (an apartment building
 is built), the table would include a row with scheduled_year = 2008, grid_id =
 23, residential_units = 200, and residential_units_change_type = 'A'.
 
@@ -383,6 +359,8 @@ of units [or sqft] being built by this event)) to the current improvement value
 in
 this grid cell.  The units of the improvement is currency value, e.g. dollars.
 
+The described procedure is implemented in Events Coordinator (see Section~\ref{sec:events-coordinator}).
+
 \begin{tabular}{p{2in}lp{3.5in}}
 %\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
@@ -390,14 +368,6 @@ this grid cell.  The units of the improvement is currency value, e.g. dollars.
 grid_id & integer & Grid cell where the event takes place  \\
 \hline
 scheduled_year &short & Year in which the event will be implemented  \\
-\hline
-starting_development_type_id & integer & \emph{(optional) }
-This field is ignored. It is here so that the schema is the same for the
-\verb|development_events_exogenous| and \verb|development_event_history| tables.   \\
-\hline
-ending_development_type_id & integer &  This grid cell's development type
-at the ending of the scheduled_year. Index into the \verb|development_types|
-table   \\
 \hline
 residential_units & integer & \\
 \hline
@@ -423,15 +393,11 @@ industrial_improvement_value & integer & See description, above  \\
 \hline
 governmental_improvement_value & integer & See description, above  \\
 \hline
-fraction_residential_land_value & float & Fraction of residential land in this cell  \\
-\hline
 
 \end{tabular}
 
 \begin{itemize} \tight
-\item fraction_residential_land_value must be between 0 and 1
-\item grid_id must be a valid id in the \verb|gridcells| table or zero
-\item development_type_id must be a valid index into the \verb|development_types| table or zero
+\item grid_id must be a valid id in the \verb|gridcells| table
 \end{itemize}
 
 
@@ -488,14 +454,10 @@ governmental_improvement_value & integer & See description, above  \\
 \end{tabular}
 
 \begin{itemize} \tight
-\item grid_id must be a valid id in the \verb|gridcells| table or zero
-\item development_type_id must be a valid index into the \verb|development_types| table or zero
-\end{itemize}
-
-In addition, the following will produce warnings:
-\begin{itemize} \tight
-\item Warn if scheduled_year is greater than or equal to the base year. Such
-entries will not be used.
+\item grid_id must be a valid id in the \verb|gridcells| table
+\item starting_development_type_id must be a valid index into the \verb|development_types| table
+\item starting_development_type_id is only required if the process of unrolling gridcells is activated.
+\item Entries for which scheduled_year is greater than or equal to the base year will not be used.
 \end{itemize}
 
 \section{Database Tables About Development Constraints}
