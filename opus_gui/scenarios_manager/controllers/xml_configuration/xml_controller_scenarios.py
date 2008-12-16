@@ -12,9 +12,7 @@
 #
 
 
-
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL
+from PyQt4.QtCore import QString, QFileInfo, SIGNAL
 from PyQt4.QtGui import QIcon, QMenu, QCursor, QMessageBox
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
@@ -29,7 +27,7 @@ from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scena
 
 class XmlController_Scenarios(XmlController):
     def __init__(self, toolboxbase, parentWidget):
-        # need to be defined before XmlController init
+        # this icon needs to be defined before call to XmlController.__init__
         self.missingModelIcon = QIcon(':/Images/Images/cog_missing.png')
 
         XmlController.__init__(self, toolboxbase = toolboxbase,
@@ -69,8 +67,7 @@ class XmlController_Scenarios(XmlController):
         '''switch out the model'''
         self.model = XmlModel_Scenarios(self, self.toolboxbase.doc, self.mainwindow,
               self.toolboxbase.configFile, self.xmlType, True)
-        # we need to tell the model what icon to use for missing models since
-        # that's not defined in the default icon list
+        # add icon for missing models since to icon list
         self.model.missing_model_icon = self.missingModelIcon
         self.view = XmlView(self.mainwindow)
         self.delegate = XmlItemDelegate(self.view)
@@ -89,8 +86,6 @@ class XmlController_Scenarios(XmlController):
 
     def runModel(self):
         '''Run the selected model'''
-#        if not self.validate_models_to_run_list(True):
-#            pass # use return when default models are fixed
         # Update the XMLConfiguration copy of the XML tree before running the model
         self.toolboxbase.updateOpusXMLTree()
         modelToRun = self.currentIndex.internalPointer().node().nodeName()
@@ -111,7 +106,6 @@ class XmlController_Scenarios(XmlController):
         baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
-        #print "Test - ", newFile.absoluteFilePath()
         self.toolboxbase.openXMLTree(newFile.absoluteFilePath())
 
 
@@ -163,24 +157,20 @@ class XmlController_Scenarios(XmlController):
             self.mainwindow.editorStatusLabel.setText(QString(fileName))
 
     def removeNode(self):
-        #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
         self.validate_models_to_run_list()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeUp(self):
-        #print "Move Up Pressed"
         self.currentIndex.model().moveUp(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeDown(self):
-        #print "Move Down Pressed"
         self.currentIndex.model().moveDown(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneNode(self):
-        #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
@@ -212,7 +202,9 @@ class XmlController_Scenarios(XmlController):
                 return
 
             # version specific settings
-            model_choice_name = "model" if self.xml.xml_version < '4.2.0-beta0' else "model_choice"
+            model_choice_name = "model_choice"
+            if self.xml.xml_version < '4.2.0-beta0':
+                model_choice_name = "model" # change to old name
 
             # create and populate menu based on the node element
             menu = QMenu(self.mainwindow)
@@ -242,9 +234,6 @@ class XmlController_Scenarios(XmlController):
                     models_submenu.addAction(self.createAction(self.addIcon,
                                                                model, callback))
                 menu.addMenu(models_submenu)
-
-            # TODO: Implement
-            # self.add_default_actions(domElement, menu)
 
             if menu:
                 # Last minute chance to add items that all menus should have
@@ -296,15 +285,16 @@ class XmlController_Scenarios(XmlController):
 
 
 
-        #TODO: remove this part when default model configurations is gone from
-        # xml files
-        def_models = self.xml.get('model_manager/default_models')
-        if def_models:
-            def_model_names = [e.tagName() for e in self.xml.children(def_models)]
-            map(available_model_names.append, def_model_names)
+        # if the xml file is old, it might have some models defined as part of
+        # the 'default_model_configuration' -- include those when populating the
+        # menu. Should we drop this support?
+        def_models = self.xml.get('model_manager/default_models') or \
+            self.xml.get('model_manager/default_model_configurations') or []
+        def_model_names = [e.tagName() for e in self.xml.children(def_models)]
+        available_model_names.extend(def_model_names)
 
         model_names = [e.tagName() for e in model_elements]
-        map(available_model_names.append, model_names)
+        available_model_names.extend(model_names)
 
         return available_model_names
 
@@ -319,21 +309,25 @@ class XmlController_Scenarios(XmlController):
         self.model.insertRow(0, scenario_index, spawn)
 
     def validate_models_to_run_list(self, display_warning = False):
-        '''Check each model in the models to run list to be present in the model
-        configuration tab. If display_warning is True, a popup warning with the
-        missing models is displayed. No warning is displayed if all models are
-        present.
-        Returns True if all models are present, False otherwise.
         '''
-        # go through each of the scenarios and check if they have a
-        # models_to_run entry
+            Check each model in the models to run list to be present in the
+            model configuration tab. If display_warning is True, a popup warning
+            with the missing models is displayed. No warning is displayed if all
+            models are present.
+
+            Returns True if all models are present, False otherwise.
+        '''
+        # fetch list of project scenarios
         xml = self.xml
         manager_root = xml.manager_root()
-        scenarios = [child for child in xml.children(manager_root) if \
+        scenarios = [child for child in
+                     xml.children(manager_root) if
                      xml.get_attrib('type', child) == 'scenario']
-        existing_model_names = [model.tagName() for model in \
-                                xml.children('/model_manager/model_system') \
-                                if xml.get_attrib('type', model) == 'model']
+        # fetch list of model names
+        existing_model_names = [model.tagName() for model in
+                                xml.children('/model_manager/model_system') if
+                                xml.get_attrib('type', model) == 'model']
+        # validate existence of models in models_to_run lists
         for scenario in scenarios:
             models_to_run_section = xml.get('models_to_run', scenario)
             if not models_to_run_section:
