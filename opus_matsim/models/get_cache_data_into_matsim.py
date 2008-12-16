@@ -65,6 +65,10 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 ),
         )            
         
+        output_root = os.path.join( os.environ['OPUS_HOME'],"opus_matsim" ) 
+        try: os.mkdir( output_root )
+        except: pass
+        
         output_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
         try: os.mkdir(output_directory)
         except: pass
