@@ -12,11 +12,11 @@
 #
 
 # ABOUT THIS SCRIPT
-# This scripts updates the resource files for UrbanSim based on the content
-# of the Images sub folder. It both generates a qrc files and runs pyrcc4 
-# on it. 
+# - This scripts updates the resource files for UrbanSim based on the content
+# - of the Images sub folder. It both generates a qrc files and runs pyrcc4
+# - on it.
 
-import os, sys
+import os
 
 if __name__ == "__main__":
 
