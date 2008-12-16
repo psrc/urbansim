@@ -174,6 +174,9 @@ Linux). \linuxindex
 some other systems, UrbanSim itself has no limit on the length of names. Most
 database system allow database names, table names and column names to be 32
 characters, 64 characters (e.g. MySQL), \mysqlindex or more.
+\item Unique identifiers must be larger than 0. 
+\item Avoid Null values in tables. The Python conversion tool cannot deal with 
+Nulls, and thus, converting tables to a simulation cache would crash if Nulls are present.  
 \end{itemize}
 
 \subsection{Data Types}
@@ -296,7 +299,6 @@ must exist in the model's coefficients table.
 \item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
 \item If fixed_value is non-zero in at least one row of the table, set the remaining values to 0. Currently, fixed_value 
 are considered only in the estimation of \class{ChoiceModel}.
-\item Specific models \modelsindex have additional requirements: see Developer Model \modelsindex and Non-home-based Employment Location Choice Model. \modelsindex
 \end{itemize}
 
 A legitimate specification for an Opus variable may be one of the following:
@@ -368,7 +370,7 @@ application, with the exception of what the location-id is that the jobs table l
 \subsection{The {\tt annual_employment_control_totals} table}
 
 This table gives total target quantities of employment, by sector, by
-home-based, and by year for each simulated year.
+home-based, and by year for each simulated year. It is used by the Employment Transition Model.
 
 \begin{tabular}{lll}
 %\hline
@@ -393,13 +395,12 @@ Target non-home based employment for this sector and year   \\
 table
 \item total_home_based_employment and total_non_home_based_employment must be
 greater than or equal to zero
-\item A control total must be provided for each sector in \verb|employment_sectors| for every year in the scenario, including the start and end
-years.
+\item A control total must be provided for each sector in \verb|employment_sectors| for every year in the scenario.
 \end{itemize}
 
 \subsection{The {\tt annual_relocation_rates_for_jobs} table}
 
-This table is only used by the Employment Relocation Choice Model. \modelsindex
+This table is only used by the Employment Relocation Model.
 
 \begin{tabular}{llp{4in}}
 %\hline
@@ -414,7 +415,7 @@ job_relocation_probability & float & Probability that a job in this sector will 
 \begin{itemize}
 \tight
 \item There must be a single entry for every employment sector in the
-\item \verb|employment_sectors| table.
+\verb|employment_sectors| table.
 \item job_relocation_probability must be between 0 and 1, inclusive.
 \end{itemize}
 
@@ -475,7 +476,7 @@ sectors ``automobile_sales'' and id=6 ``trucking'', these tables would be:
 \begin{tabular}{c}
 
 \begin{tabular}{ll}
-\multicolumn{2}{c}{\tt|employment_adhoc_sector_groups|}\\
+\multicolumn{2}{c}{\tt employment_adhoc_sector_groups}\\
 \hline
 group_id & name \\
 \hline
@@ -488,7 +489,7 @@ group_id & name \\
 \\ \\
 
 \begin{tabular}{ll}
-\multicolumn{2}{c}{\tt|employment_adhoc_sector_group_definitions|}\\
+\multicolumn{2}{c}{\tt employment_adhoc_sector_group_definitions}\\
 \hline
 sector_id & group_id \\
 \hline
@@ -506,14 +507,8 @@ sector_id & group_id \\
 
 \end{tabular}
 \end{center}
-\textbf{Required \tt|employment_adhoc_sector_groups|}
 
-If a model \modelsindex is used in the simulation, then for each of the groups it requires
-there must be a single row with its name equal to the name of the group. The
-comparison is case-insensitive and insensitive to leading and trailing spaces.
-For example, both `` basic'' and ``basic'' would be fine.
-
-The following groups are required for these models:
+Here are example of groups used in specification of various models:
 \begin{itemize} \tight
 \item Employment Location Choice Model \modelsindex
 \begin{itemize} \tight
@@ -587,8 +582,7 @@ building_type & integer & building type code \\
 \end{tabular}
 
 \begin{itemize} \tight
-\item grid_id must be a valid id in the \verb|gridcells| table (may not be zero,
-since all baseyear jobs must be placed)
+\item grid_id must be a valid id in the \verb|gridcells| table
 \item job_id must be unique and greater than zero
 \item sector_id must be a valid id in the \verb|employment_sectors| table
 %\item If home_based = false, then this job's grid_id must correspond to a
@@ -618,8 +612,7 @@ sqft & integer & Square Feet used by job \\
 \end{tabular}
 
 \begin{itemize} \tight
-\item building_id must be a valid id in the \verb|building| table (may not be zero,
-since all baseyear jobs must be placed)
+\item building_id must be a valid id in the \verb|building| table
 \item job_id must be unique and greater than zero
 \item sector_id must be a valid id in the \verb|employment_sectors| table
 %\item If home_based = false, then this job's grid_id must correspond to a
@@ -631,7 +624,7 @@ since all baseyear jobs must be placed)
 \subsection{The {\tt job_building_types} table}
 
 A table of building types for jobs.  It is used to determine the members
-of the Employment Location Choice Model groups, and is used by the Employment
+of the Employment Location Choice Model group, and is used by the Employment
 Transition Model.
 
 \begin{tabular}{lll}
@@ -666,15 +659,19 @@ id & name & home_based \\\hline
 \section{Database Tables about Households}
 \label{sec:household-tables}
 
+The following tables should be general whether using a gridcell or a parcel or a zone-based 
+application, with the exception of what the location-id is that the households table links to.
 
 \subsection{The {\tt annual_household_control_totals} table}
 \label{sec:household-tables-ahct}
 
-This table gives target quantities of households classified by year and an
+This table is used by the Household Tranition Model.
+It gives target quantities of households classified by year and an
 optional set of other user-defined attributes, such as
 race of
-head, or size of household.  Each attribute is a column.  The table's key is all
-attributes other than total_number_of_households.  It must
+head, or size of household.  Each attribute is a column.  The table's key is 
+a combination of all
+attributes other than total_number_of_households.  The table must
 contain a row for each attribute and each simulated year.
 
 \begin{tabular}{llp{4in}}
@@ -711,15 +708,15 @@ total_number_of_households & integer & Target number of households of this house
 
 \begin{itemize} \tight
 \item The optional attributes above are households attributes. Thus, the names must match
-attribute names in the {\tt households} table (\ref{sec:household-tables-households}).
+attribute names in the {\tt households} table (\ref{sec:household-tables-households}). 
+Any other attributes are allowed if they are found in the  {\tt households} table.
 \item The bins for each attribute are defined in the table {\tt household_characteristics_for_ht}
 (\ref{sec:household-tables-char-for-ht}).
 The bin number is an index of such bin, starting at 0. If there is no bin definition in {\tt household_characteristics_for_ht}
 for an attribute, the following default bins are assumed: $[0,1), [1, 2), [2,3), \dots$.
 \item total_number_of_households must be greater than or equal to zero.
-\item For each year in the scenario, including the start and end years, the
-entries should be complete.
-\item Complete entries for a year mean that there is a row for that year for
+\item For each year in the scenario, the
+entries should be complete. This means that there is a row for that year for
 the cross product of all specified bins.
 \item If a year is not complete, the household types that are not specified
 will not be modified.
@@ -746,30 +743,6 @@ year &race_id &persons &total_number_of_households \\
 \hline
 \end{tabular}
 
-%Using the above example of the control totals table, the following
-%households will map to the specified rows for 2005:
-
-
-%\begin{tabular}{|l|l|p{3in}|}
-%\hline
-%race_id &persons &Control Total Row \# (total number for that row) \\
-%\hline
-%1 &1 &1 (2500) \\
-%\hline
-%2 &3 &6 (2500) \\
-%\hline
-%2 &1 &4 (1200) \\
-%\hline
-%1 &6 &3 (8000) \\
-%\hline
-%\end{tabular}\\
-%\\
-%\parbox{4in}{Persons=6 is greater than max_persons_per_...=3
-%and thus this last row maps to row 3 (race_id=1, persons=3)
-%of the control totals table. } \\
-
-
-
 \subsection{The {\tt annual_relocation_rates_for_households} table}
 
 
@@ -777,12 +750,8 @@ The annual relocation rates for households, by combination of age and income of
 household. These values are the probabilities that a household with the given
 characteristics will relocate within the time span of one year. They do not
 alter from year to year. This table is only used by the Household Relocation
-Choice Model. \modelsindex
+Model. 
 
-An alternative approach would be to implement a relocation choice model
-as a choice model, and specify and estimate it using a combination of household
-and location characteristics.  This could be linked with the location choice model,
-or done as a joint model.  This remains to be done in future development.
 
 \begin{tabular}{llp{4in}}
 %\hline
@@ -804,21 +773,17 @@ probability_of_relocating & float & The probability of relocating in a year.  \\
 \begin{itemize} \tight
 \item age_min must be \textgreater{}= 0
 \item age_max must be \textgreater{} age_min or else -1
-\item incomde_min must be \textgreater{}= 0 and must be a multiple of 1000.
-\item income_max must be \textgreater{} incomde_min and a multiple of 1000 -1
+\item income_min must be \textgreater{}= 0 and must be a multiple of 10.
+\item income_max must be \textgreater{} incomde_min and a multiple of 10 -1
 (e.g. 200,999) or else -1
 \item probability_of_relocating must be \textgreater{}= 0.0 and \textless{}= 1.0
 \item The ranges must be disjoint and cover the entire space (from zero to
 infinity in the two-dimensional space produced by age and income).
-
 \end{itemize}
-\begin{center}
 
-\pagebreak
-\begin{tabular}{c}
 As an example, this table:
 
-
+\begin{center}
 \begin{tabular}{lllll}
 %\hline
 age_min &age_max &income_min &income_max &probability_of_relocating \\
@@ -831,11 +796,7 @@ age_min &age_max &income_min &income_max &probability_of_relocating \\
 \hline
 3 &-1 &4000 &4999 &0.9 \\
 \hline
-
 \end{tabular}
-
-\end{tabular}
-
 \end{center}
 
 Would produce a space like this:\\
@@ -889,29 +850,27 @@ cars & integer & Number of cars in this household  \\
 \begin{itemize} \tight
 \item household_id must be unique and greater than zero
 \item grid_id must be a valid id in the \verb|gridcells| table or zero
-\item persons must be greater than zero and less than or equal to
-absolute_max_household_size
-\item workers must be between zero and absolute_max_household_size
-\item age_of_head greater than zero and less than or equal to
-absolute_max_person_age
+\item persons must be greater than zero
+\item workers must be between zero and persons
+\item age_of_head greater than zero
 \item income must be greater than zero and less than or equal to
-absolute_max_income
+absolute_max_income defined in constants
 \item children must be greater than or equal to zero and less than or equal to
-absolute_max_household_size
+persons
 \item race_id must be a valid id in the \verb|race_names| table
-\item cars must be greater than or equal to zero and less than or equal to
-absolute_max_household_size
+\item cars must be greater than or equal to zero
 \item The total number of households in a single grid cell should be no greater
 than that cell's residential units.
 
 \end{itemize}
 
-\subsubsection{households_for_estimation () }
+\subsubsection{households_for_estimation }
 
 The schema and structure of this table is identical to the basic households
 table. It contains data on actual households, and their actual placmements in
-\verb|gridcells|, typically from survey data. It is used in the household
-location model estimation data writer process for determining model
+gridcells, buildings or zones (depending on the type of the particular application) 
+typically from survey data. It is used in the household
+location model estimation process for determining model
 coefficients.
 
 \subsection{The {\tt household_characteristics_for_ht} table}
@@ -984,18 +943,13 @@ max & integer & Maximum value for this bin for this characteristic; -1 means inf
 \item max must be greater or equal than min or else -1.
 \item Bins for each characteristic may not overlap.
 \item Bins for each characteristic should cover all values contained in the data.
-\item If a characteristic age_of_head is used, the maximum of the first bin must be larger than 14.
 \end{itemize}
-\begin{center}
 
-
-\begin{tabular}{lp{4in}}
-As an example, this table: &defines these bins:\\
-
+As an example, this table: 
 
 \begin{tabular}{lll}
 %\hline
-characteristic & min & max \\
+characteristic & min & max \\\hline
 %\hline
 income &0 &4999 \\
 %\hline
@@ -1022,9 +976,7 @@ cars &3 &-1 \\
 
 \end{tabular}
 
-
-&
-
+defines these bins:
 
 \begin{tabular}{rl}
 income:  &
@@ -1070,10 +1022,6 @@ cars:  &
 
 \end{tabular}
 
-\end{tabular}
-
-
-\end{center}
 
 The index of these bins within a characteristic is used as a bin number in
 {\tt annual_household_control_totals}. This index starts at 0. Thus,
@@ -1095,8 +1043,8 @@ cars:  &0
 
 \subsection{The {\tt race_names} table}
 
-
-One row per race.
+This table is only needed if you include race related variables to model specifications.
+It has one row per race.
 
 
 \begin{tabular}{lll}
@@ -1140,9 +1088,9 @@ travel model \modelsindex run with whatever attributes are needed.
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline zone_id & integer & Unique identifier  \\
 
-\hline travel_time_to_airport & integer & Units: Minutes  \\
+\hline travel_time_to_airport & integer & \emph{(optional) } Units: Minutes  \\
 
-\hline travel_time_to_cbd & integer & Units: Minutes  \\
+\hline travel_time_to_cbd & integer & \emph{(optional) } Units: Minutes  \\
 
 \hline faz_id & integer & \emph{(optional) } Foreign key of the FAZ (forecast
 analysis zone) containing this zone.   \\
@@ -1152,18 +1100,14 @@ analysis zone) containing this zone.   \\
 
 \begin{itemize} \tight
 \item zone_id must be unique and greater than zero
-\item travel_time_to_airport must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
-\item travel_time_to_cbd must be \textgreater{}= 0 and \textless{}= absolute_max_travel_time
-
+\item travel_time_to_airport and travel_time_to_cbd must be \textgreater{}= 0. The 
+attributes are required if there are variables in any model specification that access
+these attributes. 
 \end{itemize}
 
 
 
 \subsection{The {\tt travel_data} table}
-
-Outputs from the external travel models, \modelsindex these logsums are inputs to the
-Accessibility Model. \modelsindex
-
 
 The travel data can be interpreted as the composite utility of going from one
 place to another given the available travel modes for that household type.
@@ -1181,86 +1125,43 @@ households tend to have a more favorable person- to-car ratio than
 frequently able to combine trips, decreasing the disutility of any
 individual trip.
 
-
-\textbf{Note:}
-In order to conserve memory usage, when the logsums are read from the database
-each logsum is multiplied by 100 and then converted to a short. When used in
-the models, \modelsindex it is divided by 100 to change back to a floating point number.
-Thus the precision of each logsum is two decimal points plus round off errors
-from converting between floating point and integer representations.
-
-
-These data should be updated with the results of any travel model \modelsindex run.
+These data should be updated with the results of any travel model run.
 
 
 \begin{tabular}{llp{4in}}
 %\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
-from_zone_id & integer &  xref=''\#Zones'' ``From'' traffic analysis zone   \\
+from_zone_id & integer &  ``From'' traffic analysis zone   \\
 \hline
-to_zone_id & integer &  ``From'' traffic analysis zone   \\
+to_zone_id & integer &  ``To'' traffic analysis zone   \\
 \hline
-logsum0 & float & \emph{(Not checked by Schema Checker) }
+logsum0 & float & \emph{(optional) }
 Logsum value for 0 vehicle households, transit logsum  \\
 \hline
-logsum1 & float & \emph{(Not checked by Schema Checker) }
+logsum1 & float & \emph{(optional) }
 Logsum value for 1 vehicle households, transit logsum  \\
 \hline
-. . . & float & \emph{(Not checked by Schema Checker) }
+. . . & float &
 . . .  \\
 \hline
-logsumN & float & \emph{(Not checked by Schema Checker) }
+logsumN & float & \emph{(optional) }
 Logsum value for N+ vehicle households, transit logsum  \\
 \hline
 
 \end{tabular}
 
-
-
-The travel data table is a little different from other tables, which generally
-have a fixed number of columns, in that it can have 1..N ``logsum'' columns.
-
-\textbf{Note:} Currently, the variables that UrbanSim supports assume the
-fixed structure, logsum0 (for transit), logsum1, logsum2, and logsum3 (for
-3+ vehicle households). If you add another logsum column, for example
-logsum4, for 4+ vehicle households and take logsum3 to mean 3 vehicle
-households, the variables in the UrbanSim models will not make
-use of this, and will continue to use logsum3 as if it still stood for 3+
-vehicle households. To use more logsums the user will therefore have to
-modify the UrbanSim accessibility variables.
-
 \begin{itemize} \tight
 \item There must be a row for each combination of from_zone_id and to_zone_id
-for all zones in the zones table. For instance, if zones contains 3 zones (1,
+for all zones in the zones table. For instance, if the table \verb|zones| contains 3 zones (1,
 2, and 5) there must be at least the following 9 entries in \verb|travel_data|:
-(1,1), (1,2), (1,5), (2,1), (2,2), (2,5), (5,1), (5,2), (5,5). When the
-TravelDataMatrix is instantiated it allocates an array based on the maximum of
-from_zone_id and to_zone_id squared times the number of logsums. Later when
-this array is accessed, it is accessed by the zone id's read from the zones
-table. Thus if the numbers of zones represented in these two tables are
-inconsistent, this will cause an array access violation.
-\item There may be additional entries in \verb|travel_data| for zones for
-from_zone_id or to_zone_id values that are not zones in the \verb|zones| table.
-These are not used by the model computation.
-\item All logsum* values must be less than or equal to zero.
-\item There must be at least one logsum* column
-\item The logsum* column names must start at logsum0 and increase consecutively
-through the integers. The names must match the Perl regular expression
-/logsum\textbackslash d+/ \begin{itemize} \tight
-\item HouseholdLocationChoiceModel requires logsum0-logsum2 to be defined. If
-logsum3 is not defined then logsum2 is used for all computations that would
-otherwise have used logsum3.
-
-\end{itemize}
-
-
-\end{itemize}
-
-
-If you have positive logsum values, subtract the maximum logsum value from all
+(1,1), (1,2), (1,5), (2,1), (2,2), (2,5), (5,1), (5,2), (5,5). 
+\item All logsum* values must be less than or equal to zero. If you have positive logsum values, subtract the maximum logsum value from all
 logsums in your table. This will correctly shift the logsums so that non are
 greater than zero.
+\item Other attributes can be included, depending on the travel model used and model specifications.
+\end{itemize}
+
 
 \section{Other Database Tables}
 \label{sec:other-db-tables}
@@ -1268,9 +1169,8 @@ greater than zero.
 
 \subsection{The {\tt base_year} table}
 
-
-One row only.
-
+This table is optional. It is only used if the base year is not defined in the configuration.
+It has one row only.
 
 \begin{tabular}{lll}
 %\hline
@@ -1278,19 +1178,12 @@ One row only.
 \hline
 year & integer & Year of base data  \\
 \hline
-
 \end{tabular}
 
-\begin{itemize} \tight
-\item year must be \textgreater{}= 1900.
-
-\end{itemize}
 
 \subsection{The {\tt cities} table}
 
-
-One row only.
-
+The table is only needed if you want to create indicators on city level. 
 
 \begin{tabular}{lll}
 %\hline
@@ -1300,7 +1193,6 @@ city_id & integer & Unique identifier  \\
 \hline
 city_name & varchar & \\
 \hline
-
 \end{tabular}
 
 \begin{itemize} \tight
@@ -1310,9 +1202,7 @@ city_name & varchar & \\
 
 \subsection{The {\tt counties} table}
 
-
-One row per county.
-
+The table is only needed if you want to create indicators on county level. 
 
 \begin{tabular}{lll}
 %\hline
@@ -1330,33 +1220,11 @@ county_name & varchar & \\
 
 \end{itemize}
 
-\subsection{The {\tt input_scenario_information} table}
-
-
-Description of the scenario used to create this output data.
-
-
-\begin{tabular}{llp{3.6in}}
-%\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-urbansim_build_number & varchar & The version of UrbanSim used to create this output database.  \\
-\hline
-scenario_database_url & varchar & The scenario database used to create this output database.  \\
-\hline
-run_date & varchar &  The date and time the simulation was run (actually, when the simulation began) to create this output database.  \\
-\hline
-description & varchar & \emph{(optional) }
-Human readable description  \\
-\hline
-
-\end{tabular}
-
 
 \subsection{The {\tt scenario_information} table}
 \label{urbansim-database-tables-scenario-inforamtion}
 
-Description of the scenario.
+Description of the scenario. It has one row only.
 
 
 \begin{tabular}{llp{3.9in}}
@@ -1378,10 +1246,8 @@ parent_database_url & varchar & The name of the next database in the chain of sc
 \section{UrbanSim Constants}
 \subsection{The {\tt urbansim_constants} table}
 
-Constants needed for calculations made by the various models. \modelsindex
-
-
-A single row with one column per constant.
+Constants needed for calculations made by the various models. 
+It has a single row with one column per constant.
 
 
 \begin{tabular}{llp{3.4in}}
@@ -1392,7 +1258,7 @@ cell_size & float &  Width and height of each grid cell in units  \\
 \hline
 units & varchar &  Units of measurement, eg. ``meters'' or ``feet''  \\
 \hline
-walking_distance_circle_radius & float &  Walking distance in meters, e.g., 600 m, R in the descriptions  \\
+walking_distance_circle_radius & float &  Walking distance in meters, e.g., 600 m  \\
 \hline
 young_age & integer &  Max age for a person to be considered young  \\
 \hline
@@ -1402,9 +1268,9 @@ low_income_fraction & float &  Fraction of the total number of households consid
 \hline
 mid_income_fraction & float &  Fraction of the total number of households considered to have mid-level incomes, e.g., 0.5   \\
 \hline
-near_arterial_threshold & float &  Line distance from the centroid of a cell to an arterial for it to be considered nearby, e.g., 300. NearArterialThreshold in description.   \\
+near_arterial_threshold & float &  Line distance from the centroid of a cell to an arterial for it to be considered nearby, e.g., 300   \\
 \hline
-near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300. NearHighwayThreshold in description.   \\
+near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300 \\
 \hline
 percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. \attributesindex So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
 \hline
@@ -1416,18 +1282,18 @@ recent_years & integer &  Maximum number of years to look back when considering 
 \begin{itemize} \tight
 \item cell_size must be greater than zero
 \item units must be one of the following: meters, feet, miles, kilometers.
-\item walking_distance_circle_radius must be greater than zero and \textless{}= absolute_max_distance
-\item walking_distance_circle_radius must result in less than 250 grid cells within walking distance
-\item young_age must be greater than zero and \textless{}= absolute_max_person_age
+\item walking_distance_circle_radius must be greater than zero
+\item young_age must be greater than zero
 \item property_value_to_annual_cost_ratio must be greater than zero
 \item low_income_fraction must be between 0 and 1
 \item mid_income_fraction must be between 0 and 1
 \item mid_income_fraction + low_income_fraction must be at most 1.
-\item near_arterial_threshold must be greater than zero and \textless{}= absolute_max_distance
-\item near_highway_threshold must be greater than zero and \textless{}= absolute_max_distance
+\item near_arterial_threshold must be greater than zero
+\item near_highway_threshold must be greater than zero
 \item percent_coverage_threshold must be between zero and 100. Note that this value is exclusive; for example, if the value is set to 45 and a grid cell is 45\% covered by roads, the cell will not be considered to be ``covered'' by roads.
-\item recent_years must be \textgreater{} 0 and \textless{}= absolute_max_recent_years
-
+\item recent_years must be \textgreater{} 0
+\item Other constants can be included.
+\item Which constants are required and which are not depends on the selection of models and model specifications.
 \end{itemize}
 
 \section{Database Tables about Indicators}
