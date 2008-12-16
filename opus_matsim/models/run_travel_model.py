@@ -62,7 +62,7 @@ class RunTravelModel(AbstractTravelModel):
         
         logger.end_block()
 
-# called from the framework via main!	    
+# called from the framework via main!
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
