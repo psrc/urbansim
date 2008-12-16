@@ -58,11 +58,10 @@ class Tests(opus_unittest.OpusTestCase):
         
         run_config['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
         run_config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = os.path.join(opus_matsim.__path__[0], 'tests', 'seattle_parcel', 'base_year_data')
-
+        run_config['cache_directory'] = None
         insert_auto_generated_cache_directory_if_needed(run_config)
-        
         run_manager = RunManager(ServicesDatabaseConfiguration())
-        
+    
         run_manager.setup_new_run(cache_directory = run_config['cache_directory'],
                                   configuration = run_config)
         
@@ -71,7 +70,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         self.assert_(True)
         
-        self.cleanup_test_run()
+        #self.cleanup_test_run()
 
         
 if __name__ == "__main__":
