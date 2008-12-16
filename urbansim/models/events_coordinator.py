@@ -26,7 +26,9 @@ class EventsCoordinator(Model):
     """Update the location_set to reflect the changes after the development_event_set.
     """
     model_name = "events_coordinator"
-
+    #if there is no match, assign to default_devtype
+    default_devtype = 24
+    
     def _set_development_types_for_sqft_and_units(self, location_set, development_type_set, index=None):
         """Figure out what development type a gridcell is.
         This decision is based on the number of units and the square feet in the gridcell. 
@@ -35,8 +37,7 @@ class EventsCoordinator(Model):
         """
         #TODO this development_type assignment scheme is ad-hoc; may only work for PSRC sheme
    
-        #if there is no match, assign to default_devtype
-        default_devtype = 24
+
         
         location_set.load_dataset_if_not_loaded(attributes=["residential_units", "industrial_sqft", 
                                               "commercial_sqft", "governmental_sqft"])
@@ -59,7 +60,7 @@ class EventsCoordinator(Model):
         ind_sqft = location_set.get_attribute_by_index("industrial_sqft", index) 
         gov_sqft = location_set.get_attribute_by_index("governmental_sqft", index) 
         
-        gridcell_dev_type = zeros((index.size,)) + default_devtype # set to the default value of 24
+        gridcell_dev_type = zeros((index.size,)) + self.default_devtype # set to the default value
         
         # go through the developmenttypes and assign them to the gridcells
         development_type_set.compute_variables(["urbansim.development_type.is_in_development_type_group_residential",
@@ -102,8 +103,8 @@ class EventsCoordinator(Model):
             gridcell_dev_type[where_this_type] = ids[dt_index]
         
    
-        #if gridcell's devtype is larger than 24, keep it unchanged
-        undevelopable_index = where(location_set.get_attribute('development_type_id')[index] > default_devtype)[0]
+        #if gridcell's devtype is larger than the default, keep it unchanged
+        undevelopable_index = where(location_set.get_attribute('development_type_id')[index] > self.default_devtype)[0]
         gridcell_dev_type[undevelopable_index] = location_set.get_attribute('development_type_id')[index][undevelopable_index]
    
         location_set.set_values_of_one_attribute("development_type_id", gridcell_dev_type, index=index)
