@@ -1,24 +1,22 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString
-from PyQt4.QtXml import QDomNode
 
-
-class XmlItem:
-    def __init__(self,domDocument, node, parentOpusDataItem):
+class XmlItem(object):
+    def __init__(self, domDocument, node, parentOpusDataItem):
         self.domDocument = domDocument
         self.domNode = node
         self.parentOpusDataItem = parentOpusDataItem
@@ -35,8 +33,7 @@ class XmlItem:
                 self.childItems.append(child_item)
                 # descend into childs subtree
                 child_item.initAsRootItem()
-                
-    
+
     def refresh(self):
         '''refreshes this item and all of it's children'''
         self.childItems = []

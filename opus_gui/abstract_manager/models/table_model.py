@@ -1,31 +1,28 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
-
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL
 from PyQt4.QtGui import QTextBrowser
 
 import sys
 import operator
 
-class TableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parentWidget=None, *args): 
-        QAbstractTableModel.__init__(self, parentWidget, *args) 
+class TableModel(QAbstractTableModel):
+    def __init__(self, datain, headerdata, parentWidget=None, *args):
+        QAbstractTableModel.__init__(self, parentWidget, *args)
         self.arraydata = datain
         self.headerdata = headerdata
- 
+
     def rowCount(self, parent):
         if not self.arraydata:
             return 0
@@ -33,8 +30,8 @@ class TableModel(QAbstractTableModel):
             return len(self.arraydata)
         else:
             return 1
- 
-    def columnCount(self, parent): 
+
+    def columnCount(self, parent):
         if not self.arraydata:
             return 0
         myList = self.arraydata[0]
@@ -42,11 +39,11 @@ class TableModel(QAbstractTableModel):
             return len(myList)
         else:
             return 1
- 
-    def data(self, index, role): 
-        if not index.isValid(): 
-            return QVariant() 
-        if role == Qt.DisplayRole: 
+
+    def data(self, index, role):
+        if not index.isValid():
+            return QVariant()
+        if role == Qt.DisplayRole:
             if isinstance(self.arraydata,list):
                 if isinstance(self.arraydata[index.row()],tuple):
                     myVal = self.arraydata[index.row()][index.column()]
@@ -63,7 +60,7 @@ class TableModel(QAbstractTableModel):
         elif role == Qt.TextAlignmentRole:
             return QVariant(Qt.AlignRight)
         else:
-            return QVariant() 
+            return QVariant()
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -77,7 +74,7 @@ class TableModel(QAbstractTableModel):
         orderList.insert(0,self.ncol)
         returnsortorder = tuple(orderList)
         return returnsortorder
-        
+
     def sort(self, ncol, order):
         """Sort table by given column number.
         """
@@ -98,7 +95,7 @@ class TableModel(QAbstractTableModel):
             if isinstance(self.arraydata,list):
                 self.arraydata.reverse()
         self.emit(SIGNAL("layoutChanged()"))
-        
+
 class CatchOutput(QTextBrowser):
     class Output:
         def __init__( self, writefunc ):
@@ -108,7 +105,7 @@ class CatchOutput(QTextBrowser):
                 map( self.writefunc, line.split("\n") )
         def flush( self ):
             pass
-                
+
     def __init__( self,parentWidget ):
         QTextBrowser.__init__( self, parentWidget )
         self.output = CatchOutput.Output(self.writeResult)
