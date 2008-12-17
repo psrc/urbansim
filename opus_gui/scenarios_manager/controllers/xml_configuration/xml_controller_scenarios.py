@@ -265,7 +265,7 @@ class XmlController_Scenarios(XmlController):
         model_elements = []
         available_model_names = []
 
-        if self.xml.xml_version >= '4.2.0-beta1':
+        if self.xml.xml_version >= '4.2.0':
             elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
                                                   attribute='type', value='model')
             model_elements = [e[0] for e in elements]
@@ -303,7 +303,7 @@ class XmlController_Scenarios(XmlController):
         spawn_text = self.model.domDocument.createTextNode('Run')
         spawn.appendChild(spawn_text)
         spawn.setAttribute('choices', 'Run|Skip')
-        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0-beta1' else 'model'
+        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0' else 'model'
         spawn.setAttribute('type', type_name)
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
