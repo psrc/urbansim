@@ -56,59 +56,66 @@ Opus Directory Tree</td>
 These project files expect a particular directory layout.  The base directory for an opus installation 
 (called <tt>opus</tt> by default) should contain the following subdirectories and files:
 <pre>
-opus
-    src
-        opus_core
-        urbansim
-        (all the other Python packages)
-    docs
-        installation
-        opus_userguide.pdf
-        opus_userguide
-            (files for the html version of userguide go here)
-        tutorials
-    project_configs
-        eugene_gridcell.xml
-        seattle_parcel.xml
-        (other personal xml project configurations go here)
-    gui
+opus/
+    data/
+        eugene_gridcell/
+            baseyear_cache/
+                1980/
+                    [baseyear cache files here]
+            runs/
+                [the system will put directories for run results here]
+        seattle_parcel/
+            baseyear_cache/
+                2000/
+                    [baseyear cache files here]
+            runs/
+                [the system will put directories for run results here]
+    docs/
+        installation/
+        opus-userguide.pdf
+        opus-userguide/
+            [files for the html version of the user guide go here]
+        tutorials/
+    project_configs/
+        eugene_gridcell_default.xml
+        seattle_parcel_default.xml
+        [other personal xml project configurations go here]
+    settings/
+        database_server_configurations.xml
         gui_config.xml
-    data
-        eugene_gridcell
-            baseyear_cache
-                1980
-                    (baseyear cache files here)
-            runs
-                (the system will put directories for run results here)
-        seattle_parcel
-            baseyear_cache
-                2000
-                    (baseyear cache files here)
-            runs
-                (the system will put directories for run results here)
+    src/
+        opus_core/
+        urbansim/
+        [all the other Python packages]
 </pre>
 
-<p>A zip file containing this entire directory structure for the 4.2-dev development version, 
-including the Eugene and Seattle data, is available at 
-<a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.zip">http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.zip</a>.
-You can unzip this to a convenient location on your local disk (say your home directory).  The environment variable 
-<tt>OPUS_HOME</tt> should point to the location of the <tt>opus</tt> directory.  You can optionally have an environment 
-variable <tt>OPUS_DATA_PATH</tt> that points to the <tt>data</tt> directory; if this variable is missing it defaults to 
-<tt>OPUS_HOME</tt> plus <tt>data</tt>.  The <tt>gui</tt> subdirectory contains configuration information for the GUI itself; 
-you shouldn't need to do anything with this. The <tt>src</tt> directory is empty in the development version -- populate this 
-from the subversion repository.  (Or you can keep your source code in a different directory; it doesn't need to be at this 
-location.  Make sure your <tt>PYTHONPATH</tt> variable is correctly set to point to the source code directory, wherever 
-you put it.)  Finally, in the development version of the zip file, <tt>docs</tt> is also empty -- you can find the latest 
-documentation <a href="http://www.urbansim.org/download/#latest_dev">here</a>.  Documentation for the exact version that you have checked 
-out from subversion is in the project <tt>opus_docs</tt>.
-</p>
+<p>A zip file containing this entire directory structure,
+is available on the 
+<a href="http://www.urbansim.org/download/#latest_dev">download page</a>.
+Be sure and get the zip file corresponding to the version of the code you
+are using.<p/>
 
 <p>
-If you just want part of the Opus directory tree, there are also zip files with just the Eugene data, just the Seattle data, 
-and just the template configurations lined from the download page. (But if you download the entire directory tree you don't 
-need to download these separately.)
+You can unzip this to a convenient location on your local disk (say your
+home directory).  The environment variable
+<tt>OPUS_HOME</tt> should point to the location of the <tt>opus</tt>
+directory.  You can optionally have an environment
+variable <tt>OPUS_DATA_PATH</tt> that points to the <tt>data</tt>
+directory; if this variable is missing it defaults to
+<tt>OPUS_HOME</tt> plus <tt>data</tt>.  The <tt>settings</tt> subdirectory
+contains configuration information for database server cofigurations and for
+preference settings for the GUI; you shouldn't need to do anything with
+this. The <tt>src</tt> directory is empty in the development version --
+populate this from the subversion repository.  (Or you can keep your source
+code in a different directory; it doesn't need to be at this location.
+Make sure your <tt>PYTHONPATH</tt> variable is correctly set to point to
+the source code directory, wherever you put it.)  Finally, in the
+development version of the zip file, <tt>docs</tt> is also empty -- you can
+find the latest
+documentation <a href="http://www.urbansim.org/download/#latest_dev">here</a>.
+Documentation for the exact version that you have checked out from
+subversion is in the project <tt>opus_docs</tt>.
 </p>
-
 
 </body>
 </html>

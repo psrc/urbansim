@@ -41,10 +41,10 @@
 <!-- HEAD BANNER ENDS HERE -->
 <h1>Installing Opus &amp; UrbanSim on Windows</h1>
 
-<p>You have two options for installing Opus and UrbanSim on Windows.  The first is to
-<a href="windows_install_installer.html">use the Opus installer</a>.  This option is
+<p>You have two options for installing Opus and UrbanSim on Windows.  The first is to use the
+<a href="windows_install_installer.html">Windows Opus installer</a>.  This option is
 simpler and is recommended for most users.  The second option is to download and 
-install python and all of the relevant packages manually, as described below.</p>
+install Python and all of the relevant packages manually, as described below.</p>
 
 <p>These following instructions are for installing Opus &amp; UrbanSim on
 Windows.&nbsp; These installation directions have been tested with Windows XP
@@ -54,7 +54,7 @@ and Intel processors. </p>
 
   <li><a href="#python">Install Python</a></li>
 
-  <li><a href="#libraries">Install Python libraries</a></li>
+  <li><a href="#libraries">Install Python libraries and Qt</a></li>
 
   <li>(optional) <a href="#mysql">Install MySQL</a></li>
 
@@ -78,9 +78,9 @@ Python website</a> includes documentation, downloads, and much else.</p>
 <p>Download and install the Python 2.5.1 Windows installer from 
 <a href="http://www.python.org/download/">http://www.python.org/download/</a>.</p>
 
-<h2> <a name="libraries">Step 2: Installing Python Libraries</h2>
+<h2> <a name="libraries">Step 2: Installing Python Libraries and Qt</h2>
 
-<p>Opus and Urbansim require a number of python packages, and make optional use of 
+<p>Opus and Urbansim require a number of Python packages, and make optional use of 
 several others.  Download and install them from the
         list of <a href="python_packages.html">required, recommended and
         optional Python packages</a>.  Many packages have multiple versions.  Be sure
@@ -147,7 +147,7 @@ Administrator</a>. These are both available as binaries.</p>
 <p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
 using these projects, and a directory in which to insert the source code.  
 Download the zip file with data for the latest development version from
-<a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.zip">http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.zip</a>.
+<a href="http://www.urbansim.org/download/#latest_dev">this page</a>.
 Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
 this directory some convenient place on your local disk (perhaps in <tt>C:\</tt>).
 See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
@@ -240,9 +240,8 @@ This is the best option if you'll be doing software development. &nbsp;See <a hr
 <h2><a name="environment">Step 4: Defining Environment Variables</a>&nbsp;</h2>
 
 <p>UrbanSim requires the following environment variables.&nbsp; The first
-tells the Python interpreter where to find the Opus/UrbanSim code.  The remaining
-variables describe how to connect to MySQL -- leave those four out if you aren't
-installing MySQL.</p>
+tells the Python interpreter where to find the Opus/UrbanSim code.  
+The others tell the system where to find your cached data and configurations.</p>
 
 <ul>
 

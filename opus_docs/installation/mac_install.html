@@ -33,7 +33,9 @@
     <p>
       The following instructions are for installing Opus and UrbanSim
       on&nbsp;Mac OS X. The directions have been tested with Mac OS X
-      Leopard (10.5) with an Intel processor.
+      Leopard (10.5) with an Intel processor.  In the past we have also 
+      run UrbanSim on a Mac with a PPC processor, but haven't tested the
+      instructions recently for that processor.
     </p>
 
     <ol>
@@ -128,6 +130,15 @@
       Step 3: <a name=libraries>Installing Python Libraries and Qt</a>
     </h2>
 
+<p>Opus and Urbansim require a number of python packages, and make optional
+use of several others.  Download and install them from the list
+of <a href="python_packages.html">required, recommended and optional Python
+packages</a>.  Many packages have multiple versions, and are sometimes
+available in both dmg form and source.  If you get a dmg (disk image) file,
+be sure to pick the one for Python 2.5.  In addition to the general
+instructions at the above link, here are some additional Mac-specific
+suggestions for installing the libraries.</p>
+
     <h3>
       3.1 Prerequisites
     </h3>
@@ -152,9 +163,8 @@
     </p>
     <p>
     Unfortunately Xcode doesn't come with a Fortran compiler, which is needed to
-    build the SciPy package. You can download the GNU Fortran compiler
-    <a href="http://r.research.att.com/gfortran-4.2.3.dmg">here</a>.
-    The installation should be straightforward.
+    build the SciPy package. You can download the GNU Fortran compiler from
+    <a href="http://r.research.att.com/gfortran-4.2.3.dmg">http://r.research.att.com/gfortran-4.2.3.dmg</a>. The installation should be straightforward.
     </p>
     
     <p>
@@ -172,13 +182,17 @@
     <h3>
       3.2 Installing the required packages
     </h3>
-    <p>
-      We strongly recommend that you use Easy Install. EasyInstall is a Python
-      module that can download, build (if necessary) and install Python packages
-      with minimal user interaction. For more on Easy Install,
-      <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK
-    webpage</a>.
-    </p>
+
+<p>Generally we recommend that you use Easy Install. EasyInstall is a
+Python module that can download, build (if necessary) and install Python
+packages with minimal user interaction. For more on Easy Install,
+<a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK
+webpage</a>.  However, if EasyInstall doesn't work, or is over-eager to
+build some packages from source that are also available as dmg files, get
+these packages from the download site for that package (linked below for
+each package) or from
+<a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.
+</p>
 
     <p>
     To install it; download
@@ -224,9 +238,7 @@
     install them manually.
     </p>
     
-    <h3>3.3 Installing semi-optional packages</h3>
-    
-    <p>There are some packages that may or may not be needed depending on your setup.</p>
+    <h3>3.3 Installing optional packages</h3>
     
     <h4>Using R</h4>
     <p>
@@ -306,7 +318,7 @@
     $ cd <i>path/to/</i>qt-mac-opensource-src-<i>version</i>
     $ sudo make install </pre>
 
-    <p>Note that this build will take a while.</p>
+    <p>This build will take a while.</p>
 
     <h4>Building SIP</h4>
     <p>
@@ -327,7 +339,7 @@
     $ make
     $ sudo make install </pre>
 
-    <p>Note that this build will take a while.</p>
+    <p>Note that this build will also take a while.</p>
           
     <h2>
       Step 4: <a name="opus">Installing Opus and UrbanSim</a>
@@ -339,16 +351,15 @@
 
     <h3>4.1 Getting the sample data</h3>
 
-    <p>
-      First, get a hold of the sample data. This is provided in a zip file that
+    <p>First, get the sample data. This is provided in a zip file that
       contains both the sample data for Eugene and Seattle projects, template
       configurations for running simulations using these projects, and a directory
       in which to insert the source code.
     </p>
 
     <p>
-      Download the zip file with data for the latest development version
-      <a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.zip">here</a>.
+      Download the zip file with data for the latest development version 
+      from <a href="http://www.urbansim.org/download/#latest_dev">this page</a>.
     </p>
 
     <p>
@@ -368,10 +379,10 @@
       To get the code, the best way is to use subversion to check it out directly
       from the repository.
     </p>
-    (a note for you modeler types,
+    (A note for you modeler types:
     <a href="http://subversion.tigris.org/">subversion</a> in this context is the name
     of a version control system that nicely manages keeping track of different
-    versions of the code; we're not talking politics).&nbsp; Using subversion, it is
+    versions of the code; we're not talking politics.)&nbsp; Using subversion, it is
     easy to update to newer versions of Opus/UrbanSim and merge in any changes
     you've made. &nbsp;You can also request any particular version of the code from
     subversion. &nbsp;However, you do have to have a subversion client installed on
@@ -430,7 +441,7 @@
     <p>
       UrbanSim requires the following environment variables.&nbsp; The first tells
       the Python interpreter where to find the Opus/UrbanSim code. The second tells
-      the GUI where to find your cached data and configurations.
+      the system where to find your cached data and configurations.
     </p>
 
     <ul>
@@ -466,9 +477,10 @@
     that is via an XML file
     <tt>.MacOSX/environment.plist</tt> (note the
     leading dot) in your home directory. See
-    <a href="http://developer.apple.com/qa/qa2001/qa1067.html title=here">this
+    <a href="http://developer.apple.com/qa/qa2001/qa1067.html">this
       article</a> for information about this. Here is some sample contents of the file
-    for defining the required variables:
+    for defining the required variables.  (Change &quot;yourname&quot; to
+      your login name.)
     <pre>
       &lt;?xml version="1.0" encoding="UTF-8"?&gt;
       &lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
@@ -476,7 +488,7 @@
       &lt;plist version="1.0"&gt;
       
       &lt;key&gt;PYTHONPATH&lt;/key&gt;
-      &lt;string&gt;localhost&lt;/string&gt;
+      &lt;string&gt;/Users/yourname/opus/src&lt;/string&gt;
 
       &lt;key&gt;OPUS_HOME&lt;/key&gt;
       &lt;string&gt;/Users/yourname/opus&lt;/string&gt;

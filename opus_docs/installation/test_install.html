@@ -51,19 +51,14 @@ reasonable answer: </p>
 
 <h2>Can Python find the Opus packages?</h2>
 <p>Now test that the opus_core and urbansim packages are downloaded and that
-Python can find them by checking that you can get the package info for them:</p>
-<pre>&gt;&gt;&gt; import opus_core.opus_package_info
-&gt;&gt;&gt; opus_core.opus_package_info.package().info()
-Opus package opus_core
-Required Opus packages for opus_core: []
-Required external packages for opus_core: ['numpy&gt;=1.0.4', 'matplotlib&gt;=0.91.2', 'sqlalchemy&gt;=0.4.5', 'scipy&gt;=0.7']
-
-&gt;&gt;&gt; import urbansim.opus_package_info
-&gt;&gt;&gt; urbansim.opus_package_info.package().info()
-Opus package urbansim
-Required Opus packages for urbansim: ['opus_core']
-Required external packages for urbansim: []
-&gt;&gt;&gt;</pre>
+Python can find them.  The <tt>opus_core</tt> package also has a version number you can check:</p>
+<pre>&gt;&gt;&gt; import opus_core
+&gt;&gt;&gt; import urbansim
+&gt;&gt;&gt; opus_core.__version__
+'4.2.0'
+</pre>
+(The version number will be different of course for development versions or other stable
+releases -- see <a href="releases.html">Opus Revisions and Releases</a>.)
 
 <h2>Do the unit tests pass?</h2>
 <p>As an optional part of testing the installation, all of the base Opus
@@ -71,7 +66,7 @@ packages have unit tests that should succeed. </p>
 <p>The unit tests in each Opus package are set up to run as standalone Python
 programs: simply invoke Python on the file containing the unit test. For
 instance, to test the Python module opus_core.tests.test_sampling_toolbox.py,
-open a command shell, connect to the directory <tt>opusworkspace/opus_core/tests</tt>,
+open a command shell, connect to the directory <tt>opus/src/opus_core/tests</tt>,
 and type:</p>
 <pre>python test_sampling_toolbox.py
 .......
@@ -83,12 +78,12 @@ OK
 <p>where a period gets printed each time a test is run, perhaps along with some
 additional information, followed by a summary at
 the end.&nbsp; If you have installed Opus to a different directory, use that
-path in the command, above.</p>
+path in the above command instead.</p>
 
 <p>To run all of the unit tests defined in the opus_core package, and thus
-perform a more comprehensive test of your installation, invoke opus_core’s
-all_tests.py über-test module:</p>
-<pre>python C:\opusworkspace\opus_core\tests\all_tests.py
+perform a more comprehensive test of your installation, invoke opus_core's
+all_tests.py &#252;ber-test module:</p>
+<pre>python C:\opus\src\opus_core\tests\all_tests.py
 
 WARNING: Could not import gdal library. Skipping test_input_numpy_output_geotiff.
 

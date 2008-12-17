@@ -80,32 +80,10 @@ folder.&nbsp; Start X11 before you start Wing; otherwise Wing will complain.</li
 <h2>Debugging Externally Launched Code</h2>
 <p>Wing allows you to debug programs that are launched outside of Wing.&nbsp;
 This can be useful for Opus, since Opus sometimes uses separate processes for
-running some tasks, e.g. for running each year of a simulation.&nbsp; For more
-information, see Section 6.14 Debugging Externally Launched Code of the Wing
-(which the Wing table of contents lists, oddly, as section 3.6.14).</p>
-<p>If you are using Wing on a server where others may also be running Wing at
-the same time, you need to configure Wing so that it debugs the processes you
-started, not those someone esle started (these instructions are for Wing version
-2.1.2-1):</p>
-<ol>
-  <li>In Wing's <b>Edit</b> &gt; <b>Preferences</b> &gt; <b>Debugger</b> &gt; <b>External/Remote</b>
-    dialog box:
-    <ul>
-      <li>Check the <b>Enable Passive Listen </b>box&nbsp;</li>
-      <li>Change the <b>Server Port</b> number to a number that is unique to you
-        (do not use the default 50005).</li>
-    </ul>
-  </li>
-  <li>Record your unique Server Port, above.</li>
-  <li>Put a copy of wingdbstub.py (you can find one in C:\Program Files\Wing IDE
-    2.0) into the same directory as the program you are invoking, e.g. in your
-    urbansim/model_coordinators directory.</li>
-  <li>Modify line 62 of that wingdbstub.py to change kWingHostPort to use your
-    Server Port number.</li>
-  <li>(for Mac users) Modify line 106 of wingdbstub.py to the correct WINGHOME,
-    e.g. WINGHOME=&quot;/Applications/WingIDE.app/Contents/MacOS&quot;.</li>
-</ol>
-<p>&nbsp;</p>
+running some tasks, e.g. for running each year of a simulation.&nbsp; Information
+on this is at the bottom of the 
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/TestingAndDebugging">Testing 
+and Debugging Page</a> on the trac wiki.</p>
 
 </body>
 </html>
