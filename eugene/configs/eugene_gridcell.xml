@@ -135,7 +135,6 @@
           <development_type_groups choices="Cache|Skip" type="table">Cache</development_type_groups>
           <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
           <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
-          <employment_events choices="Cache|Skip" type="table">Cache</employment_events>
           <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
           <land_use_events choices="Cache|Skip" type="table">Skip</land_use_events>
           <plan_types choices="Cache|Skip" type="table">Cache</plan_types>
