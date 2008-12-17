@@ -52,14 +52,11 @@ def main():
     parser = OptionParser()
     
     parser.add_option("-o", "--host", dest="host", type="string",
-        help="The mysql host (default: MYSQLHOSTNAME environment variable, "
-            " then 'localhost').")
+        help="The mysql host (default: 'localhost').")
     parser.add_option("-u", "--username", dest="username", type="string",
-        help="The mysql connection password (default: MYSQLUSERNAME environment"
-            " variable, then nothing).")
+        help="The mysql connection password (default: nothing).")
     parser.add_option("-p", "--password", dest="password", type="string",
-        help="The mysql connection password (default: MYSQLPASSWORD environment"
-            " variable, then nothing).")
+        help="The mysql connection password (default: nothing).")
     parser.add_option("-n", "--nobackup", action="store_false", dest="backup", 
         help="If this flag is present, no backup tables will be generated.")
     parser.add_option("-f", "--postfix", dest="postfix", type="string",

@@ -60,10 +60,7 @@ if __name__ == '__main__':
     #CacheScenarioDatabase().run(gridcell_config)
     
     # step 2 cache water demand data by 
-    dbcon = ScenarioDatabase(hostname = os.environ['MYSQLHOSTNAME'],
-                             username = os.environ['MYSQLUSERNAME'],
-                             password = os.environ['MYSQLPASSWORD'],
-                             database_name = "water_demand_seattle2") 
+    dbcon = ScenarioDatabase(database_name = "water_demand_seattle2") 
     
     print "Create Storage object."
     from opus_core.storage_factory import StorageFactory

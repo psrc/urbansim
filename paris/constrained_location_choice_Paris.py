@@ -12,6 +12,8 @@
 # other acknowledgments.
 # 
 
+#WARNING: THIS SCRIPT IS OBSOLETE AND WILL LIKELY NOT WORK
+
 import time, os
 import MySQLdb
 from matplotlib.pylab import *

@@ -103,9 +103,6 @@ config_changes = {
         database_name = 'PSRC_2000_scenario_E_constrained_king_county',
         ),
     'estimation_database_configuration': EstimationDatabaseConfiguration(
-        host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name     = os.environ.get('MYSQLUSERNAME',''),
-        password      = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_scenario_E_constrained_king_county_output',
         ),
     'base_year':2000,

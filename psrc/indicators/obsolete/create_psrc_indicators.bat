@@ -1,3 +1,0 @@
-python create_psrc_indicators_2000_10_20_30.py
-REM python create_psrc_indicators_2000.py
-python create_psrc_indicators_2030.py
