@@ -12,6 +12,16 @@
 # other acknowledgments.
 #
 
+#######
+# In a command line, you can estimate using this command:
+#  
+# python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=household_location_choice_model -s eugene.estimation.HLCM_specification
+#
+# see 
+# python urbansim/tools/start_estimation.py --help
+# for other options
+#######
+
 specification = {}
 #
 # ############################# Residential ##############################

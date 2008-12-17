@@ -22,7 +22,10 @@
 # Home-based
 # python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=employment_location_choice_model --group=home_based -s eugene.estimation.ELCM_specification
 #
-
+# see 
+# python urbansim/tools/start_estimation.py --help
+# for other options
+#######
 
 specification ={}
 

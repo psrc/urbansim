@@ -12,6 +12,16 @@
 # other acknowledgments.
 # 
 
+#######
+# In a command line, you can estimate using this command:
+#  
+# python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=land_price_model -s eugene.estimation.LPM_specification
+#
+# see 
+# python urbansim/tools/start_estimation.py --help
+# for other options
+#######
+
 specification={
 -2:
 [
