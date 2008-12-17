@@ -743,7 +743,13 @@ financial agents then pick proposals to finance with random
 utility maximization process.  The concept of development
 template is borrowed from that of ``standard'' product type
 in real estate \cite{Hooper1999} and urban design
-literature\cite{Song2007}.  We assume the financial agents'
+literature\cite{Song2007}.  We use development templates to
+describe the mix of building types and intensities of development,
+and other characteristics such as approximate scale of project,
+and fraction of land lost as 'overhead', for example for
+parking or for internal streets and rights of way in a subdivision. 
+
+We assume the financial agents'
 behavior is motivated by profit (they attempt to maximize
 their profits), within constraints imposed by the physical
 environment and public land use regulations.  The main
@@ -755,9 +761,20 @@ relevant at those sites.
 We derive a sampling process that is consistent with random
 utility maximization framework \cite{Wang2008}.
 
+The urban area is divided into infinite number of
+  non-overlapping development sites, indexed by
+  $i=1,\ldots,I$.  Each site has a bundle of characteristics
+  $x_i$, such as the market value of the property, lot size,
+  and development regulation. A predefined set of real
+  estate development templates $j=1,\ldots,J$, which categorized the
+  development patterns in an urban area and can be as
+  detailed as needed (though with some computational cost for more detail). 
+  Each development template is characterized by attributes $y_j$.
+
+
 %% shall we keep these formula in the manual?
 Define a proposed development project $D_{ij}$ as the
-combination of development site $i$ and product type $j$
+combination of development site $i$ and development template $j$
 when development constraints allow such a development
 project at this site:
 \begin{eqnarray}
@@ -769,12 +786,12 @@ characteristics to a $K$-dimension vector $q_i$ that
 constrains development, while $\mathbf{Q}_j(\cdot)$
 calculates this $K$-dimension measure $qq_j$ for the
 proposed development.  A combination of development site $i$
-and product type $j$ is in the proposed development project
-set $D$ only when the product type is allowed at the site
+and development template $j$ is in the proposed development project
+set $D$ only when the development template is allowed at the site
 for each dimension of the constraints $q_{ik} \ge qq_{jk},
 \mbox{for} \; k=1,\ldots, K$.
 
-Given a combination of development site $i$ and product type
+Given a combination of development site $i$ and development template
 $j$ in $D$, we can calculate the expected hedonic price and
 construction cost of the proposed development:
 \begin{eqnarray}
