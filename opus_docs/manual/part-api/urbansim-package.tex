@@ -80,7 +80,7 @@ county* & counties & county_id
 \\
 development_constraint & development_constraints & constraint_id 
 \\ 
-development_event & development_events_exogenous & grid_id, scheduled_year 
+development_event & development_events & grid_id, scheduled_year 
 \\
 development_event_history & development_event_history & grid_id, scheduled_year 
 \\
@@ -1688,7 +1688,7 @@ processing (e.g. by the Events Coordinator).
 {\it Input}:
 \begin{description}
 \item[storage] - An object of class \class{Storage} that holds the exogeneous events.
-\item[in_table] - Table name of the events. Default is 'development_events_exogenous' 
+\item[in_table] - Table name of the events. Default is 'development_events'.
 (see Section~\ref{sec:db-tables-development-events-exogenous} for the table structure).
 \item[out_table] -  Table name of writing the events. The argument is not used in the model.
 \end{description}
@@ -1810,7 +1810,8 @@ to/by/from \verb|location_set|. It updates the location attributes
 given by 'units' of \verb|model_configuration|. The type of change can be given 
 in event set attribute 'type_of_change' as 'A' for add, 'R' for replace and 'D' for delete.
 The default type of change is 'A'. The method also determines a new development type 
-for each location depending on the existing development. 
+for each location depending on the existing development and the definition of development types 
+given by the \verb|development_type_set| (see Section~\ref{sec:development-tables}). 
  
 
 {\it Output}:~\\[1mm]

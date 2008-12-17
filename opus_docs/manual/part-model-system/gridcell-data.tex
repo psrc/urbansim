@@ -327,7 +327,7 @@ group_id & integer & Index into the \verb|development_type_groups| table  \\
 \label{sec:db-tables-events}
 
 These tables represent events in the real estate development. Events that are scheduled 
-to take place in the future are stored in the {\tt development_events_exogenous} table,
+to take place in the future are stored in the {\tt development_events} table,
 events that occured prior to the base year are stored in the {\tt development_event_history} table.
 
 Both tables can contain columns of the pattern ``{\it units}_{\tt change_type}''. Each value determines
@@ -339,7 +339,7 @@ a type of change for that type of {\it units}. Possible values are:
 \end{itemize}
 If this column is missing for a certain type of units, the default value is ``A'' for all events.
 
-\subsection{The {\tt development_events_exogenous} table}
+\subsection{The {\tt development_events} table}
 \label{sec:db-tables-development-events-exogenous}
 
 These development events are changes to grid cells which are scheduled to take
@@ -410,8 +410,8 @@ and for ``unrolling'' the baseyear to create versions of the gridcell data for
 prior years.
 
 This table uses a subset of the schema used for
-\verb|development_events_exogenous|.  It
-can be considered an extension back in time of the \verb|development_events_exogenous|
+\verb|development_events|.  It
+can be considered an extension back in time of the \verb|development_events|
 table, though with additional constraints, specified below.
 
 \begin{tabular}{p{2in}lp{3.5in}}
