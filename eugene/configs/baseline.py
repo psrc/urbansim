@@ -111,7 +111,6 @@ class Baseline(AbstractUrbansimConfiguration):
                     'employment_adhoc_sector_group_definitions',
                     'employment_adhoc_sector_groups',
                     'employment_sectors',
-                    #'land_use_events',
                     'plan_types',
                     'plan_type_groups',
                     'plan_type_group_definitions',                    

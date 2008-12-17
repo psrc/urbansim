@@ -90,7 +90,6 @@ my_configuration_general = {
             'employment_adhoc_sector_group_definitions',
             'employment_adhoc_sector_groups',
             'employment_sectors',
-            'land_use_events',
             'plan_types',
             'race_names',
             'target_vacancies',
