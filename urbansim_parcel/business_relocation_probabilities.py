@@ -12,30 +12,8 @@
 # other acknowledgments.
 #
 
-from urbansim.datasets.rate_dataset import RateDataset
-from opus_core.probabilities import Probabilities
-from numpy import array, int32
+from urbansim.relocation_probabilities import relocation_probabilities
 
-
-class business_relocation_probabilities(Probabilities):
-    def run(self, utilities=None, resources=None):
-        """ Return a 2D probability array obtained from a RateSet. 'resources' must contain
-        an entry 'rate' (a RateSet dataset) and an entry "job" (a JobSet dataset)
-        that is able to provide an attribute 'sector_id'. Otherwise the method
-        returns None.
-        """
-        rates = resources.get("rate", None)
-        if (rates == None) or (not isinstance(rates, RateDataset)):
-            return None
-        sector_prob = rates.get_attribute("business_relocation_probability")
-
-        business = resources.get("business", None)
-        if business == None:
-            return None
-#        rates.make_rates_array_if_not_made()
-        probability = array(map(lambda x: sector_prob[rates.get_id_index(x)], \
-            business.get_attribute("building_use_id").astype(int32)))
-        return probability
-
-    def get_dependent_datasets(self):
-        return ["rate"]
+class business_relocation_probabilities(relocation_probabilities):
+    agent_set = 'business'
+    rate_set = 'business_relocation_rate'

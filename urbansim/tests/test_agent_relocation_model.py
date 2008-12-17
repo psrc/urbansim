@@ -25,7 +25,11 @@ from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.job_dataset import JobDataset
-from urbansim.datasets.rate_dataset import RateDataset
+
+#from urbansim.datasets.rate_dataset import RateDataset
+from urbansim.datasets.household_relocation_rate_dataset import HouseholdRelocationRateDataset
+from urbansim.datasets.job_relocation_rate_dataset import JobRelocationRateDataset
+
 from opus_core.storage_factory import StorageFactory
 
 
@@ -61,7 +65,7 @@ class Tests(StochasticTestCase):
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         
         storage.write_table(table_name = 'rates', table_data =self.annual_relocation_rates_for_households_data)            
-        hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what="households")
+        hh_rateset = HouseholdRelocationRateDataset(in_storage=storage, in_table_name='rates')
 
         hrm_resources = Resources({"rate":hh_rateset})
 
@@ -101,9 +105,9 @@ class Tests(StochasticTestCase):
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         
         storage.write_table(table_name = 'rates', table_data =self.annual_relocation_rates_for_households_data)
-        hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what="households")
+        hh_rateset = HouseholdRelocationRateDataset(in_storage=storage, in_table_name='rates')
 
-        hrm_resources = Resources({"rate":hh_rateset})
+        hrm_resources = Resources({"household_relocation_rate":hh_rateset})
 
         hrm = HouseholdRelocationModelCreator().get_model(debuglevel=1)
         hrm_relocation_results = hrm.run(hh_set,resources=hrm_resources)
@@ -125,9 +129,9 @@ class Tests(StochasticTestCase):
         storage.write_table(table_name = 'rates', table_data = annual_relocation_rates_for_households_data)
       
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
-        hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what='households')
+        hh_rateset = HouseholdRelocationRateDataset(in_storage=storage, in_table_name='rates')
 
-        hrm_resources = Resources({'rate':hh_rateset})
+        hrm_resources = Resources({'household_relocation_rate':hh_rateset})
 
         hrm = HouseholdRelocationModelCreator().get_model(debuglevel=1)
         hrm_relocation_results = hrm.run(hh_set,resources=hrm_resources)
@@ -149,9 +153,9 @@ class Tests(StochasticTestCase):
         storage.write_table(table_name = 'rates', table_data =annual_relocation_rates_for_households_data)
         
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
-        hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what='households')
+        hh_rateset = HouseholdRelocationRateDataset(in_storage=storage, in_table_name='rates')
 
-        hrm_resources = Resources({'rate':hh_rateset})
+        hrm_resources = Resources({'household_relocation_rate':hh_rateset})
 
         hrm = HouseholdRelocationModelCreator().get_model(debuglevel=1)
         
@@ -219,11 +223,11 @@ class Tests(StochasticTestCase):
                 'job_relocation_probability':array([0,0.5]),
                 }
             )
-        rates = RateDataset(in_storage=storage, in_table_name='rates', what='jobs')
+        rates = JobRelocationRateDataset(in_storage=storage, in_table_name='rates')
         
         # run model
         model = EmploymentRelocationModelCreator().get_model(debuglevel=0)
-        hrm_resources = Resources({"rate":rates})
+        hrm_resources = Resources({"job_relocation_rate":rates})
                     
         # get results from one run
         movers_indices = model.run(jobs, resources = hrm_resources)
@@ -279,9 +283,9 @@ class Tests(StochasticTestCase):
             )
 
         jobs_set = JobDataset(in_storage=storage, in_table_name='jobs')
-        jobs_rateset = RateDataset(in_storage=storage, in_table_name='rates', what='jobs')
+        jobs_rateset = JobRelocationRateDataset(in_storage=storage, in_table_name='rates')
 
-        erm_resources = Resources({"rate":jobs_rateset})
+        erm_resources = Resources({"job_relocation_rate":jobs_rateset})
 
         erm = EmploymentRelocationModelCreator().get_model(debuglevel=1)
         def run_model():

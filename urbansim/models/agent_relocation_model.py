@@ -64,20 +64,27 @@ class AgentRelocationModel(Model):
         self.debug.print_debug("Number of movers: " + str(movers_indices.size), 2)
         return movers_indices
 
-    def prepare_for_run(self, what=None, rate_storage=None, rate_table=None, sample_rates=False,
-                        n=100, multiplicator=1, flush_rates=True):
-        from urbansim.datasets.rate_dataset import RateDataset
+    def prepare_for_run(self, what=None, rate_dataset_name=None, rate_storage=None, rate_table=None, 
+                        sample_rates=False, n=100, multiplicator=1, flush_rates=True):
+        from opus_core.datasets.dataset_factory import DatasetFactory
+        from opus_core.session_configuration import SessionConfiguration
+        if not rate_dataset_name:
+            rate_dataset_name = DatasetFactory().dataset_name_for_table(rate_table)
+        
+        rates = DatasetFactory().search_for_dataset(rate_dataset_name,
+                                                    package_order=SessionConfiguration().package_order,
+                                                    arguments={'in_storage':rate_storage, 
+                                                               'in_table_name':rate_table,
+                                                           }
+                                                    )
         resources = Resources()
-        if (rate_storage is not None) and (rate_table is not None):
-            rates = RateDataset(what=what, in_storage=rate_storage,
-                             in_table_name=rate_table)
-            if sample_rates:
-                cache_storage=None
-                if flush_rates:
-                    cache_storage=rate_storage
-                rates.sample_rates(n=n, cache_storage=cache_storage,
-                                    multiplicator=multiplicator)
-            resources.merge({rates.get_dataset_name():rates})
+        if sample_rates:
+            cache_storage=None
+            if flush_rates:
+                cache_storage=rate_storage
+            rates.sample_rates(n=n, cache_storage=cache_storage,
+                                multiplicator=multiplicator)
+        resources.merge({rate_dataset_name:rates})
         return resources
 
 

@@ -1,5 +1,5 @@
 #
-# Opus software. Copyright (C) 2005-2008 University of Washington
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
 #
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -12,9 +12,12 @@
 # other acknowledgments.
 #
 
-from urbansim.relocation_probabilities import relocation_probabilities
+from rate_dataset import RateDataset
 
-class employment_relocation_probabilities(relocation_probabilities):
-    agent_set = 'job'
-    rate_set = 'job_relocation_rate'
-    
+class BusinessRelocationRateDataset(RateDataset):
+
+    id_name_default = ["sector_id"]
+    dataset_name = "business_relocation_rate"
+    probability_attribute = "business_relocation_probability"
+    in_table_name_default = "annual_relocation_rates_for_business"
+    out_table_name_default = "annual_relocation_rates_for_business"
