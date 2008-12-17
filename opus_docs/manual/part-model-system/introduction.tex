@@ -14,7 +14,7 @@ structures used in it.  Until 2005, most applications used a geographic framewor
 %\label{fig:puget-sound}
 %\end{figure}
 
-
+\subsection{Gridcells}
 The gridcell-based approach to developing the data for UrbanSim, as the name suggests, begins with the decision of a resolution to use for a grid to overlay the study area.  There is no definitively correct grid cell resolution, and a pragmatic choice of 150 meters by 150 meters was chosen in early UrbanSim
 applications, mainly as a compromise between the high level of resolution desired, and the increased computational demands made by higher resolution data.
 
@@ -67,6 +67,7 @@ from general plans, since those are also based on polygons, and in fact, apply t
 \end{figure}
 
 
+\subsection{Parcels}
 
 
 To address some of the limitations of the gridcell-based data structure, recent development of UrbanSim has adopted a data structure based on parcels.
@@ -83,6 +84,7 @@ are shown in Figure \ref{fig:flexible-geographies}, and make clear that only the
 %\caption{Core of Parcel-based UrbanSim Data Model} \label{fig:data-model-2}
 %\end{figure*}
 
+\subsection{Zones}
 
 Given the available flexibility in configuring models in OPUS, an alternative data structure can be readily substituted for parcel or gridcell based data.  For example, locations could be defined by zones used in the travel model, to make them consistent with current-generation zone-based travel models.  This approach can also be used to create a rather simple model system using less geographic detail.  For example, an application in Paris used Communes, or administrative areas roughly equivalent to traffic analysis zones in number (approximately 1300).
 
