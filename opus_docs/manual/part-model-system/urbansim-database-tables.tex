@@ -58,11 +58,10 @@ own databases using local data.  But it became clear that the boundary between d
 data that was optional was not at all clear to users.
 
 Some data in a standard UrbanSim application database is generic, and some contains data used to store
-overall system information for an application, for example \emph{urbansim_constants}.  This table, developed
-for use with the gridcell versions of UrbanSim, contains information such as the point of origin of the grid,
-its cell size, thresholds to be considered for spatial queries of what is to be considered 'within-walking-distance'.
-In the more recent parcel application of UrbanSim, this table is still retained, mainly because a grid can still
-be used with a parcel model system, by cross-referencing parcels and gridcells, and some variables still can
+overall system information for an application. The
+\emph{urbansim_constants} table is an example of the latter.  This
+table, developed for use with the gridcell versions of UrbanSim, contains information such as the point of origin of the grid, its cell size, thresholds to be considered for spatial queries of what is to be considered 'within-walking-distance'. In the more recent parcel application of UrbanSim, this table is still retained, mainly because a grid can still
+be used with a parcel model system, by cross-referencing parcels and gridcells, and some variables still
 make use of the spatial queries.  So in this case, the table is needed, even though it may not be used specifically
 by a model.  Dependencies of this sort will gradually be eliminated from the system, as all of these kinds of
 configurations will be accommodated within the GUI.
@@ -1295,56 +1294,56 @@ recent_years & integer &  Maximum number of years to look back when considering 
 \item Which constants are required and which are not depends on the selection of models and model specifications.
 \end{itemize}
 
-\section{Database Tables about Indicators}
-
-
-The following tables contain cached values for the indicator computations.
-There is a separate table for each indicator/geography type pair. For a given
-indicator and geography type, nnn is the short name for the indicator, and ggg
-is the geography_type_title for the geography type. The short name for the
-indicator is the same as its xml file name (just the name, not the .xml
-extension). For example, cache_employment_region contains cached values for the
-employment in the 'region' geography, while cache_employment_counties contains
-cached values for the employment in the geography named 'counties'. Note that
-these cache tables have exactly the same layout as the 'result' table defined
-by the SQL to compute each indicator.
-
-\subsubsection{cache_nnn_ggg}
-
-For indicators without subtypes the table is as follows:
-
-\begin{tabular}{llp{3.9in}}
-%\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-year & integer & Year  \\
-\hline
-geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
-\hline
-indicator_value & double & The value of the indicators for the given year/geography_id pair.  \\
-\hline
-
-\end{tabular}
-
-\subsubsection{cache_nnn_ggg}
-
-For indicators with subtypes, the table is the same except for an additional
-column for the subtype:
-
-\begin{tabular}{llp{3.9in}}
-%\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-year & integer & Year  \\
-\hline
-geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
-\hline
-subtype & integer & Subtype  \\
-\hline
-indicator_value & double & The value of the indicators for the given year/geography_id/subtype tuple.  \\
-\hline
-
-\end{tabular}
+% \section{Database Tables about Indicators}
+% 
+% 
+% The following tables contain cached values for the indicator computations.
+% There is a separate table for each indicator/geography type pair. For a given
+% indicator and geography type, nnn is the short name for the indicator, and ggg
+% is the geography_type_title for the geography type. The short name for the
+% indicator is the same as its xml file name (just the name, not the .xml
+% extension). For example, cache_employment_region contains cached values for the
+% employment in the 'region' geography, while cache_employment_counties contains
+% cached values for the employment in the geography named 'counties'. Note that
+% these cache tables have exactly the same layout as the 'result' table defined
+% by the SQL to compute each indicator.
+% 
+% \subsubsection{cache_nnn_ggg}
+% 
+% For indicators without subtypes the table is as follows:
+% 
+% \begin{tabular}{llp{3.9in}}
+% %\hline
+% \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+% \hline
+% year & integer & Year  \\
+% \hline
+% geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
+% \hline
+% indicator_value & double & The value of the indicators for the given year/geography_id pair.  \\
+% \hline
+% 
+% \end{tabular}
+% 
+% \subsubsection{cache_nnn_ggg}
+% 
+% For indicators with subtypes, the table is the same except for an additional
+% column for the subtype:
+% 
+% \begin{tabular}{llp{3.9in}}
+% %\hline
+% \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+% \hline
+% year & integer & Year  \\
+% \hline
+% geography_id & integer & The unique identifier for a particular polygon of the geography with this geography_type_title.  \\
+% \hline
+% subtype & integer & Subtype  \\
+% \hline
+% indicator_value & double & The value of the indicators for the given year/geography_id/subtype tuple.  \\
+% \hline
+% 
+% \end{tabular}
 
 
 %%% Local Variables:
