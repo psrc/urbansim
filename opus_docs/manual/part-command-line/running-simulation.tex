@@ -10,40 +10,35 @@
 \label{part:running-simulation}
 %
 \section{Running a Simulation}
-% 
-\subsection{Run Management}
-\label{sec:run-manager}
-%
-An alternative way of running a simulation from the GUI (as described in Chapter~\ref{chap:scenarios-manager})
-is to launch it from a command line.
-Opus contains a set of scripts that simplify the
-process of creating a base year cache, starting, and restarting a set of simulation runs.
 
-These scripts are a set of command line applications, or tools, in the
-\file{opus_core/tools} directory.  They use a database as the central
-repository (by default sqlite) for coordination and context infomation for run managment, by
-default called \verb|services|.  If you don't have this database, create it
-(you need to do this from within the \file{opus_core/tools}
-directory):
-\pythonindex
-\begin{verbatim}
-python create_services_database.py
-\end{verbatim}
-This creates the database named \verb|services| on the \verb|localhost|
-database server using the user name and password specified in the
-\verb|MYSQLUSERNAME| and \verb|MYSQLPASSWORD| environment variables. To use a
-different host for the database server, include the \verb|--hostname|
-option. To use a different database name, include the \verb|--database|
-option:
-\pythonindex
-\begin{verbatim}
-python create_services_database.py --hostname myhost.mydomain --database
-myservices
-\end{verbatim}
+An alternative way of running a simulation from the GUI (as described
+in Chapter~\ref{chap:scenarios-manager}) is to launch it from a command
+line. Opus contains a set of scripts that simplify the process of
+creating a base year cache, starting, and restarting a set of
+simulation runs. These scripts are a set of command line applications,
+or tools, in the \file{opus_core/tools} directory. This sectiondescribes how to run a simulation using these tools. 
 
 All scripts described below print a help message when called with the
 \verb|-h| or \verb|--help| option.
 
+% 
+\subsection{Run Management}
+\label{sec:run-manager}
+
+\subsubsection{The Services Database}
+
+Before we begin, it is important to note that the Opus framework uses a
+database to store information about the simulations that have been
+run. This database is by default called \verb|services|. 
+
+The default database engine, hostname and other necessary information
+for the services database is set in
+``[OPUS_HOME]/settings/database_server_configurations.xml". By default,
+it will use sqlite (a database management system that just uses local
+files). You can, however, update the appropriate settings in the XML
+to configure the services database to use a mysql, postgres, or mssql
+server. The services database is created automatically on the
+specified database server by Opus if it does not yet exist when it is needed.
 \subsubsection{Create Baseyear Cache}
 \label{sec:run-manager-baseyearcache}
 %
