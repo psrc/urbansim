@@ -469,7 +469,9 @@ developer can create on a particular grid cell.  Each row defines one rule.
 Development is not allowed on any gridcell that matches any of these rules.  A
 gridcell matches a rule if the attribute values for the gridcell match all of
 the values in the rule (rule columns with the value ``-1'' are ignored when
-determining a match).
+determining a match). The table is used by the Development Project Location Choice Model 
+(see Section~\ref{sec:development-project-lcm}) when computing the amount of allowed development 
+in grid cells.
 
 \begin{tabular}{llp{3.5in}}
 
@@ -478,10 +480,11 @@ determining a match).
 
 \hline constraint_id & integer & Unique rule identification number  \\
 
-\hline \emph{name-of-a-gridcell-attribute} & integer or float &  Value for this
+\hline \emph{name-of-a-gridcell-attribute-1} & integer or float &  Value for this
 attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
-\emph{don't care}) \\
-
+\emph{don't care}) \\\hline
+... & ... & ... \\\hline
+\emph{name-of-a-gridcell-attribute-N} & integer or float & \\
 \hline min_units & integer & Minimum number of residential units for a gridcell.
 A development project may only be placed on this gridcell if it will result in
 this gridcell containing at least this number of residential units. \\
@@ -517,7 +520,7 @@ result in this gridcell containing at most this number of industrial sqft. \\
 \tight
 \item constraint_id must be a unique positive integer.
 
-\item \emph{name-of-a-gridcell-attribute} is the name of a gridcell attribute,
+\item \emph{name-of-a-gridcell-attribute-[1...N]} are names of a gridcell attributes,
 e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
 names is determined by the set of numeric column names on the gridcell table.
 
@@ -528,11 +531,12 @@ equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
 
 \section{Database Tables About Target Vacancies}
 
-\subsection{The {\tt target_vacancies} table used in Gridcell-based Applications}
+\subsection{The {\tt target_vacancies} table}
 \label{sec:table-target-vacancies-gridcell}
 
-The \verb|target_vacancies| table is used by the development project transition
-model~(\ref{sec:development-project-transition-model}). It gives the model information about acceptable vacancy rates. The table
+This version of \verb|target_vacancies| table is used by the development project transition
+model~(\ref{sec:development-project-transition-model}) in gridcell-based applications. 
+It gives the model information about acceptable vacancy rates. The table
 has one row for each year the simulation runs. Each row gives target values for
 the residential and nonresidential vacancies for that year, which are defined
 below.  Only data after the base year is used.
@@ -558,7 +562,6 @@ nonresidential sqft to total nonresidential sqft  \\
 \begin{itemize}
 \tight
 \item There must be exactly one row for each year to be simulated.
-\item target_total_residential_vacancy must be between 0 and 1, inclusive.
-\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\item target_total_residential_vacancy and target_total_non_residential_vacancy must be between 0 and 1, inclusive.
 \end{itemize}
 

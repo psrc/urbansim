@@ -19,16 +19,16 @@ city\_id & integer & id number for the city that the parcel's centroid falls wit
 county\_id & integer & id number for the county that the parcel's centroid falls within\\ \hline
 plan\_type\_id & integer & id number that identifies the parcel's plan type\\ \hline
 parcel\_sqft & integer & square feet of the parcel as an integer \\ \hline
-assessor\_parcel\_id & integer & original tax assessor's id number\\ \hline
-tax\_exempt\_flag & integer & (optional) identifies parcel as tax exempt or not\\ \hline
+assessor\_parcel\_id & integer & \emph{(optional)} original tax assessor's id number\\ \hline
+tax\_exempt\_flag & integer & \emph{(optional)} identifies parcel as tax exempt or not\\ \hline
 land\_value & long & value of the land from the assessor \\ \hline
-is\_in\_flood\_plain & integer & (optional) indicates whether or not a parcel is in a flood plain\\ \hline
-is\_on\_steep\_slope & integer & (optional) indicates whether or not a parcel is on a steep slope\\ \hline
-is\_in\_fault\_zone & integer & (optional) indicates whether or not a parcel is in a fault zone\\ \hline
+is\_in\_flood\_plain & integer & \emph{(optional)} indicates whether or not a parcel is in a flood plain\\ \hline
+is\_on\_steep\_slope & integer & \emph{(optional)} indicates whether or not a parcel is on a steep slope\\ \hline
+is\_in\_fault\_zone & integer & \emph{(optional)} indicates whether or not a parcel is in a fault zone\\ \hline
 centroid\_x & long & state plane x coordinate of parcel centroid \\ \hline
 centroid\_y & long & state plane y coordinate of parcel centroid\\ \hline
-census\_block\_id & integer &  (optional) id number for the census block that the parcel's centroid falls within\\ \hline
-raz\_id & integer & (optional) id number for the raz that the parcel's centroid falls within\\ \hline
+census\_block\_id & integer &  \emph{(optional)} id number for the census block that the parcel's centroid falls within\\ \hline
+raz\_id & integer & \emph{(optional)} id number for the raz that the parcel's centroid falls within\\ \hline
 \end{tabular}
 
 \section{Database Tables about Buildings}
@@ -47,17 +47,34 @@ should substitute gridcell id or zone id.
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 \hline
 building\_id & integer & unique identifier \\ \hline
-building\_quality\_id & integer & identified for building quality\\ \hline
-building\_type\_id & integer & identifier for building type\\ \hline
+building\_quality\_id & integer & \emph{(optional)} identified for building quality\\ \hline
+building\_type\_id & integer & identifier for building type; valid id in the \verb|building_types| table\\ \hline
 improvement\_value & long & value of building (replacement cost)\\ \hline
 land\_area & long & land area (usually in sqft) associated with building, includes footprint plus associated area such as landscaping and parking.\\ \hline
 non\_residential\_sqft & long & non-residential square footage of building\\ \hline 
 parcel\_id & integer & identifier of parcel in which building is located\\ \hline
 residential\_units & integer & number of residential units in the building\\ \hline
 sqft\_per\_unit & integer & number of residential square feet per unit in the building\\ \hline
-stories & integer & number of stories in the building\\ \hline
-tax\_exempt & integer & indicator for whether building is tax-exempt\\ \hline
+stories & integer & \emph{(optional)} number of stories in the building\\ \hline
+tax\_exempt & integer & \emph{(optional)} indicator for whether building is tax-exempt\\ \hline
 year\_built & integer & year of construction of the building\\ \hline
+\end{tabular}
+
+
+\subsection{The {\tt building_types} table}
+%
+This is a table about available types of buildings.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+building\_type\_id & integer & unique identifier \\ \hline
+building\_type\_name & varchar & name of the building type \\\hline
+description & varchar & \emph{(optional)} description of the building type \\\hline
+generic_building_type_id & integer & \emph{(optional)} identifier for generic building type \\\hline
+generic_building_type_description & varchar & \emph{(optional)}\\\hline
+is_residential & boolean & 1 if this building type is residential, 0 otherwise \\\hline
+unit_name & varchar & name of units for this building type, e.g. 'commercial_sqft' or 'residential_units' \\\hline
 \end{tabular}
 
 
@@ -66,7 +83,11 @@ year\_built & integer & year of construction of the building\\ \hline
 \subsection{The {\tt development\_project\_proposals} table}
 \label{sec:db-tables-development-project-proposals}
 
-A record in this table, when combined with one or more records in the development\_project\_components table, represents a "known" development project. This table would be populated with projects known to be coming in the future. This table would also be populated during a simulation run for projects that are not yet complete, in other words, projects that are in the middle of developing according to their velocity function. It is entirely possible for a simulation run to happen without pre-populating this table with records.
+A record in this table, when combined with one or more records in the development\_project\_components table, represents a "known" development project. 
+This table would be populated with projects known to be coming in the future. 
+This table would also be populated during a simulation run for projects that are not yet complete, in other words, 
+projects that are in the middle of developing according to their velocity function. 
+It is entirely possible for a simulation run to happen without pre-populating this table with records.
 
 \begin{tabular}{p{2in}lp{3.5in}}
 %\hline
@@ -89,7 +110,13 @@ built\_units\_to\_date & integer & the number of residential units built in the 
 \subsection{The {\tt development\_project\_proposal\_components} table}
 \label{sec:db-tables-development-project-proposal-components}
 
-A record in this table represents a portion of a development project identified in the development\_project\_proposals table. In some sense a single record here is meant to represent a single building, or part of a building. Therefore individual records here do not necessarily represent single free-standing buildings, although they are mostly treated that way. This table allows for the flexible representation of mixed uses to occur on a parcel. Examples include multiple free-standing buildings with different uses, a single building with multiple uses inside of it (a single record for each use), or further complex representations of mixed use.
+A record in this table represents a portion of a development project identified in the development\_project\_proposals table. 
+In some sense a single record here is meant to represent a single building, or part of a building. 
+Therefore individual records here do not necessarily represent single free-standing buildings, 
+although they are mostly treated that way. This table allows for the flexible representation of mixed uses to occur on a parcel. 
+Examples include multiple free-standing buildings with different uses, a single building with multiple uses inside of it 
+(a single record for each use), or further complex representations of mixed use. This table is not required 
+by UrbanSim, but it is created by the developer model and cached every simulation year. 
 
 \begin{tabular}{p{2.1in}lp{3.3in}}
 %\hline
@@ -97,7 +124,7 @@ A record in this table represents a portion of a development project identified 
 \hline
 development\_project\_component\_id & integer & unique identifier\\ \hline
 development\_project\_id & integer & identifies which development the project belongs to\\ \hline
-velocity\_function\_id & integer & identifies the rate or function by which the project develops over time\\ hline
+velocity\_function\_id & integer & identifies the rate or function by which the project develops over time\\ \hline
 percent\_of\_building\_sqft & integer & identifies the percentage of the building that this component takes up.
 100\% would indicate a free-standing building with a single use, and several records with percent\_of\_building\_sqft 
 adding up to 100\% would indicate a multiple use single building. \\ \hline
@@ -131,7 +158,11 @@ development\_type & integer & a readable name that describes the type of develop
 \subsection{The {\tt development\_template\_components} table}
 \label{sec:db-tables-development-template-components}
 
-This table is roughly equivalent to the development\_projects table and represents buildings or parts of buildings to be included in a particular development template.  By breaking development templates into components, development project templates can be configured as hierarchies or combinations of building blocks, providing a very flexible means of representing a wide variety of development types.  Note that the templates can be generated using real or hypothetical data, since they will be compared to regulatory constraints and the size constraints of parcels.
+This table is roughly equivalent to the development\_project_proposal_components table and represents buildings or parts 
+of buildings to be included in a particular development template.  By breaking development templates into components, 
+development project templates can be configured as hierarchies or combinations of building blocks, providing a very flexible 
+means of representing a wide variety of development types.  Note that the templates can be generated using real or hypothetical data, 
+since they will be compared to regulatory constraints and the size constraints of parcels.
 
 
 \begin{tabular}{p{2.3in}lp{3.2in}}
