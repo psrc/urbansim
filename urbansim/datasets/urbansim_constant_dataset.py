@@ -72,7 +72,7 @@ class Tests(opus_unittest.OpusTestCase):
 
     def test(self):
         urbansim_constant = UrbansimConstantDataset(in_storage=AttributeCache())
-        self.assertEqual(urbansim_constant['absolute_max_year'], 3000)
+        self.assertEqual(urbansim_constant['absolute_min_year'], 1800)
         self.assertAlmostEqual(urbansim_constant['acres'], 150*150*0.0002471, 6)
         self.assert_(urbansim_constant["walking_distance_footprint"].ndim == 2)
         

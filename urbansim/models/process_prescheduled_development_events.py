@@ -17,13 +17,12 @@ from opus_core.logger import logger
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 
 class ProcessPrescheduledDevelopmentEvents(Model):
-    """Process any pre-scheduled development events.
-       Currently, these can only be from exogenous development events.
+    """Create a class object from any pre-scheduled development events.
     """
     model_name = "ProcessPrescheduledDevelopmentEvents"
     
-    def run (self, storage, in_table="development_events_exogenous",
-               out_table="development_events_exogenous"):
+    def run (self, storage, in_table="development_events",
+               out_table="development_events"):
 
         
         if not storage.has_table(in_table):

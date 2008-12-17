@@ -99,29 +99,12 @@ class Constants(dict):
                 * self["gridcell_height"].value_in_units(UrbanSimLengthConstants().units_meters) * 0.0002471 # acres/sq m
 
     def set_internal_constants(self):
-        """ The maximum possible value for all dollar values (land, improvement,
-        and total value) for a cell = 2,000,000,000
-        """
-        self["absolute_max_cell_dollars"] = 2000000000
-        """ The maximum possible value for square feet data (for non-residential
-        space) in a cell = 2,000,000,000
-        """
-        self["absolute_max_cell_sqft"] = 2000000000
-        """ Maximum posible value for income = 2,000,000,000
+        """ Maximum possible value for income = 2,000,000,000
         """
         self["absolute_max_income"] = 2000000000
         """ Minimum possible value for year = 0
         """
         self["absolute_min_year"] = 1800
-        """ Maximum possible value for year = 3,000
-        """
-        self["absolute_max_year"] = 3000
-        """ Maximum number of residential units in a grid cell = 10,000
-        """
-        self["absolute_max_cell_residential_units"] = 10000
-        """ Maximum building age = 3,000
-        """
-        self["absolute_max_building_age"] = self["absolute_max_year"] - self["absolute_min_year"]
         """ Maximum travel time = 1440
         """
         self["absolute_max_travel_time"] = 60 * 24
