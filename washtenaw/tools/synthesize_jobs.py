@@ -18,6 +18,8 @@ from opus_core.configuration import Configuration
 from urbansim.synthesize_jobs import SynthesizeJobs
 from time import time
 
+#WARNING: THIS IS LIKELY OBSOLETE AND WILL NOT WORK
+
 config = {
     'output_database_name':'washtenaw_estimation_synthesized_output',
 
@@ -47,9 +49,6 @@ config = {
     
     'store':{
         'type':'sql_storage',
-        'host_name':'trondheim.cs.washington.edu',
-        'user_name':os.environ['MYSQLUSERNAME'], 
-        'password':os.environ['MYSQLPASSWORD'],
         'database_name':'washtenaw_class',
         'drop_database_first':False,
         },

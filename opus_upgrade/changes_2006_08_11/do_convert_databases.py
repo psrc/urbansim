@@ -27,11 +27,9 @@ def main():
     parser.add_option("-o", "--host", dest="host", type="string",
         help="The mysql host (default: 'localhost').")
     parser.add_option("-u", "--username", dest="username", type="string",
-        help="The mysql connection password (default: MYSQLUSERNAME environment"
-            " variable, then nothing).")
+        help="The mysql connection password (default: nothing).")
     parser.add_option("-p", "--password", dest="password", type="string",
-        help="The mysql connection password (default: MYSQLPASSWORD environment"
-            " variable, then nothing).")
+        help="The mysql connection password (default: nothing).")
     parser.add_option("-n", "--nobackup", action="store_false", dest="backup", 
         help="If this flag is present, no backup tables will be generated.")
     parser.add_option("-f", "--postfix", dest="postfix", type="string",
@@ -46,11 +44,9 @@ def main():
     
     if options.host == None: options.host = 'localhost'
     if options.username == None: 
-        try: options.username = os.environ['MYSQLUSERNAME']
-        except: options.username = ''
+        options.username = ''
     if options.password == None: 
-        try: options.password = os.environ['MYSQLPASSWORD']
-        except: options.password = ''
+        options.password = ''
     if options.backup == None: options.backup = True
     if options.postfix == None: options.postfix = '_old'
     

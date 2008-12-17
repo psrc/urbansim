@@ -461,8 +461,6 @@ class SynthesizeJobs(object):
 #            
 #            'db_config': DatabaseConfiguration(
 #                host_name = 'localhost',
-#                user_name = os.environ['MYSQLUSERNAME'],
-#                password = os.environ['MYSQLPASSWORD'],
 #                database_name = self.in_db,
 #                )
 #
