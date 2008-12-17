@@ -11,6 +11,18 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
+######
+# In a command line, you can estimate using these commands:
+# Industrial: 
+# python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=employment_location_choice_model --group=industrial -s eugene.estimation.ELCM_specification
+#
+# Commercial:
+# python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=employment_location_choice_model --group=commercial -s eugene.estimation.ELCM_specification
+#
+# Home-based
+# python urbansim/tools/start_estimation.py -c eugene.configs.baseline_estimation --model=employment_location_choice_model --group=home_based -s eugene.estimation.ELCM_specification
+#
+
 
 specification ={}
 

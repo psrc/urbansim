@@ -54,7 +54,6 @@ class Baseline(AbstractUrbansimConfiguration):
                 'distribute_unplaced_jobs_model',
                 ],
             'scenario_database_configuration': ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear'),
-#            'cache_directory':'c:/opusworkspace/eugene',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_gridcell/runs'),
                 cache_from_database = False,
