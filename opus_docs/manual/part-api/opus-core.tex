@@ -480,21 +480,22 @@ connection to a database. Here's an example of obtaining an
                                          DatabaseServerConfiguration
 >>> from opus_core.database_management.database_server import DatabaseServer
 >>> from opus_core.storage_factory import StorageFactory
->>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
-                                         username = os.environ["MYSQLUSERNAME"],
-                                         password = os.environ["MYSQLPASSWORD"],
+>>> config = DatabaseServerConfiguration(hostname = 'my.host.net',
+                                         username = 'me',
+                                         password = 'my_password',
                                          protocol = "mysql")
->>> db = DatabaseServer(config).get_database(database_name = ``mydatabase'')
->>> storage = StorageFactory().get_storage('sql_storage',
-        storage_location = db)
+>>> db_server = DatabaseServer(config)
+>>> db = db_server.get_database(database_name = ``mydatabase'')
+>>> storage = StorageFactory().get_storage('sql', storage_location = db)
 \end{verbatim}
 
-Note that the parameters \verb|hostname|, \verb|username|, and
-\verb|password| to \class{DatabaseServerConfiguration} are actually only
-necessary if you are trying to connect to a database that cannot be accessed via the server
-information that you have specified in your environment variables. Protocol
-will default to ``mysql'', unless you have set your DEFAULT_URBANSIM_DB_ENGINE
-environment variable to another database engine (e.g. postgres). 
+Note that you should probably never have to create a
+DatabaseServerConfiguration object directly -- instead, you should
+instantiate the child classes of EstimationDatabaseConfiguration,
+IndicatorsDatabaseConfiguration, ServicesDatabaseConfiguration, or
+ScenarioDatabaseConfiguration. Configurations of these types will
+default to the server information found in
+``[OPUS_HOME]/settings/database_server_configuration.xml''.
 
 Now you have obtained a \class{sql_storage} object. For this storage class,
 all implemented methods of the storage interface which accept a \verb|table_name| parameter interpret it as
