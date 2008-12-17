@@ -463,14 +463,16 @@ governmental_improvement_value & integer & See description, above  \\
 \section{Database Tables About Development Constraints}
 %
 \subsection{The {\tt development_constraints} table}
-
+\index{development constraints}
+%
 This table defines rules that restrict the possible development types a
 developer can create on a particular grid cell.  Each row defines one rule.
 Development is not allowed on any gridcell that matches any of these rules.  A
 gridcell matches a rule if the attribute values for the gridcell match all of
 the values in the rule (rule columns with the value ``-1'' are ignored when
 determining a match). The table is used by the Development Project Location Choice Model 
-(see Section~\ref{sec:development-project-lcm}) when computing the amount of allowed development 
+(see page~\pageref{real-estate-development-model-gridcell} and Section~\ref{sec:development-project-lcm}) 
+when computing the amount of allowed development 
 in grid cells.
 
 \begin{tabular}{llp{3.5in}}

@@ -1098,8 +1098,8 @@ This class implements a functionality of a discrete choice model, an approach
 widely used in land use and transportation modeling. In principal, a set of
 agents make choices from a finite set of possibilities (alternatives). The
 choice selection is based on probabilities derived from utilities. These are
-computed on the basis of given variables \variablesindex and coefficients. \coefficientsindex The model allows
-the coefficients \coefficientsindex to be also estimated within this framework.
+computed on the basis of given variables and coefficients. The model allows
+the coefficients to be also estimated within this framework. See also Section~\ref{sec:components-choice-model}.
 
 As there are many different aspects to consider in specifying a discrete
 choice model, the software has been designed in a modular way to accommodate
@@ -1261,9 +1261,9 @@ Each entry is a dictionary returned by estimation procedure for that submodel.
 %
 \label{sec:regression-model}
 The \class{RegressionModel} class implements a model based on a regression
-procedure. In summary, there is a set of observations, whose attributes \attributesindex or/and
-variables \variablesindex are used to predict a certain outcome, using some coefficients. \coefficientsindex
-Those can be also estimated within this framework.
+procedure. In summary, there is a set of observations, whose attributes or/and
+variables are used to predict a certain outcome, using some coefficients.
+Those can be also estimated within this framework. See also Section~\ref{sec:components-regression-model}.
 
 As in the case of \class{ChoiceModel}, the regression model can be composed by
 plug-in modules.
@@ -1408,7 +1408,8 @@ to be passed into the constructor. The following entries of the \verb|run_config
 \index{models!opus_core models!simple model}
 %
 This model is an alternative way of computing a variable on a dataset, except that the resulting attribute 
-becomes a primary attribute.
+becomes a primary attribute (see also Section~\ref{sec:components-simple-model}).
+
 The \method{run()} method takes the following arguments:
 \begin{description}
 \item[dataset] an object of class \class{Dataset} for which the computation is done.
@@ -1427,7 +1428,8 @@ the attribute is marked as primary. Values of this attribute are returned.
 \index{class!AllocationModel}
 \index{models!opus_core models!allocation model}
 %
-The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions.
+The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions 
+(see Section~\ref{sec:components-allocation-model}). 
 
 The \method{run()} method takes the following arguments:
 \begin{description}

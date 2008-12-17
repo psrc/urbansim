@@ -481,7 +481,7 @@ The method returns results of \method{estimate()} method of
 \index{Real Estate Price Model}\index{models!urbansim models!real estate price model}
 
 The \class{RealEstatePriceModel} \index{class!RealEstatePriceModel}
-class predicts real estate prices via a regression procedure.
+class predicts real estate prices via a regression procedure (see Section~\ref{sec:model-system-real-estate-price-model}).
 In order to avoid jumps in prices for the first simulated year, the initial residuals are 
 added to the regression outcomes. Thus,
 the model is a child of the \class{RegressionModelWithInitialResiduals}  
@@ -752,13 +752,15 @@ It controls the number of chunks in which the sampling is done for the estimatio
 %
 %
 \subsection{Development Project Location Choice Model}
+%
 \label{sec:development-project-lcm}
 \index{Development Project Location Choice Model} \index{models!urbansim models!development project location choice model}
 \index{class!DevelopmentProjectLocationChoiceModel}
 %
 The Development project location choice model implemented in the
 \package{urbansim} package simulates a process where
-development projects of a specific type choose locations to be placed into.
+development projects of a specific type choose locations to be placed into (see Section~\ref{real-estate-development-model}
+on page~\pageref{real-estate-development-model-gridcell}).
 The class \class{DevelopmentProjectLocationChoiceModel} is a child of
 \class{LocationChoiceModel} \index{class!LocationChoiceModel} described in
 Section~\ref{sec:location-choice-model}.
@@ -957,7 +959,8 @@ This model (class \class{HouseholdLocationChoiceModel})
 \index{class!HouseholdLocationChoiceModel}
 is an Agent Location Choice Model \index{class!AgentLocationChoiceModel} that makes default settings
 of various arguments usable in the context of households
-choosing their locations. The model is initiated with the arguments and their default values
+choosing their locations. See also Section~\ref{sec:model-system-household-location-choice-model}.
+The model is initiated with the arguments and their default values
 listed below. They are either directly passed to the constructor of the parent or packed into 
 the \verb|run_config| and/or
 \verb|estimate_config| arguments under appropriate names.
@@ -1050,7 +1053,8 @@ The \method{prepare_for_estimate} method appends the member name as prefix in fr
 The class \class{EmploymentLocationChoiceModel} \index{class!EmploymentLocationChoiceModel} 
 is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{class!AgentLocationChoiceModelMember}
 Its default settings
-of various arguments makes the model usable in the context of jobs choosing their locations.
+of various arguments makes the model usable in the context of jobs choosing their locations. 
+See also Section~\ref{sec:model-system-employment-location-choice-model}.
 It is initialized by the following arguments and default values:
 \begin{description}
 \item[group_member] - no default value
@@ -1185,7 +1189,7 @@ where the particular building would fit into.
 The class \class{HouseholdTransitionModel} \index{class!HouseholdTransitionModel}
 creates and removes households to and from given household set according to
 the joint distribution of their characteristics. The total number of
-households is controlled by given annual control totals.
+households is controlled by given annual control totals. See also Section~\ref{sec:model-system-demographic-transition-model}.
 
 \subsubsection{Initialization}
 %
@@ -1370,7 +1374,7 @@ Compare the control totals table to the attributes of households.
 The class \class{EmploymentTransitionModel} \index{class!EmploymentTransitionModel} creates and removes jobs to and
 from given job set according to a job distribution over employment sectors.
 The total number of jobs is controlled by given annual control totals. It
-distinguishes between home based and non-home based jobs.
+distinguishes between home based and non-home based jobs. See also Section~\ref{sec:model-system-economic-transition-model}.
 
 The algorithm is similar to the Household Transition Model.
 Here, the only marginal characteristics are sector
@@ -1965,7 +1969,9 @@ The class \class{AgentRelocationModel}\index{class!AgentRelocationModel}
 determines which members of the given
 set of agents should be relocated. This is done on basis of given
 probabilities. Additionally, the way how to choose the agents can be given by
-passing a \class{Choices} object.
+passing a \class{Choices} object. See also Sections~\ref{sec:model-system-employment-relocation-model} 
+and~\ref{sec:model-system-household-relocation-model}.
+
 
 %
 \subsubsection{Initialization}

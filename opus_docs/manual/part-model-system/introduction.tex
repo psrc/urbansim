@@ -150,6 +150,10 @@ of many of the models, discrete choice models, is presented as an overview.
 
 
 \subsection{Economic Transition Model}
+\label{sec:model-system-economic-transition-model}
+\index{models!urbansim models!employment transition model}
+\index{Economic Transition Model}
+%
 Employment is classified by the user into employment sectors based
 on aggregations of Standard Industrial Classification (SIC) codes, or more
 recently, North American Industry Classification (NAICS) codes.
@@ -190,7 +194,10 @@ resolved by the Employment Location Choice Model.
 
 
 \subsection{Demographic Transition Model}
-
+\label{sec:model-system-demographic-transition-model}
+\index{models!urbansim models!household transition model}
+\index{Demographic Transition Model}
+%
 The Demographic Transition Model accounts for changes in the
 distribution of households by type over time, using an algorithm
 analogous to that used in the Economic Transition Model.  In
@@ -222,7 +229,9 @@ form to the employment transition model described above.
 
 
 \subsection{Employment Relocation Model}
-
+\label{sec:model-system-employment-relocation-model}
+\index{Employment Relocation Model}
+%
 Employment relocation and location choices are made by firms.
 However, in the current version of UrbanSim, we use individual
 jobs as the units of analysis.  This is equivalent to assuming
@@ -268,7 +277,9 @@ for each sector.
 
 
 \subsection{Household Relocation Model}
-
+\label{sec:model-system-household-relocation-model}
+\index{Household Relocation Model}
+%
 The Household Relocation Model is similar in form to the Employment
 Relocation Model described above.  The same algorithm is used, but
 with rates or coefficients applicable to each household type.  For
@@ -294,7 +305,11 @@ or done as a joint model.  This remains to be done in future development.
 
 
 \subsection{Employment Location Choice Model}
-
+%
+\label{sec:model-system-employment-location-choice-model}
+\index{models!urbansim models!employment location choice model}
+\index{Employment Location Choice Model}
+%
 In this model, we predict the probability that a job that is
 either new (from the Economic Transition Model), or has moved
 within the region (from the Employment Mobility Model), will be
@@ -430,7 +445,11 @@ formation
 
 
 \subsection{Household Location Choice Model}
-
+%
+\label{sec:model-system-household-location-choice-model}
+\index{models!urbansim models!household location choice model}
+\index{Household Location Choice Model}
+%
 In this model, as in the employment location model, we predict the
 probability that a household that is either new (from the
 transition component), or has decided to move within the region
@@ -574,7 +593,11 @@ Neighborhood Employment}}
 \end{itemize}
 
 \subsection{Real Estate Price Model}
-
+%
+\label{sec:model-system-real-estate-price-model}
+\index{Real Estate Price Model}
+\index{models!urbansim models!real estate price model}
+%
 UrbanSim uses real estate prices as the indicator of the match between
 demand and supply of land at different locations and with
 different land use types, and of the relative market valuations
@@ -662,6 +685,11 @@ UrbanSim in the gridcell-based and parcel-based model system
 respectively.
 
 \subsubsection{Development Project Location Choice Model}
+%
+\label{real-estate-development-model-gridcell}
+\index{Development Project Location Choice Model} 
+\index{models!urbansim models!development project location choice model}
+%
 The Development Project Location Choice Model models real
 estate development as a process where real estate property
 developers seek the best available site for their real
@@ -704,6 +732,8 @@ Travel time to CBD, airport}
 \end{itemize}
 
 \subsubsection{Development Project Proposal Sampling Model}
+\label{sec:model-system-development-project-proposal-sampling-model}
+%
 The Development Project Proposal Sampling Model models real
 estate development as real estate project proposals
 competing for financing.  A project proposal proposes
@@ -800,7 +830,11 @@ the case of redevelopment.
 \end{table}
 
 
-\subsubsection{Development Constraints} \label{sec-development-constraints}
+\subsubsection{Development Constraints}
+%
+\label{sec-development-constraints}
+\index{development constraints}
+%
 Constraints on development outcomes are included through a
 combination of user-specified spatial overlays and decision rules
 about specific types of development allowed in different
@@ -829,6 +863,9 @@ constraint within one scenario and compare the scenario results to
 a more restrictive policy.
 
 \subsubsection{Development Templates}
+\label{sec-development-templates}
+\index{development templates}
+%
 It has been shown in the literature that home builders and
 developers are employing a portfolio of ``standard housing
 type'' ex ante in the development process and series of

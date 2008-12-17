@@ -138,8 +138,15 @@ residential\_units & integer & the number of residential units in the building c
 
 \subsection{The {\tt development\_templates} table}
 \label{sec:db-tables-development-templates}
+\index{development templates}
 
-This table, along with corresponding records in the development\_template\_components table, represents development templates that can be used to define virtually any size and configuration of a development project, from a single house on an infill lot to a large subdivision, to a mixed use project with retail on the first floor and condominiums above. The contents of this table are roughly comparable to the development\_projects table, since development templates become proposals once they are determined to fit within a parcel and are allowed by development constraints, and then become projects if they are chosen to be constructed.
+This table, along with corresponding records in the development\_template\_components table, 
+represents development templates that can be used to define virtually any size and configuration of a development project, 
+from a single house on an infill lot to a large subdivision, to a mixed use project with retail on the first floor and 
+condominiums above. The contents of this table are roughly comparable to the development\_projects table, 
+since development templates become proposals once they are determined to fit within a parcel and are allowed by development 
+constraints, and then become projects if they are chosen to be constructed. See also page~\pageref{sec-development-templates}.
+
 
 \begin{tabular}{p{2in}lp{3.5in}}
 %\hline
@@ -224,17 +231,19 @@ building\_sqft\_per\_job & integer & the sqft per job each job will take in a pa
 \section{Database Tables About Development Constraints}
 
 \subsection{The {\tt development_constraints} table}
-
+\index{development constraints}
+%
 Note that this table is substantially different than its counterpart for a gridcell-based
 model application.  This is because the real estate development model is fundamentally
 different as well.  The model that uses this table in a parcel-based application is the 
-development\_project\_proposal\_sampling\_model, which evaluates alternative 
+development\_project\_proposal\_sampling\_model (see page~\pageref{sec:model-system-development-project-proposal-sampling-model}), 
+which evaluates alternative 
 development templates that can be placed on a parcel according to the constraints
 specified in this table, and then computes a return on investment on the remaining
 viable proposals, before choosing which proposals to build.
 This table defines rules that restrict the possible development types a
 developer can create on a particular parcel.  Each row defines one rule.
-Development is not allowed on any parcel that matches any of these rules. 
+Development is not allowed on any parcel that matches any of these rules. See also page~\pageref{sec-development-constraints}.
 
 \begin{tabular}{llp{3.5in}}
 

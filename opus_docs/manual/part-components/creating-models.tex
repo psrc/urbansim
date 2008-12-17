@@ -14,6 +14,10 @@ Opus provides infrastructure to develop, specify, estimate, diagnose and predict
 \squishend 
 
 \subsection{Simple Models}
+%
+\label{sec:components-simple-model}
+\index{models!opus_core models!simple model}
+%
 The simplest form of a model in Opus is called, for lack of imagination, Simple Model.  It is about as simple as a model can get: compute a variable and write the results to a dataset.  Here are some examples of what could be done with a simple model:
 
 \squishlist
@@ -57,7 +61,12 @@ The Sampling Model takes the following arguments:
 \item Probability Attribute: the name of the attribute containing the probability values (or rates)
 \item List of Classification Attributes: attributes of Outcome Dataset that will be used to index different Probabilities (e.g. age and income in household relocation)
 \squishend
+
 \subsection{Allocation Models}
+%
+\label{sec:components-allocation-model}
+\index{models!opus_core models!allocation model}
+%
 Another simple generic model supported in Opus is the Allocation Model, which does not require estimating model parameters.  This model proportionately allocates some aggregate quantity to a smaller unit of analysis using a weight.  This model could be configured, for example, to allocate visitor population estimates, military population, nursing home population, and other quantities to traffic analysis zones for use in the travel model system.  Or it could be used to build up a simplistic incremental land use allocation model (though this would not contain much behavioral content).
 
 The algorithm for this type of model is quite simple.  To create an Allocation Model, we need to specify six arguments:
@@ -94,6 +103,10 @@ We then iterate over $m$ until $T^m = 0$
 This simple algorithm is fairly versatile, and can be used in two modes: as incremental growth or as total values. If used in incremental mode, it adds the allocated quantity to the existing quantities.  The alternative, total, mode for this model replaces the quantities with the new predicted values.
 
 \subsection{Regression Models}
+%
+\label{sec:components-regression-model}
+\index{models!opus_core models!regression model}
+
 
 Regression models are available to address problems in which the dependent variable is continuous, and a linear equation can be specified to predict it.  The primary use of this model in a core model in UrbanSim is the prediction of property values.  In the context of predicting property values, the model is referred to as a hedonic regression \cite{waddell-hedonic-1993}, but the Opus regression model is general enough to address any standard multiple regression specification.  Other examples of applications for this basic class of models would be to predict water or energy consumption per household, or parking prices.
 
@@ -106,6 +119,10 @@ Y_i = \alpha + \beta X_i + \epsilon_i
 where $X_i$ is a matrix of explanatory, or independent, variables, and $\beta$ is a vector of estimated parameters.  Opus provides an estimation method using Ordinary Least Squares, and additional estimation methods are available by interfacing Opus with the R statistical package.  For the current discussion, we focus on working with the built-in estimation capacity.
 
 \subsection{Choice Models}
+%
+\label{sec:components-choice-model}
+\index{models!opus_core models!choice model}
+%
 
 Many modeling problems do not have a continuous outcome, or dependent variable.  It is common to have modeling problems in which the outcome is the selection of one of a set of possible discrete outcomes, like which mode to take to work, or whether to buy or rent a property.  This class of problem we will refer to as discrete choice situations, and we develop choice models to address them.
 
