@@ -16,7 +16,7 @@ from rate_dataset import RateDataset
 from numpy import where, int32, zeros, float32
 
 class HouseholdRelocationRateDataset(RateDataset):
-    id_name_default = ["age_min", "income_min"]
+    id_name_default = []
     dataset_name = "household_relocation_rate"
     probability_attribute = "probability_of_relocating"
     in_table_name_default = "annual_relocation_rates_for_households"

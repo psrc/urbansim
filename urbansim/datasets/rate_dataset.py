@@ -37,7 +37,7 @@ class RateDataset(UrbansimDataset):
         
     def get_rate(self, dataset):
         probability_attribute = self.get_probability_attribute_name()
-        column_names = set( self.get_known_attribute_names() ) - set( [ probability_attribute, 'rate_id'] )
+        column_names = set( self.get_known_attribute_names() ) - set( [ probability_attribute, 'rate_id', '_hidden_id_'] )
         self.independent_variables = list(set([col.rstrip('_min').rstrip('_max') for col in column_names]))
         self._compute_variables_for_dataset_if_needed(dataset, self.independent_variables)
         known_attributes = dataset.get_known_attribute_names()

@@ -47,8 +47,8 @@ class Tests(StochasticTestCase):
             "income": array(600*[35000] + 400*[20000] + 200*[50000] + 300*[75000])
             }    
         self.annual_relocation_rates_for_households_data = {
-            "age_min": array([0,51,0,51]),
-            "age_max": array([50,100,50,100]),
+            "age_of_head_min": array([0,51,0,51]),
+            "age_of_head_max": array([50,100,50,100]),
             "income_min": array([0,0,40000,40000]),
             "income_max": array([39999,39999,100000,100000]),
             "probability_of_relocating": array(4*[1.0])                   
