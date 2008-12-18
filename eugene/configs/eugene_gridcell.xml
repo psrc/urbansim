@@ -35,7 +35,7 @@
           <firstyear type="integer">1980</firstyear>
           <lastyear type="integer">1980</lastyear>
         </years>
-        <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+        <save_estimation_results choices="True|False" type="boolean">False</save_estimation_results>
       </estimation_config>
     </model_system>
     </model_manager>
