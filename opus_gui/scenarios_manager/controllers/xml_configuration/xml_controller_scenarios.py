@@ -201,11 +201,6 @@ class XmlController_Scenarios(XmlController):
             if domElement.isNull():
                 return
 
-            # version specific settings
-            model_choice_name = "model_choice"
-            if self.xml.xml_version < '4.2.0-beta0':
-                model_choice_name = "model" # change to old name
-
             # create and populate menu based on the node element
             menu = QMenu(self.mainwindow)
             if domElement.attribute(QString("executable")) == QString("True"):
@@ -216,7 +211,7 @@ class XmlController_Scenarios(XmlController):
                 menu.addAction(self.actEditXMLFileGlobal)
                 menu.addAction(self.actEditXMLFileLocal)
 
-            elif domElement.attribute(QString("type")) == model_choice_name:
+            elif domElement.attribute(QString("type")) == "model_choice":
                 menu.addAction(self.actRemoveModel)
                 menu.addAction(self.actMoveNodeUp)
                 menu.addAction(self.actMoveNodeDown)

@@ -15,7 +15,7 @@
 import os
 from os.path import join
 
-from opus_core.exception.schema_exception import SchemaException
+from opus_core.opus_exceptions.schema_exception import SchemaException
 from opus_core.opus_package_info import package
 from opus_core.logger import logger
 from xml.dom.minidom import parse, parseString

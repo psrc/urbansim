@@ -12,10 +12,29 @@
 # other acknowledgments.
 # 
 
+# ********** CONSTANTS TO EDIT TO CHANGE VERSION NUMBERS **********
+
+# Edit the following constant to change the major, minor, and bugfix numbers,
+# or to change from development to stable releases
+# if this is a stable release, change version to include a bugfix number (e.g. '4.2.3'), and stable to True
+version = '4.2'
+stable = False
+
+# Minumimum and maximum version numbers for XML that this code is guaranteed to work for.
+# (It might work for others, but no promises.)
+minimum_xml_version = '4.2.0-beta1'
+maximum_xml_version = '4.2.0'
+
+# ********** END OF CONSTANTS TO EDIT TO CHANGE VERSION NUMBERS **********
+
+opus_version_number = '4.2'
+stable = False
+
 import sys, re
 from subprocess import Popen, PIPE
 
-def version_number(package_name='opus_core'):
+
+def get_opus_version_number(package_name='opus_core'):
     """Return a string with the version number for this version of the Opus code.  
     The variable opus_core.__version__ is set to this string (and maybe later in 
     all Opus/UrbanSim packages).  For stable releases, the version is something like 
@@ -28,13 +47,6 @@ def version_number(package_name='opus_core'):
     missing the svn information, the version for a development version will be e.g. 
     '4.3-dev (revision number not available)'
     """
-    
-    # edit the following constant to change the major, minor, and bugfix numbers,
-    # or to change from development to stable releases
-    version = '4.2'
-    stable = False
-    # if this is a stable release, change version to include a bugfix number (e.g. '4.2.3'), and stable to True
-    # ********* end of part to edit to change version number ********* 
     
     if stable:
         return version

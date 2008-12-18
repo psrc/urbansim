@@ -25,7 +25,6 @@ from opus_core.logger import logger
 from numpy import ma
 from scipy.ndimage import standard_deviation
 from inspect import getmembers, ismethod
-from exceptions import Exception
 
 
 DEFAULT_BYTEORDER = 'little'
