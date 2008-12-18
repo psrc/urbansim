@@ -48,6 +48,7 @@ if __name__ == "__main__":
     from opus_core.store.attribute_cache import AttributeCache
     
     from opus_core.session_configuration import SessionConfiguration
+    from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
     
     option_group = CreateBaseyearCacheOptionGroup()
     parser = option_group.parser
@@ -61,7 +62,12 @@ if __name__ == "__main__":
         
         if options.cache_directory is not None:
             config['cache_directory'] = options.cache_directory
-        
+            
+        if options.database is not None:
+            config['services_database_configuration'] = ServicesDatabaseConfiguration(database_name = options.database)
+        elif options.database_configuration is not None:            
+            config['services_database_configuration'] = ServicesDatabaseConfiguration(database_configuration = options.database_configuration)
+            
         SessionConfiguration(new_instance=True,
                              package_order=config['dataset_pool_configuration'].package_order,                            
                              in_storage=AttributeCache())
