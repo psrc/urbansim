@@ -42,6 +42,7 @@ class Baseline(UrbansimParcelConfiguration):
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     'households',
+                    'persons',
                     'buildings',
                     'parcels',
                     'gridcells',
@@ -86,7 +87,7 @@ class Baseline(UrbansimParcelConfiguration):
                 unroll_gridcells = False
                 ),
             'scenario_database_configuration': ScenarioDatabaseConfiguration(
-                database_name = 'psrc_2005_parcel_baseyear_subset_seattle',
+                database_name = 'seattle_2000_parcel_baseyear_data',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
