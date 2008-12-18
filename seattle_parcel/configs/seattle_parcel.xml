@@ -16,7 +16,7 @@
   <model_manager>
     <model_system>
       <estimation_config type="configuration">
-        <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+        <save_estimation_results choices="True|False" type="boolean">False</save_estimation_results>
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
         <estimation_database_configuration type="class">
           <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
