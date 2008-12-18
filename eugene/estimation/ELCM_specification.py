@@ -1,15 +1,16 @@
 #
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
+#
 # 
 ######
 # In a command line, you can estimate using these commands:
@@ -44,7 +45,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -52,17 +53,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -85,7 +86,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -93,17 +94,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -126,7 +127,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -134,17 +135,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     #('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -167,7 +168,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -175,17 +176,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -208,7 +209,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -216,17 +217,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -249,7 +250,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -257,17 +258,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -290,7 +291,7 @@ specification['industrial'] = { #industrial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -298,17 +299,17 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -333,7 +334,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -341,17 +342,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -377,7 +378,7 @@ specification['commercial'] = {  #commercial
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
         #: keep
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
         #: keep
     ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
@@ -387,18 +388,18 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
         #: keep
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
         #: keep
     ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
         #: keep
     ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
         #: keep
@@ -424,7 +425,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -432,17 +433,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     #('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -465,7 +466,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     #('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -473,17 +474,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -506,7 +507,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -514,17 +515,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -548,7 +549,7 @@ specification['commercial'] = {  #commercial
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
         #: keep
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -557,17 +558,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
         #:
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -591,7 +592,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -599,17 +600,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -633,7 +634,7 @@ specification['commercial'] = {  #commercial
     #('ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     #('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -641,17 +642,17 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
     ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW')
-    
+
     #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
     #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
     #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
     #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
     #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
@@ -668,7 +669,7 @@ specification['home_based'] = { #home-based
 #     ('urbansim.gridcell.average_household_size', 'HHSIZE'),
 #     ('urbansim.gridcell.average_income', 'AVG_INCOME'),
 #     ('urbansim.gridcell.average_income_per_housing_unit', 'AVG_UNIT_INCOME'),
-     
+
     #('urbansim.gridcell.building_age', 'BAGE_BL'),
 #    ('urbansim.gridcell.is_near_arterial', 'BART'),
     #('urbansim.gridcell.is_near_highway', 'BHWY'),
@@ -681,7 +682,7 @@ specification['home_based'] = { #home-based
 #    ('urbansim.gridcell.ln_total_improvement_value', 'BLIMP'),
     #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
 #    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
+
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
     #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
     #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
@@ -689,17 +690,17 @@ specification['home_based'] = { #home-based
     #('urbansim.gridcell.ln_residential_units', 'BLDU'),
     #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
 #    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
+
     ('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
     ('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
 #    ('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
+
 #    ('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
     ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
+
 #    ('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
     #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
+
     #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
 #    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
     ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
