@@ -63,8 +63,8 @@ if __name__ == "__main__":
         if options.cache_directory is not None:
             config['cache_directory'] = options.cache_directory
             
-        if options.database is not None:
-            config['services_database_configuration'] = ServicesDatabaseConfiguration(database_name = options.database)
+        if options.database_name is not None:
+            config['services_database_configuration'] = ServicesDatabaseConfiguration(database_name = options.database_name)
         elif options.database_configuration is not None:            
             config['services_database_configuration'] = ServicesDatabaseConfiguration(database_configuration = options.database_configuration)
             
