@@ -1,0 +1,23 @@
+\chapter{Sample UrbanSim Projects}
+
+To facilitate learning how UrbanSim works, sample projects and data have been made available for download and use.  Note that these are not in any way operational, but are for demonstration purposes only.  A zone-based sample application is in development, and will be added once it is complete.
+
+\section{Eugene Gridcell Project}
+
+Project name: eugene-gridcell-default
+
+The Eugene Gridcell project is one of the two initial sample projects that are available.  It is based on data compiled by the Lane Council of Governments, and approximates conditions in 1980 for the Eugene-Springfield, Oregon metropolitan area.  The project is an example of an UrbanSim application of the first generation, using gridcells as the unit of geography, with 150 by 150 meter resolution.  The models were developed as part of the development of the initial prototype of UrbanSim approximately during 1996 - 1998.  Many of the models have been modified extensively since that time, for example, as shown in the Seattle-parcel project.
+
+The Eugene gridcell project can be loaded in the GUI, and a baseline simulation can be run using the models as specified previously.  At this time the specification of the models has not been added into the GUI, and therefore the models cannot easily be re-specified or estimated within the GUI.  As time permits, this will be added for demonstration purposes. 
+
+The main advantage and use of the Eugene project is that it is small and runs quickly, so it provides a quick means to test an installation of OPUS and UrbanSim by running a simulation.  Note that little time or effort has been available to fine tune the Eugene application, and the specifications and coefficients are from the initial calibration of the model using a base year of 1994.  So one should not rely heavily on the results, but use the project as intended: a simple demonstration.  It also can be of some use for exploring the data used in the gridcell-based applications.  
+
+\section{Seattle Parcel Project}
+
+Project name: seattle-parcel-default
+
+Recent developments in UrbanSim have included the development of substantial flexibility in the use of geographic units of analysis.  A new model system has been developed for the Puget Sound Regional Council (PSRC), and the previous version of UrbanSim based on gridcells (like the Eugene application) has been converted to use parcels and buildings.  The Seattle parcel project has been generated as a second example project, by taking a snapshot of the PSRC model system and data, and extracting a subset of the database containing only information within the City of Seattle.  In addition, the employment data, which in the PSRC application is confidential, has been replaced with synthetic employment data derived from County Business Patterns by Zip Code for use in the Seattle parcel project.
+
+The main objective in making the Seattle parcel project available to the user community is the same as the original sample project: to make the models and data available for examination by users that may wish to create an application based on the configuration of this project.  Note that the simulation results are not likely to be robust, since the original specifications were from the calibration of the model on the full Puget Sound four county region.
+
+One last caveat for this project: the specifications included in the GUI for models that can be estimated are simply place-holders, and allow a user to experiment with specifying and estimating models in the GUI.  Note that specifying and estimating models in the GUI, if the save results flag is set to true, will overwrite stored specifications and modify simulation results.  This is not a significant concern since this is a sample, experimental project, and not for production use.
