@@ -26,6 +26,7 @@ from opus_gui.results_manager.controllers.xml_configuration.xml_controller_resul
 from opus_gui.models_manager.controllers.xml_configuration.xml_controller_models import XmlController_Models
 from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
 from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
+from opus_core.opus_exceptions.xml_version_exception import XmlVersionException
 
 import os,tempfile
 
@@ -44,16 +45,16 @@ class ToolboxBase(object):
         self.configFile = None
         self.configFileTemp = None
         self.opus_core_xml_configuration = None
-        
+
         # These are the trees that are displayed for each toolbox
         self.view = None
         self.modelManagerTree = None
         self.resultsManagerTree = None
         self.runManagerTree = None
         self.dataManagerTree = None
-        #TODO: is this needed? mainwindow.saveConfig asks for this attribute 
+        #TODO: is this needed? mainwindow.saveConfig asks for this attribute
         self.dataManagerDBSTree = None
-               
+
         self.dataManagerFileTree = None
         self.generalManagerTree = None
 
@@ -63,7 +64,7 @@ class ToolboxBase(object):
         self.gui_configuration_file = os.path.join(gui_directory, 'gui_config.xml')
         if not os.path.exists(self.gui_configuration_file):
             self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
-            
+
         self.project_name = None
 
         self.gui_configuration_doc = QDomDocument()
@@ -74,7 +75,7 @@ class ToolboxBase(object):
             # print "updateOpusXMLTree"
             indentSize = 2
             self.opus_core_xml_configuration.update(str(self.doc.toString(indentSize)))
-    
+
     def openXMLTree(self, xml_file):
         saveBeforeOpen = QMessageBox.Discard
         # Check if the current model(s) is(are) dirty first...
@@ -136,8 +137,12 @@ class ToolboxBase(object):
             fileNameInfo = QFileInfo(self.xml_file)
             fileName = fileNameInfo.fileName().trimmed()
             fileNamePath = fileNameInfo.absolutePath().trimmed()
-            self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
-            [tempFile,tempFilePath] = tempfile.mkstemp()
+            try:
+                self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
+            except XmlVersionException, ex:
+                QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
+                return
+            [tempFile, tempFilePath] = tempfile.mkstemp()
             #print tempFile,tempFilePath
             # full_tree is the "whole" tree, inherited nodes and all
             # tree is just the actual file the GUI was asked to open
@@ -148,28 +153,37 @@ class ToolboxBase(object):
                 self.doc = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
                 self.project_name = self.opus_core_xml_configuration.full_tree.getroot().findtext('./general/project_name')
-                
+
                 self.opusDataPath = os.path.join(self.opus_core_xml_configuration.get_opus_data_path(), self.project_name)
                 os.environ['OPUSPROJECTNAME'] = self.project_name
-                
+
                 self.generalManagerTree = XmlController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())
                 self.modelManagerTree = XmlController_Models(toolboxbase = self, parentWidget = self.mainwindow.modelmanager_page.layout())
                 self.runManagerTree = XmlController_Scenarios(toolboxbase = self, parentWidget = self.mainwindow.runmanager_page.layout())
                 self.dataManagerTree = XmlController_DataTools(toolboxbase = self, parentWidget = self.mainwindow.datamanager_xmlconfig.layout())
                 self.resultsManagerTree = XmlController_Results(toolboxbase = self, parentWidget = self.mainwindow.resultsmanager_page.layout())
-                
+
                 self.dataManagerFileTree = FileController_OpusData(self,'data_manager.opus_data',self.opusDataPath,
                                                         self.mainwindow.datamanager_dirview.layout())
-                
+
             else:
-                print "Error reading the %s configuration file" % (xml_file)
+                msg = "Error reading the %s configuration file" % (xml_file)
+                QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
         else:
-            print "There was an error removing the old config"
-            
-            
+            msg = "There was an error removing the old config"
+            QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
+
+        # project loaded, show any XML version messages
+        if self.opus_core_xml_configuration.version_warning_message:
+            msg = ('Warning! Inconsistent version numbers found in XML files '
+                   'when loading project.\nDetails:\n\n')
+            msg = msg + self.opus_core_xml_configuration.version_warning_message
+            QMessageBox.warning(self.mainwindow, 'Inconsistent xml versions', msg)
+
+
     def projectIsDirty(self):
         '''returns true if any of the managers is dirty'''
-        managers = [self.resultsManagerTree, 
+        managers = [self.resultsManagerTree,
             self.modelManagerTree,
             self.runManagerTree,
             self.dataManagerTree,
@@ -205,8 +219,8 @@ class ToolboxBase(object):
         new_file.write(''.join(default_gui_config.readlines()))
         new_file.close()
         default_gui_config.close()
-        
-        
+
+
     def reemit_reinit_default_gui_configuration_file(self):
         self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
         self.gui_configuration_doc = QDomDocument()
@@ -217,9 +231,9 @@ class ToolboxBase(object):
         #updates and saves the gui configuration file
         from xml.etree.cElementTree import ElementTree
         import StringIO
-        
+
         str_io = StringIO.StringIO(self.gui_configuration_doc.toString(2))
         etree = ElementTree(file=str_io)
         etree.write(self.gui_configuration_file)
         str_io.close()
-        
+
