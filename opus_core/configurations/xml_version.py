@@ -14,7 +14,7 @@
 
 from opus_core.tests import opus_unittest
 
-class XmlVersion(object):
+class XMLVersion(object):
     '''Small help class to enable easy version comparison between versions'''
     major = stable = minor = 0
     beta = -1
@@ -59,7 +59,7 @@ class XmlVersion(object):
     
     def __cmp__(self, other):
         if isinstance(other, str): # enable comparison with strings
-            other = XmlVersion(other)
+            other = XMLVersion(other)
 
         if self.major > other.major: return 1
         if self.major < other.major: return -1
@@ -82,12 +82,12 @@ class XmlVersion(object):
     def _print_format(self):
         print('Correct version string format is: X.X.X[-betaX] (X represents a number).')
 
-class XmlVersionTests(opus_unittest.OpusTestCase):
+class XMLVersionTests(opus_unittest.OpusTestCase):
     
     def test_version_compare(self):
-        v1 = XmlVersion('4.2.0')
-        v2 = XmlVersion('4.2.2')
-        v3 = XmlVersion('4.2.0')
+        v1 = XMLVersion('4.2.0')
+        v2 = XMLVersion('4.2.2')
+        v3 = XMLVersion('4.2.0')
         self.assertTrue(v1 < v2)
         self.assertFalse(v1 > v2)
         self.assertTrue(v1 == v3)
@@ -95,15 +95,15 @@ class XmlVersionTests(opus_unittest.OpusTestCase):
         
         # betas are previous to stables, so beta3 should be greater than 
         # the stable version (which doesn't have beta suffix)
-        self.assertTrue(XmlVersion('1.0.0-beta3') < '1.0.0')
-        self.assertTrue(XmlVersion('1.0.0-beta2') > '1.0.0-beta1')
+        self.assertTrue(XMLVersion('1.0.0-beta3') < '1.0.0')
+        self.assertTrue(XMLVersion('1.0.0-beta2') > '1.0.0-beta1')
         
         
     def test_version_string(self):
-        self.assertTrue(XmlVersion('4.2') == '0.0.0')
-        self.assertTrue(XmlVersion('jibberish') == '0.0.0')
-        self.assertTrue(XmlVersion('4.3.2.3.3.2.1.3'))
-        self.assertTrue(XmlVersion('1.0.0-beta') == '0.0.0')
+        self.assertTrue(XMLVersion('4.2') == '0.0.0')
+        self.assertTrue(XMLVersion('jibberish') == '0.0.0')
+        self.assertTrue(XMLVersion('4.3.2.3.3.2.1.3'))
+        self.assertTrue(XMLVersion('1.0.0-beta') == '0.0.0')
         
 if __name__ == '__main__':
     opus_unittest.main()

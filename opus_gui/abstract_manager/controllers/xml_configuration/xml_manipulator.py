@@ -435,7 +435,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
 
     def setUp(self):
         from opus_gui.abstract_manager.models.xml_item import XmlItem
-        from opus_core.configurations.xml_configuration import XmlVersion
+        from opus_core.configurations.xml_configuration import XMLVersion
 
         class Dummy: pass
         class DummyModel(object):
@@ -444,7 +444,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 self.domDocument = dd
                 tb = Dummy()
                 tb.opus_core_xml_configuration = Dummy()
-                tb.opus_core_xml_configuration.xml_version = XmlVersion('4.1.0')
+                tb.opus_core_xml_configuration.xml_version = XMLVersion('4.1.0')
                 self.mainwindow.toolboxBase = tb
                 self._rootItem = XmlItem(dd, dd.documentElement(), None)
                 self._rootItem.initAsRootItem()

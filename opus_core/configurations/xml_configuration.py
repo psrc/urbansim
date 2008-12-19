@@ -16,9 +16,9 @@ import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
-from opus_core.configurations.xml_version import XmlVersion
+from opus_core.configurations.xml_version import XMLVersion
 from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
-from opus_core.opus_exceptions.xml_version_exception import XmlVersionException
+from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 
 
 class XMLConfiguration(object):
@@ -51,7 +51,7 @@ class XMLConfiguration(object):
         self.parent_map = None
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
-        self.xml_version = XmlVersion()
+        self.xml_version = XMLVersion()
         self.version_warning_message = ''
         self.initialize_from_xml_file(is_parent)
 
@@ -257,16 +257,16 @@ class XMLConfiguration(object):
         # set the parser to this files xml version
         version_node = self.tree.getroot().find('xml_version')
         if version_node is not None:
-            self.xml_version = XmlVersion(version_node.text)
+            self.xml_version = XMLVersion(version_node.text)
         else:
             # files w/o specified version get optimistically regarded as up-to-date
-            self.xml_version = XmlVersion(maximum_xml_version)
+            self.xml_version = XMLVersion(maximum_xml_version)
         # check that the version number is OK
         if self.xml_version < minimum_xml_version:
-            raise XmlVersionException, ("XML version for this project file is less than the minimum required XML version.\n"
+            raise XMLVersionException, ("XML version for this project file is less than the minimum required XML version.\n"
                 + "  File name: %s \n  XML version found: %s  \n  minimum required: %s") % (self.full_filename, self.xml_version, minimum_xml_version)
         if self.xml_version > maximum_xml_version:
-            raise XmlVersionException, ("XML version for this project file is greater than the maximum expected XML version.\n"
+            raise XMLVersionException, ("XML version for this project file is greater than the maximum expected XML version.\n"
                 + "(Likely fix: update your version of the Opus/UrbanSim code.)\n"
                 + "  File name: %s \n  XML version found: %s \n  maximum expected: %s") % (self.full_filename, self.xml_version, maximum_xml_version)
         for p in self._get_parent_trees():
@@ -839,31 +839,28 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
 
-    def skip_test_get_section(self):
-        f = os.path.join(self.test_configs, 'estimate.xml')
-        config = XMLConfiguration(f).get_section('model_manager/estimation')
+    def test_get_section(self):
+        f = os.path.join(self.test_configs, 'parent1.xml')
+        config = XMLConfiguration(f).get_section('general/expression_library')
         should_be = {
-          'real_estate_price_model': {
-            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'existing_units']}},
-          'models_to_estimate': ['real_estate_price_model'],
-          'estimation_config': {}}
+          'ln_cost': 'ln(psrc.parcel.cost)',
+          'existing_units': 'urbansim_parcel.parcel.existing_units'}
         self.assertEqual(config, should_be)
 
-    def skip_test_get_section_of_child(self):
-        f = os.path.join(self.test_configs, 'estimation_child.xml')
-        config = XMLConfiguration(f).get_section('model_manager/estimation')
+    def test_get_section_of_child(self):
+        f = os.path.join(self.test_configs, 'child1.xml')
+        config = XMLConfiguration(f).get_section('general/expression_library')
         should_be = {
-          'real_estate_price_model': {
-            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'existing_units']}},
-          'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model'],
-          'estimation_config': {}}
+          'ln_cost': 'ln(psrc.parcel.cost)+10',
+          'existing_units': 'urbansim_parcel.parcel.existing_units',
+          'tax': 'urbansim_parcel.parcel.tax'}
         self.assertEqual(config, should_be)
 
     def test_inherited_nodes(self):
         # make sure that inherited attributes are tagged as 'inherited'
-        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        f = os.path.join(self.test_configs, 'child1.xml')
         expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
-        # the ln_cost variable is redefined in estimation_child, so it shouldn't have the 'inherited' attribute
+        # the ln_cost variable is redefined in child1, so it shouldn't have the 'inherited' attribute
         ln_cost_node = expression_library_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
         # the tax variable is new, so also shouldn't have the 'inherited' attribute
@@ -871,55 +868,55 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(tax_node.get('inherited'), None)
         # the existing_units variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
         existing_units_node = expression_library_node.find('existing_units')
-        self.assertEqual(existing_units_node.get('inherited'), 'estimate')
+        self.assertEqual(existing_units_node.get('inherited'), 'parent1')
 
     def test_grandchild_inherited_nodes(self):
         # test two levels of inheritance, with multiple inheritance as well
-        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
         expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
-        # the ln_cost variable is redefined in estimation_grandchild, so it shouldn't have the 'inherited' attribute
+        # the ln_cost variable is redefined in grandchild, so it shouldn't have the 'inherited' attribute
         ln_cost_node = expression_library_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
-        # the tax variable is inherited from estimation_child (there is also a definition in estimation_child2 but that
+        # the tax variable is inherited from child1 (there is also a definition in child2 but that
         # shouldn't be used)
         tax_node = expression_library_node.find('tax')
-        self.assertEqual(tax_node.get('inherited'), 'estimation_child')
-        # the extratax variable is inherited from estimation_child2
+        self.assertEqual(tax_node.get('inherited'), 'child1')
+        # the extratax variable is inherited from child2
         extratax_node = expression_library_node.find('extratax')
-        self.assertEqual(extratax_node.get('inherited'), 'estimation_child2')
-        # the existing_units variable is inherited from estimate
+        self.assertEqual(extratax_node.get('inherited'), 'child2')
+        # the existing_units variable is inherited from parent1
         existing_units_node = expression_library_node.find('existing_units')
-        self.assertEqual(existing_units_node.get('inherited'), 'estimate')
+        self.assertEqual(existing_units_node.get('inherited'), 'parent1')
 
     def test_inherited_attributes(self):
         # make sure that inherited attributes are overridden properly, and otherwise passed through if not overridden
         path = 'general/test_node'
-        f1 = os.path.join(self.test_configs, 'estimate.xml')
+        f1 = os.path.join(self.test_configs, 'parent1.xml')
         n1 = XMLConfiguration(f1).full_tree.find(path)
-        self.assertEqual(n1.get('test_attribute'), 'parent_value')
+        self.assertEqual(n1.get('test_attribute'), 'parent1_value')
         self.assertEqual(n1.get('oceanic_attribute'), 'squid')
-        f2 = os.path.join(self.test_configs, 'estimation_child.xml')
+        f2 = os.path.join(self.test_configs, 'child1.xml')
         n2 = XMLConfiguration(f2).full_tree.find(path)
-        self.assertEqual(n2.get('test_attribute'), 'child_value')
+        self.assertEqual(n2.get('test_attribute'), 'child1_value')
         self.assertEqual(n2.get('oceanic_attribute'), 'squid')
-        f3 = os.path.join(self.test_configs, 'estimation_child2.xml')
+        f3 = os.path.join(self.test_configs, 'child2.xml')
         n3 = XMLConfiguration(f3).full_tree.find(path)
-        self.assertEqual(n3.get('test_attribute'), 'parent_value')
+        self.assertEqual(n3.get('test_attribute'), 'parent1_value')
         self.assertEqual(n3.get('oceanic_attribute'), 'squid')
-        f4 = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        f4 = os.path.join(self.test_configs, 'grandchild1.xml')
         n4 = XMLConfiguration(f4).full_tree.find(path)
-        self.assertEqual(n4.get('test_attribute'), 'child_value')
+        self.assertEqual(n4.get('test_attribute'), 'child1_value')
         self.assertEqual(n4.get('oceanic_attribute'), 'squid')
 
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
-        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        f = os.path.join(self.test_configs, 'child1.xml')
         config = XMLConfiguration(f)
         ln_cost_str = config.find('general/expression_library/ln_cost')
         should_be = '<ln_cost dataset="parcel" source="expression" type="variable_definition" use="model variable">ln(psrc.parcel.cost)+10</ln_cost>'
         self.assertEqual(ln_cost_str.strip(), should_be)
         existing_units_str = config.find('general/expression_library/existing_units')
-        expected = '<existing_units dataset="parcel" inherited="estimate" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.existing_units</existing_units>'
+        expected = '<existing_units dataset="parcel" inherited="parent1" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.existing_units</existing_units>'
         self.assertEqual(existing_units_str.strip(), expected)
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
@@ -946,7 +943,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
               2000: {'bank': ['2000_06'], 'emme2_batch_file_name': None}}}
         self.assertEqual(config, should_be)
 
-    def skip_test_get_estimation_specification(self):
+    def test_get_estimation_specification(self):
         # test getting the estimation specification.  This also tests the expression library, which contains an expression
         # for ln_cost and a variable defined as a Python class
         f = os.path.join(self.test_configs, 'estimate.xml')
@@ -960,13 +957,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
         should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],
           -2: {1: ['constant'], 2: ['var1']}}
-        self.assertEqual(config, should_be)
-
-    def skip_test_get_estimation_specification_of_child(self):
-        f = os.path.join(self.test_configs, 'estimation_child.xml')
-        config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
-          240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
 
     def skip_test_expression_library(self):
@@ -1018,7 +1008,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
     def test_save_as(self):
         # test saving as a new file name - this should also test save()
-        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
         c = XMLConfiguration(f)
         str_io = StringIO.StringIO()
         c.save_as(str_io)
@@ -1031,10 +1021,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         str_io.close()
         est_file.close()
 
-    def skip_test_update_and_initialize(self):
+    def test_update_and_initialize(self):
         # Try update with a completely different project - make sure stuff gets replaced.
         # Then reinitialize from the file and check that it reverts.
-        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
         config = XMLConfiguration(f)
         update_str = """<?xml version='1.0' encoding='UTF-8'?>
             <opus_project>
@@ -1047,28 +1037,27 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config.update(update_str)
         section1 = config.get_section('scenario_manager/test_scenario')
         self.assertEqual(section1, {'i': 42})
-        # no model_manager section in the updated configuration
-        section2 = config.get_section('model_manager/estimation')
+        # no expression_library section in the updated configuration
+        section2 = config.get_section('general/expression_library')
         self.assertEqual(section2, None)
-        # now re-initialize from the original xml file, which has a model manager section and no scenario manager section
+        # now re-initialize from the original xml file, which has an expression_library section and no scenario manager section
         config.initialize_from_xml_file()
         section3 = config.get_section('scenario_manager/test_scenario')
         self.assertEqual(section3, None)
-        # no model_manager section in the updated configuration
-        section4 = config.get_section('model_manager/estimation')
-        self.assertEqual(section4['real_estate_price_model']['single_family_residential']['variables'], ['ln_cost', 'existing_units'])
+        section4 = config.get_section('general/expression_library')
+        self.assertEqual(section4['ln_cost'], 'ln(psrc.parcel.cost)+100')
 
     def test_update_and_save(self):
         # make sure nodes marked as temporary or inherited are filtered out when doing an update and a save
-        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        f = os.path.join(self.test_configs, 'grandchild1.xml')
         config = XMLConfiguration(f)
         update_str = """<opus_project>
             <general>
-              <parent type="file">estimation_child.xml</parent>
-              <parent type="file">estimation_child2.xml</parent>
+              <parent type="file">child1.xml</parent>
+              <parent type="file">child2.xml</parent>
               <expression_library type="dictionary" >
                 <ln_cost type="variable_definition" >ln(psrc.parcel.cost+100)</ln_cost>
-                <tax type="variable_definition" inherited="estimation_child">urbansim_parcel.parcel.tax</tax>
+                <tax type="variable_definition" inherited="child1">urbansim_parcel.parcel.tax</tax>
               </expression_library>
             </general>
             <data_manager inherited="someplace">
@@ -1091,8 +1080,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = """
           <opus_project>
             <general>
-              <parent type="file">estimation_child.xml</parent>
-              <parent type="file">estimation_child2.xml</parent>
+              <parent type="file">child1.xml</parent>
+              <parent type="file">child2.xml</parent>
               <expression_library type="dictionary">
                 <ln_cost type="variable_definition">ln(psrc.parcel.cost+100)</ln_cost>
                </expression_library>
@@ -1181,10 +1170,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertRaises(ValueError, config5.get_run_configuration, 'test_scenario')
         # badconfig_xml_version_too_small has an xml version number less than the minumum
         f_small = os.path.join(self.test_configs, 'badconfig_xml_version_too_small.xml')
-        self.assertRaises(XmlVersionException, XMLConfiguration, f_small)
+        self.assertRaises(XMLVersionException, XMLConfiguration, f_small)
         # badconfig_xml_version_too_big has an xml version number greater than the maximum
         f_big = os.path.join(self.test_configs, 'badconfig_xml_version_too_big.xml')
-        self.assertRaises(XmlVersionException, XMLConfiguration, f_big)
+        self.assertRaises(XMLVersionException, XMLConfiguration, f_big)
 
     def test_convert_model_to_dict(self):
         # new structure with type='model'

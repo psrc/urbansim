@@ -26,7 +26,7 @@ from opus_gui.results_manager.controllers.xml_configuration.xml_controller_resul
 from opus_gui.models_manager.controllers.xml_configuration.xml_controller_models import XmlController_Models
 from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
 from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
-from opus_core.opus_exceptions.xml_version_exception import XmlVersionException
+from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 
 import os,tempfile
 
@@ -139,7 +139,7 @@ class ToolboxBase(object):
             fileNamePath = fileNameInfo.absolutePath().trimmed()
             try:
                 self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
-            except XmlVersionException, ex:
+            except XMLVersionException, ex:
                 QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
                 return
             [tempFile, tempFilePath] = tempfile.mkstemp()
