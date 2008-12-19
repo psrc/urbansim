@@ -696,12 +696,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         opus_core_dir = __import__('opus_core').__path__[0]
         self.test_configs = os.path.join(opus_core_dir, 'configurations', 'test_configurations')
 
-    def skip_test_types(self):
+    def test_types(self):
         f = os.path.join(self.test_configs, 'manytypes.xml')
-        config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config,
-                         {'project_name':'test_project',
-                          'description': 'a test configuration',
+        config = XMLConfiguration(f).get_section('test_section')
+        self.assertEqual(config, 
+                         {'description': 'a test configuration',
                           'quotedthing': r"'test\test'",
                           'empty1': '',
                           'empty2': None,
@@ -715,9 +714,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'list_test': [10, 20, 30],
                           'vars': ['population', 'employment', 'density'],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
-                          'models': ['model1',
-                                     {'model2': {'group_members': 'all'}},
-                                     {'model3': {'chooser': 'random', 'sampler': 'fussy'}}],
+                          'models_to_run': ['real_estate_price_model'],
                           'mytables': ['gridcells', 'jobs'],
                           'mydatasets': ['gridcell', 'job']
                           })
@@ -958,7 +955,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           24: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
 
-    def skip_test_get_estimation_specification_with_equation(self):
+    def test_get_estimation_specification_with_equation(self):
         f = os.path.join(self.test_configs, 'estimate_choice_model.xml')
         config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
         should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],

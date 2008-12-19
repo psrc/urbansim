@@ -104,3 +104,6 @@ class XmlVersionTests(opus_unittest.OpusTestCase):
         self.assertTrue(XmlVersion('jibberish') == '0.0.0')
         self.assertTrue(XmlVersion('4.3.2.3.3.2.1.3'))
         self.assertTrue(XmlVersion('1.0.0-beta') == '0.0.0')
+        
+if __name__ == '__main__':
+    opus_unittest.main()
