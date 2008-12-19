@@ -17,7 +17,7 @@
 # Edit the following constant to change the major, minor, and bugfix numbers,
 # or to change from development to stable releases
 # if this is a stable release, change version to include a bugfix number (e.g. '4.2.3'), and stable to True
-version = '4.2'
+opus_version = '4.2'
 stable = False
 
 # Minumimum and maximum version numbers for XML that this code is guaranteed to work for.
@@ -27,8 +27,6 @@ maximum_xml_version = '4.2.0'
 
 # ********** END OF CONSTANTS TO EDIT TO CHANGE VERSION NUMBERS **********
 
-opus_version_number = '4.2'
-stable = False
 
 import sys, re
 from subprocess import Popen, PIPE
@@ -49,7 +47,7 @@ def get_opus_version_number(package_name='opus_core'):
     """
     
     if stable:
-        return version
+        return opus_version
     # it's a development version - try to find the svn revision number
     # default phrase for the revision -- override if we can find the real number
     revision = ' (revision number not available)'
@@ -87,5 +85,5 @@ def get_opus_version_number(package_name='opus_core'):
                     revision= ns[-1]
     except:
         pass
-    return "%s-dev%s" % (version, revision)
+    return "%s-dev%s" % (opus_version, revision)
     
