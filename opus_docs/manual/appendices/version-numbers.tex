@@ -69,6 +69,17 @@ numbers, except that since these change much less frequently, we use
 manually incremented numbers.  For example, 4.2.1-beta1 would be a beta
 version of the XML and sample data for upcoming stable release 4.2.1.
 
+The system has a minimum and maximum XML version number for which the code
+is known to work, and checks that XML configuration version numbers are
+within this range when they are loaded.  (If not, it raises an exception.)
+You can find the minimum and maximum XML version numbers that your code
+expects by evaluating
+\begin{verbatim}
+import opus_core.version_numbers
+opus_core.version_numbers.minimum_xml_version
+opus_core.version_numbers.maximum_xml_version
+\end{verbatim}
+
 {\bf Information for Developers.}  Please see the trac wiki for information
 on updating version numbers:
 \url{http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/VersionNumbersAndReleases}.

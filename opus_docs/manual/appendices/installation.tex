@@ -16,8 +16,10 @@
 Opus has been run and tested on Windows, Linux and Macintosh OS X\@.  (It
 should also run on any other platform that Python and its libaries run on,
 but we've not tested others.)  Instructions for installing Opus, and
-UrbanSim, which is bundled with it, are currently kept online at
-\url{http://www.urbansim.org/download/}.
+UrbanSim, which is bundled with it, are kept online at
+\url{http://www.urbansim.org/download/}.  There is also a copy of the
+instructions in the source code tree --- open the file 
+\file{opus_docs/installation/index.html} in a web browser.
 
 We provide both \emph{stable releases} and \emph{development versions} of
 Opus/UrbanSim.  Each stable release has a unique version number, such as
@@ -25,11 +27,7 @@ Opus/UrbanSim.  Each stable release has a unique version number, such as
 Generally, we recommend using the latest stable release of
 Opus/UrbanSim.  The system is under continuing development, and the other
 possibility is using the latest development version from our source code
-repository (not always recommended for the faint-of-heart).  As an
-exception to this recommendation, however, currently the new GUI is only
-available in the development version.  We intend to have a stable release
-soon of it (in autumn 2008), and will update these directions accordingly
-at that time.
+repository (not always recommended for the faint-of-heart).
 
 \subsection{Windows Installer}
 
@@ -113,15 +111,19 @@ your machine with the most current one available.
 To check out (download for the first time) any package from the Opus
 repository, if you have installed Tortoisesvn, right-click on the opus/src
 folder in the Windows Explorer, and the menu will contain new entries for
-interacting with Subversion.  Select the \verb#SVN Checkout# option, and
-use the url \url{https://trondheim.cs.washington.edu/svn/opus/trunk},
-plus the name of any package you wish to check out.  The target local
-directory should be under the Opus\_HOME/src directory, and take the same
-name as the Opus Package you are checking out.  An example of this checkout
-dialog is shown in Figure \ref{fig:tortoisesvn}.  There are other
-Subversion clients available for Windows, OS X and Linux, and any of them
-should work equivalently well for obtaining Opus packages.  Eventually,
-this functionality may be embedded into the Opus GUI.
+interacting with Subversion.  Select the \verb#SVN Checkout# option.  For a
+stable release, say version 4.2.0, use the url
+\url{https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0}, plus the
+name of any package you wish to check out.  For a package from the latest
+development version use the url
+\url{https://trondheim.cs.washington.edu/svn/opus/trunk}, plus the name of
+any package you wish to check out.  The target local directory should be
+under the Opus\_HOME/src directory, and take the same name as the Opus
+Package you are checking out.  An example of this checkout dialog is shown
+in Figure \ref{fig:tortoisesvn}.  There are other Subversion clients
+available for Windows, OS X and Linux, and any of them should work
+equivalently well for obtaining Opus packages.  Eventually, this
+functionality may be embedded into the Opus GUI.
 
 \begin{figure}[htp]
 \begin{center}
