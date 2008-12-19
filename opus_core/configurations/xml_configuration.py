@@ -959,7 +959,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           -2: {1: ['constant'], 2: ['var1']}}
         self.assertEqual(config, should_be)
 
-    def skip_test_expression_library(self):
+    def test_expression_library(self):
         # Test that get_expression_library is functioning correctly; that computing variables defined in the library
         # give the correct answers; and that the expression library is set correctly  for estimation and run configurations.
         f = os.path.join(self.test_configs, 'expression_library_test.xml')

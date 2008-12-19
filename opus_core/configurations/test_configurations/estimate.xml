@@ -9,7 +9,11 @@
   </general>
   <model_manager>
     <model_system>
+      <estimation_config type="dictionary">
+      </estimation_config>
       <real_estate_price_model type="model">
+        <structure>
+        </structure>
         <specification>
           <single_family_residential type="submodel">
             <submodel_id type="integer">24</submodel_id>
