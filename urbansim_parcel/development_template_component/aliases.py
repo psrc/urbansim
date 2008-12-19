@@ -17,5 +17,7 @@
 
 aliases = [
    "portion_of_building = development_template_component.percent_building_sqft / 100.0", 
-   "construction_cost_per_component = (development_template_component.construction_cost_per_unit * urbansim_parcel.development_template_component.portion_of_building / development_template_component.building_sqft_per_unit).astype(float32)",
+   ##TODO the value in building_sqft_per_unit column of development_template_components for PSRC is actually
+   ## building_sqft_per_sqft.  Need to make it consistent
+   "construction_cost_per_component = (development_template_component.construction_cost_per_unit * urbansim_parcel.development_template_component.portion_of_building * development_template_component.building_sqft_per_unit).astype(float32)",   
    ]

@@ -20,6 +20,6 @@ aliases = [
     #aggregate construction_cost_per_unit from unit_cost for each building component
     #result = sum over all components (percent_of_building_sqft * construction_cost_per_unit / sqft_per_unit)
     ##TODO: do we want to specify the construction cost of residential buildings by $/unit or $/sqft
-    #this variale compute the latter
+    #this variable compute the former
     "construction_cost_per_unit = (development_template.aggregate(urbansim_parcel.development_template_component.construction_cost_per_component)).astype(float32)"
    ]
