@@ -1,10 +1,10 @@
 #
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
@@ -23,7 +23,7 @@ from opus_core.opus_exceptions.xml_version_exception import XmlVersionException
 
 class XMLConfiguration(object):
     """
-    An XMLConfiguration is a kind of configuration that represents a project 
+    An XMLConfiguration is a kind of configuration that represents a project
     and that can be stored or loaded from an XML file.
     """
 
@@ -42,7 +42,7 @@ class XMLConfiguration(object):
             workspace_dir = os.path.split(opus_core_dir)[0]
             self.full_filename = os.path.join(workspace_dir, filename)
         # if self.full_filename doesn't exist, ElementTree will raise an IOError
-        # self.tree is the xml tree (without any inherited nodes); 
+        # self.tree is the xml tree (without any inherited nodes);
         # self.full_tree is the xml tree with all the inherited nodes as well
         # parent_map is a dictionary that can be used to work back up the XML tree
         # these are all set by the _initialize method
@@ -52,18 +52,19 @@ class XMLConfiguration(object):
         self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
         self.xml_version = XmlVersion()
+        self.version_warning_message = ''
         self.initialize_from_xml_file(is_parent)
-        
+
     def initialize_from_xml_file(self, is_parent=False):
         """initialize (or re-initialize) the contents of this configuration from the xml file.
         If is_parent is true, mark all of the nodes as inherited
         (either from this configuration or a grandparent)."""
         # try to load the element tree
         self._initialize(ElementTree(file=self.full_filename), is_parent)
-        
+
     def update(self, newconfig_str):
-        """Update the contents of this configuration from the string newconfig_str 
-        (a string representing an xml configuration).  Ignore any temporary or 
+        """Update the contents of this configuration from the string newconfig_str
+        (a string representing an xml configuration).  Ignore any temporary or
         inherited nodes in newconfig_str (this gets freshly initialized)."""
         # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
@@ -76,10 +77,10 @@ class XMLConfiguration(object):
         self._set_followers(etree.getroot(), self._get_parent_trees(), '')
         self._clean_tree(etree.getroot())
         self._initialize(etree, False)
-        
+
     def get_section(self, name):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
-        and return the dictionary.  Return None if there isn't such a section.  If there are 
+        and return the dictionary.  Return None if there isn't such a section.  If there are
         multiple sections with the given name, return the first one."""
         x = self._find_node(name)
         if x is None:
@@ -107,7 +108,7 @@ class XMLConfiguration(object):
         section into the run configuration.  If the configuration has a travel model configuration,
         insert that under 'travel_model_configuration'.  The travel model configuration is formed
         by merging the information from the travel model configuration sections in the model_manager
-        and in the scenario.  If the configuration has an expression library, add that to the 
+        and in the scenario.  If the configuration has an expression library, add that to the
         configuration under the key 'expression_library' """
         general_section = self.get_section('general')
         project_name = general_section['project_name']
@@ -135,41 +136,41 @@ class XMLConfiguration(object):
             del config['parent_old_format']
             parent_config.merge(config)
             config = parent_config
-        
+
         config['project_name'] = project_name
         return config
-    
+
     def get_estimation_configuration(self, model_name = None):
         """Extract an estimation configuration from this xml project and return it.
         If the configuration has an expression library, add
-        that to the configuration under the key 'expression_library' 
-        If the model_name argument is given, also parse overriding 
+        that to the configuration under the key 'expression_library'
+        If the model_name argument is given, also parse overriding
         configurations for that specific model."""
         # grab general configuration for estimations
         config_section = self.get_section('model_manager/model_system')
         config = config_section['estimation_config']
         self._merge_controllers(config)
         self._insert_expression_library(config)
-        
+
         # ignore the configuration changes for unspecified models
         if model_name is None:
             return config
-        
+
         # get the configuration overrides for the model
         changes_dict = {}
-        
-        # look for a models to run list in prepare for estimate            
+
+        # look for a models to run list in prepare for estimate
         models_to_run = []
         models_to_run_node = \
             self._find_node('model_manager/model_system/%s/structure/'
-                            'prepare_for_estimate/models_to_run/' 
+                            'prepare_for_estimate/models_to_run/'
                             %model_name)
         if models_to_run_node is not None:
             # model has a "models to run"-list
             models_to_run = self._convert_node_to_data(models_to_run_node)
             # include this model in the models_to_run list
             models_to_run.append({model_name: ["estimate"]})
-    
+
         # only submit changes to config if models_to_run was updated
         changes_dict['models'] = models_to_run
         if models_to_run:
@@ -183,7 +184,7 @@ class XMLConfiguration(object):
         all_vars = []
         lib_node = self._find_node('general/expression_library')
         for v in lib_node:
-            # if the variable is defined as an expression, make an alias; 
+            # if the variable is defined as an expression, make an alias;
             # otherwise it's a Python class - just use as is
             if v.get('source')=='expression':
                 all_vars.append('%s = %s' % (v.tag, v.text))
@@ -193,7 +194,7 @@ class XMLConfiguration(object):
         all_vars.sort()
 
         # look for list of submodels
-        submodel_list = self.get_section('model_manager/model_system/' + 
+        submodel_list = self.get_section('model_manager/model_system/' +
                                          model_name + '/specification/')
         result = {}
         result['_definition_'] = all_vars
@@ -216,18 +217,18 @@ class XMLConfiguration(object):
 
         if model_group is not None:
             result = result_group
-        
+
         return result
-    
+
     def save(self):
         """save this configuration in a file with the same name as the original"""
         self.save_as(self.full_filename)
-        
+
     def save_as(self, name):
         """save this configuration under a new name"""
         # TODO: change name???
         self.tree.write(name)
-        
+
     def find(self, path):
         """return the string encoding of the node referenced by 'path', or None if there is no such node"""
         n = self._find_node(path)
@@ -235,24 +236,24 @@ class XMLConfiguration(object):
             return n
         else:
             return tostring(n)
-        
+
     def get_opus_data_path(self):
         """return the path to the opus_data directory.  This is found in the environment variable
-        OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the 
+        OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the
         environment variable OPUS_HOME followed by 'data' """
         path = os.environ.get('OPUS_DATA_PATH')
         if path is None:
             return os.path.join(os.environ.get('OPUS_HOME'), 'data')
         else:
             return path
-        
+
     def _initialize(self, elementtree, is_parent):
         self.tree = elementtree
         self.full_tree = copy.deepcopy(self.tree)
         full_root = self.full_tree.getroot()
         if full_root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
-        
+
         # set the parser to this files xml version
         version_node = self.tree.getroot().find('xml_version')
         if version_node is not None:
@@ -262,7 +263,7 @@ class XMLConfiguration(object):
             self.xml_version = XmlVersion(maximum_xml_version)
         # check that the version number is OK
         if self.xml_version < minimum_xml_version:
-            raise XmlVersionException, ("XML version for this project file is less than the minimum required XML version.\n" 
+            raise XmlVersionException, ("XML version for this project file is less than the minimum required XML version.\n"
                 + "  File name: %s \n  XML version found: %s  \n  minimum required: %s") % (self.full_filename, self.xml_version, minimum_xml_version)
         if self.xml_version > maximum_xml_version:
             raise XmlVersionException, ("XML version for this project file is greater than the maximum expected XML version.\n"
@@ -280,13 +281,13 @@ class XMLConfiguration(object):
     def _find_node(self, path):
         # find path in my xml tree
         # this is like the 'find' provided by ElementTree, except that it also works with an empty path
-        # Caution: in ElementTree an element without any elements tests as False -- so if you are using 
+        # Caution: in ElementTree an element without any elements tests as False -- so if you are using
         # the result of _find_node in an 'if' statement, check that the result is not None explicitly.
         if path=='':
             return self.full_tree.getroot()
         else:
             return self.full_tree.getroot().find(path)
-        
+
     def _get_parent_trees(self):
         default_dir = os.path.split(self.full_filename)[0]
         parent_nodes = self.full_tree.getroot().findall('general/parent')
@@ -294,25 +295,30 @@ class XMLConfiguration(object):
         for p in parent_nodes:
             x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
             parent_trees.append(x.full_tree.getroot())
-            # warn if the xml version is not consistent through out the entire
-            # inheritage tree
-            if x.xml_version != self.xml_version:
-                print ('Warning! Different versions of XML structure.\n'
-                       'Switching from version %s in file %s\n'
-                       'to version %s in file %s'
-                        %(x.xml_version, x.full_filename,
-                          self.xml_version, self.full_filename))
 
+            # TODO maybe move this to a place where it makes more sense
+
+            # merge any warnings from inherited xml configurations
+            if x.version_warning_message:
+                self.version_warning_message = self.version_warning_message + \
+                    x.version_warning_message + '\n'
+            # if necessery, add a version inconsistent warning
+            if x.xml_version != self.xml_version:
+                self.version_warning_message = (self.version_warning_message +
+                'version "%s" in  %s is different from version "%s" in %s'
+                %(x.xml_version, os.path.basename(x.full_filename),
+                  self.xml_version, os.path.basename(self.full_filename)))
         return parent_trees
-    
+
+
     def _merge_parent_elements(self, parent_node, path):
         # parent_node is a node someplace in a parent tree, and path is a path from the root
-        # to that node.  Merge in parent_node into this configuration's tree.  We are allowed 
-        # to reuse bits of the xml from parent_node.  (The xml for it is created by this class 
+        # to that node.  Merge in parent_node into this configuration's tree.  We are allowed
+        # to reuse bits of the xml from parent_node.  (The xml for it is created by this class
         # from its file during initialization, so we don't need to make a copy).
         # Precondition: path gives a unique element in this configuration's xml tree.
         # First merge in any attributes from the parent that aren't in the child (except for 'inherited' attributes)
-        this_node = self._find_node(path) 
+        this_node = self._find_node(path)
         for k in parent_node.keys():
             if k!='inherited' and k not in this_node.attrib:
                 this_node.set(k, parent_node.get(k))
@@ -327,9 +333,9 @@ class XMLConfiguration(object):
                 # We want to insert it at a sensible place in the tree.  If there are any nodes
                 # already in the tree with a 'followers' attribute that includes the name of the
                 # new node being inserted, we need to put the new node after those nodes.
-                # Also, in the parent, 'child' is right after 'prev_child', and so in the new tree we put 
-                # 'child' right after the local version of 'prev_child', unless one of the tags in a 
-                # 'followers' attribute says it has to go later.  If 'prev_child' is not None, we know that 
+                # Also, in the parent, 'child' is right after 'prev_child', and so in the new tree we put
+                # 'child' right after the local version of 'prev_child', unless one of the tags in a
+                # 'followers' attribute says it has to go later.  If 'prev_child' is not None, we know that
                 # this tree will have a node with the same tag as 'prev_child' node, because
                 # either it was already in this tree, or we just merged it in from the parent.
                 # (One thing that may be odd about this is if there are several nodes with the
@@ -347,7 +353,7 @@ class XMLConfiguration(object):
                 # its children, in case some of them don't exist in this tree
                 self._merge_parent_elements(child, extended_path)
             prev_child = child
-            
+
     def _clean_tree(self, etree):
         # Remove from etree any nodes with the 'temporary' or 'inherited' attribute.
         # Use a counter rather than to handle the problem of deleting a node while iterating
@@ -359,7 +365,7 @@ class XMLConfiguration(object):
             else:
                 self._clean_tree(e)
                 i = i+1
-    
+
     def _set_followers(self, tree, parent_trees, path):
         # Recursively traverse tree, setting the 'followers' attribute on any node
         # that needs it.  A node n should have a 'followers' attribute if it is new in
@@ -388,13 +394,13 @@ class XMLConfiguration(object):
                         n.set('followers', s)
                 self._set_followers(n, parent_trees, extended_path)
             i = i+1
-    
+
     def _merge_controllers(self, config):
         '''merge the controllers in model_manager/model_system/ portion if the
         project (if any) into config.'''
-        
+
         my_controller_configuration = self.get_section('model_manager/model_system')
-        
+
         if my_controller_configuration is not None:
             if "models_configuration" not in config:
                 config["models_configuration"] = {}
@@ -408,10 +414,10 @@ class XMLConfiguration(object):
         for child in node:
             self._add_to_dict(child, config)
         return config
-    
+
     def _add_to_dict(self, node, result_dict):
         # Add the information in 'node' to 'result_dict'.  The way this is done depends on the node type and the
-        # parser_action (if present).  The normal case is that 'node' is an element node representing a key-value pair 
+        # parser_action (if present).  The normal case is that 'node' is an element node representing a key-value pair
         # to be added to 'result_dict'.  But there are a couple of special cases.
         # If the type is 'category' or 'category_with_special_keys' add the children to result_dict.
         # (See the comment for _convert_dictionary_with_special_keys_to_data for details on how that type is handled.)
@@ -434,12 +440,12 @@ class XMLConfiguration(object):
                 pass # we dont want templates in dicts
             else:
                 result_dict[node.tag] = data
-    
+
     def _convert_node_to_data(self, node):
         # convert the information under node into the appropriate Python datatype.
         # To do this, branch on the node's type attribute.  For some kinds of data,
-        # return None if the node should be skipped.  
-        # For example, for type="model_choice" return None if that is a model 
+        # return None if the node should be skipped.
+        # For example, for type="model_choice" return None if that is a model
         # that isn't selected to be run
         type_name = node.get('type')
         if type_name=='integer':
@@ -474,7 +480,7 @@ class XMLConfiguration(object):
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
-        elif type_name in ['dictionary', 'category', 'submodel', 
+        elif type_name in ['dictionary', 'category', 'submodel',
                            'model_system', 'configuration','model_estimation',
                            'submodel_equation', 'scenario']:
             return self._convert_dictionary_to_data(node)
@@ -504,20 +510,20 @@ class XMLConfiguration(object):
             return eval(node.text)
         else:
             raise ValueError, 'unknown type: %s' % type_name
-            
+
     def _make_instance(self, class_name, path, keyword_args={}):
         # return an instance of the class named class_name.  path is the path to import it.
         if path=='':
             cls = eval('%s()' % class_name)
         else:
-            # use the fully-qualified class name rather than a 'from pkg import classname' 
+            # use the fully-qualified class name rather than a 'from pkg import classname'
             # to avoid cluttering up the local name space
             exec('import %s' % path)
             cls = eval('%s.%s' % (path, class_name))
         inst = cls.__new__(cls)
         inst.__init__(**keyword_args)
         return inst
-    
+
     def _convert_string_to_data(self, node, func):
         blank_to_None = node.get('parser_action', '')=='blank_to_None'
         if node.text is None:
@@ -531,7 +537,7 @@ class XMLConfiguration(object):
             if blank_to_None and node.text == 'None':
                 return None
             return func(node.text)
-        
+
     def _convert_list_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
         result_list = filter(lambda n: n is not None, r)
@@ -546,31 +552,31 @@ class XMLConfiguration(object):
             return result_dict
         else:
             return result_list
-        
+
     def _convert_variable_list_to_data(self, node):
-        # node should be a text node with a comma-separated list of variable 
+        # node should be a text node with a comma-separated list of variable
         # names (perhaps with white space as well)
-        if node.text is None: 
+        if node.text is None:
             return [] # this is the case with xml stumps (like: <var_list />)
         else:
             return map(lambda s: s.strip(), node.text.split(','))
-        
+
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
         return tuple(r)
-        
+
     def _convert_file_or_directory_to_data(self, node):
         if node.get('parser_action', '')=='prefix_with_opus_data_path':
             return os.path.join(self.get_opus_data_path(), node.text)
         else:
             return node.text
-        
+
     def _convert_dictionary_to_data(self, node):
         result_dict = {}
         for child in node:
             self._add_to_dict(child, result_dict)
         return result_dict
-    
+
     def _convert_model_to_dict(self, node):
         '''translate from xml structure to dictionary configuration.'''
         structure_node = node.find('structure')
@@ -580,7 +586,7 @@ class XMLConfiguration(object):
         model_dict = {}
         for subnode in structure_node:
             # append 'arguments' to some nodes
-            if subnode.tag in ['init', 'run', 'prepare_for_run', 
+            if subnode.tag in ['init', 'run', 'prepare_for_run',
                                'estimate', 'prepare_for_estimate']:
                 subnode_struct = {'arguments':{}}
                 # everything but 'name' and 'output' should be under arguments
@@ -604,13 +610,13 @@ class XMLConfiguration(object):
             else: # just put it in the dict
                 model_dict[subnode.tag] = self._convert_node_to_data(subnode)
         return model_dict
-        
+
     def _convert_dictionary_with_special_keys_to_data(self, node):
-        # Node should be converted to a dictionary of dictionaries, typically with keys in the top-level dictionary 
-        # that are integers.  Since in xml tags can't be integers, this is handled with this special type.  The 
-        # elements under the node are parsed into dictionaries (their tags don't matter).  The node must have an 
+        # Node should be converted to a dictionary of dictionaries, typically with keys in the top-level dictionary
+        # that are integers.  Since in xml tags can't be integers, this is handled with this special type.  The
+        # elements under the node are parsed into dictionaries (their tags don't matter).  The node must have an
         # attribute 'key_name'.  The key name is used to find the key for each element in the top-level dictionary,
-        # and is deleted from the second-level dictionary.  
+        # and is deleted from the second-level dictionary.
         # See the unit tests for an example - that may make it clearer what this does.
         key_name = node.get('key_name')
         result = {}
@@ -620,7 +626,7 @@ class XMLConfiguration(object):
             del d[key_name]
             result[k] = d
         return result
-    
+
     def _convert_class_to_data(self, node):
         items = {}
         for child in node:
@@ -646,7 +652,7 @@ class XMLConfiguration(object):
                 # Get rid of the database_connection element since we just replaced it
                 # with the real connection info
                 del items['database_connection']
-        # delete the class name and class path from the dictionary -- the remaining items 
+        # delete the class name and class path from the dictionary -- the remaining items
         # will be the keyword arguments to use to create the instance
         del items['Class_name']
         del items['Class_path']
@@ -693,7 +699,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def skip_test_types(self):
         f = os.path.join(self.test_configs, 'manytypes.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
+        self.assertEqual(config,
                          {'project_name':'test_project',
                           'description': 'a test configuration',
                           'quotedthing': r"'test\test'",
@@ -709,19 +715,19 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'list_test': [10, 20, 30],
                           'vars': ['population', 'employment', 'density'],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
-                          'models': ['model1', 
-                                     {'model2': {'group_members': 'all'}}, 
+                          'models': ['model1',
+                                     {'model2': {'group_members': 'all'}},
                                      {'model3': {'chooser': 'random', 'sampler': 'fussy'}}],
                           'mytables': ['gridcells', 'jobs'],
                           'mydatasets': ['gridcell', 'job']
                           })
-            
+
     def test_whitespace_and_comments(self):
         f = os.path.join(self.test_configs, 'whitespace.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, {'project_name':'test_project',
                           'description': 'a test configuration'})
-        
+
     def test_str_and_unicode(self):
         # check that the keys in the config dictionary are str, and that
         # the str and unicode tags are working correctly
@@ -737,9 +743,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the str and unicode tags are working correctly
         f = os.path.join(self.test_configs, 'array.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        should_be = array([100, 300]) 
+        should_be = array([100, 300])
         self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
-        
+
     def test_files_directories(self):
         # if the OPUS_HOME environment variable isn't set, temporarily set it so that
         # the prefix_with_opus_data_path parser command can be tested
@@ -750,27 +756,27 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = x.get_run_configuration('test_scenario')
         prefix = x.get_opus_data_path()
         self.assertEqual(config, {'project_name':'test_project',
-                                  'file1': 'testfile', 
+                                  'file1': 'testfile',
                                   'file2': os.path.join(prefix, 'testfile'),
-                                  'dir1': 'testdir', 
+                                  'dir1': 'testdir',
                                   'dir2': os.path.join(prefix, 'testdir')})
-        
+
     def test_scenario_inheritance(self):
         # test inheritance of scenarios with a chain of xml configurations
         f = os.path.join(self.test_configs, 'child_scenarios.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
-        self.assertEqual(config, 
+        self.assertEqual(config,
             {'project_name':'test_project','description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
-            
+
     def test_scenario_inheritance_external_parent(self):
         # test inheritance of scenarios with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'grandchild_scenario_external_parent.xml')
         config1 = XMLConfiguration(f).get_run_configuration('grandchild')
-        self.assertEqual(config1, 
+        self.assertEqual(config1,
             {'project_name':'test_project','description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
-            
+
     def test_old_config_inheritance(self):
-        # test inheriting from an old-style configuration 
+        # test inheriting from an old-style configuration
         # (backward compatibility functionality - may be removed later)
         f = os.path.join(self.test_configs, 'child_scenario_oldparent.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
@@ -781,11 +787,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # 'models' is inherited
         self.assert_('models' in config)
         self.assert_('random_nonexistant_key' not in config)
-            
+
     def test_categories(self):
         f = os.path.join(self.test_configs, 'categories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
+        self.assertEqual(config,
                          {'project_name':'test_project',
                           'description': 'category test',
                           'real_name': 'config name test',
@@ -798,14 +804,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_list_to_dict(self):
         f = os.path.join(self.test_configs, 'list_to_dict.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
+        self.assertEqual(config,
                          {'project_name':'test_project',
                           'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
     def test_include(self):
         f = os.path.join(self.test_configs, 'include_test.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
+        self.assertEqual(config,
                          {'project_name':'test_project',
                           'description': 'a test scenario',
                           'firstyear': 2000,
@@ -824,7 +830,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
-            
+
     def test_class_element_with_categories(self):
         # like test_class_element, but with an additional layer of categorization in the xml
         f = os.path.join(self.test_configs, 'database_configuration_with_categories.xml')
@@ -835,7 +841,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
-            
+
     def skip_test_get_section(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_section('model_manager/estimation')
@@ -845,7 +851,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           'models_to_estimate': ['real_estate_price_model'],
           'estimation_config': {}}
         self.assertEqual(config, should_be)
-        
+
     def skip_test_get_section_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_section('model_manager/estimation')
@@ -855,7 +861,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model'],
           'estimation_config': {}}
         self.assertEqual(config, should_be)
-        
+
     def test_inherited_nodes(self):
         # make sure that inherited attributes are tagged as 'inherited'
         f = os.path.join(self.test_configs, 'estimation_child.xml')
@@ -869,7 +875,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the existing_units variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
         existing_units_node = expression_library_node.find('existing_units')
         self.assertEqual(existing_units_node.get('inherited'), 'estimate')
-        
+
     def test_grandchild_inherited_nodes(self):
         # test two levels of inheritance, with multiple inheritance as well
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
@@ -877,7 +883,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the ln_cost variable is redefined in estimation_grandchild, so it shouldn't have the 'inherited' attribute
         ln_cost_node = expression_library_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
-        # the tax variable is inherited from estimation_child (there is also a definition in estimation_child2 but that 
+        # the tax variable is inherited from estimation_child (there is also a definition in estimation_child2 but that
         # shouldn't be used)
         tax_node = expression_library_node.find('tax')
         self.assertEqual(tax_node.get('inherited'), 'estimation_child')
@@ -887,7 +893,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the existing_units variable is inherited from estimate
         existing_units_node = expression_library_node.find('existing_units')
         self.assertEqual(existing_units_node.get('inherited'), 'estimate')
-        
+
     def test_inherited_attributes(self):
         # make sure that inherited attributes are overridden properly, and otherwise passed through if not overridden
         path = 'general/test_node'
@@ -906,8 +912,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f4 = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         n4 = XMLConfiguration(f4).full_tree.find(path)
         self.assertEqual(n4.get('test_attribute'), 'child_value')
-        self.assertEqual(n4.get('oceanic_attribute'), 'squid')  
-  
+        self.assertEqual(n4.get('oceanic_attribute'), 'squid')
+
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')
@@ -920,59 +926,59 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(existing_units_str.strip(), expected)
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
-        
+
     def test_get_controller(self):
         # test getting a run specification that includes a controller in the xml
         f = os.path.join(self.test_configs, 'controller_test.xml')
         config = XMLConfiguration(f).get_run_configuration('baseline')
         should_be = {'project_name':'test_project',
                     'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
-          'name': 'prepare_for_run', 
+          'name': 'prepare_for_run',
           'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
           }}}}}
         self.assertEqual(config, should_be)
-        
+
     def test_travel_model_config(self):
         # test whether the travel model section of a run configuration is being set correctly
         # this also tests the 'category_with_special_keys' type
         f = os.path.join(self.test_configs, 'travel_model.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
-        should_be = {'project_name': 'test_project', 'travel_model_configuration': 
+        should_be = {'project_name': 'test_project', 'travel_model_configuration':
             {'travel_model_base_directory': 'base3',
              'emme2_batch_file_name': 'QUICKRUN.bat',
               2000: {'bank': ['2000_06'], 'emme2_batch_file_name': None}}}
         self.assertEqual(config, should_be)
-            
+
     def skip_test_get_estimation_specification(self):
         # test getting the estimation specification.  This also tests the expression library, which contains an expression
-        # for ln_cost and a variable defined as a Python class 
+        # for ln_cost and a variable defined as a Python class
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
           24: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
-        
+
     def skip_test_get_estimation_specification_with_equation(self):
         f = os.path.join(self.test_configs, 'estimate_choice_model.xml')
         config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
         should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],
           -2: {1: ['constant'], 2: ['var1']}}
         self.assertEqual(config, should_be)
-        
+
     def skip_test_get_estimation_specification_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
           240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
-        
+
     def skip_test_expression_library(self):
         # Test that get_expression_library is functioning correctly; that computing variables defined in the library
-        # give the correct answers; and that the expression library is set correctly  for estimation and run configurations. 
+        # give the correct answers; and that the expression library is set correctly  for estimation and run configurations.
         f = os.path.join(self.test_configs, 'expression_library_test.xml')
         config = XMLConfiguration(f)
         lib = config.get_expression_library()
-        # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet 
+        # NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet
         # (so it can't be used yet in computing variables).
         lib_should_be = {('test_agent', 'income'): 'income',
                      ('test_agent', 'income_times_2'): 'opus_core.test_agent.income_times_2',
@@ -1027,7 +1033,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(squished_result, should_be)
         str_io.close()
         est_file.close()
-        
+
     def skip_test_update_and_initialize(self):
         # Try update with a completely different project - make sure stuff gets replaced.
         # Then reinitialize from the file and check that it reverts.
@@ -1115,7 +1121,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         mydict = config.full_tree.find('general/mydict')
         child_names = map(lambda n: n.tag, mydict.getchildren())
         self.assertEqual(child_names, ['a', 'b', 'x', 'c', 'd'])
-        # Now update the configuration with a new xml tree, in which x is after c and 
+        # Now update the configuration with a new xml tree, in which x is after c and
         # there is also a new node e
         update_str = """
           <opus_project>
@@ -1162,7 +1168,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # badconfig2 doesn't have a root element called project
         f2 = os.path.join(self.test_configs, 'badconfig2.xml')
         self.assertRaises(ValueError, XMLConfiguration, f2)
-        # badconfig3 is well-formed, but doesn't have a scenario_manager section 
+        # badconfig3 is well-formed, but doesn't have a scenario_manager section
         # (so getting the run configuration from it doesn't work)
         f3 = os.path.join(self.test_configs, 'badconfig3.xml')
         config3 = XMLConfiguration(f3)
@@ -1182,7 +1188,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # badconfig_xml_version_too_big has an xml version number greater than the maximum
         f_big = os.path.join(self.test_configs, 'badconfig_xml_version_too_big.xml')
         self.assertRaises(XmlVersionException, XMLConfiguration, f_big)
-         
+
     def test_convert_model_to_dict(self):
         # new structure with type='model'
         f_new = os.path.join(self.test_configs, 'new_model_struct.xml')
