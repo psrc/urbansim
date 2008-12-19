@@ -176,7 +176,7 @@ class ToolboxBase(object):
         # project loaded, show any XML version messages
         if self.opus_core_xml_configuration.version_warning_message:
             msg = ('Warning! Inconsistent version numbers found in XML files '
-                   'when loading project.\nDetails:\n\n')
+                   'when loading project.\n\nDetails:\n\n')
             msg = msg + self.opus_core_xml_configuration.version_warning_message
             QMessageBox.warning(self.mainwindow, 'Inconsistent xml versions', msg)
 
