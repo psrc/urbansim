@@ -14,7 +14,7 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, QFileInfo, QFile, QIODevice
+from PyQt4.QtCore import QFileInfo, QFile, QIODevice
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtXml import QDomDocument
 
@@ -55,8 +55,7 @@ class ToolboxBase(object):
         self.dataManagerTree = None
         self.dataManagerFileTree = None
 
-        #TODO: verify that this is needed.
-        # mainwindow.saveConfig asks for this attribute
+        # never used -- obsolete or returning feature?
         self.dataManagerDBSTree = None
 
         gui_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
@@ -104,7 +103,7 @@ class ToolboxBase(object):
             QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
             return False
 
-        [tempFile, tempFilePath] = tempfile.mkstemp()
+        _, tempFilePath = tempfile.mkstemp()
         #print tempFile,tempFilePath
         # full_tree is the "whole" tree, inherited nodes and all
         # tree is just the actual file the GUI was asked to open
@@ -160,6 +159,7 @@ class ToolboxBase(object):
                 return True
         return False
 
+
     def markProjectAsClean(self):
         managers = [self.resultsManagerTree,
             self.modelManagerTree,
@@ -169,6 +169,7 @@ class ToolboxBase(object):
         for manager in managers:
             if manager:
                 manager.model.markAsClean()
+
 
     def close_controllers(self):
         '''
@@ -183,6 +184,7 @@ class ToolboxBase(object):
             if manager and manager.removeTree() == False:
                 return False
         return True
+
 
     def emit_default_gui_configuration_file(self, file_name):
         from opus_core.misc import directory_path_from_opus_path
