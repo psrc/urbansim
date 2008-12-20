@@ -202,18 +202,19 @@ Installation directions at your \file{opus_docs/docs/install.html}).
 
 \subsubsection{One-dimensional Plots}
 %
-Attributes \attributesindex in a dataset \datasetindex are stored as one-dimensional arrays, thus they can be
-plotted for example as a histogram \histogramindex or as a scatter plot. \scatterplotindex The \class{Dataset} 
-offers the following methods:
+Attributes in a dataset are stored as one-dimensional arrays, thus they can be
+plotted for example as a histogram\histogramindex
+or as a scatter plot.\scatterplotindex
+The \class{Dataset} offers the following methods:
 
 \begin{description}
-\item[\method{plot_histogram(name, ...)}] \histogramindex creates a histogram \histogramindex of attribute \attributesindex
+\item[\method{plot_histogram(name, ...)}] creates a histogram of attribute
 \verb|name| using matplotlib. \matplotlibindex
-\item[\method{r_histogram(name, ...)}] \rindex\histogramindex creates
-such histogram \histogramindex including a density line using the rpy \rpyindex library.
-\item[\method{plot_scatter(name_x, name_y, ...)}] \rindex\scatterplotindex creates a scatter plot \scatterplotindex for two
+\item[\method{r_histogram(name, ...)}] \rindex creates
+such histogram including a density line using the rpy \rpyindex library.
+\item[\method{plot_scatter(name_x, name_y, ...)}] \rindex creates a scatter plot for two
 attributes \attributesindex using matplotlib. \matplotlibindex
-\item[\method{r_scatter(name_x, name_y, ...)}] \rindex\scatterplotindex creates a scatter plot \scatterplotindex 
+\item[\method{r_scatter(name_x, name_y, ...)}] \rindex creates a scatter plot
 using the rpy \rpyindex library.
 \end{description}
 

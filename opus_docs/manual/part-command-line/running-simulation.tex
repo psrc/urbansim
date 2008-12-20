@@ -48,12 +48,11 @@ one can use an Opus tool to create such base year cache.\baseyearcacheindex
 The script needs a configuration module passed as an argument. 
 If the module is for example located at
 \file{psrc/configs/subset_configuration.py} under one of the paths found in the
-PYTHONPATH \pythonpathindex environment variable, \environmentvariablesindex the command
-\pythonindex
+PYTHONPATH environment variable, the command
 \begin{verbatim}
 python create_baseyear_cache.py psrc.configs.subset_configuration
 \end{verbatim}
-caches the database defined in the \verb|subset_configuration| module into a basyear
+caches the database defined in the \verb|subset_configuration| module into a baseyear
 cache. \baseyearcacheindex Run this command from 
 the \file{opus_core/tools/} directory. An option \verb|--cache-directory|
 can be used to pass the directory to be cached into. Alternatively, this can be
@@ -171,12 +170,12 @@ via a Python \pythonindex dictionary that then is used to create an instance of 
 
 \subsection{Run Manager Configuration}
 \label{sec:run-manager-configuration}
-%
+\index{Run Manager configuration (command line version)}
 
 As described in Sections~\ref{sec:run-manager} and~\ref{sec:running-estimation}, 
 running UrbanSim simulation or estimation is controlled by a user-defined
 configuration. The following code, \file{baseline.py}, contains a fully specified configuration
-that influences the run management. \runmanagerindex Mandatory entries and default
+that influences the run management. Mandatory entries and default
 values for optional entries are marked in the comments. The actual values for
 the listed entries are only examples.
 
@@ -269,7 +268,7 @@ to use that many chunks.  For instance, if a dataset has 11 attributes, setting
 attributes, in each chunk.
 
 In the \verb|'baseyear_cache'| \baseyearcacheindex block, the directory with the already cached data
-should be put into the entry \verb|existing_cache_to_copy|. The run manager \runmanagerindex then
+should be put into the entry \verb|existing_cache_to_copy|. The run manager then
 copies data from that directory into the simulation cache \baseyearcacheindex for this run. If you
 want to copy only selected years, they can be specified in the entry
 \verb|years_to_cache| as a list of those years; by default all years are
@@ -288,13 +287,13 @@ is by examining the year directories created in your baseyear cache.
 The entry \verb|unroll_gridcells| is specific to the urbansim gridcell project. 
 It controls if gridcells are unrolled into years before the base year. 
 
-There are several run manager \runmanagerindex configurations in Opus. See for example the
+There are several run manager configurations in Opus. See for example the
 directory \file{psrc/configs} for configuration of different PSRC \psrcindex runs.
 
 \subsection{Model System Configuration}
 \label{sec:model-system-configuration}
 %
-If one would pass the above configuration to the run manager, \runmanagerindex it would perform
+If one would pass the above configuration to the run manager, it would perform
 steps as described in Section~\ref{sec:run-manager-tasks}, but no model \modelsindex would
 be run. The configuration should in addition contain entries that control what
 models, \modelsindex in what order and with what input and output should be run. It

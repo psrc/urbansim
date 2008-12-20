@@ -13,20 +13,20 @@ The latest incarnation of UrbanSim, UrbanSim 4, is implemented as a
 set of packages in Opus. Package \package{opus_core} provides
 general functionality, \package{urbansim} contains everything around
 land use models, \modelsindex package \package{opus_emme2} is an
-Opus wrapper to the travel model EMME/2.\emmeindex
+Opus wrapper to the travel model EMME/2.\index{emme/2}
 
 \section{Running a Simulation}
 %
 \subsection{Support for Production Runs}
-The ``Run Manager'' \runmanagerindex is a set of user functionality
-provided by the \file{run_manager} \runmanagerindex directories in
+The ``Run Manager''\index{Run Manager} is a set of user functionality
+provided by the \file{run_manager} directories in
 the \package{opus_core} and \package{opus_core.services} packages
 provide support for specifying, starting, re-starting, and
 processing ``production`` runs. \index{production runs} Such a
 system is necessary to deal with the long run times for such a model
 \modelsindex system, and the large amount of data each run produces.
 A 30-year simulation of the Puget Sound Regional Council's (PSRC)
-\psrcindex dataset with their EMME/2 \emmeindex travel model, for
+\psrcindex dataset with their EMME/2 \index{emme/2} travel model, for
 instance, takes about 5 days \index{simulation!run time} to complete
 and creates about 14 GB of cache data. \index{cache!size of}
 \index{simulation!space used by}  These numbers are for a computer
@@ -202,12 +202,12 @@ the base year database which can be then used for simulation runs. The script
 needs a configuration module passed as an argument. The services database is
 not used by the script. If the desired module is located at
 \file{psrc/configs/subset_configuration.py} under one of the paths found in the
-PYTHONPATH \pythonpathindex environment variable, \environmentvariablesindex the command
+PYTHONPATH environment variable, the command
 \pythonindex
 \begin{verbatim}
 python create_baseyear_cache.py psrc.configs.subset_configuration
 \end{verbatim}
-caches the database defined in the \verb|subset_configuration| configuration into a basyear
+caches the database defined in the \verb|subset_configuration| configuration into a baseyear
 cache. \baseyearcacheindex The \file{create_baseyear_cache} file is located in
 the \file{opus_core/tools/} directory, and the above command should be
 run from the same directory. An option \verb|--cache-directory|
@@ -261,7 +261,7 @@ with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
   separate process helps reduce memory usage, \index{Memory!Using separate
   process} and helps reduce the impact of problems such as memory leaks.  This
   process writes a log file named, e.g., \file{year_2003_log.txt}.
-  \item Run the EMME/2 \emmeindex travel model for this year, if specified by the travel
+  \item Run the EMME/2 \index{emme/2} travel model for this year, if specified by the travel
   model's configuration.  The set of steps to run for the travel model is fully
   specified by the \verb|'models'| \modelsindex section of the
   \verb|'travel_model_configuration'|. Typically, it includes a preparation step
@@ -270,7 +270,7 @@ with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
   the travel model into the \verb|travel_data| dataset for the current year, so
   the data is visible to the UrbanSim models \modelsindex in that and following years.  Each
   model step is done in a separate process.  The log for the running of the
-  model is written to a file named, e.g., \file{emme2_2005_log.txt}. \emmeindex
+  model is written to a file named, e.g., \file{emme2_2005_log.txt}.
   \end{itemize}
   \item The run activity table includes status information about the run.  If
   the simulation succeeds, it will add another row to the run activity

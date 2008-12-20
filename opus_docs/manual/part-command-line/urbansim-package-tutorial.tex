@@ -22,7 +22,8 @@ the installation, as described in Appendix~\ref{appendix:installation}.
 
 You can start a Python session by opening a command window and
 typing \verb|python| at the command prompt. Alternatively, the
-Wing IDE \wingindex also provides a convenient Python shell window.
+Wing IDE \index{Integrated Development Environment (IDE)!Wing} \index{Wing IDE}
+ also provides a convenient Python shell window.
 
 Any code after the \verb|>>>| is Python code.  To follow along with this
 tutorial, enter this directly into a Python interpreter.  If you are unfamiliar
@@ -34,11 +35,11 @@ proceeding through the code.
 \label{sec:datasets}
 
 A dataset \datasetindex in Opus is considered as a $n \times m$ table where $n$ is the
-number of entries and $m$ is the number of characteristics, \characteristicsindex also called
-attributes. \attributesindex One of the characteristics \characteristicsindex must have unique values
+number of entries and $m$ is the number of characteristics, \index{characteristics} also called
+attributes. \index{attributes} One of the characteristics must have unique values
 that are numeric larger than 0.
 
-Suppose you have a set of household agents \index{household agents} with two characteristics, \characteristicsindex income
+Suppose you have a set of household agents \index{household agents} with two characteristics, income
 and number of persons per household, which are uniquely identified by
 household IDs. The file \file{data/tutorial/households.tab} in the \package{urbansim}
 package contains an example dataset \datasetindex for 10 households:
@@ -140,7 +141,6 @@ method that specifies names of attributes \attributesindex to be loaded, e.g. \v
 We can also plot a histogram \histogramindex of the income attribute \attributesindex (this method requires the
   \module{matplotlib} \matplotlibindex library):
 
-\histogramindex
 \begin{verbatim}
 >>> households.plot_histogram("income", bins = 10)
 \end{verbatim}
@@ -151,7 +151,6 @@ We can also plot a histogram \histogramindex of the income attribute \attributes
 \htmlonly{\includegraphics[scale=0.6, angle=0]{images/incomehist.jpg}}
 \end{center}
 or (if the \module{rpy} \rpyindex library is installed)
-\histogramindex
 \begin{verbatim}
 >>> households.r_histogram("income")
 \end{verbatim}
@@ -164,7 +163,7 @@ or (if the \module{rpy} \rpyindex library is installed)
 
 We can investigate a correlation \index{correlation} between attributes \attributesindex by plotting a scatter
 plot \scatterplotindex (\module{rpy} \rpyindex library required):
-\scatterplotindex
+
 \begin{verbatim}
 >>> households.r_scatter("persons", "income")
 \end{verbatim}
@@ -553,7 +552,7 @@ array([5, 5, 5, 5, 5, 7, 7, 2, 5, 5])
 One way of visualizing results of the HLCM run is to plot a histogram \histogramindex of the
 choices, including the capacity of each location (requires \module{matplotlib}
 library):
-\histogramindex
+
 \begin{verbatim}
 >>> hlcm.plot_choice_histograms(capacity=locations.get_attribute("capacity"))
 \end{verbatim}
@@ -798,7 +797,7 @@ As expected, the resulting cost decreases with increasing distance to cbd.
 
 As mentioned in Section~\ref{sec:datasets}, a dataset \datasetindex has a set of
 attributes, \attributesindex such as income or persons, that are stored in a file or database.
-We call such characteristics \characteristicsindex {\it primary attributes}. \primaryattributesindex In addition, one is usually
+We call such characteristics {\it primary attributes}. \primaryattributesindex In addition, one is usually
 interested in attributes \attributesindex that are computed, for example using some
 transformation of primary attributes. \primaryattributesindex We call those attributes \attributesindex {\it
 variables}, \variablesindex or {\it computed attributes}. \computedattributesindex They are simply handled as additional
