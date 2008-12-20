@@ -89,7 +89,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         application_title_dict = get_child_values(parent = application_options_node,
                                              child_names = ['application_title'])
         self.application_title = application_title_dict['application_title']
-        # self.setWindowTitle(self.application_title)
+
         self.updateWindowTitle()
 
         # Loading settings from gui configuration xml file regarding font sizes
@@ -270,6 +270,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
 
+
         ###T: removing these until they serve a purpose
         self.menuUtilities.removeAction(self.actionPython_View)
         #self.menuUtilities.removeAction(self.actionLog_View)
@@ -409,15 +410,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setWindowTitle(title)
 
     def openConfig(self, config=None):
-        # config should be a path to an .xml config file
+        # optionally save the project before opening
+        if self.saveOrDiscardChanges() == False:
+            return # user cancelled operation
 
-        # Check to see if there are changes to the current project, if a project is open
-        self._saveOrDiscardChanges()
-
-        if config: # open the configuration file
-            self.toolboxBase.openXMLTree(config)
-
-        else: # show open config dialog box
+        # open the provided configuration file if one is given, otherwise
+        # ask the user for a file to open
+        loaded_xml_success = False
+        if config:
+            loaded_xml_success = self.toolboxBase.openXMLTree(config)
+        else:
             start_dir = ''
             opus_home = os.environ.get('OPUS_HOME')
             if opus_home:
@@ -428,14 +430,17 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             filter_str = QString("*.xml")
             fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
                                               QString(start_dir), filter_str)
-            # Check for cancel
             if len(fd) == 0:
                 return
             config = QString(fd)
             fileNameInfo = QFileInfo(QString(fd))
             fileNameBaseName = fileNameInfo.completeBaseName()
             # Open the file and add to the Run tab...
-            self.toolboxBase.openXMLTree(config)
+            loaded_xml_success = self.toolboxBase.openXMLTree(config)
+
+        # stop setting up the project if the xml file did not load
+        if not loaded_xml_success == True:
+            return
 
         # update latest project config
         self.latest_project_file_name = config
@@ -460,7 +465,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.updateWindowTitle()
 
+
     def saveConfig(self):
+        '''
+        Save the configuration file to disk.
+        @return: True if save was successful, False otherwise
+        '''
         try:
             domDocument = self.toolboxBase.doc
             opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
@@ -470,16 +480,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
             opus_core_xml_configuration.update(data)
             opus_core_xml_configuration.save()
-            self.toolboxBase.runManagerTree.model.markAsClean()
-            self.toolboxBase.dataManagerTree.model.markAsClean()
-            if self.toolboxBase.dataManagerDBSTree is not None:
-                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
-            self.toolboxBase.modelManagerTree.model.markAsClean()
-            self.toolboxBase.resultsManagerTree.model.markAsClean()
-            self.toolboxBase.generalManagerTree.model.markAsClean()
+            self.toolboxBase.markProjectAsClean()
+            return True
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage)
+            return False
 
     def saveConfigAs(self):
         try:
@@ -502,49 +508,37 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             opus_core_xml_configuration.update(str(domDocument.toString(indentSize)))
             opus_core_xml_configuration.save_as(str(fileName))
             # mark all trees as clean
-            self.toolboxBase.runManagerTree.model.markAsClean()
-            self.toolboxBase.dataManagerTree.model.markAsClean()
-            if self.toolboxBase.dataManagerDBSTree is not None:
-                self.toolboxBase.dataManagerDBSTree.model.markAsClean()
-            self.toolboxBase.modelManagerTree.model.markAsClean()
-            self.toolboxBase.resultsManagerTree.model.markAsClean()
-            self.toolboxBase.generalManagerTree.model.markAsClean()
+            self.toolboxBase.markProjectAsClean()
             # reopen the file that was just saved to make it the active one
             self.openConfig(fileName)
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
             QMessageBox.warning(self, 'Warning', errorMessage)
 
-    def _saveOrDiscardChanges(self):
+    def saveOrDiscardChanges(self):
         """
-        Checks for changes to the currently open project (if any)
-        and prompts user to save or discard changes.
+        Prompts the user to save any changes to the project.
+        Saves the project if the user selects 'Save'.
+        Marks the project as clean if user selects 'Discard'
+        @return: True if the project is saved or discarded, False if cancelled.
         """
         if self.toolboxBase.projectIsDirty():
             doSave = QMessageBox.Discard
             question = ('Current project contains changes.\n'
                         'Do you want to save or discard those changes?')
-            buttons = (QMessageBox.Discard,QMessageBox.Save)
+            buttons = (QMessageBox.Discard,QMessageBox.Save, QMessageBox.Cancel)
             doSave = QMessageBox.question(self, "Warning", question, *buttons)
             if doSave == QMessageBox.Save:
-                self.saveConfig()
+                return self.saveConfig() # cancels on failed save
+            elif doSave == QMessageBox.Discard:
+                self.toolboxBase.markProjectAsClean()
+                return True
             else:
-                #if we have an existing tree we need to remove the dirty bit since we are discarding
-                if self.toolboxBase.runManagerTree:
-                    self.toolboxBase.runManagerTree.model.markAsClean()
-                if self.toolboxBase.dataManagerTree:
-                    self.toolboxBase.dataManagerTree.model.markAsClean()
-                if self.toolboxBase.modelManagerTree:
-                    self.toolboxBase.modelManagerTree.model.markAsClean()
-                if self.toolboxBase.resultsManagerTree:
-                    self.toolboxBase.resultsManagerTree.model.markAsClean()
-                if self.toolboxBase.generalManagerTree:
-                    self.toolboxBase.generalManagerTree.model.markAsClean()
+                return False
+
 
     def closeConfig(self):
-        """
-        Closes the current project, if one is open.
-        """
+        """ Closes the current project. """
 
         try:
             configFile = self.toolboxBase.runManagerTree.model.configFile
@@ -553,7 +547,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Warning', errorMessage)
 
         # Check to see if there are changes to the current project, if a project is open
-        self._saveOrDiscardChanges()
+        if self.saveOrDiscardChanges() == False:
+            return # user cancelled
+        
         self.toolboxBase.close_controllers()
 
 #        self.setWindowTitle(self.application_title)
