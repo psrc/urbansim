@@ -9,12 +9,12 @@
 \chapter{Writing Documentation}
 
 This chapter provides information and guidelines on writing Opus and
-UrbanSim documentation.  This guide is written using \LaTeX{}. \latexindex
-Other documentation includes a growing number of tutorials, and documentation on individual
-indicators.  Tutorials can be written using a variety of formatters, 
-including \LaTeX{} and wiki;
-guidelines for writing tutorials is on our external wiki at
-\url{http://www.urbansim.org/wiki/external/index.php/Contributing_Tutorials}.
+UrbanSim documentation.  This guide is written using \LaTeX{}.\latexindex
+Other documentation includes a growing number of tutorials, and
+documentation on individual indicators.  Tutorials can be written using a
+variety of formatters, including \LaTeX{} and wiki; guidelines for writing
+tutorials is on our trac wiki at
+\url{http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/ContributingTutorials}.
 Documentation for individual indicators is written using XML files;
 guidelines for writing indicator documentation are given in Section
 \ref{sec:writing-indicators}.
@@ -23,20 +23,20 @@ We use \LaTeX{} for the guide and other major documents,
 since it produces elegantly formatted printable document, handles
 mathematics well, and includes facilities for cross-referencing and
 indexing.  In addition to a pdf version of the documentation written using
-\LaTeX{}, \latexindex we use the latex2html \index{latex2html}\latexindex 
+\LaTeX{}, we use the latex2html \index{latex2html}
 converter program to produce an html version.
 
 \section{The Reference Manual and User Guide}
 
-The Opus and UrbanSim 4 documentation in this guide follows the Python \pythonindex
-documentation standards (or at least it's supposed to), and is written
-using \LaTeX{} \latexindex and the Python \pythonindex documentation macros.
-The latest version of this Guide (as a pdf file), and the Opus tutorial, is
-automatically posted on the UrbanSim website at
+The Opus and UrbanSim 4 documentation in this guide follows the Python
+\pythonindex documentation standards (or at least it's supposed to), and is
+written using \LaTeX{} \latexindex and the Python \pythonindex
+documentation macros.  The latest version of this Guide (as a pdf file),
+and the Opus tutorial, is automatically posted on the UrbanSim website at
 \url{http://www.urbansim.org/} whenever a new version of any of the
-manual's components is checked in to the subversion repository.  There is also an
-html version produced using latex2html, \index{latex2html}\latexindex also produced by the same build
-script.
+manual's components is checked in to the subversion repository.  There is
+also an html version produced using latex2html, also produced by the same
+build script.
 
 The Guide includes a table of contents and a (currently rudimentary) index.
 The Adobe \index{Adobe} pdf reader also includes a nice full-text-search tool that can,
@@ -128,17 +128,57 @@ info (at) urbansim.org
 
 \section{Indexing}
 
-Terms should be indexed as documentation is written. Use \verb|\index{ ... }| and
-related commands to accomplish this. There should be a space on either side of the
-index command, and the command should not be placed anywhere a space should not exist
-(such as between a word and a subsequent period or comma).
+Ideally, terms should be indexed as documentation is written.  Use
+\verb|\index{ ... }| and related commands to accomplish this.  Consider
+what would be useful for a reader of the manual in deciding what and where
+to place index commands.  For example, for ``primary attribute'' there
+should probably be an index entry where this term is first used or defined,
+but not every place it is used.  (There's full text search for that after all.)
 
-In order to encourage consistency and ease sweeping changes of indexed terms, there
-are macros defined in the \file{indexcommands.tex} file. These macros for commonly
-used---or complex---index terms should be taken advantage of whenever possible
-rather than manually using the \verb|\index{ ... }| command. Care should be taken
-that any new macros added to the file maintain the existing alphabetic ordering
-to facilitate a manual look-up of index commands.
+The \verb|\index{ ... }| command produces no text where it is written, and
+it's best to put the command next to the word it indexes, with no spaces
+between them, so that the page number isn't off by one if the word begins
+or ends a page.
+
+Some particular cases:
+
+\begin{description}
+
+\item[Subentries] For index terms with a subentry, use this form:
+  \verb|\index{MySQL!column name lengths}|.
+
+\item[Cross-references] Entries that are simply ``See'' and another entry
+  can be created using the vertical bar with this command:
+  \verb+\index{IDE|see{Interactive Development Environment}}+.  These
+  commands are probably best placed in the glossary next to the given term.
+
+\item[Font changes] Use the standard Python macros to get the correct font
+  for file names, package names, and so forth.  For example, the class
+  \class{Dataset} can be rendered using its standard typography in the
+  index using \verb|\index{Dataset@\class{Dataset}}|.  For file names and
+  similar terms whose nature isn't immediately obvious, put an additional
+  appropriate term in the index entry.  For example
+  \verb|\index{build.xml@\file{build.xml} file}| generates the following in
+  the index:
+
+  \file{build.xml} file
+
+\end{description}
+
+In order to encourage consistency for complex indexed terms, there are
+macros defined in the \file{indexcommands.tex} file.  For example, the 
+\verb|\histogramindex| macro is defined as follows:
+
+\begin{verbatim}
+\newcommand{\histogramindex}  {\index{histogram}\index{plotting!histogram}}
+\end{verbatim}
+
+This adds an index entry for ``histogram'' and another for ``plotting''
+with a subentry ``histogram.''  These macros for commonly used---or
+complex---index terms should be taken advantage of whenever possible rather
+than manually using the \verb|\index{ ... }| command.  Care should be taken
+that any new macros added to the file maintain the existing alphabetic
+ordering to facilitate a manual look-up of index commands.
 
 \section{Some Other Guidelines}
 
