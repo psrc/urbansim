@@ -48,8 +48,6 @@ class XmlController_Models(XmlController):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
-        self.actRunEstimation = self.createAction(self.applicationIcon, \
-            "Run Estimation", self.runEstimationAction)
         self.actRemoveNode = self.createAction(self.removeIcon, \
             "Remove node from current project", self.removeNode)
         self.actMakeEditable = self.createAction(self.makeEditableIcon, \
@@ -64,6 +62,13 @@ class XmlController_Models(XmlController):
             "Create model from template", self.createModelFromTemplate)
         self.actSelectVariables = self.createAction(self.applicationIcon, \
             "Select Variables", self.selectVariables)
+        # create an estimation run for the selected model
+        self.actRunEstimation = self.createAction(self.applicationIcon, \
+            "Run Estimation", self.runEstimation)
+        # run a submodel group
+        self.actRunEstimationGroup = self.createAction(self.applicationIcon,
+            "Run Estimation Group", self.runEstimationGroup)
+
 
         # create actions for the model from template dialogs
         self.create_from_template_actions = []
@@ -112,7 +117,10 @@ class XmlController_Models(XmlController):
             return False
 
 
-    def runEstimationAction(self):
+    def runEstimation(self):
+        '''
+        Create an estimation run dialog for for running all the submodels.
+        '''
         current_element = self.currentElement()
         model_name = str(current_element.tagName())
         self.toolboxbase.updateOpusXMLTree()
@@ -121,6 +129,26 @@ class XmlController_Models(XmlController):
                                        model_name = model_name)
         self.mainwindow.modelsManagerBase.addEstimationElement(newEstimation)
 
+
+    def runEstimationGroup(self):
+        '''
+            Create an estimation run dialog for this model for running a
+            all submodels within a submodel group.
+        '''
+        # figure out the model name.
+        # Expected place is <model name>/specfication/<current element>
+        current_element = self.currentElement()
+        model_element = current_element.parentNode().parentNode().toElement()
+
+        model_name = str(model_element.tagName())
+        group_name = str(current_element.tagName())
+
+        self.toolboxbase.updateOpusXMLTree()
+        newEstimation = OpusEstimation(self,
+                                       self.toolboxbase.xml_file,
+                                       model_name = model_name,
+                                       model_group = group_name)
+        self.mainwindow.modelsManagerBase.addEstimationElement(newEstimation)
 
     def removeNode(self):
         self.model.removeRow(self.currentItem().internalPointer().row(),
@@ -218,9 +246,20 @@ class XmlController_Models(XmlController):
                 submenu.addAction(act)
             menu.addMenu(submenu)
 
-#        if element_type in ['model', 'submodel', 'model_system']:
         if element_type == 'model':
-            menu.addAction(self.actRunEstimation)
+            # if this model has a specification node with children elements
+            # we give the user an option to estimate it
+            spec_node = self.xml.get('specification', domElement)
+            if spec_node and len(self.xml.children(spec_node)) > 0:
+                menu.addAction(self.actRunEstimation)
+
+        # TODO 4.2.1 change to node_type == submodel_group
+        # for now, assume that a 'dictionary' located under 'specification' is
+        # of type submodel group.
+        if element_type == 'dictionary':
+            parent_element = domElement.parentNode().toElement()
+            if parent_element.tagName() == 'specification':
+                menu.addAction(self.actRunEstimationGroup)
 
         menu.addSeparator()
 
