@@ -55,7 +55,9 @@ if __name__ == '__main__':
         config = None
     else:
         config = get_config_from_opus_path(options.configuration_path)
-    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, xml_configuration=xconfig, 
+    estimator = EstimationRunner(model=options.model_name, 
+                                 specification_module=options.specification, 
+                                 xml_configuration=xconfig, 
                                  model_group=options.model_group,
                                  configuration=config,
                                  save_estimation_results=options.save_results)
