@@ -19,7 +19,7 @@ import os, time
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from urbansim.estimation.estimation_runner import EstimationRunner
-    
+
 class RunEstimationThread(QThread):
     def __init__(self, mainwindow, estimationguielement, xml_file):
         QThread.__init__(self, mainwindow)
@@ -58,7 +58,7 @@ class RunEstimationThread(QThread):
 
 
 class OpusEstimation(object):
-    def __init__(self, xmltreeobject, xml_path, model_name):
+    def __init__(self, xmltreeobject, xml_path, model_name, model_group = None):
         dummy_callback = lambda x: None
         self.xmltreeobject = xmltreeobject
         self.xml_path = xml_path
@@ -75,6 +75,7 @@ class OpusEstimation(object):
         self.cancelled = False
         self.statusfile = None
         self.model_name = model_name
+        self.model_group = model_group
 
     def pause(self):
         self.paused = True
@@ -107,37 +108,24 @@ class OpusEstimation(object):
             estimation_section = xml_config.get_section('model_manager/model_system/')
             estimation_config = estimation_section['estimation_config']
             self.config = estimation_config
-            # TODO: put save_estimation results etc into config
+            # TODO: put this option into post run dialog
             save_results = estimation_config['save_estimation_results']
-            model_name = self.model_name
-#                for model_name in estimation_config['models_to_estimate']:
+
             # If we've paused the estimation, wait 10 seconds, and see if we are unpaused.  If we've cancelled,
             # exit the loop.  Note that this is a fairly coarse level of pause/resume/stop (at the level of
             # estimating an entire model, rather than a bit of a model).
             while self.paused and not self.cancelled:
                 time.sleep(10)
             if not self.cancelled:
-                
-                if type(model_name) == dict:
-                    for name, group_members in model_name.items():
-                        print "Name %s./nGroup Members: %s" %(name, group_members)
-                        
-                        self.__class__.er = EstimationRunner(model=name, 
-                                              xml_configuration=xml_config, 
-                                              model_group = group_members['group_members'],
-                                              configuration=None, 
-                                              save_estimation_results=save_results)
-                    self.running = True
-                    self.er.estimate()
-                    self.running = False
-                else:
-                    self.er = EstimationRunner(model=model_name, 
-                        xml_configuration=xml_config, 
-                        configuration=None, 
-                        save_estimation_results=save_results)
-                    self.running = True
-                    self.er.estimate()
-                    self.running = False
+                self.er = EstimationRunner(model = self.model_name,
+                                           specification_module = None,
+                                           xml_configuration = xml_config,
+                                           model_group = self.model_group,
+                                           configuration = None,
+                                           save_estimation_results=save_results)
+                self.running = True
+                self.er.estimate()
+                self.running = False
                 succeeded = True
         except:
             succeeded = False
