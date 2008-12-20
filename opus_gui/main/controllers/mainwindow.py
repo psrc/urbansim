@@ -14,9 +14,11 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL , QFile, QSettings, QRegExp, QFileInfo
-from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox, QSplashScreen, QLabel, \
-     QWidget, QPushButton, QHBoxLayout, QAction, QFileDialog, QToolButton, QIcon
+from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
+from PyQt4.QtCore import QFile, QSettings, QRegExp, QFileInfo
+from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox
+from PyQt4.QtGui import QSplashScreen, QLabel, QWidget, QPushButton, QHBoxLayout
+from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 from PyQt4.QtXml import QDomDocument
 
 # UI specific includes
@@ -174,8 +176,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #Add log tab
         QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
 
-#        QObject.connect(self.tabWidget, SIGNAL("currentChanged(int)"), self.tab_changed)
-
         self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
         # QGIS References are removed for the time being...
@@ -187,7 +187,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #except ImportError:
         #  self.mapStuff = None
 
-#        self.consoleStuff = ConsoleBase(self)
         self.scenariosManagerBase = ScenariosManagerBase(self)
         self.scenariosManagerBase.setGui(self)
 
@@ -265,11 +264,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.changeFontSize()
         self.setFocus()
 
+        # Variable library
         self.all_variables = None
 
         if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
             self.openConfig(self.latest_project_file_name)
-
 
         ###T: removing these until they serve a purpose
         self.menuUtilities.removeAction(self.actionPython_View)
@@ -549,7 +548,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Check to see if there are changes to the current project, if a project is open
         if self.saveOrDiscardChanges() == False:
             return # user cancelled
-        
+
         self.toolboxBase.close_controllers()
 
 #        self.setWindowTitle(self.application_title)
