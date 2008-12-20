@@ -200,17 +200,21 @@ whatever directory holds your <tt>opus</tt> directory.</p>
 cd opus/src
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim_gridcell
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui
 </pre>
 
 <p>This checks out just the minimal set of packages needed for the tutorial.  If you have a fast
-connection and enough disk space, you can get all of the Opus packages at once using these commands:
+connection, you can get all of the Opus packages at once using these commands:
 <pre>
 cd opus
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
+<p>Notice that this time we are doing the svn checkout one directory level up, and
+checking out all the packages into the <tt>src</tt> directory.
+      
 <p>The above commands check out the latest development version of the code -- adjust the URLs 
 appropriately to get a stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
 for details on how to do this.</p>

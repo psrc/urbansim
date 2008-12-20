@@ -401,26 +401,31 @@ each package) or from
     </p>
 
     <p>
-      Next, open up a Terminal window and locate the directory
-      <tt>src</tt>, located you
-      <tt>opus</tt> directory that you unzipped in the previous step (e.g.
-      <tt>/Home/<i>yourname</i>/opus/src</tt>).&nbsp; Then type in the following
-      commands:
+      Next, open up a Terminal window and navigate to the directory
+      <tt>src</tt> under the
+      <tt>opus</tt> directory that you unzipped in the previous step by typing
+      <tt>cd opus/src</tt> (or whatever the appropriate path is for your setup). Then
+      use svn to get the needed packages:
     </p>
 
     <pre>
-      $ svn co https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
-      $ svn co https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
-      $ svn co https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
-      $ svn co https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui </pre>
+      $ cd opus/src
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim_gridcell
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui </pre>
 
     <p>
-      This checks out just the minimal set of packages needed for the tutorial. If
-      you have a fast connection and enough disk space, you can get all of the Opus
-      packages at once using this command instead:
+      This checks out just the minimal set of packages needed to run the Eugene
+      model using the GUI. If you have a fast connection, you can get all of the Opus
+      packages at once using these commands instead:
     </p>
     <pre>
-      $ svn cp https://trondheim.cs.washington.edu/svn/opus/trunk/ src </pre>
+      $ cd opus
+      $ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src </pre>
+      <p>Notice that this time we are doing the svn checkout one directory level up, and
+      checking out all the packages into the <tt>src</tt> directory.
     <p>
       The above commands check out the latest <i>development</i> version of the
       code. For instructions on how to check out the latest stable release; see
