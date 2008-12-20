@@ -45,18 +45,19 @@ class ToolboxBase(object):
         self.configFile = None
         self.configFileTemp = None
         self.opus_core_xml_configuration = None
+        self.view = None
 
         # These are the trees that are displayed for each toolbox
-        self.view = None
+        self.generalManagerTree = None
         self.modelManagerTree = None
         self.resultsManagerTree = None
         self.runManagerTree = None
         self.dataManagerTree = None
-        #TODO: is this needed? mainwindow.saveConfig asks for this attribute
-        self.dataManagerDBSTree = None
-
         self.dataManagerFileTree = None
-        self.generalManagerTree = None
+
+        #TODO: verify that this is needed.
+        # mainwindow.saveConfig asks for this attribute
+        self.dataManagerDBSTree = None
 
         gui_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         if not os.path.exists(gui_directory):
@@ -72,106 +73,71 @@ class ToolboxBase(object):
 
     def updateOpusXMLTree(self):
         if self.opus_core_xml_configuration and self.doc:
-            # print "updateOpusXMLTree"
             indentSize = 2
             self.opus_core_xml_configuration.update(str(self.doc.toString(indentSize)))
 
     def openXMLTree(self, xml_file):
-        saveBeforeOpen = QMessageBox.Discard
-        # Check if the current model(s) is(are) dirty first...
-        save_string = QString("Current project contains changes... \n"
-                              "Should we save or discard those changes before opening?")
+        '''
+        Load a project from a XML file.
+        @param xml_file: filename (str) of XML file to load
+        @return: True if the load was successful, False otherwise.
+        '''
 
-        for manager in [self.resultsManagerTree, self.modelManagerTree, self.runManagerTree, self.dataManagerTree]:
-            if manager and manager.model.isDirty():
-                saveBeforeOpen = QMessageBox.question(self.mainwindow,"Warning",
-                                                      save_string,
-                                                      QMessageBox.Discard,QMessageBox.Save)
-                break
-
-        if saveBeforeOpen == QMessageBox.Save:
-            self.mainwindow.saveConfig()
-        else:
-            #if we have an existing tree we need to remove the dirty bit since we are discarding
-            if self.runManagerTree:
-                self.runManagerTree.model.markAsClean()
-            if self.dataManagerTree:
-                self.dataManagerTree.model.markAsClean()
-            if self.modelManagerTree:
-                self.modelManagerTree.model.markAsClean()
-            if self.resultsManagerTree:
-                self.resultsManagerTree.model.markAsClean()
-            if self.generalManagerTree:
-                self.generalManagerTree.model.markAsClean()
-
-        # Try to remove all the old trees...
-        generalManagerRemoveSuccess = True
-        if self.generalManagerTree != None:
-            generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
-        resultsManagerRemoveSuccess = True
-        if self.resultsManagerTree != None:
-            resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
-        modelManagerRemoveSuccess = True
-        if self.modelManagerTree != None:
-            modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
-        runManagerRemoveSuccess = True
-        if self.runManagerTree != None:
-            runManagerRemoveSuccess = self.runManagerTree.removeTree()
-        dataManagerRemoveSuccess = True
-        if self.dataManagerTree != None:
-            dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
-        dataManagerFileRemoveSuccess = True
-        if self.dataManagerFileTree != None:
-            dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
-
-        if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
-               runManagerRemoveSuccess and dataManagerRemoveSuccess and \
-               dataManagerFileRemoveSuccess and \
-               generalManagerRemoveSuccess:
-            # We have successfully removed the old XML trees
-
-            # Open the XML by first passing to the xml_configuration and letting
-            # opus core return the nested XML based on inheritence
-            self.xml_file = xml_file
-            self.configFile = QFile(xml_file)
-            fileNameInfo = QFileInfo(self.xml_file)
-            fileName = fileNameInfo.fileName().trimmed()
-            fileNamePath = fileNameInfo.absolutePath().trimmed()
-            try:
-                self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
-            except XMLVersionException, ex:
-                QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
-                return
-            [tempFile, tempFilePath] = tempfile.mkstemp()
-            #print tempFile,tempFilePath
-            # full_tree is the "whole" tree, inherited nodes and all
-            # tree is just the actual file the GUI was asked to open
-            self.opus_core_xml_configuration.full_tree.write(tempFilePath)
-            self.configFileTemp = QFile(tempFilePath)
-            if self.configFile and self.configFileTemp:
-                self.configFileTemp.open(QIODevice.ReadWrite)
-                self.doc = QDomDocument()
-                self.doc.setContent(self.configFileTemp)
-                self.project_name = self.opus_core_xml_configuration.full_tree.getroot().findtext('./general/project_name')
-
-                self.opusDataPath = os.path.join(self.opus_core_xml_configuration.get_opus_data_path(), self.project_name)
-                os.environ['OPUSPROJECTNAME'] = self.project_name
-
-                self.generalManagerTree = XmlController_General(toolboxbase = self, parentWidget = self.mainwindow.generalmanager_page.layout())
-                self.modelManagerTree = XmlController_Models(toolboxbase = self, parentWidget = self.mainwindow.modelmanager_page.layout())
-                self.runManagerTree = XmlController_Scenarios(toolboxbase = self, parentWidget = self.mainwindow.runmanager_page.layout())
-                self.dataManagerTree = XmlController_DataTools(toolboxbase = self, parentWidget = self.mainwindow.datamanager_xmlconfig.layout())
-                self.resultsManagerTree = XmlController_Results(toolboxbase = self, parentWidget = self.mainwindow.resultsmanager_page.layout())
-
-                self.dataManagerFileTree = FileController_OpusData(self,'data_manager.opus_data',self.opusDataPath,
-                                                        self.mainwindow.datamanager_dirview.layout())
-
-            else:
-                msg = "Error reading the %s configuration file" % (xml_file)
-                QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
-        else:
-            msg = "There was an error removing the old config"
+        # make sure all trees are clean and close them
+        if not self.close_controllers():
+            msg = ('There was an error removing the old config. '
+                'Details:\nCould not remove all manager trees.\n'
+                'Try to restart OpusGui and open the project again')
             QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
+            return False
+
+        # Open the XML by first passing to the xml_configuration and letting
+        # opus core return the nested XML based on inheritence
+        self.xml_file = xml_file
+        self.configFile = QFile(xml_file)
+        fileNameInfo = QFileInfo(self.xml_file)
+        fileName = fileNameInfo.fileName().trimmed()
+        fileNamePath = fileNameInfo.absolutePath().trimmed()
+        try:
+            self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
+        except (XMLVersionException, ValueError), ex:
+            QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
+            return False
+
+        [tempFile, tempFilePath] = tempfile.mkstemp()
+        #print tempFile,tempFilePath
+        # full_tree is the "whole" tree, inherited nodes and all
+        # tree is just the actual file the GUI was asked to open
+        self.opus_core_xml_configuration.full_tree.write(tempFilePath)
+        self.configFileTemp = QFile(tempFilePath)
+        if not self.configFile or not self.configFileTemp:
+            msg = "Error reading the %s configuration file" % (xml_file)
+            QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
+            return False
+
+        self.configFileTemp.open(QIODevice.ReadWrite)
+        self.doc = QDomDocument()
+        self.doc.setContent(self.configFileTemp)
+        self.project_name = self.opus_core_xml_configuration.full_tree.getroot().findtext('./general/project_name')
+
+        self.opusDataPath = os.path.join(self.opus_core_xml_configuration.get_opus_data_path(), self.project_name)
+        os.environ['OPUSPROJECTNAME'] = self.project_name
+
+        self.generalManagerTree = \
+            XmlController_General(self, self.mainwindow.generalmanager_page)
+        self.modelManagerTree = \
+            XmlController_Models(self, self.mainwindow.modelmanager_page)
+        self.runManagerTree = \
+            XmlController_Scenarios(self, self.mainwindow.runmanager_page)
+        self.dataManagerTree = \
+            XmlController_DataTools(self, self.mainwindow.datamanager_xmlconfig)
+        self.resultsManagerTree = \
+            XmlController_Results(self, self.mainwindow.resultsmanager_page)
+
+        self.dataManagerFileTree = \
+            FileController_OpusData(self, 'data_manager.opus_data',
+                                    self.opusDataPath,
+                                    self.mainwindow.datamanager_dirview.layout())
 
         # project loaded, show any XML version messages
         if self.opus_core_xml_configuration.version_warning_message:
@@ -179,6 +145,7 @@ class ToolboxBase(object):
                    'when loading project.\n\nDetails:\n\n')
             msg = msg + self.opus_core_xml_configuration.version_warning_message
             QMessageBox.warning(self.mainwindow, 'Inconsistent xml versions', msg)
+        return True
 
 
     def projectIsDirty(self):
@@ -193,21 +160,29 @@ class ToolboxBase(object):
                 return True
         return False
 
+    def markProjectAsClean(self):
+        managers = [self.resultsManagerTree,
+            self.modelManagerTree,
+            self.runManagerTree,
+            self.dataManagerTree,
+            self.generalManagerTree]
+        for manager in managers:
+            if manager:
+                manager.model.markAsClean()
+
     def close_controllers(self):
-        '''close all manager trees'''
-        # Try to remove all the old trees...
-        if self.generalManagerTree != None:
-            generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
-        if self.resultsManagerTree != None:
-            resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
-        if self.modelManagerTree != None:
-            modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
-        if self.runManagerTree != None:
-            runManagerRemoveSuccess = self.runManagerTree.removeTree()
-        if self.dataManagerTree != None:
-            dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
-        if self.dataManagerFileTree != None:
-            dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
+        '''
+        close all manager trees
+        @return: True if all trees was successfully closed, False otherwise.
+        '''
+        managers = [self.resultsManagerTree, self.modelManagerTree,
+                  self.runManagerTree, self.dataManagerTree,
+                  self.generalManagerTree, self.dataManagerFileTree]
+
+        for manager in managers:
+            if manager and manager.removeTree() == False:
+                return False
+        return True
 
     def emit_default_gui_configuration_file(self, file_name):
         from opus_core.misc import directory_path_from_opus_path
