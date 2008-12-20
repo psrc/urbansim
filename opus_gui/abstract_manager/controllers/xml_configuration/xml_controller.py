@@ -61,7 +61,7 @@ class XmlController(object):
         self.view.openDefaultItems()
 
 
-        self.parentWidget.addWidget(self.view)
+        self.parentWidget.layout().addWidget(self.view)
 
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -78,7 +78,7 @@ class XmlController(object):
     def removeTree(self):
         if not self.model.isDirty():
             self.view.hide()
-            self.parentWidget.removeWidget(self.view)
+            self.parentWidget.layout().removeWidget(self.view)
             return True
         else:
             return False
