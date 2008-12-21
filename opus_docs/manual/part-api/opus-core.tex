@@ -167,7 +167,7 @@ by \verb|get_attribute(alias)|.
 A variable (or equivalently, a computed attribute) is specified either by an expression of by a 
 fully-qualified name (see Section~\ref{sec:opus-variable}).
 Datasets \datasetindex automatically compute each variable \variablesindex when, and only when,
-needed. \index{Lazy evaluation}  This mechanism uses the dependency information
+needed.\index{lazy evaluation}  This mechanism uses the dependency information
 from each variable \variablesindex which gives an information about what variables \variablesindex this
 variable \variablesindex depends on. Additionally, it is checked if variable's \variablesindex dependent
 variables \variablesindex have changed (versioning mechanism).  The computation is invoked by
@@ -274,7 +274,7 @@ methods that would for example modify attributes (such as \method{compute_variab
 
 \subsection{Interaction Sets}
 \label{sec:interaction-set}
-\index{class!InteractionDataset}
+\index{InteractionDataset@\class{InteractionDataset} class}
 %
 Opus allows the programmer to create a dataset representing
 an interaction between two datasets, \datasetindex by using the class
@@ -334,7 +334,7 @@ An interaction set is automatically created and used in the
 
 \section{Data Storage}
 \label{sec:data-storage}
-\index{class!Storage}
+\index{Storage@\class{Storage} class}
 %
 One of the design elements of Opus is to allow users to choose alternative
 data storage methods depending on their needs, while keeping a consistent
@@ -1019,7 +1019,7 @@ $a \rightarrow b$ means $a$ inherits from $b$.}
 \end{figure}
 
 \subsection{Model Class}
-\index{class!Model}
+\index{Model@\class{Model} class}
 \class{Model} is the base class for implementing Opus models. It provides an
 automatic logger which prints out information about the model start, end and
 processing time.  Model supports two methods: an obligatory method
@@ -1030,7 +1030,7 @@ can be passed into the \method{run()} and \method{estimate()} methods and
 those can return any values.
 
 \subsection{ChunkModel Class}
-\label{sec:chunk-model} \index{class!ChunkModel}
+\label{sec:chunk-model} \index{ChunkModel@\class{ChunkModel} class}
 \index{Memory management!Using multiple chunks per model}
 
 This class enables running models (i.e. processing the \method{run()} method) in
@@ -1092,7 +1092,7 @@ An example of a user-defined \class{ChunkModel} is in Section~\ref{sec:tut-creat
 
 \subsection{ChoiceModel Class}
 \label{sec:choice-model}
-\index{class!ChoiceModel}
+\index{ChoiceModel@\class{ChoiceModel} class}
 \index{models!opus_core models!choice model}
 %
 This class implements a functionality of a discrete choice model, an approach
@@ -1257,7 +1257,7 @@ dictionary with one entry for each submodel.
 Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsection{RegressionModel Class}
-\index{class!RegressionModel}
+\index{RegressionModel@\class{RegressionModel} class}
 \index{models!opus_core models!regression model}
 %
 \label{sec:regression-model}
@@ -1381,7 +1381,7 @@ dictionary with one entry for each submodel.
 Each entry is a dictionary returned by estimation procedure for that submodel.
 
 \subsubsection{Child Class RegressionModelWithInitialResiduals}
-\index{class!RegressionModelWithInitialResiduals}
+\index{RegressionModelWithInitialResiduals@\class{RegressionModelWithInitialResiduals} class}
 \label{page:regression-model-with-initial-residuals}
 %
 This class impacts only the method \method{run()} (it doesn't change the behaviour of the \method{estimate()} method).
@@ -1405,7 +1405,7 @@ to be passed into the constructor. The following entries of the \verb|run_config
 
 \subsection{SimpleModel Class}
 \label{sec:api-simple-model}
-\index{class!SimpleModel}
+\index{SimpleModel@\class{SimpleModel} class}
 \index{models!opus_core models!simple model}
 %
 This model is an alternative way of computing a variable on a dataset, except that the resulting attribute 
@@ -1426,7 +1426,7 @@ the attribute is marked as primary. Values of this attribute are returned.
 
 \subsection{AllocationModel Class}
 \label{sec:api-allocation-model}
-\index{class!AllocationModel}
+\index{AllocationModel@\class{AllocationModel} class}
 \index{models!opus_core models!allocation model}
 %
 The AllocationModel allocates given quantity for a dataset according to weights while meeting capacity restrictions 
@@ -1467,7 +1467,7 @@ The \verb|outcome_attribute| is then flushed to cache and the values are returne
         
 \subsection{JoinAttributeModificationModel Class}
 \label{sec:api-jam-model}
-\index{class!JoinAttributeModificationModel}
+\index{JoinAttributeModificationModel@\class{JoinAttributeModificationModel} class}
 %
 The model modifies an attribute of a dataset for members that are determined by given ids of a second dataset.
 The \method{run()} method takes the following arguments:
@@ -1526,12 +1526,11 @@ model components.
 
 \subsection{Utilities Class}
 \label{sec:utilities}
-\index{class!Utilities}
+\index{Utilities@\class{Utilities} class}
 \index{utilities}
 The \class{Utilities} class is used for computing utilities in
 discrete choice modeling. In \package{opus_core} there is a
-\class{Utilities} class implemented, called {\bf linear_utilities}, \index{class!Utilities!linear_utilities}
-\index{utilities!linear utilities}
+\class{Utilities} class implemented, called \class{linear_utilities}\index{linear_utilities@\class{linear_utilities}},
 which computes linear utilities:
 \[
 U_{ni} = \sum_{j=1}^J \beta_{ij}x_{nij}\,.
@@ -1542,8 +1541,9 @@ constants) for each agent and alternative, and $\beta$ is a coefficient \coeffic
 of size $I\times J$. The \verb|run()| method gets a 3-d array of data and a
 2-d array of coefficients \coefficientsindex as arguments and returns a 2-d array of utilities.
 
-A child class of \class{linear_utilities}, called {\bf linear_utilities_diagnose}, 
-\index{class!Utilities!linear_utilities_diagnose} serves analyzing changes in utilities 
+A child class of \class{linear_utilities}, called
+\class{linear_utilities_diagnose}\index{linear_utilities_diagnose@\class{linear_utilities_diagnose}}, 
+serves analyzing changes in utilities 
 due to changes in the data. For each variable set to its 5\%- and 95\%-quantile, respectively, while keeping
 the remaining variables at their median, it runs the \class{linear_utilities} module. Results 
 are stored in a file. First line of the file corresponds to the 5\%-quantile, second line to the 95\%-quantile,
@@ -1555,7 +1555,7 @@ can be passed to the \method{run()} method in its argument \verb|resources| as a
 
 \subsection{Probabilities Class}
 \label{sec:probabilities}
-\index{class!Probabilities} \index{probabilities}
+\index{Probabilities@\class{Probabilities} class} \index{probabilities}
 
 The \class{Probabilities} class is an abstract class for computing
 probabilities in the discrete choice modeling framework. Given
@@ -1571,7 +1571,7 @@ probabilities (the same shape as utilities).
 
 \subsection{Choices Class}
 \label{sec:choices}
-\index{class!Choices}
+\index{Choices@\class{Choices} class}
 
 \class{Choices} is an abstract class for selecting choices according to given
 probabilities in the discrete choice modeling framework. Opus package \package{opus_core} supports
@@ -1611,7 +1611,7 @@ the results of the very last running method is the return value of the
 
 \subsection{Regression Class}
 \label{sec:regression}
-\index{class!Regression}\index{regression}
+\index{Regression@\class{Regression} class}\index{regression}
 
 The \class{Regression} class is an abstract class for user defined classes
 that can be used in the regression model. The class {\bf linear_regression} 
@@ -1636,7 +1636,7 @@ By default, $\delta_n \sim N(0, 1)$ for all $n$.
 
 \subsection{EstimationProcedure Class}
 \label{sec:estimation-procedure}
-\index{class!EstimationProcedure}\index{estimation}
+\index{EstimationProcedure@\class{EstimationProcedure} class}\index{estimation}
 %
 This class is an abstract class for modules that implement estimation of
 coefficients \coefficientsindex for one of the available models. {\bf bhhh_mnl_estimation}
@@ -1724,7 +1724,7 @@ when using this component.
 \subsection{Sampler Class}
 \label{sec:sampler}
 \index{Sampler}
-\index{class!Sampler}
+\index{Sampler@\class{Sampler} class}
 
 The \class{Sampler} class is an abstract class for sampling alternatives for agents.
 It returns 2-d array with rows representing agents and columns representing sampled
@@ -1801,7 +1801,7 @@ the index within the sampled index indicating the chosen choice.
 %
 \subsection{Specification}
 \index{Specification}
-\index{class!EquationSpecification}\index{model!specification}
+\index{EquationSpecification@\class{EquationSpecification} class}\index{model!specification}
 %
 \label{sec:specification}
 Often, models are specified by a set of variables. \variablesindex These are connected to a
@@ -1899,7 +1899,7 @@ used, the method stores values $-2$ in those columns.
 \subsection{Coefficients}
 \coefficientsindex
 \label{sec:coefficients}
-\index{class!Coefficients}\index{model!coefficients}
+\index{Coefficients@\class{Coefficients} class}\index{model!coefficients}
 %
 Coefficients \coefficientsindex can be managed by the class \class{Coefficients}. \coefficientsindex Its behavior
 is similar to the one of \class{EquationSpecification}.
@@ -1966,7 +1966,7 @@ format. Method \method{make_tex_table()} accepts as arguments the file name
 
 \subsection{Specified Coefficients}
 \label{sec:specified-coefficients}
-\index{class!SpecifiedCoefficients}
+\index{SpecifiedCoefficients@\class{SpecifiedCoefficients} class}
 %
 In order to connect a specification with coefficients, \coefficientsindex Opus uses the class
 \class{SpecifiedCoefficients}. Its method \method{create()} takes an instance
@@ -1989,7 +1989,7 @@ for computing the regression and the choice model for computing the utilities.
 %
 \subsection{Dataset Pool}
 \label{sec:core-dataset-pool}
-\index{dataset pool}\index{class!DatasetPool}
+\index{dataset pool}\index{DatasetPool@\class{DatasetPool} class}
 %
 A class called \class{DatasetPool} is designed to maintain a 'pool' of datasets. It is mainly used when
 computing variables. Therefore in most cases, it will be only needed if the \class{Dataset} method
@@ -2023,7 +2023,7 @@ The \class{DatasetPool} class searches for this module in the directory \file{da
 \subsection{ModelGroup and ModelGroupMember}
 %
 \label{sec:model-group}
-\index{model group}\index{class!ModelGroup}
+\index{model group}\index{ModelGroup@\class{ModelGroup} class}
 %
 These two classes are designed to be used in models that are considered as model groups, i.e. models that are to be run
 multiple times, each time on different subsets of one dataset.
@@ -2058,7 +2058,7 @@ The class \class{ModelGroup} is initialized by
 \end{description}
 The class offers useful methods for accessing member names and codes of this group.
 
-The class \class{ModelGroupMember}\index{class!ModelGroupMember}\index{model group member} is initialized by
+The class \class{ModelGroupMember}\index{ModelGroupMember@\class{ModelGroupMember} class}\index{model group member} is initialized by
 \begin{description}
 \item[model_group] - object of class \class{ModelGroup}.
 \item[member_name] - name of this specific member. It must be contained in the grouping attribute of 'model_group'.
@@ -2073,18 +2073,18 @@ correspond to this group member.
 %
 Opus implements a few classes that are used for configuration of objects.
 \begin{description}
-\item[GeneralResources] - \index{GeneralResources} \index{class!GeneralResources} it is a python \pythonindex dictionary with some additional methods.
-\item[SessionConfiguration] - \index{SessionConfiguration} \index{class!SessionConfiguration} a singleton (child of \class{GeneralResources} that is to be configured
+\item[GeneralResources] - \index{GeneralResources} \index{GeneralResources@\class{GeneralResources} class} it is a python \pythonindex dictionary with some additional methods.
+\item[SessionConfiguration] - \index{SessionConfiguration} \index{SessionConfiguration@\class{SessionConfiguration} class} a singleton (child of \class{GeneralResources} that is to be configured
         with global settings for a user's session.  Requires parameter
         \verb|in_storage| to not be \verb|None| if creating a new instance, so
         SessionConfiguration knows from where to get the data for any dataset it
         creates.
-\item[Configuration] - \index{Configuration}  \index{class!Configuration} 
+\item[Configuration] - \index{Configuration}  \index{Configuration@\class{Configuration} class} 
   it is a child of \class{GeneralResources} that implements a hierarchical
         representation of the user-specified parameters and settings.
-\item[Resources] - \index{Resources} \index{class!Resources} it is a child of \class{Configuration}. It has access to the
+\item[Resources] - \index{Resources} \index{Resources@\class{Resources} class} it is a child of \class{Configuration}. It has access to the
 \class{SessionConfiguration}.
-\item[ChunkSpecification] - \index{ChunkSpecification} \index{class!ChunkSpecification} class for configuring chunks used by the \class{ChunkModel} (see 
+\item[ChunkSpecification] - \index{ChunkSpecification} \index{ChunkSpecification@\class{ChunkSpecification} class} class for configuring chunks used by the \class{ChunkModel} (see 
 Section~\ref{sec:chunk-model}). It is initialized by a dictionary containing either the key 'records_per_chunk' or
 'nchunks' with the appropriate value. Method \method{nchunks()} returns number of chunks. Method \method{chunk_size()}
 returns the number of records in one chunk.

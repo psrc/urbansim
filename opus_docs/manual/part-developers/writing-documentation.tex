@@ -153,17 +153,18 @@ Some particular cases:
   commands are probably best placed in the glossary next to the given term.
 
 \item[Font changes] Use the standard Python macros to get the correct font
-  for file names, package names, and so forth.  For example, the class
-  \class{Dataset} can be rendered using its standard typography in the
-  index using \verb|\index{Dataset@\class{Dataset}}|.  For file names and
+  for file names, package names, and so forth.  For example, \LaTeX{}
+  can be rendered using its traditional typography in the
+  index using \verb|{\index{latex@\LaTeX{}}}|.  For file names, classes and
   similar terms whose nature isn't immediately obvious, put an additional
   appropriate term in the index entry.  For example
-  \verb|\index{build.xml@\file{build.xml} file}| generates the following in
-  the index:
-
-  \file{build.xml} file
+  \verb|\index{Model@\class{Model} class}| generates ``\class{Model} class''
+  in the index.
 
 \end{description}
+
+The index is in two-column format, so for very long words in the index (e.g. 
+class names), you can suggest hyphenation points to \LaTeX{}.
 
 In order to encourage consistency for complex indexed terms, there are
 macros defined in the \file{indexcommands.tex} file.  For example, the 

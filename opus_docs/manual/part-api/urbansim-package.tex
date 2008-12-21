@@ -222,11 +222,11 @@ and configures their inputs and outputs. In the following sections we describe e
 \label{sec:land-price-model} 
 \index{Land Price Model}\index{models!urbansim models!land price model}
 %
-The \class{LandPriceModel} \index{class!LandPriceModel} 
+The \class{LandPriceModel} \index{LandPriceModel@\class{LandPriceModel} class} 
 predicts prices of land, in particular the
 residential and non-residential land value for each member of the given
 location set. The prediction is done via a regression procedure and thus,
-the model is a child of the \class{RegressionModel} \index{class!RegressionModel} described in
+the model is a child of the \class{RegressionModel} \index{RegressionModel@\class{RegressionModel} class} described in
 Section~\ref{sec:regression-model}.
 
 \subsubsection{Initialization}
@@ -327,16 +327,16 @@ the Initialization paragraph).
 \end{description}
 
 \subsubsection{Corrected Land Price Model}
-\index{Corrected Land Price Model}\index{class!CorrectedLandPriceModel}
+\index{Corrected Land Price Model}\index{CorrectedLandPriceModel@\class{CorrectedLandPriceModel} class}
 %
-This child model of \class{LandPriceModel} \index{class!LandPriceModel} makes a
+This child model of \class{LandPriceModel} \index{LandPriceModel@\class{LandPriceModel} class} makes a
 correction of the land value to avoid its declination with development type
 change.
 
 The \method{run()} method expects an additional argument, \verb|n_simulated_years|,
 which gives the number of years that have been already simulated. If it is larger than 1,
 after running its parent's code, a model called \class{CorrectLandValue} 
-\index{class!CorrectLandValue}
+\index{CorrectLandValue@\class{CorrectLandValue} class}
 is invoked. 
 This model determines those members of \verb|dataset| whose
 development type changed and at the same time have lower total land value when
@@ -348,7 +348,7 @@ are replaced by values of the same attributes from previous year.
 \subsection{Residential Land Share Model}
 %
 \label{sec:residential-land-share-model}
-\index{Residential Land Share Model}\index{class!ResidentialLandShareModel}
+\index{Residential Land Share Model}\index{ResidentialLandShareModel@\class{ResidentialLandShareModel} class}
 \index{models!urbansim models!residential land share model}
 
 Residential land share model (implemented in class
@@ -405,9 +405,9 @@ with data from table ``residential_land_share_model_coefficients''.
 \label{sec:housing-price-model}
 \index{Housing Price Model}\index{models!urbansim models!housing price model}
 
-The \class{HousingPriceModel} \index{class!HousingPriceModel} 
+The \class{HousingPriceModel} \index{HousingPriceModel@\class{HousingPriceModel} class} 
 class predicts housing prices via a regression procedure and thus,
-the model is a child of the \class{RegressionModel} \index{class!RegressionModel} described in
+the model is a child of the \class{RegressionModel} \index{RegressionModel@\class{RegressionModel} class} described in
 Section~\ref{sec:regression-model}.
 
 \subsubsection{Initialization}
@@ -480,12 +480,12 @@ The method returns results of \method{estimate()} method of
 \label{sec:real-estate-price-model}
 \index{Real Estate Price Model}\index{models!urbansim models!real estate price model}
 
-The \class{RealEstatePriceModel} \index{class!RealEstatePriceModel}
+The \class{RealEstatePriceModel} \index{RealEstatePriceModel@\class{RealEstatePriceModel} class}
 class predicts real estate prices via a regression procedure (see Section~\ref{sec:model-system-real-estate-price-model}).
 In order to avoid jumps in prices for the first simulated year, the initial residuals are 
 added to the regression outcomes. Thus,
 the model is a child of the \class{RegressionModelWithInitialResiduals}  
-\index{class!RegressionModelWithInitialResiduals}
+\index{RegressionModelWithInitialResiduals@\class{RegressionModelWithInitialResiduals} class}
 described in
 Section~\ref{sec:regression-model} in a paragraph on page~\pageref{page:regression-model-with-initial-residuals}.
 
@@ -601,12 +601,12 @@ filtered using the filter passed to the constructor.
 %
 \label{sec:location-choice-model}
 \index{Location Choice Model} \index{models!urbansim models!location choice model}
-\index{class!LocationChoiceModel}
+\index{LocationChoiceModel@\class{LocationChoiceModel} class}
 
 A location choice model is a choice model where the set of alternatives is a
 set of locations.
 
-The class \class{LocationChoiceModel} is a child of \class{ChoiceModel} \index{class!ChoiceModel}
+The class \class{LocationChoiceModel} is a child of \class{ChoiceModel} \index{ChoiceModel@\class{ChoiceModel} class}
 described in Section~\ref{sec:choice-model}. In addition, it allows sampling
 of alternatives and filtering alternatives according to a specified filter.
 
@@ -755,14 +755,14 @@ It controls the number of chunks in which the sampling is done for the estimatio
 %
 \label{sec:development-project-lcm}
 \index{Development Project Location Choice Model} \index{models!urbansim models!development project location choice model}
-\index{class!DevelopmentProjectLocationChoiceModel}
+\index{DevelopmentProjectLocationChoiceModel@\class{DevelopmentProjectLocationChoiceModel} class}
 %
 The Development project location choice model implemented in the
 \package{urbansim} package simulates a process where
 development projects of a specific type choose locations to be placed into (see Section~\ref{real-estate-development-model}
 on page~\pageref{real-estate-development-model-gridcell}).
 The class \class{DevelopmentProjectLocationChoiceModel} is a child of
-\class{LocationChoiceModel} \index{class!LocationChoiceModel} described in
+\class{LocationChoiceModel} \index{LocationChoiceModel@\class{LocationChoiceModel} class} described in
 Section~\ref{sec:location-choice-model}.
 
 \subsubsection{Initialization}
@@ -835,7 +835,7 @@ The \method{estimate()} method is identical to its parent method
 %
 The model can be created using a pre-defined creator in \package{urbansim}.
 The class\\
-\class{DevelopmentProjectLocationChoiceModelCreator} \index{class!DevelopmentProjectLocationChoiceModelCreator} 
+\class{DevelopmentProjectLocationChoiceModelCreator}\index{DevelopmentProjectLocationChoiceModelCreator@\class{DevelopmentProjectLocationChoice\-Model\-Creator} class} 
 sets useful default
 values for arguments of the constructor. The model is by default initialized with:
 \begin{description}
@@ -902,10 +902,10 @@ set the \verb|sub_model_id| field of the specification and coefficients table to
 %
 \label{sec:agent-lcm}
 \index{Agent Location Choice Model}\index{models!urbansim models!agent location choice model}
-\index{class!AgentLocationChoiceModel}
+\index{AgentLocationChoiceModel@\class{AgentLocationChoiceModel} class}
 
 The class \class{AgentLocationChoiceModel} is a child
-of \class{LocationChoiceModel}\index{class!LocationChoiceModel} described in
+of \class{LocationChoiceModel}\index{LocationChoiceModel@\class{LocationChoiceModel} class} described in
 Section~\ref{sec:location-choice-model}. It can deal with exceeded capacity of locations.
 
 \subsubsection{Initialization}
@@ -956,8 +956,8 @@ given by the argument \verb|maximum_runs|.
 \index{Household Location Choice Model} \index{models!urbansim models!household location choice model}
 %
 This model (class \class{HouseholdLocationChoiceModel}) 
-\index{class!HouseholdLocationChoiceModel}
-is an Agent Location Choice Model \index{class!AgentLocationChoiceModel} that makes default settings
+\index{HouseholdLocationChoiceModel@\class{HouseholdLocationChoiceModel} class}
+is an Agent Location Choice Model \index{AgentLocationChoiceModel@\class{AgentLocationChoiceModel} class} that makes default settings
 of various arguments usable in the context of households
 choosing their locations. See also Section~\ref{sec:model-system-household-location-choice-model}.
 The model is initiated with the arguments and their default values
@@ -1022,9 +1022,9 @@ when running Household Location Choice Model.
 %
 \label{sec:agent-lcm-member}
 \index{Agent Location Choice Model Member}
-\index{class!AgentLocationChoiceModelMember}
+\index{AgentLocationChoiceModelMember@\class{AgentLocationChoiceModelMember} class}
 %
-This model is a child of \class{AgentLocationChoiceModel} \index{class!AgentLocationChoiceModel}
+This model is a child of \class{AgentLocationChoiceModel} \index{AgentLocationChoiceModel@\class{AgentLocationChoiceModel} class}
 (Section~\ref{sec:agent-lcm}) that is used 
 for running the parent class with different subsets of the agents.
 
@@ -1032,7 +1032,7 @@ for running the parent class with different subsets of the agents.
 %
 The class is initialized by passing the following arguments:
 \begin{description}
-\item[group_member] - An object of class \class{ModelGroupMember}\index{class!ModelGroupMember} (see Section~\ref{sec:model-group}) 
+\item[group_member] - An object of class \class{ModelGroupMember}\index{ModelGroupMember@\class{ModelGroupMember} class} (see Section~\ref{sec:model-group}) 
   determining for which member is this model initialized.
 \item[location_set] - A dataset of locations.
 \item[agents_grouping_attribute] - An attribute of the agent set that is used for classifying agents into the member groups. 
@@ -1050,8 +1050,8 @@ The \method{prepare_for_estimate} method appends the member name as prefix in fr
 \label{sec:elcm} 
 \index{Employment Location Choice Model}\index{models!urbansim models!employment location choice model}
 %
-The class \class{EmploymentLocationChoiceModel} \index{class!EmploymentLocationChoiceModel} 
-is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{class!AgentLocationChoiceModelMember}
+The class \class{EmploymentLocationChoiceModel} \index{EmploymentLocationChoiceModel@\class{EmploymentLocationChoiceModel} class} 
+is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{AgentLocationChoiceModelMember@\class{AgentLocationChoiceModelMember} class}
 Its default settings
 of various arguments makes the model usable in the context of jobs choosing their locations. 
 See also Section~\ref{sec:model-system-employment-location-choice-model}.
@@ -1125,8 +1125,8 @@ when running Employment Location Choice Model.
 \label{sec:BLCM}
 \index{Building Location Choice Model}\index{models!urbansim models!building location choice model}
 %
-The class \class{BuildingLocationChoiceModel} \index{class!BuildingLocationChoiceModel} 
-is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{class!AgentLocationChoiceModelMember}
+The class \class{BuildingLocationChoiceModel} \index{BuildingLocationChoiceModel@\class{BuildingLocationChoiceModel} class} 
+is a child of \class{AgentLocationChoiceModelMember}. \index{model group}\index{AgentLocationChoiceModelMember@\class{AgentLocationChoiceModelMember} class}
 Its default settings
 of various arguments makes the model usable in the context of buildings choosing their locations.
 It is an alternative model to the Development Project Location Choice Model \index{Development Project Location Choice Model}
@@ -1186,7 +1186,7 @@ where the particular building would fit into.
 \label{sec:household-transition-model}
 \index{Household Transition Model}\index{models!urbansim models!household transition model}
 
-The class \class{HouseholdTransitionModel} \index{class!HouseholdTransitionModel}
+The class \class{HouseholdTransitionModel} \index{HouseholdTransitionModel@\class{HouseholdTransitionModel} class}
 creates and removes households to and from given household set according to
 the joint distribution of their characteristics. The total number of
 households is controlled by given annual control totals. See also Section~\ref{sec:model-system-demographic-transition-model}.
@@ -1371,7 +1371,7 @@ Compare the control totals table to the attributes of households.
 \label{sec:employment-transition-model}
 \index{Employment Transition Model}\index{models!urbansim models!employment transition model}
 
-The class \class{EmploymentTransitionModel} \index{class!EmploymentTransitionModel} creates and removes jobs to and
+The class \class{EmploymentTransitionModel} \index{EmploymentTransitionModel@\class{EmploymentTransitionModel} class} creates and removes jobs to and
 from given job set according to a job distribution over employment sectors.
 The total number of jobs is controlled by given annual control totals. It
 distinguishes between home based and non-home based jobs. See also Section~\ref{sec:model-system-economic-transition-model}.
@@ -1492,7 +1492,7 @@ Model (\ref{sec:household-transition-model}).
 \index{Development Project Transition Model} \index{models!urbansim models!development project transition model}
 %
 The model (implemented in the class \class{DevelopmentProjectTransitionModel}) 
-\index{class!DevelopmentProjectTransitionModel}
+\index{DevelopmentProjectTransitionModel@\class{DevelopmentProjectTransitionModel} class}
 creates development projects in order to match the desired vacancy rates. Each
 development project is for a single type of development, e.g.  'industrial' or
 'commercial'.  The distribution of project sizes (amount of space, value of
@@ -1614,7 +1614,7 @@ following arguments:
 \index{Development Event Transition Model}\index{models!urbansim models!development event transition model}
 %
 The model \class{DevelopmentEventTransitionModel} 
-\index{class!DevelopmentEventTransitionModel}
+\index{DevelopmentEventTransitionModel@\class{DevelopmentEventTransitionModel} class}
 creates for each location a development event, which is a collection
 of development projects of different type (e.g. commercial, residential,
 industrial) for this location. This model is not estimated and contains only a
@@ -1681,7 +1681,7 @@ passing the following arguments:
 \label{sec:process-prescheduled-development-events}
 \index{models!urbansim models!process prescheduled development events}
 %
-This model (implemented in class  \class{ProcessPrescheduledDevelopmentEvents}\index{class!ProcessPrescheduledDevelopmentEvents})
+This model (implemented in class  \class{ProcessPrescheduledDevelopmentEvents}\index{ProcessPrescheduledDevelopmentEvents@\class{ProcessPrescheduledDevelopmentEvents} class})
 is intended to be used in combination with the Events Coordinator\index{Events Coordinator} (see Section~\ref{sec:events-coordinator}).
 It reads exogeneous events from the storage (e.g. from database or cache) and returns them as an Opus object for further
 processing (e.g. by the Events Coordinator).
@@ -1717,7 +1717,7 @@ the base year cache storage.
 \index{Building Transition Model}\index{models!urbansim models!building transition models}
 %
 
-The model (implemented in the class \class{BuildingTransitionModel}) \index{class!BuildingTransitionModel}
+The model (implemented in the class \class{BuildingTransitionModel}) \index{BuildingTransitionModel@\class{BuildingTransitionModel} class}
 creates buildings in order to match the desired vacancy rates. 
 It is an alternative model to the Development Project Transition Model\index{Development Project Transition Model}
 described in Section~\ref{sec:development-project-transition-model}, tailored to the case when 
@@ -1780,7 +1780,7 @@ The method returns the difference between the number of buildings before and aft
 \label{sec:events-coordinator}
 \index{Events Coordinator}\index{models!urbansim models!events coordinator}
 %
-The class \class{EventsCoordinator}\index{class!EventsCoordinator} updates a location set to reflect changes
+The class \class{EventsCoordinator}\index{EventsCoordinator@\class{EventsCoordinator} class} updates a location set to reflect changes
 that are contained in the given event set. The event set can be an output of the Development Event Transition Model
 (see Section~\ref{sec:development-event-transition-model})
 or of the Process Prescheduled Development Events (see Section~\ref{sec:process-prescheduled-development-events}). 
@@ -1847,7 +1847,7 @@ following arguments:
 
 \subsubsection{Events Coordinator And Storing}
 %
-\index{class!EventsCoordinatorAndStoring}
+\index{EventsCoordinatorAndStoring@\class{EventsCoordinatorAndStoring} class}
 A child class of \class{EventsCoordinator}, called \class{EventsCoordinatorAndStoring},
 runs the parent class and stores the development event set into the simulation cache.
 This is especially useful for tracking down annual development.
@@ -1859,12 +1859,12 @@ This is especially useful for tracking down annual development.
 \label{sec:scaling-jobs-model} 
 \index{Scaling Jobs Model}\index{models!urbansim models!scaling jobs model}
 %
-The class \class{ScalingJobsModel}\index{class!ScalingJobsModel} locates jobs to locations according to the
+The class \class{ScalingJobsModel}\index{ScalingJobsModel@\class{ScalingJobsModel} class} locates jobs to locations according to the
 distribution of job sectors in locations.
 \subsubsection{Initialization}
 The model is initialized by passing the following arguments:
 \begin{description}
-\item[group_member] - An object of class \class{ModelGroupMember}\index{class!ModelGroupMember} 
+\item[group_member] - An object of class \class{ModelGroupMember}\index{ModelGroupMember@\class{ModelGroupMember} class} 
   (see~\ref{sec:model-group}). Default is \verb|None|.
 \item[agents_grouping_attribute] - The agents grouping attribute. Default is 'job.building_type'.
 \item[filter] - A fully-qualified variable name for filtering out a subset of locations to place jobs in. Default is None.
@@ -1935,9 +1935,9 @@ when running Scaling Jobs Model.
 %
 \label{sec:distribute-unplaced-jobs-model} 
 \index{Distribute Unplaced Jobs Model}\index{models!urbansim models!distribute unplaced jobs model}
-\index{class!DistributeUnplacedJobsModel}
+\index{DistributeUnplacedJobsModel@\class{DistributeUnplacedJobsModel} class}
 %
-This model is a child of the \class{ScalingJobsModel}\index{class!ScalingJobsModel}. It determines all unplaced jobs, i.e.
+This model is a child of the \class{ScalingJobsModel}\index{ScalingJobsModel@\class{ScalingJobsModel} class}. It determines all unplaced jobs, i.e.
  jobs with location identifier smaller equal 0. Then it calls the parent model on those jobs, setting 
  'group_member' to \verb|None|. The \method{run()} method accepts an additional argument 
  {\bf agents_filter} which is a fully-qualified variable name of the agent set. It allows for additional filtering 
@@ -1965,7 +1965,7 @@ The argument {\bf agents_index} is set to None for all projects.
 \label{sec:agent-relocation-model}
 \index{Agent Relocation model}\index{models!urbansim models!agent relocation model}
 
-The class \class{AgentRelocationModel}\index{class!AgentRelocationModel} 
+The class \class{AgentRelocationModel}\index{AgentRelocationModel@\class{AgentRelocationModel} class} 
 determines which members of the given
 set of agents should be relocated. This is done on basis of given
 probabilities. Additionally, the way how to choose the agents can be given by
@@ -2035,11 +2035,11 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \method{get_model()} returns an instance of
 \class{AgentRelocationModel} with the following default settings:
 \begin{itemize}
-\item \class{HouseholdRelocationModelCreator}\index{class!HouseholdRelocationModelCreator} - sets the argument
+\item \class{HouseholdRelocationModelCreator}\index{HouseholdRelocationModelCreator@\class{HouseholdRelocationModelCreator} class} - sets the argument
   \verb|probabilities| to ``urbansim.household_relocation_probabilities''
   (see Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| to
   ``Household Relocation Model''.
-\item \class{EmploymentRelocationModelCreator}\index{class!EmploymentRelocationModelCreator} - sets the argument
+\item \class{EmploymentRelocationModelCreator}\index{EmploymentRelocationModelCreator@\class{EmploymentRelocationModelCreator} class} - sets the argument
   \verb|probabilities| to
   ``urbansim.employment_relocation_probabilities'' (see
   Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| to
@@ -2087,7 +2087,7 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \subsection{Probabilities Classes}
 %
 \label{sec:urbansim-probabilities}
-This section describes \class{Probabilitites}\index{class!Probabilities} classes (see
+This section describes \class{Probabilitites}\index{Probabilities@\class{Probabilities} class} classes (see
 Section~\ref{sec:probabilities}) that are implemented in \package{urbansim}.
 
 \subsubsection{household_relocation_probabilities}
@@ -2120,7 +2120,7 @@ expected to be contained in the argument \verb|resources| of the
 \subsection{Choices Classes}
 %
 \label{sec:urbansim-choices}
-\index{class!Choices}
+\index{Choices@\class{Choices} class}
 This section describes \class{Choices} classes (see
 Section~\ref{sec:choices}) that are implemented in \package{urbansim}.
 
