@@ -221,8 +221,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         projects = None
         # create agents for estimation
         if events_for_estimation_storage is not None:
-            event_set = DevelopmentEventDataset(urbansim_constant,
-                                            in_storage = events_for_estimation_storage,
+            event_set = DevelopmentEventDataset(in_storage = events_for_estimation_storage,
                                             in_table_name= events_for_estimation_table)
             event_set.remove_non_recent_data(base_year, urbansim_constant['recent_years'])
             projects = DevelopmentProjectCreator().create_projects_from_history(
