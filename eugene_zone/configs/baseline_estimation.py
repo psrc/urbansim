@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import os
 from baseline import Baseline
 from urbansim_zone.configs.config_changes_for_estimation import ConfigChangesForEstimation
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
@@ -21,8 +22,7 @@ class BaselineEstimation(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
-        #'cache_directory':'/urbansim_cache/eugene', # change or leave out
-        self['cache_directory'] = '/Users/hana/urbansim_cache/eugene/baseyear_cache_zone'
+        self['cache_directory'] = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/base_year_data')
         self['scenario_database_configuration'] = ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone')
         self['estimation_database_configuration'] = EstimationDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone')
     

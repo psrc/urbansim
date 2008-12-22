@@ -50,15 +50,12 @@ class Baseline(UrbansimZoneConfiguration):
                 'distribute_unplaced_jobs_model',
                 ],
             'scenario_database_configuration': ScenarioDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone'),
-#            'estimation_database_configuration': EstimationDatabaseConfiguration(database_name = 'eugene_1980_baseyear_zone'),
-            #'cache_directory':'c:/opusworkspace/eugene',
-            'cache_directory':'/Users/hana/urbansim_cache/eugene/baseyear_cache_zone',
+            'cache_directory': os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = '/Users/hana/urbansim_cache/eugene/zone',
+                cache_directory_root = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/runs'),
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = '/Users/hana/urbansim_cache/eugene/baseyear_cache_zone'
-                    #existing_cache_to_copy = 'c:/urbansim_cache/eugene_1980_baseyear_cache',
+                    existing_cache_to_copy = os.path.join(os.environ['OPUS_HOME'], 'data/eugene_zone/base_year_data')
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
