@@ -21,6 +21,45 @@
       <hwy600 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;600</hwy600>
       <hwy300 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;300</hwy300>
       <land_value dataset="gridcell" source="expression" type="variable_definition" use="indicator">gridcell.residential_land_value+gridcell.nonresidential_land_value</land_value>
+      <!-- BEGIN NEW VARS : these are automatically generated variables from specification modules -->
+        <ble_rew dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_retail_sector_employment_within_walking_distance</ble_rew>
+        <ble_saw dataset="job_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance</ble_saw>
+        <ctir dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.cost_to_income_ratio</ctir>
+        <bpliw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.percent_low_income_households_within_walking_distance</bpliw>
+        <hwy dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.is_near_highway</hwy>
+        <ldevsfi dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_developable_industrial_sqft_capacity</ldevsfi>
+        <sfc_0 dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.has_0_commercial_sqft</sfc_0>
+        <bflood dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.is_in_floodplain</bflood>
+        <bldhw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_distance_to_highway</bldhw>
+        <bltlv dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_total_land_value</bltlv>
+        <plihwwdihi dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.percent_low_income_households_within_walking_distance_if_high_income</plihwwdihi>
+        <ruwhhc dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.residential_units_when_household_has_children</ruwhhc>
+        <bpmiw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.percent_mid_income_households_within_walking_distance</bpmiw>
+        <btt_cbd dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.travel_time_to_CBD</btt_cbd>
+        <yhihdr dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.young_household_in_high_density_residential</yhihdr>
+        <ldevsfc dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_developable_commercial_sqft_capacity</ldevsfc>
+        <iayb dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.income_and_year_built</iayb>
+        <lsfiw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_industrial_sqft_within_walking_distance</lsfiw>
+        <bart dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.is_near_arterial</bart>
+        <piw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.percent_industrial_within_walking_distance</piw>
+        <ble_sew dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_service_sector_employment_within_walking_distance</ble_sew>
+        <prw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.percent_residential_within_walking_distance</prw>
+        <ble_bw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_basic_sector_employment_within_walking_distance</ble_bw>
+        <pmhwwdim dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.percent_minority_households_within_walking_distance_if_minority</pmhwwdim>
+        <phihwwdili dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_low_income</phihwwdili>
+        <o_ugb dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.is_outside_urban_growth_boundary</o_ugb>
+        <bltv dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_total_value</bltv>
+        <bwet dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.is_in_wetland</bwet>
+        <yhimu dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.household_x_gridcell.young_household_in_mixed_use</yhimu>
+        <le_w dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_total_employment_within_walking_distance</le_w>
+        <unit_35 dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.has_3_to_5_units</unit_35>
+        <lru dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_residential_units</lru>
+        <blimp dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_total_improvement_value</blimp>
+        <blwap_1 dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_work_access_to_population_1</blwap_1>
+        <blnrsfw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance</blnrsfw>
+        <nrs dataset="gridcell" source="expression" type="variable_definition" use="model_variable">ln_bounded(urbansim.gridcell.non_residential_sqft)</nrs>
+        <blsfcw dataset="gridcell" source="Python class" type="variable_definition" use="model_variable">urbansim.gridcell.ln_commercial_sqft_within_walking_distance</blsfcw>
+      <!-- END NEW VARS -->
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
     <dataset_pool_configuration type="class">
@@ -107,8 +146,16 @@
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="string">'residential_land_share_model_specification'</specification_table>
             <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">-2</submodel_id>
+                <description type="string">No description</description>
+                <variables type="variable_list">constant,lru,nrs</variables>
+            </submodel>
+        </specification>
       </residential_land_share_model>
       <land_price_model type="model">
         <structure>
@@ -157,8 +204,16 @@
             <specification_table type="string">'land_price_model_specification'</specification_table>
             <filter_variable type="string">'urbansim.gridcell.total_land_value'</filter_variable>
             <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">-2</submodel_id>
+                <description type="string">No description</description>
+                <variables type="variable_list">constant,pctdevwal,hwy,bldhw,bflood,ln_impval,cbdtrvl,bwet,lru,ln_duw,pcthiwa</variables>
+            </submodel>
+        </specification>
       </land_price_model>
       <development_project_transition_model type="model">
         <structure>
@@ -234,8 +289,16 @@
             <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
             <base_year type="string">resources['base_year']</base_year>
             <categories type="list">[1, 2, 3, 5, 10, 20]</categories>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">1</submodel_id>
+                <description type="string">Residential</description>
+                <variables type="variable_list">blimp,prw,unit_35,le_w,sfc_0,o_ugb,tt_cbd</variables>
+            </submodel>
+        </specification>
       </residential_development_project_location_choice_model>
       <commercial_development_project_location_choice_model type="model">
         <structure>
@@ -287,8 +350,16 @@
             <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
             <base_year type="string">resources['base_year']</base_year>
             <categories type="list">[1000, 2000, 5000, 10000]</categories>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">-2</submodel_id>
+                <description type="string">Commercial</description>
+                <variables type="variable_list">bltlv,prw,le_w,ldevsfc,o_ugb,art,tt_cbd,blwap_1</variables>
+            </submodel>        
+        </specification>
       </commercial_development_project_location_choice_model>
       <industrial_development_project_location_choice_model type="model">
         <structure>
@@ -340,10 +411,18 @@
             <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
             <base_year type="string">resources['base_year']</base_year>
             <categories type="string">[1000, 2000, 5000, 10000]</categories>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">1</submodel_id>
+                <description type="string">Industrial</description>
+                <variables type="variable_list">lv,lduw,lsfiw,piw,ldevsfi</variables>
+            </submodel>
+        </specification>
       </industrial_development_project_location_choice_model>
-      <!-- development models start -->
+      <!-- development models end -->
       <development_event_transition_model type="model">
         <structure>
           <import type="dictionary">
@@ -510,8 +589,16 @@
             <agents_for_estimation_table parser_action="blank_to_None" type="string">'households_for_estimation'</agents_for_estimation_table>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <data_objects type="string">datasets</data_objects>
+            <models_to_run type="list" parser_action="skip">['household_transition_model', 'household_relocation_model']</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <submodel type="submodel">
+                <submodel_id type="integer">-2</submodel_id>
+                <description type="string">No description</description>
+                <variables type="variable_list">ctir,iayb,phihwwdili,plihwwdihi,yhihdr,yhimu,pmhwwdim,ruwhhc</variables>
+            </submodel>
+        </specification>
       </household_location_choice_model>
       <employment_relocation_model type="model">
         <structure>
@@ -608,8 +695,108 @@
             <agents_for_estimation_table parser_action="blank_to_None" type="string">'jobs_for_estimation'</agents_for_estimation_table>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <join_datasets type="boolean">False</join_datasets>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+            <industrial type="dictionary">
+                <submodel type="submodel">
+                    <submodel_id type="integer">1</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+                </submodel>
+                <submodel type="submodel">
+                    <submodel_id type="integer">2</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+                </submodel>
+                <submodel type="submodel">
+                    <submodel_id type="integer">3</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltv,ble_rew</variables>
+                </submodel>
+                <submodel type="submodel">
+                    <submodel_id type="integer">4</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">5</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">6</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltv,blnrsfw,ble_sew</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">7</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
+                </submodel>
+            </industrial>
+            <commercial type="dictionary">
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">1</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">2</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">3</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltv,ble_rew</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">4</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">5</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bart,bhwy,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">6</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltv,blnrsfw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">7</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltv,blnrsfw,ble_saw</variables>
+                </submodel>
+
+                <submodel type="submodel">
+                    <submodel_id type="integer">8</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">blnrsfw</variables>
+                </submodel>
+            </commercial>
+            <home_based type="dictionary">
+                <submodel type="submodel">
+                    <submodel_id type="integer">-2</submodel_id>
+                    <description type="string">No description</description>
+                    <variables type="variable_list">bltlv,bpliw,bpmiw,blwap_1,ble_sew,btt_cbd</variables>
+                </submodel>
+            </home_based>
+        </specification>
       </employment_location_choice_model>
       <distribute_unplaced_jobs_model type="model">
         <structure>
@@ -703,6 +890,7 @@
             <data_objects type="string">datasets</data_objects>
             <agents_for_estimation_table parser_action="blank_to_None" type="string">'jobs_for_estimation'</agents_for_estimation_table>
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
           </prepare_for_estimate>
         </structure>
       </home_based_employment_location_choice_model>
