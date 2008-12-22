@@ -805,9 +805,45 @@ variables}, \variablesindex or {\it computed attributes}. \computedattributesind
 ``parent dataset''. \datasetindex
 
 In Opus, a variable \variablesindex is a class derived from the
-\package{opus_core} class \class{Variable} \variablesindex.
-(Section~\ref{sec:opus-variable} gives additional details about this class.)
-Its name is identical to the name of the module in which it is implemented.
+\package{opus_core} class \class{Variable}\variablesindex.  Opus expressions 
+(Section~\ref{sec:expressions}),
+as used in the expression library in the GUI and elsewhere, in fact just
+are compiled into an automatically generated subclass of class \class{Variable}.
+Section~\ref{sec:opus-variable} gives additional details about this class, 
+including a discussion of how expressions are compiled.
+
+In the GUI description, we used the expression library as a place to store and
+reuse variable definitions.  We can also write expressions as Python strings
+and use them from the command line.  The syntax of these expression language is 
+that of Python, but the semantics
+are somewhat different --- for example, a name like
+\code{gridcell.distance_to_cbd} is a reference to the value of that
+variable.  (If you just evaluated this in a Python shell you'd get an
+error, saying that the \package{gridcell} package didn't have a
+\code{distance_to_cbd} attribute.)  Further, expressions are evaluated lazily.
+Here is a simple example:
+
+\begin{verbatim}
+>>> locations.compute_variables(["sqrt(gridcell.distance_to_cbd)"])
+array([ 2.23606798,  3.16227766,  2.23606798,  1.        ,  4.47213595,
+        0.        ,  2.64575131,  2.64575131,  1.73205081])
+\end{verbatim}
+
+The expressions are fed to the \method{compute_variables} method 
+\index{compute_variables} of
+\class{Dataset} (Section \ref{sec:compute-variables}), just as for simple
+variable references.  (Given a new expression, Opus will compose a
+new variable definition, including a \method{compute} and a
+\method{dependencies} method, which computes the value of that expression.
+It then saves the new variable definition in case the same expression is
+encountered again --- see Section~\ref{sec:implementation-of-expressions}.
+However, usually the user need not
+be concerned about this.)  The \method{compute_variables} method evaluates
+each variable (or expression) in turn, and returns the value of the last one.
+
+For variables defined by hand as Python classes (rather than using Tekoa expressions), the
+name of the class for a given variable is identical to the name of the module 
+in which it is implemented.
 The module is stored in a directory whose name corresponds to the name of
 the parent dataset. \datasetindex Note that the variable \variablesindex 
 name must be all lower case.
@@ -857,6 +893,78 @@ a dataset-qualified name.  For our example, we populate the primary attribute:
 >>> locations.add_primary_attribute(name="percent_wetland",
                                     data=[85,20,0,90,35,51,0,10,5])
 \end{verbatim}
+
+\begin{figure}[th]
+\begin{verbatim}
+from opus_core.variables.variable import Variable
+from urbansim.functions import attribute_label
+from variable_functions import my_attribute_label
+from opus_core.logger import logger
+
+class population(Variable):
+    """Compute the total number of people residing in a gridcell, 
+    by summing hh_persons over all households in the gridcell"""
+    
+    _return_type="int32"
+    hh_persons = "persons"
+
+    def dependencies(self):
+        return [attribute_label("household", self.hh_persons), 
+                attribute_label("household", "grid_id"), 
+                my_attribute_label("grid_id")]
+
+    def compute(self, dataset_pool):
+        households = dataset_pool.get_dataset('household')
+        return self.get_dataset().sum_dataset_over_ids(households, self.hh_persons)
+
+
+from opus_core.tests import opus_unittest
+from opus_core.tests.utils.variable_tester import VariableTester
+from numpy import array
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        gridcell_grid_id = array([1, 2, 3])
+        #specify an array of 4 hh's, 1st hh's grid_id = 2 (it's in gridcell 2), etc.
+        household_grid_id = array([2, 1, 3, 2]) 
+        #specify how many people live in each household
+        hh_persons = array([10, 5, 20, 30])
+
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                "gridcell":{
+                    "grid_id":gridcell_grid_id 
+                    }, 
+                "household":{ 
+                    "household_id":array([1,2,3,4]),
+                    "persons":hh_persons, 
+                    "grid_id":household_grid_id
+                }
+            }
+        )
+        
+        should_be = array([5, 40, 20])
+        tester.test_is_close_for_family_variable(self, should_be)
+
+if __name__=='__main__':
+    opus_unittest.main()
+\end{verbatim}
+\caption{Definition of the `population' variable as a Python class}
+\label{fig:population-variable}
+\end{figure}
+
+As another example, consider the \code{population} variable to compute
+the population in each gridcell.  We refer
+to a variable using a \verb#Pythonpath#, which provides a means for
+Python to find modules and classes in a directory structure.  So, a
+reference to this particular module using a \emph{fully qualified path}
+would be \code{urbansim.gridcell.population}.  You can find all of the
+existing variables by browsing on disk in the source code directory. 
+The directory structure mirrors the parts of the variable name, so that
+\code{urbansim.gridcell.population} is really pointing to
+\file{opus/src/urbansim/gridcell/population.py}, which is also included 
+in Figure~\ref{fig:population-variable} on page~\pageref{fig:population-variable}.
 
 \subsubsection{Dataset Pool}
 \index{dataset pool}
@@ -1157,493 +1265,6 @@ before the call of \\
   a specific date yet for this change.  We will try to preserve backward
   compatibility.}
 
-\section{Expressions}
-\label{sec:urbansim-tutorial-expressions}
-\index{expressions}
-
-In many cases variable definitions are simple expressions involving other
-variables.  For these cases, Opus provides an \emph{expression language}
-that allows them to be defined succinctly, rather than requiring the Opus
-user to write new variable definitions in Python.  (The expression language
-has been added recently to Opus, and there are many explicitly declared
-variables in the existing UrbanSim package that are no longer needed ---
-they could be written as expressions instead in the specifications.  We
-plan to remove these unneeded variables in the future.)
-
-The syntax of the expression language is that of Python, but the semantics
-are somewhat different --- for example, a name like
-\code{gridcell.distance_to_cbd} is a reference to the value of that
-variable.  (If you just evaluated this in a Python shell you'd get an
-error, saying that the \package{gridcell} package didn't have a
-\code{distance_to_cbd} attribute.)  Here is a simple example:
-
-\begin{verbatim}
->>> locations.compute_variables(["sqrt(gridcell.distance_to_cbd)"])
-array([ 2.23606798,  3.16227766,  2.23606798,  1.        ,  4.47213595,
-        0.        ,  2.64575131,  2.64575131,  1.73205081])
-\end{verbatim}
-
-The expressions are fed to the \method{compute_variables} method 
-\index{compute_variables} of
-\class{Dataset} (Section \ref{sec:compute-variables}), just as for simple
-variable references.  (In fact, given a new expression, Opus will compose a
-new variable definition, including a \method{compute} and a
-\method{dependencies} method, which computes the value of that expression.
-It then saves the new variable definition in case the same expression is
-encountered again.  However, the user need not
-be concerned about this.)  The \method{compute_variables} method evaluates
-each variable (or expression) in turn, and returns the value of the last one.
-
-An expression consists of an attribute name, or a function or operation
-applied to other expressions.  This definition is recursive, so that a
-function or operation can be applied to expressions composed
-from other expressions.  For example, here are some legal expressions:
-
-\begin{itemize}
-
-\item \code{urbansim.gridcell.population}
-\item \code{ln(urbansim.gridcell.population)+1}
-
-\end{itemize}
-
-\subsection{Variable Names in Expressions}
-
-The name used in an expression can be either a fully-qualified variable
-name, a dataset-qualified variable name, or a primary attribute.
-The variable names can include arguments (Section
-\ref{sec:tutorial-numbersinvariables}), \index{arguments}
-so that
-\class{is_near_highway_if_threshold_is_2} matches the variable definition
-for \class{is_near_SSS_if_threshold_is_DDD}.
-
-\subsection{Unary Functions for Opus Expressions}
-\label{sec:functions-for-opus-expressions}
-
-There is a set of unary functions defined to use in expressions, as
-follows.  These all operate on numpy arrays.
-
-\begin{description}
-
-\item[\code{clip_to_zero}] Returns the input values with all negative values
-   clipped to 0. \index{clip_to_zero}
-
-\item[\code{exp}] Returns an array consisting of $e$ raised to the input 
-values.\index{exp}
-
-\item[\code{ln}] Returns an array of natural logarithms.  Input values of 0
-result in 0.  (The intent is that this function be used on arrays of
-values, where 0 denotes a missing value.  However, be cautious --- as you
-approach 0 from the positive side, the result value becomes more and more
-negative, and then suddenly returns to 0 at 0.)  \index{ln}
-
-\item[\code{ln_bounded}] Returns an array of natural logarithms. Values
-less than 1 result in 0.  \index{ln_bounded}
-
-\item[\code{ln_shifted}] Returns an array of natural logarithms.  The input
-  values are shifted by the second argument before taking the log.  (The
-  default shift value is 1.)  \index{ln_shifted}
-
-\item[\code{ln_shifted_auto}] If the input values includes values that are
-less than or equal to 0, they are shifted so that the minimum of the
-shifted values is 1 before taking the log.  Otherwise the log is taken on
-the original values.  \index{ln_shifted_auto}
-
-\item[\code{sqrt}] Returns an array of square roots.  Values less than 0
-  result in 0. \index{sqrt}
-
-\item[\code{safe_array_divide}] First three arguments are the nominator, denominator and 
-a constant. The function returns an array of numerator / denominator for all values where denominator is not 0,
-otherwise the constant (default value is 0). An optional fourth argument controls
-the type of the resulting array. The default value is 'float32'.
-\end{description}
-
-In addition, all of the functions in numpy are available.  To avoid name
-collisions, the function name in an expression must include the package
-name \code{numpy}.  For example, this expression gives you the reciprocals
-of all the values in a variable \code{v}:
-
-\code{numpy.reciprocal(v)}
-
-\subsection{Operators for Opus Expressions}
-\index{numpy!operators}
-
-All of the numpy operators can be used in Opus expressions, including
-\verb|+ - * / ** |.  Note the numpy semantics for these --- for example,
-\verb|*| does elementwise multiplication of two numpy arrays, or with a
-scalar argument, scales all the elements in an array,
-e.g.\ \code{1.2*household.income}.
-
-\subsection{Aliasing}
-\label{sec:aliasing}
-\index{aliasing}
-
-A new attribute name can be declared and initialized using an assignment
-statement:
-
-\code{lnpop = ln(urbansim.gridcell.population)}
-
-This is treated as an expression, which can occur in the list of
-expressions given to \method{compute_variables} or in an \file{aliases.py}
-file (see below).  The value of the new alias is returned as the value of
-the expression if it's the last item on the list of variables and
-expressions.
-
-It is convenient, and often more efficient, to gather all the expressions
-and aliases for a particular package and dataset into one place.  The
-optional \file{aliases.py} file supports this.  \index{alias.py file}
-This file should define a
-single variable \code{aliases} to be a list of expressions, each of which
-should define an alias.  This file is then placed in the same directory as
-variables for that package and dataset.  For example, to define aliases
-relevant to \code{urbansim.gridcell}, put an \file{aliases.py} file into
-the \file{urbansim.gridcell} directory.  These aliases can then be referred
-to using the fully-qualified name of the alias.  When finding a variable
-referenced by a fully-qualified name, the system first searches the aliases
-file (if present), and then the variable definitions in the appropriate
-directory.
-
-As an example, the directory \code{opus_core.test_agent} contains one
-variable definition, for the variable \code{income_times_2}.  (This
-directory and variable are used for unit tests for \package{opus_core}.)
-The file \file{aliases.py} in that same directory contains the following:
-
-\begin{verbatim}
-aliases = [
-    'income_times_5 = 5*opus_core.test_agent.income',
-    'income_times_10 = 5*opus_core.test_agent.income_times_2'
-    ]
-\end{verbatim}
-
-The first alias refers to a primary attribute (\code{test_agent.income}),
-and the second to the variable.  These aliases can then be referred to
-using a fully-qualified name, in exactly the same way as a variable,
-for example
-
-\code{opus_core.test_agent.income_times_5}.  
-
-See the unit tests in
-\file{opus_core.variables.expression_tests.aliases_file} for examples of
-using these aliases.
-
-\subsection{Casting the Value of an Expression}
-\index{casting}
-
-Normally the value of a variable defined by an expressions will be a
-\code{float64} (this is a numpy type).  For large datasets this may use too
-much space.  You can cast the result of any expression to a different type
-using the numpy \code{astype} method.  For example, the alias defined by
-this expression will be of type \code{float32}:
-
-\begin{verbatim}
-lnpop = ( ln(urbansim.gridcell.population) ).astype(float32)
-\end{verbatim}
-
-The following numpy types can be used as the argument to the \code{astype}
-method: \code{bool8}, \code{int8}, \code{uint8}, \code{int16},
-\code{uint16}, \code{int32}, \code{uint32}, \code{int64}, \code{uint64}
-\code{float32}, \code{float64}, \code{complex64}, \code{complex128}, and
-\code{longlong}.
- 
-\subsection{Interaction Sets}
-\index{interaction sets}
-
-If you access an attribute of a component of an interaction set in the
-context of that interaction set, the result is converted into a 2-d array
-and returned.  These 2-d arrays can then be multiplied, divided, compared,
-and so forth, using the numpy functions and operators.  For example,
-suppose we have an interaction set \file{household_x_gridcell}.  The
-component \file{household} set has an attribute \verb|income| with values
-\verb|[100, 200, 300]|.  (These numbers are just to explain the concepts
---- obviously they aren't realistic incomes.)  The \file{gridcell}
-component has an attribute \verb|cost| with values \verb|[1000, 1200]|.
-Then evaluating
-
-\begin{verbatim}
-household_x_gridcell.compute_variables('urbansim.household.income')
-\end{verbatim}
-
-will return a 2-d array
-
-\begin{verbatim}
-[ [100, 100],
-  [200, 200],
-  [300, 300] ]
-\end{verbatim}
-
-and
-
-\begin{verbatim}
-household_x_gridcell.compute_variables('urbansim.gridcell.cost')
-\end{verbatim}
-
-returns
-
-\begin{verbatim}
-[ [1000, 1200],
-  [1000, 1200],
-  [1000, 1200] ]
-\end{verbatim}
-
-Then
-\begin{verbatim}
-household_x_gridcell.compute_variables(
-            'urbansim.gridcell.cost*urbansim.household.income')
-\end{verbatim}
-
-evaluates to
-\begin{verbatim}
-[ [100000, 120000],
-  [200000, 240000],
-  [300000, 360000] ]
-\end{verbatim}
-
-Both the arguments to the operation and the result can be used in more
-complex expressions.  For example, if we wanted to give everyone
-a \$5000 income boost, and also scale the result, this could be done using
-\verb|(household.income+5000)*gridcell.cost * 1.2|.
-
-As another example, the model specification from
-page~\pageref{page:iv-spec} can be modified by using an expression for the
-interaction and taking its log: \variablesindex \coefficientsindex
-
-\begin{verbatim}
->>> specification = EquationSpecification(
-      variables=("gridcell.cost",
-         "ln(urbansim.gridcell.cost*urbansim.household.income)"),
-      coefficients=("costcoef", "cti_coef"))
-\end{verbatim}
-
-
-\subsection{Aggregation and Disaggregation}
-\label{sec:aggregation}
-\index{aggregation} \index{disaggregation}
-
-The methods \class{aggregate} and \class{disaggregate} are used to
-aggregate and disaggregate variable values over two or more datasets.  
-\index{aggregate} \index{disaggregate} The \class{aggregate} method associates
-information from one dataset to another along a many-to-one relationship, while
-the \class{disaggregate} method does the same along a one-to-many relationship. Some
-examples are:
-
-\begin{itemize}
-\item \code{zone.aggregate(gridcell.population)}
-
-\item \code{zone.aggregate(2.5*gridcell.population)}
-
-\item \code{zone.aggregate(urbansim.gridcell.population)}
-
-\item \code{neighborhood.aggregate(gridcell.population, 
-  intermediates=[zone,faz])}
-
-\item \code{neighborhood.aggregate(gridcell.population, 
-  intermediates=[zone, faz], function=mean)}
-
-\item \code{zone.aggregate(gridcell.population, function=mean)}
-
-\item \code{region.aggregate_all(zone.my_variable)}
-
-\item \code{region.aggregate_all(zone.my_variable, function=mean)}
-
-\item \code{faz.disaggregate(neighborhood.population)}
-
-\item \code{gridcell.disaggregate(neighborhood.population, 
-      intermediates=[zone, faz])}
-
-\end{itemize}
-
-The syntax and semantics for these is as follows.
-
-\subsubsection{Aggregation}
-
-Suppose we have three different geographical units: gridcells, zones and
-neighborhoods.  We have information available on the gridcell level and
-would like to aggregate this information for zones and neighborhoods. We
-know the assignments of gridcells to zones and of zones to neighborhoods.
-
-First, we place the data for three neighborhoods and five zones into a dict storage:\index{Storage!dict}
-\begin{verbatim}
->>> dstorage = StorageFactory().get_storage('dict_storage')
->>> dstorage.write_table(table_name='neighborhoods',
-                         table_data={"nbh_id":array([1,2,3])}
-                         )
->>> dstorage.write_table(table_name='zones',
-                         table_data={"zone_id":array([1,2,3,4,5]),
-                                     "nbh_id": array([3,3,1,2,1])}
-                         )
-\end{verbatim}
-
-Then, we create the corresponding datasets: \datasetindex
-\begin{verbatim}
->>> neighborhoods = Dataset(in_storage=dstorage, in_table_name='neighborhoods',
-                            dataset_name="neighborhood", id_name="nbh_id")
->>> zones = Dataset(in_storage=dstorage, in_table_name='zones',
-                    dataset_name="zone", id_name="zone_id")
-\end{verbatim}
-Note that \verb|zones| contain assignments to neighborhoods in the
-attribute `nbh_id'.  For the gridcell set, consider the dataset \datasetindex
-\verb|locations| defined on page~\pageref{page:tutorial-gc-locations}. We
-add assignments of those nine locations to the zones:
-\primaryattributesindex
-\begin{verbatim}
->>> locations.add_primary_attribute(name="zone_id", data=[3,5,2,2,1,1,3,5,3])
-\end{verbatim}
-Note that any assignment must be done by using an attribute \attributesindex of the same name
-as the unique identifier of the dataset \datasetindex that the assignment is made to.
-
-As the next step, we prepare a dataset pool \index{dataset pool} for the variable computation, since we are dealing with variables
-that involve more than one dataset. To make things easy, we explicitly insert
-our three datasets into the pool:
-\begin{verbatim}
->>> dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
-                               datasets_dict={'gridcell': locations,
-                                              'zone': zones, 
-                                              'neighborhood':neighborhoods})
-\end{verbatim}
-An aggregation over one geographical level for the \verb|locations|
-attribute \attributesindex `capacity' can be done by: \variablesindex
-\attributesindex
-\begin{verbatim}
->>> aggr_var = "aggregated_capacity = zone.aggregate(gridcell.capacity)"
->>> zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
-aggregated_capacity = zone.aggregate(gridcell.capacity)..................0.0 sec
-array([ 4.,  5.,  4.,  0.,  2.])
-\end{verbatim}
-By default, the aggregation function applied to the aggregated data is the
-`sum' function. This can be changed by passing the desired function as second
-argument in the variable \variablesindex name: \variablesindex
-\begin{verbatim}
->>> aggr_var = \
-"zone.aggregate(urbansim.gridcell.is_near_cbd_if_threshold_is_2, function=maximum)"
->>> zones.compute_variables(aggr_var, dataset_pool=dataset_pool)
-zone.aggregate(urbansim.gridcell.is_near_cbd_if_threshold_is_2, function=maximum):
-                                                            completed...0.4 sec
-array([ 1.,  1.,  0.,  0.,  0.])
-\end{verbatim}
-
-The \method{aggregate} method accepts the following aggregation functions:
-sum, mean, variance, standard_deviation, minimum, maximum,
-center_of_mass. These are functions of the scipy package
-\module{ndimage}.
-
-An aggregation over two or more levels of geography is done by passing a
-third argument into the \class{aggregate} method. It is a list of dataset
-\datasetindex names over which it is aggregated, excluding datasets
-\datasetindex for the lowest and highest level. For example, aggregating
-the gridcell attribute \attributesindex `capacity' for the neighborhood set
-can be done by: \variablesindex \attributesindex
-\begin{verbatim}
->>> aggr_var2 = \
-   "neighborhood.aggregate(gridcell.capacity, function=sum, intermediates=[zone])"
->>> neighborhoods.compute_variables(aggr_var2, dataset_pool=dataset_pool)
-neighborhood.aggregate(gridcell.capacity, function=sum, intermediates=[zone])
-    zone.aggregate(gridcell.capacity,function=sum).......................0.0 sec
-neighborhood.aggregate(gridcell.capacity, function=sum, intermediates=[zone]):
-                                                            completed...0.3 sec
-array([ 6.,  0.,  9.])
-\end{verbatim}
-
-\subsubsection{Disaggregation}
-
-Disaggregation is done analogously. The \class{disaggregate} method takes
-information from a coarse set of entities and allocates it to a finer set of
-entities, in the manner of a one-to-many relationship. By default, the function
-for allocating data is to simply replicate the data on the parent entity for
-each inheriting entity. The method takes one required argument, an
-attribute/variable
-\attributesindex\variablesindex name, and one optional argument, a list of
-dataset \datasetindex names. Here we add an attribute \attributesindex
-``is_cbd'' to the neighborhood set and distribute it across gridcells:
-\primaryattributesindex \variablesindex
-\begin{verbatim}
->>> neighborhoods.add_primary_attribute(name="is_cbd", data=[0,0,1])
->>> disaggr_var = \
-       "is_cbd = gridcell.disaggregate(neighborhood.is_cbd, intermediates=[zone])"
->>> locations.compute_variables(disaggr_var, dataset_pool=dataset_pool)
-is_cbd = gridcell.disaggregate(neighborhood.is_cbd, intermediates=[zone])
-    zone.disaggregate(neighborhood.is_cbd).......................0.0 sec
-is_cbd = gridcell.disaggregate(neighborhood.is_cbd, intermediates=[zone]):
-                                                           completed...0.0 sec
-array([0, 0, 1, 1, 1, 1, 0, 0, 0])
-
-\end{verbatim}
-
-Note that since we used the dataset-qualified \datasetindex name for
-``is_cbd'' in the \method{disaggregate} method, the attribute must be a
-primary attribute \primaryattributesindex of \verb|neighborhoods|.  The
-\method{aggregate} and \method{disaggregate} methods both must have the
-dataset name of the dataset for which they are computed before the method
-name, e.g.\ \code{gridcell.disaggregate}.
-
-To aggregate over all members of one dataset, \datasetindex one can use the
-built-in method \method{aggregate_all}. It must be used with a dataset
-\datasetindex that has one element which is the case of the
-\package{opus_core} dataset \datasetindex \class{AlldataDataset}
-implemented in the directory \file{datasets}. For example, the total
-capacity for all gridcells can be determined by: \variablesindex
-\attributesindex
-\begin{verbatim}
->>> from opus_core.datasets.alldata_dataset import AlldataDataset
->>> alldata = AlldataDataset()
->>> alldata.compute_variables(
-        "total_capacity = alldata.aggregate_all(gridcell.capacity, function=sum)",
-        dataset_pool=dataset_pool)
-total_capacity = alldata.aggregate_all(gridcell.capacity, function=sum)....0.0 sec
-array([ 15.])
-\end{verbatim}
-In addition to \method{sum}, the \class{aggregate_all} class accepts all
-functions that are accepted by the \class{aggregate} class;
-the default is \method{sum}.
-
-If the attribute being aggregated or disaggregated is a simple variable, it
-should be either dataset-qualified or fully-qualified, i.e.\ always
-including the dataset name and optionally including the package name.  The
-attribute being aggregated can also be an expression.  (In this case,
-behind the scenes the system generates a new variable for that expression,
-and then uses the new variable in the aggregation or disaggregation
-operations.  However, this isn't visible to the user.)  The result of an
-aggregation or disaggregation can also be used in more complex expressions,
-e.g. \code{ln(2*aggregate(gridcell.population))}.
-
-\subsection{Number of Agents}
-\index{number_of_agents}
-
-A common task in modeling is to determine a number of agents of one dataset
-\datasetindex that are assigned to another dataset. \datasetindex For this
-purpose, Opus contains a built-in method \class{number_of_agents}, which
-takes as an argument the name of the agent dataset. \datasetindex For
-example, our household dataset \datasetindex is assigned to the following
-locations: \attributesindex
-\begin{verbatim}
->>> households.modify_attribute(name="location",
-                              data=[2, 8, 3, 1, 5, 4, 9, 7, 3, 6])
-\end{verbatim}
-Then, the number of households in each location can be determined by:
-\variablesindex \attributesindex
-\begin{verbatim}
->>> dataset_pool.add_datasets_if_not_included({'household': households})
->>> locations.compute_variables("gridcell.number_of_agents(household)",
-                                dataset_pool=dataset_pool)
-gridcell.number_of_agents(household).....................0.0 sec
-array([ 1.,  1.,  2.,  1.,  1.,  1.,  1.,  1.,  1.])
-\end{verbatim}
-Note that we had to add the household dataset to the dataset pool \index{dataset pool}
-in order to have it available in the computation process.
-
-Similarly, the number of zones in neighborhoods is computed by
-\variablesindex\attributesindex
-\begin{verbatim}
->>> neighborhoods.compute_variables("neighborhood.number_of_agents(zone)",
-                                    dataset_pool=dataset_pool)
-neighborhood.number_of_agents(zone)......................0.0 sec
-array([ 2.,  1.,  2.])
-\end{verbatim}
-
-As in the case of \method{aggregate} and \method{disaggregate}, the
-\method{number_of_agents} method must be preceded by the `owner' dataset
-name, e.g. \verb|neighborhood.number_of_agents| for computing on the
-\verb|neighborhood| dataset.
-
-%
 \section{Creating a New Model}
 %
 \label{sec:tut-creating-new-model}
