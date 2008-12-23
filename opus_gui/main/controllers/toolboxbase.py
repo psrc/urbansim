@@ -99,8 +99,10 @@ class ToolboxBase(object):
         fileNamePath = fileNameInfo.absolutePath().trimmed()
         try:
             self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
-        except (XMLVersionException, ValueError), ex:
-            QMessageBox.critical(self.mainwindow, 'Could not load XML file', str(ex))
+        except Exception, ex:
+            msg = 'Failed to load XML:\n'
+            QMessageBox.critical(self.mainwindow, 'Failed to load XML',
+                                 msg + str(ex))
             return False
 
         _, tempFilePath = tempfile.mkstemp()
