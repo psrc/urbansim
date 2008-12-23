@@ -20,8 +20,9 @@ from urbansim.estimation.estimator import update_controller_by_specification_fro
 
 class EstimationRunner(Estimator):
 
-    def __init__(self, model, specification_module=None, xml_configuration=None, model_group=None,
-                  configuration={}, save_estimation_results=False):
+    def __init__(self, model, specification_module=None,
+                 xml_configuration=None, model_group=None, configuration={},
+                 save_estimation_results=False):
         """
         If 'specification_module' is given, it contains the specification defined as a dictionary in a module.
         Alternatively, the specification can be passed in an xml format in the 'xml_configuration' argument
@@ -44,7 +45,7 @@ class EstimationRunner(Estimator):
         if configuration is None:
             if self.xml_configuration is None:
                 raise StandardError, "Either dictionary based or XML based configuration must be given."
-            config = self.xml_configuration.get_estimation_configuration(model)
+            config = self.xml_configuration.get_estimation_configuration(model, model_group)
         else:
             config = Configuration(configuration)
         config_changes = config.get('config_changes_for_estimation', {})
@@ -82,7 +83,7 @@ class EstimationRunner(Estimator):
                 else:
                     config = update_controller_by_specification_from_dict(config, model, specification_dict[model_group])
 
-            config['model_name'] = '%s_%s' % (model_group, model)
+            config['model'] = '%s_%s' % (model_group, model)
 
         Estimator.__init__(self, config, save_estimation_results=save_estimation_results)
 
