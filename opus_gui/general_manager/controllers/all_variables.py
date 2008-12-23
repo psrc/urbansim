@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -37,7 +37,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.row = row
         self.mainwindow = mainwindow.mainwindow
         self.parent = mainwindow
-        
+
         if create_new_from_old:
             self.variableBox.setTitle(QString('Creating new variable (based on %s)'%initialParams[0]))
             self.mode = 2
@@ -52,7 +52,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             self.lineEdit.setText(self.initialParams[0])
             #self._setup_co_dataset_name(value = self.initialParams[1])
             if str(self.initialParams[2]) == "both":
-                self.cbIndicatorUse.setChecked(True) 
+                self.cbIndicatorUse.setChecked(True)
                 self.cbModelUse.setChecked(True)
             elif str(self.initialParams[2]) == 'indicator':
                 self.cbIndicatorUse.setChecked(True)
@@ -60,7 +60,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             else:
                 self.cbModelUse.setChecked(True)
                 self.cbIndicatorUse.setChecked(False)
-                
+
             self.comboBox_2.setCurrentIndex(self.comboBox_2.findText(self.initialParams[3]))
             self.textEdit.setPlainText(self.initialParams[4])
         #else:
@@ -74,26 +74,26 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 #
 #        for dataset in available_datasets:
 #            self.cbo_dataset_name.addItem(QString(dataset))
-#        
+#
 #        if value is not None:
 #            idx = self.cbo_dataset_name.findText(value)
 #            if idx != -1:
 #                self.dataset_name = value
-#                self.cbo_dataset_name.setCurrentIndex(idx)        
-                            
+#                self.cbo_dataset_name.setCurrentIndex(idx)
+
     def editsMade(self):
         # If we dont have seed params, then this is a new variable
         if self.initialParams == None:
             return True
         # Else we are looking to see if any of the params have actually changed
-        
+
         vals = [QString(v) for v in self._get_variable_definition()]
         return   (vals[0] != self.initialParams[0]) or \
                  (vals[1] != self.initialParams[1]) or \
                  (vals[2] != self.initialParams[2]) or \
                  (vals[3] != self.initialParams[3]) or \
                  (vals[4] != self.initialParams[4])
-        
+
     def on_saveChanges_released(self):
         #print "save pressed"
         if self.editsMade():
@@ -104,7 +104,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             if self.mode == 0:
                 self.allVariablesGui.tm.removeRow(self.row)
                 dirty = 1
-                
+
             (variable_name, dataset_name, use, source, definition) = self._get_variable_definition()
             self.allVariablesGui.tm.insertRow(self.row,["",
                                                         QString(variable_name),
@@ -119,7 +119,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
     def on_cancelWindow_released(self):
         self.close()
-                
+
     def on_cboCheckSyntax_released(self):
         success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_parse_errors(variables = [self._get_variable_definition()])
 
@@ -128,7 +128,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
             QMessageBox.warning(self, 'Variable check results', errorString)
-            
+
     def on_cboCheckData_released(self):
         success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_data_errors(variables = [self._get_variable_definition()])
         if success:
@@ -136,11 +136,11 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         else:
             errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(errors)
             QMessageBox.warning(self, 'Variable check results', errorString)
-                
-        
+
+
     def _get_variable_definition(self):
         variable_name = str(self.lineEdit.text())
-        
+
         if self.cbIndicatorUse.isChecked():
             if self.cbModelUse.isChecked():
                 use = 'both'
@@ -156,7 +156,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         dataset_name = VariableName(expression = definition).get_dataset_name()
         return (variable_name, dataset_name, use, source, definition)
 
-        
+
 class AllVariablesGui(object):
     def __init__(self, mainwindow, editable):
         #if edit_select:
@@ -165,10 +165,10 @@ class AllVariablesGui(object):
         #    print "Edit GUI"
         self.mainwindow = mainwindow
         self.all_variables_index = None
-        
+
         # Is the tableview dirty?
         self.dirty = False
-        
+
         #Add a default table
         tv = QTableView()
         delegate = AllVariablesTableViewDelegate(tv)
@@ -176,7 +176,7 @@ class AllVariablesGui(object):
         tv.setSortingEnabled(True)
         tv.setColumnWidth(0, 25) # adjust size to fit check box
 #        tv.setSelectionBehavior(QTableView.SelectRows)
-        
+
         # So we have a data structure to define the headers for the table...
         # The first element is empty string because it is over the check box
         header = ["","Name","Dataset","Use","Source","Definition"]
@@ -267,7 +267,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
         AllVariablesGui.__init__(self, mainwindow, True)
-        
+
         self.mainwindow = mainwindow
 
         # For now, disable the save button until we implement the write in the model...
@@ -311,8 +311,8 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         QObject.connect(self.actCheckAgainstData,
                         SIGNAL("triggered()"),
                         self.checkAgainstData)
-        
-        
+
+
         self.tv.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.tv,SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
@@ -372,7 +372,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                     if tselement.tagName() == list[1]:
                         return tsnode
         return None
-        
+
 
     def updateNodeFromList(self,node,list):
         if not node.isNull():
@@ -416,7 +416,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             ##    new list... these have either had their tagname modified or
             ##    are removed.  In either case, remove the old node
             ##    and check if an inherited parent needs to be placed back in.
-            
+
             # Loop through the list of lists and find the node in the XML and update it
             for i,testCase in enumerate(self.tm.arraydata):
                 # Find the XML node that has the tag name in column 1
@@ -444,7 +444,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                     # Here we must have a new node (or renamed node) so
                     # we go ahead and add a new node to the XML
                     newElement = self.tree.model.domDocument.createElement(QString(testCase[1]))
-                    newElement.setAttribute(QString("type"),QString("variable_definition"))                    
+                    newElement.setAttribute(QString("type"),QString("variable_definition"))
                     newElementText = self.tree.model.domDocument.createTextNode(QString(""))
                     newElement.appendChild(newElementText)
                     self.updateNodeFromList(newElement,testCase)
@@ -510,7 +510,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
             QMessageBox.warning(self, 'Variable check results', errorString)
-                
+
     def checkAgainstData(self):
         row = self.currentIndex.row()
         success, errors = self.tm.checkAgainstData(row = row)
@@ -519,8 +519,8 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         else:
             errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(errors)
             QMessageBox.warning(self, 'Variable check results', errorString)
-            
-    
+
+
     def on_checkSelectedVariables_released(self):
 #        saveBeforeCheck = QMessageBox.Yes
 #        if self.dirty:
@@ -540,7 +540,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 #        if saveBeforeCheck == QMessageBox.Yes:
 #            self.on_saveChanges_released()
         self.tm.checkAllVariables()
-        
+
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
     def __init__(self, mainwindow, nodeToUpdate=None, callback=None):
@@ -548,9 +548,9 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
             Qt.WindowMaximizeButtonHint
         QDialog.__init__(self, mainwindow, flags)
         self.setupUi(self)
-        
+
         self.setModal(True)
-        
+
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
         AllVariablesGui.__init__(self, mainwindow, False)
@@ -561,7 +561,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
             self.nodeToUpdate = QDomNode()
         self.callback = callback
         self.tm.initCheckBoxes(self.getCurrentList(self.nodeToUpdate))
-        
+
     def getCurrentList(self,node):
         element = node.toElement()
         if element.isNull():
@@ -575,9 +575,10 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
                 if children.item(x).isText():
                     textNode = children.item(x).toText()
                     # Finally set the text node value
+
                     return map(lambda s: s.strip(), str(textNode.data()).split(','))
         return []
-                                
+
     def updateNodeFromListString(self,node,listString):
         element = node.toElement()
         if element.isNull():
@@ -603,7 +604,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         self.tree.model.markAsDirty()
         self.tree.model.emit(SIGNAL("layoutChanged()"))
 
-            
+
     def on_saveSelections_released(self):
         #print "save pressed"
         returnList = []
@@ -613,6 +614,15 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
             if testCase[-2]:
                 # We have one that is checked... push it into the return list
                 returnList.append(str(testCase[1]))
+
+        # The variable selector has no way of differenting variables with same
+        # name but different definitions appart. This results in two variables
+        # (or more), with the same name but different dataset, being selected
+        # in the selector. If the user clicks accept selection, all of these
+        # names will end up in returnList which is not what we want.
+        # For now we 'solve' this by just filter out duplicates.
+        returnList = list({}.fromkeys(returnList))
+
         #self.pp.pprint(returnList)
         returnString = string.join(returnList,', ')
         #print returnString
