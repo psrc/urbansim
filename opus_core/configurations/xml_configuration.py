@@ -140,13 +140,14 @@ class XMLConfiguration(object):
         config['project_name'] = project_name
         return config
 
-    def get_estimation_configuration(self, model_name = None):
+    def get_estimation_configuration(self, model_name = None, model_group = None):
         """Extract an estimation configuration from this xml project and return it.
         If the configuration has an expression library, add
         that to the configuration under the key 'expression_library'
         If the model_name argument is given, also parse overriding
         configurations for that specific model."""
         # grab general configuration for estimations
+
         config_section = self.get_section('model_manager/model_system')
         config = config_section['estimation_config']
         self._merge_controllers(config)
@@ -156,26 +157,36 @@ class XMLConfiguration(object):
         if model_name is None:
             return config
 
-        # get the configuration overrides for the model
+        # get the model specific configuration changes
         changes_dict = {}
 
         # look for a models to run list in prepare for estimate
-        models_to_run = []
-        models_to_run_node = \
-            self._find_node('model_manager/model_system/%s/structure/'
-                            'prepare_for_estimate/models_to_run/'
-                            %model_name)
-        if models_to_run_node is not None:
-            # model has a "models to run"-list
-            models_to_run = self._convert_node_to_data(models_to_run_node)
-            # include this model in the models_to_run list
-            models_to_run.append({model_name: ["estimate"]})
+        mtr_path = ('model_manager/model_system/%s/structure/'
+                'prepare_for_estimate/models_to_run/' %model_name)
+        mtr_element = self._find_node(mtr_path)
 
-        # only submit changes to config if models_to_run was updated
-        changes_dict['models'] = models_to_run
-        if models_to_run:
-            config['config_changes_for_estimation'] = {model_name: changes_dict}
+        if mtr_element is None:
+            return config
 
+        # list of models to run before estimating the model
+        mtr_list = self._convert_node_to_data(mtr_element)
+
+        # if config_changes_for_estimation is given, the model system uses it
+        # exclusively to specifiy what models to run. So we need to manually add
+        # this model. Model groups are specified different from regular models.
+        if model_group is None:
+            mtr_list.append({model_name: ["estimate"]}) # regular model
+        else:
+            group_members = {'group_members': [{model_group:['estimate']}]}
+            mtr_list.append({model_name: group_members})
+
+        # override the list of models to run
+        changes_dict['models'] = mtr_list
+
+        # NOTE -- Here is the place to add support for additional model specific
+        # configuration like datasets_to_preload etc.
+
+        config['config_changes_for_estimation'] = {model_name: changes_dict}
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):
@@ -699,7 +710,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_types(self):
         f = os.path.join(self.test_configs, 'manytypes.xml')
         config = XMLConfiguration(f).get_section('test_section')
-        self.assertEqual(config, 
+        self.assertEqual(config,
                          {'description': 'a test configuration',
                           'quotedthing': r"'test\test'",
                           'empty1': '',
@@ -1188,3 +1199,4 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
 if __name__ == '__main__':
     opus_unittest.main()
+
