@@ -19,9 +19,23 @@
           <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
           <database_name type="string" />
         </estimation_database_configuration>
+
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <gridcell choices="Load|Skip" copyable="True" followers="my_dataset" type="dataset">Load</gridcell>
+          <gridcell type="dataset" choices="Load|Skip">Load<nchunks type="integer">2</nchunks>          </gridcell>
+          <household type="dataset" choices="Load|Skip">Load</household>
+          <job type="dataset" choices="Load|Skip">Load</job>
+          <zone type="dataset" choices="Load|Skip">Load</zone>
+          <development_type type="dataset" choices="Load|Skip">Load</development_type>
+          <target_vacancy type="dataset" choices="Load|Skip">Load</target_vacancy>
+          <development_event_history type="dataset" choices="Load|Skip">Load</development_event_history>
+          <development_constraint type="dataset" choices="Load|Skip">Load</development_constraint>
+          <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
+          <building_type type="dataset" choices="Load|Skip">Skip</building_type>
+          <building type="dataset" choices="Load|Skip">Skip</building>
+          <vacant_land_and_building_type type="dataset" choices="Load|Skip">Load</vacant_land_and_building_type>
+          <urbansim_constant type="dataset" choices="Load|Skip">Load</urbansim_constant>
         </datasets_to_preload>
+
         <dataset_pool_configuration type="class">
           <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
