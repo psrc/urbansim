@@ -65,6 +65,10 @@ class XmlController_Models(XmlController):
         # create an estimation run for the selected model
         self.actRunEstimation = self.createAction(self.applicationIcon, \
             "Run Estimation", self.runEstimation)
+        # inform the users that they need to right click the sub model groups
+        self.actHowToRunEstGroups = self.createAction(self.applicationIcon,
+            "Right click the individual submodel groups to estimate them",
+            lambda: ())
         # run a submodel group
         self.actRunEstimationGroup = self.createAction(self.applicationIcon,
             "Run Estimation Group", self.runEstimationGroup)
@@ -104,18 +108,6 @@ class XmlController_Models(XmlController):
         AllVariablesSelectGui(self.mainwindow,
                               callback=self.selectVariablesCallback,
                               nodeToUpdate=self.currentElement()).show()
-
-    def checkIsDirty(self):
-        if (self.toolboxbase.resultsManagerTree and self.toolboxbase.resultsManagerTree.model.isDirty()) or \
-               (self.toolboxbase.modelManagerTree and self.toolboxbase.modelManagerTree.model.isDirty()) or \
-               (self.toolboxbase.runManagerTree and self.toolboxbase.runManagerTree.model.isDirty()) or \
-               (self.toolboxbase.dataManagerTree and self.toolboxbase.dataManagerTree.model.isDirty()) or \
-               (self.toolboxbase.dataManagerDBSTree and self.toolboxbase.dataManagerDBSTree.model.isDirty()) or \
-               (self.toolboxbase.generalManagerTree and self.toolboxbase.generalManagerTree.model.isDirty()):
-            return True
-        else:
-            return False
-
 
     def runEstimation(self):
         '''
@@ -231,14 +223,14 @@ class XmlController_Models(XmlController):
 
         domElement = item.internalPointer().node().toElement()
         if domElement.isNull():
-            return
+            return # invalid item
 
         element_type = domElement.attribute('type').toLower()
 
         # create menu to populate
         menu = QMenu(self.mainwindow)
 
-        # populate menu with model manager specifics
+        # populate menu with model manager specific menu choices
         if element_type == 'model_system':
             submenu = QMenu(menu) # to populate with templates
             submenu.setTitle('Create model from template')
@@ -247,11 +239,23 @@ class XmlController_Models(XmlController):
             menu.addMenu(submenu)
 
         if element_type == 'model':
-            # if this model has a specification node with children elements
-            # we give the user an option to estimate it
+            # If the users right clicks a model, give them the option to
+            # estimate it only if the model has a (non empty) specification
+            # subnode. If the model holds subgroups -- inform the user how to
+            # estimate them.
             spec_node = self.xml.get('specification', domElement)
-            if spec_node and len(self.xml.children(spec_node)) > 0:
-                menu.addAction(self.actRunEstimation)
+            submodels = None
+            if spec_node:
+                submodels = self.xml.children(spec_node)
+            if spec_node and submodels:
+                # check if its groups by type checking the first node
+                # note: this is not a reliable method if models can have mixed
+                # submodels and submodel groups.
+                if submodels[0].attribute('type').toLower() == 'submodel':
+                    menu.addAction(self.actRunEstimation)
+                else:
+                    menu.addAction(self.actHowToRunEstGroups)
+
 
         # TODO 4.2.1 change to node_type == submodel_group
         # for now, assume that a 'dictionary' located under 'specification' is
