@@ -43,7 +43,7 @@ class ModelSystem(object):
     """
     Uses the information in configuration to run/estimate a set of models for given set of years.
     """
-    
+
     def __init__(self):
         self.running = False
         self.forked_processes = []
@@ -55,11 +55,11 @@ class ModelSystem(object):
                            must correspond to the name of the module/class of that model. Default(object): None
                years - a tuple (start year, end year)
                debuglevel - an integer. The higher the more output will be printed. Default: 0
-               expression_library - a dictionary.  The keys in the dictionary are pairs (dataset_name, variable_name) 
+               expression_library - a dictionary.  The keys in the dictionary are pairs (dataset_name, variable_name)
                and the values are the corresponding expressions.  The model system needs to set the expression library
                (if it isn't None) in DatasetFactory for DatasetFactory to know about variables defined as expressions
                in the xml expression library.  Default: None
-        This method is called both to start up the simulation for all years, and also for each year 
+        This method is called both to start up the simulation for all years, and also for each year
         when running with one process per year.  In the latter case, 'years' consists of just
         (current_year, current_year) rather than the real start and end years for the simulation.
         """
@@ -72,12 +72,12 @@ class ModelSystem(object):
         self.simulation_state = SimulationState()
         self.simulation_state.set_low_memory_run(resources.get("low_memory_mode", False))
         self.run_year_namespace = {}
-        
+
         if resources['cache_directory'] is not None:
             self.simulation_state.set_cache_directory(resources['cache_directory'])
-            
+
         if 'expression_library' in resources:
-            VariableFactory().set_expression_library(resources['expression_library'])            
+            VariableFactory().set_expression_library(resources['expression_library'])
 
         cache_directory = self.simulation_state.get_cache_directory()
         log_file = os.path.join(cache_directory, log_file_name)
@@ -85,36 +85,36 @@ class ModelSystem(object):
         try:
             logger.log_status("Cache Directory set to: " + cache_directory)
             logger.start_block('Start simulation run')
-            
+
             try:
                 models = resources.get("models", [])
                 models_in_years = resources.get("models_in_year",  {})
-    
+
                 if (len(models) <=0) and (len(models_in_years.keys()) <= 0):
                     logger.log_status("No models specified. Nothing to be run.")
                     return
-    
+
                 resources.check_obligatory_keys(["years"])
-    
+
                 years = resources["years"]
                 if (not isinstance(years, tuple)) and (not isinstance(years, list)):
                     raise TypeError, "Entry 'years' in resources must be a tuple."
-    
+
                 if len(years) < 2:
                     print years
                     raise StandardError, "Entry 'years' in resources must be of length at least 2."
-    
+
                 start_year = years[0]
                 end_year = years[-1]
                 if not resources.has_key("flush_variables"): # if dependent attributes/variables should be flushed after each computation
                     resources["flush_variables"] = False
-    
+
                 debuglevel = resources.get("debuglevel", 0)
                 seed_values = resources.get('seed', 0)
-                
+
                 logger.log_status("random seed = %s" % str(seed_values))
                 seed(seed_values)
-    
+
                 for year in range(start_year, end_year+1):
                     logger.start_block("Starting simulation for year " + str(year))
                     try:
@@ -189,7 +189,7 @@ class ModelSystem(object):
                     datasets_to_preload = resources.get('datasets_to_preload',{})
                 for dataset_name in datasets_to_preload:
                     SessionConfiguration().get_dataset_from_pool(dataset_name)
-    
+
                 models_configuration = resources['models_configuration']
                 dataset_pool = SessionConfiguration().get_dataset_pool()
                 datasets = {}
@@ -197,7 +197,7 @@ class ModelSystem(object):
                     self.vardict[dataset_name] = its_dataset
                     datasets[dataset_name] = its_dataset
                     exec '%s=its_dataset' % dataset_name
-    
+
                 # This is needed. It resides in locals()
                 # and is passed on to models as they run.
                 ### TODO: There has got to be a better way!
@@ -241,13 +241,13 @@ class ModelSystem(object):
                                 model_configuration = models_configuration[member_model_name]
                                 if "controller" in model_configuration.keys():
                                     controller_config = model_configuration["controller"]
-    
+
                         # import part
                         if "import" in controller_config.keys():
                             import_config = controller_config["import"]
                             for import_module in import_config.keys():
                                 exec("from %s import %s" % (import_module, import_config[import_module]))
-    
+
                         # gui_import_replacements part
                         # This is a temporary hack -- replicates the functionality of the "import" section
                         # for use with the GUI.  The contents of this part of the config is a dictionary.
@@ -259,10 +259,10 @@ class ModelSystem(object):
                                 pair = import_replacement_config[model_name]
                                 temp = pair[1]
                                 exec("%s = temp") % pair[0]
-    
+
                         # init part
                         model = self.do_init(locals())
-                        
+
                         # estimate and/or run part
                         for process in processes:
                             model_number = model_number+1
@@ -278,16 +278,16 @@ class ModelSystem(object):
                                 outputvar = "process_output"
                             self.vardict[outputvar] = self.do_process(locals())
                             exec outputvar+'=self.vardict[outputvar]'
-    
+
                             # check command file from gui, if the simulation should be stopped or paused
                             self.do_commands_from_gui(resources.get('command_file_for_gui', None))
-                            
+
                             # capture namespace for interactive estimation
                             self.run_year_namespace = locals()
                             self.flush_datasets(resources.get("datasets_to_cache_after_each_model",[]))
                             del model
                             collect()
-    
+
                 # Write all datasets to cache.
                 if write_datasets_to_cache_at_end_of_year:
                     logger.start_block('Writing datasets to cache for year %s' % year)
@@ -360,7 +360,7 @@ class ModelSystem(object):
         return eval(ev)
 
     def get_number_of_models_and_model_group_members_to_run(self, models, models_configuration):
-        """Count number_of models in the list 'models' that can include group members (each member and each process is one model).""" 
+        """Count number_of models in the list 'models' that can include group members (each member and each process is one model)."""
         # list models can be in the form:
         # [{'model_name_1': {'group_members': ['residential', 'commercial']}},
         #  {'model_name_2': {'group_members': [{'residential': ['estimate','run']},
@@ -391,7 +391,7 @@ class ModelSystem(object):
                         group_members = model_group.get_member_names()
                     model_group_members_to_run[model_name] = [{}, model_group]
                     for member in group_members:
-                        if isinstance(member, dict): 
+                        if isinstance(member, dict):
                             # see 'model_name_2' ('residential') in the comment above
                             member_name = member.keys()[0]
                             model_group_members_to_run[model_name][0][member_name] = member[member_name]
@@ -411,7 +411,7 @@ class ModelSystem(object):
                 model_group_members_to_run[model_entry] = [{}, None]
                 number_of_models +=1
         return  (number_of_models, model_group_members_to_run)
-                            
+
     def do_commands_from_gui(self, filename=None):
         if (filename is None) or not os.path.exists(filename):
             return
@@ -427,8 +427,8 @@ class ModelSystem(object):
             elif line <> 'pause':
                 logger.log_warning("Unknown command '%s'. Allowed commands: 'stop', 'pause', 'resume'." % line)
             time.sleep(10)
-            
-            
+
+
     def run_multiprocess(self, resources):
         resources = Resources(resources)
         profiler_name = resources.get("profile_filename", None)
@@ -440,7 +440,7 @@ class ModelSystem(object):
         ### TODO: Get rid of this! There is absolutely no good reason to be
         ###       changing the Configuration!
         resources['cache_directory'] = cache_directory
-        
+
         log_file = os.path.join(cache_directory, 'run_multiprocess.log')
         logger.enable_file_logging(log_file)
 
@@ -452,9 +452,9 @@ class ModelSystem(object):
         seed_array = randint(1,2**30, nyears)
         logger.log_status("Running simulation for years %d thru %d" % (start_year, end_year))
         logger.log_status("Root seed: %s" % root_seed)
-        
+
         self._run_each_year_as_separate_process(start_year, end_year, seed_array, resources)
- 
+
         if profiler_name is not None: # insert original value
             resources["profile_filename"] = profiler_name
         logger.log_status("Done running simulation for years %d thru %d" % (start_year, end_year))
@@ -479,7 +479,7 @@ class ModelSystem(object):
                 logger.end_block()
             iyear +=1
         self._notify_stopped()
-    
+
     def run_in_one_process(self, resources, run_in_background=False, class_path='opus_core.model_coordinators.model_system'):
         resources = Resources(resources)
         if resources['cache_directory'] is not None:
@@ -510,7 +510,7 @@ class ModelSystem(object):
         self._notify_started()
         RunModelSystem(model_system = self, resources = resources)
         self._notify_stopped()
-            
+
     def construct_arguments_from_config(self, config):
         key = "arguments"
         if (key not in config.keys()) or (len(config[key].keys()) <= 0):
@@ -553,13 +553,13 @@ class ModelSystem(object):
         if not run_in_background:
             self.forked_processes[-1].wait()
             self.forked_processes[-1].cleanup()
-        
+
     def _notify_started(self):
         self.running_conditional.acquire()
         self.running = True
         self.running_conditional.notifyAll()
         self.running_conditional.release()
-        
+
     def _notify_stopped(self):
         self.running_conditional.acquire()
         self.running = False
@@ -569,30 +569,30 @@ class ModelSystem(object):
 
 class RunModelSystem(object):
     def __init__(self, model_system, resources, skip_cache_after_each_year = False, log_file_name = 'run_model_system.log'):
-    
+
         SessionConfiguration(new_instance=True,
                              package_order=resources['dataset_pool_configuration'].package_order,
                              in_storage=AttributeCache())
-    
+
     #    logger.enable_memory_logging()
         if not resources.get("log_to_stdout", True):
             logger.disable_std_out()
-            
+
         profiler = None
         if resources.get("profile_filename", None) is not None:
             import hotshot
             profiler = hotshot.Profile(resources.get("profile_filename"))
-            
+
         write_datasets_to_cache_at_end_of_year = not skip_cache_after_each_year
-        
+
         if profiler is None:
             model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=log_file_name)
         else:
             profiler.run("model_system.run(resources, write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year, log_file_name=log_file_name)")
-            logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' % 
+            logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' %
                                   resources.get("profile_filename"))
             profiler.close()
-    
+
 
 
 if __name__ == "__main__":
@@ -605,7 +605,7 @@ if __name__ == "__main__":
     parser.add_option("-d", "--delete-resources-file-directory", dest="delete_resources_file_directory",
                       action="store_true",
                       help="Delete the directory containing the pickled resources file when done?")
-    parser.add_option("--skip-cache-after-each-year", dest="skip_cache_after_each_year", default=False, 
+    parser.add_option("--skip-cache-after-each-year", dest="skip_cache_after_each_year", default=False,
                       action="store_true", help="Datasets will not be cached at the end of each year.")
     parser.add_option("--log-file-name", dest="log_file_name", default='run_model_system.log',
                       help="File name for logging output of model system (without directory).")
@@ -616,9 +616,9 @@ if __name__ == "__main__":
     delete_resources_file_directory = options.delete_resources_file_directory
     skip_cache_after_each_year = options.skip_cache_after_each_year
     log_file_name = options.log_file_name
-    RunModelSystem(model_system = s, 
-                   resources = resources, 
-                   skip_cache_after_each_year = skip_cache_after_each_year, 
+    RunModelSystem(model_system = s,
+                   resources = resources,
+                   skip_cache_after_each_year = skip_cache_after_each_year,
                    log_file_name = log_file_name)
     if delete_resources_file_directory:
         dir = os.path.split(options.resources_file_name)[0]
