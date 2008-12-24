@@ -142,38 +142,14 @@ Administrator</a>. These are both available as binaries.</p>
 
 
 
-<h2>Step 5: <a name="opus">Installing Opus and UrbanSim</a></h2>
+<h2>Step 4: <a name="opus">Installing Opus and UrbanSim</a></h2>
 
-<p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
-using these projects, and a directory in which to insert the source code.  
-Download the zip file with data for the latest development version from
-<a href="http://www.urbansim.org/download/#latest_dev">this page</a>.
-Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
-this directory some convenient place on your local disk (perhaps in <tt>C:\</tt>).
-See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
-sample data.</p>
+    
+<p>Follow the directions on the <a href="downloading_opus_urbansim.html">Downloading the Opus/UrbanSim sample data and source code</a> page.</p>
 
-For the development version, you should check out the
-source code directly from our subversion repository. &nbsp;(For you modeler
-types, <a href="http://subversion.tigris.org/">subversion</a>
-in this context is the name of a version control system that nicely
-manages keeping track of different versions of the code; we're not
-talking politics.) &nbsp;Using subversion, it is easy to update to newer versions of
-Opus/UrbanSim and merge in any changes you've made. &nbsp;You can also
-request any particular version of the code from subversion.
-&nbsp;However, you do have to have a subversion client installed on
-your machine.</p>
-
-<p>Here are two ways to get the code. The source code directory will have subdirectories with
-the code for opus_core, urbansim, and other packages, and also a file
-docs with all of the documentation for that version. &nbsp;The manual
-is in the subdirectory <i>opus_docs\manual</i> of the opus workspace, 
-and the tutorials are in the <i>tutorials</i> subdirectory.</p>
-
-<h3>Option 1: Getting Opus and UrbanSim using TortiseSVN or command-line subversion client</h3>
-
-<p>The directions for this option are written assuming you're using the <a href="http://tortoisesvn.tigris.org/">TortiseSVN</a>
-subversion client -- if you don't have it already, download it by
+<p>Those directions use a command-line subversion client.  On Windows you can use a graphical client, 
+<a href="http://tortoisesvn.tigris.org/">TortiseSVN</a>, instead.
+If you don't have it already, download TortiseSVN by
 following the link. &nbsp;(You can use another client if you prefer,
 though -- see <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a> for a list.)</p>
 
@@ -235,12 +211,7 @@ at once by selecting the whole group.</p>
 appropriately to get a stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
 for details on how to do this.</p>
 
-<h3>Option 2: Getting Opus and UrbanSim using subversion and Eclipse</h3>
-
-
-This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.
-
-<h2><a name="environment">Step 4: Defining Environment Variables</a>&nbsp;</h2>
+<h2><a name="environment">Step 5: Defining Environment Variables</a>&nbsp;</h2>
 
 <p>UrbanSim requires the following environment variables.&nbsp; The first
 tells the Python interpreter where to find the Opus/UrbanSim code.  

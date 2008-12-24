@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+
+<title>Downloading the Opus/UrbanSim Sample Data and Source Code</title>
+  <link href="../style/book.css" rel="stylesheet" type="text/css">
+ 
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+ 
+<body>
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  
+<table border="0" cellspacing="0" width="100%">
+
+    <tbody>
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Downloading Source Code</td>
+
+    </tr>
+
+  
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Downloading the Opus/UrbanSim Sample Data and Source Code</h1>
+
+<h2>Getting the Sample Data and Configurations</h2>
+
+<p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
+using these projects, and a directory in which to insert the source code.  
+Download the zip file with data for the latest development version 
+from <a href="http://www.urbansim.org/download/#latest_dev">this page</a>.
+Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
+this directory some convenient place on your local disk. (We suggest putting it in your home directory.)
+See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
+sample data.</p>
+
+<h2>Getting the Source Code</h2>
+
+<p>For the development version, you should check out the
+source code directly from our subversion repository. &nbsp;(For you modeler
+types, <a href="http://subversion.tigris.org/">subversion</a>
+in this context is the name of a version control system that nicely
+manages keeping track of different versions of the code; we're not
+talking politics.) &nbsp;Using subversion, it is easy to update to newer versions of
+Opus/UrbanSim and merge in any changes you've made. &nbsp;You can also
+request any particular version of the code from subversion.
+&nbsp;However, you do have to have a subversion client installed on
+your machine.</p>
+
+<p>Here are two ways to get the code. The source code directory will have subdirectories with
+the code for opus_core, urbansim, and other packages, and also a file
+docs with all of the documentation for that version. &nbsp;The manual
+is in the subdirectory <i>opus_docs/manual</i> of the opus workspace, 
+and the tutorials are in the <i>tutorials</i> subdirectory.</p>
+
+
+<h3>Option 1: Getting Opus and UrbanSim using a command line interface to subversion</h3>
+
+<p>First, make sure you have a subversion client installed (<tt>svn</tt>). If not, you can get one 
+from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;
+Next, in a shell (i.e. a terminal window or DOS window), type the following commands.  These commands assume you start the shell in
+whatever directory holds your <tt>opus</tt> directory.</p>
+<pre>
+cd opus/src
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim_gridcell
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui
+</pre>
+
+(The commands above work directly for Mac and Linux.  On Windows the character for subdirectories is <tt>\</tt> instead of <tt>/</tt>, so
+the initial command is <tt>cd opus\src</tt> instead.)
+
+<p>This checks out just the minimal set of packages needed for the tutorial.  If you have a fast
+connection, you can get all of the Opus packages at once using these commands:
+<pre>
+cd opus
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
+</pre>
+
+<p>Notice that this time we are doing the svn checkout one directory level up, and
+checking out all the packages into the <tt>src</tt> directory.
+      
+<p>The above commands check out the latest development version of the code -- adjust the URLs 
+appropriately to get a stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
+for details on how to do this.</p>
+
+<h3>Option 2: Getting Opus and UrbanSim using subversion and Eclipse</h3>
+This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.<br>
+
+</body>
+</html>
