@@ -150,8 +150,8 @@ Attributes \attributesindex for a dataset \datasetindex can be specified in foll
 \item[Expression] (e.g.\ \code{ln(urbansim.gridcell.population+1)})
   \index{expressions}
   Expressions are composed from variable names, constants, functions, and
-  operators --- see Sections \ref{sec:expressions} and
-  \ref{sec:implementation-of-expressions}.
+  operators --- see Chapter~\ref{chapter:expressions} and 
+  Section~\ref{sec:implementation-of-expressions}.
 
 \end{description}
 Expressions and fully-qualified names can be given an alias using the syntax
@@ -826,12 +826,12 @@ in this method translates to a missing branch of the tree and thus failing to
 determine a need for recomputing.
 
 
-\subsection{Using Expressions to Create Opus Variables}
+\subsection{Expression Language Implementation}
 \label{sec:implementation-of-expressions}
 \index{expressions!implementation}
 
 Opus expressions are written in a domain-specific programming language called Tekoa
-(Section \ref{sec:expressions}).  Each newly-encountered expression is compiled into
+(Chapter~\ref{chapter:expressions}).  Each newly-encountered expression is compiled into
 an automatically generated subclass of \class{Variable}, with similar functionality
 to that described above.  This section describes how this compilation is done.
 For the most part, the implementation shouldn't be relevant
