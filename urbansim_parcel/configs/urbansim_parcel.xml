@@ -451,7 +451,6 @@
                         <output hidden="True" type="string">development_project_proposal</output>
                     </run>
                 </structure>
-                
             </expected_sale_price_model>
             <development_proposal_choice_model copyable="True" type="model">
                 <structure type="dictionary">
@@ -557,8 +556,31 @@
                         <maximum_runs type="integer">10</maximum_runs>
                     </run>
                 </structure>
-                
             </household_location_choice_model>
+            <household_transition_model type="model">
+              <structure type="dictionary">
+                <import type="dictionary">
+                    <module>urbansim.models.household_transition_model</module>
+                    <classname>HouseholdTransitionModel</classname>
+                </import>
+                <init type="dictionary">
+                  <name type="string">HouseholdTransitionModel</name>
+                  <location_id_name type="string">'building_id'</location_id_name>
+                  <debuglevel type="string">debuglevel</debuglevel>
+                </init>
+                <prepare_for_run type="dictionary">
+                  <output type="string">(control_totals, characteristics)</output>
+                  <name type="string">prepare_for_run</name>
+                  <storage type="string">base_cache_storage</storage>
+                </prepare_for_run>
+                <run type="dictionary">
+                  <characteristics type="string">characteristics</characteristics>
+                  <household_set type="string">household</household_set>
+                  <control_totals parser_action="blank_to_None" type="string">control_totals</control_totals>
+                  <year type="string">year</year>
+                </run>
+              </structure>
+            </household_transition_model>
         </model_system>
     </model_manager>
     <scenario_manager>
