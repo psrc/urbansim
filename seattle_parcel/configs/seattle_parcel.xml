@@ -37,7 +37,7 @@
         </years>
       </estimation_config>
       <real_estate_price_model copyable="True" type="model">
-        <specification>
+        <specification type="dictionary">
           <civil type="submodel">
             <description type="string">Civil and Quasi-Public</description>
             <submodel_id type="integer">2</submodel_id>
@@ -106,7 +106,7 @@
         </specification>
       </real_estate_price_model>
       <employment_location_choice_model copyable="True" type="model">
-        <specification>
+        <specification type="dictionary">
             <home_based type="dictionary">
               <submodel copyable="True" type="submodel">
                 <description type="string">No submodel</description>
@@ -124,7 +124,7 @@
         </specification>
       </employment_location_choice_model>
       <household_location_choice_model copyable="True" type="model">
-        <specification>
+        <specification type="dictionary">
           <submodel copyable="True" type="submodel">
             <description type="string">No submodel</description>
             <submodel_id type="integer">-2</submodel_id>

@@ -136,7 +136,7 @@
                 </datasets_to_preload>
             </estimation_config>
             <refinement_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim.models.refinement_model</module>
                         <classname>RefinementModel</classname>
@@ -157,10 +157,10 @@
                         <dataset_pool hidden="True" type="string">dataset_pool            </dataset_pool>
                     </run>
                 </structure>
-                <specification/>
+                
             </refinement_model>
             <real_estate_price_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim.models.real_estate_price_model</module>
                         <classname>RealEstatePriceModel</classname>
@@ -208,10 +208,10 @@
                         <output hidden="True" type="string">(coefficients, dummy)</output>
                     </estimate>
                 </structure>
-                <specification/>
+                
             </real_estate_price_model>
             <employment_transition_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim.models.employment_transition_model</module>
                         <classname>EmploymentTransitionModel</classname>
@@ -233,10 +233,10 @@
                         <year type="string">year</year>
                     </run>
                 </structure>
-                <specification/>
+                
             </employment_transition_model>
             <employment_relocation_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim.models.employment_relocation_model_creator</module>
                         <classname>EmploymentRelocationModelCreator</classname>
@@ -260,10 +260,10 @@
                         <agent_set type="string">job</agent_set>
                     </run>
                 </structure>
-                <specification/>
+                
             </employment_relocation_model>
             <employment_location_choice_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <estimate type="dictionary">
                         <agent_set type="string">job</agent_set>
                         <agents_index hidden="True" type="string">index</agents_index>
@@ -331,10 +331,10 @@
                         <maximum_runs type="integer">3</maximum_runs>
                     </run>
                 </structure>
-                <specification/>
+                
             </employment_location_choice_model>
             <distribute_unplaced_jobs_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.distribute_unplaced_jobs_model</module>
                         <classname>DistributeUnplacedJobsModel</classname>
@@ -352,10 +352,10 @@
                         <agents_filter type="quoted_string">urbansim.job.is_in_employment_sector_group_scalable_sectors</agents_filter>
                     </run>
                 </structure>
-                <specification/>
+                
             </distribute_unplaced_jobs_model>
             <governmental_employment_location_choice_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.scaling_jobs_model</module>
                         <classname>ScalingJobsModel</classname>
@@ -373,10 +373,10 @@
                         <location_set type="string">building</location_set>
                     </run>
                 </structure>
-                <specification/>
+                
             </governmental_employment_location_choice_model>
             <household_relocation_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim.models.household_relocation_model_creator</module>
                         <classname>HouseholdRelocationModelCreator</classname>
@@ -398,10 +398,10 @@
                         <resources hidden="True" type="string">hrm_resources</resources>
                     </run>
                 </structure>
-                <specification/>
+                
             </household_relocation_model>
             <process_pipeline_events copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.process_pipeline_events</module>
                         <classname>ProcessPipelineEvents</classname>
@@ -416,10 +416,10 @@
                         <output hidden="True" type="string">scheduled_development_events</output>
                     </run>
                 </structure>
-                <specification/>
+                
             </process_pipeline_events>
             <expected_sale_price_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.development_project_proposal_regression_model</module>
                         <classname>DevelopmentProjectProposalRegressionModel</classname>
@@ -451,10 +451,10 @@
                         <output hidden="True" type="string">development_project_proposal</output>
                     </run>
                 </structure>
-                <specification/>
+                
             </expected_sale_price_model>
             <development_proposal_choice_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.development_project_proposal_sampling_model</module>
                         <classname>DevelopmentProjectProposalSamplingModel</classname>
@@ -470,10 +470,10 @@
                         <output hidden="True" type="string">(development_project_proposal, demolished_buildings)</output>
                     </run>
                 </structure>
-                <specification/>
+                
             </development_proposal_choice_model>
             <building_construction_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <import hidden="True" type="dictionary">
                         <module type="string">urbansim_parcel.models.building_construction_model</module>
                         <classname>BuildingConstructionModel</classname>
@@ -488,10 +488,10 @@
                         <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
                     </run>
                 </structure>
-                <specification/>
+                
             </building_construction_model>
             <household_location_choice_model copyable="True" type="model">
-                <structure>
+                <structure type="dictionary">
                     <estimate type="dictionary">
                         <output hidden="True" type="string">(coefficients, _)</output>
                         <agent_set type="string">household</agent_set>
@@ -557,7 +557,7 @@
                         <maximum_runs type="integer">10</maximum_runs>
                     </run>
                 </structure>
-                <specification/>
+                
             </household_location_choice_model>
         </model_system>
     </model_manager>
