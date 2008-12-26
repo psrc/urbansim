@@ -26,10 +26,8 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
 
 class XmlController_Scenarios(XmlController):
+    
     def __init__(self, toolboxbase, parentWidget):
-        # this icon needs to be defined before call to XmlController.__init__
-        self.missingModelIcon = QIcon(':/Images/Images/cog_missing.png')
-
         XmlController.__init__(self, toolboxbase = toolboxbase,
                                xml_type = 'scenario_manager',
                                parentWidget = parentWidget)
@@ -67,8 +65,6 @@ class XmlController_Scenarios(XmlController):
         '''switch out the model'''
         self.model = XmlModel_Scenarios(self, self.toolboxbase.doc, self.mainwindow,
               self.toolboxbase.configFile, self.xmlType, True)
-        # add icon for missing models since to icon list
-        self.model.missing_model_icon = self.missingModelIcon
         self.view = XmlView(self.mainwindow)
         self.delegate = XmlItemDelegate(self.view)
 
