@@ -11,7 +11,9 @@
 # other acknowledgments.
 #
 
-
+import os,tempfile
+from xml.etree.cElementTree import ElementTree
+import StringIO
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QFileInfo, QFile, QIODevice
@@ -27,8 +29,7 @@ from opus_gui.models_manager.controllers.xml_configuration.xml_controller_models
 from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
 from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
-
-import os,tempfile
+from opus_core.misc import directory_path_from_opus_path
 
 # Main class for the toolbox
 class ToolboxBase(object):
@@ -55,25 +56,32 @@ class ToolboxBase(object):
         self.dataManagerTree = None
         self.dataManagerFileTree = None
 
-        # never used -- obsolete or returning feature?
+        # TODO never used -- obsolete or returning feature?
         self.dataManagerDBSTree = None
 
         gui_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         if not os.path.exists(gui_directory):
             os.mkdir(gui_directory)
+        
         self.gui_configuration_file = os.path.join(gui_directory, 'gui_config.xml')
         if not os.path.exists(self.gui_configuration_file):
-            self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
+            self.emit_default_gui_configuration_file(self.gui_configuration_file)
 
         self.project_name = None
 
         self.gui_configuration_doc = QDomDocument()
         self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
 
+
     def updateOpusXMLTree(self):
+        '''
+        Update the XMLConfiguration object for the currently opened project with
+        the XML content in QtXml.
+        '''
         if self.opus_core_xml_configuration and self.doc:
             indentSize = 2
             self.opus_core_xml_configuration.update(str(self.doc.toString(indentSize)))
+
 
     def openXMLTree(self, xml_file):
         '''
@@ -109,8 +117,8 @@ class ToolboxBase(object):
         #print tempFile,tempFilePath
         # full_tree is the "whole" tree, inherited nodes and all
         # tree is just the actual file the GUI was asked to open
-        self.opus_core_xml_configuration.full_tree.write(tempFilePath)
         self.configFileTemp = QFile(tempFilePath)
+        self.opus_core_xml_configuration.full_tree.write(tempFilePath)
         if not self.configFile or not self.configFileTemp:
             msg = "Error reading the %s configuration file" % (xml_file)
             QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
@@ -150,7 +158,10 @@ class ToolboxBase(object):
 
 
     def projectIsDirty(self):
-        '''returns true if any of the managers is dirty'''
+        '''
+        Get dirty status for the project.
+        @return: True if any of the managers is dirty, False otherwise
+        '''
         managers = [self.resultsManagerTree,
             self.modelManagerTree,
             self.runManagerTree,
@@ -163,6 +174,7 @@ class ToolboxBase(object):
 
 
     def markProjectAsClean(self):
+        ''' Marks all of the manager trees as clean '''
         managers = [self.resultsManagerTree,
             self.modelManagerTree,
             self.runManagerTree,
@@ -175,7 +187,7 @@ class ToolboxBase(object):
 
     def close_controllers(self):
         '''
-        close all manager trees
+        Close all manager trees.
         @return: True if all trees was successfully closed, False otherwise.
         '''
         managers = [self.resultsManagerTree, self.modelManagerTree,
@@ -189,8 +201,10 @@ class ToolboxBase(object):
 
 
     def emit_default_gui_configuration_file(self, file_name):
-        from opus_core.misc import directory_path_from_opus_path
-
+        ''' 
+        Copy the default configuration file from opus_gui/main.
+        @param: file_name (String) full path of where to copy the configuration
+        '''
         default_gui_config_path = os.path.join(directory_path_from_opus_path('opus_gui.main'),
                                                'default_gui_configuration.xml')
         default_gui_config = open(default_gui_config_path)
@@ -201,18 +215,18 @@ class ToolboxBase(object):
 
 
     def reemit_reinit_default_gui_configuration_file(self):
-        self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
+        '''
+        Emit the default configuration file and initialize the QDomDocument for
+        configurations from the newly emitted file.
+        '''
+        self.emit_default_gui_configuration_file(self.gui_configuration_file)
         self.gui_configuration_doc = QDomDocument()
         self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
 
 
     def save_gui_configuration_file(self):
-        #updates and saves the gui configuration file
-        from xml.etree.cElementTree import ElementTree
-        import StringIO
-
+        ''' Update and save the GUI configuration file '''
         str_io = StringIO.StringIO(self.gui_configuration_doc.toString(2))
         etree = ElementTree(file=str_io)
         etree.write(self.gui_configuration_file)
         str_io.close()
-
