@@ -21,8 +21,8 @@ from PyQt4.Qt import qApp
 
 from opus_gui.abstract_manager.models.xml_item import XmlItem
 
-# node types that are on-off selectable items
-__boolean_node_types__ = ('model_choice', 'table', 'dataset', 'variable')
+# What node types we want checkboxes for
+__checkbox_node_types__ = ('model_choice', 'table', 'dataset', 'variable')
 
 class XmlModel(QAbstractItemModel):
     def __init__(self, parentTree, document, mainwindow, configFile, xmlType, editable, addIcons=True):
@@ -106,6 +106,7 @@ class XmlModel(QAbstractItemModel):
             self.toolSetIcon = QIcon(":/Images/Images/folder_wrench.png")
             self.toolConfigIcon = QIcon(":/Images/Images/wrench.png")
             self.toolFileIcon = QIcon(":/Images/Images/wrench_orange.png")
+            self.missingModelIcon = QIcon(':/Images/Images/cog_missing.png')
 
             self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
             self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
@@ -175,22 +176,9 @@ class XmlModel(QAbstractItemModel):
         #return 1
         return 2
 
-    def data_handler(self, index, role):
-        '''
-            Offers a way for inheriting models to override the data method on a
-            case to case basis. If this methods returns an empty QVariant() then
-            the we fall back on the default data method.
-        '''
-        return QVariant()
-
     def data(self, index, role):
         if not index.isValid():
             return QVariant()
-
-        # check if the data_handler cares about this index
-        data_handler = self.data_handler(index, role)
-        if data_handler != QVariant():
-            return data_handler
 
         # Get the item associated with the index
         item = index.internalPointer()
@@ -222,7 +210,7 @@ class XmlModel(QAbstractItemModel):
             if role == Qt.DisplayRole: # don't display passwords in clear text
                 if element_type == "password":
                     return QVariant(QString("*********"))
-                if element_type in __boolean_node_types__:
+                if element_type in __checkbox_node_types__:
                     # do_choice = element.attribute("choices").split('|')[0]
                     # return QVariant(do_choice)
                     return QVariant()
@@ -236,7 +224,7 @@ class XmlModel(QAbstractItemModel):
                 # didn't find a text child
                 return QVariant()
             elif role == Qt.CheckStateRole:
-                if element_type in __boolean_node_types__:
+                if element_type in __checkbox_node_types__:
                     # if element.hasAttribute("inherited"):
                     #    return QVariant()
 
@@ -263,7 +251,7 @@ class XmlModel(QAbstractItemModel):
         # inherited nodes are not editable
         element = index.internalPointer().domNode.toElement()
         if not element.isNull() and element.hasAttribute(QString("inherited")):
-            if element.attribute("type").toLower() in __boolean_node_types__:
+            if element.attribute("type").toLower() in __checkbox_node_types__:
                 # enable clicking the checkboxes also for inherited nodes
                 return (Qt.ItemIsEnabled | Qt.ItemIsSelectable |
                         Qt.ItemIsUserCheckable)
@@ -276,7 +264,7 @@ class XmlModel(QAbstractItemModel):
         # editable items in second column
         elif index.column() == 1:
             # represent boolean choices (selectables) as check boxes
-            if element.attribute("type").toLower() in __boolean_node_types__:
+            if element.attribute("type").toLower() in __checkbox_node_types__:
                 return (Qt.ItemIsEnabled | Qt.ItemIsSelectable |
                         Qt.ItemIsUserCheckable)
             # other items are just editable
@@ -403,7 +391,7 @@ class XmlModel(QAbstractItemModel):
 
         # user clicking on a checkbox
         if role == Qt.CheckStateRole and \
-        element.attribute('type').toLower() in __boolean_node_types__:
+        element.attribute('type').toLower() in __checkbox_node_types__:
             # ask the users if they want to make inherited nodes local first
             if element.hasAttribute('inherited'):
                 p = self.mainwindow
