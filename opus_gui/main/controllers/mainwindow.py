@@ -11,8 +11,6 @@
 # other acknowledgments.
 #
 
-
-
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
 from PyQt4.QtCore import QFile, QSettings, QRegExp, QFileInfo
@@ -41,7 +39,6 @@ from opus_gui.general_manager.controllers.all_variables import AllVariablesEditG
 
 # General system includes
 import time, tempfile, os
-
 
 # Main window used for houseing the canvas, toolbars, and dialogs
 class OpusGui(QMainWindow, Ui_MainWindow):
@@ -278,8 +275,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def getDbConnectionNames(self):
         '''
-        Returns a list of the names of database connections available in the
-        database_server_configurations.xml document
+        Fetch a list of the names of database connections available in the
+        database_server_configurations.xml document.
+        @return: ([String]) list of database connection names.
         '''
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         database_server_configuration_file = os.path.join(settings_directory, 'database_server_configurations.xml')
@@ -294,12 +292,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 list_of_db_connections.append(str(db_connection_name))
         return list_of_db_connections
 
-    def writeOutput(self,result):
+    def writeOutput(self, result):
+        ''' Write non empty results to logView '''
         if result == "":
             return
         self.logViewTextBrowser.append(result)
 
     def editAllVariables(self):
+        ''' Open the variable library GUI '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesEditGui(self,flags)
 
@@ -307,6 +307,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.all_variables.show()
 
     def closeCurrentTab(self):
+        ''' Close the currently showing tab '''
         widget = self.tabWidget.currentWidget()
 
         if widget in self.resultsManagerBase.guiElements:
@@ -321,12 +322,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             widget.hide()
         except:
             pass
-        # Do something with the widget if we need to...
-
-
 
 
     def openMapTab(self):
+        ''' Open up a tab containing a map view '''
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
             self.changeFontSize()
@@ -336,6 +335,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
 
     def openPythonTab(self):
+        ''' Open an interactive Python console '''
         if self.tabWidget.indexOf(self.tab_pythonView) == -1:
             self.tab_pythonView.show()
             self.changeFontSize()
@@ -343,10 +343,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                      QIcon(":/Images/Images/python_type.png"),"Python Console")
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
+
     def openResultBrowser(self):
+        ''' Open a Results browser '''
         self.resultsManagerBase.add_result_browser()
 
+
     def openEditorTab(self):
+        ''' Open a Python file editor '''
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
             self.changeFontSize()
@@ -356,6 +360,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
 
     def openLogTab(self):
+        ''' Open a log viewer '''
         if self.tabWidget.indexOf(self.tab_logView) == -1:
             self.tab_logView.show()
             self.changeFontSize()
@@ -363,9 +368,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                      QIcon(":/Images/Images/table.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
 
-
-
     def openAbout(self):
+        ''' Show a dialog box with information about OpusGui '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimAboutGui(self,flags)
         wnd.setModal(True)
@@ -373,6 +377,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.changeFontSize()
 
     def openPreferences(self):
+        ''' Open the preferences window '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimPreferencesGui(self, flags)
         wnd.setModal(True)
@@ -380,6 +385,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.changeFontSize()
 
     def openDatabaseSettings(self):
+        ''' Open the database settings window '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         #wnd = UrbansimDatabaseSettingsGUI(self, flags)
         # Commented out the previous line and added the following line
@@ -409,6 +415,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setWindowTitle(title)
 
     def openConfig(self, config=None):
+        ''' Open a configuration file.
+        @param config: (String) filename of configuration to open. 
+        If config is None, the user is presented with a dialog to select which 
+        file to open.
+        '''
         # optionally save the project before opening
         if self.saveOrDiscardChanges() == False:
             return # user cancelled operation
@@ -487,6 +498,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             return False
 
     def saveConfigAs(self):
+        ''' Save the configuration under a different name '''
         try:
             # get the location for the new config file on disk
             start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
@@ -515,12 +527,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, 'Warning', errorMessage)
 
     def saveOrDiscardChanges(self):
-        """
+        '''
         Prompts the user to save any changes to the project.
         Saves the project if the user selects 'Save'.
         Marks the project as clean if user selects 'Discard'
         @return: True if the project is saved or discarded, False if cancelled.
-        """
+        '''
         if self.toolboxBase.projectIsDirty():
             doSave = QMessageBox.Discard
             question = ('Current project contains changes.\n'
@@ -537,8 +549,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
 
     def closeConfig(self):
-        """ Closes the current project. """
-
+        ''' Closes the current project. '''
         try:
             configFile = self.toolboxBase.runManagerTree.model.configFile
         except:
@@ -568,15 +579,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.updateWindowTitle()
 
     def closeEvent(self, event):
-        '''called just before the window is closed.
-        ask users if they want to save their changes (or cancel the closing)'''
-        # Check to see if there are changes to the current project, if a project is open
+        ''' 
+        Callback for close window event.
+        Give the user a change to save any project changes or continue working.
+        '''
+        # Check to see if there are changes to the current project
         if self.toolboxBase.projectIsDirty():
             doSave = QMessageBox.Discard
-            question = ('Do you want to save your changes '
-                        'before quitting?')
-            buttons = (QMessageBox.Cancel,
-                       QMessageBox.Discard,
+            question = ('Do you want to save your changes before quitting?')
+            buttons = (QMessageBox.Cancel, QMessageBox.Discard,
                        QMessageBox.Save)
             doSave = QMessageBox.question(self, "Unsaved changes",
                                           question,
@@ -584,14 +595,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             if doSave == QMessageBox.Save:
                 self.saveConfig()
             elif doSave == QMessageBox.Cancel:
-                # dont quit
-                event.ignore()
+                event.ignore() # don't close window
                 return
+
         # Save application geometry on shut down
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))
 
     def editorOpenFileButton_released(self):
+        ''' Callback for open file button '''
         #print "Open"
         # First find the file to open
         start_dir = ''
@@ -626,6 +638,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.editorSaveFileButton.setDisabled(True)
 
     def editorSaveFileButton_released(self):
+        ''' Callback for save file button '''
         #print "Save"
         if self.editorDirty == True:
             # Save the file TODO...
@@ -643,6 +656,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 self.editorSaveFileButton.setDisabled(True)
 
     def editorSaveAsFileButton_released(self):
+        ''' Callback for save file as button '''
         #print "Save As"
         if self.editorDirty == True:
             # Save the file TODO...
@@ -652,6 +666,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.editorDirty = False
 
     def editorStuffTextChanged(self):
+        ''' Callback for when the text has changed in the editor '''
         #print "text changed = " + str(self.editorDirty)
         if self.editorDirty == False:
             wintitle = self.editorStatusLabel.text().replace("- ", "* ")
@@ -661,6 +676,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
 
     def changeFontSize(self):
+        ''' Update various widgets with the font size from GUI settings '''
         #menubar...
         menuFontSizeFamily = self.menubar.findChildren(QMenu)
         menuFontSizeFamily.append(self.menubar)
@@ -711,31 +727,57 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
 
     def getMenuFontSize(self):
+        ''' 
+        Get the font size used in menus.
+        @return: (int) Font size in points
+        '''
         return self.menu_font_size
 
     def setMenuFontSize(self, pointSize):
+        ''' 
+        Set the menu font size.
+        @param: pointSize (int) Font size (in points) to use
+        '''
         self.menu_font_size = pointSize
 
     def getMainTabsFontSize(self):
+        ''' 
+        Get the font size used in tab titles.
+        @return: (int) Font size in points
+        '''
         return self.main_tabs_font_size
 
     def setMainTabsFontSize(self, pointSize):
         self.main_tabs_font_size = pointSize
 
     def getGeneralTextFontSize(self):
+        ''' 
+        Get the font size used for various text elements.
+        @return: (int) Font size in points
+        '''
         return self.general_text_font_size
 
     def setGeneralTextFontSize(self, pointSize):
         self.general_text_font_size = pointSize
 
     def getOpenLatestProject(self):
+        '''
+        Get the GUI option "Open latest project on load"
+        @return: True if the latest project should be loaded, False otherwise
+        '''
         return self.open_latest_project
 
     def setOpenLatestProject(self, open_latest_project):
+        '''
+        Set GUI option "Open latest project on load"
+        @param: open_latest_project (bool) setting value
+        '''
         self.open_latest_project = open_latest_project
 
 
     def updateFontSettingsNode(self):
+        ''' Update font settings in the GUI configuration file '''
+        
         #get the font settings node from xml
         font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
         nodesToSave = {"menu_font_size":self.menu_font_size,
@@ -760,6 +802,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             node = node.nextSibling()
 
     def updateProjectHistoryNode(self):
+        ''' Update project history list in the GUI configuration file '''
         #get the project history node from xml
         proj_hist_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
         nodesToSave = {"previous_project":str(self.latest_project_file_name),
@@ -786,6 +829,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             node = node.nextSibling()
 
     def saveGuiConfig(self):
+        ''' Save the GUI configuration file '''
         try:
             self.toolboxBase.save_gui_configuration_file()
         except:
