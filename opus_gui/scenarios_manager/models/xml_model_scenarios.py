@@ -13,29 +13,34 @@
 #
 
 from PyQt4.QtCore import QVariant, Qt
-from PyQt4.QtGui import QColor
+from PyQt4.QtGui import QColor, QIcon
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 
 class XmlModel_Scenarios(XmlModel):
-
-    missing_model_icon = None
 
     def __init__(self, parentTree, document, mainwindow, configFile, xmlType,
                  editable, addIcons=True):
         XmlModel.__init__(self, parentTree, document, mainwindow, configFile,
                           xmlType, editable, addIcons)
 
-    def data_handler(self, index, role):
+    def data(self, index, role):
         # override the data method to enable custom icons for missing models
 
         item = index.internalPointer()
         if not hasattr(item, 'is_missing_model') or \
             item.is_missing_model == False:
-            return QVariant() # fall back on defaults
+            # we don't need special handling if there's no missing model
+            return XmlModel.data(self, index, role)
 
-        if role == Qt.ForegroundRole:
+        # Override display for missing models
+        if role == Qt.ForegroundRole and index.column() == 1:
             return QVariant(QColor(Qt.red))
         elif role == Qt.DecorationRole and index.column() == 0:
-            return QVariant(self.missing_model_icon)
-        return QVariant()
+            return QVariant(self.missingModelIcon)
+        elif role == Qt.DisplayRole and index.column() == 1:
+            # add (missing model) next to check box
+            return QVariant("(missing model)")
+        
+        # fall back on default
+        return XmlModel.data(self, index, role)
