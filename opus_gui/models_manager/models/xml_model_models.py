@@ -24,7 +24,7 @@ class XmlModel_Models(XmlModel):
         XmlModel.__init__(self, parentTree, document, mainwindow, configFile, 
                           xmlType, editable, addIcons)
 
-    def data_handler(self, index, role):
+    def data(self, index, role):
         #override visual representation of some data types
         element = index.internalPointer().node().toElement()
         element_type = element.attribute('type')
@@ -44,8 +44,8 @@ class XmlModel_Models(XmlModel):
         elif role == Qt.ForegroundRole:
             if element_type == 'configuration':
                 return QVariant(QColor(Qt.darkMagenta))
-        return QVariant()
-    
+        # fall back on default
+        return XmlModel.data(self, index, role)
 
     def insert_model(self, model_element):
         '''inserts a dom element under model_system'''
