@@ -16,6 +16,9 @@
 from PyQt4.QtCore import QString
 
 class XmlItem(object):
+    '''
+    Represents an Item in the Manager Tree models.
+    '''
     def __init__(self, domDocument, node, parentOpusDataItem):
         self.domDocument = domDocument
         self.domNode = node
@@ -23,7 +26,10 @@ class XmlItem(object):
         self.childItems = []
 
     def initAsRootItem(self):
-        '''use this element as a root item and selectively add its children'''
+        '''
+        Add this Item to the tree and iterate through it's children and add any 
+        non-hidden child nodes
+        '''
         for x in xrange(0, self.domNode.childNodes().count(), 1):
             child_node = self.domNode.childNodes().item(x).toElement()
             # do not add nodes (or subtrees) that should be hidden
@@ -35,37 +41,55 @@ class XmlItem(object):
                 child_item.initAsRootItem()
 
     def refresh(self):
-        '''refreshes this item and all of it's children'''
+        ''' Re-adds all the children nodes of this Item '''
         self.childItems = []
         self.initAsRootItem()
 
     def node(self):
+        ''' 
+        Get a reference to the internal domNode for this Item
+        @return: (QDomNode) A reference to the internal domNode
+         '''
         return self.domNode
 
     def parent(self):
+        ''' 
+        Get a reference to this item's parent.
+        @return: parent item (XmlItem) or None
+        '''
         return self.parentOpusDataItem
 
-    def child(self, i):
-        #print "DataItem.child ", i
-        if len(self.childItems) > i:
-            return self.childItems[i]
-        tryToFind = i+1
-        foundSoFar = 0
-        for x in xrange(0, self.domNode.childNodes().count(), 1):
-            current = self.domNode.childNodes().item(x)
-            if current.isElement() and not \
-                current.toElement().attribute('hidden').toLower() == QString('true'):
-                # We found one
-                foundSoFar = foundSoFar + 1
-            if foundSoFar == tryToFind:
-                # We have the one we are looking for
-                childNode = self.domNode.childNodes().item(x)
-                childItem = XmlItem(self.domDocument, childNode, i , self)
-                self.childItems.append(childItem)
-                return childItem
-        return None
+    def child(self, row):
+        '''
+        Get a reference to the item at a given row
+        @param: row (int) which item row
+        @return: the item (XmlItem) at the row or None
+        '''
+        try:
+            return self.childItems[row]
+        except IndexError:
+            return None
+#        tryToFind = i+1
+#        foundSoFar = 0
+#        for x in xrange(0, self.domNode.childNodes().count(), 1):
+#            current = self.domNode.childNodes().item(x)
+#            if current.isElement() and not \
+#                current.toElement().attribute('hidden').toLower() == QString('true'):
+#                # We found one
+#                foundSoFar = foundSoFar + 1
+#            if foundSoFar == tryToFind:
+#                # We have the one we are looking for
+#                childNode = self.domNode.childNodes().item(x)
+#                childItem = XmlItem(self.domDocument, childNode, i , self)
+#                self.childItems.append(childItem)
+#                return childItem
+
 
     def row(self):
+        ''' 
+        Get the row number for this Item.
+        @return: (int) row number of this Item.
+        '''
         if self.parentOpusDataItem:
             try:
                 index = self.parentOpusDataItem.childItems.index(self)
@@ -76,9 +100,17 @@ class XmlItem(object):
             return 0
 
     def numChildren(self):
+        '''
+        Get the number of child nodes for this Item.
+        @return: Number of child nodes (int)
+        '''
         return len(self.childItems)
 
     def lastChild(self):
+        '''
+        Get a reference to the child in the last row.
+        @return The last child item (XmlItem) or None
+        '''
         if len(self.childItems) > 0:
             return self.childItems[-1]
         else:
