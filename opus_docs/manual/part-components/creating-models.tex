@@ -170,13 +170,13 @@ seattle\_parcel project, which includes submodels to separately specify the
 model for each general land use type.  If you are using a computer with the
 Windows operating system, open a command shell, and type the following:
 
-\begin{lstlisting}
+\begin{verbatim}
 python -i c:\opus\src\urbansim\tools\start_estimation.py -x c:\opus\project_configs\seattle_parcel.xml -m real_estate_price_model
-\end{lstlisting}
+\end{verbatim}
 
 Depending on exactly what the specification is, the result would look something like the lsting below:\\
 
-\begin{lstlisting}
+\begin{verbatim}
 (clipped results)
 ...
     ===============================================
@@ -212,15 +212,15 @@ Depending on exactly what the specification is, the result would look something 
     ===============================================
 
 Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): completed...0.9 sec
-\end{lstlisting}
+\end{verbatim}
 
 Since the model was estimated in interactive mode, using the -i option in the python command to start the estimation, the program remains active after estimation is completed, and additional commands may be directly entered at the python prompt: $>>>$.  Assume that we want to further explore the data in submodel 30 (mixed-use properties).  
 
 One of the first things one might wish to do is to examine the correlation among the variables in a model.  We can do this by using one of the built-in estimator methods, plot\_correlation, with the following command:
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> estimator.plot_correlation(30)
-\end{lstlisting}
+\end{verbatim}
 
 The method computes a correlation matrix for the data used in submodel 30 and generates a plot of this correlation, as shown in Figure \ref{fig:correlation30}:
 
@@ -236,14 +236,14 @@ Note that when a plot is generated from the command line in Python, control of P
 
 We can retrieve the data for submodel 30 as a dataset that we can further analyze using Opus methods for the Dataset class.  Begin with the following command to retrieve the data and assign it to an object called ds30 (for submodel 30):
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> ds30 = estimator.get_data_as_dataset(30)
 >>>
-\end{lstlisting}
+\end{verbatim}
 
 The syntax above indicates that we are executing a method called get\_data\_as\_dataset of the class estimator, which is the class that is running the estimation of the model.  The value 30 in parentheses is an argument being passed to this method, to identify that we want to retrieve only the subset of the data that corresponds with submodel 30.  If we wanted all the data, we would leave out the argument, but keep the empty parentheses.  Note that nothing special happens when this command is executed.  If it succeeded, it will create the new dataset object called ds30, and return to the python prompt.  At this point, we can use a variety of built in methods for the dataset class to further explore the data.  The first of these methods is summary(), which computes a statistical summary of the data in this object, like so:\\
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> ds30.summary()
 Attribute name	mean       sd	       sum            min             max
 -------------------------------------------------------------------------
@@ -259,14 +259,14 @@ lnsqft          9.74        1.17      4440.23       6.42972      14.1835
 Size: 456  records
 identifiers: 
          id  in range  1 - 456
-\end{lstlisting}
+\end{verbatim}
 
 
 Another useful Dataset method is the plot\_histogram, which computes a histogram for an attribute of a dataset and plots it, as shown in Figure \ref{fig:histogram-lnsqft}:\\
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> ds30 = plot_histogram('lnsqft')
-\end{lstlisting}
+\end{verbatim}
 
 \begin{figure}[htp]
 \begin{center}
@@ -280,7 +280,7 @@ Another useful Dataset method is the plot\_histogram, which computes a histogram
 After interactive exploration of the data used in the model, we might choose to drop or add variables from the specification.  For demonstration purposes, drop lnemp30da from the specification of submodel 30, in the GUI, and save the project.  Alternatively this could be done by editing the seattle\_parcel.xml (be careful to use an editor that will not damage the format of the file, for example in Windows you can use a Notepad version that has added XML support). Once the specification has been edited and saved, re-run the estimation for only submodel 30 like this:\\
 
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> estimator.reestimate(30)
 Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): started on Thu May 22 09:36:12 2008
     Estimate regression for submodel 30
@@ -304,11 +304,11 @@ Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model
 Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): completed...0.1 sec
 >>> 
 >>>
-\end{lstlisting}
+\end{verbatim}
 
 Notice that now we see a warning, indicating a problem in the specification.  Let's drop the least significant variable, lnemp20tw, and try estimating again:
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> estimator.reestimate(30)
 Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): started on Thu May 22 09:43:26 2008
     Estimate regression for submodel 30
@@ -326,25 +326,25 @@ Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model
         lnsqft  -0.121596       0.0254847       -4.77133
        lnunits  0.203752        0.0268711        7.58258
     ===============================================
-\end{lstlisting}
+\end{verbatim}
 
 Now the results do not indicate a warning, though we could experiment further to refine the specification. This interactive approach is very efficient for rapidly experimenting with model specifications and re-estimating a single model.  The same approach is available to estimate a subset of the models, using the following syntax:
 
-\begin{lstlisting}
+\begin{verbatim}
 >>> estimator.reestimate(submodels=[3,7,9])
-\end{lstlisting}
+\end{verbatim}
 
 \subsection{Estimation of a Choice Model}
 
 From the command shell (but not in python), we can also start the estimation of a choice model, like the housing type choice model created earlier in this chapter:
 
-\begin{lstlisting}
+\begin{verbatim}
 python -i c:\opus\src\urbansim\tools\start_estimation.py -x c:\opus\project_configs\seattle_parcel.xml -m housing_type_choice_model 
-\end{lstlisting}
+\end{verbatim}
 
 The resulting output is shown below:
 
-\begin{lstlisting}
+\begin{verbatim}
 (clipped listing)
 ...
             Estimating Choice Model (from opus_core.choice_model): started on Thu May 22 09:51:57 2008
@@ -374,11 +374,11 @@ The resulting output is shown below:
 Start simulation run: completed.........................................14.4 sec
 Closing log file: /Users/pwaddell/opus/data/seattle_parcel/base_year_data/run_model_system.log
 >>> 
-\end{lstlisting}
+\end{verbatim}
 
 Note that the same method used for the regression model, get\_data\_as\_dataset, can be used to retrieve the data and analyze it interactively. 
 
-%\begin{lstlisting}
+%\begin{verbatim}
 %# reestimate and analyze data as above
 %# in addition
 % >>> estimator.plot_choice_set()
@@ -390,4 +390,4 @@ Note that the same method used for the regression model, get\_data\_as\_dataset,
 % >>> estimator.plot_utility()
 %
 %# see also python -i urbansim/tools/start_estimation.py --help
-%\end{lstlisting}
+%\end{verbatim}
