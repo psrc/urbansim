@@ -19,6 +19,8 @@ from opus_gui.results_manager.run.opus_result_generator import OpusResultGenerat
 class VariableValidator(object):
     def __init__(self, toolboxBase):
         self.toolboxBase = toolboxBase
+        # maximum number of errors to report (to prevent overlong dialogs)
+        self.max_errors = 6
         
     def validate(self, variables, ok_msg):
         parsing_successful, parsing_errors = self.check_parse_errors(variables)
@@ -72,9 +74,10 @@ class VariableValidator(object):
                     errors.append("Unknown source type %s: (%s, %s): %s" % (source, var_name, dataset_name, expr))
             except (SyntaxError, ValueError), e:
                 errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
-        
-
-
+            # check whether there are too many errors; if so stop to prevent the list from getting too long
+            if len(errors)>self.max_errors:
+                errors.append("[*** rest of error report truncated ***]")
+                return False, errors
         return len(errors) == 0, errors
 
 
@@ -86,8 +89,10 @@ class VariableValidator(object):
             successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name, expression = expr, source = source)
             if not successful:
                 errors.append("Expression %s could not be run on <br>dataset %s on the baseyear data.<br>Details:<br>%s"%(
-                                var_name, dataset_name, str(error) ))
-                    
+                                var_name, dataset_name, str(error) )) 
+            if len(errors)>self.max_errors:
+                errors.append("[*** rest of error report truncated ***]")
+                return False, errors
         return len(errors) == 0, errors
         
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
