@@ -34,7 +34,7 @@ class Baseline(GeneralConfiguration):
                 cache_directory_root = r'/Volumes/Data/opus/data/sanfrancisco/runs',
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/Volumes/Data/opus/data/sanfrancisco/base_year_cache',
+                    existing_cache_to_copy = r'/Volumes/Data/opus/data/sanfrancisco/base_year_data',
                     ),                
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [

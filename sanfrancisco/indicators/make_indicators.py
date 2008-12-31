@@ -27,12 +27,12 @@ from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import Lor
 
 
 run_description = '(baseline 06/28/2007)'
-cache_directory = r'/home/lmwang/work/sf/cache_source_0108'
+cache_directory = r'/Volumes/Data/opus/data/sanfrancisco/runs/run_2.2008_12_30_13_34'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001],
+    years = [2005, 2007, 2010],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         ),       
