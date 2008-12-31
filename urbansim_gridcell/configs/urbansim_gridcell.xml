@@ -9,7 +9,7 @@
       <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
       <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
       <ln_du dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.residential_units)</ln_du>
-      <ln_duw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units_within_walking_distance</ln_duw>
+      <ln_duw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units_within_walking_distance</ln_duw>
       <pcthiwa dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_high_income_households_within_walking_distance</pcthiwa>
       <wetland dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.percent_wetland&gt;50</wetland>
       <cbdtrvl dataset="gridcell" source="Python class" type="variable_definition" use="model variable">eugene.gridcell.travel_time_hbw_am_drive_alone_to_220</cbdtrvl>
@@ -22,42 +22,42 @@
       <hwy300 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;300</hwy300>
       <land_value dataset="gridcell" source="expression" type="variable_definition" use="indicator">gridcell.residential_land_value+gridcell.nonresidential_land_value</land_value>
       <!-- These are variables that are automatically extracted from specification modules -->
-      <ble_rew dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_retail_sector_employment_within_walking_distance</ble_rew>
-      <ble_saw dataset="job_x_gridcell" source="expression" type="variable_definition" use="model variable">urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance</ble_saw>
+      <ble_rew dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_retail_sector_employment_within_walking_distance</ble_rew>
+      <ble_saw dataset="job_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance</ble_saw>
       <ctir dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.cost_to_income_ratio</ctir>
-      <bpliw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.percent_low_income_households_within_walking_distance</bpliw>
-      <hwy dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.is_near_highway</hwy>
-      <ldevsfi dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_industrial_sqft_capacity</ldevsfi>
-      <sfc_0 dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.has_0_commercial_sqft</sfc_0>
-      <bltv dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_value</bltv>
-      <bldhw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_distance_to_highway</bldhw>
-      <bltlv dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_land_value</bltlv>
+      <bpliw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_low_income_households_within_walking_distance</bpliw>
+      <hwy dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_near_highway</hwy>
+      <ldevsfi dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_industrial_sqft_capacity</ldevsfi>
+      <sfc_0 dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.has_0_commercial_sqft</sfc_0>
+      <bltv dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_value</bltv>
+      <bldhw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_distance_to_highway</bldhw>
+      <bltlv dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_land_value</bltlv>
       <plihwwdihi dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_low_income_households_within_walking_distance_if_high_income</plihwwdihi>
       <ruwhhc dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.residential_units_when_household_has_children</ruwhhc>
-      <bpmiw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.percent_mid_income_households_within_walking_distance</bpmiw>
-      <blnrsfw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance</blnrsfw>
+      <bpmiw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_mid_income_households_within_walking_distance</bpmiw>
+      <blnrsfw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance</blnrsfw>
       <yhihdr dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.young_household_in_high_density_residential</yhihdr>
-      <ldevsfc dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_commercial_sqft_capacity</ldevsfc>
+      <ldevsfc dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_commercial_sqft_capacity</ldevsfc>
       <iayb dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.income_and_year_built</iayb>
-      <nrs dataset="gridcell" source="Python class" type="variable_definition" use="model variable">ln_bounded(urbansim.gridcell.non_residential_sqft)</nrs>
-      <bart dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.is_near_arterial</bart>
-      <blwap_1 dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_work_access_to_population_1</blwap_1>
-      <piw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.percent_industrial_within_walking_distance</piw>
-      <ble_sew dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_service_sector_employment_within_walking_distance</ble_sew>
-      <prw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.percent_residential_within_walking_distance</prw>
-      <ble_bw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_basic_sector_employment_within_walking_distance</ble_bw>
+      <nrs dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln_bounded(urbansim.gridcell.non_residential_sqft)</nrs>
+      <bart dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_near_arterial</bart>
+      <blwap_1 dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_work_access_to_population_1</blwap_1>
+      <piw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_industrial_within_walking_distance</piw>
+      <ble_sew dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_service_sector_employment_within_walking_distance</ble_sew>
+      <prw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_residential_within_walking_distance</prw>
+      <ble_bw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_basic_sector_employment_within_walking_distance</ble_bw>
       <pmhwwdim dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_minority_households_within_walking_distance_if_minority</pmhwwdim>
       <phihwwdili dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_low_income</phihwwdili>
-      <o_ugb dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.is_outside_urban_growth_boundary</o_ugb>
-      <bflood dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.is_in_floodplain</bflood>
-      <bwet dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.is_in_wetland</bwet>
+      <o_ugb dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_outside_urban_growth_boundary</o_ugb>
+      <bflood dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_in_floodplain</bflood>
+      <bwet dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_in_wetland</bwet>
       <yhimu dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.young_household_in_mixed_use</yhimu>
-      <le_w dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_employment_within_walking_distance</le_w>
+      <le_w dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_employment_within_walking_distance</le_w>
       <lru dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units</lru>
-      <blimp dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_improvement_value</blimp>
-      <lsfiw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_industrial_sqft_within_walking_distance</lsfiw>
-      <btt_cbd dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.travel_time_to_CBD</btt_cbd>
-      <blsfcw dataset="gridcell" source="expression" type="variable_definition" use="model variable">urbansim.gridcell.ln_commercial_sqft_within_walking_distance</blsfcw>
+      <blimp dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_improvement_value</blimp>
+      <lsfiw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_industrial_sqft_within_walking_distance</lsfiw>
+      <btt_cbd dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.travel_time_to_CBD</btt_cbd>
+      <blsfcw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_commercial_sqft_within_walking_distance</blsfcw>
       <!-- automatically generated variables end -->
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
