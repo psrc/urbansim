@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import array, isscalar
+from numpy import array, isscalar, ma
 from opus_core.datasets.dataset import Dataset
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
@@ -101,12 +101,10 @@ class Tests(opus_unittest.OpusTestCase):
                 "id":array([1,2,3,4]), 
                 "year":array([1968,1989,1750,0]) # absolute_min_year = 1800
                 }
-            )
-        
+            )    
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name="id")
-        # This does not work but should
-        #result = ds.compute_variables(['is_correct_year = dataset.year >= urbansim_constant.absolute_min_year'], dataset_pool=dataset_pool)
-        #self.assertEqual(ma.allequal(result, array([1,1,0,0])), True)
+        result = ds.compute_variables(['is_correct_year = dataset.year >= urbansim_constant.absolute_min_year'], dataset_pool=dataset_pool)
+        self.assertEqual(ma.allequal(result, array([1,1,0,0])), True)
         
 if __name__ == '__main__':
     opus_unittest.main()

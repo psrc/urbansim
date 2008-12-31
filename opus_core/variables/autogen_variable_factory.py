@@ -44,6 +44,9 @@ class AutogenVariableFactory(object):
     _named_constants = ["True", "False", "bool8", "int8", "uint8", "int16", "uint16", "int32", 
         "uint32", "int64", "uint64", "float32", "float64", "complex64", "complex128", "longlong"]
     
+    # datasets whose name ends in _constant_suffix are treated as constant datasets
+    _constant_suffix = '_constant'
+    
     # counter for automatically-generated class names
     _autogen_counter = 0
     
@@ -390,6 +393,9 @@ class AutogenVariableFactory(object):
             self._analyze_one_dataset_name(receiver)
 
     def _analyze_one_dataset_name(self, name):
+        # if 'name' ends in self._constant_suffix ignore it as far as determining the expression's dataset name
+        if name is None or name.endswith(self._constant_suffix):
+            return
         if self._has_multiple_owner_datasets:
             return
         if self._owner_dataset_name is None:
@@ -423,16 +429,18 @@ class AutogenVariableFactory(object):
         dm = 4*' ' + 'def dependencies(self): \n' + 8*' ' + 'return ['
         need_comma = False
         for pkg, ds, short in self._dependents:
-            if need_comma:
-                dm = dm + ', '
-            else:
-                need_comma = True  # put in a comma the next time around the loop
-            if ds is None:
-                dm = dm + 'self.get_dataset().get_dataset_name()+".%s"' % short
-            elif pkg is None:
-                dm = dm + '"%s.%s"' % (ds, short)
-            else:
-                dm = dm + '"%s.%s.%s"' % (pkg, ds, short)
+            # if the dataset name ends in self._constant_suffix don't add it to the dependencies
+            if ds is None or not ds.endswith(self._constant_suffix):
+                if need_comma:
+                  dm = dm + ', '
+                else:
+                    need_comma = True  # put in a comma the next time around the loop
+                if ds is None:
+                    dm = dm + 'self.get_dataset().get_dataset_name()+".%s"' % short
+                elif pkg is None:
+                    dm = dm + '"%s.%s"' % (ds, short)
+                else:
+                    dm = dm + '"%s.%s.%s"' % (pkg, ds, short)
         # add dependency info for aggregation variables, if any
         for receiver, method, pkg, aggregated_dataset, aggregated_attr, intermediates, op in self._aggregation_calls:
             if need_comma:
@@ -459,7 +467,11 @@ class AutogenVariableFactory(object):
         # or urbansim.gridcell).
         already_generated = Set()
         for pkg, ds, short in self._dependents:
-            getter = 'self.get_dataset().get_attribute("%s")' % short
+            # if the dataset name ends in self._constant_suffix, get the dataset out of the dataset pool; otherwise it is self.get_dataset()
+            if ds is not None and ds.endswith(self._constant_suffix):
+                getter = 'dataset_pool.get_dataset("%s").get_attribute("%s")' % (ds,short)
+            else:
+                getter = 'self.get_dataset().get_attribute("%s")' % short
             if ds is None:
                 # the dependent is an unqualified attribute name
                 compute_method = compute_method + 8*' ' + '%s = %s \n' % (short, getter)

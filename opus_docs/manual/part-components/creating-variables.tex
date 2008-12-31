@@ -23,7 +23,7 @@ arrays.  Here are some examples.
 
 \begin{itemize}
 
-\item \code{hwy_300 = gridcell.distance_to_highway<300} generates a dummy
+\item \code{gridcell.distance_to_highway<300} generates a dummy
   variable whose value is 1 for gridcells that have an attribute value of
   distance to highway less than 300 meters, and otherwise 0.  In this case,
   we are operating on a primary attribute of gridcells, namely
@@ -31,14 +31,13 @@ arrays.  Here are some examples.
   attribute is part of the data that we initially load into the model, as
   opposed to data we compute within the model (computed attributes).  
 
-\item \code{ln_pop = ln(urbansim.gridcell.population} computes the log of
+\item \code{ln(urbansim.gridcell.population} computes the log of
   an existing variable, \code{population}, which is in the
   \package{urbansim} package and applies to the gridcell dataset.
 
-\item \code{pop_emp_ratio = urbansim.gridcell.population /
-  urbansim.gridcell.number_of_jobs} computes the ratio of population to
-  employment, using variables stored in the urbansim package, associated
-  with the gridcell dataset.
+\item \code{urbansim.gridcell.population / urbansim.gridcell.number_of_jobs}
+  computes the ratio of population to employment, using variables stored 
+  in the urbansim package, associated with the gridcell dataset.
 
 \end{itemize}
 
@@ -49,13 +48,13 @@ as summing the population in households that live in a gridcell.  For
 example, this variable defines the population in each zone, by aggregating
 the number of people in each gridcell contained in that zone:
 
-\code{population = zone.aggregate(urbansim.gridcell.population)}
+\code{zone.aggregate(urbansim.gridcell.population)}
 
 Sometimes multiple levels of geography are required in the aggregation.
 For example, the following variable computes the population for each
 parcel:
 
-\code{population = parcel.aggregate(household.persons, intermediates = [building])}
+\code{parcel.aggregate(household.persons, intermediates = [building])}
 
 In the parcel-based models (e.g. the Seattle\_parcel sample model and
 data), households are assigned to buildings, and buildings are assigned to
@@ -72,7 +71,7 @@ which are connected to zones indirectly through buildings and then parcels:
 household $\rightarrow$ building $\rightarrow$ parcel $\rightarrow$ zone.
 So the expression is
 
-\code{density = household.disaggregate(urbansim\_parcel.zone.population\_density, intermediates = [building, parcel])}
+\code{household.disaggregate(urbansim\_parcel.zone.population\_density, intermediates = [building, parcel])}
 
 Note that for both aggregate and disaggregate methods, the first element,
 preceding the method name, is the name of the dataset to which the result
@@ -119,6 +118,11 @@ The attribute names used in an expression can be:
 \item a dataset-qualified variable name (for variables in the XML
   expression library) or primary attribute.  Example:
   \code{household.income}.
+
+\item an attribute of a constant dataset.  (Constant datasets are
+  identified syntacticly --- their names end in the string \verb|_constant|.)
+  Example: \code{urbansim_constant.near_highway_threshold}.
+
 \end{itemize}
 
 The variable names can include arguments (Section
@@ -368,7 +372,7 @@ As in the case of \method{aggregate} and \method{disaggregate}, the
 name, e.g. \verb|neighborhood.number_of_agents| for computing on the
 \verb|neighborhood| dataset.
 
-\subsection{When are Two Expressions Equal?}
+\subsection{Equality of Expressions}
 \label{sec:expression-equality}
 \index{expressions!equality}
 
