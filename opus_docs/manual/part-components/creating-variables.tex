@@ -31,7 +31,7 @@ arrays.  Here are some examples.
   attribute is part of the data that we initially load into the model, as
   opposed to data we compute within the model (computed attributes).  
 
-\item \code{ln(urbansim.gridcell.population} computes the log of
+\item \code{ln(urbansim.gridcell.population)} computes the log of
   an existing variable, \code{population}, which is in the
   \package{urbansim} package and applies to the gridcell dataset.
 
@@ -94,7 +94,7 @@ somewhat different --- for example, a name like
 variable.  (If you just evaluated this in a Python shell you'd get an
 error, saying that the \package{gridcell} package didn't have a
 \code{distance_to_cbd} attribute.)  Further, expressions are evaluated
-lazily.
+lazily (in other words, values are computed only when they are needed).
 
 An expression consists of an attribute name, or a function or operation
 applied to other expressions.  Thus, a more complex expression can be built
@@ -120,7 +120,7 @@ The attribute names used in an expression can be:
   \code{household.income}.
 
 \item an attribute of a constant dataset.  (Constant datasets are
-  identified syntacticly --- their names end in the string \verb|_constant|.)
+  identified syntactically --- their names end in the string \verb|_constant|.)
   Example: \code{urbansim_constant.near_highway_threshold}.
 
 \end{itemize}
@@ -175,7 +175,7 @@ follows.  These all operate on numpy arrays.
   constant. The function returns an array of numerator / denominator for
   all values where denominator is not 0, otherwise the constant (default
   value is 0). An optional fourth argument controls the type of the
-  resulting array. The default value is 'float32'.
+  resulting array. The default value is `float32'.
 \end{description}
 
 In addition, all of the functions in Numpy are available.  To avoid name
@@ -204,7 +204,7 @@ using the numpy \code{astype} method.  For example, the type of
 this expression is \code{float32}:
 
 \begin{verbatim}
-( ln(urbansim.gridcell.population) ).astype(float32)
+ln(urbansim.gridcell.population).astype(float32)
 \end{verbatim}
 
 The following numpy types can be used as the argument to the \code{astype}
@@ -220,9 +220,9 @@ If you access an attribute of a component of an interaction set in the
 context of that interaction set, the result is converted into a 2-d array
 and returned.  These 2-d arrays can then be multiplied, divided, compared,
 and so forth, using the numpy functions and operators.  For example,
-suppose we have an interaction set \file{household_x_gridcell}.  The
-component \file{household} set has an attribute \verb|income|, and
-the \file{gridcell}
+suppose we have an interaction set \code{household_x_gridcell}.  The
+component \code{household} set has an attribute \code{income}, and
+the \code{gridcell}
 component has an attribute \verb|cost|.  Then
 \begin{verbatim}
 urbansim.gridcell.cost*urbansim.household.income
@@ -372,6 +372,42 @@ As in the case of \method{aggregate} and \method{disaggregate}, the
 name, e.g. \verb|neighborhood.number_of_agents| for computing on the
 \verb|neighborhood| dataset.
 
+\subsection{Principal Dataset of an Expression}
+\index{expressions!principal dataset}
+\index{principal dataset}
+
+Every expression has a single \emph{principal dataset} to which it applies.
+For example, the principal dataset for \code{ln(gridcell.population)} is
+\code{gridcell}.  Generally, it wouldn't make sense for an expression to
+have more than one principal dataset --- for example, the expression
+\code{gridcell.population+zone.population} doesn't make sense semantically.
+
+There are a few additional aspects of this rule:
+
+\begin{itemize}
+
+\item A constant dataset doesn't count as a principal dataset --- for example,
+\code{gridcell.distance_to_highway<urbansim_constant.near_highway_threshold}
+is a meaningful expression, whose principal dataset is \code{gridcell}.
+(\code{urbansim_constant.near_highway_threshold} returns an array of
+length 1, and numpy replicates that value for each gridcell, so that the
+value of the whole expression is an
+array of booleans of the same length as the \code{gridcell} dataset.)
+
+\item For an \code{aggregate} or \code{disaggregate} expression, the
+  principal dataset is the dataset being aggregated or disaggregated to,
+  i.e.\ the dataset on which the aggregate or disaggregate method is being
+  called.  For example, \code{zone} is the principal dataset for
+  \code{zone.aggregate(gridcell.population)}.
+
+\item For expressions involving interaction sets, different subexpressions
+  can reference one or the other of the datasets being interacted.
+  For example, the principal dataset for
+  \code{urbansim.gridcell.cost*urbansim.household.income} is
+  \code{household_x_gridcell}.
+
+\end{itemize}
+
 \subsection{Equality of Expressions}
 \label{sec:expression-equality}
 \index{expressions!equality}
@@ -385,8 +421,9 @@ urbansim.gridcell.population + 1
 \end{verbatim}
 
 However, two textually different expressions are \emph{not} equivalent,
-even if they are algebraically equal.  For example,
-\verb|1 + urbansim.gridcell.population| is different from the previous
+even if they are algebraically equal, and the system will treat them as
+two different variables.  For example,
+\verb|1+urbansim.gridcell.population| is different from the previous
 expressions.  In many cases this doesn't matter.  Reasons it may matter
 are: (1) if the resulting value uses a lot of memory or takes a long time
 to compute, having a second copy of the value will waste memory or
