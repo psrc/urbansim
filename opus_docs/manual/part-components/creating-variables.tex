@@ -107,7 +107,7 @@ up from simpler expressions.  For example, here are some legal expressions:
 
 \end{itemize}
 
-\subsection{Variable Names in Expressions}
+\section{Variable Names in Expressions}
 
 The attribute names used in an expression can be:
 
@@ -133,7 +133,7 @@ matches the variable definition for
   to variables is not ideal --- we hope to replace it with a more standard
   syntax in the future.}
 
-\subsection{Unary Functions for Opus Expressions}
+\section{Unary Functions for Opus Expressions}
 \label{sec:functions-for-opus-expressions}
 
 There is a set of unary functions defined to use in expressions, as
@@ -185,7 +185,7 @@ of all the values in a variable \code{v}:
 
 \code{numpy.reciprocal(v)}
 
-\subsection{Operators for Opus Expressions}
+\section{Operators for Opus Expressions}
 \index{numpy!operators}
 
 All of the numpy operators can be used in Opus expressions, including
@@ -194,7 +194,7 @@ numpy semantics for these --- for example, \verb|*| does elementwise
 multiplication of two numpy arrays, or with a scalar argument, scales all
  the elements in an array, e.g.\ \code{1.2*household.income}.
 
-\subsection{Casting the Value of an Expression}
+\section{Casting the Value of an Expression}
 \index{casting}
 
 Normally the value of a variable defined by an expressions will be a
@@ -213,7 +213,7 @@ method: \code{bool8}, \code{int8}, \code{uint8}, \code{int16},
 \code{float32}, \code{float64}, \code{complex64}, \code{complex128}, and
 \code{longlong}.
  
-\subsection{Interaction Sets}
+\section{Interaction Sets}
 \index{interaction sets}
 
 If you access an attribute of a component of an interaction set in the
@@ -236,7 +236,7 @@ complex expressions.  For example, if we wanted to give everyone
 a \$5000 income boost, and also scale the result, this could be done using
 \verb|(household.income+5000)*gridcell.cost * 1.2|.
 
-\subsection{Aggregation and Disaggregation}
+\section{Aggregation and Disaggregation}
 \label{sec:aggregation}
 \index{aggregation} \index{disaggregation}
 
@@ -349,7 +349,7 @@ operations.  However, this isn't visible to the user.)  The result of an
 aggregation or disaggregation can also be used in more complex expressions,
 e.g. \code{ln(2*aggregate(gridcell.population))}.
 
-\subsection{Number of Agents}
+\section{Number of Agents}
 \index{number_of_agents}
 
 A common task in modeling is to determine a number of agents of one dataset
@@ -372,7 +372,7 @@ As in the case of \method{aggregate} and \method{disaggregate}, the
 name, e.g. \verb|neighborhood.number_of_agents| for computing on the
 \verb|neighborhood| dataset.
 
-\subsection{Principal Dataset of an Expression}
+\section{Principal Dataset of an Expression}
 \index{expressions!principal dataset}
 \index{principal dataset}
 
@@ -408,7 +408,7 @@ array of booleans of the same length as the \code{gridcell} dataset.)
 
 \end{itemize}
 
-\subsection{Equality of Expressions}
+\section{Equality of Expressions}
 \label{sec:expression-equality}
 \index{expressions!equality}
 
@@ -433,7 +433,7 @@ this reason, good practice is to put each expression that you'll need for a
 given package and dataset in the expression library.  Elsewhere use its
 name.  (Also see Section \ref{sec:expressions-aliasing}.)
 
-\subsection{Names and Aliasing}
+\section{Names and Aliasing}
 \label{sec:expressions-aliasing}
 \index{aliasing}
 
