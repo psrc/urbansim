@@ -18,7 +18,7 @@
 aliases = [
 #   "construction_cost_per_unit = development_project_proposal.disaggregate(urbansim_parcel.development_template.construction_cost_per_unit)",
 #   "construction_cost = (urbansim_parcel.development_project_proposal.construction_cost_per_unit * urbansim_parcel.development_project_proposal.units_proposed).astype(float32)",
-   "construction_cost = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.component_construction_cost)",
+   "construction_cost = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.construction_cost)",
    "total_revenue = (urbansim_parcel.development_project_proposal.building_sqft * development_project_proposal.unit_price_expected).astype(float32)",
    "unit_price = development_project_proposal.disaggregate(urbansim_parcel.parcel.unit_price)",
    "existing_units = development_project_proposal.disaggregate(urbansim_parcel.parcel.existing_units)",
