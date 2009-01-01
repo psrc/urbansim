@@ -32,7 +32,7 @@ cache_directory = r'/Volumes/Data/opus/data/sanfrancisco/runs/run_2.2008_12_30_1
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2005, 2007, 2010],
+    years = [2001, 2002, 2005, 2007, 2010, 2020, 2030],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         ),       
