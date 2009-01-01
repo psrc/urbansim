@@ -60,8 +60,20 @@ class Tests(opus_unittest.OpusTestCase):
             'development_template':
             {
                 'template_id': array([1,2,3,4]),
-                'construction_cost_per_unit': array([200000, 200, 90, 100000])
+                'density_type': array(['units_per_acre', 'far', 'far', 'units_per_acre' ]),
+#                'construction_cost_per_unit': array([200000, 200, 90, 100000])
             },
+            'development_template_component':
+            {
+                'component_id': array([1, 2, 3, 4, 5, 6]),
+                'template_id':  array([1, 2, 2, 3, 3, 4]),
+                'percent_building_sqft':      array([100,  80,   20,   50, 50, 100]),
+                'building_sqft_per_unit':     array([4000, 400,  1,    1,  1,  1000]),
+                'construction_cost_per_unit': array([50,   200,  200,  80, 100, 100]),
+#                'building_type':              array([19,   4,    3,    13, 3,   19]), 
+                'is_residential':             array([1,    1,    0,    0,  0,   1]),
+#                'construction_cost_per_unit': array([200000, 200, 90, 100000])
+            },            
             'building':
             {
                 "building_id":       array([500,   500,    1000000]),
@@ -92,7 +104,17 @@ class Tests(opus_unittest.OpusTestCase):
                 "units_proposed":array([1, 1500, 2000, 8, 1000, 4000, 3, 2, 8000, 1000000, 4]),
                 "building_sqft": array([200, 1500, 2000, 3000, 1000, 4000, 500, 350, 8000, 1000000, 3500])
                 
+            },
+            'development_project_proposal_component':
+            {
+                "proposal_component_id":array([1,  2, 3,  4, 5,  6,  7,  8,  9,10,11,12, 13,14,15, 16,  17]),
+                "component_id":         array([1,  2, 3,  4, 5,  6,  2,  3,  4, 5, 6, 1,  2, 3, 4,  5,  6]),
+                "proposal_id":          array([1,  2, 2,  3, 3,  4,  5,  5,  6, 6, 7, 8,  9, 9, 10, 10, 11]),
+                "template_id":          array([1,  2, 2,  3, 3,  4,  2,  2,  3, 3, 4, 1,  2, 2, 3,  3,  4]),
+                'is_residential':       array([1,  1, 0,  0, 0,  1,  1,  0,  0, 0, 1, 1,  1, 0, 0,  0,  1]),
+                
             }
+            
             }
         )
         
