@@ -13,5 +13,5 @@
 # 
 
 aliases = [
-           "building_type = household.disaggregate(building.building_type)",
+           "building_type_id = household.disaggregate(building.building_type_id)",
            ]
