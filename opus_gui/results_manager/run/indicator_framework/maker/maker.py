@@ -36,11 +36,12 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.results_manager import ResultsManager
 
 class Maker(object):
-    def __init__(self, project_name, test = False, expression_library = None):
+    def __init__(self, project_name, test = False, expression_library = None, ignore_cache = False):
         self.computed_indicators = {}
         self.test = test
         self.project_name = project_name
         self.expression_library = expression_library
+        self.ignore_cache = ignore_cache
         
     def create(self, indicator, source_data):
         computed_indicators = self.create_batch(
@@ -154,7 +155,7 @@ class Maker(object):
         if not os.path.exists(storage_location):
             os.mkdir(storage_location)
         else:
-            if store.table_exists(table_name = table_name):
+            if not self.ignore_cache and store.table_exists(table_name = table_name):
                 already_computed_attributes = store.get_column_names(table_name = table_name)
                 
         attributes = dataset.get_id_name() + [ind.attribute 
