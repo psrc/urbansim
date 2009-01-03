@@ -405,7 +405,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         dirty_flag = self.toolboxBase.projectIsDirty()
 
         if file_name is not None:
-            file_name = file_name.split(os.sep)[-1]
+            file_name = os.path.basename(str(file_name))
         title = app_name # default to only app name
         if proj_name: # proj_name is None when no project is loaded
             if dirty_flag:
