@@ -541,7 +541,9 @@ class ResultsManagerXMLHelper:
             for dir in os.listdir(baseyear_directory):
                 if len(dir) == 4 and dir.isdigit():
                     years.append(int(dir))
-            start_year = min(years)
+            #the baseyear data will always start at a single given year, though there may be data from prior years
+            #start_year = min(years)
+            start_year = max(years)
             end_year = max(years)
             run_name = 'base_year_data'
             run_id = run_manager._get_new_run_id()
