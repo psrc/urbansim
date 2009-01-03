@@ -69,41 +69,49 @@ class Tests(opus_unittest.OpusTestCase):
                 'template_id':  array([1, 2, 2, 3, 3, 4]),
                 'percent_building_sqft':      array([100,  80,   20,   50, 50, 100]),
                 'building_sqft_per_unit':     array([4000, 400,  1,    1,  1,  1000]),
-                'construction_cost_per_unit': array([50,   200,  200,  80, 100, 100]),
+                ## construction_cost_per_unit is actually construction_cost_per_sqft
+                'construction_cost_per_unit': array([50,   20,  20,  80, 100, 100]),
 #                'building_type':              array([19,   4,    3,    13, 3,   19]), 
                 'is_residential':             array([1,    1,    0,    0,  0,   1]),
 #                'construction_cost_per_unit': array([200000, 200, 90, 100000])
             },            
             'building':
             {
-                "building_id":       array([500,   500,    1000000]),
+                "building_id":       array([1,   2,    3]),
                 "building_type_id":  array([1,   2,    3]),
-                "building_sqft":     array([500,   500,    1000000]),
-                "parcel_id":        array([1,   2,    3]),
+                "building_sqft":     array([500, 1500, 1000000]),
+                "parcel_id":         array([1,   2,    3]),
             },
             'demolition_cost_per_sqft':
             {
-                "building_type_id":        array([1,   2,    3]),
-                "demolition_cost_per_sqft":       array([500,   500,    1000000]),
+                "building_type_id":         array([1,   2,    3]),
+                "demolition_cost_per_sqft": array([50,   25,  15]),
             },
             
             'parcel':
             {
-                "parcel_id":        array([1,   2,    3]),
-                "unit_price":       array([500,   500,    1000000]),
-                "existing_units":   array([2,    1,      1])
+                "parcel_id":        array([1,        2,         3]),
+                "parcel_sqft":      array([20000,  45360,  90000]),
+                "unit_price":       array([50,     500,    100000]),
+                "existing_units":   array([20000,  1000,        1]),
+                "improvement_value":array([0,    150000,    60000]), 
             },
+                        
             'development_project_proposal':
             {
                 "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
                 "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
                 "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4]),
-                "unit_price_expected":array([360000/200.0, 400000/1500.0, 400000/2000.0, 200000/3000.0, 330000/1000.0, 420000/4000.0, 
-                                                480000/500.0, 1400000/350.0, 4600000/8000.0, 200000000/1000000.0, 1000000/3500.0]),
+                "unit_price_expected":array([560000/2000.0, 400000/1500.0, 400000/2000.0, 200000/3000.0, 330000/1000.0, 420000/4000.0, 
+                                                480000/5000.0, 1400000/3050.0, 4600000/8000.0, 200000000/1000000.0, 1000000/3500.0]),
                 "is_redevelopment":array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
                 "units_proposed":array([1, 1500, 2000, 8, 1000, 4000, 3, 2, 8000, 1000000, 4]),
-                "building_sqft": array([200, 1500, 2000, 3000, 1000, 4000, 500, 350, 8000, 1000000, 3500])
-                
+                "building_sqft": array([2000, 1500, 2000, 3000, 1000, 4000, 5000, 3050, 8000, 1000000, 3500]),
+                "is_redevelopment":array([0,  0,  1,  1, 0,  1, 1, 0, 1, 1,  1]),
+                "land_area_taken": array([10000, 20000, 10000, 20000,
+                                          22680, 45360, 15120, 
+                                          45000, 45000, 90000, 9000,  
+                                          ]),
             },
             'development_project_proposal_component':
             {
@@ -117,11 +125,26 @@ class Tests(opus_unittest.OpusTestCase):
             
             }
         )
-        
-        should_be = array([0.79104478, 0.32890365,  1.20994475,  -0.75031211,  
-                             0.64588529, 0.16504854, 0.59733777, 
-                             0.000, 0.76923077, 1.1978022, -0.28571429])
-        
+## revenue
+#array([560000/2000.0, 400000/1500.0, 400000/2000.0, 200000/3000.0, 330000/1000.0, 420000/4000.0, 
+#       480000/5000.0, 1400000/3050.0, 4600000/8000.0, 200000000/1000000.0, 1000000/3500.0]),
+
+## acquisition cost        
+#                    array([500000, 1000000, 500000, 1000000,
+#                           175000,  500000, 266666.666, 
+#                            20000,   80000, 100000,   64000])
+## demolition cost
+#array([0, 0, 50*500, 50*500, 
+#       0, 25*1500, 25*1500,
+#       0, 15*1000000, 15*1000000, 15*1000000])       
+## construction cost
+#array([50*4000, 1500*.8*20+1500*.2*20, 2000*.5*80+2000*.5*100, 8*1000*100, 
+#              1000*.8*20+1000*.2*20, 4000*.5*80+4000*.5*100, 3*1000*100,
+#              2*4000*50, 8000*.8*20+8000*.2*1*20, 1000000*.5*80+1000000*.5*100, 4*1000*100])  
+        should_be = array([[-0.2       , -0.61165049, -0.43262411, -0.89041096,  0.69230769,
+                        -0.53203343, -0.20551724,  2.33333333, -0.69816273,  0.90294957,
+                        -0.93533368]])
+
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
 
 if __name__=='__main__':
