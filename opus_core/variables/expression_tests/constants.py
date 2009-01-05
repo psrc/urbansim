@@ -12,21 +12,19 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset import Dataset
-from opus_core.variables.variable_factory import VariableFactory
 from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import array, ma
-from sets import Set
 
 
 class Tests(opus_unittest.OpusTestCase):
 
     def test_constants(self):
         # test an expression involving two dataset names, one of which is *_constant
-        expr = "test_agent.age<=urbansim_constant.young_age"
+        expr = "test_agent.age<=opus_constant.young_age"
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
             table_name='test_agents',
@@ -35,7 +33,15 @@ class Tests(opus_unittest.OpusTestCase):
                 "id":array([1,3,4,10])
                 }
             )
-        # Test that the dataset name is correct for expr.  It should be test_agent -- urbansim_constant just holds constants, 
+        storage.write_table(
+            table_name='opus_constants',
+            table_data={
+                "young_age":array([35]),
+                "opus_constant_id":array([1])
+                }
+            )
+        dataset_pool = DatasetPool(storage=storage)
+        # Test that the dataset name is correct for expr.  It should be test_agent -- opus_constant just holds constants, 
         # and is ignored as far as finding the dataset name for the expression.
         name = VariableName(expr)
         autogen = name.get_autogen_class()
@@ -45,9 +51,9 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(autogen().dependencies(), ['test_agent.age'])
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
         # uncomment this once the test is rewritten to not use urbansim_constant
-#        result = dataset.compute_variables([expr])
-#        should_be = array( [True,True,False,False] )
-#        self.assertEqual( ma.allclose( result, should_be, rtol=1e-7), True)
+        result = dataset.compute_variables([expr], dataset_pool=dataset_pool)
+        should_be = array( [True,True,False,False] )
+        self.assertEqual( ma.allequal( result, should_be), True)
 
 if __name__=='__main__':
     opus_unittest.main()
