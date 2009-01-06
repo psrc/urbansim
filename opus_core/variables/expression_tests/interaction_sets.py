@@ -40,10 +40,10 @@ class Tests(opus_unittest.OpusTestCase):
                            [20000, 40000], 
                            [500000, 1000000]])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), msg = "Error in " + expr)
-        # the VariableName for this expression should not have dataset_name set, since there are
-        # two different dataset names in expr
         name = VariableName(expr)
-        self.assertEqual(name.get_dataset_name(), None, msg="bad value for dataset")
+        # since the expression involves both test_agent and test_location, the dataset name should be
+        # test_agent_x_test_location
+        self.assertEqual(name.get_dataset_name(), 'test_agent_x_test_location', msg="bad value for dataset")
 
     def test_divide(self):
         expr = 'test_location.cost/test_agent.income'

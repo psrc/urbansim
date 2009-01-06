@@ -50,7 +50,6 @@ class Tests(opus_unittest.OpusTestCase):
         # make an instance of the class and check the dependencies (it shouldn't depend on urbansim_constant)
         self.assertEqual(autogen().dependencies(), ['test_agent.age'])
         dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
-        # uncomment this once the test is rewritten to not use urbansim_constant
         result = dataset.compute_variables([expr], dataset_pool=dataset_pool)
         should_be = array( [True,True,False,False] )
         self.assertEqual( ma.allequal( result, should_be), True)

@@ -19,6 +19,7 @@ import parser
 from types import TupleType
 from opus_core.variables.variable import Variable
 from opus_core.datasets.interaction_dataset import InteractionDataset
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.variables.variable_name import VariableName, autogenvar_prefix
 from opus_core.variables.dummy_name import DummyName
 from opus_core.variables.dummy_dataset import DummyDataset, make_aggregation_call
@@ -49,7 +50,7 @@ class AutogenVariableFactory(object):
     
     # counter for automatically-generated class names
     _autogen_counter = 0
-    
+
     def __init__(self, expr):
         # expr is a string that is the expression being compiled into a variable
         self._expr = expr
@@ -60,12 +61,13 @@ class AutogenVariableFactory(object):
         self._alias = alias
         # the remaining instance variables are set by generate_variable_name_tuple (if called)
         #
-        # The owner_dataset is the dataset for which this expression is being evaluated (or
-        # None if not known).  If all of the attribute references in the expression are unqualified,
-        # then owner_dataset will remain None.  Otherwise all the qualified references must be to the
-        # same dataset (except inside an interaction function).
-        self._owner_dataset_name = None
-        self._has_multiple_owner_datasets = False
+        # The principal dataset is the dataset for which this expression is being evaluated.
+        # Except for expressions for interaction sets, all of the qualified references at the
+        # top level (not in aggregate or disaggregate calls) must be to the same dataset.  
+        # For interaction sets, the name will be n1_x_n2 where n1 and n2 are used in this expression.  
+        # To find the principal dataset, we find the dataset names used.  If just one, then that is 
+        # also the principal dataset name.  Otherwise the name will be n1_x_n2.
+        self._dataset_names_used = []
         # dependents is a set of dependents for expr.  Each element in 'dependents' 
         #     is a tuple (package,dataset,shortname).  For attributes named with just the
         #     un-qualified name, package and dataset will be None.  (This would be the case for
@@ -115,8 +117,18 @@ class AutogenVariableFactory(object):
             if same:
                 return (None, None, vars['shortname'], self._alias, None)
         # it's a more complex expression -- need to generate a new variable class
+        # first determine the principal dataset name
         (short_name, autogen_class) = self._generate_new_variable()
-        return (None, self._owner_dataset_name, short_name, self._alias, autogen_class)
+        n = len(self._dataset_names_used)
+        if n==0:
+            principal_dataset_name = None
+        elif n==1:
+            principal_dataset_name = self._dataset_names_used[0]
+        elif n==2:
+            principal_dataset_name = DatasetFactory().get_interaction_set_name(self._dataset_names_used[0], self._dataset_names_used[1])
+        else:
+            raise ValueError, "unable to determine principal dataset name for expression (too many names) " + self._expr
+        return (None, principal_dataset_name, short_name, self._alias, autogen_class)
     
     def get_parsetree(self):
         return self._expr_parsetree
@@ -379,10 +391,8 @@ class AutogenVariableFactory(object):
                 result[kwd] = val         
         return result
     
-    # Determine whether this expression has just one dataset.  If so, set self._owner_dataset_name to that
-    # dataset.  If it uses more than one dataset (which should only be the case for an interaction set - 
-    # although this is currently not checked), set self._owner_dataset_name back to None, and set 
-    # self._has_multiple_owner_datasets to True.
+    # Analyze the dataset names to try and determine the principal dataset name.  If this expression
+    # uses more than one dataset it must be for an interaction set.
     def _analyze_dataset_names(self):
         for pkg, ds, short in self._dependents:
             if ds is not None:
@@ -395,14 +405,9 @@ class AutogenVariableFactory(object):
     def _analyze_one_dataset_name(self, name):
         # if 'name' ends in self._constant_suffix ignore it as far as determining the expression's dataset name
         if name is None or name.endswith(self._constant_suffix):
-            return
-        if self._has_multiple_owner_datasets:
-            return
-        if self._owner_dataset_name is None:
-            self._owner_dataset_name = name
-        elif name!=self._owner_dataset_name:
-            self._has_multiple_owner_datasets = True
-            self._owner_dataset_name = None  
+            pass
+        elif name not in self._dataset_names_used:
+            self._dataset_names_used.append(name)
 
     # Analyze the arguments for a function or method call.  This is a separate method from _analyze_tree
     # because we need to treat the keywords in keyword arguments properly and not think they are variable names.
