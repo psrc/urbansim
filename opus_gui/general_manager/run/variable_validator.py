@@ -110,7 +110,7 @@ class VariableValidator(object):
                                                                  node_type = 'source_data')
         years = [int(str(vals['start_year']))]
 
-        result_generator = OpusResultGenerator(self.toolboxBase)
+        result_generator = OpusResultGenerator(self.toolboxBase, ignore_cache = True)
         result_generator.set_data(
                source_data_name = 'base_year_data',
                indicator_name = indicator_name,
