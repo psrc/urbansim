@@ -165,9 +165,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
 
         #Add editor tab
-        QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
+#        QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
         #Add python tab
-        QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
+#        QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
         #Add result browser tab
         QObject.connect(self.actLaunchResultBrowser, SIGNAL("triggered()"), self.openResultBrowser)
         #Add log tab
@@ -268,9 +268,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.openConfig(self.latest_project_file_name)
 
         ###T: removing these until they serve a purpose
-        self.menuUtilities.removeAction(self.actionPython_View)
+        #self.menuUtilities.removeAction(self.actionPython_View)
         #self.menuUtilities.removeAction(self.actionLog_View)
-        self.menuUtilities.removeAction(self.actionEditor_View)
+        #self.menuUtilities.removeAction(self.actionEditor_View)
 
 
     def getDbConnectionNames(self):
