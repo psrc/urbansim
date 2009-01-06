@@ -23,7 +23,16 @@ class DatasetFactory(object):
         - the dataset class is called 'MyGrizzlyBearDataset'
     Any exceptions to this convention should be listed in the 'exceptions' list to allow
     dataset names, tables, modules, and classes to be determined.
+    
+    To allow the expression compiler to deduce the types of expressions for interaction sets, the class variable
+    interaction_set_names is a list of standard names for interaction sets (since otherwise the compiler doesn't
+    know which order to list the component sets).
     """
+    
+    interaction_set_names = ['development_project_x_gridcell', 'faz_x_land_use_type',
+        'household_x_building', 'household_x_gridcell', 'household_x_neighborhood', 'household_x_parcel', 'household_x_zone',
+        'job_x_building', 'job_x_gridcell', 'large_area_x_land_use_type',
+        'person_x_job', 'person_x_zone', 'test_x_test', 'test_agent_x_test_location', 'zone_x_employment_sector']
     
     # The exceptions list is a list of tuples
     #      (dataset_name, table_name, module_name, dataset_class_name)
@@ -178,6 +187,19 @@ class DatasetFactory(object):
             argstmp.clear()
             
         return datasets
+        
+    def get_interaction_set_name(self, n1, n2):
+        """return the interaction dataset name for datasets named n1 and n2"""
+        name1 = n1 + '_x_' + n2
+        if name1 in self.interaction_set_names:
+            return name1
+        name2 = n2 + '_x_' + n1
+        if name2 in self.interaction_set_names:
+            return name2
+        # default is to alphabetize n1 and n2
+        d = min(name1, name2)
+        logger.log_warning('interaction dataset name for %s and %s not in DatasetFactory.interaction_set_names -- defaulting to %s' % (n1, n2, d))
+        return d
     
     def _table_module_class_names_for_dataset(self, dataset_name):
         """
@@ -235,6 +257,12 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
         self.assertEqual(ds.get_id_name()[0], '_hidden_id_')
         self.assertEqual(ds.get_dataset_name(), 'frog')
         self.assertEqual(ds.size(), 3)
+        
+    def test_get_interaction_set_name(self):
+        factory = DatasetFactory()
+        self.assertEqual(factory.get_interaction_set_name('household', 'gridcell'), 'household_x_gridcell')
+        self.assertEqual(factory.get_interaction_set_name('gridcell', 'household'), 'household_x_gridcell')
+        self.assertEqual(factory.get_interaction_set_name('squid', 'clam'), 'clam_x_squid')
 
 if __name__ == '__main__':
     opus_unittest.main()
