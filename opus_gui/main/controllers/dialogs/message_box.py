@@ -58,7 +58,7 @@ class MessageBox(QDialog, Ui_dlgMessageBox):
     WARNING = 1
     INFORMATION = 2
     
-    def __init__(self, mainwindow, text, detailed_text, mode = ERROR, flags = Qt.Dialog):
+    def __init__(self, mainwindow, text, detailed_text = None, mode = ERROR, flags = Qt.Dialog):
         QDialog.__init__(self, mainwindow, flags)
         self.setupUi(self)
         if mode == MessageBox.ERROR:
