@@ -119,7 +119,7 @@ class Ui_dlgMessageBox(object):
 
     def retranslateUi(self, dlgMessageBox):
         dlgMessageBox.setWindowTitle(QtGui.QApplication.translate("dlgMessageBox", " ", None, QtGui.QApplication.UnicodeUTF8))
-        dlgMessageBox.setWindowFilePath(QtGui.QApplication.translate("dlgMessageBox", " ", None, QtGui.QApplication.UnicodeUTF8))
+        #dlgMessageBox.setWindowFilePath(QtGui.QApplication.translate("dlgMessageBox", " ", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnShowDetails.setText(QtGui.QApplication.translate("dlgMessageBox", "Show Details...", None, QtGui.QApplication.UnicodeUTF8))
         self.btnOk.setText(QtGui.QApplication.translate("dlgMessageBox", "Ok", None, QtGui.QApplication.UnicodeUTF8))
 
