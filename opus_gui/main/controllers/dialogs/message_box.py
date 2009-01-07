@@ -71,6 +71,10 @@ class MessageBox(QDialog, Ui_dlgMessageBox):
         self.lblImage.setPixmap(img)
         self.lblText.setText('<qt><b>%s</b></qt>'%text)
         self.lblDetailText.setText(QString(detailed_text))
+        if detailed_text != '' and detailed_text != None:
+            self.lblDetailText.setText(QString(detailed_text))
+        else:
+            self.pbnShowDetails.hide()
         self.details_showing = True
         self.detail_expansion_size = self.saDetails.height() + self.gridLayout.verticalSpacing()
         self.on_pbnShowDetails_released()
