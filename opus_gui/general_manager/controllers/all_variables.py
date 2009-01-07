@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString, Qt, QObject, SIGNAL, QModelIndex, QTimer
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog
 from PyQt4.QtXml import QDomNode
 
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.all_variables_table_model import AllVariablesTableModel
 from opus_gui.general_manager.views.all_variables_table_view_delegate import AllVariablesTableViewDelegate
 from opus_gui.general_manager.views.ui_all_variables_edit import Ui_AllVariablesEditGui
@@ -125,23 +125,23 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_parse_errors(variables = [self._get_variable_definition()])
 
         if success:
-            ErrorForm.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self.mainwindow,
                               text = 'Variable syntax check successful!',
                               detailed_text = '')
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = "There is a variable syntax error.",
                               detailed_text = errorString)
 
     def on_cboCheckData_released(self):
         success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_data_errors(variables = [self._get_variable_definition()])
         if success:
-            ErrorForm.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self.mainwindow,
                               text = 'Variable checked successfully against baseyear data!',
                               detailed_text = '')
         else:
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = "There was an error executing the variable on the baseyear data.",
                               detailed_text = "<br><br>".join(errors))
 
@@ -158,7 +158,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         elif self.cbModelUse.isChecked():
             use = 'model variable'
         else:
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = 'The variable must have a use (Indicator and/or Model variable) specified!',
                               detailed_text = '')
             
@@ -527,12 +527,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         success, errors = self.tm.checkSyntax(row = row)
         
         if success:
-            ErrorForm.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self.mainwindow,
                               text = 'Variable syntax check successful!',
                               detailed_text = '')
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = "There is a variable syntax error.",
                               detailed_text = errorString)
 
@@ -540,11 +540,11 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         row = self.currentIndex.row()
         success, errors = self.tm.checkAgainstData(row = row)
         if success:
-            ErrorForm.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self.mainwindow,
                               text = 'Variable checked successfully against baseyear data!',
                               detailed_text = '')
         else:
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = "There was an error executing the variable on the baseyear data.",
                               detailed_text = "<br><br>".join(errors))
 

@@ -16,7 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL, QModelIndex
 from PyQt4.QtGui import QColor
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 import operator
 from opus_gui.general_manager.run.variable_validator import VariableValidator
@@ -211,11 +211,11 @@ class AllVariablesTableModel(QAbstractTableModel):
         success, msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = tocheck,
                                      ok_msg = 'All expressions for selected variables parse correctly and can be executed on the baseyear data!')
         if success:
-            ErrorForm.information(mainwindow = self.parentWidget,
+            MessageBox.information(mainwindow = self.parentWidget,
                               text = 'The expressions passed the tests.',
                               detailed_text = msg)            
         else:   
-            ErrorForm.warning(mainwindow = self.parentWidget,
+            MessageBox.warning(mainwindow = self.parentWidget,
                               text = 'Some or all expressions failed a test.',
                               detailed_text = msg)
             
@@ -230,11 +230,11 @@ class AllVariablesTableModel(QAbstractTableModel):
         success,msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = vars,
                                      ok_msg = 'All expressions parse correctly and can be executed on the baseyear data!')
         if success:
-            ErrorForm.information(mainwindow = self.parentWidget,
+            MessageBox.information(mainwindow = self.parentWidget,
                               text = 'The expressions passed the tests.',
                               detailed_text = msg)            
         else:   
-            ErrorForm.warning(mainwindow = self.parentWidget,
+            MessageBox.warning(mainwindow = self.parentWidget,
                               text = 'Some or all expressions failed a test.',
                               detailed_text = msg)
     

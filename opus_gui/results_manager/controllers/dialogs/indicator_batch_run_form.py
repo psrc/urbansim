@@ -13,7 +13,7 @@
 
 from PyQt4.QtCore import QString, QObject, SIGNAL
 from PyQt4.QtGui import QDialog
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -119,6 +119,6 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
         self.close()
 
     def runErrorFromThread(self,errorMessage):
-        ErrorForm.warning(mainwindow = self.mainwindow,
+        MessageBox.warning(mainwindow = self.mainwindow,
                           text = "There was a problem running the batch.",
                           detailed_text = errorMessage)

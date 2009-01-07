@@ -16,7 +16,7 @@
 from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 import os
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -259,7 +259,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             except:
                 errorInfo = formatExceptionInfo()
                 logger.log_error(errorInfo)
-                ErrorForm.error(mainwindow = self.mainwindow,
+                MessageBox.error(mainwindow = self.mainwindow,
                                 text = 'Could not get fixed field parameters for all columns',
                                 detailed_text = '')
                 return None

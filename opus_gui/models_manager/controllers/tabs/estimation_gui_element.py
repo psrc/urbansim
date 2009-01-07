@@ -15,7 +15,7 @@ from PyQt4.QtGui import QWidget, QIcon
 
 from opus_gui.models_manager.run.run_estimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
     def __init__(self, mainwindow, modelsManagerBase, estimation):
@@ -139,6 +139,6 @@ class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Estimation..."))
-        ErrorForm.warning(mainwindow = self.mainwindow,
+        MessageBox.warning(mainwindow = self.mainwindow,
                           text = "There was a problem with the estimation.",
                           detailed_text = errorMessage)

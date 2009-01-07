@@ -18,7 +18,7 @@ from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox
 from PyQt4.QtGui import QSplashScreen, QLabel, QWidget, QPushButton, QHBoxLayout
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 from PyQt4.QtXml import QDomDocument
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 # UI specific includes
 from opus_gui.main.views.ui_mainwindow import Ui_MainWindow
@@ -495,7 +495,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             return True
         except:
             errorMessage = formatExceptionInfo(custom_message = '')
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = "Unexpected error saving config.",
                               detailed_text = errorMessage)
             return False
@@ -527,7 +527,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.openConfig(fileName)
         except:
             errorMessage = formatExceptionInfo(custom_message = '')
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = "Unexpected error saving config.",
                               detailed_text = errorMessage)
 
@@ -559,7 +559,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             configFile = self.toolboxBase.runManagerTree.model.configFile
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = "Unexpected error closing config.",
                               detailed_text = errorMessage)
 

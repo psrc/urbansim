@@ -27,7 +27,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.run_manager import RunManager
 from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 
 class ResultsManagerBase(AbstractManagerBase):  
@@ -51,7 +51,7 @@ class ResultsManagerBase(AbstractManagerBase):
         if added_runs != []:
             run_data = '\n'.join(added_runs)
             msg = 'The following simulation runs have been automatically added to the results manager:\n\n%s'%run_data
-            ErrorForm.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self.mainwindow,
                               text = 'Simulation runs have been added to this project.',
                               detailed_text = msg)
 

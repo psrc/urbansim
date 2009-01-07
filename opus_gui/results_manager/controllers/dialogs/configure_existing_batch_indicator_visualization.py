@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.xml_helper_methods import get_child_values, ResultsManagerXMLHelper
@@ -96,7 +96,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             if viz_type == 'matplotlib_map' and dataset_name == 'parcel':
                 msg = 'Cannot create a Matplotlib map for parcel dataset. Please plot at a higher geographic aggregation or export to an external GIS tool.'
                 close = False
-                ErrorForm.warning(mainwindow = self.mainwindow,
+                MessageBox.warning(mainwindow = self.mainwindow,
                                 text = msg,
                                 detailed_text = '')
             else:

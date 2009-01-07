@@ -17,12 +17,12 @@
 from PyQt4.QtCore import QString, QSize
 from PyQt4.QtGui import QDialog, QPixmap
 # UI specific includes
-from opus_gui.main.views.ui_error_form import Ui_dlgErrorForm
+from opus_gui.main.views.ui_message_box import Ui_dlgMessageBox
 from opus_core.misc import directory_path_from_opus_path
 import os
 from PyQt4.QtCore import Qt
 
-class ErrorForm(QDialog, Ui_dlgErrorForm):
+class MessageBox(QDialog, Ui_dlgMessageBox):
     ERROR = 0
     WARNING = 1
     INFORMATION = 2
@@ -30,11 +30,11 @@ class ErrorForm(QDialog, Ui_dlgErrorForm):
     def __init__(self, mainwindow, text, detailed_text, mode = ERROR, flags = Qt.Dialog):
         QDialog.__init__(self, mainwindow, flags)
         self.setupUi(self)
-        if mode == ErrorForm.ERROR:
+        if mode == MessageBox.ERROR:
             img = QPixmap(':/Images/Images/big_error.png')
-        elif mode == ErrorForm.WARNING:
+        elif mode == MessageBox.WARNING:
             img = QPixmap(':/Images/Images/big_warning.png')
-        elif mode == ErrorForm.INFORMATION:
+        elif mode == MessageBox.INFORMATION:
             img = QPixmap(':/Images/Images/big_information.png')            
 
         self.lblImage.setPixmap(img)
@@ -66,26 +66,26 @@ class ErrorForm(QDialog, Ui_dlgErrorForm):
             self.adjustSize()
             
     def warning(mainwindow, text, detailed_text, flags = Qt.Dialog|Qt.WindowMaximizeButtonHint):
-        frm = ErrorForm(mainwindow = mainwindow, 
+        frm = MessageBox(mainwindow = mainwindow, 
                         text = text, 
                         detailed_text = detailed_text,
-                        mode = ErrorForm.WARNING,
+                        mode = MessageBox.WARNING,
                         flags = flags)
         frm.show()
 
     def error(mainwindow, text, detailed_text, flags = Qt.Dialog|Qt.WindowMaximizeButtonHint):
-        frm = ErrorForm(mainwindow = mainwindow, 
+        frm = MessageBox(mainwindow = mainwindow, 
                         text = text, 
                         detailed_text = detailed_text,
-                        mode = ErrorForm.ERROR,
+                        mode = MessageBox.ERROR,
                         flags = flags)
         frm.show()
 
     def information(mainwindow, text, detailed_text, flags = Qt.Dialog|Qt.WindowMaximizeButtonHint):
-        frm = ErrorForm(mainwindow = mainwindow, 
+        frm = MessageBox(mainwindow = mainwindow, 
                         text = text, 
                         detailed_text = detailed_text,
-                        mode = ErrorForm.INFORMATION,
+                        mode = MessageBox.INFORMATION,
                         flags = flags)
         frm.show()
 

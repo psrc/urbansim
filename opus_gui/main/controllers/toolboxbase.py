@@ -17,7 +17,7 @@ import StringIO
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QFileInfo, QFile, QIODevice
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from PyQt4.QtXml import QDomDocument
 
@@ -95,7 +95,7 @@ class ToolboxBase(object):
 
         # make sure all trees are clean and close them
         if not self.close_controllers():
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = 'There was an error removing the old config.',
                               detailed_text = 'Could not remove all manager trees. Try to restart OpusGui and open the project again'
                 )
@@ -112,7 +112,7 @@ class ToolboxBase(object):
             self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
         except Exception, ex:
             msg = formatExceptionInfo()
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = 'Failed to load the XML project file.',
                               detailed_text = msg
                 )
@@ -127,7 +127,7 @@ class ToolboxBase(object):
         self.opus_core_xml_configuration.full_tree.write(tempFilePath)
         if not self.configFile or not self.configFileTemp:
             msg = "Error reading the %s configuration file" % (xml_file)
-            ErrorForm.error(mainwindow = self.mainwindow,
+            MessageBox.error(mainwindow = self.mainwindow,
                               text = 'Error loading XML project file.',
                               detailed_text = msg
                 )
@@ -159,7 +159,7 @@ class ToolboxBase(object):
 
         # project loaded, show any XML version messages
         if self.opus_core_xml_configuration.version_warning_message:
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = 'Inconsistent version numbers found in XML files when loading project.',
                               detailed_text = self.opus_core_xml_configuration.version_warning_message
                 )

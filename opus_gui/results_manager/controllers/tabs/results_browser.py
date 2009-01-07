@@ -14,7 +14,7 @@
 from PyQt4.QtCore import QString, QObject, SIGNAL, Qt 
 from PyQt4.QtGui import QTabWidget, QWidget, \
                         QTableWidgetItem, QSizePolicy, QIcon
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -401,7 +401,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
     
     def runErrorFromThread(self,errorMessage):
         text = 'Error in computing or displaying indicator'
-        ErrorForm.error(mainwindow = self.mainwindow, 
+        MessageBox.error(mainwindow = self.mainwindow, 
                         text = text, 
                         detailed_text = errorMessage)
         

@@ -16,7 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import SIGNAL, QString, Qt
 from PyQt4.QtGui import QDialog
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.abstract_manager.views.ui_clonenode import Ui_CloneNodeGui
 
@@ -60,7 +60,7 @@ class RenameNodeGui(CloneNodeGui):
         
         # check that we got a valid node
         if not node.isElement():
-            ErrorForm.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self.mainwindow,
                               text = 'Invalid node',
                               detailed_text = 'Ignoring rename request for non element node.')
             self.close()

@@ -19,7 +19,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
-from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
@@ -489,6 +489,6 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Simulation Run..."))
-        ErrorForm.warning(mainwindow = self.mainwindow,
+        MessageBox.warning(mainwindow = self.mainwindow,
                           text = "There was a problem running the simulation.",
                           detailed_text = errorMessage)
