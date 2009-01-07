@@ -20,7 +20,7 @@ class VariableValidator(object):
     def __init__(self, toolboxBase):
         self.toolboxBase = toolboxBase
         # maximum number of lines in the error report (to prevent overlong dialogs)
-        self.max_lines = 12
+        self.max_lines = 100
         
     def validate(self, variables, ok_msg):
         parsing_successful, parsing_errors = self.check_parse_errors(variables)

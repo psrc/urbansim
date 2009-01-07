@@ -12,13 +12,14 @@
 # 
 
 from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, Qt, QVariant, QString, QTimer
-from PyQt4.QtGui import QWidget, QIcon, QDialog, QMessageBox
+from PyQt4.QtGui import QWidget, QIcon, QDialog
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
@@ -488,4 +489,6 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Simulation Run..."))
-        QMessageBox.warning(self.mainwindow,'Warning', errorMessage)
+        ErrorForm.warning(mainwindow = self.mainwindow,
+                          text = "There was a problem running the simulation.",
+                          detailed_text = errorMessage)

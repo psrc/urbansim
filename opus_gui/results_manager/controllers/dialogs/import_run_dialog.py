@@ -15,7 +15,8 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt
-from PyQt4.QtGui import QDialog, QFileDialog, QMessageBox
+from PyQt4.QtGui import QDialog, QFileDialog
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 from opus_gui.results_manager.views.ui_import_run_dialog import Ui_dlgImportRun
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
@@ -39,7 +40,9 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
         if not os.path.exists(path):
             msg = 'Cannot import, %s does not exist'%path
             logger.log_warning(msg)
-            QMessageBox.warning(self.mainwindow, 'Warning', QString(msg))
+            ErrorForm.warning(mainwindow = self.mainwindow,
+                            text = msg,
+                            detailed_text = '')
         else:
             cache_directory = path
             years = []
@@ -50,8 +53,10 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
             if years == []:
                 msg = 'Cannot import, %s has no run data'%path
                 logger.log_warning(msg)
-                QMessageBox.warning(self.mainwindow, 'Warning', QString(msg))
-
+                ErrorForm.warning(mainwindow = self.mainwindow,
+                                text = msg,
+                                detailed_text = '')
+                
             else:
                 start_year = min(years)
                 end_year = max(years)
@@ -78,10 +83,11 @@ class ImportRunDialog(QDialog, Ui_dlgImportRun):
                     self.xml_helper.update_available_runs()    
                     logger.log_status('Added run %s of project %s to run_activity table'%(run_name, project_name))
                 except:
-                    errorInfo = formatExceptionInfo(custom_message = 'Could not add run %s of project %s to run_activity table'%(run_name, project_name))
+                    errorInfo = formatExceptionInfo()
                     logger.log_error(errorInfo)
-                    QMessageBox.warning(self.mainwindow, 'Warning', QString(errorInfo))
-            
+                    ErrorForm.error(mainwindow = self.mainwindow,
+                                    text = 'Could not add run %s of project %s to run_activity table'%(run_name, project_name),
+                                    detailed_text = errorInfo)
                     
         self.close()
 

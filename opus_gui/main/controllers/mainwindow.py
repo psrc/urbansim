@@ -18,6 +18,7 @@ from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox
 from PyQt4.QtGui import QSplashScreen, QLabel, QWidget, QPushButton, QHBoxLayout
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 from PyQt4.QtXml import QDomDocument
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 # UI specific includes
 from opus_gui.main.views.ui_mainwindow import Ui_MainWindow
@@ -493,8 +494,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxBase.markProjectAsClean()
             return True
         except:
-            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
-            QMessageBox.warning(self, 'Warning', errorMessage)
+            errorMessage = formatExceptionInfo(custom_message = '')
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = "Unexpected error saving config.",
+                              detailed_text = errorMessage)
             return False
 
     def saveConfigAs(self):
@@ -523,8 +526,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # reopen the file that was just saved to make it the active one
             self.openConfig(fileName)
         except:
-            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
-            QMessageBox.warning(self, 'Warning', errorMessage)
+            errorMessage = formatExceptionInfo(custom_message = '')
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = "Unexpected error saving config.",
+                              detailed_text = errorMessage)
 
     def saveOrDiscardChanges(self):
         '''
@@ -554,7 +559,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             configFile = self.toolboxBase.runManagerTree.model.configFile
         except:
             errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
-            QMessageBox.warning(self, 'Warning', errorMessage)
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = "Unexpected error closing config.",
+                              detailed_text = errorMessage)
+
 
         # Check to see if there are changes to the current project, if a project is open
         if self.saveOrDiscardChanges() == False:

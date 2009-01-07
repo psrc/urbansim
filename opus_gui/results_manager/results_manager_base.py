@@ -15,7 +15,6 @@ from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrowser
 from opus_gui.results_manager.controllers.dialogs.indicator_batch_run_form import IndicatorBatchRunForm
-from opus_gui.results_manager.controllers.tabs.view_documentation_form import ViewDocumentationForm
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization import ConfigureNewBatchIndicatorVisualization
@@ -28,8 +27,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.run_manager import RunManager
 from opus_gui.abstract_manager.abstract_manager_base import AbstractManagerBase
 
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import QString
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 
 class ResultsManagerBase(AbstractManagerBase):  
@@ -53,7 +51,10 @@ class ResultsManagerBase(AbstractManagerBase):
         if added_runs != []:
             run_data = '\n'.join(added_runs)
             msg = 'The following simulation runs have been automatically added to the results manager:\n\n%s'%run_data
-            QMessageBox.information(self.mainwindow,'Simulation runs added', QString(msg))        
+            ErrorForm.information(mainwindow = self.mainwindow,
+                              text = 'Simulation runs have been added to this project.',
+                              detailed_text = msg)
+
             self.toolboxBase.resultsManagerTree.model.markAsDirty()
                 
                 

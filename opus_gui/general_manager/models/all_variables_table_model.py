@@ -15,7 +15,8 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL, QModelIndex
-from PyQt4.QtGui import QColor,QMessageBox
+from PyQt4.QtGui import QColor
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 import operator
 from opus_gui.general_manager.run.variable_validator import VariableValidator
@@ -210,9 +211,13 @@ class AllVariablesTableModel(QAbstractTableModel):
         success, msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = tocheck,
                                      ok_msg = 'All expressions for selected variables parse correctly and can be executed on the baseyear data!')
         if success:
-            QMessageBox.information(self.parentWidget, 'Expression check results', msg)
+            ErrorForm.information(mainwindow = self.parentWidget,
+                              text = 'The expressions passed the tests.',
+                              detailed_text = msg)            
         else:   
-            QMessageBox.warning(self.parentWidget, 'Expression check results', msg)    
+            ErrorForm.warning(mainwindow = self.parentWidget,
+                              text = 'Some or all expressions failed a test.',
+                              detailed_text = msg)
             
     def checkAllVariables(self):
         # check all the variables in the expression library
@@ -225,8 +230,12 @@ class AllVariablesTableModel(QAbstractTableModel):
         success,msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = vars,
                                      ok_msg = 'All expressions parse correctly and can be executed on the baseyear data!')
         if success:
-            QMessageBox.information(self.parentWidget, 'Expression check results', msg)
+            ErrorForm.information(mainwindow = self.parentWidget,
+                              text = 'The expressions passed the tests.',
+                              detailed_text = msg)            
         else:   
-            QMessageBox.warning(self.parentWidget, 'Expression check results', msg)
+            ErrorForm.warning(mainwindow = self.parentWidget,
+                              text = 'Some or all expressions failed a test.',
+                              detailed_text = msg)
     
     

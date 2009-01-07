@@ -12,8 +12,10 @@
 # 
 
 from PyQt4.QtCore import QString, QObject, SIGNAL, Qt 
-from PyQt4.QtGui import QMessageBox, QTabWidget, QWidget, \
+from PyQt4.QtGui import QTabWidget, QWidget, \
                         QTableWidgetItem, QSizePolicy, QIcon
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -398,4 +400,15 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         return True
     
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.mainwindow, 'warning', errorMessage)
+        text = 'Error in computing or displaying indicator'
+        ErrorForm.error(mainwindow = self.mainwindow, 
+                        text = text, 
+                        detailed_text = errorMessage)
+        
+#        box = QMessageBox(QMessageBox.Warning, '', 'Error in computing or displaying indicator', QMessageBox.Ok, self.mainwindow, Qt.Dialog|Qt.WindowMaximizeButtonHint)
+#        box.setDetailedText(errorMessage)
+#        #box.setSizeGripEnabled(True)
+#        #box.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+#        box.setFixedWidth(500)
+#        box.setMinimumWidth(500)
+#        box.show()

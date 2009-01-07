@@ -17,7 +17,8 @@ import StringIO
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QFileInfo, QFile, QIODevice
-from PyQt4.QtGui import QMessageBox
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
+
 from PyQt4.QtXml import QDomDocument
 
 from opus_gui.data_manager.controllers.files.file_controller_opus_data import FileController_OpusData
@@ -30,6 +31,8 @@ from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_sce
 from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 from opus_core.misc import directory_path_from_opus_path
+
+from opus_gui.util.exception_formatter import formatExceptionInfo
 
 # Main class for the toolbox
 class ToolboxBase(object):
@@ -92,10 +95,10 @@ class ToolboxBase(object):
 
         # make sure all trees are clean and close them
         if not self.close_controllers():
-            msg = ('There was an error removing the old config. '
-                'Details:\nCould not remove all manager trees.\n'
-                'Try to restart OpusGui and open the project again')
-            QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = 'There was an error removing the old config.',
+                              detailed_text = 'Could not remove all manager trees. Try to restart OpusGui and open the project again'
+                )
             return False
 
         # Open the XML by first passing to the xml_configuration and letting
@@ -108,9 +111,12 @@ class ToolboxBase(object):
         try:
             self.opus_core_xml_configuration = XMLConfiguration(str(fileName),str(fileNamePath))
         except Exception, ex:
-            msg = 'Failed to load XML:\n'
-            QMessageBox.critical(self.mainwindow, 'Failed to load XML',
-                                 msg + str(ex))
+            msg = formatExceptionInfo()
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = 'Failed to load the XML project file.',
+                              detailed_text = msg
+                )
+            
             return False
 
         _, tempFilePath = tempfile.mkstemp()
@@ -121,7 +127,10 @@ class ToolboxBase(object):
         self.opus_core_xml_configuration.full_tree.write(tempFilePath)
         if not self.configFile or not self.configFileTemp:
             msg = "Error reading the %s configuration file" % (xml_file)
-            QMessageBox.critical(self.mainwindow, 'Error loading file', msg)
+            ErrorForm.error(mainwindow = self.mainwindow,
+                              text = 'Error loading XML project file.',
+                              detailed_text = msg
+                )
             return False
 
         self.configFileTemp.open(QIODevice.ReadWrite)
@@ -150,10 +159,10 @@ class ToolboxBase(object):
 
         # project loaded, show any XML version messages
         if self.opus_core_xml_configuration.version_warning_message:
-            msg = ('Warning! Inconsistent version numbers found in XML files '
-                   'when loading project.\n\nDetails:\n\n')
-            msg = msg + self.opus_core_xml_configuration.version_warning_message
-            QMessageBox.warning(self.mainwindow, 'Inconsistent xml versions', msg)
+            ErrorForm.warning(mainwindow = self.mainwindow,
+                              text = 'Inconsistent version numbers found in XML files when loading project.',
+                              detailed_text = self.opus_core_xml_configuration.version_warning_message
+                )
         return True
 
 

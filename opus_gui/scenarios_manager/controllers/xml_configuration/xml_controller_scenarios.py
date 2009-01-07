@@ -13,10 +13,11 @@
 
 
 from PyQt4.QtCore import QString, QFileInfo, SIGNAL
-from PyQt4.QtGui import QIcon, QMenu, QCursor, QMessageBox
+from PyQt4.QtGui import QIcon, QMenu, QCursor
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
 from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
+from opus_gui.main.controllers.dialogs.error_form import ErrorForm
 
 from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
@@ -348,7 +349,10 @@ class XmlController_Scenarios(XmlController):
                     for model in missing_models:
                         msg = msg + '    %s\n' %model.tagName()
                         item = xml._item_for_element(model)
-                    QMessageBox.error(self, 'Error - Missing models', msg)
+                    ErrorForm.error(mainwindow = self.mainwindow,
+                                      text = "There are missing models.",
+                                      detailed_text = msg)
+
                 return False
             else:
                 return True
