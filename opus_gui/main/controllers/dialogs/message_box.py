@@ -11,6 +11,37 @@
 # other acknowledgments.
 # 
 
+'''
+A custom MessageBox class to replace much of QT's very inflexible QMessageBox functionanlity.
+
+MessageBox provides a way to display informational, warning, and error messages, 
+along with details (i.e. a stacktrace or more information on what may have caused 
+an error). The different modes only change which icon is displayed. 
+Unlike QMessageBox, the window can be resized.
+
+The interface is very similar to QMessageBox. Here are some sample uses:
+
+   ...
+   except Exception, e:
+        errorinfo = formatExceptionInfo()
+        MessageBox.error(mainwindow = self.mainwindow,
+                          text = "There was a problem running the simulation.",
+                          detailed_text = errorinfo)
+
+   ...
+   msg = 'The table %s has been truncated to %i rows because of memory limitations.'%(visualization.table_name,limit)
+   detailed_msg = '<qt>To view the full results, open the following file:<br><br><small>%s</small></qt>'%visualization.get_file_path()
+   MessageBox.warning(mainwindow = self.mainwindow,
+                                  text = msg,
+                                  detailed_text = detailed_msg)
+
+   ...
+   run_data = '\n'.join(added_runs)
+   msg = 'The following simulation runs have been automatically added to the results manager:\n\n%s'%run_data
+   MessageBox.information(mainwindow = self.mainwindow,
+                              text = 'Simulation runs have been added to this project.',
+                              detailed_text = msg)
+'''
 
 
 # PyQt4 includes for python bindings to QT
