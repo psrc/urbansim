@@ -281,9 +281,10 @@ class XmlController_Scenarios(XmlController):
         # the 'default_model_configuration' -- include those when populating the
         # menu. Should we drop this support?
         def_models = self.xml.get('model_manager/default_models') or \
-            self.xml.get('model_manager/default_model_configurations') or []
-        def_model_names = [e.tagName() for e in self.xml.children(def_models)]
-        available_model_names.extend(def_model_names)
+            self.xml.get('model_manager/default_model_configurations')  
+        if def_models is not None:
+            def_model_names = [e.tagName() for e in self.xml.children(def_models)]
+            available_model_names.extend(def_model_names)
 
         model_names = [e.tagName() for e in model_elements]
         available_model_names.extend(model_names)
