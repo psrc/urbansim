@@ -25,6 +25,7 @@ from PyQt4.QtCore import Qt
 class ErrorForm(QDialog, Ui_dlgErrorForm):
     ERROR = 0
     WARNING = 1
+    INFORMATION = 2
     
     def __init__(self, mainwindow, text, detailed_text, mode = ERROR, flags = Qt.Dialog):
         QDialog.__init__(self, mainwindow, flags)
@@ -33,6 +34,8 @@ class ErrorForm(QDialog, Ui_dlgErrorForm):
             img = QPixmap(':/Images/Images/big_error.png')
         elif mode == ErrorForm.WARNING:
             img = QPixmap(':/Images/Images/big_warning.png')
+        elif mode == ErrorForm.INFORMATION:
+            img = QPixmap(':/Images/Images/big_information.png')            
 
         self.lblImage.setPixmap(img)
         self.lblText.setText('<qt><b>%s</b></qt>'%text)
@@ -77,6 +80,16 @@ class ErrorForm(QDialog, Ui_dlgErrorForm):
                         mode = ErrorForm.ERROR,
                         flags = flags)
         frm.show()
+
+    def information(mainwindow, text, detailed_text, flags = Qt.Dialog|Qt.WindowMaximizeButtonHint):
+        frm = ErrorForm(mainwindow = mainwindow, 
+                        text = text, 
+                        detailed_text = detailed_text,
+                        mode = ErrorForm.INFORMATION,
+                        flags = flags)
+        frm.show()
+
         
     warning = staticmethod(warning)    
     error = staticmethod(error)
+    information = staticmethod(information)
