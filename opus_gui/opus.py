@@ -34,7 +34,7 @@ def main(argv):
     app.setApplicationName("OPUS")
 
     # Set application icon
-    applicationIcon = QIcon(":/Images/Images/new-logo-medium.png")
+    applicationIcon = QIcon(":/Images/Images/new-logo-medium-no-mirror.png")
     app.setWindowIcon(applicationIcon)
 
     # Set the app style
