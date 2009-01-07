@@ -153,7 +153,15 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
             return None
         source = str(self.comboBox_2.currentText())
         definition = str(self.textEdit.toPlainText())
-        dataset_name = VariableName(expression = definition).get_dataset_name()
+        n = VariableName(expression = definition)
+        dataset_name = n.get_dataset_name()
+        if dataset_name is None:
+            # TODO: FIX THIS -- LOOK UP THE TUPLE IN THE AVAILABLE DATASETS
+            p = n.get_interaction_set_names()
+            if len(p)==2:
+                dataset_name = p[0] + '_x_' + p[1]
+            else:
+                raise ValueError, "couldn't determine interaction set name for %s" % definition
         return (variable_name, dataset_name, use, source, definition)
 
 

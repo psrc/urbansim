@@ -21,7 +21,8 @@ class VariableName(object):
         or 'ln(urbansim.gridcell.population)'
     _squished_expression: same as expression, but with whitespace removed
     package_name: the name of the package containing the variable definition (e.g. 'urbansim'), or None 
-    dataset_name: the name of the dataset (e.g. 'gridcell'), or None
+    dataset_name: the name of the dataset (e.g. 'gridcell'), or None for primary attributes or expressions involving interaction sets
+    interaction_set_names: tuple of names of the components of the interaction set, for expressions for variables on interaction sets
     short_name: the name of the attribute that holds the variable value in the dataset, e.g. 'population'
         (this is required; it can't be None)
     alias: an alias for the variable, or None.  Example: for 'lnpop = ln(urbansim.gridcell.population)' 
@@ -50,9 +51,20 @@ class VariableName(object):
             from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
             t = AutogenVariableFactory(expression).generate_variable_name_tuple()
             self._cache[squished] = t
-        (package_name, dataset_name, short_name, alias, autogen_class) = self._cache[squished]
+        (package_name, dataset_names, short_name, alias, autogen_class) = self._cache[squished]
         self._package_name = package_name
-        self._dataset_name = dataset_name
+        n = len(dataset_names)
+        if n==0:
+            self._dataset_name = None
+            self._interaction_set_names = None
+        elif n==1:
+            self._dataset_name = dataset_names[0]
+            self._interaction_set_names = None
+        elif n==2:
+            self._dataset_name = None
+            self._interaction_set_names = dataset_names
+        else:
+            raise ValueError, "couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(datasetnames)
         self._short_name = short_name
         self._alias = alias
         if autogen_class is not None:
@@ -66,6 +78,9 @@ class VariableName(object):
 
     def get_dataset_name(self):
         return self._dataset_name
+
+    def get_interaction_set_names(self):
+        return self._interaction_set_names
 
     def get_short_name(self):
         return self._short_name

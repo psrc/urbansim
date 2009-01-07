@@ -48,7 +48,6 @@ class VariableValidator(object):
             try:
                 n = VariableName(expr)
                 # check that the expression is of the correct form given the source
-                # TODO: what if it's a constant?
                 if source=='primary attribute':
                     if n.get_autogen_class() is not None:
                         errors.append("Error - this is parsing as an expression rather than as a primary attribute: (%s, %s): %s" % (var_name, dataset_name, expr))

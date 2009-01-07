@@ -580,16 +580,9 @@ class InteractionDataset(Dataset):
         return dataset
     
     def _check_dataset_name(self, name):
-        """check that name is the name of this dataset, one of its components, or the name of this dataset with the components flipped"""
-        if name==self.get_dataset_name():
-            return
-        if name==self.get_dataset(1).get_dataset_name():
-            return
-        if name==self.get_dataset(2).get_dataset_name():
-            return
-        if name==(self.get_dataset(2).get_dataset_name()+'_x_'+self.get_dataset(1).get_dataset_name()):
-            return
-        raise ValueError, 'different dataset names for variable and dataset or a component'
+        """check that name is the name of this dataset or one of its components"""
+        if name!=self.get_dataset_name() and name!=self.get_dataset(1).get_dataset_name() and name!=self.get_dataset(2).get_dataset_name():
+            raise ValueError, 'different dataset names for variable and dataset or a component'
 
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory

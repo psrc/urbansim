@@ -61,13 +61,19 @@ class AutogenVariableFactory(object):
         self._alias = alias
         # the remaining instance variables are set by generate_variable_name_tuple (if called)
         #
-        # The principal dataset is the dataset for which this expression is being evaluated.
+        # self._dataset_names is a tuple of datasets for which this expression is being evaluated.
         # Except for expressions for interaction sets, all of the qualified references at the
-        # top level (not in aggregate or disaggregate calls) must be to the same dataset.  
-        # For interaction sets, the name will be n1_x_n2 where n1 and n2 are used in this expression.  
-        # To find the principal dataset, we find the dataset names used.  If just one, then that is 
-        # also the principal dataset name.  Otherwise the name will be n1_x_n2.
-        self._dataset_names_used = []
+        # top level (not in aggregate or disaggregate calls) must be to the same dataset, and
+        # after analyzing the expression self._dataset_names should be a tuple of length 1, which
+        # will be the name of that dataset.  (An exception is if the expression just references
+        # primary attributes, without a qualifying dataset.  Right now that's legal in expressions
+        # but probably should be disallowed.)  
+        # For interaction sets, from the expression we can determine the names of the component
+        # datasets (n1 and n2).  The name of the interaction set will be either n1_x_n2 or n2_x_n1,
+        # but we just determine the tuple (n1,n2) rather than trying to determine
+        # that the dataset name is n1_x_n2 or n2_x_n1.  (Actually it's almost certainly n1_x_n2, if 
+        # n1 is used first in the expression, but we don't try to guess.)
+        self._dataset_names = ()
         # dependents is a set of dependents for expr.  Each element in 'dependents' 
         #     is a tuple (package,dataset,shortname).  For attributes named with just the
         #     un-qualified name, package and dataset will be None.  (This would be the case for
@@ -97,7 +103,7 @@ class AutogenVariableFactory(object):
         self._parsetree_replacements = {}
 
     def generate_variable_name_tuple(self):
-        """return a tuple (package_name, dataset_name, short_name, alias, autogen_class)
+        """return a tuple (package_name, dataset_names, short_name, alias, autogen_class)
         corresponding to my expression."""
         self._parse_expr()
         # Hack: always generate a new variable class if there is an alias.  (In theory we shouldn't
@@ -109,26 +115,16 @@ class AutogenVariableFactory(object):
             # first check if expr is a fully-qualified variable, dataset-qualified variable, or an attribute
             same, vars = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, self._expr_parsetree)
             if same:
-                return (vars['package'], vars['dataset'], vars['shortname'], self._alias, None)
+                return (vars['package'], (vars['dataset'],), vars['shortname'], self._alias, None)
             same, vars = match(EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE, self._expr_parsetree)
             if same:
-                return (None, vars['dataset'], vars['shortname'], self._alias, None)
+                return (None, (vars['dataset'],), vars['shortname'], self._alias, None)
             same, vars = match(EXPRESSION_IS_ATTRIBUTE, self._expr_parsetree)
             if same:
-                return (None, None, vars['shortname'], self._alias, None)
+                return (None, (), vars['shortname'], self._alias, None)
         # it's a more complex expression -- need to generate a new variable class
-        # first determine the principal dataset name
         (short_name, autogen_class) = self._generate_new_variable()
-        n = len(self._dataset_names_used)
-        if n==0:
-            principal_dataset_name = None
-        elif n==1:
-            principal_dataset_name = self._dataset_names_used[0]
-        elif n==2:
-            principal_dataset_name = DatasetFactory().get_interaction_set_name(self._dataset_names_used[0], self._dataset_names_used[1])
-        else:
-            raise ValueError, "unable to determine principal dataset name for expression (too many names) " + self._expr
-        return (None, principal_dataset_name, short_name, self._alias, autogen_class)
+        return (None, self._dataset_names, short_name, self._alias, autogen_class)
     
     def get_parsetree(self):
         return self._expr_parsetree
@@ -406,8 +402,8 @@ class AutogenVariableFactory(object):
         # if 'name' ends in self._constant_suffix ignore it as far as determining the expression's dataset name
         if name is None or name.endswith(self._constant_suffix):
             pass
-        elif name not in self._dataset_names_used:
-            self._dataset_names_used.append(name)
+        elif name not in self._dataset_names:
+            self._dataset_names = self._dataset_names + (name,)
 
     # Analyze the arguments for a function or method call.  This is a separate method from _analyze_tree
     # because we need to treat the keywords in keyword arguments properly and not think they are variable names.
