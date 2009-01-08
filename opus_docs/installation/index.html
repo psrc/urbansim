@@ -79,28 +79,18 @@ database you may need to modify your code and data.</p>
 <p>The result of an install will be an <a href="opus_directory_tree.html">Opus directory tree</a>
 that holds the source code, sample project data, and xml configurations for use by the GUI.
 
-<h1>Note for 64-bit Users</h1>
+<h2>Additional Installation Instructions</h2>
 
-<p>Currently running the simulation does not work correctly, due to a bug in scipy.  During excution of the
-household transition model, something like this error will occur:
-</p>
-<pre>
-  File "/usr/lib/python2.5/site-packages/scipy/ndimage/measurements.py", line 124, in sum
-    raise ValueError("Invalid index type")
-  ValueError: Invalid index type
-</pre>
+<p>Here are some additional instructions for particular situations:</p>
 
-<p>The current workaround is to edit the line immediately above the raise in scipy/ndimage/measurements.py to read:<p>
+<ul>
 
-<pre>
-                     numpy.uint8, numpy.uint16, numpy.bool, numpy.int64]:
-</pre>
-rather than:
-<pre>
-                     numpy.uint8, numpy.uint16, numpy.bool]:
-</pre>
+<li><a href="ide_setup.html">Configuring an Interactive Development Environment</a> (for programmers)</li>
+<li><a href="latex.html">Writing and Formatting Opus Documentation using the LaTeX Document Preparation System</a></li>
+<li><a href="64_bit.html">Running Opus &amp; UrbanSim on 64 Bit Machines</a></li>
+</ul>
 
-<h1>Uninstalling Opus</h1>
+<h2>Uninstalling Opus</h2>
 
 <p>If you no longer wish to have Opus on your computer, just remove the
 Opus source code directory from your Python path, delete any other environment variables,

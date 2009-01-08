@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+
+
+  <title>Running Opus &amp; UrbanSim on 64 Bit Machines</title>
+  <link href="../style/book.css" rel="stylesheet" type="text/css">
+ 
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+ 
+<body>
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  
+<table border="0" cellspacing="0" width="100%">
+
+    <tbody>
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; 64 Bit Machines</td>
+
+    </tr>
+
+  
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Running Opus &amp; UrbanSim on 64 Bit Machines</h1>
+
+<p>We have successfully run Opus &amp; UrbanSim on 64 bit machines; although this has been tested much less extensively than running on 32 bit machines.</p>
+
+
+<p>There is one patch that is currently needed to run on 64 bit machines, due to a bug in scipy.  During excution of the
+household transition model, something like this error will occur:
+</p>
+<pre>
+  File "/usr/lib/python2.5/site-packages/scipy/ndimage/measurements.py", line 124, in sum
+    raise ValueError("Invalid index type")
+  ValueError: Invalid index type
+</pre>
+
+<p>The current workaround is to edit the line immediately above the raise in scipy/ndimage/measurements.py to read:<p>
+
+<pre>
+                     numpy.uint8, numpy.uint16, numpy.bool, numpy.int64]:
+</pre>
+rather than:
+<pre>
+                     numpy.uint8, numpy.uint16, numpy.bool]:
+</pre>
+
+
+</body>
+</html>

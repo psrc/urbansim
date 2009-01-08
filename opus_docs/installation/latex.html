@@ -17,7 +17,7 @@
     </tr>
   </table>
 <!-- HEAD BANNER ENDS HERE -->
-<h1>Using LaTeX with Opus</h1>
+<h1>Writing and Formatting Opus Documentation using the LaTeX Document Preparation System</h1>
 
 <p>This section provides instructions for using LaTeX.&nbsp; The Opus and
 UrbanSim Reference Manual and Users Guide (aka Manual) are written using the
@@ -27,7 +27,9 @@ and cross-referencing, and is the standard used for documenting Python packages.
 It also typesets elegantly, particularly for mathematical formulae. The
 disadvantage is that it is not a WYSIWYG (“what you see is what you get”)
 system.&nbsp; Instead, you edit a source document with a text editor, then use LaTeX
-to format it and produce a pdf file and / or a set of html pages.&nbsp; If you are new with LaTeX, take a look at the <a href="http://www.tug.org/begin.html">Getting
+to format it and produce a pdf file and / or a set of html pages.&nbsp; The home page for
+the LaTeX project is at <a href="http://www.latex-project.org/">http://www.latex-project.org/</a>.  If you are new with LaTeX, 
+also take a look at the <a href="http://www.tug.org/begin.html">Getting
 Started with TeX, LaTeX, and Friends</a> page. </p>
 
 <p>The source for the Manual resides in the opus_docs/manual package.
@@ -41,18 +43,15 @@ files (although not yet consistently); see <a href="http://www.python.org/doc/2.
 <h2>Installing a LaTeX environment </h2>
 
 <p>There are many applications and environments that support editing LaTeX
-files.&nbsp;&nbsp; </p>
+files -- see the <a href="http://www.latex-project.org/ftp.html">LaTeX project download page</a>.</p>
 
 <p>SuSe comes with LaTeX, as do most other Linux distributions.</p>
 
 <p>On the Mac, use <a href="http://www.uoregon.edu/~koch/texshop/">TeXShop</a> or <a href="http://www.tug.org/mactex">MacTeX</a>.</p>
 
-<p> On Windows, you can use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
-Eclipse plug-in, that provides decent LaTeX support, or the <a href="http://www.miktex.org">Miktex</a>
-version of LaTeX.&nbsp; You might want to try the <a href="http://www.ctan.org/starter.html">proTeXt</a>
-installation that is based on the MiKTeX distribution, and includes some
-additional components including the <a href="http://www.toolscenter.org/">TeXnicCenter</a>
-LaTeX editor.</p>
+<p> On Windows, you can use <a href="http://www.tug.org/protext/">proTeXt</a>.  The 
+<a href="http://texlipse.sourceforge.net/">Texlipse</a>
+Eclipse plug-in also provides LaTeX support.</p>
 
 
 <h2>Running LaTeX</h2>
@@ -82,11 +81,13 @@ bibtex opus-userguide
 pdflatex opus-userguide
 pdflatex opus-userguide
 </pre>
+
 <p>If you get an error message that the file <tt>userguide.ind</tt> wasn't
   found (this will happen the first time you do the above command), just hit
   return and continue, since the next step will create this index file.</p>
 <tt>makeindex</tt> generates the index, and <tt>bibtex</tt> generates the bibliography.
-You have to run latex a couple of times to incorporate the index and resolve any cross-references.</p>
+You have to run latex a couple of times after making the index and bibliography files
+to incorporate the index and resolve any cross-references correctly.</p>
 
 </body>
 </html>
