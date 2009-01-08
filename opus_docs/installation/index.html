@@ -79,6 +79,27 @@ database you may need to modify your code and data.</p>
 <p>The result of an install will be an <a href="opus_directory_tree.html">Opus directory tree</a>
 that holds the source code, sample project data, and xml configurations for use by the GUI.
 
+<h1>Note for 64-bit Users</h1>
+
+<p>Currently running the simulation does not work correctly, due to a bug in scipy.  During excution of the
+household transition model, something like this error will occur:
+</p>
+<pre>
+  File "/usr/lib/python2.5/site-packages/scipy/ndimage/measurements.py", line 124, in sum
+    raise ValueError("Invalid index type")
+  ValueError: Invalid index type
+</pre>
+
+<p>The current workaround is to edit the line immediately above the raise in scipy/ndimage/measurements.py to read:<p>
+
+<pre>
+                     numpy.uint8, numpy.uint16, numpy.bool, numpy.int64]:
+</pre>
+rather than:
+<pre>
+                     numpy.uint8, numpy.uint16, numpy.bool]:
+</pre>
+
 <h1>Uninstalling Opus</h1>
 
 <p>If you no longer wish to have Opus on your computer, just remove the
