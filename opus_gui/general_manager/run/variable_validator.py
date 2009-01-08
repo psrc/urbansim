@@ -13,8 +13,11 @@
 
 
 from opus_core.variables.variable_name import VariableName
+from opus_core.session_configuration import SessionConfiguration
 from opus_gui.results_manager.run.indicator_framework_interface import IndicatorFrameworkInterface
 from opus_gui.results_manager.run.opus_result_generator import OpusResultGenerator
+from opus_core.store.attribute_cache import AttributeCache
+from opus_core.simulation_state import SimulationState
 
 class VariableValidator(object):
     def __init__(self, toolboxBase):
@@ -102,23 +105,39 @@ class VariableValidator(object):
         return lines>self.max_lines
         
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
-        
         interface = IndicatorFrameworkInterface(self.toolboxBase)
         node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data', 
                                                                  child_attributes = ['start_year'],
                                                                  node_type = 'source_data')
-        years = [int(str(vals['start_year']))]
+        year = int(str(vals['start_year']))
 
-        result_generator = OpusResultGenerator(self.toolboxBase, ignore_cache = True)
-        result_generator.set_data(
-               source_data_name = 'base_year_data',
-               indicator_name = indicator_name,
-               dataset_name = dataset_name,
-               years = years,
-               indicator_definition = (expression, source))
-        
+        src_data = interface.get_source_data(source_data_name = 'base_year_data', years = [year])
+        SimulationState().set_current_time(year)
+        SimulationState().set_cache_directory(src_data.cache_directory)
+        SessionConfiguration(
+            new_instance = True,
+            package_order = src_data.dataset_pool_configuration.package_order,
+            in_storage = AttributeCache()) 
+        dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
+
         try:
-            result_generator.run(raise_exception = True)
+            dataset.compute_variables(names = [expression])
             return True, None
         except Exception, e:
             return False, e
+
+#        years = [int(str(vals['start_year']))]
+#
+#        result_generator = OpusResultGenerator(self.toolboxBase, ignore_cache = True)
+#        result_generator.set_data(
+#               source_data_name = 'base_year_data',
+#               indicator_name = indicator_name,
+#               dataset_name = dataset_name,
+#               years = years,
+#               indicator_definition = (expression, source))
+        
+#        try:
+#            result_generator.run(raise_exception = True)
+#            return True, None
+#        except Exception, e:
+#            return False, e
