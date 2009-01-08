@@ -516,10 +516,7 @@ class AbstractDataset(object):
 
     def get_non_id_primary_attribute_names(self):
         """Return a list of primary attribute names that are not unique identifiers."""
-        names = copy.copy(self.get_primary_attribute_names())
-        for name in self.get_id_name():
-            if name in names:
-                names.remove(name)
+        names = copy.copy([attr for attr in self.get_primary_attribute_names() if attr not in self.get_id_name()])
         return names
     
     def get_computed_attribute_names(self):
@@ -787,7 +784,7 @@ class AbstractDataset(object):
             if attr not in self.get_attribute_names():
                 self.add_attribute(data=dataset.get_attribute_by_index(attr, idx),
                                    name=dataset.attribute_boxes[attr].get_full_name(),
-                                   metadata=AttributeType.PRIMARY)
+                                   metadata=AttributeType.PRIMARY) #T: why is this automatically set to be a primary attribute?
                 attribute_box = self._get_attribute_box(attr)
                 attribute_box.set_variable_instance(dataset.attribute_boxes[attr].get_variable_instance())
 
@@ -850,6 +847,7 @@ class AbstractDataset(object):
         if not isinstance(name, list):
             name = [name]
         ID_NOT_FOUND = -1
+        #T: won't the following only work if the join_attribute is an id col?
         idx = dataset.try_get_id_index(self.get_multiple_attributes(jattr).astype(int32), ID_NOT_FOUND)
         idx_found = idx <> ID_NOT_FOUND
         lname = len(name)
