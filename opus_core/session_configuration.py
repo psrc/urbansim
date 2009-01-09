@@ -92,10 +92,10 @@ class SessionConfiguration(Singleton, GeneralResources):
             
         return self.dataset_pool
     
-    def get_dataset_from_pool(self, dataset_name):
+    def get_dataset_from_pool(self, dataset_name, dataset_arguments = {}):
         """Return the object of this dataset from this dataset pool.
         """
-        return self.get_dataset_pool().get_dataset(dataset_name)
+        return self.get_dataset_pool().get_dataset(dataset_name, dataset_arguments = dataset_arguments)
 
     def delete_datasets(self):
         self.get_dataset_pool().remove_all_datasets()
