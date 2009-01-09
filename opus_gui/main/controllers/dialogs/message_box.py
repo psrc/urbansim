@@ -85,17 +85,15 @@ class MessageBox(QDialog, Ui_dlgMessageBox):
             self.detail_expansion_size = self.saDetails.height() + self.gridLayout.verticalSpacing()
             self.details_showing = False
             self.pbnShowDetails.setText('Show Details...')
-            #self.gridLayout.removeWidget(self.saDetails)
+            self.setUpdatesEnabled(False)
             self.saDetails.hide()
             self.resize(self.width(), self.height() - self.detail_expansion_size)
+            self.setUpdatesEnabled(True)
             self.adjustSize()
         else:
             self.pbnShowDetails.setText('Hide Details...')
             self.details_showing = True
-            #self.resize(self.width(), self.height() + self.detail_expansion_size )
             self.saDetails.show()   
-
-            #self.gridLayout.addWidget(self.saDetails)
             self.adjustSize()
             
     def warning(mainwindow, text, detailed_text, flags = Qt.Dialog|Qt.WindowMaximizeButtonHint):
