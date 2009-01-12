@@ -15,7 +15,7 @@
 
 import os, sys, string
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
-from opus_core.database_management.opus_database import OpusDatabase
+from opus_core.database_management.database_server import DatabaseServer
 from random import Random
 
 def opusRun(progressCB,logCB,params):
@@ -31,7 +31,8 @@ def opusRun(progressCB,logCB,params):
     raw_pums_households_table_name = 'raw_pums_hh_data'
     
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
-    opus_db = OpusDatabase(database_server_configuration=dbs_config, database_name=database_name)
+    server = DatabaseServer(database_server_configuration = dbs_config)
+    opus_db = server.get_database(database_name=database_name)   
     
     logCB("Creating temporary table pp_temp...\n")
     

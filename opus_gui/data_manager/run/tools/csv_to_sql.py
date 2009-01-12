@@ -13,9 +13,11 @@
 #
 
 import os, sys, subprocess
-from opus_core.database_management.opus_database import OpusDatabase
+from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 
+
+    
 def opusRun(progressCB,logCB,params):
     param_dict = {}
     for key, val in params.iteritems():
@@ -99,7 +101,8 @@ def get_nln_option(table_name):
     return nln_option
 
 def drop_table(dbs_config, database_name, output_table_name):
-    db = OpusDatabase(dbs_config, database_name)
+    server = DatabaseServer(database_server_configuration=dbs_config)
+    db = server.get_database(database_name = database_name)
     print db.database_name
     db.drop_table(output_table_name)
 
