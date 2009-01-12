@@ -30,12 +30,19 @@ class MSSQLServerManager(AbstractDatabaseEngineManager):
             
         if not database_name:
             database_name = self._get_default_database()
-        
-        connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
-                                             server_config.user_name, 
-                                             password, 
-                                             server_config.host_name, 
-                                             database_name) 
+            
+        if password is not None:        
+            connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
+                                                 server_config.user_name, 
+                                                 password, 
+                                                 server_config.host_name, 
+                                                 database_name) 
+        else:
+            connect_string = '%s://%s@%s/%s'%(server_config.protocol, 
+                                                 server_config.user_name, 
+                                                 server_config.host_name, 
+                                                 database_name) 
+
         return connect_string            
     
     def create_database(self, server, database_name):
