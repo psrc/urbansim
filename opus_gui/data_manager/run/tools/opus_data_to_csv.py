@@ -34,7 +34,7 @@ def opusRun(progressCB,logCB,params):
     opus_table_name = params_dict['opus_table_name']
 
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
-    attribute_cache_years = attribute_cache._get_sorted_list_of_years()
+    attribute_cache_years = [int(year) for year in os.listdir(opus_data_directory) if year.isdigit() and len(year) == 4]
 
     if opus_data_year != 'ALL':
         attribute_cache_years = [opus_data_year]

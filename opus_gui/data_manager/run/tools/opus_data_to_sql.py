@@ -20,6 +20,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.opus_database import OpusDatabase
+from fnmatch import fnmatch
 
 def opusRun(progressCB,logCB,params):
     params_dict = {}
@@ -37,7 +38,7 @@ def opusRun(progressCB,logCB,params):
     opusdb = OpusDatabase(database_server_configuration=dbs_config, database_name=database_name)
 
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
-    attribute_cache_years = attribute_cache._get_sorted_list_of_years()
+    attribute_cache_years = [int(year) for year in os.listdir(opus_data_directory) if year.isdigit() and len(year) == 4]
     if opus_data_year != 'ALL':
         attribute_cache_years = [opus_data_year]
 
