@@ -77,8 +77,12 @@ class DatabaseServer(object):
         logger.log_status("SQL: " + sql_query, tags=["database"], verbosity_level=3)            
         
     def execute(self, query):
-        return self.engine.execute(query)
-        
+        try:
+            result = self.engine.execute(query)
+        except:
+            print query
+            raise
+        return result
         
     '''Deprecated: DO NOT USE'''
     def DoQuery(self, query):
@@ -114,11 +118,15 @@ class DatabaseServer(object):
             self.protocol_manager.drop_database(server = self,
                                                 database_name = database_name)
 
-    def get_database(self, database_name):
+    def get_database(self, database_name, create_if_doesnt_exist = True):
         """
         Returns an object connecting to this database on this database server.
         """
         from opus_core.database_management.opus_database import OpusDatabase
+        
+        if create_if_doesnt_exist:
+            self.create_database(database_name = database_name)
+            
         database = OpusDatabase(
                 database_server_configuration = self.config,
                 database_name=database_name)
