@@ -78,8 +78,8 @@ UrbanSim gets its input data from either a \emph{baseyear} database or a
 \emph{scenario} databases as read-only databases, however other data
 preparation applications such as the estimators or the household synthesizer
 may write to them.  In fact, when the run manager starts a new simulation, the
-first step is to copy the baseyear data into the baseyear cache. \baseyearcacheindex The
-simulation then reads all of its baseyear information from the baseyear cache \baseyearcacheindex
+first step is to copy the baseyear data into the baseyear cache. The
+simulation then reads all of its baseyear information from the baseyear cache
 and writes all results to the simulation cache\index{simulation cache}.  Data is only written to the
 output database when specified (currently done manually).
 
@@ -233,19 +233,19 @@ Most database tables are optional. The required set of tables is determined by t
 a run. Details can be found in the description of the particular models in Section~\ref{sec:urbansim-models}. 
 
 Additionally, some tables and various attributes of tables are determined by 
-the variables \variablesindex used by the models.  This can be found by looking at the models'
+the variables used by the models.  This can be found by looking at the models'
 specification tables.
 
 The \verb|tables_to_cache| argument of
-\verb|urbansim.configs.cache_baseyear_configuration| lists the tables required for the standard set of models \modelsindex 
+\verb|urbansim.configs.cache_baseyear_configuration| lists the tables required for the standard set of models 
 in a production run of UrbanSim. Additional tables can be used in post-processing, for example for creating
 indicators.
 
 
 \section{Coefficients and Specification Tables}
 
-The UrbanSim models \modelsindex are configured through user specified
-variables and coefficients. \coefficientsindex The coefficients should be
+The UrbanSim models are configured through user specified
+variables and coefficients. The coefficients should be
 estimated separately for each region to be modeled by UrbanSim. The art and
 science of estimating the coefficients is a matter for a series of college
 courses so this description assumes that appropriate variables for each model
@@ -271,8 +271,8 @@ specification tables. The schemas are:
 
 %\hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\\hline 
-variable_name \variablesindex & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
-coefficient_name \coefficientsindex & varchar & Name of a coefficient connected to this variable.\\\hline
+variable_name & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
+coefficient_name & varchar & Name of a coefficient connected to this variable.\\\hline
 sub_model_id & integer & \emph{(optional)} Defines the submodel, if the model
 contains submodels. If the model does not have multiple submodels, use ``-2'' for this field, or leave it out.\\\hline
 equation_id & integer & \emph{(optional)} If a submodel has multiple equations, this field
@@ -293,9 +293,9 @@ The employment location choice models, for instance, define submodels by
 employment sectors, so the values of this field are the
 \verb|sector_id| values
 of the jobs dataset. 
-\item Each combination of (sub_model_id, coefficient_name) \coefficientsindex
+\item Each combination of (sub_model_id, coefficient_name)
 must exist in the model's coefficients table.
-\item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
+\item Each combination of (sub_model_id, equation_id, variable_name) must be unique.
 \item If fixed_value is non-zero in at least one row of the table, set the remaining values to 0. Currently, fixed_value 
 are considered only in the estimation of \class{ChoiceModel}.
 \end{itemize}
@@ -509,14 +509,14 @@ sector_id & group_id \\
 
 Here are example of groups used in specification of various models:
 \begin{itemize} \tight
-\item Employment Location Choice Model \modelsindex
+\item Employment Location Choice Model 
 \begin{itemize} \tight
 \item basic
 \item retail
 \item service
 
 \end{itemize}
-\item Employment Non-Home-Based Location Choice Model \modelsindex
+\item Employment Non-Home-Based Location Choice Model 
 \begin{itemize} \tight
 \item basic
 \item retail
@@ -524,12 +524,12 @@ Here are example of groups used in specification of various models:
 \item elc_sector
 
 \end{itemize}
-\item Scaling Procedure for Jobs Model \modelsindex
+\item Scaling Procedure for Jobs Model 
 \begin{itemize} \tight
 \item scalable_sectors
 
 \end{itemize}
-\item Household Location Choice Model \modelsindex
+\item Household Location Choice Model 
 \begin{itemize} \tight
 \item retail
 
@@ -877,7 +877,7 @@ coefficients.
 Bin definitions for the characterizing households used by the Household
 Transition Model (\ref{sec:household-transition-model})
 to produce an N-dimensional partitioning of the households. Thus, the table is only needed if the
-Household Transition Model \modelsindex is enabled.
+Household Transition Model is enabled.
 
 The names of the
 characteristics must match
@@ -1079,7 +1079,7 @@ and thus will have rough or stair-stepped edges).
 
 In practice, the zones table often includes other columns, depending upon the
 needs for your models.  These data should be updated with the results of any
-travel model \modelsindex run with whatever attributes are needed.
+travel model run with whatever attributes are needed.
 
 \begin{tabular}{llp{3.5in}}
 %\hline
@@ -1270,7 +1270,7 @@ near_arterial_threshold & float &  Line distance from the centroid of a cell to 
 \hline
 near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300 \\
 \hline
-percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. \attributesindex So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
+percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
 \hline
 recent_years & integer &  Maximum number of years to look back when considering recent transitions. For example, if recent_years = 3, then the value commercial_sqft_recently_added in the \verb|gridcells| table would refer to the number of square feet of commercial space built in the last 3 years.   \\
 \hline

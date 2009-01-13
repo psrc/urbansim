@@ -303,9 +303,9 @@ center_of_mass. These are functions of the scipy package
 
 An aggregation over two or more levels of geography is done by passing a
 third argument into the \class{aggregate} method. It is a list of dataset
-\datasetindex names over which it is aggregated, excluding datasets
-\datasetindex for the lowest and highest level. For example, aggregating
-the gridcell attribute \attributesindex `capacity' for the neighborhood set
+  names over which it is aggregated, excluding datasets
+  for the lowest and highest level. For example, aggregating
+the gridcell attribute `capacity' for the neighborhood set
 can be done by: 
 \begin{verbatim}
 neighborhood.aggregate(gridcell.capacity, function=sum, intermediates=[zone])
@@ -319,17 +319,17 @@ entities, in the manner of a one-to-many relationship. By default, the function
 for allocating data is to simply replicate the data on the parent entity for
 each inheriting entity. The method takes one required argument, an
 attribute/variable
-\attributesindex\variablesindex name, and one optional argument, a list of
-dataset \datasetindex names. Here we distribute an attribute
+name, and one optional argument, a list of
+dataset names. Here we distribute an attribute
 ``is_cbd'' from the neighborhood set across gridcells:
 \begin{verbatim}
 gridcell.disaggregate(neighborhood.is_cbd, intermediates=[zone])
 \end{verbatim}
 
-To aggregate over all members of one dataset, \datasetindex one can use the
+To aggregate over all members of one dataset, one can use the
 built-in method \method{aggregate_all}. It must be used with a dataset
-\datasetindex that has one element which is the case of the
-\package{opus_core} dataset \datasetindex \class{AlldataDataset}
+  that has one element which is the case of the
+\package{opus_core} dataset \class{AlldataDataset}
 implemented in the directory \file{datasets}. For example, the total
 capacity for all gridcells can be determined by:
 \begin{verbatim}
@@ -353,11 +353,11 @@ e.g. \code{ln(2*aggregate(gridcell.population))}.
 \index{number_of_agents}
 
 A common task in modeling is to determine a number of agents of one dataset
-\datasetindex that are assigned to another dataset. \datasetindex For this
+  that are assigned to another dataset. For this
 purpose, Opus contains a built-in method \class{number_of_agents}, which
 takes as an argument the name of the agent dataset.  For example,
 the number of households in each location can be determined by:
-\variablesindex \attributesindex
+
 \begin{verbatim}
 gridcell.number_of_agents(household)
 \end{verbatim}

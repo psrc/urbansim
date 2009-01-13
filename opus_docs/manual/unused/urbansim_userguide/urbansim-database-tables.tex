@@ -34,8 +34,8 @@ UrbanSim gets its input data from either a \emph{baseyear} database or a
 \emph{scenario} databases as read-only databases, however other data
 preparation applications such as the estimators or the household synthesizer
 may write to them.  In fact, when the run manager starts a new simulation, the
-first step is to copy the baseyear data into the baseyear cache. \baseyearcacheindex The
-simulation then reads all of its baseyear information from the baseyear cache \baseyearcacheindex
+first step is to copy the baseyear data into the baseyear cache. The
+simulation then reads all of its baseyear information from the baseyear cache
 and writes all results to the simulation cache. \simulationcacheindex Data is only written to the
 output database when specified (currently done manually).
 
@@ -183,19 +183,19 @@ Most database tables are optional. The required set of tables is determined by t
 a run. Details can be found in the description of the particular models in Section~\ref{sec:urbansim-models}. 
 
 Additionally, some tables and various attributes of tables are determined by 
-the variables \variablesindex used by the models.  This can be found by looking at the models'
+the variables used by the models.  This can be found by looking at the models'
 specification tables.
 
 The \verb|tables_to_cache| argument of
-\verb|urbansim.configs.cache_baseyear_configuration| lists the tables required for the standard set of models \modelsindex 
+\verb|urbansim.configs.cache_baseyear_configuration| lists the tables required for the standard set of models 
 in a production run of UrbanSim. Additional tables can be used in post-processing, for example for creating
 indicators.
 
 
 \section{Coefficients and Specification Tables}
 
-The UrbanSim models \modelsindex are configured through user specified
-variables and coefficients. \coefficientsindex The coefficients should be
+The UrbanSim models are configured through user specified
+variables and coefficients. The coefficients should be
 estimated separately for each region to be modeled by UrbanSim. The art and
 science of estimating the coefficients is a matter for a series of college
 courses so this description assumes that appropriate variables for each model
@@ -221,8 +221,8 @@ specification tables. The schemas are:
 
 \hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\\hline 
-variable_name \variablesindex & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
-coefficient_name \coefficientsindex & varchar & Name of a coefficient connected to this variable.\\\hline
+variable_name & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
+coefficient_name & varchar & Name of a coefficient connected to this variable.\\\hline
 sub_model_id & integer & \emph{(optional)} Defines the submodel, if the model
 contains submodels. If the model does not have multiple submodels, use ``-2'' for this field, or leave it out.\\\hline
 equation_id & integer & \emph{(optional)} If a submodel has multiple equations, this field
@@ -243,12 +243,12 @@ The employment location choice models, for instance, define submodels by
 employment sectors, so the values of this field are the
 \verb|sector_id| values
 of the jobs dataset. 
-\item Each combination of (sub_model_id, coefficient_name) \coefficientsindex
+\item Each combination of (sub_model_id, coefficient_name)
 must exist in the model's coefficients table.
-\item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
+\item Each combination of (sub_model_id, equation_id, variable_name) must be unique.
 \item If fixed_value is non-zero in at least one row of the table, set the remaining values to 0. Currently, fixed_value 
 are considered only in the estimation of \class{ChoiceModel}.
-\item Specific models \modelsindex have additional requirements: see Developer Model \modelsindex and Non-home-based Employment Location Choice Model. \modelsindex
+\item Specific models have additional requirements: see Developer Model and Non-home-based Employment Location Choice Model. 
 \end{itemize}
 
 A legitimate specification for an Opus variable may be one of the following:
@@ -329,8 +329,8 @@ disjoint (i.e., may not share any development types); in other words, each
 development type must belong to at most one group in each
 non-overlapping-group.
 
-Groups and non-overlapping-groups are used in the computation of the variables \variablesindex
-in the models, so to fully understand them requires understanding the model \modelsindex
+Groups and non-overlapping-groups are used in the computation of the variables
+in the models, so to fully understand them requires understanding the model 
 definitions.
 
 \subsection{The {\tt development_types} table}
@@ -451,7 +451,7 @@ Let R1-R3 be in the
 ``residential'' group in the ``dynamic_land_use_variables''
 non-overlapping-group, M4-M5 be in the ``mixed_use'' group in the
 ``dynamic_land_use_variables'' non-overlapping-group, and C1-C9 be in the
-``commercial'' group in the ``dynamic_land_use_variables'' \variablesindex
+``commercial'' group in the ``dynamic_land_use_variables''
 non-overlapping-group. Also let R3 and M5 be in the
 ``high_density_residential'' group, and ``M5'' and ``C4'' be in the
 ``noisy_commercial'' group.
@@ -820,7 +820,7 @@ years.
 
 \subsection{The {\tt annual_relocation_rates_for_jobs} table}
 
-This table is only used by the Employment Relocation Choice Model. \modelsindex
+This table is only used by the Employment Relocation Choice Model. 
 
 \begin{tabular}{|l|l|p{4in}|}
 \hline
@@ -929,21 +929,21 @@ sector_id & group_id \\
 \end{center}
 \textbf{Required \tt|employment_adhoc_sector_groups|}
 
-If a model \modelsindex is used in the simulation, then for each of the groups it requires
+If a model is used in the simulation, then for each of the groups it requires
 there must be a single row with its name equal to the name of the group. The
 comparison is case-insensitive and insensitive to leading and trailing spaces.
 For example, both `` basic'' and ``basic'' would be fine.
 
 The following groups are required for these models:
 \begin{itemize} \tight
-\item Employment Location Choice Model \modelsindex
+\item Employment Location Choice Model 
 \begin{itemize} \tight
 \item basic
 \item retail
 \item service
 
 \end{itemize}
-\item Employment Non-Home-Based Location Choice Model \modelsindex
+\item Employment Non-Home-Based Location Choice Model 
 \begin{itemize} \tight
 \item basic
 \item retail
@@ -951,12 +951,12 @@ The following groups are required for these models:
 \item elc_sector
 
 \end{itemize}
-\item Scaling Procedure for Jobs Model \modelsindex
+\item Scaling Procedure for Jobs Model 
 \begin{itemize} \tight
 \item scalable_sectors
 
 \end{itemize}
-\item Household Location Choice Model \modelsindex
+\item Household Location Choice Model 
 \begin{itemize} \tight
 \item retail
 
@@ -1511,7 +1511,7 @@ The annual relocation rates for households, by combination of age and income of
 household. These values are the probabilities that a household with the given
 characteristics will relocate within the time span of one year. They do not
 alter from year to year. This table is only used by the Household Relocation
-Choice Model. \modelsindex
+Choice Model. 
 
 
 \begin{tabular}{|l|l|p{4in}|}
@@ -1643,7 +1643,7 @@ coefficients.
 Bin definitions for the characterizing households used by the Household
 Transition Model (\ref{sec:household-transition-model})
 to produce an N-dimensional partitioning of the households. Thus, the table is only needed if the
-Household Transition Model \modelsindex is enabled.
+Household Transition Model is enabled.
 
 The names of the
 characteristics must match
@@ -2007,7 +2007,7 @@ parent_database_url & varchar & The name of the next database in the chain of sc
 
 \subsection{The {\tt urbansim_constants} table}
 
-Constants needed for calculations made by the various models. \modelsindex
+Constants needed for calculations made by the various models. 
 
 
 A single row with one column per constant.
@@ -2035,7 +2035,7 @@ near_arterial_threshold & float &  Line distance from the centroid of a cell to 
 \hline
 near_highway_threshold & float &  Line distance from the centroid to a highway for it to be considered nearby, e.g., 300. NearHighwayThreshold in description.   \\
 \hline
-percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. \attributesindex So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
+percent_coverage_threshold & integer &  The threshold above which a grid cell's percent_*, e.g. percent_wetland, must be to be considered ``covered'' for that attribute. So, if percent_coverage_threshhold is 50 percent and percent_wetland is 60 percent, the grid cell would be considered ``covered'' by wetland.   \\
 \hline
 recent_years & integer &  Maximum number of years to look back when considering recent transitions. For example, if recent_years = 3, then the value commercial_sqft_recently_added in the \verb|gridcells| table would refer to the number of square feet of commercial space built in the last 3 years.   \\
 \hline
@@ -2063,8 +2063,8 @@ recent_years & integer &  Maximum number of years to look back when considering 
 
 \subsection{The {\tt travel_data} table}
 
-Outputs from the external travel models, \modelsindex these logsums are inputs to the
-Accessibility Model. \modelsindex
+Outputs from the external travel models, these logsums are inputs to the
+Accessibility Model. 
 
 
 The travel data can be interpreted as the composite utility of going from one
@@ -2087,12 +2087,12 @@ individual trip.
 \textbf{Note:}
 In order to conserve memory usage, when the logsums are read from the database
 each logsum is multiplied by 100 and then converted to a short. When used in
-the models, \modelsindex it is divided by 100 to change back to a floating point number.
+the models, it is divided by 100 to change back to a floating point number.
 Thus the precision of each logsum is two decimal points plus round off errors
 from converting between floating point and integer representations.
 
 
-These data should be updated with the results of any travel model \modelsindex run.
+These data should be updated with the results of any travel model run.
 
 
 \begin{tabular}{|l|l|p{4in}|}
@@ -2172,7 +2172,7 @@ and thus will have rough or stair-stepped edges).
 
 In practice, the zones table often includes other columns, depending upon the
 needs for your models.  These data should be updated with the results of any
-travel model \modelsindex run with whatever attributes are needed.
+travel model run with whatever attributes are needed.
 
 \begin{tabular}{|l|l|p{3.5in}|}
 \hline

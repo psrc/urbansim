@@ -178,7 +178,7 @@ For more examples, check out the files in the \package{opus_core} package.
 \subsection{Writing Unit Tests for a Variable}
 %
 By convention, there are a set of ``unit tests'' for every Opus variable
-\variablesindex, and for every Opus model.  These tests check that the variable
+, and for every Opus model.  These tests check that the variable
 or model is doing the right thing, and were useful to uncover bugs when we wrote
 the tests.  In addition, the innards of the Opus system also include
 many unit tests to check that the framework works.
@@ -186,7 +186,7 @@ many unit tests to check that the framework works.
 Here are some guidelines to writing unit tests:
 \begin{itemize}
   \item Create \emph{just enough} data for the test.  For instance, create
-  three gridcells with two attributes \attributesindex on each gridcell.  This
+  three gridcells with two attributes on each gridcell.  This
   makes it easier to write, understand and modify tests.
   \item Use data that has interesting differences; the test data does not have
   to be realistic.
@@ -358,7 +358,7 @@ _semi_private_method_names_like_this
 __private_method_names_like_this
 \end{verbatim}
 
-Exceptions are the class names for Opus variable \variablesindex classes (e.g.\
+Exceptions are the class names for Opus variable classes (e.g.\
 \mbox{\tt total_land_value}), for model component classes (e.g.\
 \mbox{\tt linear_utilities}) and for pluggable model building
 blocks (e.g.\ \verb|mnl_probabilities|).  These all are lower case
@@ -690,7 +690,7 @@ Opus-specific exceptions, rather than generic exceptions like StandardError.)
 isolated files, so that it is easier to localize these strings to different
 databases.
 
-\item Follow the conventions in Python's \pythonindex PEP 290: Code
+\item Follow the conventions in Python's PEP 290: Code
 Migration and Modernization PEP 8
 (\url{http://www.python.org/peps/pep-0290.html}) For instance, when
 searching for a substring, where you don't care about the position of the
@@ -700,10 +700,10 @@ clear, e.g. use \verb|string2 in string1| instead of
 when testing dictionary membership, use the 'in' keyword instead of the
 'has_key()' method. The result is shorter, more readable and runs faster.\item
 
-\item Follow the conventions in PEP 8: Style Guide for Python \pythonindex Code
+\item Follow the conventions in PEP 8: Style Guide for Python Code
 PEP 257 (\url{http://www.python.org/peps/pep-0008.html})
 
-\item See Python's \pythonindex PEP 257: Docstring Conventions
+\item See Python's PEP 257: Docstring Conventions
 (\url{http://www.python.org/peps/pep-0257.html}).
 
 \end{itemize}

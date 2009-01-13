@@ -3,10 +3,10 @@
 \label{sec:real-estate-price-model} \index{Real Estate Price Model}
 \modelsindex
 %
-The \class{RealEstatePriceModel} \modelsindex predicts per-unit prices of buildings, 
+The \class{RealEstatePriceModel} predicts per-unit prices of buildings, 
 for each member of the given
 location set. The prediction is done via a regression procedure and thus,
-the model \modelsindex is a child of the \class{RegressionModel} \modelsindex described in
+the model is a child of the \class{RegressionModel} described in
 Section~\ref{sec:regression-model}.
 
 \subsubsection{Initialization}
@@ -20,7 +20,7 @@ The class is initialized by passing the following arguments:
 \item[filter] - name of a variable/attribute used to filter out elements for
   the regression (applied to both, the \method{run()} and \method{estimate()}
   method). Default value is None.
-\item[submodel_string] - If model \modelsindex contains submodels, this character string
+\item[submodel_string] - If model contains submodels, this character string
   specifies what attribute of the observation set determines those
   submodels. Default value is ``building_type_id''.
 \item[run_config] - A collection of additional arguments that control a
@@ -28,7 +28,7 @@ The class is initialized by passing the following arguments:
 \item[estimate_config] - A collection of additional arguments that control an
   estimation run. It should be of class \class{Resources}.
 \end{description}
-The constructor sets \verb|filter| as a class attribute \attributesindex and calls the parent
+The constructor sets \verb|filter| as a class attribute and calls the parent
 constructor (see Initialization in Section~\ref{sec:regression-model}).
 
 \subsubsection{The Run Method}
@@ -36,7 +36,7 @@ constructor (see Initialization in Section~\ref{sec:regression-model}).
 {\it Input}:\\[1mm]
 The \method{run()} method takes exactly the same arguments as its parent
 class:\\
-{\bf specification}, {\bf coefficients}, {\bf dataset}, \datasetindex {\bf index}, {\bf
+{\bf specification}, {\bf coefficients}, {\bf dataset}, {\bf index}, {\bf
   chunk_specification}, {\bf data_objects}, and {\bf run_config}.
 
 
@@ -44,32 +44,32 @@ class:\\
 {\it Algorithm}:\\[1mm]
 If \verb|filter| is given in the initialization, \verb|index| is
 updated to only those elements for which the value of
-attribute/variable \attributesindex\variablesindex \verb|filter| is
+attribute/variable \verb|filter| is
 larger than zero. It then invokes the \method{run()} method of
-\class{RegressionModel} \modelsindex passing all arguments where
+\class{RegressionModel} passing all arguments where
 \verb|index| is possibly modified. The returned value of this call
 is considered to be the prediction of the natural logarithm of the value 
 per unit for each element of \verb|dataset| included in
 \verb|index|. The 'unit' used for the predictions is per 'square foot' 
 for non-residential buildings, and per residential unit for residential buildings. 
 Each of those values is then exponentiated . 
-Attribute \attributesindex ``unit_price'' 
+Attribute ``unit_price'' 
  (which is expected to be a known
-attribute \attributesindex of the \verb|dataset|) is modified by
+attribute of the \verb|dataset|) is modified by
 replacing current values with the computed values.
 
 If any of the computed values exceeds the maximal value of float32, a warning
 is issued and the value is clipped to the maximal possible value.
 
 {\it Output}:\\[1mm]
-The method returns an index of values within \verb|dataset| \datasetindex for which the 
+The method returns an index of values within \verb|dataset| for which the 
 unit_price was modified.
 
 \subsubsection{The Estimate Method}
 {\it Input}:\\[1mm]
 The \method{estimate()} method takes exactly the same arguments as its parent
 class: \\
-{\bf specification}, {\bf dataset}, \datasetindex {\bf outcome_attribute}, {\bf index}, {\bf
+{\bf specification}, {\bf dataset}, {\bf outcome_attribute}, {\bf index}, {\bf
   procedure}, {\bf data_objects}, and {\bf estimate_config}.
 
 {\it Algorithm}:\\[1mm]
@@ -79,26 +79,26 @@ passing all arguments and the possible modified \verb|index|.
 
 {\it Output}:\\[1mm]
 The method returns results of \method{estimate()} method of
-\class{RegressionModel} \modelsindex (see Section~\ref{sec:regression-model}).
+\class{RegressionModel} (see Section~\ref{sec:regression-model}).
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
 {\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the model \modelsindex is
-initialized with default values of the model \modelsindex
+For a production run of UrbanSim the model is
+initialized with default values of the model 
 constructor. The \method{run()} method is called by passing the
 following arguments:
 \begin{description}
 \item[specification] - An
 \class{EquationSpecification} object created with data from table
-``real_estate_price_model_specification''.  \modelsindex
-\item[coefficients] \coefficientsindex - A \class{Coefficients} \coefficientsindex object created
-with data from table ``real_estate_price_model_coefficients''. \coefficientsindex\modelsindex
-\item[dataset] \datasetindex - An instance of class \class{BuildingDataset} created with data
+``real_estate_price_model_specification''.  
+\item[coefficients] - A \class{Coefficients} object created
+with data from table ``real_estate_price_model_coefficients''.\modelsindex
+\item[dataset] - An instance of class \class{BuildingDataset} created with data
   from table ``buildings'' (see Section~\ref{sec:parcel-tables} for the
   table structure).
-\item[index] - None. Thus, the model \modelsindex runs on all members of \verb|dataset| \datasetindex which are possibly 
+\item[index] - None. Thus, the model runs on all members of \verb|dataset| which are possibly 
 filtered using a filter passed to the constructor (by default ``None'', see
 the Initialization paragraph).
 \end{description}
@@ -106,10 +106,10 @@ the Initialization paragraph).
 \subsection{Location Choice Model}
 \label{sec:location-choice-model}
 \index{Location Choice Model}
-A location choice model \modelsindex is a choice model \modelsindex where the set of alternatives is a
+A location choice model is a choice model where the set of alternatives is a
 set of locations.
 
-The class \class{LocationChoiceModel} \modelsindex is a child of \class{ChoiceModel} \modelsindex
+The class \class{LocationChoiceModel} is a child of \class{ChoiceModel} 
 described in Section~\ref{sec:choice-model}. In addition, it allows sampling
 of alternatives and filtering alternatives according to a specified filter.
 
@@ -117,7 +117,7 @@ of alternatives and filtering alternatives according to a specified filter.
 %
 The class is initialized by passing the following arguments:
 \begin{description}
-\item[location_set] - A dataset \datasetindex of locations to be chosen from.
+\item[location_set] - A dataset of locations to be chosen from.
 \item[sampler] - A fully qualified name of the module for sampling
   alternatives. Default value is ``opus_core.samplers.weighted_sampler''. If
   this argument is set to None, no sampling is performed.
@@ -135,12 +135,12 @@ The class is initialized by passing the following arguments:
   interaction between agents and choices (such as those from
   Table~\ref{tab:urbansim-interaction-datasets}). It then determines the
   package in which the module lives. Default value is
-  ``urbansim.datasets''. \datasetindex
-\item[filter] - It is either a string specifying an attribute \attributesindex name of the
+  ``urbansim.datasets''. 
+\item[filter] - It is either a string specifying an attribute name of the
   filter, or a 1D/2D array giving the filter directly, or a dictionary
   specifying filter for each submodel. If it is None (default), no filter is
   applied.
-\item[submodel_string] - If model \modelsindex contains submodels, this character string
+\item[submodel_string] - If model contains submodels, this character string
   specifies what agent's attribute determines those submodels. If it is None
   (default), no division into submodels is applied.
 \item[run_config] - A collection of additional arguments that control a
@@ -156,25 +156,25 @@ property \verb|filter|
 %
 \subsubsection{The Run Method}
 %
-The \method{run()} method runs the simulation of location choice model \modelsindex on basis
-of a given specification and coefficients. \coefficientsindex
+The \method{run()} method runs the simulation of location choice model on basis
+of a given specification and coefficients.
 
 {\it Input}:\\[1mm]
 It takes the same arguments as the \method{run()} method of its parent (see
 Section~\ref{sec:choice-model} for more details): \\
-{\bf specification}, {\bf coefficients}, \coefficientsindex {\bf agent_set}, {\bf agents_index},
+{\bf specification}, {\bf coefficients}, {\bf agent_set}, {\bf agents_index},
 {\bf chunk_specification}, {\bf data_objects}, and {\bf run_config}.
 
 {\it Algorithm}:\\[1mm]
-The model \modelsindex is processed in chunks. The \method{run_chunk()} method moves
+The model is processed in chunks. The \method{run_chunk()} method moves
 the agents out of their locations, i.e. the values of an
 \verb|agent_set| attribute of the same name as the unique identifier of
 \verb|location_set| is set to $-1$ for each agents of the currently processed
-chunk. If \verb|agent_set| does not have this attribute, \attributesindex it is appended to it.
+chunk. If \verb|agent_set| does not have this attribute, it is appended to it.
 
 If an entry ``compute_capacity_flag'' is given in \verb|run_config| and its
 value is True, an entry ``capacity_string'' is expected in \verb|run_config|
-which gives the name of attribute/variable \attributesindex\variablesindex of \verb|location_set| that
+which gives the name of attribute/variable of \verb|location_set| that
 determines capacity for each location. In such a case, after removing agents
 from their locations, the capacity is computed using method
 \method{determine_units_capacity()}. Note that by removing agents of only the
@@ -184,7 +184,7 @@ running chunks.
 
 The capacity values are used as weights of locations in the case of sampling.
 They are multiplied by the filter given in the initialization.  The
-model \modelsindex then invokes sampling of alternatives by calling the
+model then invokes sampling of alternatives by calling the
 \method{run()} method of the sampler class, passing the possibly filtered
 weights. The parent class then takes care of creating the interaction set, for
 agents of the corresponding chunk and possibly sampled alternatives and of
@@ -214,14 +214,14 @@ The \method{estimate()} method takes the same arguments as its parent class:\\
 {\it Algorithm}:\\[1mm]
 As in the \method{run()} method, if ``compute_capacity_flag'' is given in
 \verb|estimate_config| and its value is True, an entry ``capacity_string'' is
-expected in \verb|estimate_config| which gives the name of attribute/variable \attributesindex\variablesindex
+expected in \verb|estimate_config| which gives the name of attribute/variable
 of \verb|location_set| that determines capacity for each location. In such a
 case, the capacity is computed using method
 \method{determine_units_capacity_for_estimation()}.
 
 The weights for sampling alternatives are determined by an optional entry
 ``weights_for_estimation_string'' in \verb|estimate_config| which should be an
-attribute/variable \attributesindex\variablesindex name of \verb|location_set|. They are multiplied by the
+attribute/variable name of \verb|location_set|. They are multiplied by the
 given \verb|filter| (if any) and as in the case of the \method{run()} method,
 sampling is performed using those weights. The parent class performs then the
 estimation. If \verb|estimate_config| includes an entry
@@ -255,13 +255,13 @@ As mentioned above, \verb|estimate_config| can also contain an entry ``weights_f
 \label{sec:development-project-proposal-cm}
 \index{Development Project Proposal Choice Model}
 %
-The Development project proposal choice model \modelsindex simulates a process where
+The Development project proposal choice model simulates a process where
 development project proposals are generated for all development sites, and a hypothetical
 financing agent (a construction lender) evaluates the expected return on investment
 for each proposal and selects projects based on their relative ROI, until the accepted
 projects saturate demand (as measured by a long-term vacancy rate target).
-The class \class{DevelopmentProjectProposalChoiceModel} \modelsindex is a child of
-\class{LocationChoiceModel} \modelsindex described in
+The class \class{DevelopmentProjectProposalChoiceModel} is a child of
+\class{LocationChoiceModel} described in
 Section~\ref{sec:location-choice-model}.
 
 \subsubsection{Generate Development Proposals}
@@ -378,7 +378,7 @@ Development Site, according to the Development Velocity Function associated with
 \modelsindex
 %
 \label{sec:household-transition-model}
-\index{Household Transition Model} \modelsindex The class \class{HouseholdTransitionModel} \modelsindex
+\index{Household Transition Model} The class \class{HouseholdTransitionModel} 
 creates and removes households to and from given household set according to
 the joint distribution of their characteristics. The total number of
 households is controlled by given annual control totals.
@@ -388,24 +388,24 @@ households is controlled by given annual control totals.
 {\it Input}:
 \begin{description}
 \item[year] - an integer indicating the simulated year.
-\item[household_set] - an instance of \class{Dataset} \datasetindex that contains some
-  specific attributes \attributesindex (see description of the algorithm bellow).
+\item[household_set] - an instance of \class{Dataset} that contains some
+  specific attributes (see description of the algorithm bellow).
 \item[control_totals] - an instance of \class{ControlTotalDataset} initiated for
-  the dataset ``household''. It must have at least attributes \attributesindex
+  the dataset ``household''. It must have at least attributes
   ``total_number_of_households'' and ``year'' which give the control totals
-  for specific years. Optionally, it can contain other attributes \attributesindex whose
+  for specific years. Optionally, it can contain other attributes whose
   combinations determine groups for the control totals.  These are e.g.
   ``age_of_head'', ``income'', ``persons'', ``cars'', ``children'',
-  ``race_id'', ``workers''. Each value of such attribute \attributesindex is the corresponding
+  ``race_id'', ``workers''. Each value of such attribute is the corresponding
   group index (starting from zero) for this characteristics from the argument
-  \verb|characteristics| (see below). The unique identifier of this dataset \datasetindex
-  should consist of all attributes \attributesindex but the ``total_number_of_households'' (for
+  \verb|characteristics| (see below). The unique identifier of this dataset 
+  should consist of all attributes but the ``total_number_of_households'' (for
   details see Section ``annual_household_control_totals''
   in~\ref{sec:household-tables-ahct}).
 \item[characteristics] - an instance of class
   \class{HouseholdCharacteristicDataset} that specifies grouping of
-  characteristics.  It must have three attributes: \attributesindex ``characteristic'', ``min''
-  and ``max''.  Values of the ``characteristic'' attribute \attributesindex should match the
+  characteristics.  It must have three attributes: ``characteristic'', ``min''
+  and ``max''.  Values of the ``characteristic'' attribute should match the
   names of the existing optional attributes of \verb|control_totals|, but they
   can be also other names. ``min'' and ``max'' determine group boundaries for
   each characteristics (for details see Section
@@ -414,12 +414,12 @@ households is controlled by given annual control totals.
   \verb|control_totals|, the grouping is assumed to be $[0,1), [1,2), [2,3)$,
   etc.
 \item[resources] - additional \class{Resources} for controlling the
-  simulation run. The argument is not used in this version of the model. \modelsindex
+  simulation run. The argument is not used in this version of the model. 
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
 The optional attributes in \verb|control_totals| are called 'marginal'
-characteristics, the remaining characteristics from the dataset \datasetindex
+characteristics, the remaining characteristics from the dataset 
 \verb|characteristics| are called 'scaled' characteristics. The given
 \verb|household_set| must contain the union of the marginal and scaled
 characteristics as its primary attributes. \primaryattributesindex
@@ -445,12 +445,12 @@ the number $n_u$ of those unplaced households is larger than $d$, only $d$
 households are randomly sampled for deletion. If $n_u$ is smaller than $d$,
 then $d-n_u$ households from the set of placed households of that bin are
 randomly sampled and deleted. Households are considered as unplaced if their
-attribute \attributesindex given by the class property \verb|location_id_name| (which is by
+attribute given by the class property \verb|location_id_name| (which is by
 default ``grid_id'') is smaller equal zero.
 
 {\it Output}:~\\[1mm]
 The method returns the total difference between the sizes of the household
-dataset \datasetindex after and before the model \modelsindex run. Thus, a positive value means that in
+dataset after and before the model run. Thus, a positive value means that in
 total there were more households added than removed, a negative value means
 the opposite.
 
@@ -458,7 +458,7 @@ the opposite.
 \subsubsection{Example}
 %
 Consider the following example. We have two marginal characteristics defined
-in the control totals - persons and income. The dataset \datasetindex \verb|characteristics|
+in the control totals - persons and income. The dataset \verb|characteristics|
 defines three categories - persons (3 groups), income (2 groups) and age of
 head (3 groups). A combination of those groups divides the space of households
 characteristics into 18 groups in total, as shown in
@@ -507,12 +507,12 @@ denotes the index (starting from 0) of the particular group within the
 characteristics table. E.g. the first line in the control totals table refers
 to the persons group $[0,2]$ and income group $[0,49999]$.
 
-The model \modelsindex iterates over bins defined by the marginal characteristics. In this
+The model iterates over bins defined by the marginal characteristics. In this
 case, it would iterate over the 6 groups marked by A,B,C,D,E,F in
 Figure~\ref{fig:htm-example}, it would then determine the number of households
 that belong to each group in terms of their characteristics and compare it
 with the control total for that group. If for example in bin F (shaded area in
-the figure) there are 10 households to be created, the model \modelsindex would randomly
+the figure) there are 10 households to be created, the model would randomly
 sample (with replacement) 10 bins from the 3 bins within F (formed by groups
 on the axis ``age_of_head''), weighted by the number of existing households in
 those bins.  These are categories of the 10 new households. Then for each of
@@ -523,14 +523,14 @@ between 4 and 8\footnote{When a maximum is set to $\infty$, we replace it by a
   reasonable maximum for sampling, which is two times the category range.}
 and age of head between 15 and 29.  If the difference between control total
 and the number of households in F would call for removing households, the
-model \modelsindex would randomly sample households belonging to F regardless to which bin
+model would randomly sample households belonging to F regardless to which bin
 within F they belong.
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
 {\em Configuration for Production Run}:\\[1mm]
-In a production run of UrbanSim, the model \modelsindex runs with the following arguments:
+In a production run of UrbanSim, the model runs with the following arguments:
 \begin{description}
 \item[year] - The current year of the simulation.
 \item[household_set] - A \class{HouseholdDataset} object created with data from
@@ -553,12 +553,12 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
 \label{sec:employment-transition-model}
 \index{Employment Transition Model}
 
-The class \class{EmploymentTransitionModel} \modelsindex creates and removes jobs to and
+The class \class{EmploymentTransitionModel} creates and removes jobs to and
 from given job set according to a job distribution over employment sectors.
 The total number of jobs is controlled by given annual control totals. It
 distinguishes between home based and non-home based jobs.
 
-The algorithm is a simplification of the Household Transition Model. \modelsindex There are
+The algorithm is a simplification of the Household Transition Model. There are
 no scaled characteristics and the only marginal characteristics are sector
 identifiers.
 
@@ -567,46 +567,46 @@ identifiers.
 {\it Input}:
 \begin{description}
 \item[year] - an integer indicating the simulated year.
-\item[job_set] - an instance of \class{Dataset} \datasetindex that contains some
-  specific attributes \attributesindex (see description of the algorithm bellow).
+\item[job_set] - an instance of \class{Dataset} that contains some
+  specific attributes (see description of the algorithm bellow).
 \item[control_totals] - an instance of \class{ControlTotalDataset} initiated for
-  the dataset ``employment''. It must have at least attributes \attributesindex ``sector_id'',
+  the dataset ``employment''. It must have at least attributes ``sector_id'',
   ``total_home_based_employment'', ``total_non_home_based_employment'' and
   ``year'' which specify the annual control totals per sector and employment
-  type.  The unique identifier of this dataset \datasetindex should be ``year'' and
+  type.  The unique identifier of this dataset should be ``year'' and
   ``sector_id'' (for details see Section ``annual_employment_control_totals''
   in~\ref{sec:employment-tables}).
 \item[job_building_types] - an instance of class \class{Dataset} that contains unique 
 building types of jobs. It must contain an attribute 'home_based' determining which 
 of the building types are home based (see ``job_building_types'' in~\ref{sec:employment-tables}).
- \item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+ \item[data_objects] - a dictionary containing other datasets and arguments
+  needed for computing variables.
 \item[resources] - additional \class{Resources} for controlling the
-  simulation run. The argument is not used in this version of the model. \modelsindex
+  simulation run. The argument is not used in this version of the model. 
 \end{description}
 
 
 {\it Algorithm}:~\\[1mm]
 The \verb|job_set| is required to have a primary attribute \primaryattributesindex
 ``building_type'' with values that correspond to values of the unique identifier of \verb|job_building_types|.
-The algorithm invokes a computation of variables \variablesindex
+The algorithm invokes a computation of variables
 ``is_in_employment_sector_$n$_home_based'' and
 ``is_in_employment_sector_$n$_non_home_based'' implemented in the package
-given by the class property \verb|variable_package| \variablesindex (by default
-``urbansim''). $n$ in the variable \variablesindex names is the sector id. If you use
-the default \package{urbansim} implementation of those variables, \variablesindex they require
+given by the class property \verb|variable_package| (by default
+``urbansim''). $n$ in the variable names is the sector id. If you use
+the default \package{urbansim} implementation of those variables, they require
 a primary attributes \primaryattributesindex ``home_based'' of the dataset \verb|job_building_types|
 and a primary attribute ``sector_id'' of \verb|job_set|. Each job is set to be home based if its building 
 type is home based, otherwise the job is non-home based.  
 
 The method iterates over sectors given in \verb|control_totals|. For each
 sector it determines the number of jobs of that sector that are home based
-(non-home based) using the above variables. \variablesindex It then compares those numbers to
+(non-home based) using the above variables. It then compares those numbers to
 the control totals.  If the difference $d_h$ ($d_{nh}$) is positive, new home
 based (non-home based) jobs are created, if it is negative, home based
 (non-home based) jobs are removed, if it is zero, nothing is done.
 
-Jobs that are created get the corresponding values for the attribute \attributesindex
+Jobs that are created get the corresponding values for the attribute
 ``sector_id''. For each combination of (sector id, home based) and (sector id, non-home based) 
 it is determined, if there are any jobs of this group
 previously available. In such a case, the distribution of ``building_type'' among those jobs is
@@ -622,12 +622,12 @@ $d_h$ ($d_{nh}$) jobs are randomly sampled for deletion. If $n_{h_u}$
 ($n_{nh_u}$) is smaller than $d_h$ ($d_{nh}$), then $d_h-n_{h_u}$
 ($d_{nh}-n_{nh_u}$) jobs from the set of placed jobs of that sector are
 randomly sampled and deleted. Jobs are considered as unplaced if their
-attribute \attributesindex given by the class property \verb|location_id_name| (which is by
+attribute given by the class property \verb|location_id_name| (which is by
 default ``grid_id'') is smaller equal zero.
 
 {\it Output}:~\\[1mm]
 The method returns the total difference between the sizes of the job
-dataset \datasetindex after and before the model \modelsindex run. Thus, a positive value means that in
+dataset after and before the model run. Thus, a positive value means that in
 total there were more jobs added than removed, a negative value means
 the opposite.
 
@@ -635,7 +635,7 @@ the opposite.
 \modelsindex
 %
 {\em Configuration for Production Run}:\\[1mm]
-In a production run of UrbanSim, the model \modelsindex runs with the following arguments:
+In a production run of UrbanSim, the model runs with the following arguments:
 \begin{description}
 \item[year] - The current year of the simulation.
 \item[job_set] - A \class{JobDataset} object created with data from
@@ -659,7 +659,7 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
 \label{sec:agent-relocation-model}
 \index{Agent Relocation model}
 
-The class \class{AgentRelocationModel} \modelsindex determines which members of the given
+The class \class{AgentRelocationModel} determines which members of the given
 set of agents should be relocated. This is done on basis of given
 probabilities. Additionally, the way how to choose the agents can be given by
 passing a \class{Choices} object.
@@ -676,13 +676,13 @@ The class is initialized by passing the following arguments:
   agents for relocation according to given probabilities. The module should be
   a child of the \package{opus_core} class \class{Choices}.  Default value is
   ``opus_core.random_choices'' (see Section~\ref{sec:choices}).
-\item[location_id_name] - Name of the attribute \attributesindex that specifies locations. It
+\item[location_id_name] - Name of the attribute that specifies locations. It
   must be a primary attribute \primaryattributesindex of the agent set. Default value is
   ``grid_id''.
-\item[model_name] \modelsindex - Name of the model. \modelsindex Default value is ``Agent Relocation
-  Model''. \modelsindex
+\item[model_name] - Name of the model. Default value is ``Agent Relocation
+  Model''. 
 \end{description}
-The initialization method creates a class attribute \attributesindex \verb|upc_sequence|, using
+The initialization method creates a class attribute \verb|upc_sequence|, using
 the passed arguments \verb|probabilities| and \verb|choices|. It is an object
 of class \class{upc_sequence} where the utilities component is set to None
 (see Section~\ref{sec:upc-sequence}).
@@ -692,7 +692,7 @@ of class \class{upc_sequence} where the utilities component is set to None
 %
 {\it Input}:
 \begin{description}
-\item[agent_set] - A \class{Dataset} \datasetindex object containing agents to be relocated.
+\item[agent_set] - A \class{Dataset} object containing agents to be relocated.
 \item[resources] - An instance of class \class{Resources} which is a
   collection of additional arguments and objects that will be passed to the
   \verb|upc_sequence| run.
@@ -706,7 +706,7 @@ choices component and it is expected to return an array of zeros for agents
 not to be relocated, and ones for agent to be relocated. The distinct values
 of indices of the ``to be relocated'' agents joined with indices of all
 unplaced agents is the resulting array of agents to be relocated. As unplaced
-agents are considered agents that have value smaller equal 0 for the attribute \attributesindex
+agents are considered agents that have value smaller equal 0 for the attribute
 given in \verb|location_id_name| passed to the constructor.
 
 {\it Output}:~\\[1mm]
@@ -717,18 +717,18 @@ relocated.
 \subsubsection{Creators}
 %
 There are two pre-defined creators in \package{urbansim}. Their method
-\method{get_model()} \modelsindex returns an instance of
-\class{AgentRelocationModel} \modelsindex with the following default settings:
+\method{get_model()} returns an instance of
+\class{AgentRelocationModel} with the following default settings:
 \begin{itemize}
-\item \class{HouseholdRelocationModelCreator} \modelsindex - sets the argument
+\item \class{HouseholdRelocationModelCreator} - sets the argument
   \verb|probabilities| to ``urbansim.household_relocation_probabilities''
-  (see Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| \modelsindex to
-  ``Household Relocation Model''. \modelsindex
-\item \class{EmploymentRelocationModelCreator} \modelsindex - sets the argument
+  (see Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| to
+  ``Household Relocation Model''. 
+\item \class{EmploymentRelocationModelCreator} - sets the argument
   \verb|probabilities| to
   ``urbansim.employment_relocation_probabilities'' (see
-  Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| \modelsindex to
-  ``Employment Relocation Model''.  \modelsindex
+  Section~\ref{sec:urbansim-probabilities}) and \verb|model_name| to
+  ``Employment Relocation Model''.  
 \end{itemize}
 
 %
@@ -737,26 +737,26 @@ There are two pre-defined creators in \package{urbansim}. Their method
 %
 {\em Configuration for Production Run}:
 \begin{itemize}
-\item To run a {\bf Household Relocation Model} \modelsindex in a production run, the
-  \class{HouseholdRelocationModelCreator} \modelsindex is used to create an instance of the
-  \class{AgentRelocationModel}. \modelsindex Additionally, it creates an instance of
+\item To run a {\bf Household Relocation Model} in a production run, the
+  \class{HouseholdRelocationModelCreator} is used to create an instance of the
+  \class{AgentRelocationModel}. Additionally, it creates an instance of
   \class{RateDataset} initialized with the argument \verb|what=|''households''
   which reads data from table ``annual_relocation_rates_for_households'' (see
   Section~\ref{sec:household-tables} for the table structure). This object is
   put into {\bf resources} which is passed to the \method{run()} method of
-  the model. \modelsindex As {\bf agent_set} the production code passes a
+  the model. As {\bf agent_set} the production code passes a
   \class{HouseholdDataset} object that was (possibly) used and modified by the
-  Household Transition Model. \modelsindex
-\item To run a {\bf Employment Relocation Model}, \modelsindex the
-  \class{EmploymentRelocationModelCreator} \modelsindex is used to create an instance of the
-  \class{AgentRelocationModel}. \modelsindex Additionally, it creates an instance of
+  Household Transition Model. 
+\item To run a {\bf Employment Relocation Model}, the
+  \class{EmploymentRelocationModelCreator} is used to create an instance of the
+  \class{AgentRelocationModel}. Additionally, it creates an instance of
   \class{RateDataset} initialized with the argument \verb|what=|''jobs''
   which reads data from table ``annual_relocation_rates_for_jobs'' (see
   Section~\ref{sec:employment-tables} for the table structure). This object is
   put into {\bf resources} which is passed to the \method{run()} method of
-  the model. \modelsindex As {\bf agent_set} the production code passes a
+  the model. As {\bf agent_set} the production code passes a
   \class{JobDataset} object that was (possibly) used and modified by the
-  Employment Transition Model. \modelsindex
+  Employment Transition Model. 
 \end{itemize}
 
 %
@@ -766,19 +766,19 @@ There are two pre-defined creators in \package{urbansim}. Their method
 \label{sec:agent-lcm}
 \index{Agent Location Choice Model}
 
-The class \class{AgentLocationChoiceModel} \modelsindex is a child
-of \class{LocationChoiceModel} \modelsindex described in
-Section~\ref{sec:location-choice-model}. \modelsindex It extends the
+The class \class{AgentLocationChoiceModel} is a child
+of \class{LocationChoiceModel} described in
+Section~\ref{sec:location-choice-model}. It extends the
 parent class only in one way: It puts the parent method
 \method{run()} into a loop which is repeated whenever there is an
 overflow in the capacity after the last run. This behavior is
 activated only if the ``compute_capacity_flag'' entry of
 \verb|run_config| is set to True. In such a case, \verb|run_config|
 also should have entries ``number_of_units_string'' giving the
-variable \variablesindex name for computing number of available
+variable name for computing number of available
 units in each location, and ``number_of_agents_string'' giving the
-variable \variablesindex name for computing the number of agents
-located in each location. Those variables \variablesindex are
+variable name for computing the number of agents
+located in each location. Those variables are
 computed and the difference in their values determines the
 overfilled locations. If there are any such locations, an
 appropriate number of agents (from the set given by
@@ -786,7 +786,7 @@ appropriate number of agents (from the set given by
 \method{run()} method is called again. The maximum number of
 iterations is 10.
 
-The model \modelsindex also completes any unqualified variable \variablesindex names given in constructor
+The model also completes any unqualified variable names given in constructor
 arguments, \verb|run_config| and \verb|estimate_config| to fully-qualified
 names, by using the dataset name of the given \verb|location_set| and package
 ``urbansim''.
@@ -798,7 +798,7 @@ names, by using the dataset name of the given \verb|location_set| and package
 {\em Configuration for Production Run}:\\[1mm]
 The {\bf HouseholdLocationChoiceModelCreator} passes a
 \class{BuildingDataset} object that was (possibly) used and modified by the
-development models \modelsindex to the constructor of \class{AgentLocationChoiceModel} \modelsindex as
+development models to the constructor of \class{AgentLocationChoiceModel} as
 the argument {\bf location_set}. Additionally, it overwrites the default
 value of {\bf choices} with ``urbansim.lottery_choices'' (see
 Section~\ref{sec:urbansim-choices}).
@@ -807,12 +807,12 @@ The following arguments are passed to
   the \method{run()} method:
 \begin{description}
 \item[specification] - An \class{EquationSpecification} object created with
-  data from table ``household_location_choice_model_specification''. \modelsindex
-\item[coefficients] \coefficientsindex - A \class{Coefficients} \coefficientsindex object created with data from
-  table ``household_location_choice_model_coefficients''. \modelsindex
+  data from table ``household_location_choice_model_specification''. 
+\item[coefficients] - A \class{Coefficients} object created with data from
+  table ``household_location_choice_model_coefficients''. 
 \item[agent_set] - A \class{HouseholdDataset} object used in Household Relocation
-  Model. \modelsindex
-\item[agents_index] - Results of Household Relocation Model. \modelsindex Make sure this model is turned on 
+  Model. 
+\item[agents_index] - Results of Household Relocation Model. Make sure this model is turned on 
 when running Household Location Choice Model.
 \end{description}
 
@@ -863,9 +863,9 @@ The \method{run()} method is called with the following arguments:
 \begin{description}
 \item[specification] - Uses data from
   ``employment_location_choice_model_specification'' .
-\item[coefficients] \coefficientsindex - Uses data from ``employment_location_choice_model_coefficients'' 
-\item[agent_set] - A \class{JobDataset} object used in Employment Relocation Model. \modelsindex
-\item[agents_index] - Results of Employment Relocation Model \modelsindex.
+\item[coefficients] - Uses data from ``employment_location_choice_model_coefficients'' 
+\item[agent_set] - A \class{JobDataset} object used in Employment Relocation Model. 
+\item[agents_index] - Results of Employment Relocation Model .
 \end{description}
  
 \subsection{Scaling Jobs Model}
@@ -873,7 +873,7 @@ The \method{run()} method is called with the following arguments:
 %
 \label{sec:scaling-jobs-model} \index{Scaling Jobs Model}
 %
-The class \class{ScalingJobsModel} \modelsindex locates jobs to locations according to the
+The class \class{ScalingJobsModel} locates jobs to locations according to the
 distribution of jobs sectors in locations. \index{model group}
 \subsubsection{Initialization}
 The model is initialized by passing the following arguments:
@@ -889,19 +889,19 @@ The model is initialized by passing the following arguments:
 \item[location_set] - an instance of \class{Dataset} containing the set of all
   locations for locating jobs.
 \item[agent_set] - an instance of \class{Dataset} containing the set of all
-  jobs. It must have an attribute \attributesindex ``sector_id'' and attribute \attributesindex of the same name
+  jobs. It must have an attribute ``sector_id'' and attribute of the same name
   as the unique identifier of the \verb|location_set|.
 \item[agents_index] - indices of members of the \verb|agent_set| for which the
-  model \modelsindex runs. If it is None, the whole \verb|agent_set| is considered.
-\item[data_objects] - a dictionary containing other datasets \datasetindex and arguments
-  needed for computing variables. \variablesindex
+  model runs. If it is None, the whole \verb|agent_set| is considered.
+\item[data_objects] - a dictionary containing other datasets and arguments
+  needed for computing variables.
 \item[resources] - additional \class{Resources} for controlling the
-  simulation run. The argument is not used in this version of the model. \modelsindex
+  simulation run. The argument is not used in this version of the model. 
 \end{description}
 
 {\it Algorithm}:~\\[1mm]
 The \verb|location_set| is expected to have implemented variable
-\variablesindex ``number_of_jobs_of_sector_$n$'' in the package
+ ``number_of_jobs_of_sector_$n$'' in the package
 given by the class property \verb|variable_package| (default is
 ``urbansim'').  $n$ is an integer giving sector IDs.
 
@@ -913,7 +913,7 @@ randomly samples (with replacement) the desired count of locations
 weighted by the number of existing jobs of that sector in each
 location. If there are no existing jobs in that sector, it samples
 with equal weights for all locations.  It then modifies the location
-attribute \attributesindex of the job set by storing the sampled
+attribute of the job set by storing the sampled
 location IDs.
 
 {\it Output}:~\\[1mm]
@@ -930,10 +930,10 @@ The \method{run()} method is called with
 the following arguments:
 \begin{description}
 \item[location_set] - A \class{GridcellDataset} object that was (possibly) used
-  and modified by the development models. \modelsindex
+  and modified by the development models. 
 \item[agent_set] - A \class{JobDataset} object used in Employment Relocation
-  Model. \modelsindex
-\item[agents_index] - Results of Employment Relocation Model. \modelsindex
+  Model. 
+\item[agents_index] - Results of Employment Relocation Model. 
 \end{description}
 
 \subsection{Events Coordinator}
@@ -941,17 +941,17 @@ the following arguments:
 \index{Events Coordinator}
 %
 The class \class{EventsCoordinator} updates a location set to reflect changes
-that are contained in the output of the Development Event Transition Model. \modelsindex
-There is no \method{estimate()} method for this model. \modelsindex
+that are contained in the output of the Development Event Transition Model. 
+There is no \method{estimate()} method for this model. 
 %
 \subsubsection{The Run Method}
 %
 {\it Input}:
 \begin{description}
-\item[model_configuration] \modelsindex - a \class{Configuration} object that determines
-  project types and settings for each type (see Model \modelsindex Configuration of
+\item[model_configuration] - a \class{Configuration} object that determines
+  project types and settings for each type (see Model Configuration of
   Section~\ref{sec:development-project-transition-model}).
-\item[location_set] - a \class{Dataset} \datasetindex object to be updated.
+\item[location_set] - a \class{Dataset} object to be updated.
 \item[development_event_set] - a \class{DevelopmentEventDataset} with development
   events to be used to update the locations.
 \item[development_type_set] - an object of class \class{DevelopmentTypeDataset}.
@@ -973,12 +973,12 @@ development events that were processed.
 For a production run of UrbanSim the method \method{run()} is called using the
 following arguments:
 \begin{description}
-\item[model_configuration] \modelsindex - The model \modelsindex configuration for project types from
+\item[model_configuration] - The model configuration for project types from
   \file{general_configuration.py} as shown on page~\pageref{page:model-configuration}.
 \item[location_set] - An instance of class \class{GridcellDataset} created with
   data from table ``gridcells'' (see Section~\ref{sec:gridcell-tables} for the
-  table structure) and (possibly) modified by previous models. \modelsindex
-\item[development_event_set] - Result of a Development Event Transition Model \modelsindex
+  table structure) and (possibly) modified by previous models. 
+\item[development_event_set] - Result of a Development Event Transition Model 
   run.
 \item[current_year] - The current year of the simulation.
 \end{description}

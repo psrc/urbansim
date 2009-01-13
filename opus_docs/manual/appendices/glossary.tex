@@ -29,17 +29,17 @@ An object that contains a set of agents.
 \item[Alternative] \index{alternative}
 One of the objects that an agent may choose.
 
-\item[Attribute] \attributesindex
+\item[Attribute]\index{attributes}
 A value that can be attributed to a particular object.  An
 inherent characteristic of an object.  For instance, the UrbanSim
-job object may have attributes \attributesindex such as ``id'', ``gridcell_id'', 
-and ``is_in_scalable_sector_group''.  Attributes \attributesindex may be 
-"primary'', \primaryattributesindex in that the jobs in the input database 
-have values for that attribute. \attributesindex  Or attributes \attributesindex may be computed
-by a variable \variablesindex definition.  There are no ``constant'' attributes. \attributesindex 
-Models may modify any attributes, \attributesindex including ``primary'' attributes. \primaryattributesindex
+job object may have attributes such as ``id'', ``gridcell_id'', 
+and ``is_in_scalable_sector_group''.  Attributes may be 
+"primary''\index{attributes!primary}\index{primary attributes}, in that the jobs in the input database 
+have values for that attribute.  Or attributes may be computed
+by a variable definition.  There are no ``constant'' attributes. 
+Models may modify any attributes, including ``primary'' attributes.
 
-\item[baseyear cache] \baseyearcacheindex
+\item[baseyear cache]\index{baseyear cache}
 The file-based storage for the attribute values read from the baseyear
 database.  Access to a file-based cache is much faster than to a database. 
 Data cached during model simulation is written to a simulation cache. 
@@ -67,15 +67,15 @@ A set of categories.
 The Center for Urban Simulation and Policy Analysis at the University of Washington
 (home of the UrbanSim project).
 
-\item[Dataset] \datasetindex
+\item[Dataset]\index{dataset}
 A set of objects, such as gridcells or jobs, of the same type.
-You can think of a dataset \datasetindex as a table, with one column
-for each attribute, \attributesindex and one row for each object.  
-Each object in the dataset \datasetindex has a unique identifier (an integer) stored in
-an attribute \attributesindex whose name is referenced as ``id_name''. \datasetindex  
+You can think of a dataset as a table, with one column
+for each attribute, and one row for each object.  
+Each object in the dataset has a unique identifier (an integer) stored in
+an attribute whose name is referenced as ``id_name''.  
 
-In practice, a dataset \datasetindex often is constructed from a single
-table read from a Storage object, though some datasets \datasetindex
+In practice, a dataset often is constructed from a single
+table read from a Storage object, though some datasets 
 are constructed by joining information from multiple tables.
 
 \item[Logit Equation] \index{Logit Equation}
@@ -89,7 +89,7 @@ each alternative:
 \end{equation}
 
 \item[Estimated Utility Function] \index{Estimated Utility Function}
-A set of paired variables \variablesindex and coefficients \coefficientsindex of the form $\sum
+A set of paired variables and coefficients of the form $\sum
 c_{i}*v_{i}$.
 
 \item[Integrated Development Environment (IDE)]\index{Integrated Development Environment (IDE)}
@@ -101,13 +101,13 @@ Eclipse\index{Integrated Development Environment (IDE)!Eclipse}\index{Eclipse ID
 Wing\index{Integrated Development Environment (IDE)!Wing}\index{Wing IDE}\@.
 
 \item[Interaction Set] \index{interaction set}
-A dataset \datasetindex of variables \variablesindex describing the interaction between two
-different datasets. \datasetindex  See ``Interaction Variable''. \variablesindex
+A dataset of variables describing the interaction between two
+different datasets.  See ``Interaction Variable''.
 
 \item[Interaction Variable] \index{interaction variable}
-A variable \variablesindex that computes the interaction between two different
-datasets, \datasetindex such as that gridcell ``number_of_households'' 
-variable \variablesindex that computes the number of households residing in
+A variable that computes the interaction between two different
+datasets, such as that gridcell ``number_of_households'' 
+variable that computes the number of households residing in
 each gridcell.
 
 \item[Logit Model] \index{Logit Model} \index{model!Logit}
@@ -133,7 +133,7 @@ module contains a set of tests that test that model.
 
 \item[Model implementation] \index{model!implementation}
 A model whose specification, or both specification and
-coefficients, \coefficientsindex have been estimated to a particular data set.
+coefficients\index{coefficients}, have been estimated to a particular data set.
 
 \item[Model object] \index{model!object}
 A model, or a model part.  Model objects act on data objects.
@@ -151,14 +151,14 @@ household-location-choice model, which is part of an UrbanSim model.
 
 \item[Model specification] \index{model!specification}
 A definition of what variables are included in an econometric
-model.  Coefficient \coefficientsindex values may, or may not, also be part of the
+model.  Coefficient values\index{coefficient values} may, or may not, also be part of the
 specification.
 
 \item[Opus] \index{Opus} The Open Platform for Urban Simulation, a new
-Python-based \pythonindex framework for writing urban and regional models.
+Python-based framework for writing urban and regional models.
 
 \item[Opus package] \indexii{Opus}{package} The term ``Opus package'' refers to 
-any Python \pythonindex package built using the Opus framework and that follows
+any Python package\index{Python package} built using the Opus framework and that follows
 the Opus package guidelines.  The packages in the Opus base distribution
 will all be Opus packages in this sense, as will contributed Opus packages. See
 Section~\ref{sec:create-opus-package} for directions for creating your own Opus
@@ -175,13 +175,13 @@ A way of structuring Python's module namespace by using ``dotted module
 names''.  See the Python documentation at \url{http://www.python.org/doc}.
 
 \item[Resources] \index{Resources} 
-A Python \pythonindex dictionary object.  It is used to contain parameters passed
+A Python dictionary object.  It is used to contain parameters passed
 between model steps.
 
 \item[simulation cache]\index{simulation cache}
-The file-based storage for the attribute values for the datasets \datasetindex used by the
+The file-based storage for the attribute values for the datasets used by the
 models. Access to a file-based cache is much faster than to a database.  The
-baseyear attributes \attributesindex are stored in the baseyear cache. \baseyearcacheindex
+baseyear attributes are stored in the baseyear cache\index{baseyear cache}.
 
 \item[]\item[Simulation cycle] \index{simulation cycle}
 A set of sub-models that run in sequence before repeating.
@@ -194,11 +194,11 @@ A \ldots \emph{need to supply this definition}
 The unit of simulated time between each simulation cycle. For many
 simulations, this will be a year.
 
-\item[Variable] \variablesindex
-An attribute \attributesindex that is computed by a variable \variablesindex definition.  Each
-variable \variablesindex definition resides in its own Python \pythonindex module.  The 
-Python \pythonindex module for a variable, \variablesindex e.g. ``is_industrial'', is the
-same as the variable \variablesindex name except with a ``.py'' extension, 
+\item[Variable]\index{variables}
+An attribute that is computed by a variable definition.  Each
+variable definition resides in its own Python module.  The 
+Python module for a variable, e.g. ``is_industrial'', is the
+same as the variable name except with a ``.py'' extension, 
 e.g. ``is_industrial.py''.  
 
 \item[Work request system] \index{work request system}

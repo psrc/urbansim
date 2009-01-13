@@ -15,13 +15,13 @@ contained in the \package{urbansim} package.
 
 \section{Datasets}
 \label{sec:urbansim-datasets}
-\datasetindex
+ 
 %
-All datasets \datasetindex defined in \package{urbansim} are implemented as children of the
-Opus \package{opus_core} class \class{Dataset} \datasetindex described in
-Section~\ref{sec:opus-core-datasets}. Each dataset \datasetindex sets default values for several
+All datasets defined in \package{urbansim} are implemented as children of the
+Opus \package{opus_core} class \class{Dataset} described in
+Section~\ref{sec:opus-core-datasets}. Each dataset sets default values for several
 class properties, such as a name of the unique identifier (\verb|id_name|),
-dataset \datasetindex name (\verb|dataset_name|), \datasetindex \verb|in_table_name| and
+dataset name (\verb|dataset_name|), \verb|in_table_name| and
 \verb|out_table_name|. For example, the following code 
 \begin{verbatim}
 >>> from opus_core.datasets.dataset import Dataset
@@ -37,26 +37,26 @@ is equivalent to
 >>> households = HouseholdDataset(in_storage = storage)
 \end{verbatim}
 
-The \package{urbansim} datasets \datasetindex are defined in \verb|urbansim.datasets|. \datasetindex
+The \package{urbansim} datasets are defined in \verb|urbansim.datasets|. 
 We use the following naming convention: For module name we use the dataset 
 name in lower case in singular form, where single words are connected by
 '_', and ending with ``_dataset''.
-For class name we capitalize the first letters in each word of the dataset \datasetindex
-name, use singular form and add 'Dataset' at the end. For example, a dataset \datasetindex for
+For class name we capitalize the first letters in each word of the dataset 
+name, use singular form and add 'Dataset' at the end. For example, a dataset for
 development projects is defined in class \class{DevelopmentProjectDataset}
 implemented in the module \file{development_project_dataset.py}. For interaction
-sets, we connect the two dataset \datasetindex names in the same way, but with 
+sets, we connect the two dataset names in the same way, but with 
 an 'x' in the module name and an 'X' in the class name. For example, an
 interaction set of development projects and gridcells is defined in
 \class{DevelopmentXProjectGridcellDataset} implemented in
 \file{development_project_x_gridcell_dataset.py}.
 
 \subsection{Predefined Datasets}
-\datasetindex
+ 
 %
-Table~\ref{tab:urbansim-datasets} lists dataset \datasetindex classes that are predefined in
+Table~\ref{tab:urbansim-datasets} lists dataset classes that are predefined in
 \package{urbansim} (in alphabetical order), including the default value for
-\verb|dataset_name|, \datasetindex \verb|in_table_name|, \verb|id_name| and name of the
+\verb|dataset_name|, \verb|in_table_name|, \verb|id_name| and name of the
 module in which the class is implemented (excluding '.py'). In most cases they
 correspond to database tables described in
 Chapter~\ref{chapter:urbansim-database-tables}. The corresponding table name
@@ -175,16 +175,16 @@ job_x_gridcell \\\hline
 \end{table}
 
 \section{Variables}
-\variablesindex
+
 %
-Variables \variablesindex predefined in \package{urbansim} are structured according to the
-dataset \datasetindex to which they belong. They are implemented in directories of the same
-name as \verb|dataset_name| \datasetindex which is placed in the top directory of
-\package{urbansim}. For example, all gridcell variables \variablesindex are placed in
-\file{urbansim/gridcell}, all interaction variables \variablesindex of households and
-gridcells are placed in \file{urbansim/household_x_gridcell}. All variables \variablesindex
+Variables predefined in \package{urbansim} are structured according to the
+dataset to which they belong. They are implemented in directories of the same
+name as \verb|dataset_name| which is placed in the top directory of
+\package{urbansim}. For example, all gridcell variables are placed in
+\file{urbansim/gridcell}, all interaction variables of households and
+gridcells are placed in \file{urbansim/household_x_gridcell}. All variables
 are defined as children of the \package{opus_core} class \class{Variable} or as expressions in \file{alias.py} file,
-\variablesindex and thus, they follow the guidelines presented in Section~\ref{sec:opus-variable}.
+ and thus, they follow the guidelines presented in Section~\ref{sec:opus-variable}.
 
 \section{Models}
 \label{sec:urbansim-models}
@@ -274,7 +274,7 @@ is considered to be the prediction of the natural logarithm of total
 land value for each element of \verb|dataset| included in
 \verb|index|. Each of those values is then exponentiated and split
 into residential and non-residential land value, using the attribute
-\attributesindex ``fraction_residential_land'' (this must be a known
+``fraction_residential_land'' (this must be a known
 attribute of \verb|dataset|).
 Attributes ``residential_land_value'' and
 ``nonresidential_land_value'' (which also are expected to be known
@@ -632,7 +632,7 @@ The class is initialized by passing the following arguments:
   interaction between agents and choices (such as those from
   Table~\ref{tab:urbansim-interaction-datasets}). It then determines the
   package in which the module lives. Default value is
-  ``urbansim.datasets''. \datasetindex
+  ``urbansim.datasets''. 
 \item[filter] - It is either a string specifying an attribute name of the
   filter for filtering out locations to be chosen from, or a 1D/2D array giving the filter directly, or a dictionary
   specifying filter for each submodel. If it is None (default), no filter is
@@ -855,7 +855,7 @@ Entries of \verb|run_config| are set as to:
     "sample_size_locations": 30,
     "capacity_string": "urbansim.gridcell.is_developable_for_%s" % units }
 \end{verbatim}
-The variable \variablesindex \verb|units| in the last line is taken from a model configuration
+The variable \verb|units| in the last line is taken from a model configuration
 that is passed to the creator in an entry ``units'' of the corresponding
 project type (see model configuration on
 page~\pageref{page:model-configuration}).
@@ -1112,7 +1112,7 @@ In all versions, the \method{run()} method is called with the following argument
 \begin{description}
 \item[specification] - Uses data from
   ``\%s_employment_location_choice_model_specification'' where \%s is replaced by the member name.
-\item[coefficients] \coefficientsindex - Uses data from ``\%s_employment_location_choice_model_coefficients'' 
+\item[coefficients] - Uses data from ``\%s_employment_location_choice_model_coefficients'' 
     where \%s is replaced by the member name.
 \item[agent_set] - A \class{JobDataset} object used in Employment Relocation Model.
 \item[agents_index] - Results of Employment Relocation Model (see page~\pageref{page:ERM}).\index{Employment Relocation Model} 
@@ -1206,7 +1206,7 @@ The argument is set as a class property.
 \begin{description}
 \item[year] - an integer indicating the simulated year.
 \item[household_set] - an instance of \class{Dataset} that contains some
-  specific attributes \attributesindex (see description of the algorithm bellow).
+  specific attributes (see description of the algorithm bellow).
 \item[control_totals] - an instance of \class{HousehldControlTotalDataset}. It must have at least attributes
   ``total_number_of_households'' and ``year'' which give the control totals
   for specific years. Optionally, it can contain other attributes whose
@@ -1422,7 +1422,7 @@ The algorithm invokes a computation of variables
 ``is_in_employment_sector_$n$_home_based'' and
 ``is_in_employment_sector_$n$_non_home_based'' implemented in the package
 given by the class property \verb|variable_package|. 
-$n$ in the variable \variablesindex names is the sector id. If you use
+$n$ in the variable names is the sector id. If you use
 the default \package{urbansim} implementation of those variables, they require
 a primary attributes ``home_based'' of the dataset \verb|job_building_types|
 and a primary attribute ``sector_id'' of \verb|job_set|. Each job is set to be home based if its building 
@@ -1986,7 +1986,7 @@ The class is initialized by passing the following arguments:
   agents for relocation according to given probabilities. The module should be
   a child of the \package{opus_core} class \class{Choices}.  Default value is
   ``opus_core.random_choices'' (see Section~\ref{sec:choices}).
-\item[location_id_name] - Name of the attribute \attributesindex that specifies locations. It
+\item[location_id_name] - Name of the attribute that specifies locations. It
   must be a primary attribute of the agent set. Default value is
   ``grid_id''.
 \item[model_name] - Name of the model. Default value is ``Agent Relocation

@@ -42,9 +42,9 @@ specified database server by Opus if it does not yet exist when it is needed.
 \subsubsection{Create Baseyear Cache}
 \label{sec:run-manager-baseyearcache}
 %
-Opus simulations usually run on data stored in a base year cache.
+Opus simulations usually run on data stored in a base year cache\index{baseyear cache}.
 If the raw data are stored in a database, 
-one can use an Opus tool to create such base year cache.\baseyearcacheindex 
+one can use an Opus tool to create such a base year cache.
 The script needs a configuration module passed as an argument. 
 If the module is for example located at
 \file{psrc/configs/subset_configuration.py} under one of the paths found in the
@@ -53,7 +53,7 @@ PYTHONPATH environment variable, the command
 python create_baseyear_cache.py psrc.configs.subset_configuration
 \end{verbatim}
 caches the database defined in the \verb|subset_configuration| module into a baseyear
-cache. \baseyearcacheindex Run this command from 
+cache.  Run this command from 
 the \file{opus_core/tools/} directory. An option \verb|--cache-directory|
 can be used to pass the directory to be cached into. Alternatively, this can be
 specified in the configuration as an entry \verb|'cache_directory'|. See also
@@ -67,7 +67,7 @@ Opus supports a configuration defined either as a Python dictionary, or as an xm
 (see Section \ref{sec:start-simulation-xml}). This section describes the former.
 In both cases, the configuration is used to specify different parts
 of the simulation, such as the years in which to run UrbanSim, what
-UrbanSim models \modelsindex to run each year, what types of development
+UrbanSim models to run each year, what types of development
 projects exist, how to configure each type of development project,
 etc. See, for instance, the run configuration in
 \verb|seattle_parcel/configs/baseline.py| (Python dictionary version) or
@@ -122,8 +122,8 @@ match runs with their cache directory, the name of the cache directory begins
 with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
 \item For each simulated year:
   \begin{itemize}
-  \item Forks a new process to run the set of UrbanSim models \modelsindex for this year.
-  The set of models \modelsindex to be run is specified by the configuration. Using a
+  \item Forks a new process to run the set of UrbanSim models for this year.
+  The set of models to be run is specified by the configuration. Using a
   separate process helps reduce memory usage, \index{Memory!Using separate
   process} and helps reduce the impact of problems such as memory leaks.  This
   process writes a log file named, e.g., \file{year_2003_log.txt}.
@@ -143,7 +143,7 @@ with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
 \index{restart a simulation}
 If you halt a run or it fails, you can restart it at the beginning of any year.
 To restart the run with \verb|run_id| 42 at the beginning of year 2005, do:
-\pythonindex
+
 \begin{verbatim}
 python restart_run.py 42 2005
 \end{verbatim}
@@ -160,7 +160,7 @@ beginning of 2005. One can suppress this behavior using the option \verb|--skip-
 \label{sec:configuration}
 %
 A configuration is a specification of what parts to use in the simulation or estimation
-and how to configure each part.  Parts include the list and order of models \modelsindex to
+and how to configure each part.  Parts include the list and order of models to
 run, where to get the input values, where to store the output data, what years
 to simulate, what tables to store into the UrbanSim baseyear and simulation
 caches, etc. Each of these parts in
@@ -179,7 +179,6 @@ that influences the run management. Mandatory entries and default
 values for optional entries are marked in the comments. The actual values for
 the listed entries are only examples.
 
-\baseyearcacheindex
 \begin{verbatim}
 from opus_core.configuration import Configuration
 from opus_core.database_management.configurations.scenario_database_configuration \
@@ -256,9 +255,9 @@ of this location.
 The entry \verb|'tables_to_cache'| is used by the script \verb|create_baseyear_cache.py|. 
 Only tables listed here are cached from database into the baseyear cache.
 
-If a database table is so large that Python \pythonindex runs out of memory when copying it
+If a database table is so large that Python runs out of memory when copying it
 to cache, you can reduce memory usage (but increase the time it takes to cache
-the data) by increasing the number of ``chunks'' in which the dataset's \datasetindex
+the data) by increasing the number of ``chunks'' in which the dataset's 
 attributes are read from the table. \index{Memory management!When caching data
 from input store}\index{Memory management!tables_to_cache_nchunks@\texttt{tables_to_cache_nchunks}} By
 default, all attributes of a table are read in a single chunk. Setting the
@@ -267,9 +266,9 @@ to use that many chunks.  For instance, if a dataset has 11 attributes, setting
 \verb|'tables_to_chunk_nchunks'| to 3 will use three chunks loading 4, 4, and 3
 attributes, in each chunk.
 
-In the \verb|'baseyear_cache'| \baseyearcacheindex block, the directory with the already cached data
+In the \verb|'baseyear_cache'| block, the directory with the already cached data
 should be put into the entry \verb|existing_cache_to_copy|. The run manager then
-copies data from that directory into the simulation cache \baseyearcacheindex for this run. If you
+copies data from that directory into the simulation cache for this run. If you
 want to copy only selected years, they can be specified in the entry
 \verb|years_to_cache| as a list of those years; by default all years are
 copied. Note that this behaviour can be alternatively controlled directly from
@@ -294,17 +293,17 @@ directory \file{psrc/configs} for configuration of different PSRC\index{PSRC} ru
 \label{sec:model-system-configuration}
 %
 If one would pass the above configuration to the run manager, it would perform
-steps as described in Section~\ref{sec:run-manager-tasks}, but no model \modelsindex would
+steps as described in Section~\ref{sec:run-manager-tasks}, but no model would
 be run. The configuration should in addition contain entries that control what
-models, \modelsindex in what order and with what input and output should be run. It
+models, in what order and with what input and output should be run. It
 determines the behaviour of the class \class{ModelSystem}. UrbanSim basic
-configuration of the model \modelsindex system can be found in the file
+configuration of the model system can be found in the file
 \file{urbansim/configs/general_configuration.py} as an example.
 
-The set of models \modelsindex to run is specified by the entry ``models''. \modelsindex It is a list of
+The set of models to run is specified by the entry ``models''. It is a list of
 user-defined model names. The order in this list also specifies the order in
 which they are processed. For example, the UrbanSim gridcell project consists by default of
-following models: \modelsindex
+following models: 
 \begin{verbatim}
    'models': [
         "prescheduled_events",
@@ -337,21 +336,21 @@ just configure the model group to be run on all subsets. This is the case of ``e
 in the list above (see Section~\ref{sec:model-controller-configuration} for further details).
  
 By default, the \class{ModelSystem} runs the method
-\method{run()} of the listed models. \modelsindex Each entry in this model list can be
+\method{run()} of the listed models. Each entry in this model list can be
 alternatively a dictionary containing one entry: The name of the entry is the model
 name, the value is a list of model methods to be processed. Thus, one can combine
-estimation and simulation of different models. \modelsindex
+estimation and simulation of different models. 
 
 In addition (or alternatively), the configuration can contain an entry
-``models_in_year''. \modelsindex It is a dictionary where keys are years. Each value is
-expected to be such list of models \modelsindex as above. In each year, it is checked if
-``models_in_year'' \modelsindex (if it is present) contains that year. If it is the case,
-its list of models \modelsindex is run, instead of the global set of models. \modelsindex This allows
-users to set different set of models \modelsindex for different years, for example an
+``models_in_year''. It is a dictionary where keys are years. Each value is
+expected to be such list of models as above. In each year, it is checked if
+``models_in_year'' (if it is present) contains that year. If it is the case,
+its list of models is run, instead of the global set of models. This allows
+users to set different set of models for different years, for example an
 additional model can be run only in the first year, or last year.
 
-For each entry in the model \modelsindex list there must be a corresponding entry in
-the ``controller'' configuration which specifies how models \modelsindex are initialized,
+For each entry in the model list there must be a corresponding entry in
+the ``controller'' configuration which specifies how models are initialized,
 what methods to run and what arguments should be passed in. This will be
 described in Section~\ref{sec:model-controller-configuration}.
 
@@ -382,20 +381,20 @@ from the current time.
 
 \verb|'debuglevel'| controls the amount of output information.
 
-Models \modelsindex usually need various datasets \datasetindex to run with. They are specified in the
+Models usually need various datasets to run with. They are specified in the
 configuration entry \verb|'datasets_to_preload'|. For example,
 \begin{verbatim}
     'datasets_to_preload': {
         'gridcell':{"id_name": "grid_id"},
         'household':{}
 \end{verbatim}
-It is a dictionary that has dataset \datasetindex names as keys. Each value is again a
+It is a dictionary that has dataset names as keys. Each value is again a
 dictionary with argument-value pairs that are passed to the corresponding
-dataset \datasetindex constructor. \class{ModelSystem} \modelsindex creates those datasets \datasetindex at the
-beginning of each simulated year and they are accessible to the models \modelsindex
+dataset constructor. \class{ModelSystem} creates those datasets at the
+beginning of each simulated year and they are accessible to the models 
 definition in the controller through their names (see
 Section~\ref{sec:model-controller-configuration} for details). One should put
-here all datasets \datasetindex that will be passed as arguments to the model constructors
+here all datasets that will be passed as arguments to the model constructors
 or to the model methods to be processed.
 
 From the preloaded datasets, \class{ModelSystem} creates a dataset pool (accessible
@@ -412,22 +411,22 @@ the entry
 \label{sec:models-configuration}
 \label{sec:model-controller-configuration}
 %
-The run configuration can contain an entry \verb|'models_configuration'| \modelsindex which can
-include any information specific to models \modelsindex or common to a set of models. \modelsindex The
+The run configuration can contain an entry \verb|'models_configuration'| which can
+include any information specific to models or common to a set of models. The
 value of this entry is a dictionary.  Model specific information would be
 included in an entry of the same name as the model name used in the entry
 \verb|'models'| (see Section~\ref{sec:model-system-configuration}). The
-\class{ModelSystem} \modelsindex class makes this information available to the controller
-by creating two local variables: \verb|'models_configuration'| \modelsindex (containing the
-value of \verb|'models_configuration'| \modelsindex and available to all models) \modelsindex and
-\verb|'model_configuration'| \modelsindex (available to each model at the time of its
+\class{ModelSystem} class makes this information available to the controller
+by creating two local variables: \verb|'models_configuration'| (containing the
+value of \verb|'models_configuration'| and available to all models) and
+\verb|'model_configuration'| (available to each model at the time of its
 processing and containing information for this model). See the variable
-\verb|'models_configuration'| \modelsindex in the file \file{urbansim/configs/general_configuration.py} for an
-example how UrbanSim configures models. \modelsindex
+\verb|'models_configuration'| in the file \file{urbansim/configs/general_configuration.py} for an
+example how UrbanSim configures models. 
 
-Each model that is included in the configuration entry \verb|'models'| \modelsindex must have a
-controller entry in the \verb|'models_configuration'| \modelsindex entry.  More specifically, the model specific
-section of \verb|'models_configuration'| \modelsindex is expected to contain an entry \verb|'controller'|
+Each model that is included in the configuration entry \verb|'models'| must have a
+controller entry in the \verb|'models_configuration'| entry.  More specifically, the model specific
+section of \verb|'models_configuration'| is expected to contain an entry \verb|'controller'|
 for each model. For example, a controller specification for the model
 specified by the name \verb|'land_price_model'| would be contained in\\
 \verb|config['models_configuration']['land_price_model']['controller']|.
@@ -450,7 +449,7 @@ The value of this controller entry is a dictionary with a few well-defined entri
   Optional entry "arguments" specifies arguments to be passed into the
   constructor. It is given as a dictionary of argument names and values. All
   values are given as character strings and are later converted by
-  \class{ModelSystem} to python \pythonindex objects. If an argument value is suppose to be
+  \class{ModelSystem} to python objects. If an argument value is suppose to be
   a character string object, it must be given in double quotes, e.g.
   "'my_string'".
 \end{description}
@@ -472,7 +471,7 @@ should be run.
 The \class{ModelSystem} class evaluates the given imports and creates an
 instance of the model by processing the \verb|'init'| entry. The remaining entries
 below are related to specific methods of the created model instance.  As
-mentioned in Section~\ref{sec:model-system-configuration}, models \modelsindex
+mentioned in Section~\ref{sec:model-system-configuration}, models 
 that are listed in the \verb|'models'| entry of the run configuration can be also
 specified using a list of methods to be processed. If the list is not given, a
 method \method{run()} is assumed to be the only method to be processed. The
@@ -499,19 +498,19 @@ methods are specified in \verb|'models'|. It is a dictionary with optional argum
 \end{description}
 
 The entry \verb|'arguments'| in the above items can contain any character
-strings that are convertable (using python's \verb|eval()|) to python \pythonindex objects,
-including python \pythonindex expressions. They must be objects that are known to the
-\class{ModelSystem}, for example datasets \datasetindex that are defined in
+strings that are convertable (using python's \verb|eval()|) to python objects,
+including python expressions. They must be objects that are known to the
+\class{ModelSystem}, for example datasets that are defined in
 \verb|'datasets_to_preload'| (described in
 Section~\ref{sec:model-system-configuration}), since those are created prior to
-the simulation. They can be called either by the dataset \datasetindex name, or using
+the simulation. They can be called either by the dataset name, or using
 \code{datasets['{\it name}']}. Also, the \verb|model_configuration| and
 \verb|models_configuration| objects described in
 Section~\ref{sec:models-configuration} can be used in \verb|'arguments'|. Other
 objects that \class{ModelSystem} provides are  \verb|cache_storage|
 (\class{Storage} object for the simulation cache storage
-in the simulated year), \verb|base_cache_storage| \baseyearcacheindex (\class{Storage} object for
-the baseyear cache \baseyearcacheindex storage in the base year),
+in the simulated year), \verb|base_cache_storage| (\class{Storage} object for
+the baseyear cache storage in the base year),
 \verb|model_resources| (all preloaded datasets as an object of
 \class{Resources}),  \verb|resources|
 (Configuration passed into the simulation), \verb|datasets| (all preloaded datasets as a dictionary),
@@ -524,7 +523,7 @@ as arguments, you need to make sure, that those classes are known to the
 \verb|'import'| section of the controller.
 
 Here is an example of a controller settings for the land price model in UrbanSim:
-\modelsindex\datasetindex
+
 \begin{verbatim}
 run_configuration['models_configuration']['land_price_model']['controller'] = {
     "import": {"urbansim.models.corrected_land_price_model":
@@ -576,17 +575,15 @@ To delete all data for run with \verb|run_id| 42, and remove that run's
 information from the \verb|services|
 database use:
 
-\pythonindex
 \begin{verbatim}
 python delete_run.py --run-id 42
 \end{verbatim}
 
 To delete a set of years without removing the information from the
 \verb|services| database, use the \verb|--years-to-delete| option.  This
-option takes an arbitrary Python \pythonindex expression that creates a list of integers.
+option takes an arbitrary Python expression that creates a list of integers.
 For instance, to remove the cached data for years 2001 through 2029 use:
 
-\pythonindex
 \begin{verbatim}
 python delete_run.py --run-id 42 --years-to-delete range(2001,2030)
 \end{verbatim}

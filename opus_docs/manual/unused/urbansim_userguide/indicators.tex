@@ -10,8 +10,8 @@
 \indicatorsindex
 
 As used in the planning literature, an indicator is a
-variable \variablesindex that conveys information on the condition or
-trend of an attribute \attributesindex of the system considered.  The
+variable that conveys information on the condition or
+trend of an attribute of the system considered.  The
 indicator will then have a specific value at a given time.
 For UrbanSim, indicators provide the principal mechanism
 for presenting simulation results to modelers and other stakeholders so
@@ -56,24 +56,24 @@ other indicators represented as Opus attributes.)
 \section{Using Opus Attributes in Indicators}
 
 The basic class for dealing with data in Opus is the class \class{Dataset}
-\datasetindex (Section \ref{sec:opus-core-datasets}).  A dataset
-\datasetindex is a collection of attributes \attributesindex for a
+  (Section \ref{sec:opus-core-datasets}).  A dataset
+  is a collection of attributes for a
 particular type of entity, such as a set of grid cells, or a set of
 households.  Each member in this set has the same set of characteristics,
 such as income of household.  In Opus, these characteristics are called
-attributes. \attributesindex Attributes \attributesindex can be either read
+attributes. Attributes can be either read
 from a data store (primary attributes) \primaryattributesindex or computed
 using an Opus variable definition (computed
 attributes). \computedattributesindex
 
-Any Opus attribute \attributesindex (primary or computed)
+Any Opus attribute (primary or computed)
 \computedattributesindex\primaryattributesindex can be used as an
 indicator, \indicatorsindex although of course only some attributes
-\attributesindex will be particularly \emph{useful} as
+will be particularly \emph{useful} as
 indicators. \indicatorsindex The primary attributes \primaryattributesindex
 of interest are commonly in the database tables for the given Opus
 application.  For UrbanSim, these database tables and their attributes
-\attributesindex are documented in Chapter
+are documented in Chapter
 \ref{chapter:urbansim-database-tables}, ``UrbanSim Database Tables.''  
 % (A
 % fine point: models or other Opus code can also create other primary
@@ -83,7 +83,7 @@ application.  For UrbanSim, these database tables and their attributes
 % attributes \primaryattributesindex of interest for indicators
 % \indicatorsindex will be in the database tables.)  
 Each computed attribute
-\computedattributesindex is defined by an Opus variable \variablesindex
+\computedattributesindex is defined by an Opus variable
 definition.
 
 Indicators can be computed and visualized, via a
@@ -97,7 +97,7 @@ involving multiple attributes.
 \subsection{Definition through Fully-qualified Name}
 
 For both primary \primaryattributesindex and computed attributes,
-\computedattributesindex the attribute \attributesindex to be used as an
+\computedattributesindex the attribute to be used as an
 indicator \indicatorsindex can be identified by its fully-qualified name,
 for example:
 
@@ -114,18 +114,18 @@ units is part of the data stored for each gridcell.
 gridcells; for a gridcell, it is computed by summing the number of
 persons in each household located in that grid cell. 
 
-Attributes \attributesindex can also be in project-specific packages in
+Attributes can also be in project-specific packages in
 addition to ones in the \package{urbansim} package.  For example, in our
 PSRC \psrcindex application of UrbanSim, one of the indicators
 \indicatorsindex is
 \module{psrc.zone.travel_time_hbw_am_drive_alone_to_cbd}, for the
 \verb|zone| geography defined for this application.
 
-As with other Opus variables, \variablesindex the variable \variablesindex
-name for variables \variablesindex used as indicators \indicatorsindex can
-be a template that matches a family of related variables, \variablesindex
+As with other Opus variables, the variable
+name for variables used as indicators \indicatorsindex can
+be a template that matches a family of related variables,
 such as \module{psrc.houeshold.has_DDD_cars}.  This variable
-\variablesindex can then be instantiated with a particular number of cars,
+ can then be instantiated with a particular number of cars,
 e.g.\ \module{psrc.houeshold.has_2_cars}.
 
 \subsection{Definition through Aggregation}
@@ -518,7 +518,7 @@ indicator. The HTML file is located in the indicators subdirectory of the
 cache directory and is named \verb|indicator_results.html|.
 
 \section{When to Compute Indicator Values}
-\indicatorsindex\attributesindex
+\indicatorsindex
 
 Both the GUI and script-based indicator configuration requests invoke a
 class \class{IndicatorFactory}.  The indicator factory fires up separate
@@ -532,10 +532,10 @@ if not, stop the simulation.  Of course it is also fine to run any or all
 of the indicators \indicatorsindex after the simulation has completed.
 
 \section{Defining New Indicators}
-\indicatorsindex\attributesindex
+\indicatorsindex
 
 To add a new indicator \indicatorsindex that uses Opus attributes,
-\attributesindex define an appropriate variable. \variablesindex (As usual,
+define an appropriate variable. (As usual,
 a good way to proceed is to find an existing definition that is similar to
 what you want, and copy and modify it.)  If the indicator \indicatorsindex
 is a specialized one, it should be defined in a package specific to that
@@ -546,9 +546,9 @@ that way, if you upgrade to a version of the \package{urbansim} package,
 your indicator \indicatorsindex definition won't be lost.)
 
 For example, here is the definition for the ``population'' variable
-\variablesindex in \module{urbansim.faz.population}.
+ in \module{urbansim.faz.population}.
 
-\variablesindex\attributesindex\numpyindex
+\numpyindex
 \begin{verbatim}
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
@@ -606,17 +606,17 @@ if __name__=='__main__':
     opus_unittest.main()
 \end{verbatim}
 
-Again, this is just an ordinary Opus variable. \variablesindex Here
+Again, this is just an ordinary Opus variable. Here
 is a brief explanation of the different parts of the definition (see
 also Section~\ref{sec:opus-variable}).  We define a new class
 \class{population}, which must be a subclass of \class{Variable}.
-\variablesindex (The convention is that the names of Opus variables
-\variablesindex are lower case, even though usually Python
-\pythonindex class names are capitalized.)  Its values depend on the
-values of certain other variables, \variablesindex which are listed
+ (The convention is that the names of Opus variables
+ are lower case, even though usually Python
+class names are capitalized.)  Its values depend on the
+values of certain other variables, which are listed
 in the \method{dependencies} method.  The \method{compute} method is
 where the action is: this defines how the values of this variable
-\variablesindex are computed.  In this case, we know that each
+ are computed.  In this case, we know that each
 \verb|faz| (Forecast Analysis Zone) contains a number of gridcells. 
 The \verb|sum_over_ids| method iterates through
 the gridcells, adding up populations depending on which
@@ -626,9 +626,9 @@ the population in each \verb|faz|.  If invoked, the
 is the population in each \verb|faz| between 0 and the total
 population in all the grid cells?  (See Section
 \ref{sec:programming-by-contract}.)  Finally, a unit test is defined
-for this variable. \variablesindex This unit test, as with any other
+for this variable. This unit test, as with any other
 Opus unit test, sets up just enough data to test whether the
-variable's \variablesindex value is being computed correctly for a
+variable's value is being computed correctly for a
 small example (Section \ref{sec:unit-tests}). The
 \verb|if__name__=='__main__':| part at the end means that the test
 will be run if the file is run from the command line, but not if it

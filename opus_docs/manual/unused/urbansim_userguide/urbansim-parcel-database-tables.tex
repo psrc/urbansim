@@ -41,7 +41,7 @@ database.
 \end{description}
 
 Most database tables are optional. The required set of tables is determined by
-the variables \variablesindex used by the models.  This can be found by looking at the models'
+the variables used by the models.  This can be found by looking at the models'
 specification tables.
 
 
@@ -57,8 +57,8 @@ UrbanSim gets its input data from either a \emph{baseyear} database or a
 \emph{scenario} databases as read-only databases, however other data
 preparation applications such as the estimators or the household synthesizer
 may write to them.  In fact, when the run manager starts a new simulation, the
-first step is to copy the baseyear data into the baseyear cache. \baseyearcacheindex The
-simulation then reads all of its baseyear information from the baseyear cache \baseyearcacheindex
+first step is to copy the baseyear data into the baseyear cache. The
+simulation then reads all of its baseyear information from the baseyear cache
 and writes all results to the simulation cache. \simulationcacheindex Data is only written to the
 output database when specified (currently done manually).
 
@@ -153,7 +153,7 @@ databases, database tables, and database columns. This avoids problems when
 moving database between different operating systems (e.g. between Windows \windowsindex and
 Linux). \linuxindex
 \item The \verb|tables_to_cache| entry of the \verb|run_configuration| in
-\verb|urbansim.configs.base_config| lists the tables required for the models \modelsindex used in
+\verb|urbansim.configs.base_config| lists the tables required for the models used in
 the Puget Sound region.  (This information \emph{should} be in the
 \package{psrc} \psrcindex package, not the \package{urbansim} package; we will fix this in
 the future.)
@@ -216,8 +216,8 @@ should be true for the entries in the table.
 
 \subsection{Coefficient and Specification tables}
 
-The UrbanSim models \modelsindex are configured through user specified
-variables and coefficients. \coefficientsindex The coefficients should be
+The UrbanSim models are configured through user specified
+variables and coefficients. The coefficients should be
 estimated separately for each region to be modeled by UrbanSim. The art and
 science of estimating the coefficients is a matter for a series of college
 courses so this description assumes that appropriate variables for each model
@@ -301,11 +301,11 @@ contains an id identifying which equation this row applies to.  If a model does
 not have multiple equations, use ``-2'' for this field. \\
 
 \hline
-coefficient_name \coefficientsindex & varchar & Each sub-model does not have
+coefficient_name & varchar & Each sub-model does not have
 multiple equations, so use '-2' in this column  \\
 
 \hline
-variable_name \variablesindex & varchar & \\
+variable_name & varchar & \\
 
 \hline
 
@@ -314,11 +314,11 @@ variable_name \variablesindex & varchar & \\
 \begin{itemize} \tight
 \item The sub_model_id values must exist in the \verb|submodel_string| attribute
 of the model's dataset.
-\item Each combination of (sub_model_id, coefficient_name) \coefficientsindex
+\item Each combination of (sub_model_id, coefficient_name)
 must exist in the model's coefficients table.
 \item variable_name must be a legitimate specification for an Opus variable.
-\item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
-\item Specific models \modelsindex have additional requirements: see Developer Model \modelsindex and Non-home-based Employment Location Choice Model. \modelsindex
+\item Each combination of (sub_model_id, equation_id, variable_name) must be unique.
+\item Specific models have additional requirements: see Developer Model and Non-home-based Employment Location Choice Model. 
 
 \end{itemize}
 

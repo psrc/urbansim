@@ -74,35 +74,35 @@ particular model application.}
 
 \section{Datasets}
 \label{sec:urbansim-datasets}
-\datasetindex
+ 
 %
-All datasets \datasetindex defined in \package{urbansim} are implemented as children of the
-Opus \package{opus_core} class \class{Dataset} \datasetindex described in
-Section~\ref{sec:opus-core-datasets}. Each dataset \datasetindex sets default values for several
+All datasets defined in \package{urbansim} are implemented as children of the
+Opus \package{opus_core} class \class{Dataset} described in
+Section~\ref{sec:opus-core-datasets}. Each dataset sets default values for several
 class properties, such as a name of the unique identifier (\verb|id_name|),
-dataset \datasetindex name (\verb|dataset_name|), \datasetindex \verb|in_table_name| and
+dataset name (\verb|dataset_name|), \verb|in_table_name| and
 \verb|out_table_name|. 
 
-The \package{urbansim} datasets \datasetindex are defined in \verb|urbansim.datasets|. \datasetindex
+The \package{urbansim} datasets are defined in \verb|urbansim.datasets|. 
 We use the following naming convention: For module name we use the dataset 
 name in lower case in singular form, where single words are connected by
 '_', and ending with ``_dataset''.
-For class name we capitalize the first letters in each word of the dataset \datasetindex
-name, use singular form and add 'Dataset' at the end. For example, a dataset \datasetindex for
+For class name we capitalize the first letters in each word of the dataset 
+name, use singular form and add 'Dataset' at the end. For example, a dataset for
 development projects is defined in class \class{DevelopmentProjectDataset}
 implemented in the module \file{development_project_dataset.py}. For interaction
-sets, we connect the two dataset \datasetindex names in the same way, but with 
+sets, we connect the two dataset names in the same way, but with 
 an 'x' in the module name and an 'X' in the class name. For example, an
 interaction set of development projects and gridcells is defined in
 \class{DevelopmentXProjectGridcellDataset} implemented in
 \file{development_project_x_gridcell_dataset.py}.
 
 \subsection{Predefined Datasets}
-\datasetindex
+ 
 %
-Table~\ref{tab:urbansim-datasets} lists dataset \datasetindex classes that are predefined in
+Table~\ref{tab:urbansim-datasets} lists dataset classes that are predefined in
 \package{urbansim} (in alphabetical order), including the default value for
-\verb|dataset_name|, \datasetindex \verb|in_table_name|, \verb|id_name| and name of the
+\verb|dataset_name|, \verb|in_table_name|, \verb|id_name| and name of the
 module in which the class is implemented (excluding '.py'). In most cases they
 correspond to database tables described in
 Chapter~\ref{chapter:urbansim-database-tables}. The corresponding table name
@@ -204,37 +204,37 @@ zone* & zones & zone_id
 %end{latexonly}
 
 \section{Variables}
-\variablesindex
+
 %
-Variables \variablesindex predefined in \package{urbansim} are structured according to the
-dataset \datasetindex to which they belong. They are implemented in directories of the same
-name as \verb|dataset_name| \datasetindex which is placed in the top directory of
-\package{urbansim}. For example, all gridcell variables \variablesindex are placed in
-``urbansim.gridcell'', all interaction variables \variablesindex of households and
-gridcells are placed in ``urbansim.household_x_gridcell''. All variables \variablesindex
-are defined as children of the Opus \package{opus_core} class \class{Variable} \variablesindex and
+Variables predefined in \package{urbansim} are structured according to the
+dataset to which they belong. They are implemented in directories of the same
+name as \verb|dataset_name| which is placed in the top directory of
+\package{urbansim}. For example, all gridcell variables are placed in
+``urbansim.gridcell'', all interaction variables of households and
+gridcells are placed in ``urbansim.household_x_gridcell''. All variables
+are defined as children of the Opus \package{opus_core} class \class{Variable} and
 thus they follow the guidelines presented in Section~\ref{sec:opus-variable}.
 
 \section{Models}
 \label{sec:urbansim-models}
 \modelsindex
 
-\package{urbansim} has a set of predefined models, \modelsindex each
+\package{urbansim} has a set of predefined models, each
 of them implemented as a child of one of the core Opus models
 \modelsindex described in Section~\ref{sec:opus-core-models}.  They
 are hierarchically structured and a few of them are created using
 specific creators.  All
-\package{urbansim} models \modelsindex are placed in
+\package{urbansim} models are placed in
 ``urbansim.models''.
 
 
 \subsection{Overview}
 
-The models \modelsindex to execute when running UrbanSim are determined by the configuration
-(see Section~\ref{sec:model-system-configuration}). Its entry ``models'' \modelsindex is a
-list of character strings that identify the models \modelsindex to run in that order.
+The models to execute when running UrbanSim are determined by the configuration
+(see Section~\ref{sec:model-system-configuration}). Its entry ``models'' is a
+list of character strings that identify the models to run in that order.
 UrbanSim defines following models, grouped by their use in a gridcell, parcel or zone level model
-application: \modelsindex
+application: 
 
 \input{parcel-models-list}
 \input{parcel-models}
