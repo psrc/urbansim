@@ -41,6 +41,7 @@
                         <coefficients_storage type="string">base_cache_storage</coefficients_storage>
                         <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
                         <sample_coefficients type="boolean">False</sample_coefficients>
+                        <distribution type="quoted_string">normal</distribution>
                         <cache_storage hidden="True" type="string">base_cache_storage</cache_storage>
                         <multiplicator type="integer">1</multiplicator>
                     </arguments>
