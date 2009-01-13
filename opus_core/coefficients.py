@@ -21,9 +21,9 @@ from opus_core.specified_coefficients import SpecifiedCoefficients, SpecifiedCoe
 from opus_core.simulation_state import SimulationState
 from opus_core.logger import logger
 from opus_core.variables.attribute_type import AttributeType
-from numpy import int32, array, zeros, float32, arange, nan, resize
+from numpy import int32, array, zeros, float32, arange, nan, resize, newaxis
 from numpy import apply_along_axis, ndarray
-from numpy.random import normal
+from numpy.random import normal, uniform
 import sys
 import os
 import string
@@ -398,6 +398,76 @@ class Coefficients(object):
             tex_file.write(r"\end{longtable}")
             tex_file.write('\n')
 
+    def sample_values(self, distribution=None, distribution_dictionary=None, **kwargs):
+        """
+        Return a copy of self, where values are sampled from given distribution(s).
+        If 'distribution' is 'normal', all coefficients are sampled from normal distribution
+        (see docstring for sample_values_from_normal_distribution).
+        If 'distribution' is 'uniform', all coefficients are sampled from uniform distribution
+        (see docstring for sample_values_from_uniform_distribution).
+        In both cases, kwargs are passed to the appropriate method.
+        If 'distribution' is None, argument 'distribution_dictionary' must be given.
+        This dictionary contains arguments for sampling different coefficients using different distributions.
+        Keys of this dictionary are coefficient names, values are again dictionaries. These must have a 
+        key 'distribution' which is either 'normal' or 'uniform'. An optional entry 'parameters' contains 
+        a dictionary with keyword arguments passed to either sample_one_value_from_normal_distribution (multiplicator) or 
+        sample_one_value_from_uniform_distribution (a, b, center_around_value). See example in test_sample_coefficients_mixed_distr.
+        """
+        if distribution == 'normal':
+            return self.sample_values_from_normal_distribution(**kwargs)
+        elif distribution == 'uniform':
+            return self.sample_values_from_uniform_distribution(**kwargs)
+        elif distribution is None: 
+            if not isinstance(distribution_dictionary, dict):
+                raise TypeError, "Either argument 'distribution' or argument 'distribution_dictionary' must be not None."
+            # Every coefficient can have different distribution
+            new_coef = self.copy_and_truncate(arange(self.size()))
+            for name, args in distribution_dictionary.iteritems():
+                idx = ematch(self.get_names(), name)
+                if idx.size <= 0:
+                    logger.log_warning('Coefficient %s not found. Sampling for this coefficient ignored.' % name)
+                    continue
+                if 'distribution' not in args.keys():
+                    logger.log_warning("The sampling dictionary for coefficient %s must contain the entry 'distribution'. Sampling for this coefficient ignored." % name)
+                    continue
+                pars = {}
+                if 'parameters' in args:
+                    pars = args['parameters']
+                if args['distribution'] == 'normal':
+                    new_coef.values[idx] = self.sample_one_value_from_normal_distribution(idx, **pars)
+                elif args['distribution'] == 'uniform':
+                    new_coef.values[idx] = self.sample_one_value_from_uniform_distribution(idx, **pars)
+                else:
+                    logger.log_warning("Sampling from %s distribution not implemented. Sampling for %s ignored.", (args['distribution'], name))
+            return new_coef
+        raise ValueError("Sampling from %s distribution not implemented." % distribution)
+        
+    def sample_values_from_uniform_distribution(self, a=0.5, b=0.5, center_around_value=True):
+        """Return a copy of self, where values are sampled from uniform distribution.
+        If 'center_around_value' is True, the distribution is U(x-a,x+b) where x are values 
+        of the coefficients. Otherwise, the distribution is U(a,b).
+        """
+        values = self.get_values()
+        
+        def draw_rn (x, n):
+            return uniform(x-a, x+b, size=n)
+        
+        if center_around_value:
+            sampled_values = apply_along_axis(draw_rn, 1, values[:,newaxis], 1).reshape((values.size,)).astype(values.dtype)
+        else:                        
+            sampled_values = uniform(a, b, size= values.size).astype(values.dtype)
+
+        new_coef = self.copy_and_truncate(arange(self.size()))
+        new_coef.set_values(sampled_values)
+        return new_coef
+    
+    def sample_one_value_from_uniform_distribution(self, index, a=0.5, b=0.5, center_around_value=True):
+        x = self.get_values()[index]
+        if center_around_value:
+            return uniform(x-a, x+b, size=1)[0]
+        else:
+            return uniform(a, b, size=1)[0]
+        
     def sample_values_from_normal_distribution(self, multiplicator=1):
         """Return a copy of self, where values are sampled from normal distribution
            with means equal to values of self and standard deviation equal to
@@ -416,6 +486,13 @@ class Coefficients(object):
         new_coef.set_values(sampled_values)
         return new_coef
 
+    def sample_one_value_from_normal_distribution(self, index, multiplicator=1):
+        x = self.get_values()[index]
+        se = self.get_standard_errors()[index]
+        if se == 0:
+            return x
+        return normal(x, multiplicator*se, size=1)[0]
+    
     def is_invalid(self):
         for to_check in [
                 self.other_info[-2]['Adjusted R-Squared'],
@@ -465,7 +542,8 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
         finally:
             os.remove('%s.tex' % tmp_file_prefix)
 
-    def test_sample_coefficients(self):
+    def test_sample_normal_coefficients(self):
+        """Coefficients are sampled from N(x, sd=2*se), where x is the coefficient value and se is coefficient standard error."""
         coef_values = array([0.5, -0.00001], dtype="float32")
         se = array([0.02, 0.0000001])
         multiplicator = 2
@@ -474,7 +552,7 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
                              other_measures={"t_stat":array([2.5, 4.99999])})
 
 
-        new_coef = coef.sample_values_from_normal_distribution(multiplicator=multiplicator)
+        new_coef = coef.sample_values(distribution='normal', multiplicator=multiplicator)
         values = new_coef.get_values()
         should_be = coef_values
         std = multiplicator*se
@@ -483,6 +561,88 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
             self.assertEqual(ma.allclose(new_coef.get_values()[i], should_be[i], atol=3*std[i]), True)
         # check data type
         self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+        
+    def test_sample_uniform_coefficients(self):
+        """Coefficients are sampled from U(x-0.5, x+0.5), where x is the coefficient value."""
+        
+        from opus_core.pstat import chisqprob
+        coef_values = array([0.5, -0.00001], dtype="float32")
+        coef = Coefficients(names=array(["coef1", "coef2"]), values = coef_values)
 
+        # for each coefficient run a one-sided Chi^2 test
+        expected_values = coef_values
+        TS = zeros(coef_values.size)
+        df = 9
+        significance_level = 0.05
+        for j in range(df+1):
+            new_coef = coef.sample_values(distribution='uniform')
+            values = new_coef.get_values()
+            TS += ((values - expected_values)**2)/expected_values
+            
+        for i in range(values.size):
+            prob = chisqprob(TS[i], df)
+            if (prob < significance_level/2.0):
+                self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+ 
+        # check data type
+        self.assert_(values.dtype.name == "float32", msg = "Error in coefficients data type.")
+
+    def test_sample_uniform_0_1_coefficients(self):
+        """ All coefficients are sampled from U(5,10). """
+        
+        from opus_core.pstat import chisqprob
+        coef_values = array([0,0], dtype="float32")
+        coef = Coefficients(names=array(["coef1", "coef2"]), values = coef_values)
+
+        # for each coefficient run a one-sided Chi^2 test
+        expected_values = array([7.5, 7.5])
+        TS = zeros(coef_values.size)
+        df = 9
+        significance_level = 0.05
+        for j in range(df+1):
+            new_coef = coef.sample_values(distribution='uniform', center_around_value=False, a=5, b=10)
+            values = new_coef.get_values()
+            TS += ((values - expected_values)**2)/expected_values
+            
+        for i in range(values.size):
+            prob = chisqprob(TS[i], df)
+            if (prob < significance_level/2.0):
+                self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+                
+    def test_sample_coefficients_mixed_distr(self):
+        """ 2 coefficients are sampled from different distributions, one stays the same. """
+        
+        from opus_core.pstat import chisqprob
+        coef_values = array([1, 0.5, 0.2], dtype="float32")
+        se = array([0, 0.02, 0.001], dtype="float32")
+        coef = Coefficients(names=array(["coef_uniform", "coef_const", "coef_normal"]), values = coef_values,
+                            standard_errors = se)
+        sampling_dict = {"coef_uniform": {"distribution": "uniform",
+                                          "parameters": {"a": 1, "b": 1}
+                                          },
+                        "coef_normal": {"distribution": "normal",
+                                        "parameters": {"multiplicator": 10}
+                                          }
+                        }
+        # for coefficient 1 and 3 run a one-sided Chi^2 test
+        expected_values = coef_values
+        TSU = 0
+        TSN = 0
+        df = 9
+        significance_level = 0.05
+        for j in range(df+1):
+            new_coef = coef.sample_values(distribution_dictionary=sampling_dict)
+            values = new_coef.get_values()
+            TSU += ((values[0] - expected_values[0])**2)/expected_values[0]
+            TSN += ((values[2] - expected_values[2])/(se[2]*10))**2
+            self.assertEqual(ma.allclose(new_coef.get_values()[1], expected_values[1]), True)
+            
+        prob = chisqprob(TSU, df)
+        if (prob < significance_level/2.0):
+            self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+        prob = chisqprob(TSN, df)
+        if (prob < significance_level/2.0):
+            self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+                
 if __name__=="__main__":
     opus_unittest.main()

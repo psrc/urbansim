@@ -197,11 +197,13 @@ def get_specification_for_estimation(specification_dict=None, specification_stor
     return specification
 
 def prepare_specification_and_coefficients(specification_storage=None, specification_table=None, coefficients_storage=None,
-                         coefficients_table=None, sample_coefficients=False, cache_storage=None, multiplicator=1):
+                         coefficients_table=None, sample_coefficients=False, cache_storage=None, **kwargs):
     """ Load specification and coefficients from given tables in given storages.
-    If 'sample_coefficients' is True, coefficients are sampled from normal distribution,
-    where the standard deviation is multiplied by the given 'multiplicator'. In this case,
-    the new coefficients are flushed into cache.
+    If 'sample_coefficients' is True, coefficients are sampled from given distribution. In such a case,
+    either an argument 'distribution' should be given (equal either 'normal' or 'uniform'), 
+    or argument distribution_dictionary should be given containing details about sampling specific coefficients
+    (see docstring for method sample_values in opus_core/coefficients.py).
+    If coefficients are sampled, the new values are flushed into cache.
     """
     from opus_core.equation_specification import EquationSpecification
     from opus_core.coefficients import Coefficients
@@ -214,9 +216,7 @@ def prepare_specification_and_coefficients(specification_storage=None, specifica
         coefficients = Coefficients(in_storage=coefficients_storage)
         coefficients.load(in_table_name=coefficients_table)
         if sample_coefficients:
-            coefficients = coefficients.sample_values_from_normal_distribution(
-                                                        multiplicator=multiplicator)
-
+            coefficients = coefficients.sample_values(**kwargs)
             coefficients.flush_coefficients(coefficients_table, cache_storage)
 
     return (specification, coefficients)
