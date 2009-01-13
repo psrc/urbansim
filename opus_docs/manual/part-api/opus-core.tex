@@ -33,19 +33,19 @@ collection of tools for building other opus packages.
 \section{Datasets}
 \label{sec:opus-core-datasets}
 %
-The basic class for dealing with data is called \class{Dataset}.
-\datasetindex 
-A dataset \datasetindex is a collection of attributes \attributesindex for a particular type of entity,
+The basic class for dealing with data is called \class{Dataset}\index{Dataset@class{Dataset} class}.
+A dataset is a collection of attributes\index{attributes} for a particular type of entity,
 such as a set of grid cells, or a set of households.  Each member in this set
 has the same set of characteristics, such as income of households.  In Opus,
-these characteristics are called attributes. \attributesindex
+these characteristics are called attributes.
 
-Conceptually, a dataset \datasetindex is similar to a table.  Each attribute \attributesindex is a column.
-Each row describes the attribute values for one member of the dataset. \datasetindex
+Conceptually, a dataset is similar to a table.  Each attribute is a column.
+Each row describes the attribute values for one member of the dataset.
 
-Some attributes \attributesindex are read from a data store, we call them {\it primary
-  attributes}. \primaryattributesindex  Others, {\it computed attributes}, \computedattributesindex are computed by Opus
-variable definitions.  Attributes \attributesindex can be also modified or created by models.
+Some attributes are read from a data store, we call them 
+\emph{primary attributes}\index{primary attributes}\index{attributes!primary}.
+Others, \emph{omputed attributes}\index{computed attributes}\index{attributes!computed},
+are computed by Opus variable definitions.  Attributes can be also modified or created by models.
 
 In this section, we describe the main functionality of \class{Dataset}. For a list of additional methods, 
 see Appendix~\ref{appendix:selected-methods-dataset}.
@@ -53,7 +53,7 @@ see Appendix~\ref{appendix:selected-methods-dataset}.
 %
 \subsection{Initialization}
 %
-The \class{Dataset} \datasetindex class is initialized by the following arguments:
+The \class{Dataset} class is initialized by the following arguments:
 \begin{description}
 \item[resources] \index{resources} - on object of class \class{Resources}\index{Resources} (dictionary). It can
   contain any of the remaining arguments, but if an argument of the
@@ -201,19 +201,19 @@ Installation directions at your \file{opus_docs/docs/install.html}).
 \subsubsection{One-dimensional Plots}
 %
 Attributes in a dataset are stored as one-dimensional arrays, thus they can be
-plotted for example as a histogram\histogramindex
-or as a scatter plot.\scatterplotindex
+plotted for example as a histogram{\index{histogram}\index{plotting!histogram}}
+or as a scatter plot{\index{scatter plot}\index{plotting!scatter plot}}.
 The \class{Dataset} offers the following methods:
 
 \begin{description}
 \item[\method{plot_histogram(name, ...)}] creates a histogram of attribute
-\verb|name| using matplotlib. \matplotlibindex
-\item[\method{r_histogram(name, ...)}] \rindex creates
-such histogram including a density line using the rpy \rpyindex library.
-\item[\method{plot_scatter(name_x, name_y, ...)}] \rindex creates a scatter plot for two
-attributes \attributesindex using matplotlib. \matplotlibindex
-\item[\method{r_scatter(name_x, name_y, ...)}] \rindex creates a scatter plot
-using the rpy \rpyindex library.
+\verb|name| using matplotlib\index{matplotlib}.
+\item[\method{r_histogram(name, ...)}] creates
+such histogram including a density line using the rpy\index{R}\index{rpy} library.
+\item[\method{plot_scatter(name_x, name_y, ...)}] creates a scatter plot for two
+attributes \attributesindex using matplotlib.
+\item[\method{r_scatter(name_x, name_y, ...)}] creates a scatter plot
+using the rpy\index{R}\index{rpy} library.
 \end{description}
 
 \subsubsection{Two-dimensional Plots}
@@ -226,10 +226,9 @@ coordinates, e.g. to \verb|('relative_x','relative_y')|.  This information then
 will be used by routines that need it.
 
 \begin{description}
-\item[\method{plot_map(name, ...)}] creates an image using the matplotlib \matplotlibindex
+\item[\method{plot_map(name, ...)}] creates an image using the matplotlib
 library.
-\item[\method{r_image(name, ...)}] \rindex does the same using the rpy \rpyindex
-library.
+\item[\method{r_image(name, ...)}] does the same using the rpy\index{R}\index{rpy} library.
 \end{description}
 
 \subsection{Attribute Box}
@@ -249,11 +248,11 @@ can be accessed by the dataset \datasetindex method
 given in one of the  forms from Section~\ref{sec:opus-core-attribute-names}.
 
 \subsection{Subsets of Dataset}
-\datasetindex\datasetsubsetindex
 %
-Opus implements a child class of \class{Dataset}, \datasetindex called \class{DatasetSubset}, \datasetsubsetindex
-which allows to define a subset of a dataset. \datasetindex\datasetsubsetindex Conceptually, it is a viewing
-window for the parent \class{Dataset} \datasetindex object, not a copy. Thus, any change in
+Opus implements a child class of \class{Dataset}, 
+called \class{DatasetSubset}\index{DatasetSubset@class{DatasetSubset} class},
+which allows to define a subset of a dataset.  Conceptually, it is a viewing
+window for the parent \class{Dataset} object, not a copy. Thus, any change in
 the parent object is seen by the child.
 
 It is initialized by passing the parent object and an index to the
@@ -669,7 +668,7 @@ variables \variablesindex that are listed in the
 \method{dependencies()} method (see below) are already computed and accessible by the dataset \datasetindex
 method \method{get_attribute()}.
 
-The \method{compute()} method should return a numpy array \numpyindex of the size of number
+The \method{compute()} method should return a numpy array of the size of number
 of elements in the ``owner'' dataset. \datasetindex
 
 \subsubsection{Optional Method \method{dependencies()}}
@@ -974,7 +973,7 @@ memory. The class does not have any effect on an \method{estimate()} method.
   model will be chunked.
 \item[dataset_index] - an index of elements within \verb|dataset| that are to
   be chunked. Default is None which means that all elements of \verb|dataset| are considered.
-\item[result_array_type] - a type of the resulting array. It can be any numerical type of numpy array. \numpyindex
+\item[result_array_type] - a type of the resulting array. It can be any numerical type of numpy array.
         The default value is \verb|float32|.
 \item[...] - optional additional arguments that are passed to the method
   \method{run_chunk()}. They are expected to be keyword arguments.
@@ -1006,9 +1005,9 @@ The method is expected to return an array of the same size as the size of the fi
 The $i$-th value of the result is expected to be associated with the dataset element indexed by index[$i$].
 
 Optionally, the method  \method{get_agents_order()} can be implemented in the child class. It determines the order in which 
-dataset elements are passed into chunks. This method takes a dataset \datasetindex as an argument which is an
-object of class \class{DatasetSubset} \datasetsubsetindex containing only those elements of the
-original \verb|dataset| \datasetindex that are defined by \verb|dataset_index|. \datasetindex It returns
+dataset elements are passed into chunks. This method takes a dataset as an argument which is an
+object of class \class{DatasetSubset}\index{DatasetSubset@\class{DatasetSubset} class} containing only those elements of the
+original \verb|dataset| that are defined by \verb|dataset_index|.  It returns
 an index of elements within the given subset determining the order in which the
 elements should be processed. For example, if this method returns a randomized
 index, the elements passed into \method{run_chunk()} will be processed in

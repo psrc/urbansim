@@ -19,7 +19,7 @@ and Python coding standards.
 
 This section provides information on constructing a new Opus project.
 
-An Opus package is a Python package \pythonpackagesindex that conforms to the
+An Opus package is a Python package\index{Python!packages}\index{Python} that conforms to the
 Opus conventions.  If you are only creating new child XML configurations and
 modifying them with the GUI, you don't need to make a new package.  However, if
 you're writing Python code to define new variables as Python classes, to define new 
@@ -62,7 +62,7 @@ Directives for CUSPA's automated build system.
 Each Opus package may have a different set of files and directories, depending
 upon what is needed. To illustrate what an Opus package may contain, consider
 the \package{psrc} package we created for the Puget Sound Regional
-Council's (PSRC) \psrcindex application
+Council's (PSRC)\index{PSRC} application
 of UrbanSim.  Here are some of the directories and files it contains.  (This
 material is in flux --- some
 of these are being superseded by information in the XML configuration file, e.g.\
@@ -476,7 +476,6 @@ use \verb|import numpy|, and then within your code qualify the names, e.g.
 
 Do not use multiple-line imports, such as:
 
-\numpyindex
 \begin{verbatim}
 from numpy import array, repeat, transpose, ndarray, reshape, \
         indices, zeros, float32, asarray, arange, compress, \

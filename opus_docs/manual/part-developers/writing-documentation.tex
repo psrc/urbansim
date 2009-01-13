@@ -9,7 +9,7 @@
 \chapter{Writing Documentation}
 
 This chapter provides information and guidelines on writing Opus and
-UrbanSim documentation.  This guide is written using \LaTeX{}.\latexindex
+UrbanSim documentation.  This guide is written using \LaTeX{}.{\index{LaTeX@\LaTeX{}}}
 Other documentation includes a growing number of tutorials, and
 documentation on individual indicators.  Tutorials can be written using a
 variety of formatters, including \LaTeX{} and wiki; guidelines for writing
@@ -30,7 +30,7 @@ converter program to produce an html version.
 
 The Opus and UrbanSim 4 documentation in this guide follows the Python
 \pythonindex documentation standards (or at least it's supposed to), and is
-written using \LaTeX{} \latexindex and the Python \pythonindex
+written using \LaTeX{} and the Python
 documentation macros.  The latest version of this Guide (as a pdf file),
 and the Opus tutorial, is automatically posted on the UrbanSim website at
 \url{http://www.urbansim.org/} whenever a new version of any of the
@@ -61,12 +61,12 @@ of course, be used on this manual when reading the pdf version online.
 See also:
 
 Documenting Python \pythonindex (http://docs.python.org/doc/doc.html): This document
-describes how to document Python \pythonindex using the \LaTeX{} \latexindex macros
+describes how to document Python \pythonindex using the \LaTeX{} macros
 developed for the purpose.
 
 Python \pythonindex Documentation Download page (http://docs.python.org/download.html):
 The download page provides links for downloading the Python \pythonindex documentation
-in various formats, in particular \LaTeX{} \latexindex source.  The macros in the
+in various formats, in particular \LaTeX{} source.  The macros in the
 \file{texinputs/} subdirectory there have been copied into the
 \file{docs/latex} directory (and occasionally modified) for use in
 formatting this Guide.  Other manuals there are also useful as examples
@@ -76,14 +76,14 @@ of using the macros.
 \section{Using Python Macros}
 \pythonindex
 
-The Python \pythonindex macros include logical markup for the elements of the language
-and related concepts.  Use the \LaTeX{} \latexindex macros defined in python.sty \pythonindex to
+The Python macros include logical markup for the elements of the language
+and related concepts.  Use the \LaTeX{} macros defined in python.sty to
 format source code, along with function, method, and file names, and so
-forth.  This ensures a uniform appearance.  Also, the Python \pythonindex documentation
-states that sometime in the future, the Python \pythonindex documentation is likely to
+forth.  This ensures a uniform appearance.  Also, the Python documentation
+states that sometime in the future, the Python documentation is likely to
 be converted to XML or some other structured markup, and using the logical
 markup now will facilitate the transition.  Here are some useful examples
-of such macros.  See the ``Inline Markup'' section of ``Documenting Python'' \pythonindex
+of such macros.  See the ``Inline Markup'' section of ``Documenting Python''
 for the complete list
 (\url{http://www.python.org/doc/current/doc/inline-markup.html}).
 
@@ -166,21 +166,6 @@ Some particular cases:
 The index is in two-column format, so for very long words in the index (e.g. 
 class names), you can suggest hyphenation points to \LaTeX{}.
 
-In order to encourage consistency for complex indexed terms, there are
-macros defined in the \file{indexcommands.tex} file.  For example, the 
-\verb|\histogramindex| macro is defined as follows:
-
-\begin{verbatim}
-\newcommand{\histogramindex}  {\index{histogram}\index{plotting!histogram}}
-\end{verbatim}
-
-This adds an index entry for ``histogram'' and another for ``plotting''
-with a subentry ``histogram.''  These macros for commonly used---or
-complex---index terms should be taken advantage of whenever possible rather
-than manually using the \verb|\index{ ... }| command.  Care should be taken
-that any new macros added to the file maintain the existing alphabetic
-ordering to facilitate a manual look-up of index commands.
-
 \section{Some Other Guidelines}
 
 Here are a few other guidelines.  \emph{These are mostly noted as a result
@@ -200,15 +185,15 @@ source code.
   ellipses --- if you just write three periods in a row they are spaced too
   closely (for example: ...).
 
-\item The latex2html \index{latex2html}\latexindex program handles the mathematical typesetting from
-  \LaTeX{} \latexindex by including the math as a bitmap.  This is reasonable for
+\item The latex2html \index{latex2html} program handles the mathematical typesetting from
+  \LaTeX{} by including the math as a bitmap.  This is reasonable for
   actual equations, but looks a bit odd for simple symbols in the middle of
   a sentence.  There should be a switch to turn these into ordinary text,
-  or in the extreme we could write alternate latex \latexindex or html macros.
+  or in the extreme we could write alternate latex or html macros.
   However, if this can't be fixed, avoid using the math typesetting
   environments if you don't need them.  For example, to produce a
   backslash, use \verb|\textbackslash| or \verb$\verb|\|$ rather than
-  \verb|$\backslash$| (since in latex2html \index{latex2html}\latexindex the first two options produce a
+  \verb|$\backslash$| (since in latex2html \index{latex2html} the first two options produce a
   character, the third a GIF image).
 
 \item Do not use underscores in \verb|.tex| filenames. Use hyphens instead (i.e. use `-' instead of `_').

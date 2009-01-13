@@ -117,7 +117,7 @@ array([  1000.,   2000.,   5000.,   3000.,    500.,  10000.,   8000.,
 ['household_id', 'income']
 \end{verbatim}
 
-Each attribute \attributesindex of a \class{Dataset} is stored as a numpy array. \numpyindex
+Each attribute \attributesindex of a \class{Dataset} is stored as a numpy array.
 
 In the above example, each of the attributes \attributesindex is
 loaded separately. Alternatively, we can load multiple attributes
@@ -138,8 +138,8 @@ method that specifies names of attributes \attributesindex to be loaded, e.g. \v
 % (terhorst) The answer is, "Yes." There's a handy little macro called
 % "upquote" that does exactly this for \verbatim and \verb.
 
-We can also plot a histogram \histogramindex of the income attribute \attributesindex (this method requires the
-  \module{matplotlib} \matplotlibindex library):
+We can also plot a histogram{\index{histogram}\index{plotting!histogram}} of the income attribute \attributesindex (this method requires the
+  \module{matplotlib}\index{matplotlib} library):
 
 \begin{verbatim}
 >>> households.plot_histogram("income", bins = 10)
@@ -150,7 +150,7 @@ We can also plot a histogram \histogramindex of the income attribute \attributes
 %end{latexonly}
 \htmlonly{\includegraphics[scale=0.6, angle=0]{images/incomehist.jpg}}
 \end{center}
-or (if the \module{rpy} \rpyindex library is installed)
+or (if the \module{rpy}\index{R}\index{rpy} library is installed)
 \begin{verbatim}
 >>> households.r_histogram("income")
 \end{verbatim}
@@ -162,7 +162,7 @@ or (if the \module{rpy} \rpyindex library is installed)
 \end{center}
 
 We can investigate a correlation \index{correlation} between attributes \attributesindex by plotting a scatter
-plot \scatterplotindex (\module{rpy} \rpyindex library required):
+plot (\module{rpy}\index{R}\index{rpy} library required):
 
 \begin{verbatim}
 >>> households.r_scatter("persons", "income")
@@ -432,7 +432,6 @@ Note that multiple runs will produce different results, which is due to random
 numbers \index{random numbers} used within the model. In order to receive reproducible results\index{reproducible results}, one
 can fix the seed of the random number generator. The call above was
 preceded by
-\numpyindex
 \begin{verbatim}
 >>> from numpy.random import seed
 >>> seed(1)
@@ -549,7 +548,8 @@ the agent set or adds this attribute \attributesindex to the dataset, \datasetin
 array([5, 5, 5, 5, 5, 7, 7, 2, 5, 5])
 \end{verbatim}
 
-One way of visualizing results of the HLCM run is to plot a histogram \histogramindex of the
+One way of visualizing results of the HLCM run is to plot a 
+histogram{\index{histogram}\index{plotting!histogram}} of the
 choices, including the capacity of each location (requires \module{matplotlib}
 library):
 
@@ -795,14 +795,15 @@ As expected, the resulting cost decreases with increasing distance to cbd.
 %
 \variablesindex
 
-As mentioned in Section~\ref{sec:datasets}, a dataset \datasetindex has a set of
-attributes, \attributesindex such as income or persons, that are stored in a file or database.
-We call such characteristics {\it primary attributes}. \primaryattributesindex In addition, one is usually
-interested in attributes \attributesindex that are computed, for example using some
-transformation of primary attributes. \primaryattributesindex We call those attributes \attributesindex {\it
-variables}, \variablesindex or {\it computed attributes}. \computedattributesindex They are simply handled as additional
-``columns'' of a dataset \datasetindex to which they belong to, here denoted as
-``parent dataset''. \datasetindex
+As mentioned in Section~\ref{sec:datasets}, a dataset has a set of
+attributes\index{attributes}, such as income or persons, that are stored in a file or database.
+We call such characteristics \emph{primary attributes}\index{primary attributes}\index{attributes!primary}.  
+In addition, one is usually interested in attributes that are computed, for example using some
+transformation of primary attributes.  We call those attributes \emph{variables}\index{variables},
+or \emph{computed attributes}\index{attributes!computed}\index{computed attributes}.
+They are simply handled as additional
+``columns'' of a dataset to which they belong to, here denoted as
+``parent dataset''.
 
 In Opus, a variable \variablesindex is a class derived from the
 \package{opus_core} class \class{Variable}\variablesindex.  Opus expressions 
@@ -1203,8 +1204,6 @@ As {\em location} we can use e.g. `highway',  `arterial', or `cbd'.
 The class name is \class{is_near_SSS_if_threshold_is_DDD} and must have a
 constructor implemented which takes a string and a number as arguments:
 
-\variablesindex
-\numpyindex
 \begin{verbatim}
 from opus_core.variables.variable import Variable
 
@@ -1671,7 +1670,6 @@ in the parent class (see Section~\ref{sec:chunk-model} for its arguments).
 
 The model can be coded as follows:
 
-\numpyindex \attributesindex
 \begin{verbatim}
 >>> from opus_core.chunk_model import ChunkModel
 >>> from numpy import apply_along_axis
@@ -1698,11 +1696,11 @@ the means and variances for dataset members of this chunk, generates a matrix of
 random numbers of size $n \times$ {\em number of agents in the chunk}, and returns the means for each agent.
 
 
-In order to use this model, we need to create a dataset \datasetindex with the two required attributes \attributesindex for means and variances.
-In our case, we have a dataset \datasetindex of $100,000$ entries. The mean and variance for the first half of the entries
+In order to use this model, we need to create a dataset \datasetindex with the two required attributes for means and variances.
+In our case, we have a dataset of $100,000$ entries. The mean and variance for the first half of the entries
 is $0$ and $1$, respectively. The mean and variance for the second half of the entries
 is $10$ and $5$, respectively.
-\numpyindex\index{Storage!dict}
+
 \begin{verbatim}
 >>> from numpy import arange, array
 >>> from opus_core.storage_factory import StorageFactory

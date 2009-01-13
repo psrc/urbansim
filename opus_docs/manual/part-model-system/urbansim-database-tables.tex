@@ -27,7 +27,7 @@ database.
 \end{description}
 
 At the moment, UrbanSim supports several database servers.  The one that has been most thoroughly 
-used and tested is the MySQL \mysqlindex database server.  Support has been added for Postgres, 
+used and tested is the MySQL\index{MySQL} database server.  Support has been added for Postgres, 
 SQLite, and Microsoft SQL Server, though the Microsoft SQL Server interface has some differences
 from the other database platforms that limit it in some ways.  We advise using MySQL or Postgres as
  DBMS options for production use with OPUS and UrbanSim.
@@ -80,7 +80,7 @@ preparation applications such as the estimators or the household synthesizer
 may write to them.  In fact, when the run manager starts a new simulation, the
 first step is to copy the baseyear data into the baseyear cache. \baseyearcacheindex The
 simulation then reads all of its baseyear information from the baseyear cache \baseyearcacheindex
-and writes all results to the simulation cache. \simulationcacheindex Data is only written to the
+and writes all results to the simulation cache\index{simulation cache}.  Data is only written to the
 output database when specified (currently done manually).
 
 A \emph{baseyear} database contains a snapshot of the base
@@ -172,7 +172,7 @@ Linux).
 \item Avoid overly abbreviated names.  While very short names were required by
 some other systems, UrbanSim itself has no limit on the length of names. Most
 database system allow database names, table names and column names to be 32
-characters, 64 characters (e.g. MySQL), \mysqlindex or more.
+characters, 64 characters (e.g. MySQL)\index{MySQL}, or more.
 \item Unique identifiers must be larger than 0. 
 \item Avoid Null values in tables. The Python conversion tool cannot deal with 
 Nulls, and thus, converting tables to a simulation cache would crash if Nulls are present.  
@@ -184,7 +184,7 @@ Nulls, and thus, converting tables to a simulation cache would crash if Nulls ar
 types} When Opus reads data from a database table, it stores the
 data in a Python type that is close to the type of the corresponding
 column in the database.  The particular mapping between database
-types and Python types currently is defined for MySQL \mysqlindex
+types and Python types currently is defined for MySQL
 and should be re-defined for each additional type of database.  The
 conversion for MySQL is:
 
