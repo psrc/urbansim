@@ -63,6 +63,7 @@ class MultipleRunsModification:
             config["models_configuration"][new_model_name] = Configuration(config["models_configuration"][model_name])
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_coefficients"] = \
                                                 True
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["distribution"] = "'normal'"
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["cache_storage"] = \
                                                 "base_cache_storage" 
         for model_name in self.models_with_sampled_control_totals:
