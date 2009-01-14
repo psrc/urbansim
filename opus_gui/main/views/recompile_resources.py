@@ -20,12 +20,12 @@ import os
 
 if __name__ == "__main__":
 
-    TMPFILE = '_tmp_resource.qrc'
+    RCFILE = 'opusmain.qrc'
     OUTFILE = 'opusmain_rc.py'
 
     files = os.listdir('./Images')
     images = [f for f in files if f.endswith('.png')]
-    rcfile = open('./%s' %TMPFILE, 'w')
+    rcfile = open('./%s' %RCFILE, 'w')
     rcfile.write('<RCC>\n')
     rcfile.write('    <qresource prefix="/Images" >\n')
     for image in images:
@@ -33,8 +33,7 @@ if __name__ == "__main__":
     rcfile.write('    </qresource>\n')
     rcfile.write('</RCC>')
     rcfile.close()
-    print 'Wrote %d images to %s' %(len(images), TMPFILE)
-    os.system('pyrcc4 %s -o %s' %(TMPFILE, OUTFILE))
+    print 'Wrote %d images to %s' %(len(images), RCFILE)
+    os.system('pyrcc4 %s -o %s' %(RCFILE, OUTFILE))
     print 'Compiled to %s' %OUTFILE
-    os.remove(TMPFILE)
 
