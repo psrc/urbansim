@@ -19,6 +19,7 @@ from opus_core.configuration import Configuration
 from opus_core.configurations.xml_version import XMLVersion
 from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
+from opus_core.variables.variable_name import VariableName
 
 
 class XMLConfiguration(object):
@@ -195,15 +196,21 @@ class XMLConfiguration(object):
         all_vars = []
         lib_node = self._find_node('general/expression_library')
         for v in lib_node:
-            # if the variable is defined as an expression, make an alias;
-            # otherwise it's a Python class - just use as is
+            # If the variable is defined as an expression, make an alias.
+            # Otherwise it's a Python class.  If the name in the expression library
+            # is the same as the variable short name, just use it as is; otherwise
+            # also set up an alias.
             if v.get('source')=='expression':
+                add_alias = True
+            else:
+                n = VariableName(v.text)
+                add_alias = n.get_short_name()!=v.tag
+            if add_alias:
                 all_vars.append('%s = %s' % (v.tag, v.text))
             else:
                 all_vars.append(v.text)
         # sort the list of variables to make it easier to test the results
         all_vars.sort()
-
         # look for list of submodels
         submodel_list = self.get_section('model_manager/model_system/' +
                                          model_name + '/specification/')
@@ -225,10 +232,8 @@ class XMLConfiguration(object):
                         if equation_name!='description' and equation_name!='submodel_id':
                             equation_spec = submodel[equation_name]
                             result[submodel['submodel_id']][equation_spec['equation_id']] = equation_spec['variables']
-
         if model_group is not None:
             result = result_group
-
         return result
 
     def save(self):
@@ -956,11 +961,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
     def test_get_estimation_specification(self):
         # test getting the estimation specification.  This also tests the expression library, which contains an expression
-        # for ln_cost and a variable defined as a Python class
+        # for ln_cost and a variable defined as a Python class.  In the _definition_ entry in the dictionary, we include an alias
+        # if the name of the expression (a Python class reference in this case) is different from the variable name, as in
+        # the bsqft variable.
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
-          24: ['ln_cost', 'existing_units']}
+        should_be = {'_definition_': ['bsqft = urbansim_parcel.parcel.building_sqft', 'ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
+          24: ['ln_cost', 'existing_units', 'bsqft']}
         self.assertEqual(config, should_be)
 
     def test_get_estimation_specification_with_equation(self):
@@ -986,6 +993,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                      ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
                      ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
+                     ('parcel', 'bsqft'): 'urbansim_parcel.parcel.building_sqft',
                      ('parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units'}
         self.assertEqual(lib, lib_should_be)
         # Test that computing the value of this variable gives the correct answer.  This involves

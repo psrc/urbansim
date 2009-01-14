@@ -3,6 +3,7 @@
    <expression_library type="dictionary">
      <ln_cost type="variable_definition" dataset="parcel" use="model variable" source="expression">ln(psrc.parcel.cost)</ln_cost>
      <existing_units type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.existing_units</existing_units>
+     <bsqft type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.building_sqft</bsqft>
    </expression_library>
     <project_name type="string">test_project</project_name>
     <test_node type="string" test_attribute="parent_value" oceanic_attribute="squid">this is just to test attribute inheritance</test_node>
@@ -17,7 +18,7 @@
         <specification>
           <single_family_residential type="submodel">
             <submodel_id type="integer">24</submodel_id>
-            <variables type="variable_list">ln_cost, existing_units</variables>
+            <variables type="variable_list">ln_cost, existing_units, bsqft</variables>
           </single_family_residential>
         </specification>
       </real_estate_price_model>
