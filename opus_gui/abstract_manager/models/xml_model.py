@@ -414,7 +414,7 @@ class XmlModel(QAbstractItemModel):
                 value = QVariant(choices[1])
 
         # TODO replace with xml manip
-        value = value.toString() # convert value to string
+        value = value.toString() # cast the QVariant object to a QString
         if element.hasChildNodes():
             children = element.childNodes()
             for x in xrange(0,children.count(),1):
@@ -427,8 +427,8 @@ class XmlModel(QAbstractItemModel):
         else:
             # print "New text node to be added"
             # We need to add a text node since it was blank
-            if value.toString() != QString(""):
-                newText = self.domDocument.createTextNode(QString(value.toString()))
+            if len(value) > 0: # Don't add empty text nodes
+                newText = self.domDocument.createTextNode(QString(value))
                 element.appendChild(newText)
                 if not self.isTemporary(newText):
                     self.markAsDirty()
