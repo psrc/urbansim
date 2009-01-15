@@ -14,9 +14,10 @@
 
 import os
 import gc
-from numpy import zeros, arange, mean
+from numpy import zeros, arange, mean, concatenate, newaxis
+from numpy.random import normal
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.misc import load_from_text_file, write_table_to_text_file, write_to_text_file
+from opus_core.misc import load_from_text_file, write_table_to_text_file, write_to_text_file, try_transformation
 from opus_core.plot_functions import plot_values_as_boxplot_r
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
@@ -80,7 +81,7 @@ class MultipleRuns:
         """
         'quantity_of_interest' is a variable name in its fully-qualified name.
         Return a matrix of size (dataset.size x number_of_runs), with values of the variable
-        for eeach dataset member and run. Dataset is the one to which the 
+        for each dataset member and run. Dataset is the one to which the 
         quantity_of_interest belongs to. 
         """
         variable_name = VariableName(quantity_of_interest)
@@ -125,8 +126,11 @@ class MultipleRuns:
     def set_values_from_mr(self, year, quantities_of_interest):
         self.year_of_values_from_mr = year
         self.values_from_mr = {}
+        self.ids_matching_values_from_mr = {}
         for var in quantities_of_interest:
             self.values_from_mr[var] = self.compute_values_from_multiple_runs(year, var)
+            ds = self.get_dataset_from_first_run(year, VariableName(var).get_dataset_name())
+            self.ids_matching_values_from_mr[var] = ds.get_id_attribute()
             
     def get_dataset_with_means(self, dataset_name, dataset=None):
         """Return dataset where each element is the corresponding mean over the multiple runs. 
@@ -146,17 +150,47 @@ class MultipleRuns:
     def export_values_from_mr(self, directory, prefix=''):
         vars = self.values_from_mr.keys()
         for var in vars:
-            filename = os.path.join(directory, "%s%s" % (prefix, VariableName(var).get_alias()))
-            write_table_to_text_file(filename, self.values_from_mr[var])
+            self._do_export_values(var, self.values_from_mr[var], directory, prefix)
             
+    def _do_export_values(self, variable, values, directory, prefix='', variable_prefix=''):
+        filename = os.path.join(directory, "%s%s.%s%s" % (prefix, VariableName(variable).get_dataset_name(), variable_prefix,
+                                                          VariableName(variable).get_alias()))
+        if self.ids_matching_values_from_mr[variable].ndim < values.ndim:
+            data = concatenate((self.ids_matching_values_from_mr[variable][:,newaxis], values), axis=1)
+        else:
+            data = concatenate((self.ids_matching_values_from_mr[variable], values), axis=1)
+        write_table_to_text_file(filename, data)
+        
     def plot_current_values_as_boxplot_r(self, filename=None, logy=False):
         """Create a set of boxplots (using R), one plot per variable in self.values_from_mr.
         (see docstring in plot_functions.plot_values_as_boxplot_r)
         """
         plot_values_as_boxplot_r(self.values_from_mr, filename=filename, logy=logy)
         
+    def simulate_from_normal(self, variable, n=1, bias=0, sd=1, transformation_pair=(None, None)):
+        """Simulates n values from the normal distribution for each value of self.values_from_mr 
+        for the given variable:
+        N(v+bias, sd^2), where v is (possibly) transformed matrix self.values_from_mr using the first element 
+        of transformation_pair. The second element is applied to the results.
+        The resulting array has as many rows as self.values_from_mr. Number of columns is 
+        equal to the number of columns of self.values_from_mr * n
+        """
+        if n < 1:
+            return None
 
+        values = try_transformation(self.values_from_mr[variable], transformation_pair[0])
+        result = normal(values+bias, sd, size=self.values_from_mr[variable].shape)
+        for i in range(1,n):
+            result = concatenate((result, normal(values+bias, sd, size=self.values_from_mr[variable].shape)), axis=1)
+        return try_transformation(result, transformation_pair[1])
     
+    def simulate_from_normal_and_export(self, directory, prefix='', variable_prefix='', n=1, bias=0, sd=1, transformation_pair=(None, None)):
+        vars = self.values_from_mr.keys()
+        for var in vars:
+            data = self.simulate_from_normal(var, n, bias, sd, transformation_pair)
+            self._do_export_values(var, data, directory, prefix, variable_prefix)
+
+            
 def create_file_cache_directories(directory, prefix='', file_name='cache_directories'):
     logger.start_block('Creating file %s in %s' % (file_name, directory))
     all_dirs = os.listdir(directory)

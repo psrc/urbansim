@@ -516,6 +516,10 @@ class BayesianMelding(MultipleRuns):
                            mode='a', delimiter=' ')
         
     def export_bm_parameters(self, directory, filename=None, quantities=None, run_index=None):
+        """Writes BM parameters (bias and variance) for each quantity to a file. The variance parameter is either 
+        the one computed for a run given by run_index, or (if it is not given) for the run with the highest weight.
+        
+        """
         if filename is None:
             filename = 'bm_parameters_' + str(self.get_calibration_year())
         if run_index is not None:
@@ -656,7 +660,8 @@ class BayesianMeldingFromFile(BayesianMelding):
     def generate_posterior_distribution(self, year, quantity_of_interest, cache_directory=None, values=None, ids=None, procedure="opus_core.bm_normal_posterior",
                                         use_bias_and_variance_from=None, transformed_back=True, transformation_pair = (None, None), **kwargs):
         if cache_directory is not None:
-            self.set_cache_attributes(cache_directory)
+            self.cache_set = array([cache_directory])
+            #self.set_cache_attributes(cache_directory)
         else:
             if values is None or ids is None:
                 raise StandardError, "Either cache_directory or values and ids must be given."
@@ -707,5 +712,4 @@ class BayesianMeldingFromFile(BayesianMelding):
         return self.get_predicted_values()
 
     def get_posterior_component_variance(self):
-        # temporarily without propagation factor (for experimentation)
-        return self.get_variance_for_quantity()
+        return self.get_variance_for_quantity()*self.get_propagation_factor()
