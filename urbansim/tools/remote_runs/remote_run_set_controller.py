@@ -48,8 +48,10 @@ class RemoteRunSet(RemoteRun):
     default_run_id_file = 'run_ids'
     python_commands = {"localhost": "python"}
     configuration_update = {
-                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/test',
+                            "localhost": {#'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/0818',
+                                          'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/relocation/0114',
                                           'existing_cache_to_copy': '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
+                                          #'existing_cache_to_copy': '/Users/hana/urbansim_cache/psrc/parcel/relocation_models_estimation/cache_source_parcel'
                                           },
                             "128.208.52.233": {'cache_directory_root': '/urbansim_cache/psrc_parcel_hana/runs', #paris
                                                'existing_cache_to_copy': '/urbansim_cache/psrc_parcel_hana/base_year_data'
@@ -57,7 +59,7 @@ class RemoteRunSet(RemoteRun):
                             }
     for i in range(1,13):
         configuration_update["faloorum%s.csss.washington.edu" % i] = {
-                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/test',
+                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0818',
                                                             'existing_cache_to_copy': '/homes/scratch/hana/urbansim_cache/psrc/cache_source_parcel'
                                                               }    
     def __init__(self, server_file, hostname, username, password, *args, **kwargs):
@@ -182,11 +184,10 @@ class RemoteRunSet(RemoteRun):
                                                                              self.run_id, self.date_time_str)
             config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = config_update.get('existing_cache_to_copy', 
                                                                 config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy)
-        self.prepare_cache_and_communication_path(config)
         run_manager = self.get_run_manager()
-        run_manager.services_db.execute(
-               run_manager.services_db.delete(run_manager.services_db.c.run_id == self.run_id))
+#        run_manager.delete_everything_for_this_run(run_id = self.run_id)
         run_manager.add_row_to_history(self.run_id, config, "started")
+        self.prepare_cache_and_communication_path(config)
         
     def set_environment_for_this_run(self, server, run_id):
         self.run_id = run_id
@@ -257,7 +258,7 @@ if __name__ == "__main__":
     #try: import wingdbstub
     #except: pass
     run_manager = RunManager(option_group.get_services_database_configuration(options))
-    run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name,
+    run = RemoteRunSet(options.server_file, hostname, username, password, options.server, options.database_name,
                        options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)
 

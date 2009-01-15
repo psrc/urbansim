@@ -296,15 +296,12 @@ class RemoteRun:
             if this_start_year <= this_end_year:
                 urbansim_resources['years'] = (this_start_year, this_end_year)
 
-                run_manager = self.get_run_manager()
-                run_manager.services_db.execute(
-                       run_manager.services_db.delete(run_manager.services_db.c.run_id == self.run_id))
-                            
-                run_manager().add_row_to_history(self.run_id, urbansim_resources, "started")
+                run_manager = self.get_run_manager()                
+                run_manager.add_row_to_history(run_id=self.run_id, resources=urbansim_resources, status="started")
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                               "%s %s --skip-cache-cleanup --skip-travel-model --protocol=mysql %s" % (
+                                               "%s %s --skip-cache-cleanup --skip-travel-model %s" % (
                                                          self.run_id, this_start_year, bg),
                                                    )
                     if not background:               
