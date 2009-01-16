@@ -43,7 +43,7 @@ def opusRun(progressCB,logCB,params):
     try:
         p = subprocess.Popen('ogr2ogr', stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout_text, stderr_text = p.communicate()
-    except WindowsError:
+    except:
         logCB('ogr2ogr is not properly installed or configured\n')
         return
 
