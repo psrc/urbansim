@@ -12,22 +12,23 @@
 # other acknowledgments.
 #
 
-from opus_core.tests import opus_unittest
+from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 
 class XMLVersion(object):
     """Holds an Opus XML version number of the form 1.0 (i.e. major number, period, minor number), for easy
     comparison.  The default value is 0.0, which is intended to be less than any actual XML version number."""
     def __init__(self, version_string='0.0'):
-        if version_string.startswith('4.2'):
-            raise ValueError, 'this is an old-style XML configuration number -- please update'
+        # TODO: remove this test for old-style version numbers in a bit (say after May 2009), after there won't be any floating around
+        if version_string.startswith('4.2.'):
+            raise XMLVersionException, 'this is an old-style XML configuration number -- please update'
         version_parts = version_string.split('.')
         if not len(version_parts) == 2:
-            raise ValueError, 'invalid format for XML version number'
+            raise XMLVersionException, 'invalid format for XML version number'
         try:
             self.major = int(version_parts[0])
             self.minor = int(version_parts[1])
         except ValueError:
-            raise ValueError, 'invalid format for XML version number'
+            raise XMLVersionException, 'invalid format for XML version number'
 
     def __str__(self):
         return '%d.%d' % (self.major, self.minor)
@@ -39,6 +40,9 @@ class XMLVersion(object):
         if self.major > other.major: return 1
         if self.major < other.major: return -1
         return self.minor.__cmp__(other.minor)
+    
+
+from opus_core.tests import opus_unittest
     
 class XMLVersionTests(opus_unittest.OpusTestCase):
     
@@ -58,6 +62,11 @@ class XMLVersionTests(opus_unittest.OpusTestCase):
         self.assertTrue(XMLVersion('1.2') == '1.2')
         self.assertTrue(XMLVersion('1.2') > '1.0')
         self.assertTrue(XMLVersion('1.2') < '2.0')
+        
+    def test_version_exceptions(self):
+        self.assertRaises(XMLVersionException, XMLVersion, 'badstuff')
+        self.assertRaises(XMLVersionException, XMLVersion, '4.2.0')
+        self.assertRaises(XMLVersionException, XMLVersion, '1.0.0')
         
 if __name__ == '__main__':
     opus_unittest.main()
