@@ -444,7 +444,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
                 self.domDocument = dd
                 tb = Dummy()
                 tb.opus_core_xml_configuration = Dummy()
-                tb.opus_core_xml_configuration.xml_version = XMLVersion('4.1.0')
+                tb.opus_core_xml_configuration.xml_version = XMLVersion('0.9')
                 self.mainwindow.toolboxBase = tb
                 self._rootItem = XmlItem(dd, dd.documentElement(), None)
                 self._rootItem.initAsRootItem()
@@ -481,7 +481,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
 
 
     def test_xml_version(self):
-        self.assertEqual(self.xml.xml_version, '4.1.0')
+        self.assertEqual(self.xml.xml_version, '0.9')
 
 
     def test_get(self):
@@ -621,4 +621,7 @@ class XmlManipulatorTester(opus_unittest.OpusTestCase):
         # check that hidden nodes dont get returned as items
         hidden = self.xml.get('levelthree')
         self.assertTrue(self.xml._item_for_element(hidden) is None)
+
+if __name__ == '__main__':
+    opus_unittest.main()
 
