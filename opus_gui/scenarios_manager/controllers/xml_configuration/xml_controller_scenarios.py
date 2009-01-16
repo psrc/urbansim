@@ -257,26 +257,8 @@ class XmlController_Scenarios(XmlController):
         model_elements = []
         available_model_names = []
 
-        if self.xml.xml_version >= '4.2.0':
-            elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc,
-                                                  attribute='type', value='model')
-            model_elements = [e[0] for e in elements]
-        else:
-            # we can't fetch by type in old xml versions, so grab everything
-            # that is under model_manager/model_system and filter out hidden
-            # elements (such as templates). Note that this doesn't guarantee
-            # that we only get models, but it's probably our best guess
-            root = self.model.domDocument.documentElement()
-            model_system = self.xml_helper.get_sub_element_by_path(root, 'model_manager/model_system')
-            model_nodes = model_system.childNodes()
-            for x in range(0, model_nodes.length()):
-                model_node = model_nodes.item(x).toElement()
-                if not model_node.isNull() and not \
-                    model_node.attribute('hidden').toLower() == QString('true'):
-                    model_elements.append(model_node)
-
-
-
+        elements = elementsByAttributeValue(domDocument=self.toolboxbase.doc, attribute='type', value='model')
+        model_elements = [e[0] for e in elements]
         # if the xml file is old, it might have some models defined as part of
         # the 'default_model_configuration' -- include those when populating the
         # menu. Should we drop this support?
@@ -296,8 +278,7 @@ class XmlController_Scenarios(XmlController):
         spawn_text = self.model.domDocument.createTextNode('Run')
         spawn.appendChild(spawn_text)
         spawn.setAttribute('choices', 'Run|Skip')
-        type_name = 'model_choice' if self.xml.xml_version >= '4.2.0' else 'model'
-        spawn.setAttribute('type', type_name)
+        spawn.setAttribute('type', 'model_choice')
         # insert as first child to scenario
         self.model.insertRow(0, scenario_index, spawn)
 

@@ -35,7 +35,7 @@ from sqlalchemy.sql import select, func
 ###       delete_run_tests back into opus_core.
 
 config_template = """<opus_project>
-  <xml_version>4.2.0</xml_version>
+  <xml_version>1.0</xml_version>
   <general>
     <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
     </general>

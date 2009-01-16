@@ -15,95 +15,49 @@
 from opus_core.tests import opus_unittest
 
 class XMLVersion(object):
-    '''Small help class to enable easy version comparison between versions'''
-    major = stable = minor = 0
-    beta = -1
-    
-    def __init__(self, version_string = '0.0.0'):
+    """Holds an Opus XML version number of the form 1.0 (i.e. major number, period, minor number), for easy
+    comparison.  The default value is 0.0, which is intended to be less than any actual XML version number."""
+    def __init__(self, version_string='0.0'):
+        if version_string.startswith('4.2'):
+            raise ValueError, 'this is an old-style XML configuration number -- please update'
         version_parts = version_string.split('.')
-        if not len(version_parts) == 3:
-            # should always be three sections
-            print('Warning: Incorrect version string format in %s.' %
-                  version_string)
-            self._print_format()
-            return
+        if not len(version_parts) == 2:
+            raise ValueError, 'invalid format for XML version number'
         try:
-            # check if the last part has beta suffix
-            minor_beta = version_parts[2].split('-')
-            if len(minor_beta) == 2:
-                self.minor = int(minor_beta[0])
-                self.beta = int(minor_beta[1][4:]) # exclude 'beta' suffix
-            elif len(minor_beta) == 1:
-                self.minor = int(minor_beta[0])
-            else:
-                raise ValueError()
             self.major = int(version_parts[0])
-            self.stable = int(version_parts[1])
+            self.minor = int(version_parts[1])
         except ValueError:
-            print('Invalid number found in version string "%s"' %version_string)
-            self._print_format()
-            self.major = self.stable = self.minor = 0
-            self.beta = -1
-            return
+            raise ValueError, 'invalid format for XML version number'
 
     def __str__(self):
-        beta_string = 'Beta#: %d' %self.beta
-        if self.beta < 0:
-            beta_string = 'Stable'
-        return ('%d.%d.%d (%s)' %(self.major, self.stable, 
-                                  self.minor, beta_string))
+        return '%d.%d' % (self.major, self.minor)
         
-    def is_beta(self):
-        '''returns true if this version string is a beta string'''
-        return self.beta != -1
-    
     def __cmp__(self, other):
         if isinstance(other, str): # enable comparison with strings
             other = XMLVersion(other)
 
         if self.major > other.major: return 1
         if self.major < other.major: return -1
-        if self.stable > other.stable: return 1
-        if self.stable < other.stable: return -1
-        if self.minor > other.minor: return 1
-        if self.minor < other.minor: return -1
-        # beta strings with same major, stable and minor as stables are 'less'
-        if self.is_beta() and (not other.is_beta()):
-            return -1
-        elif (not self.is_beta()) and other.is_beta():
-            return 1
-        elif self.is_beta() and other.is_beta():
-            # compare by beta number
-            if self.beta > other.beta: return 1
-            if self.beta < other.beta: return -1
-        # everything equal
-        return 0
+        return self.minor.__cmp__(other.minor)
     
-    def _print_format(self):
-        print('Correct version string format is: X.X.X[-betaX] (X represents a number).')
-
 class XMLVersionTests(opus_unittest.OpusTestCase):
     
     def test_version_compare(self):
-        v1 = XMLVersion('4.2.0')
-        v2 = XMLVersion('4.2.2')
-        v3 = XMLVersion('4.2.0')
+        v0 = XMLVersion()
+        v1 = XMLVersion('1.1')
+        v2 = XMLVersion('1.2')
+        v3 = XMLVersion('3.0')
+        self.assertTrue(v0 < v1)
         self.assertTrue(v1 < v2)
+        self.assertTrue(v2 < v3)
         self.assertFalse(v1 > v2)
-        self.assertTrue(v1 == v3)
-        self.assertTrue(v2 > '4.2.1')
-        
-        # betas are previous to stables, so beta3 should be greater than 
-        # the stable version (which doesn't have beta suffix)
-        self.assertTrue(XMLVersion('1.0.0-beta3') < '1.0.0')
-        self.assertTrue(XMLVersion('1.0.0-beta2') > '1.0.0-beta1')
-        
+        self.assertTrue(v1 == v1)
+        self.assertTrue(v3 > v1)
         
     def test_version_string(self):
-        self.assertTrue(XMLVersion('4.2') == '0.0.0')
-        self.assertTrue(XMLVersion('jibberish') == '0.0.0')
-        self.assertTrue(XMLVersion('4.3.2.3.3.2.1.3'))
-        self.assertTrue(XMLVersion('1.0.0-beta') == '0.0.0')
+        self.assertTrue(XMLVersion('1.2') == '1.2')
+        self.assertTrue(XMLVersion('1.2') > '1.0')
+        self.assertTrue(XMLVersion('1.2') < '2.0')
         
 if __name__ == '__main__':
     opus_unittest.main()

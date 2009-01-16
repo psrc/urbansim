@@ -1,5 +1,5 @@
 <opus_project>
-<xml_version>4.2.0</xml_version>
+<xml_version>1.0</xml_version>
   <general>
     <description type="string">Sample Seattle project</description>
     <project_name hidden="True" type="string">seattle_parcel</project_name>

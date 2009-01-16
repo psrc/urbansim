@@ -1,5 +1,5 @@
 <gui_configuration>
-    <xml_version>4.2.0</xml_version>
+    <xml_version>1.0</xml_version>
 	<startup_options>
 		<splash_logo>opus-logo.bmp</splash_logo>
 	</startup_options>

@@ -22,8 +22,8 @@ stable = False
 
 # Minumimum and maximum version numbers for XML that this code is guaranteed to work for.
 # (It might work for others, but no promises.)
-minimum_xml_version = '4.2.0-beta1'
-maximum_xml_version = '4.2.0'
+minimum_xml_version = '1.0'
+maximum_xml_version = '1.0'
 
 # ********** END OF CONSTANTS TO EDIT TO CHANGE VERSION NUMBERS **********
 

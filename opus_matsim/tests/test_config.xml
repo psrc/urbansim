@@ -1,5 +1,5 @@
 <opus_project>
-  <xml_version>4.2.0</xml_version>
+  <xml_version>1.0</xml_version>
   <general>
     <description type="string">opus_matsim test setup.  DO NOT CHANGE</description>
     <project_name hidden="True" type="string">opus_matsim</project_name>

@@ -1,5 +1,5 @@
 <opus_project>
-  <xml_version>4.2.0</xml_version>
+  <xml_version>1.0</xml_version>
   <general>
     <description type="string">Base UrbanSim project</description>
     <project_name type="string" hidden="True">urbansim</project_name>

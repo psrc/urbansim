@@ -10,64 +10,59 @@
 \label{appendix:version-numbers}
 \index{version numbers}
 
-Opus and UrbanSim use version numbers for the source code, for the XML
-project configuration files, and for the sample data.  You should generally
-use consistent versions of these three things, since the source code will
-expect that the XML files are laid out in a particular way and that
-particular tables are in the sample data.  A given version number
-corresponds to a specific version of the source code and the exact contents
-of the sample data.  For the XML configuration files, the version number
+Opus and UrbanSim use version numbers for the source code and for the XML
+project configuration files.  You should use consistent versions of these,
+since the source code will expect that the XML files are laid out in a
+particular way.
+
+A given source code version number corresponds to a specific version of the
+source code.  For the XML configuration files, the version number
 identifies the expected layout of the XML, not the exact content of the
 configuration --- if we were using DTDs or other XML schema descriptions,
-it would be the version of the DTD\@.  (We hope to support such a schema in
-the future.)
+it would be the version of the DTD\@.  (We plan to support such a schema in
+the near future.)
 
-\section{Version Numbers for Stable Releases}
+\section{Source Code Version Numbers for Stable Releases}
 
-For stable releases, the version is something like `4.2.1', where 4 is the
-major release number (i.e. UrbanSim 4), 2 is the minor number, and 1 is the
-bugfix number.  The same version number is used for the source code, XML
-configurations, and the sample data, with the goal of making it easy to
-check that these are consistent.
-
-The version number of the source code is associated with the
-\package{opus_core} package, and can be found in the usual Python fashion
-by evaluating the following expression:
+For stable releases, the version is of the form `4.2.1', where 4 is the
+major release number (i.e.\ UrbanSim 4), 2 is the minor number, and 1 is
+the bugfix number.  The version number of the source code is associated
+with the \package{opus_core} package, and can be found in the usual Python
+fashion by evaluating the following expression:
 
 \code{opus_core.__version__}
 
 (In the future we may add the \code{__version__} attribute to all
 Opus/UrbanSim modules.)
 
-The version number for an XML configuration is given in an element with the
-\code{xml_version} tag, for example:
+\section{Source Code Version Numbers for Development Versions}
 
-\code{<xml_version>4.2.0</xml_version>}
+For development versions, the version for the source code is something like
+`4.2-dev5216' where 5216 is the svn (subversion code repository) revision
+number for this version of the code.  When this development version is
+first released as a stable release, it becomes `4.2.0'. The 4.2 series
+then enters bugfix and minor enhancement mode.  Further stable releases in
+the 4.2 series will be bugfix versions (perhaps also with some minor
+enhancements), e.g. 4.2.1, 4.2.2, etc.  When the code in the main trunk is
+ready to move to a major change in functionality, the version number for
+the main trunk will then move to the 4.3 series, for example 4.3-dev3377.
+
+\section{XML Version Numbers}
+
+XML version numbers are of the form `1.0', where 1 is the major number and
+0 is the minor number.  These are independent of the source code version
+numbers.\footnote{We had a brief period of trying to keep them the same,
+  but soon decided this wasn't a good idea, since the code version numbers
+  change more rapidly than the XML version numbers, and we didn't want to
+  require that users change the XML version numbers on all their
+  configurations if there weren't any other changes.}  The version number
+for an XML configuration is given in an element with the \code{xml_version}
+tag, for example:
+
+\code{<xml_version>1.0</xml_version>}
 
 Currently this isn't visible in the GUI itself --- you need to view the
 contents of the XML file.
-
-For the sample data, the version number is built into the zip file name.
-For example \file{opus-4-1-2.zip} is the sample data file for version
-4.1.2.  This file can be downloaded from the UrbanSim download page at
-\url{http://www.urbansim.org/download/}.
-
-\section{Version Numbers for Development Versions}
-
-For development versions, the version for the source code is something like
-`4.2-dev3216' where 3216 is the svn revision number for this version of the
-module. When this development version is first released as a stable
-release, it will become `4.2.0'. The 4.2 series then enters bugfix and
-minor enhancement mode.  Further stable releases in the 4.2 series will be
-bugfix versions (perhaps also with some minor enhancements), e.g. 4.2.1,
-4.2.2, etc.  When the code in the main trunk is ready to move to a major
-change in functionality, the version number for the main trunk will then
-move to the 4.3 series, for example 4.3-dev3377.
-
-Version numbers for the XML and sample data will track the source code
-numbers, except that since these change much less frequently, we use
-manually incremented numbers.  For example, 4.2.1-beta1 would be a beta
-version of the XML and sample data for upcoming stable release 4.2.1.
 
 The system has a minimum and maximum XML version number for which the code
 is known to work, and checks that XML configuration version numbers are
@@ -79,6 +74,22 @@ import opus_core.version_numbers
 opus_core.version_numbers.minimum_xml_version
 opus_core.version_numbers.maximum_xml_version
 \end{verbatim}
+
+\section{Sample Data Versions}
+
+For the sample data for a stable release, the version number is built into
+the file name.  For example \mbox{\file{opus-4-2-0.zip}} is the sample data
+file for version 4.2.0.  This file can be downloaded from the UrbanSim
+download page at \url{http://www.urbansim.org/download/}.
+
+The download page will note whether this is still valid for the current
+development version; if there are changes to the sample data before a new
+stable release, there will be a new zip file with a name like
+\file{opus-4-2-dev-20jan2009.zip} (which indicates that this is a sample
+data zip file for the 4.2 development trunk, posted on 20 January 2009).
+
+The sample data file also includes starter XML configurations, so if the
+XML version number changes a new zip file will be posted.
 
 {\bf Information for Developers.}  Please see the trac wiki for information
 on updating version numbers:
