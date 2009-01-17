@@ -1248,11 +1248,6 @@ class AbstractDataset(object):
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
         
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
-        
         if name not in self.get_known_attribute_names():
             self.compute_variables([name])
         tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)
