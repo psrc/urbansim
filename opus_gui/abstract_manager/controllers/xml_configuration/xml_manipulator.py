@@ -26,9 +26,11 @@ class XmlManipulator(object):
         self._dom_document = self._model.domDocument
 
         self._absolute_xml_root = self._dom_document.documentElement()
-        self.xml_version = self._model.mainwindow.toolboxBase.\
-            opus_core_xml_configuration.xml_version
-
+        xml_config = self._model.mainwindow.toolboxBase.opus_core_xml_configuration
+        self.xml_version = None
+        if xml_config is not None:
+            self.xml_version = xml_config.xml_version
+            
 
 #    ==========================================
 #     PRIVATE METHODS
