@@ -243,6 +243,7 @@ class XMLConfiguration(object):
     def save_as(self, name):
         """save this configuration under a new name"""
         # TODO: change name???
+        self._indent(self.tree.getroot())
         self.tree.write(name)
 
     def find(self, path):
@@ -312,13 +313,16 @@ class XMLConfiguration(object):
             x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
             parent_trees.append(x.full_tree.getroot())
 
-            # TODO maybe move this to a place where it makes more sense
+            # TODO CK: maybe figure out a place where it makes more sense to
+            # check for version switching warnings. Placed it here because this
+            # is the only place I could find where we have access to the parent
+            # configuration objects
 
-            # merge any warnings from inherited xml configurations
+            # merge any warnings from inherited XML configurations
             if x.version_warning_message:
                 self.version_warning_message = self.version_warning_message + \
                     x.version_warning_message + '\n'
-            # if necessery, add a version inconsistent warning
+            # if necessary, add a version inconsistent warning
             if x.xml_version != self.xml_version:
                 self.version_warning_message = (self.version_warning_message +
                 'version "%s" in  %s is different from version "%s" in %s'
@@ -381,6 +385,27 @@ class XMLConfiguration(object):
             else:
                 self._clean_tree(e)
                 i = i+1
+
+    def _indent(self, element, level=0):
+        '''
+        Indents the (internal) text representation for an Element.
+        This is used before saving to disk to generate nicer looking XML files.
+        (this code is based on code from http://effbot.org/zone/element-lib.htm)
+        '''
+        i = "\n" + level * "  "
+        if len(element):
+            if not element.text or not element.text.strip():
+                element.text = i + "  "
+            if not element.tail or not element.tail.strip():
+                element.tail = i
+            child_element = None
+            for child_element in element:
+                self._indent(child_element, level+1)
+            if not child_element.tail or not child_element.tail.strip():
+                child_element.tail = i
+        else:
+            if level and (not element.tail or not element.tail.strip()):
+                element.tail = i
 
     def _set_followers(self, tree, parent_trees, path):
         # Recursively traverse tree, setting the 'followers' attribute on any node
