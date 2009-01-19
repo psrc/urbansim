@@ -92,7 +92,7 @@ docs with all of the documentation for that version. &nbsp;The manual
 is in the subdirectory <i>opus_docs/manual</i> of the opus workspace, 
 and the tutorials are in the <i>tutorials</i> subdirectory.</p>
 
-<p>These directions assume that you are getting version 4.2.0.  Substitute a different version
+<p>These directions assume that you are getting the latest stable release.  Substitute a specific version
 number if you want a different stable release -- the available stable releases are listed on 
 <a href="http://www.urbansim.org/download/">the Opus/UrbanSim download page</a>; or you can see
 a list by looking directly at the source code repository:
@@ -109,20 +109,30 @@ whatever directory holds your <tt>opus</tt> directory.</p>
 Opus packages at once using these commands:</p>
 <pre>
 cd opus
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/ src
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/ src
 </pre>
 
 <p>This command checks out all of the opus packages into the <tt>src</tt> directory.</p>
+
+<p>To check out a different stable release (e.g. 4.2.0), use a URL like this instead:</p>
+
+<pre>
+cd opus
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/ src
+</pre>
+
+(<tt>latest-stable-release</tt> will be the same as the last-numbered specific version, but using 
+<tt>latest-stable-release</tt> makes it easier to update to new releases.)
 
 <p>Alternatively, if you have a slow connection or limited disk space, you can
 check out just the minimal set of packages needed for the tutorial:</p>
 <pre>
 cd opus/src
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/opus_core
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/urbansim
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/urbansim_gridcell
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/eugene
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.2.0/opus_gui
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/opus_core
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/urbansim
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/urbansim_gridcell
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/eugene
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/opus_gui
 </pre>
 
 <p> Notice that this time we are in the <tt>src</tt> directory when
@@ -135,21 +145,24 @@ This is the best option if you'll be doing software development. &nbsp;See <a hr
 <h2><a name="updating">Updating to a New Stable Release</h2>
 
 <p>If you don't have any configurations and data of your own, the easiest course is just to delete your
-old <tt>opus</tt> directory and get a fresh zip file.  If you do have configurations or data, the 
-<tt>switch</tt> command to svn updates your working copy of the code to a different version.  For example, 
+existing <tt>opus</tt> directory and get a fresh zip file.  If you do have configurations or data and you
+checked out the latest stable release using the URL 
+https://trondheim.cs.washington.edu/svn/opus/tags/latest-stable-release/, then all you need to do to update
+if there is a new stable release is to open a shell or DOS window, navigate to the opus/src directory that 
+holds the source code, and use the svn update command:
+<pre>
+cd opus/src
+svn update
+</pre>
+
+If you checked out a specific numbered version for a stable release, want to switch to a different specific
+numbered version, or want to switch to the latest development version, you can use the <tt>switch</tt> command 
+to svn to update your working copy of the code to a different version.  For example, 
 if you checked out all the packages and want to update to version 4.2.1, do this:
 
 <pre>
 cd opus
 svn switch https://trondheim.cs.washington.edu/svn/opus/tags/4.2.1/ src
-</pre>
-
-<p>Or here's how to switch from a stable release to the development version (again assuming you
-checked out all the packages):</p>
-
-<pre>
-cd opus
-svn switch https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
 <p>If you update the code you may need to update your data and configurations as well.  The
@@ -167,6 +180,15 @@ different URL for the code.  For example, to check out all the Opus packages at 
 <pre>
 cd opus
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
+</pre>
+
+
+<p>Or if you've already checked out a stable release, here's how to switch from a stable release to 
+the development version (again assuming you checked out all the packages):</p>
+
+<pre>
+cd opus
+svn switch https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
 </body>
