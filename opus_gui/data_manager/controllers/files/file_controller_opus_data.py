@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -20,6 +20,7 @@ from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAc
 #from opus_gui.data_manager.run_tool import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
+from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.models.table_model import TableModel
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from StringIO import StringIO
@@ -27,32 +28,34 @@ from StringIO import StringIO
 from opus_gui.abstract_manager.controllers.files.file_controller import FileController
 
 class FileController_OpusData(FileController):
-    def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
+    def __init__(self, manager, data_path, parent_widget):
 
-        FileController.__init__(self, toolboxbase = toolboxbase, controller_type = controller_type,
-                                    opusDataPath = opusDataPath, parentWidget = parentWidget,
-                                    listen_to_menu = listen_to_menu)
+        FileController.__init__(self,
+                                manager,
+                                data_path,
+                                parent_widget)
 
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
         self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
 
         self.actRefresh = QAction(self.refreshIcon, "Refresh Tree",
-                                  self.mainwindow)
+                                  self.treeview)
         QObject.connect(self.actRefresh, SIGNAL("triggered()"),
                         self.refreshAction)
 
         self.actViewDataset = QAction(self.applicationIcon, "View Dataset",
-                                      self.mainwindow)
+                                      self.treeview)
         QObject.connect(self.actViewDataset, SIGNAL("triggered()"),
                         self.viewDatasetAction)
-        
+
         self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
-                                       self.mainwindow)
+                                       self.treeview)
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
                         self.openTextFile)
-        
-        self.xml_model = toolboxbase.dataManagerTree.model
+
+        self.tool_library_node = \
+            self.manager.project.find('data_manager/Tool_Library')
 
     def viewDatasetAction(self):
         #print "viewDatasetAction"
@@ -67,19 +70,24 @@ class FileController_OpusData(FileController):
         # temporarily use the table name for the dataset name
         # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
-        general = self.mainwindow.toolboxBase.opus_core_xml_configuration.get_section('general')
-        # problem: this gets the package order for the current project, but the viewer shows all the data
-        package_order = general['dataset_pool_configuration'].package_order
-        # PREVIOUS HACK: 
+
+        # CK: package_order doesn't seem to be used anymore -- commenting out
+        # this section
+
+#        general = self.mainwindow.toolboxBase.opus_core_xml_configuration.get_section('general')
+#        # problem: this gets the package order for the current project, but the viewer shows all the data
+#        package_order = general['dataset_pool_configuration'].package_order
+
+        # PREVIOUS HACK:
         # package_order = ['seattle_parcel','urbansim_parcel', 'eugene', 'urbansim', 'opus_core']
         # temporary code: just use a generic dataset for now
         data = Dataset(in_storage=storage, dataset_name=table_name, in_table_name=table_name, id_name=[])
         # code to get a more specialized dataset if possible (doesn't work with table names not ending in 's'
         # unless they are in the exceptions list in DatasetFactory)
-        # data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order, 
+        # data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order,
         #    arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
-        tabs = self.mainwindow.tabWidget
+        tabs = self.manager.tab_widget
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
@@ -95,9 +103,9 @@ class FileController_OpusData(FileController):
 #        textBrowser.insertPlainText(strng)
         textBrowser.insertHtml(self.parse_dataset_summary(strng))
         summaryGroupBoxLayout.addWidget(textBrowser)
-        
+
         widgetLayout.addWidget(summaryGroupBox)
-        
+
         tableGroupBox = QGroupBox(container)
         tableGroupBox.setTitle(QString("Table View"))
         tableGroupBox.setFlat(True)
@@ -112,13 +120,13 @@ class FileController_OpusData(FileController):
         tabledata = map(None,*tabledata_tmp)
 
         # If the table data is not empty then we display it
-        if tabledata:            
+        if tabledata:
             #tv.resizeColumnsToContents()
-            tm = TableModel(tabledata, header, container) 
+            tm = TableModel(tabledata, header, container)
             tv.setModel(tm)
             tv.setSortingEnabled(True)
             tableGroupBoxLayout.addWidget(tv)
-            
+
         widgetLayout.addWidget(tableGroupBox)
 
         tabIcon = QIcon(":/Images/Images/cog.png")
@@ -146,7 +154,7 @@ class FileController_OpusData(FileController):
               border: 1px black solid;
               padding: 0.2em;
             }
-    
+
             table.prettytable caption {
               margin-left: inherit;
               margin-right: inherit;
@@ -161,23 +169,23 @@ class FileController_OpusData(FileController):
             '<div id="text">',
             '<table class="prettytable">'
             ]
-            
+
         summary_lines = summary.split('\n')
         for i, line in enumerate(summary_lines):
             if i == 1: continue
             html.append('<tr>')
-            if i == 0:                                
+            if i == 0:
                 header = line.split()[1:]
                 html.append(''.join(['<th>%s</th>'%col for col in header]))
             else:
-                
+
                 row = line.split()
                 if len(row) == 0: continue
-                if row[0] == 'Size:': 
+                if row[0] == 'Size:':
                     start_end = i
                     break
-                html.append(''.join(['<td>%s</td>'%col for col in row]))                
-        
+                html.append(''.join(['<td>%s</td>'%col for col in row]))
+
             html.append('</tr>')
         html.append('</table>')
         try:
@@ -186,35 +194,43 @@ class FileController_OpusData(FileController):
             pass
         html.append('</div></body>')
         return QString('\n'.join(html))
-        
-        
+
+
     def refreshAction(self):
         #print "refreshAction"
         self.model.refresh(self.treeview.rootIndex())
 
+# Disabling editor support for now
+
     def openTextFile(self):
-        print "openTextFile pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.model.filePath(self.currentIndex))
-        if self.mainwindow.editorStuff:
-            print "Loading into qscintilla..."
-            filename = self.model.filePath(self.currentIndex)
-            self.mainwindow.editorStuff.clear()
-            try:
-                f = open(filename,'r')
-            except:
-                return
-            for l in f.readlines():
-                self.mainwindow.editorStuff.append(l)
-            f.close()
-            self.mainwindow.editorStatusLabel.setText(QString(filename))
-            self.mainwindow.openEditorTab()
+        print 'openTextFile %s' % self.model.filePath(self.currentIndex)
+        pass
+#        print "openTextFile pressed with column = %s and item = %s" % \
+#              (self.currentColumn, self.model.filePath(self.currentIndex))
+#        if self.mainwindow.editorStuff:
+#            print "Loading into qscintilla..."
+#            filename = self.model.filePath(self.currentIndex)
+#            self.mainwindow.editorStuff.clear()
+#            try:
+#                f = open(filename,'r')
+#            except:
+#                return
+#            for l in f.readlines():
+#                self.mainwindow.editorStuff.append(l)
+#            f.close()
+#            self.mainwindow.editorStatusLabel.setText(QString(filename))
+#            self.mainwindow.openEditorTab()
 
     def fillInAvailableTools(self):
-        #print "Checking for tools"
+
+        # Operations on the selected item
         choices = {}
+
+        # Classification for the selected item
         classification = ""
+
         if self.model.isDir(self.currentIndex):
-            regex = QRegExp("\\d{4}")
+            regex = QRegExp("\\d{4}") # match directory names with four digits
             name = self.model.fileName(self.currentIndex)
             parentname = self.model.fileName(self.model.parent(self.currentIndex))
             isdir = self.model.isDir(self.currentIndex)
@@ -238,92 +254,110 @@ class FileController_OpusData(FileController):
             if parentparentisdir and regex.exactMatch(parentparentname):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
-        # print "Classification = " + classification
-        dbxml = self.xml_model.index(0,0,QModelIndex()).parent()
-        # First loop through all tool_sets
-        setsindexlist = self.xml_model.findElementIndexByType("tool_library",dbxml,True)
-        for setsindex in setsindexlist:
-            if setsindex.isValid():
-                #print "Found valid tool_sets"
-                # Now loop through all tool_set and find the ones with a matching classification
-                tsindexlist = self.xml_model.findElementIndexByType("tool_file",setsindex,True)
-                for tsindex in tsindexlist:
-                    if tsindex.isValid():
-                        #print "Found valid tool_set"
-                        classificationtext = ""
-                        tsitem = tsindex.internalPointer()
-                        # We use the dom tree to find the classification because it is a hidden node
-                        # in the XML tree and will not show up via a search on the model indexes (i.e. it
-                        # is not actually in the model/view since it is hidden.
-                        if tsitem.node().hasChildNodes():
-                            tschildren = tsitem.node().childNodes()
-                            for x in xrange(0,tschildren.count(),1):
-                                if tschildren.item(x).isElement():
-                                    tselement = tschildren.item(x).toElement()
-                                    if tselement.hasAttribute(QString("type")) and \
-                                           (tselement.attribute(QString("type")) == QString("acts_on")):
-                                        if tselement.hasChildNodes():
-                                            classchildren = tselement.childNodes()
-                                            for x in xrange(0,classchildren.count(),1):
-                                                if classchildren.item(x).isText():
-                                                    #print "Found some text in the classification element"
-                                                    #classificationtext = classchildren.item(x).nodeValue()
-                                                    classificationtext = str(classchildren.item(x).nodeValue()).split(',')
-                                    if tselement.hasAttribute(QString("type")) and \
-                                           (tselement.attribute(QString("type")) == QString("exports_to")):
-                                        #print tselement.text()
-                                        export_to_text = tselement.text()
-                        tagName = tsitem.domNode.toElement().tagName()
-                        for i in classificationtext:
-                            if i != "" and i == classification:
-                                choices[tagName] = export_to_text
+
+        # Build up a list of available operations based on the classification
+
+        tool_set_nodes = [tool_set_node for tool_set_node in self.tool_library_node
+                          if tool_set_node.get('type') == 'tool_group']
+        tool_file_nodes = []
+        for tool_set_node in tool_set_nodes:
+            tool_file_nodes.extend([node for node in tool_set_node
+                           if node.get('type') == 'tool_file'])
+
+        # Find all tool_nodes that acts on the resolved classification
+        # (by looking at the XML node 'acts_on')
+        for tool_node in tool_file_nodes:
+            acts_on_node = tool_node.find('acts_on')
+            exports_to_node = tool_node.find('exports_to')
+
+            if acts_on_node is None or exports_to_node is None:
+                # This tool doesn't export anything
+                continue
+
+            tool_classifications = acts_on_node.text.split(',')
+            exports_to_value = exports_to_node.text
+            if classification in tool_classifications:
+                choices[exports_to_value] = tool_node
+
         self.classification = classification
         return choices
+
+#         print "Classification = " + classification
+#        dbxml = self.treeview.model().index(0,0,QModelIndex()).parent()
+#         First loop through all tool_sets
+#        setsindexlist = self.treeview.findElementIndexByType("tool_library",dbxml,True)
+#        for setsindex in setsindexlist:
+#            if setsindex.isValid():
+#                print "Found valid tool_sets"
+#                 Now loop through all tool_set and find the ones with a matching classification
+#                tsindexlist = self.xml_model.findElementIndexByType("tool_file",setsindex,True)
+#                for tsindex in tsindexlist:
+#                    if tsindex.isValid():
+#                        print "Found valid tool_set"
+#                        classificationtext = ""
+#                        tsitem = tsindex.internalPointer()
+#                         We use the dom tree to find the classification because it is a hidden node
+#                         in the XML tree and will not show up via a search on the model indexes (i.e. it
+#                         is not actually in the model/view since it is hidden.
+#                        if tsitem.node().hasChildNodes():
+#                            tschildren = tsitem.node().childNodes()
+#                            for x in xrange(0,tschildren.count(),1):
+#                                if tschildren.item(x).isElement():
+#                                    tselement = tschildren.item(x).toElement()
+#                                    if tselement.hasAttribute(QString("type")) and \
+#                                           (tselement.attribute(QString("type")) == QString("acts_on")):
+#                                        if tselement.hasChildNodes():
+#                                            classchildren = tselement.childNodes()
+#                                            for x in xrange(0,classchildren.count(),1):
+#                                                if classchildren.item(x).isText():
+#                                                    print "Found some text in the classification element"
+#                                                    classificationtext = classchildren.item(x).nodeValue()
+#                                                    classificationtext = str(classchildren.item(x).nodeValue()).split(',')
+#                                    if tselement.hasAttribute(QString("type")) and \
+#                                           (tselement.attribute(QString("type")) == QString("exports_to")):
+#                                        print tselement.text()
+#                                        export_to_text = tselement.text()
+#                        tagName = tsitem.domNode.toElement().tagName()
+#                        for i in classificationtext:
+#                            if i != "" and i == classification:
+#                                choices[tagName] = export_to_text
+#        self.classification = classification
+#        return choices
 
     def dataActionMenuFunction(self,action):
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
         if action != self.actRefresh:
-            #actiontext = action.text()
-            actiontext = self.dynactions[action.text()]
+            actiontext = str(action.text())
+            tool_node = self.dynactions[actiontext]
             filename = self.model.fileName(self.currentIndex)
             filepath = self.model.filePath(self.currentIndex)
             parentfilepath = self.model.filePath(self.currentIndex.parent())
-            # Add in the code to take action... like run a tool...
-            # First find the batch to loop over the configs to execute
-            toolxml = self.xml_model.index(0,0,QModelIndex()).parent()
-            toolindexlist = self.xml_model.findElementIndexByName(actiontext,toolxml,False)
-            toolindex = toolindexlist[0]
-            if toolindex.isValid():
-                print toolindex.internalPointer().node().toElement().tagName()
-                params = self.getOptionalParams()
-                flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-                window = ExecuteToolGui(self.mainwindow,self.xml_model,
-                                        toolindex.internalPointer().node().toElement(),
-                                        None,flags,optional_params = params)
-                tool_title = window.tool_title.replace('_', ' ')
-                tool_title2 = str(tool_title).title()
-                window.setWindowTitle(tool_title2)
-                window.show()
+
+            params = self.getOptionalParams()
+            window = ExecuteToolGui(self.treeview, tool_node,
+                                    self.tool_library_node,
+                                    params)
+            window.show()
         return
-    
+
     def getOptionalParams(self):
         params = {}
         if self.classification == 'database':
-            params['opus_data_directory'] = self.model.filePath(self.currentIndex.parent())
-            params['opus_data_year'] = self.model.fileName(self.currentIndex)
+            params['opus_data_directory'] = str(self.model.filePath(self.currentIndex.parent()))
+            params['opus_data_year'] = str(self.model.fileName(self.currentIndex))
             params['opus_table_name'] = 'ALL'
-            return params
         elif self.classification == 'dataset':
-            params['opus_data_directory'] = self.model.filePath(self.currentIndex.parent().parent())
-            params['opus_data_year'] = self.model.fileName(self.currentIndex.parent())
-            params['opus_table_name'] = self.model.fileName(self.currentIndex)
-            return params
-        
+            params['opus_data_directory'] = str(self.model.filePath(self.currentIndex.parent().parent()))
+            params['opus_data_year'] = str(self.model.fileName(self.currentIndex.parent()))
+            params['opus_table_name'] = str(self.model.fileName(self.currentIndex))
+        return params
+
     def processCustomMenu(self, position):
         self.currentColumn = self.treeview.indexAt(position).column()
         self.currentIndex = self.treeview.indexAt(position)
 
-        self.menu = QMenu(self.mainwindow)
+        self.menu = QMenu(self.treeview)
+
         if self.currentIndex.isValid():
             if self.model.fileInfo(self.currentIndex).suffix() == "txt":
                 self.menu.addAction(self.actOpenTextFile)
@@ -331,33 +365,34 @@ class FileController_OpusData(FileController):
                 # Do stuff for directories
                 choices = self.fillInAvailableTools()
                 if self.classification == "dataset":
-                    self.export_menu = QMenu(QString('Export Opus dataset to'), self.mainwindow)
+                    self.export_menu = QMenu(QString('Export Opus dataset to'), self.treeview)
                     self.export_menu.setIcon(self.tableGoIcon)
                     if len(choices) > 0:
                         self.dynactions = {}
-                        for i,j in choices.iteritems():
-                            dynaction = QAction(self.applicationIcon, j, self.mainwindow)
+                        for export_type,tool_node in choices.iteritems():
+                            dynaction = QAction(self.applicationIcon, export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
-                            self.dynactions[j] = i
+                            self.dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
-                                        self.dataActionMenuFunction)                            
+                                        self.dataActionMenuFunction)
                     self.menu.addMenu(self.export_menu)
                     self.menu.addSeparator()
                     # We need to provide the option to open the dataset
                     self.menu.addAction(self.actViewDataset)
                 if self.classification == "database":
-                    self.export_menu = QMenu(QString('Export Opus database to'), self.mainwindow)
+                    self.export_menu = QMenu(QString('Export Opus database to'))
                     self.export_menu.setIcon(self.tableGoIcon)
                     if len(choices) > 0:
                         self.dynactions = {}
-                        for i,j in choices.iteritems():
-                            dynaction = QAction(self.applicationIcon, j, self.mainwindow)
+                        for export_type,tool_node in choices.iteritems():
+                            dynaction = QAction(self.applicationIcon, export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
-                            self.dynactions[j] = i
+                            self.dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
-                                        self.dataActionMenuFunction) 
+                                        self.dataActionMenuFunction)
                     self.menu.addMenu(self.export_menu)
-                    self.menu.addSeparator()                  
+                    self.menu.addSeparator()
+
         # Now tack on a refresh for all right clicks
         #print "Setting model refresh"
         self.menu.addAction(self.actRefresh)

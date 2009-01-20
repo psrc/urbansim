@@ -10,193 +10,144 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
+from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
 
+import os,tempfile
 
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL, QFile, QIODevice
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QFileDialog
 from PyQt4.QtXml import QDomDocument
+
+from xml.etree.cElementTree import Element, SubElement, ElementTree
 
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 import opus_gui.util.documentationbase
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
-from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
+
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 from opus_gui.data_manager.controllers.dialogs.executetoolset import ExecuteToolSetGui
-from opus_gui.util.xmlhelper import getElementsByTagname
-import os,tempfile
 
 class XmlController_DataTools(XmlController):
-    def __init__(self, toolboxbase, parentWidget):
-        XmlController.__init__(self, toolboxbase = toolboxbase, 
-                               xml_type = 'data_manager', 
-                               parentWidget = parentWidget) 
+    def __init__(self, manager):
+        XmlController.__init__(self, manager)
 
-        self.currentColumn = None
-        self.currentIndex = None
-
-        self.acceptIcon = QIcon(":/Images/Images/accept.png")
-        self.removeIcon = QIcon(":/Images/Images/delete.png")
-        self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-        self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        self.addIcon = QIcon(":/Images/Images/add.png")
-        self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
-        self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
-        self.executeIcon = QIcon(":/Images/Images/table_go.png")
-        self.cloneIcon = QIcon(":/Images/Images/application_double.png")
-        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-        
-        self.actExecToolFile = self.createAction(self.executeIcon,"Execute Tool...",self.execToolFile)
-        self.actExecToolConfig = self.createAction(self.executeIcon,"Execute Tool...",self.execToolFile)
-        self.actAddToolFile = self.createAction(self.addIcon,"Add Tool to Library",self.addToolFile)
-        self.actAddRequiredStringParam = self.createAction(self.addIcon,"Add Required String Parameter",self.addRequiredStringParam)
-        self.actAddRequiredDirParam = self.createAction(self.addIcon,"Add Required Directory Parameter",self.addRequiredDirParam)
-        self.actAddRequiredFileParam = self.createAction(self.addIcon,"Add Required File Parameter",self.addRequiredFileParam)
-        self.actAddOptionalStringParam = self.createAction(self.addIcon,"Add Optional String Parameter",self.addOptionalStringParam)
-        self.actAddOptionalDirParam = self.createAction(self.addIcon,"Add Optional Directory Parameter",self.addOptionalDirParam)
-        self.actAddOptionalFileParam = self.createAction(self.addIcon,"Add Optional File Parameter",self.addOptionalFileParam)
-        self.actAddNewToolSet = self.createAction(self.addIcon,"Add New Tool Set",self.addNewToolSet)
-        self.actNewConfig = self.createAction(self.addIcon,"Add Tool to Tool Set",self.newConfig)
-        self.actCloneBatch = self.createAction(self.cloneIcon,"Clone Tool Set",self.cloneNode)
-        self.actCloneTool = self.createAction(self.cloneIcon,"Clone Tool",self.cloneNode)
-        self.actOpenDocumentation = self.createAction(self.calendarIcon,"Open Documentation",self.openDocumentation)
-        self.actRemoveNode = self.createAction(self.removeIcon,"Remove node from current project",self.removeNode)
-        self.actMoveNodeUp = self.createAction(self.arrowUpIcon,"Move Up",self.moveNodeUp)
-        self.actMoveNodeDown = self.createAction(self.arrowDownIcon,"Move Down",self.moveNodeDown)
-        self.actExecBatch = self.createAction(self.executeIcon,"Execute Tool Set",self.execBatch)
-        self.actMakeEditable = self.createAction(self.makeEditableIcon,"Add to current project",self.makeEditableAction)
-        self.actCloneNode = self.createAction(self.cloneIcon,"Copy Node",self.cloneNode)
-        self.actExportXMLToFile = self.createAction(self.cloneIcon,"Export XML Node To File",self.exportXMLToFile)
-        self.actImportXMLFromFile = self.createAction(self.cloneIcon,"Import XML Node From File",self.importXMLFromFile)
-
+        self.actExecToolFile = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
+        self.actExecToolConfig = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
+        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool to Library", self.addToolFile)
+        self.actAddRequiredStringParam = self.createAction(self.model.addIcon,"Add Required String Parameter",self.addRequiredStringParam)
+        self.actAddRequiredDirParam = self.createAction(self.model.addIcon,"Add Required Directory Parameter",self.addRequiredDirParam)
+        self.actAddRequiredFileParam = self.createAction(self.model.addIcon,"Add Required File Parameter",self.addRequiredFileParam)
+        self.actAddOptionalStringParam = self.createAction(self.model.addIcon,"Add Optional String Parameter",self.addOptionalStringParam)
+        self.actAddOptionalDirParam = self.createAction(self.model.addIcon,"Add Optional Directory Parameter",self.addOptionalDirParam)
+        self.actAddOptionalFileParam = self.createAction(self.model.addIcon,"Add Optional File Parameter",self.addOptionalFileParam)
+        self.actAddNewToolSet = self.createAction(self.model.addIcon,"Add New Tool Set",self.addNewToolSet)
+        self.actNewConfig = self.createAction(self.model.addIcon,"Add Tool to Tool Set",self.newConfig)
+        self.actOpenDocumentation = self.createAction(self.model.calendarIcon,"Open Documentation",self.openDocumentation)
+        self.actMoveNodeUp = self.createAction(self.model.arrowUpIcon,"Move Up",self.moveNodeUp)
+        self.actMoveNodeDown = self.createAction(self.model.arrowDownIcon,"Move Down",self.moveNodeDown)
+        self.actExecBatch = self.createAction(self.model.executeIcon,"Execute Tool Set",self.execBatch)
+        self.actExportXMLToFile = self.createAction(self.model.cloneIcon,"Export XML Node To File",self.exportXMLToFile)
+        self.actImportXMLFromFile = self.createAction(self.model.cloneIcon,"Import XML Node From File",self.importXMLFromFile)
 
     def addToolFile(self):
-        #print "Add Tool Pressed"
-        # First add the dummy tool shell
-        newNode = self.currentIndex.model().domDocument.createElement(QString("Tool_Name_Rename_Me"))
-        newNode.setAttribute(QString("type"),QString("tool_file"))
-        # Now add the name field
-        newName = self.currentIndex.model().domDocument.createElement(QString("name"))
-        newName.setAttribute(QString("type"),QString("tool_name"))
-        newNameText = self.currentIndex.model().domDocument.createTextNode(QString("File_Name_Rename_Me"))
-        newName.appendChild(newNameText)
-        # Next the empty params section
-        newParams = self.currentIndex.model().domDocument.createElement(QString("params"))
-        newParams.setAttribute(QString("type"),QString("param_template"))
-        newNode.appendChild(newName)
-        newNode.appendChild(newParams)
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
 
+        toolname = 'Tool_Name_Rename_Me'
+        filename = 'File_Name_Rename_Me'
+        tool_node = Element(toolname, {'type':'tool_file'})
+        SubElement(tool_node, "name", {'type':'tool_name'}).text = filename
+        SubElement(tool_node, "param", {'type':'param_template'})
 
-    def newToolParam(self,toolType,choices):
-        newParam = self.currentIndex.model().domDocument.createElement(QString("New_Param_Rename_Me"))
+        self.model.insertRow(0, self.selectedIndex(), tool_node)
 
-        newNodeRequired = self.currentIndex.model().domDocument.createElement(QString("required"))
-        newNodeRequired.setAttribute(QString("type"),QString("string"))
-        newNodeRequired.setAttribute(QString("choices"),QString("Required|Optional"))
-        newTextRequired = self.currentIndex.model().domDocument.createTextNode(choices)
-        newNodeRequired.appendChild(newTextRequired)
+    def newToolParam(self, toolType, choices):
+        ''' NO DOCUMENTATION '''
+        param_node = Element("New_Param_Rename_Me")
 
-        newNodeType = self.currentIndex.model().domDocument.createElement(QString("type"))
-        newNodeType.setAttribute(QString("type"),QString("string"))
-        #newNode.setAttribute(QString("choices"),QString("string"))
-        newTextType = self.currentIndex.model().domDocument.createTextNode(toolType)
-        newNodeType.appendChild(newTextType)
+        attributes = {'type': "string", 'choices': "Required|Optional"}
+        SubElement(param_node, 'required', attributes).text = choices
 
-        newNodeDefault = self.currentIndex.model().domDocument.createElement(QString("default"))
-        newNodeDefault.setAttribute(QString("type"),toolType)
-        newTextDefault = self.currentIndex.model().domDocument.createTextNode("")
-        newNodeDefault.appendChild(newTextDefault)
-
-        newParam.appendChild(newNodeRequired)
-        newParam.appendChild(newNodeType)
-        newParam.appendChild(newNodeDefault)
-
-        return newParam
+        SubElement(param_node, 'type', {'type': "string"}).text = toolType
+        SubElement(param_node, 'default', {'type': toolType }).text = ""
+        return param_node
 
     def addRequiredStringParam(self):
-        newNode = self.newToolParam(QString("string"), QString("Required"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        req_node = self.newToolParam("string", "Required")
+        self.model.insertSibling(req_node, self.selectedIndex())
 
     def addRequiredDirParam(self):
-        newNode = self.newToolParam(QString("dir_path"), QString("Required"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        newNode = self.newToolParam("dir_path", "Required")
+        self.model.insertSibling(newNode, self.selectedIndex())
 
     def addRequiredFileParam(self):
-        newNode = self.newToolParam(QString("file_path"), QString("Required"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        newNode = self.newToolParam("file_path", "Required")
+        self.model.insertSibling(newNode, self.selectedIndex())
 
     def addOptionalStringParam(self):
-        newNode = self.newToolParam(QString("string"), QString("Optional"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        newNode = self.newToolParam("string", "Optional")
+        self.model.insertSibling(newNode, self.selectedIndex())
 
     def addOptionalDirParam(self):
-        newNode = self.newToolParam(QString("dir_path"), QString("Optional"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        newNode = self.newToolParam("dir_path", "Optional")
+        self.model.insertSibling(newNode, self.selectedIndex())
 
     def addOptionalFileParam(self):
-        newNode = self.newToolParam(QString("file_path"), QString("Optional"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        newNode = self.newToolParam("dir_path", "Optional")
+        self.model.insertSibling(newNode, self.selectedIndex())
 
     def addNewToolSet(self):
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+
         # First add the dummy toolset shell
-        newNode = self.currentIndex.model().domDocument.createElement(QString("Rename_Me"))
-        newNode.setAttribute(QString("type"),QString("tool_set"))
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        toolset_node = Element('Rename_Me', {'type': "tool_set"})
+        self.model.insertRow(0, self.selectedIndex(), toolset_node)
 
     def newConfig(self):
-        #print "newConfig Pressed"
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = ConfigureToolGui(self,flags)
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        index = self.selectedIndex()
+        tool_set_node = self.selectedItem().node
+        tool_library_node = self.xml_root.find('Tool_Library')
+        callback = \
+            lambda node: self.model.insertRow(0, self.model.parent(index), node)
+        window = ConfigureToolGui(tool_library_node, callback, self.view)
         window.setModal(True)
         window.show()
-        # Connect to a signal when the GUI collects the vars to add the element
 
     def moveNodeUp(self):
-        #print "Move Up Pressed"
-        self.currentIndex.model().moveUp(self.currentIndex)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        # TODO connect directly to lambda
+        assert self.hasSelectedItem()
+        new_index = self.model.moveUp(self.selectedIndex())
+        self.view.setCurrentIndex(new_index)
 
     def moveNodeDown(self):
-        #print "Move Down Pressed"
-        self.currentIndex.model().moveDown(self.currentIndex)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        ''' NO DOCUMENTATION '''
+        # TODO connect directly to lambda
+        assert self.hasSelectedItem()
+        new_index = self.model.moveDown(self.selectedIndex())
+        self.view.setCurrentIndex(new_index)
 
     def openDocumentation(self):
-        #print "Open Documentation Pressed"
-        filePath = ""
-        if self.currentIndex.internalPointer().node().hasChildNodes():
-            children = self.currentIndex.internalPointer().node().childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    filePath = children.item(x).nodeValue()
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        filePath = self.selectedItem().node.text
         fileInfo = QFileInfo(filePath)
         baseInfo = QFileInfo(self.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
@@ -205,150 +156,150 @@ class XmlController_DataTools(XmlController):
         x = util.documentationbase.DocumentationTab(self.mainwindow,
                                                     QString(fileName))
 
-
     def execToolFile(self):
-        #print "Exec Tool Pressed"
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
         # Open up a GUI element and populate with variable's
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
-                                self.currentIndex.internalPointer().node().toElement(),
-                                self.execToolConfigGen,flags)
-        tool_title = window.tool_title.replace('_', ' ')
-        tool_title2 = str(tool_title).title()
-        window.setWindowTitle(tool_title2)
+        window = ExecuteToolGui(self.manager.base_widget,
+                                self.selectedItem().node,
+                                self.xml_root.find('Tool_Library'))
         window.setModal(True)
         window.show()
-        
 
-    def execToolConfigGen(self,configNode,statusElement=None,progressElement=None):
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-        tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
-        tool_name = QString("")
-        if tool_hook.hasChildNodes():
-            children = tool_hook.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    tool_name = children.item(x).nodeValue()
-        # This will be in the Tool_Library
-        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
-        tool_file = library.toElement().elementsByTagName(tool_name).item(0)
-        
-        # First find the tool path text...
-        if tool_path.hasChildNodes():
-            children = tool_path.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    toolPath = children.item(x).nodeValue()
-        # Next if the tool_file has a tool_name we grab it
-        filePath = ""
-        if tool_file.hasChildNodes():
-            children = tool_file.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isElement():
-                    thisElement = children.item(x).toElement()
-                    if thisElement.hasAttribute(QString("type")) and \
-                           (thisElement.attribute(QString("type")) == QString("tool_name")):
-                        if thisElement.hasChildNodes():
-                            children2 = thisElement.childNodes()
-                            for x2 in xrange(0,children2.count(),1):
-                                if children2.item(x2).isText():
-                                    filePath = children2.item(x2).nodeValue()
-        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-        #print "New import ", importPath
+# CK: Could not find anything that uses this --
+# note that there's a duplicate in ExecuteToolGui that IS used
 
-        #Now loop and build up the parameters...
-        params = {}
-        childNodes = configNode.childNodes()
-        for x in xrange(0,childNodes.count(),1):
-            thisElement = childNodes.item(x)
-            thisElementText = QString("")
-            if thisElement.hasChildNodes():
-                children = thisElement.childNodes()
-                for x in xrange(0,children.count(),1):
-                    if children.item(x).isText():
-                        thisElementText = children.item(x).nodeValue()
-            params[thisElement.toElement().tagName()] = thisElementText
-
-        x = OpusTool(self.mainwindow,importPath,params)
-        y = RunToolThread(self.mainwindow,x)
-        y.run()
+#    def execToolConfigGen(self, tool_node):
+#        ''' NO DOCUMENTATION '''
+#        library = self.model.root_node().find('Tool_Library')
+#
+#        tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
+#        tool_name = QString("")
+#        if tool_hook.hasChildNodes():
+#            children = tool_hook.childNodes()
+#            for x in xrange(0,children.count(),1):
+#                if children.item(x).isText():
+#                    tool_name = children.item(x).nodeValue()
+#        # This will be in the Tool_Library
+#        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
+#        tool_file = library.toElement().elementsByTagName(tool_name).item(0)
+#
+#        # First find the tool path text...
+#        if tool_path.hasChildNodes():
+#            children = tool_path.childNodes()
+#            for x in xrange(0,children.count(),1):
+#                if children.item(x).isText():
+#                    toolPath = children.item(x).nodeValue()
+#        # Next if the tool_file has a tool_name we grab it
+#        filePath = ""
+#        if tool_file.hasChildNodes():
+#            children = tool_file.childNodes()
+#            for x in xrange(0,children.count(),1):
+#                if children.item(x).isElement():
+#                    thisElement = children.item(x).toElement()
+#                    if thisElement.hasAttribute(QString("type")) and \
+#                           (thisElement.attribute(QString("type")) == QString("tool_name")):
+#                        if thisElement.hasChildNodes():
+#                            children2 = thisElement.childNodes()
+#                            for x2 in xrange(0,children2.count(),1):
+#                                if children2.item(x2).isText():
+#                                    filePath = children2.item(x2).nodeValue()
+#        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
+#        #print "New import ", importPath
+#
+#        #Now loop and build up the parameters...
+#        params = {}
+#        childNodes = configNode.childNodes()
+#        for x in xrange(0,childNodes.count(),1):
+#            thisElement = childNodes.item(x)
+#            thisElementText = QString("")
+#            if thisElement.hasChildNodes():
+#                children = thisElement.childNodes()
+#                for x in xrange(0,children.count(),1):
+#                    if children.item(x).isText():
+#                        thisElementText = children.item(x).nodeValue()
+#            params[thisElement.toElement().tagName()] = thisElementText
+#
+#        x = OpusTool(self.mainwindow,importPath,params)
+#        y = RunToolThread(self.mainwindow,x)
+#        y.run()
 
     def toolFinished(self, success):
+        ''' NO DOCUMENTATION '''
         print "Tool Finished Signal Recieved - %s" % (success)
-    
-    def execToolConfig(self):
-        # First find the tool that this config refers to...
-        configNode = self.currentIndex.internalPointer().node().toElement()
-        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-        self.execToolConfigGen(configNode)
-        
+
+# CK: Couldn't find anything that uses this
+
+#    def execToolConfig(self):
+#        ''' NO DOCUMENTATION '''
+#        # First find the tool that this config refers to...
+#        configNode = self.currentIndex.internalPointer().node().toElement()
+#        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+#        self.execToolConfigGen(configNode)
+
+# CK: Couldn't find anything that uses this
+
     def execBatch(self):
-        #print "Execute batch pressed..."
-        batchNode = self.currentIndex.internalPointer().node().toElement()
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+
+        batchNode = self.selectedItem().node
+        # TODO Update XML to only have lowercase names
+        library = self.model.root_node().find('Tool_Library')
         childNodes = batchNode.childNodes()
         tool_hooks = []
-        for x in xrange(0,childNodes.count(),1):
-            thisNode = childNodes.item(x)
-            thisNodesChildren = thisNode.childNodes()
-            for y in range(0, thisNodesChildren.count(), 1):
-                newNode = thisNodesChildren.item(y)
-                newElement = newNode.toElement()
-                if newElement.hasAttribute(QString("type")) and \
-                    (newElement.attribute(QString("type")) == QString("tool_library_ref")):
-                    tool_hooks.append(newElement.text())
-        
+        # tool_hooks = [x.text for x in batchNode.findall('.//*') if
+        #               x.get('type') == 'tool_library_ref']
+        for thisNode in batchNode:
+            for newNode in thisNode:
+                if newNode.get('type') == 'tool_library_ref':
+                    tool_hooks.append(newNode.text)
+
         tool_hook_to_tool_name_dict = {}
-        for i in tool_hooks:
-            tool_file = getElementsByTagname(library, i, False, True)
-            x = tool_file[0].elementsByTagName(QString("name"))
-            for j in range(0, x.length(), 1):
-                tool_hook_to_tool_name_dict[i] = x.item(j).toElement().text()
-                    
-#            if thisNode.isElement():
-#                thisElement = thisNode.toElement()
-#                if thisElement.hasAttribute(QString("type")) and \
-#                       (thisElement.attribute(QString("type")) == QString("tool_config")):
-#                    print thisElement.text()
-#                    #self.execToolConfigGen(thisElement)
-#                    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-#                    window = ExecuteToolGui(self.mainwindow,self.currentIndex.model(),
-#                                            thisElement,
-#                                            self.execToolConfigGen,flags)
-#                    tool_title = window.tool_title.replace('_', ' ')
-#                    tool_title2 = str(tool_title).title()
-#                    window.setWindowTitle(tool_title2)
-#                    window.setModal(True)
-#                    window.show()
-        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        for tool_hook in tool_hooks:
+            # find the tag named as the hook (somewhere?) in lib
+            tool_file = library.find('.//%s' %tool_hook)
+            name = tool_file.find('name')
+            tool_hook_to_tool_name_dict[tool_file] = name.text
+
         flgs = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        wndow = ExecuteToolSetGui(self.mainwindow, flgs, childNodes, tool_hook_to_tool_name_dict)
+        wndow = ExecuteToolSetGui(get_mainwindow_instance(), flgs, childNodes,
+                                  tool_hook_to_tool_name_dict)
         wndow.show()
 
-    def cloneNode(self):
-        #print "cloneNode Pressed"
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parentIndex = self.currentIndex.model().parent(self.currentIndex)
-        model = self.currentIndex.model()
-        window = CloneNodeGui(self, clone, parentIndex, model)
-        window.show()
+# CK: Moved to XmlController
+#    def cloneNode(self):
+#        ''' NO DOCUMENTATION '''
+#        #print "cloneNode Pressed"
+#        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+#        parentIndex = self.currentIndex.model().parent(self.currentIndex)
+#        model = self.currentIndex.model()
+#        window = CloneNodeGui(self, clone, parentIndex, model)
+#        window.show()
 
-    def removeNode(self):
-        #print "Remove Node Pressed"
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
-                                            self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+# CK: Moved to XmlController as removeSelectedNode
+#    def removeNode(self):
+#        ''' NO DOCUMENTATION '''
+#        #print "Remove Node Pressed"
+#        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+#                                            self.currentIndex.model().parent(self.currentIndex))
+#        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def makeEditableAction(self):
-        thisNode = self.currentIndex.internalPointer().node()
-        self.currentIndex.model().makeEditable(thisNode)
-        # Finally we refresh the tree to indicate that there has been a change
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+# CK: Moved to XmlController as makeSelectedNodeEditable
+#    def makeEditableAction(self):
+#        ''' NO DOCUMENTATION '''
+#        thisNode = self.currentIndex.internalPointer().node()
+#        self.currentIndex.model().makeEditable(thisNode)
+#        # Finally we refresh the tree to indicate that there has been a change
+#        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
 
     def exportXMLToFile(self):
-        #print "exportXMLToFile"
-        # First we grab a copy of the XML
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+
+        # TODO clean this up maybe?
+
         # Ask the user where they want to save the file to
         start_dir = ''
         opus_home = os.environ.get('OPUS_HOME')
@@ -358,46 +309,27 @@ class XmlController_DataTools(XmlController):
                 start_dir = start_dir_test
         configDialog = QFileDialog()
         filter_str = QString("*.xml")
-        fd = configDialog.getSaveFileName(self.mainwindow,QString("Save As..."),
+        fd = configDialog.getSaveFileName(self.manager.base_widget,
+                                          QString("Save As..."),
                                           QString(start_dir), filter_str)
         # Check for cancel
         if len(fd) == 0:
             return
-        fileName = QString(fd)
         fileNameInfo = QFileInfo(QString(fd))
         fileName = fileNameInfo.fileName().trimmed()
         fileNamePath = fileNameInfo.absolutePath().trimmed()
-
-        # Now create a dummyfile to make XMLConfiguration happy to start...
-        [tempFile,tempFilePath] = tempfile.mkstemp()
-        tempFileNameInfo = QFileInfo(QString(tempFilePath))
-        tempFileName = tempFileNameInfo.fileName().trimmed()
-        tempFileNamePath = tempFileNameInfo.absolutePath().trimmed()
-        # We have to write out some dummy data for XMLConfig to be happy
-        tempFile = QFile(tempFilePath)
-        if tempFile:
-            tempFile.open(QIODevice.ReadWrite)
-            tempFile.write("<opus_project></opus_project>")
-            tempFile.close()
-
-        # Then create an XMLConfiguration based on that file
-        newXMLTree = XMLConfiguration(str(tempFileName),str(tempFileNamePath))
-
-        # Create a dom document to use as a temp space for the clone before writing out
-        newDomDoc = QDomDocument()
-        # Once again, we have to have opus_project for XMLConfig to be happy
-        rootElement = newDomDoc.createElement("opus_project")
-        newDomDoc.appendChild(rootElement)
-        newElement = newDomDoc.importNode(clone,True)
-        rootElement.appendChild(newElement)
-        # Finally, write out the clone to the file via XMLConfiguration
-        indentSize = 2
-        newXMLTree.update(str(newDomDoc.toString(indentSize)))
         saveName = os.path.join(str(fileNamePath),str(fileName))
-        newXMLTree.save_as(saveName)
 
+        # proper root node for XmlConfiguration
+        root_node = Element('opus_project')
+        root_node.append(self.selectedItem().node)
+
+        # Write out the file
+        ElementTree(root_node).write(saveName)
 
     def importXMLFromFile(self):
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
         # print "importXMLFromFile"
         # First, prompt the user for the filename to read in
         start_dir = ''
@@ -408,8 +340,9 @@ class XmlController_DataTools(XmlController):
                 start_dir = start_dir_test
         configDialog = QFileDialog()
         filter_str = QString("*.xml")
-        fd = configDialog.getOpenFileName(self.mainwindow,QString("Please select an xml file to import..."),
-                                          QString(start_dir), filter_str)
+        fd = configDialog.getOpenFileName(self.manager.base_widget,
+                                          "Please select an xml file to import...",
+                                          start_dir, filter_str)
         # Check for cancel
         if len(fd) == 0:
             return
@@ -420,126 +353,75 @@ class XmlController_DataTools(XmlController):
         fileNameInfoPath = fileNameInfo.absolutePath().trimmed()
 
         # Pass that in to create a new XMLConfiguration
-        newXMLTree = XMLConfiguration(str(fileNameInfoName),str(fileNameInfoPath))
-        
-        # Get the tree from XMLConfiguration
-        [tempFile,tempFilePath] = tempfile.mkstemp()
-        newXMLTree.full_tree.write(tempFilePath)
-        configFileTemp = QFile(tempFilePath)
-        configFileTemp.open(QIODevice.ReadWrite)
-        newDoc = QDomDocument()
-        newDoc.setContent(configFileTemp)
+        xml_config = XMLConfiguration(str(fileNameInfoName),str(fileNameInfoPath))
 
-        # Now get the first node under opus_project
-        xmlRoot = newDoc.elementsByTagName(QString("opus_project")).item(0)
-        if xmlRoot.isNull():
-            #Need to add an error here
-            print "null xmlRoot"
-            return
-        newNodeToCopy = xmlRoot.firstChild()
-        if newNodeToCopy.isNull():
-            #Need to add an error here
-            print "null newNodeToCopy"
-            return
-
-        # Need to get a copy of the node from one doc to the next
-        newNode = self.currentIndex.model().domDocument.importNode(newNodeToCopy,True)
+        xml_node = xml_config.full_tree.getroot()
+        if len(xml_node) == 0:
+            raise ValueError('Loading tool from XML file failed. '
+                             'No tool definition found')
+        xml_node = xml_node[0]
 
         # Insert it into the parent node from where the user clicked
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        self.model.insertSibling(xml_node, self.selectedIndex())
+
 
     def processCustomMenu(self, position):
-        if self.view.indexAt(position).isValid() and \
-               self.view.indexAt(position).column() == 0:
-            self.currentColumn = self.view.indexAt(position).column()
-            self.currentIndex = self.view.indexAt(position)
-            parentElement = None
-            parentIndex = self.currentIndex.model().parent(self.currentIndex)
-            if parentIndex and parentIndex.isValid():
-                parentNode = parentIndex.internalPointer().node()
-                parentElement = parentNode.toElement()
-            item = self.currentIndex.internalPointer()
-            domNode = item.node()
-            if domNode.isNull():
-                return
-            # Handle ElementNodes
-            if domNode.isElement():
-                domElement = domNode.toElement()
-                if domElement.isNull():
-                    return
+        ''' See XmlConfig.processCustomMenu for documentation '''
+        item = self.selectItemAt(position)
+        if not item:
+            return
 
-                self.menu = QMenu(self.mainwindow)
-                if domElement.attribute(QString("type")) == QString("tool_file"):
-                    self.menu.addAction(self.actExecToolFile)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actCloneTool)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("type")) == QString("tool_group"):
-                    self.menu.addAction(self.actAddToolFile)
-                elif domElement.attribute(QString("type")) == QString("param_template"):
-                    self.menu.addAction(self.actAddRequiredStringParam)
-                    self.menu.addAction(self.actAddRequiredDirParam)
-                    self.menu.addAction(self.actAddRequiredFileParam)
-                    self.menu.addAction(self.actAddOptionalStringParam)
-                    self.menu.addAction(self.actAddOptionalDirParam)
-                    self.menu.addAction(self.actAddOptionalFileParam)
-                elif domElement.attribute(QString("type")) == QString("tool_config"):
-                    self.menu.addAction(self.actExecToolConfig)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("type")) == QString("tool_sets"):
-                    self.menu.addAction(self.actAddNewToolSet)
-                elif domElement.attribute(QString("type")) == QString("tool_set"):
-                    self.menu.addAction(self.actExecBatch)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actNewConfig)
-                    self.menu.addAction(self.actCloneBatch)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("type")) == QString("documentation_path"):
-                    self.menu.addAction(self.actOpenDocumentation)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actCloneNode)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
+        node = item.node
 
-                if self.menu:
-                    # Last minute chance to add items that all menues should have
-                    if domElement.hasAttribute(QString("inherited")):
-                        # Tack on a make editable if the node is inherited
-                        self.menu.addSeparator()
-                        self.menu.addAction(self.actMakeEditable)
-                    else:
-                        if domElement.hasAttribute(QString("copyable")) and \
-                               domElement.attribute(QString("copyable")) == QString("True"):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actCloneNode)
-                        if domElement and (not domElement.isNull()) and \
-                               domElement.hasAttribute(QString("type")) and \
-                               ((domElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (domElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (domElement.attribute(QString("type")) == QString("list")) or \
-                                (domElement.attribute(QString("type")) == QString("tool_file")) or \
-                                (domElement.attribute(QString("type")) == QString("tool_config")) or \
-                                (domElement.attribute(QString("type")) == QString("tool_set")) or \
-                                (domElement.attribute(QString("type")) == QString("param_template"))):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actRemoveNode)
-                    # Now add the export and import methods
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actExportXMLToFile)
-                    self.menu.addAction(self.actImportXMLFromFile)
-                    
-                # Check if the menu has any elements before exec is called
-                if not self.menu.isEmpty():
-                    self.menu.exec_(QCursor.pos())
-        return
+        menu = QMenu(self.view)
+        if node.get('type') == "tool_file":
+            menu.addAction(self.actExecToolFile)
+            menu.addSeparator()
+            menu.addAction(self.actMoveNodeUp)
+            menu.addAction(self.actMoveNodeDown)
+        elif node.get('type') == "tool_group":
+            menu.addAction(self.actAddToolFile)
+        elif node.get('type') == "param_template":
+            menu.addAction(self.actAddRequiredStringParam)
+            menu.addAction(self.actAddRequiredDirParam)
+            menu.addAction(self.actAddRequiredFileParam)
+            menu.addAction(self.actAddOptionalStringParam)
+            menu.addAction(self.actAddOptionalDirParam)
+            menu.addAction(self.actAddOptionalFileParam)
+        elif node.get('type') == "tool_config":
+            menu.addAction(self.actExecToolConfig)
+            menu.addSeparator()
+            menu.addAction(self.actMoveNodeUp)
+            menu.addAction(self.actMoveNodeDown)
+        elif node.get('type') == "tool_sets":
+            menu.addAction(self.actAddNewToolSet)
+        elif node.get('type') == "tool_set":
+            menu.addAction(self.actExecBatch)
+            menu.addSeparator()
+            menu.addAction(self.actNewConfig)
+            menu.addSeparator()
+            menu.addAction(self.actMoveNodeUp)
+            menu.addAction(self.actMoveNodeDown)
+        elif node.get('type') == "documentation_path":
+            menu.addAction(self.actOpenDocumentation)
+            menu.addSeparator()
+            menu.addAction(self.actCloneNode)
+            menu.addSeparator()
+            menu.addAction(self.actMoveNodeUp)
+            menu.addAction(self.actMoveNodeDown)
+
+        if not menu: # don't build a menu for this node
+            return
+
+        # Default menu items
+        self.addDefaultMenuItems(node, menu)
+
+        # Now add the export and import methods
+        menu.addSeparator()
+        menu.addAction(self.actExportXMLToFile)
+        menu.addAction(self.actImportXMLFromFile)
+
+        # Check if the menu has any elements before exec is called
+        if not menu.isEmpty():
+            menu.exec_(QCursor.pos())
 

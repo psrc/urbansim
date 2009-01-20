@@ -1,35 +1,40 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
+
+from time import localtime, strftime
 
 from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, Qt, QVariant, QString, QTimer
-from PyQt4.QtGui import QWidget, QIcon, QDialog
+from PyQt4.QtGui import QWidget, QIcon, QDialog, QMessageBox
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
-from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
+from opus_gui.results_manager.results_manager import get_available_batch_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
+
+from opus_gui.general_manager.general_manager import \
+    get_available_dataset_names, get_variable_nodes_per_dataset
+from opus_gui.results_manager.results_manager import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_gui.scenarios_manager.views.ui_simulation_gui_element import Ui_SimulationGuiElement
 from opus_gui.scenarios_manager.views.ui_overwrite_dialog import Ui_dlgOverwriteRun
-from time import localtime, strftime
 
 from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
+from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
 
 class OverwriteRunDialog(QDialog,Ui_dlgOverwriteRun):
     def __init__(self, parent):
@@ -37,18 +42,20 @@ class OverwriteRunDialog(QDialog,Ui_dlgOverwriteRun):
 
         QDialog.__init__(self, parent.mainwindow, flags)
         self.setupUi(self)
-        
+
 # This is an element in the Run Manager GUI that is the container for the model
 # and the model thread.  If the start button is pressed then the GUI will create
 # a thread to execute the given model.
 class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
-    def __init__(self, mainwindow, runManager, model):
+    def __init__(self, mainwindow, runManager, model, xml_config):
+
         QWidget.__init__(self, mainwindow)
 
         self.mainwindow = mainwindow
         self.setupUi(self)
 
         self.runManager = runManager
+        self.project = runManager.project
         self.model = model
         self.model.guiElement = self
         self.inGui = False
@@ -58,23 +65,15 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.timer = None
         self.runThread = None
         self.config = None
-        
-        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxBase)
-        self.toolboxBase = self.mainwindow.toolboxBase
-        
-        # Grab the path to the base XML used to run this model
-        self.xml_path = model.xml_path
+        self.xml_config = xml_config
 
-        # Bring up the XML file and grab the start year and end year
-        fileNameInfo = QFileInfo(self.xml_path)
-        fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
+        config = xml_config.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = fileNameInfo.fileName()   
+        self.tabLabel = model.modeltorun
 
         self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
@@ -97,9 +96,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.runProgressBarModel.hide()
         self.runProgressBarModelLabel.hide()
         self.summaryCurrentPieceValue.hide()
-        
+
     def updateConfigAndGuiForRun(self):
-        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
+        config = self.xml_config.get_run_configuration(str(self.model.modeltorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
@@ -124,7 +123,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self.runProgressBarModel.hide()
             self.runProgressBarModelLabel.hide()
             self.summaryCurrentPieceValue.hide()
-        
+
     def on_cbModel_stateChanged(self, state):
         if self.cbModel.isChecked():
             self.runProgressBarModel.show()
@@ -136,59 +135,62 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self.summaryCurrentPieceValue.hide()
 
     def setupDiagnosticIndicatorTab(self):
-
-        config = self.toolboxBase.opus_core_xml_configuration.get_run_configuration(str(self.model.modeltorun))
-
-        years = range(config["years"][0],config["years"][1]+1)
+        years = range(self.config["years"][0], self.config["years"][1]+1)
         self.yearItems = []
         for year in years:
             #the second value in the list determines if it is already added to the drop down
-            self.yearItems.append([year, False]); 
+            self.yearItems.append([year, False]);
 
-        datasets = self.xml_helper.get_available_datasets()        
-        
+        datasets = get_available_dataset_names(self.project)
+
         for dataset in datasets:
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
         self.setup_diagnostic_indicators()
         self.indicatorResultsTab.removeTab(0)
         QObject.connect(self.diagnostic_go_button,SIGNAL("released()"),self.on_indicatorBox)
-        QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)       
-        
+        QObject.connect(self.diagnostic_dataset_name, SIGNAL("currentIndexChanged(QString)"), self.on_diagnostic_dataset_name_currentIndexChanged)
+
     def setup_diagnostic_indicators(self):
-        indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
-        dataset = self.diagnostic_dataset_name.currentText()
+        dataset = str(self.diagnostic_dataset_name.currentText())
+        all_variable_nodes = get_variable_nodes_per_dataset(self.project)
+        if dataset in all_variable_nodes:
+            indicators = all_variable_nodes[dataset]
+        else:
+            indicators = []
+
+#        indicators = self.xml_helper.get_available_indicator_names(attributes = ['dataset'])
         self.diagnostic_indicator_name.clear()
         for indicator in indicators:
-            if indicator['dataset'] == dataset:
-                self.diagnostic_indicator_name.addItem(indicator['name'])
+            self.diagnostic_indicator_name.addItem(indicator.tag)
 
     def on_diagnostic_dataset_name_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
         self.setup_diagnostic_indicators()
-        
-    def setup_indicator_batch_combobox(self):        
+
+    def setup_indicator_batch_combobox(self):
         self.cboOptionalIndicatorBatch.addItem(QString('(None)'))
-        batches = self.xml_helper.get_available_batches()
-        for batch in batches:
-            self.cboOptionalIndicatorBatch.addItem(QString(batch['name']))
-        
+        # Get available batches
+        batch_nodes = get_available_batch_nodes(self.project)
+        for batch_node in batch_nodes:
+            self.cboOptionalIndicatorBatch.addItem(batch_node.tag)
+
     def setup_run_name_line_edit(self):
         run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
         self.leRunName.setText(QString(run_name))
-            
+
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
 
         dataset_name = self.diagnostic_dataset_name.currentText()
         year = self.diagnostic_year.currentText()
         if year is None: return
-        
+
         year = int(str(year))
         cache_directory = self.model.config['cache_directory']
         indicator_type = str(self.diagnostic_indicator_type.currentText())
-        
+
         params = {'indicators':[indicator_name]}
         if indicator_type == 'table':
             indicator_type = 'tab'
@@ -200,13 +202,12 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             (indicator_type, str(dataset_name), params)
         ]
 
-        self.batch_processor = BatchProcessor(
-                                    toolboxBase = self.toolboxBase)
-            
+        self.batch_processor = BatchProcessor(self.project)
+
         self.batch_processor.guiElement = self
-             
+
         self.batch_processor.set_data(
-            visualizations = visualizations, 
+            visualizations = visualizations,
             source_data_name = self.model.run_name,
             years = [year, year],
             cache_directory = cache_directory)
@@ -215,23 +216,23 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                               parentThread = self.mainwindow,
                               parentGuiElement = self,
                               thread_object = self.batch_processor)
-        
+
         # Use this signal from the thread if it is capable of producing its own status signal
         QObject.connect(self.diagnosticThread, SIGNAL("runFinished(PyQt_PyObject)"),
                         self.visualizationsCreated)
         QObject.connect(self.diagnosticThread, SIGNAL("runError(PyQt_PyObject)"),
                         self.runErrorFromThread)
-        
+
         self.diagnosticThread.start()
 
     def visualizationsCreated(self):
         all_visualizations = self.batch_processor.get_visualizations()
-        for indicator_type, visualizations in all_visualizations:            
+        for indicator_type, visualizations in all_visualizations:
             for visualization in visualizations:
                 if indicator_type == 'matplotlib_map':
                     form = ViewImageForm(mainwindow = self.mainwindow,
                                          visualization = visualization)
-                else:        
+                else:
                     form = ViewTableForm(mainwindow = self.mainwindow,
                          visualization = visualization)
                 self.indicatorResultsTab.insertTab(0,form,form.tabIcon,form.tabLabel)
@@ -239,7 +240,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def removeElement(self):
         return self.on_pbnRemoveModel_released()
-        
+
     def on_pbnRemoveModel_released(self):
         #    if(self.running == True):
         success = True
@@ -256,44 +257,45 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
     def on_pbnStartModel_released(self):
         proceed = True
         duplicate = False
-        
+
         run_name = str(self.leRunName.text())
         if run_name == '':
             run_name = None
         else:
             run_id = None
-            for run in self.xml_helper.get_available_run_info(attributes = ['run_id']):
-                existing_run_name = run['name']
+            run_nodes = get_available_run_nodes(self.project)
+            for run_node in run_nodes:
+                existing_run_name = run_node.tag
                 if run_name == existing_run_name:
                     duplicate = True
-                    if 'run_id' in run: run_id = int(run['run_id'])
+                    run_id = int(run_node.get('run_id'))
                     break
             if duplicate:
                 dlg_dup = OverwriteRunDialog(self)
-            
+
                 if dlg_dup.exec_() == QDialog.Rejected:
                     proceed = False
-                
+
         if not proceed: return
-        
-        
+
+
         if self.running and not self.paused:
             # Take care of pausing a run
             success = self.runThread.pause()
-            if success: 
+            if success:
                 self.paused = True
                 self.timer.stop()
                 self.pbnStartModel.setText(QString("Resume simulation run..."))
         elif self.running and self.paused:
             # Need to resume a paused run
             success = self.runThread.resume()
-            if success: 
+            if success:
                 self.paused = False
                 self.timer.start(1000)
                 self.pbnStartModel.setText(QString("Pause simulation run..."))
         elif not self.running:
             # Update the XML
-            self.toolboxBase.updateOpusXMLTree()
+            self.project.update_xml_config()
             self.updateConfigAndGuiForRun()
 
             # Fire up a new thread and run the model
@@ -313,24 +315,23 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             self.progressBarTotal.setRange(0,0)
             self.progressBarYear.setRange(0,0)
             self.progressBarModel.setRange(0,0)
-            
+
             batch_name = str(self.cboOptionalIndicatorBatch.currentText())
             if batch_name == '(None)':
-                batch_name = None            
-            
-            self.runThread = RunModelThread(self.mainwindow,
+                batch_name = None
+
+            self.runThread = RunModelThread(get_mainwindow_instance(),
                                             self,
-                                            self.xml_path,
                                             batch_name,
                                             run_name)
-            
+
             if duplicate and run_id is not None:
                 from opus_core.services.run_server.run_manager import RunManager as ServicesRunManager
                 run_manager = ServicesRunManager(ServicesDatabaseConfiguration())
                 run_manager.delete_everything_for_this_run(run_id = run_id)
                 run_manager.close()
-                
-            
+
+
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                             self.runFinishedFromThread)
@@ -360,17 +361,16 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.progressBarTotal.setValue(100)
         self.progressBarYear.setValue(100)
         self.progressBarModel.setValue(100)
-        
-        if success: msg = 'Simulation ran successfully!'
-        else: msg = 'Simulation failed.'
+
+        msg = 'Simulation ran successfully!' if success else 'Simulation failed.'
         self.summaryCurrentYearValue.setText(QString(msg))
         self.summaryCurrentModelValue.setText(QString("Finished"))
         self.summaryCurrentPieceValue.setText(QString("Finished"))
-        
+
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.modelguielement.model._get_current_log(self.logFileKey)
-        
+
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Simulation Run..."))
@@ -387,15 +387,15 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.resultsManagerBase.addViewImageIndicator
                 elif indicator_type == 'table_per_year' or \
-                     indicator_type == 'table_per_attribute':    
-                    form_generator = self.mainwindow.resultsManagerBase.addViewTableIndicator            
-            
-                if form_generator is not None:    
+                     indicator_type == 'table_per_attribute':
+                    form_generator = self.mainwindow.resultsManagerBase.addViewTableIndicator
+
+                if form_generator is not None:
                     for visualization in visualizations:
-                        form_generator(visualization = visualization, indicator_type = indicator_type)    
+                        form_generator(visualization = visualization, indicator_type = indicator_type)
 
 
-        
+
     # GUI elements that show progress go here.  Note that they have to be set
     # up first in the constructor of this class, then optionally initialized in
     # on_pbnStartModel_released(), then calculated and updated here, and finally
@@ -443,29 +443,29 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                     # For each year, we need to run all of the models.
                     # year_fraction_completed is the fraction completed (ignoring the currently running year)
                     # model_fraction_completed is the additional fraction completed for the current year
-    
+
                     modelProgress = 100.0 * (current_piece / total_pieces)
                     yearProgress = modelProgress / total_models + 100.0 * (current_model / total_models)
                     totalProgress = yearProgress / total_years + 100.0 * ((current_year - self.start_year) / total_years)
-    
+
                     currentYearString = "("+str(int((current_year - self.start_year))+1)+"/"+str(int(total_years))+") "+str(int(current_year))
                     self.summaryCurrentYearValue.setText(QString(currentYearString))
-    
+
                     currentModelString = "("+str(int(current_model)+1)+"/"+str(int(total_models))+") "+current_model_display_name
                     self.summaryCurrentModelValue.setText(QString(currentModelString))
-    
+
                     currentPieceString = "("+str(int(current_piece)+1)+"/"+str(int(total_pieces))+") "+current_piece_name
                     self.summaryCurrentPieceValue.setText(QString(currentPieceString))
-    
+
                     boxTitle = current_model_display_name
-                    
+
                     #detect if a year has been completed
                     for item in self.yearItems:
                         if (int(item[0]) < int(current_year) and not item[1]) :
                             self.diagnostic_year.addItem(QString(str(item[0])))
-                            item[1] = True 
+                            item[1] = True
                             #hook into indicator group computation here
-    
+
                     if (self.progressBarTotal.maximum() == 0):
                         self.progressBarTotal.setRange(0,100)
                         self.progressBarYear.setRange(0,100)

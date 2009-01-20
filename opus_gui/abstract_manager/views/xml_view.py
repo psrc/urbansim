@@ -11,39 +11,44 @@
 # other acknowledgments.
 #
 
-
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, QModelIndex
 from PyQt4.QtGui import QTreeView
+from PyQt4.QtCore import QModelIndex
 
 class XmlView(QTreeView):
-    def __init__(self, mainwindow):
-        QTreeView.__init__(self, mainwindow)
-        self.mainwindow = mainwindow
+
+    '''
+    TreeView for viewing XML data.
+    '''
+
+    STANDARD_COLUMN_WIDTH_NODES = 250
+    STANDARD_COLUMN_WIDTH_DATA  = 50
+
+    def __init__(self, parent_widget):
+        '''
+        Tree view for displaying data in a XmlModel
+        @param parent_widget (QWidget): Parent widget
+        '''
+        QTreeView.__init__(self, parent_widget)
+
         self.setAnimated(True)
         self.setMinimumHeight(200)
 
-    def openDefaultItems(self):
-        # Loop through all the data model items displayed and expand
-        # if they are marked to be expanded by default
-        model = self.model()
-        self.loopItems(model,model.index(0,0,QModelIndex()).parent())
-        
-        # refresh the widths of the columns
-        self.setColumnWidth(0,250)
-        self.setColumnWidth(1,50)
+    def _expand_subnodes(self, item):
+        '''
+        Recursively expands all items under (and including) a given index.
+        Items are expanded only if "setexpanded" set to "True".
+        @param item (XmlItem): the item to (maybe) expand along with subnodes
+        '''
+        index = self.model().index_for_item(item)
+        if item.node.get('setexpanded') == 'True':
+            self.expand(index)
+        for child_item in item.child_items:
+            self._expand_subnodes(child_item)
 
-    def loopItems(self,model,parentIndex):
-        rows = model.rowCount(parentIndex)
-        for x in xrange(0,rows,1):
-            child = model.index(x,0,parentIndex)
-            childElement = child.internalPointer().domNode.toElement()
-            if not childElement.isNull():
-                # If this child needs to be expanded we do it
-                if childElement.hasAttribute(QString("setexpanded")) and \
-                       childElement.attribute(QString("setexpanded")) == QString("True"):
-                    self.expand(child)
-                # If this child has other children then we recurse
-                if model.rowCount(child)>0:
-                    self.loopItems(model,child)
+    def openDefaultItems(self):
+        ''' Expand all items that default to expanded and refresh the width'''
+        # Expand all items at the root level
+        self._expand_subnodes(self.model().root_item())
+        self.setColumnWidth(0, self.STANDARD_COLUMN_WIDTH_NODES)
+        self.setColumnWidth(1, self.STANDARD_COLUMN_WIDTH_DATA)
 

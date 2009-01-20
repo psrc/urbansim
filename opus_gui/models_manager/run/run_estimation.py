@@ -21,10 +21,10 @@ from opus_gui.util.exception_formatter import formatExceptionInfo
 from urbansim.estimation.estimation_runner import EstimationRunner
 
 class RunEstimationThread(QThread):
-    def __init__(self, mainwindow, estimationguielement, xml_file):
+    def __init__(self, mainwindow, estimationguielement, xml_file = None):
         QThread.__init__(self, mainwindow)
         self.estimationguielement = estimationguielement
-        self.xml_file = xml_file
+        # self.xml_file = xml_file
 
     def run(self):
         self.estimationguielement.progressBar.setRange(0,100)
@@ -58,14 +58,25 @@ class RunEstimationThread(QThread):
 
 
 class OpusEstimation(object):
-    def __init__(self, xmltreeobject, xml_path, model_name, model_group = None):
+    # xml_config, model_name, model_group
+    def __init__(self, xml_config, model_name, model_group = None):
+        '''
+        @param xml_config (XMLConfiguration): xml configuration object for the model
+        @param model_name (String): the name of the model to run
+        @param model_group (String): name of the sub model group to run
+        '''
+
         dummy_callback = lambda x: None
-        self.xmltreeobject = xmltreeobject
-        self.xml_path = xml_path
+
+        self.xml_config = xml_config
+        self.model_name = model_name
+        self.model_group = model_group
+
         self.er = None
         self.progressCallback = dummy_callback
         self.finishedCallback = dummy_callback
         self.errorCallback = dummy_callback
+
         self.guiElement = None
         self.config = None
         self.statusfile = None
@@ -74,8 +85,6 @@ class OpusEstimation(object):
         self.paused = False
         self.cancelled = False
         self.statusfile = None
-        self.model_name = model_name
-        self.model_group = model_group
 
     def pause(self):
         self.paused = True
@@ -101,11 +110,8 @@ class OpusEstimation(object):
         statusfile = None
         succeeded = False
         try:
-            fileNameInfo = QFileInfo(self.xml_path)
-            filename = fileNameInfo.absoluteFilePath().trimmed()
             # get the configuration for estimations
-            xml_config = self.xmltreeobject.toolboxbase.opus_core_xml_configuration
-            estimation_section = xml_config.get_section('model_manager/model_system/')
+            estimation_section = self.xml_config.get_section('model_manager/model_system/')
             estimation_config = estimation_section['estimation_config']
             self.config = estimation_config
             # TODO: put this option into post run dialog
@@ -119,7 +125,7 @@ class OpusEstimation(object):
             if not self.cancelled:
                 self.er = EstimationRunner(model = self.model_name,
                                            specification_module = None,
-                                           xml_configuration = xml_config,
+                                           xml_configuration = self.xml_config,
                                            model_group = self.model_group,
                                            configuration = None,
                                            save_estimation_results=save_results)

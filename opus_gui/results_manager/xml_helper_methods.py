@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 from PyQt4.QtCore import QString, QModelIndex, SIGNAL
 from PyQt4.QtXml import QDomNode, QDomElement, QDomDocument
@@ -22,23 +22,23 @@ import os
 def elementsByAttributeValue(domDocument,
                              attribute,
                              value):
-    first_child = domDocument.documentElement() 
+    first_child = domDocument.documentElement()
     matches = []
-    _elementsByAttributeValue(first_child = first_child, 
-                               domDocument = domDocument, 
-                               attribute = QString(attribute), 
+    _elementsByAttributeValue(first_child = first_child,
+                               domDocument = domDocument,
+                               attribute = QString(attribute),
                                value = QString(value),
                                matches = matches)
 
     return matches
-       
+
 def _elementsByAttributeValue(first_child,
                               domDocument,
                               attribute,
                               value,
                               matches):
 
-    node = first_child  
+    node = first_child
     while not node.isNull():
         if node.isElement():
             domElement = node.toElement()
@@ -47,23 +47,23 @@ def _elementsByAttributeValue(first_child,
 
             if domElement.attribute(attribute) == value:
                 matches.append((domElement,node))
-            
+
         if node.hasChildNodes():
             first_child = node.firstChild()
             _elementsByAttributeValue(
-                   first_child = first_child, 
-                   domDocument = domDocument, 
-                   attribute = attribute, 
-                   value = value, 
+                   first_child = first_child,
+                   domDocument = domDocument,
+                   attribute = attribute,
+                   value = value,
                    matches = matches)
         node = node.nextSibling()
-            
+
 def get_child_values(parent, child_names = [], all = False):
     child_vals = {}
     node = parent.firstChild()
     while not node.isNull():
         if all or node.nodeName() in child_names:
-            
+
             if node.isElement():
                 domElement = node.toElement()
                 child_vals[str(node.nodeName())] = domElement.text()
@@ -71,75 +71,75 @@ def get_child_values(parent, child_names = [], all = False):
     return child_vals
 
 class ResultsManagerXMLHelper:
-    
+
     def __init__(self, toolboxBase):
         self.toolboxBase = toolboxBase
 
-        
+
     #####################################################
     #########    XML GET CONVENIENCE METHODS     ########
     #####################################################
-    
-    def get_available_datasets(self):        
-        _, available_datasets_dict = self.get_element_attributes(node_name = 'general', 
-                                    node_type = None, 
+
+    def get_available_datasets(self):
+        _, available_datasets_dict = self.get_element_attributes(node_name = 'general',
+                                    node_type = None,
                                     child_attributes = ['available_datasets'])
         return eval(str(available_datasets_dict['available_datasets']))
-    
+
     def get_available_batches(self, attributes = []):
-        return self._get_node_group(node_value = 'indicator_batch', 
-                                    node_attribute = 'type', 
-                                    child_attributes = attributes)  
+        return self._get_node_group(node_value = 'indicator_batch',
+                                    node_attribute = 'type',
+                                    child_attributes = attributes)
 
     def get_available_indicator_names(self, attributes = [],child_attributes = [], return_all = False):
-        variables = self._get_node_group(node_value = 'variable_definition', 
-                                    node_attribute = 'type', 
+        variables = self._get_node_group(node_value = 'variable_definition',
+                                    node_attribute = 'type',
                                     child_attributes = child_attributes,
-                                    attributes = attributes + ['use', 'source'])   
+                                    attributes = attributes + ['use', 'source'])
         indicators = []
         for var in variables:
             if return_all or var['use'] != 'model variable':# and var['source'] == 'expression':
                 indicators.append(var)
-        return indicators      
+        return indicators
 
     def get_available_model_variables(self, attributes = [],child_attributes = [], return_all = False):
-        variables = self._get_node_group(node_value = 'variable_definition', 
-                                    node_attribute = 'type', 
+        variables = self._get_node_group(node_value = 'variable_definition',
+                                    node_attribute = 'type',
                                     child_attributes = child_attributes,
-                                    attributes = attributes + ['use', 'source'])   
+                                    attributes = attributes + ['use', 'source'])
         indicators = []
         for var in variables:
             if return_all or var['use'] != 'indicator':# and var['source'] == 'expression':
                 indicators.append(var)
-        return indicators      
-    
+        return indicators
+
     def get_available_run_info(self, attributes = [], update = False):
         if update:
             self.update_available_runs()
-        
+
         if 'years' in attributes:
             years = True
             attributes.remove('years')
             attributes.append('cache_directory')
         else:
             years = False
-            
-        run_info = self._get_node_group(node_value = 'source_data', 
-                                    node_attribute = 'type', 
-                                    child_attributes = attributes)        
-    
+
+        run_info = self._get_node_group(node_value = '[',
+                                    node_attribute = 'type',
+                                    child_attributes = attributes)
+
         if years:
-            for run in run_info:        
+            for run in run_info:
                 server_config = ServicesDatabaseConfiguration()
                 run_manager = RunManager(server_config)
                 run['years'] = run_manager.get_years_run(str(run['cache_directory']))
-        
-        return run_info     
-    
+
+        return run_info
+
     def get_sub_element_by_path(self, root, path):
         '''grab a subelement by path from the given root (root can be node or element)'''
         root_element = None
-        if isinstance(root, QDomElement): 
+        if isinstance(root, QDomElement):
             root_element = root
         elif isinstance(root, QDomNode):
             root_element = root.toElement()
@@ -148,16 +148,16 @@ class ResultsManagerXMLHelper:
             elements = self.toolboxBase.doc.elementsByTagName(root)
             if elements and elements.lenght == 1:
                 root_element = elements[0]
-        
+
         # check that we got a valid root_element
         if root_element is None or (not root_element.isElement()):
             print 'Could not resolve provided root element (%s) to a node in the dom tree' %root
             return QDomNode() # empty node
-        
+
         # grab the subtree element and return it
         resolved_path = path.split('/')
         current_element = root_element
-        
+
         while resolved_path:
             sub_path = resolved_path.pop(0)
             if sub_path:
@@ -165,18 +165,18 @@ class ResultsManagerXMLHelper:
                 if current_element.isNull():
                     # could not resolve path all the way, return empty node
                     return QDomNode()
-            
-        return current_element   
-    
+
+        return current_element
+
     def _get_node_group(self,
-                        node_value, 
+                        node_value,
                         node_attribute = 'type',
                         child_attributes = [],
                         attributes = []):
         domDocument = self.toolboxBase.doc
         node_list = elementsByAttributeValue(
-             domDocument = domDocument, 
-             attribute = node_attribute, 
+             domDocument = domDocument,
+             attribute = node_attribute,
              value = node_value)
 
         group = []
@@ -184,7 +184,7 @@ class ResultsManagerXMLHelper:
             item_name = element.nodeName()
             item_info = {'name' : item_name,
                          'value': element.text()}
-            
+
             for attribute in attributes:
                 item_info[attribute] = element.attribute(QString(attribute))
 
@@ -193,52 +193,52 @@ class ResultsManagerXMLHelper:
                     parent = node,
                     child_names = child_attributes
                 )
-                item_info.update(attribute_vals) 
+                item_info.update(attribute_vals)
             group.append(item_info)
 
         return group
-    
-        
+
+
     def get_batch_configuration(self, batch_name):
         visualizations = []
-        
-        batch_node, _ = self.get_element_attributes(node_name = batch_name, 
+
+        batch_node, _ = self.get_element_attributes(node_name = batch_name,
                                                     node_type = 'indicator_batch')
-        
+
         node = batch_node.firstChild()
         while not node.isNull():
             element = node.toElement()
             vals = get_child_values(parent = element,
                                     all = True)
-            
+
             visualization_type = str(vals['visualization_type'])
             if visualization_type in ['table_per_year', 'table_per_attribute']:
                 visualization_type = 'tab'
-                
+
             dataset_name = str(vals['dataset_name'])
 
             vals['name'] = str(node.nodeName())
             visualizations.append((visualization_type, dataset_name, vals))
-            
+
             node = node.nextSibling()
-            
-        return visualizations 
-    
+
+        return visualizations
+
     def get_element_attributes(self, node_name, child_attributes = [], all = False, node_type = None):
         if not isinstance(node_name, QString):
             node_name = QString(node_name)
         if node_type is not None and not isinstance(node_type, QString):
             node_type = QString(node_type)
-        
+
         domDocument = self.toolboxBase.doc
-        
+
         elements = domDocument.elementsByTagName(node_name)
         matching_element = None
-        
-        if node_type is None: 
+
+        if node_type is None:
             if int(elements.length()) > 1:
                 raise Exception('There are multiple xml elements named %s'%str(node_name))
-            else: 
+            else:
                 matching_element = elements.item(0)
         else:
             for x in xrange(0,elements.length(),1):
@@ -250,26 +250,26 @@ class ResultsManagerXMLHelper:
                         matching_element = element
                         break
 
-        if not matching_element: 
+        if not matching_element:
             raise Exception('Could not find element %s of type %s'%(str(node_name), str(node_type)))
 
-        child_attributes = get_child_values(parent = matching_element, 
+        child_attributes = get_child_values(parent = matching_element,
                                  child_names = child_attributes,
                                  all = all)
         return matching_element, child_attributes
-        
-    
+
+
     #####################################################
     #####################################################
     ##############    XML ADDITIONS    ##############
     #####################################################
-                            
-    def add_run_to_run_manager_xml(self, cache_directory, 
-                                    scenario_name, run_name, 
+
+    def add_run_to_run_manager_xml(self, cache_directory,
+                                    scenario_name, run_name,
                                     start_year, end_year,
                                     run_id,
                                     temporary = False):
-                
+
         head_node_args = {'type':'source_data',
                           'value':''}
 
@@ -278,7 +278,7 @@ class ResultsManagerXMLHelper:
             'type':'integer',
             'value':str(run_id),
         }
-        
+
         scenario_def = {
             'name':'scenario_name',
             'type':'string',
@@ -303,22 +303,22 @@ class ResultsManagerXMLHelper:
             'name':'end_year',
             'type':'integer',
             'value':str(end_year),
-        }        
+        }
         child_defs = [run_id_def, scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
-        
-        self._add_new_xml_tree(head_node_name = run_name.replace(' ', '_'), 
-                               head_node_args = head_node_args, 
-                               child_node_definitions = child_defs, 
+
+        self._add_new_xml_tree(head_node_name = run_name.replace(' ', '_'),
+                               head_node_args = head_node_args,
+                               child_node_definitions = child_defs,
                                parent_name = 'Simulation_runs',
                                temporary = temporary,
                                children_hidden = True)
-          
+
     def addNewIndicatorBatch(self, batch_name):
         head_node_args = {'type':'indicator_batch',
                           'value':''}
-                
-        self._add_new_xml_tree(head_node_name = batch_name.replace(' ','_'), 
-                               head_node_args = head_node_args, 
+
+        self._add_new_xml_tree(head_node_name = batch_name.replace(' ','_'),
+                               head_node_args = head_node_args,
                                parent_name = 'Indicator_batches')
 
     def addNewVisualizationToBatch(self, viz_name, batch_name, viz_type, viz_params):
@@ -327,7 +327,7 @@ class ResultsManagerXMLHelper:
 
         viz_params.append({'value':viz_type,
                            'name':'visualization_type'})
-            
+
         for param in viz_params:
             value = param['value']
             if isinstance(value,str) or isinstance(value,QString):
@@ -337,14 +337,14 @@ class ResultsManagerXMLHelper:
                 param['type'] = 'list'
             elif isinstance(value,int):
                 param['type'] = 'integer'
-        
-        self._add_new_xml_tree(head_node_name = QString(viz_name), 
-                               head_node_args = head_node_args, 
-                               parent_name = batch_name, 
-                               child_node_definitions = viz_params, 
-                               temporary = False, 
+
+        self._add_new_xml_tree(head_node_name = QString(viz_name),
+                               head_node_args = head_node_args,
+                               parent_name = batch_name,
+                               child_node_definitions = viz_params,
+                               temporary = False,
                                children_hidden = True)
-                
+
     def _insert_children(self, head_node, child_node_definitions, children_hidden = True, temporary = False):
         # Loop through all the child definitions and create nodes if they are needed
         if child_node_definitions == []: return
@@ -366,31 +366,31 @@ class ResultsManagerXMLHelper:
         # Now loop through the nodes we created to append them to the head_node
         for node in sorted(child_nodes, reverse=True):
             head_node.appendChild(node)
-                
-                
-    def _add_new_xml_tree(self, 
+
+
+    def _add_new_xml_tree(self,
                           head_node_name,
-                          head_node_args, 
+                          head_node_args,
                           parent_name,
                           child_node_definitions = [],
                           temporary = False,
                           children_hidden = False,
                           xml_tree = None):
-        
+
         if xml_tree is None:
             xml_tree = self.toolboxBase.resultsManagerTree
         model = xml_tree.model
         document = self.toolboxBase.doc
-        
+
         # The new head node to add children to and then insert
-        head_node = model.create_node(document = document, 
+        head_node = model.create_node(document = document,
                                     name = head_node_name,
-                                    temporary = temporary, 
+                                    temporary = temporary,
                                     **head_node_args)
 
-        self._insert_children(head_node=head_node, 
-                              child_node_definitions=child_node_definitions, 
-                              children_hidden=children_hidden, 
+        self._insert_children(head_node=head_node,
+                              child_node_definitions=child_node_definitions,
+                              children_hidden=children_hidden,
                               temporary=temporary)
 
         # Find the parent node index to append to
@@ -403,10 +403,10 @@ class ResultsManagerXMLHelper:
                         head_node)
 
         model.emit(SIGNAL("layoutChanged()"))
-        
+
     def update_dom_node(self, index, new_base_node_name = None, children_to_update = None, children_hidden = True, temporary = False):
-        if index is None: return 
-        
+        if index is None: return
+
         model = self.toolboxBase.resultsManagerTree.model
         # Keep track of any edits so we can mark the GUI as edited and force a save
         # as well as make the node editable if it is not already...
@@ -435,10 +435,10 @@ class ResultsManagerXMLHelper:
 
         # Lets avoid calling setData directly... Will create a new method that will do the above
         #self.model.setData(self.selected_index,QVariant(indicator_name),Qt.EditRole)
-        
+
         # Get the first child node (also a QDomNode) for traversal
         node = base_node.firstChild()
-        
+
         # Only march on if we have non-null nodes
         while not node.isNull():
             # We only want to check out this node if it is of type "element"
@@ -466,22 +466,22 @@ class ResultsManagerXMLHelper:
                         del children_to_update[name]
             # Continue to loop through children
             node = node.nextSibling()
-        
+
         #add children which did not already exist
-        self._insert_children(head_node=base_node, 
-                              child_node_definitions=self._convert_to_node_dictionary(child_dictionary = children_to_update), 
-                              children_hidden = children_hidden, 
+        self._insert_children(head_node=base_node,
+                              child_node_definitions=self._convert_to_node_dictionary(child_dictionary = children_to_update),
+                              children_hidden = children_hidden,
                               temporary=temporary)
-                    
+
         # TODO: Should gather all of this into a method in the model to allow for bulk update
-        if dirty:    
+        if dirty:
             # If we have changed something we need to make sure the node we are editing is marked
             # as editable since there was no check that the node was editable before allowing
             # the right click edit option.
             model.makeEditable(base_node)
             # Flag the model as dirty to prompt for save
             model.markAsDirty()
-        
+
     def _convert_to_node_dictionary(self, child_dictionary):
         type_map = {
             str:'string',
@@ -492,9 +492,9 @@ class ResultsManagerXMLHelper:
         node_vals = []
         for k,v in child_dictionary.items():
             node_vals.append({'name':k, 'value':v, 'type':type_map[type(v)]})
-            
+
         return node_vals
-        
+
 
     def update_available_runs(self):
         #get existing cache directories, use as primary key to check for duplicates
@@ -503,7 +503,7 @@ class ResultsManagerXMLHelper:
         existing_cache_directories = {}
         for run in available_runs:
             cache_directory = str(run['cache_directory'])
-            
+
             if not os.path.exists(cache_directory):
                 parentIndex = model.index(0,0,QModelIndex()).parent()
                 indexes = model.findElementIndexByName(run['name'], parentIndex)
@@ -517,7 +517,7 @@ class ResultsManagerXMLHelper:
                             index.model().removeRow(index.internalPointer().row(),
                                         index.model().parent(index))
                             index.model().emit(SIGNAL("layoutChanged()"))
-                
+
             else:
                 existing_cache_directories[cache_directory] = 1
 
@@ -525,9 +525,9 @@ class ResultsManagerXMLHelper:
 
         server_config = ServicesDatabaseConfiguration()
         run_manager = RunManager(server_config)
-        
+
         # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
-        # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
+        # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment
         # variable OPUS_HOME followed by 'data'
         datapath = os.environ.get('OPUS_DATA_PATH')
         if datapath is None:
@@ -535,7 +535,7 @@ class ResultsManagerXMLHelper:
         data_directory = os.path.join(datapath, project_name)
         if not os.path.exists(data_directory): return []
         baseyear_directory = os.path.join(data_directory, 'base_year_data')
-        
+
         years = []
         if not baseyear_directory in existing_cache_directories:
             for dir in os.listdir(baseyear_directory):
@@ -552,11 +552,11 @@ class ResultsManagerXMLHelper:
                  'description': 'base year data',
                  'years': (start_year, end_year)
             }
-            run_manager.add_row_to_history(run_id = run_id, 
-                                           resources = resources, 
-                                           status = 'done', 
+            run_manager.add_row_to_history(run_id = run_id,
+                                           resources = resources,
+                                           status = 'done',
                                            run_name = run_name)
-            
+
         #get runs logged from this processor to the run activity table
 
         runs = run_manager.get_run_info(resources = True, status = 'done')
@@ -573,15 +573,15 @@ class ResultsManagerXMLHelper:
             self.add_run_to_run_manager_xml( cache_directory = cache_directory,
                                              scenario_name = project_name,
                                              run_name = run_name,
-                                             start_year = start_year, 
+                                             start_year = start_year,
                                              end_year = end_year,
                                              run_id = run_id,
                                              temporary = False)
             existing_cache_directories[cache_directory] = 1
             added_runs.append(cache_directory)
         return added_runs
-        
-            
+
+
 
     def set_text_child_value(self, element, text):
         '''Set the value of an elements text child. Create text children if appropriate.'''
@@ -592,7 +592,6 @@ class ResultsManagerXMLHelper:
             # add a text child if the node is a leaf, otherwise raise a error
             if not element.firstChild().isNull():
                 raise ValueError('Tried to set a text child of a node that already has children')
-    
+
             text_node = self.toolboxBase.doc.createTextNode(text)
             element.insertBefore(text_node, QDomNode())
-        

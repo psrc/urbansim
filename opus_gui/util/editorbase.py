@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
@@ -17,8 +17,7 @@ from PyQt4.QtCore import Qt, QString
 from PyQt4.QtGui import QFont, QFontMetrics, QColor, QIcon, QLabel, QWidget, QVBoxLayout
 from PyQt4.Qsci import QsciScintilla, QsciLexerPython
 
-
-# Main 
+# Main
 class EditorBase(QsciScintilla):
     def __init__(self, mainwindow):
         QsciScintilla.__init__(self, mainwindow)
@@ -31,41 +30,41 @@ class EditorBase(QsciScintilla):
         # the font metrics here will help
         # building the margin width later
         fm = QFontMetrics(font)
-        
+
         ## set the default font of the editor
         ## and take the same font for line numbers
         self.setFont(font)
         self.setMarginsFont(font)
-        
+
         ## Line numbers
         # conventionnaly, margin 0 is for line numbers
         self.setMarginWidth(0, fm.width( "00000" ) + 5)
         self.setMarginLineNumbers(0, True)
-        
+
         ## Edge Mode shows a red vetical bar at 80 chars
         self.setEdgeMode(QsciScintilla.EdgeLine)
         self.setEdgeColumn(80)
         self.setEdgeColor(QColor("#CCCCCC"))
-        
+
         ## Folding visual : we will use boxes
         self.setFolding(QsciScintilla.BoxedTreeFoldStyle)
-        
+
         ## Braces matching
         self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
-        
+
         ## Editing line color
         #self.setCaretLineVisible(True)
         #self.setCaretLineBackgroundColor(QColor("#CDA869"))
-        
+
         ## Margins colors
         # line numbers margin
         self.setMarginsBackgroundColor(QColor("#333333"))
         self.setMarginsForegroundColor(QColor("#CCCCCC"))
-        
+
         # folding margin colors (foreground,background)
         #self.setFoldMarginColors(QColor("#99CC66"),QColor("#333300"))
         self.setFoldMarginColors(QColor("#CCCCCC"),QColor("#CCCCCC"))
-        
+
         ## Choose a lexer
         lexer = QsciLexerPython()
         lexer.setDefaultFont(font)

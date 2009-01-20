@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -18,28 +18,26 @@ from PyQt4.QtCore import Qt, QStringList, QDir, QObject, SIGNAL
 from PyQt4.QtGui import QTreeView, QDirModel
 
 class FileController(object):
-    def __init__(self, toolboxbase, controller_type,opusDataPath, parentWidget, listen_to_menu = True):
-        self.controller_type = controller_type
+    def __init__(self, manager, opusDataPath, parentWidget, listen_to_menu = True):
 
-        self.addTree(toolboxbase,opusDataPath,parentWidget)
+        self.addTree(opusDataPath, parentWidget)
 
         self.currentColumn = None
         self.currentIndex = None
         self.classification = ""
 
+        self.manager = manager
         if listen_to_menu:
             QObject.connect(self.treeview,
                             SIGNAL("customContextMenuRequested(const QPoint &)"),
                             self.processCustomMenu)
 
 
-    def addTree(self, toolboxbase,opusDataPath,parentWidget):
-        self.mainwindow = toolboxbase.mainwindow
-        self.toolboxBase = toolboxbase
+    def addTree(self, opusDataPath, parentWidget):
         self.containerWidget = parentWidget
         self.opusDataPath = opusDataPath
 
-        self.treeview = QTreeView(self.mainwindow)
+        self.treeview = QTreeView()
         filters = QStringList()
         filters.append("*.*")
         #filters.append("*.py")
@@ -53,14 +51,14 @@ class FileController(object):
         self.treeview.hideColumn(2)
         self.treeview.hideColumn(3)
 
-        self.containerWidget.addWidget(self.treeview)
+        self.containerWidget.layout().addWidget(self.treeview)
 
         # Hook up to the mousePressEvent and pressed
         self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
 
-    def removeTree(self):
+    def close(self):
         self.treeview.hide()
-        self.containerWidget.removeWidget(self.treeview)
+        self.containerWidget.layout().removeWidget(self.treeview)
         return True
 
 

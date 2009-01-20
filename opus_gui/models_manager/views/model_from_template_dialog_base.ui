@@ -21,12 +21,6 @@
      <layout class="QVBoxLayout" name="vlayout" >
       <item>
        <widget class="QFrame" name="frame" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="maximumSize" >
          <size>
           <width>16777215</width>
@@ -34,7 +28,7 @@
          </size>
         </property>
         <property name="frameShape" >
-         <enum>QFrame::WinPanel</enum>
+         <enum>QFrame::Panel</enum>
         </property>
         <property name="frameShadow" >
          <enum>QFrame::Raised</enum>

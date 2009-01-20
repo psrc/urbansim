@@ -15,8 +15,6 @@ from PyQt4.QtCore import QString, SIGNAL, QSize, Qt
 from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
 from PyQt4.QtXml import QDomElement
 
-from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-
 from opus_gui.models_manager.views.ui_model_from_template_dialog_base import \
      Ui_ModelFromTemplateDialogBase
 
@@ -34,27 +32,33 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     Models that do not have estimation components should set the instance
     variable create_estimation_component to False.
     '''
-    def __init__(self, mainwindow, model_template_node, model_manager_model):
+    def __init__(self, model_node, project = None, callback = None,
+                 parent_widget = None):
+        '''
+        @param project (OpusProject): Currently loaded project
+        @param model_node (Element): template node to base the new model on
+        @param parent_widget (QObject): parent object
+        @param callback (function(Element)): callback function for the
+            modified node
+        '''
         # parent window for the dialog box
-        self.mainwindow = mainwindow
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
                 Qt.WindowMaximizeButtonHint | Qt.Sheet
-        QDialog.__init__(self, self.mainwindow, flags)
+        QDialog.__init__(self, parent_widget, flags)
         self.setupUi(self)
 
-        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxBase)
-
-        self.model_template_node = model_template_node
-        self.model_manager_model = model_manager_model
+        self.model_node = model_node
+        self.callback = callback
+        self.project = project
 
         self.connect(self.buttonBox, SIGNAL("accepted()"), self._on_accepted)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self._on_rejected)
 
         self.setModal(True)
 
-        # default name based on tag name for template
-        tag_name = model_template_node.toElement().tagName()
-        tag_name.replace('_template', '').replace('_', ' ')
+        # Base the default tag name on the tag for the template
+        tag_name = model_node.tag.replace('_template', '')\
+            .replace('_', ' ')
         self.leModelName.setText(tag_name)
         self.leModelName.selectAll()
         self.leModelName.focusWidget()
@@ -63,10 +67,7 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         newtitle = '%s %s'%(title, tag_name)
         self.setWindowTitle(QString(newtitle))
 
-        # the pairings of xml nodes (by path) and their values
-        self._xmlpath_value_pairs = []
-
-    def add_widget_pair(self, left_widget, right_widget):
+    def _add_widget_pair(self, left_widget, right_widget):
         '''Add a pair of widgets to the dialog.'''
         # make the leftmost widget (usually a label) constraint to a certain
         # size to maintain a nice grid
@@ -83,53 +84,35 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         layout.addWidget(right_widget)
         self.groupBox.layout().addLayout(layout)
 
-    def set_structure_element_to_value(self, xmlpath, value):
-        '''sets an element rooted in the models structure to a value
-        usage example:
-        to set "structure/init/name" to "modelname";
-          set_structure_element_to_value("init/name", "modelname")'''
-        structure_element = \
-        self.xml_helper.get_sub_element_by_path(self.model_template_node,
-                                                'structure/')
-
-        xml_element = \
-            self.xml_helper.get_sub_element_by_path(structure_element, xmlpath)
-
-        if not xml_element or not isinstance(xml_element, QDomElement):
-            raise ValueError('No such element (%s>%s)' \
-                             %(structure_element.toElement().tagName(),xmlpath))
-        self.xml_helper.set_text_child_value(xml_element, value)
-
-    def get_model_xml_name(self):
+    def _get_xml_friendly_name(self):
         '''return a valid model name based on the string the user entered'''
-        #TODO: make sure that the name is actually a valid xml name
+        #TODO: make sure that the name is actually a valid XML tag
         return self.leModelName.text().replace(QString(' '), QString('_'))
 
-    def set_model_name(self, value = None):
-        '''set the name of the root node to a valid xml value.
-        Default value is self.get_model_xml_name().'''
-        xmlname = value if value else self.get_model_xml_name()
-        self.model_template_node.toElement().setTagName(xmlname)
-
-    def _create_estimations_and_insert_node(self):
-        '''insert the node back into the model system and create an entry for
-        the new model in the estimations'''
-        new_model_element = self.model_template_node.toElement()
-        new_model_element.removeAttribute('hidden')
-        new_model_element.setAttribute('type', QString('model'))
-        self.model_manager_model.insert_model(new_model_element)
-        # update models to run lists
-        self.mainwindow.toolboxBase.runManagerTree.validate_models_to_run_list()
+    def _set_model_node_tag(self, value = None):
+        '''set the name of the root node to a valid XML value.
+        Default value is self.get_valid_model_name().'''
+        xmlname = value if value is not None else self.get_valid_model_name()
+        self.model_node.tag = xmlname
 
     def setup_node(self):
+        ''' (Abstract) Setup the node based on values in the dialog. '''
         # code that sets the specific template variables goes here
         pass
 
     def _on_accepted(self):
-        # code that sets the specific template variables goes here
+        # Setup the model node before calling the callback
         self.setup_node()
-        # insert into project tree and tree view model
-        self._create_estimations_and_insert_node()
+        # Set correct type
+        self.model_node.set('type', 'model')
+
+        # Make sure all strings are str
+        for node in self.model_node.getiterator():
+            if node.text is not None:
+                node.text = str(node.text)
+        if self.callback:
+            self.callback(self.model_node)
+        self.close()
 
     def _on_rejected(self):
         self.close()

@@ -1,50 +1,40 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
-
-
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt
 from PyQt4.QtGui import QDialog
 
-
 from opus_gui.results_manager.views.ui_get_run_info import Ui_dlgGetRunInfo
-from opus_gui.results_manager.xml_helper_methods import get_child_values
 
 class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
-    def __init__(self, xml_controller, selected_index):
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        QDialog.__init__(self, xml_controller.mainwindow, flags)
+    def __init__(self, run_node, parent_widget = None):
+        QDialog.__init__(self, parent_widget)
         self.setupUi(self)
-        self.selected_index = selected_index
+        self.run_node = run_node
+
         #fill in existing values...
-        if self.selected_index is not None:
-            base_node = self.selected_index.internalPointer().node()
-            cur_vals = get_child_values(parent = base_node,
-                                        child_names = ['run_name','end_year',
-                                                       'start_year', 'cache_directory',
-                                                       'scenario_name', 'run_id'])
-            
-            self.lblRun_name.setText(cur_vals['run_name'])
-            self.lblYears_run.setText(
-                  QString('%s - %s'%(str(cur_vals['start_year']),str(cur_vals['end_year']))))
-            self.lblScenario_name.setText(cur_vals['scenario_name'])
-            self.lblCache_directory.setText(cur_vals['cache_directory'])
-            if 'run_id' in cur_vals:
-                self.lblRunId.setText(cur_vals['run_id'])
-            else:
-                self.lblRunId.setText(QString('not available'))
-            
-        
+        run_name = run_node.find('run_name').text
+        start_year = run_node.find('start_year').text
+        end_year = run_node.find('end_year').text
+        scenario_name = run_node.find('scenario_name').text
+        cache_directory = run_node.find('cache_directory').text
+        run_id = run_node.find('run_id').text if \
+            not run_node.find('run_id') is None else 'not available'
+
+        self.lblRun_name.setText(run_name)
+        self.lblYears_run.setText('%s - %s' % (start_year, end_year))
+        self.lblScenario_name.setText(scenario_name)
+        self.lblCache_directory.setText(cache_directory)
+        self.lblRunId.setText(run_id)
+
     def on_btnDone_released(self):
         self.close()

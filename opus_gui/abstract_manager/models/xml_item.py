@@ -11,107 +11,61 @@
 # other acknowledgments.
 #
 
-
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString
-
 class XmlItem(object):
     '''
-    Represents an Item in the Manager Tree models.
+    Item container for XML nodes to be used in XmlModel.
     '''
-    def __init__(self, domDocument, node, parentOpusDataItem):
-        self.domDocument = domDocument
-        self.domNode = node
-        self.parentOpusDataItem = parentOpusDataItem
-        self.childItems = []
-
-    def initAsRootItem(self):
+    def __init__(self, node, parent_item):
         '''
-        Add this Item to the tree and iterate through it's children and add any 
-        non-hidden child nodes
+        @param node (ElementTree.Element): node to represent
+        @param parent_node (ElementTree.Element): parent node
         '''
-        for x in xrange(0, self.domNode.childNodes().count(), 1):
-            child_node = self.domNode.childNodes().item(x).toElement()
-            # do not add nodes (or subtrees) that should be hidden
-            if not child_node.isNull() and \
-                child_node.attribute('hidden').toLower() != QString('true'):
-                child_item = XmlItem(self.domDocument, child_node, self)
-                self.childItems.append(child_item)
-                # descend into childs subtree
-                child_item.initAsRootItem()
+        assert node is not None
+        self.node = node                      # Connection to ElementTree
+        self.parent_item = parent_item        # Parent item
+        self.child_items = []                 # child items (only visible nodes)
 
-    def refresh(self):
-        ''' Re-adds all the children nodes of this Item '''
-        self.childItems = []
-        self.initAsRootItem()
-
-    def node(self):
-        ''' 
-        Get a reference to the internal domNode for this Item
-        @return: (QDomNode) A reference to the internal domNode
-         '''
-        return self.domNode
-
-    def parent(self):
-        ''' 
-        Get a reference to this item's parent.
-        @return: parent item (XmlItem) or None
+    def visible(self):
         '''
-        return self.parentOpusDataItem
-
-    def child(self, row):
+        Get the visible state for this item
+        @return: True if node is visible, False otherwise
         '''
-        Get a reference to the item at a given row
-        @param: row (int) which item row
-        @return: the item (XmlItem) at the row or None
-        '''
-        try:
-            return self.childItems[row]
-        except IndexError:
-            return None
-#        tryToFind = i+1
-#        foundSoFar = 0
-#        for x in xrange(0, self.domNode.childNodes().count(), 1):
-#            current = self.domNode.childNodes().item(x)
-#            if current.isElement() and not \
-#                current.toElement().attribute('hidden').toLower() == QString('true'):
-#                # We found one
-#                foundSoFar = foundSoFar + 1
-#            if foundSoFar == tryToFind:
-#                # We have the one we are looking for
-#                childNode = self.domNode.childNodes().item(x)
-#                childItem = XmlItem(self.domDocument, childNode, i , self)
-#                self.childItems.append(childItem)
-#                return childItem
+        return self.node.get('hidden').lower() == 'true'
 
+    def is_inherited(self):
+        '''
+        Get the inheritance state for this item
+        @return: True if node is inherited, False otherwise
+        '''
+        return self.node.get('inherited') is not None
 
     def row(self):
-        ''' 
-        Get the row number for this Item.
-        @return: (int) row number of this Item.
         '''
-        if self.parentOpusDataItem:
-            try:
-                index = self.parentOpusDataItem.childItems.index(self)
-            except:
-                index = 0
-            return index
-        else:
+        Get the which row this item is in
+        @return: row number (int)
+        '''
+        if self.parent_item is None or not self in self.parent_item.child_items:
             return 0
+        return self.parent_item.child_items.index(self)
 
-    def numChildren(self):
-        '''
-        Get the number of child nodes for this Item.
-        @return: Number of child nodes (int)
-        '''
-        return len(self.childItems)
+    def rebuild(self):
+        ''' Refreshes this XmlItem's list of child_items. '''
+        self.child_items = [XmlItem(node, self) for node in self.node
+                            if not node.get('hidden') == 'True']
+        map(lambda x: x.rebuild(), self.child_items)
 
-    def lastChild(self):
+    def child_item(self, row):
         '''
-        Get a reference to the child in the last row.
-        @return The last child item (XmlItem) or None
+        Get a reference to the child item in a given row.
+        @param row (int): row to get child item from
+        @return: the item (XmlItem) at given row or None
         '''
-        if len(self.childItems) > 0:
-            return self.childItems[-1]
-        else:
+        try:
+            return self.child_items[row]
+        except IndexError, ex:
             return None
+
+    def suicide(self):
+        ''' Remove the item from it's parent and the node from the XML '''
+        self.parent_item.child_items.remove(self)
+        self.parent_item.node.remove(self.node)

@@ -13,34 +13,34 @@
 #
 
 from PyQt4.QtCore import QVariant, Qt
-from PyQt4.QtGui import QColor, QIcon
+from PyQt4.QtGui import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 
 class XmlModel_Scenarios(XmlModel):
 
-    def __init__(self, parentTree, document, mainwindow, configFile, xmlType,
-                 editable, addIcons=True):
-        XmlModel.__init__(self, parentTree, document, mainwindow, configFile,
-                          xmlType, editable, addIcons)
+    def __init__(self, model_root_node, project = None, parent_widget = None):
+        ''' See XmlModel.__init__ for documentation '''
+        XmlModel.__init__(self, model_root_node, project, parent_widget)
 
     def data(self, index, role):
-        # override the data method to enable custom icons for missing models
+        ''' PyQt API Method -- See the PyQt documentation for a description '''
 
+        # Handle special drawing of missing models
         item = index.internalPointer()
-        if not hasattr(item, 'is_missing_model') or \
-            item.is_missing_model == False:
-            # we don't need special handling if there's no missing model
+        if not hasattr(item, 'is_missing_model') or not item.is_missing_model:
+            # Not a missing model -- use default data handler
             return XmlModel.data(self, index, role)
 
-        # Override display for missing models
+        # Colorize item
         if role == Qt.ForegroundRole and index.column() == 1:
             return QVariant(QColor(Qt.red))
+        # Give it a special icon
         elif role == Qt.DecorationRole and index.column() == 0:
             return QVariant(self.missingModelIcon)
+        # Add a small information string next to it's checkbox
         elif role == Qt.DisplayRole and index.column() == 1:
-            # add (missing model) next to check box
-            return QVariant("(missing model)")
-        
-        # fall back on default
+            return QVariant("(cannot find model)")
+
+        # Other data properties are handled by the default data() method
         return XmlModel.data(self, index, role)

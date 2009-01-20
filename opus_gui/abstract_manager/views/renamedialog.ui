@@ -1,0 +1,50 @@
+<ui version="4.0" >
+ <class>RenameDialog</class>
+ <widget class="QDialog" name="RenameDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>494</width>
+    <height>108</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="xmlBox" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QLabel" name="label_2" >
+        <property name="text" >
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leName" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>label</zorder>
+  <zorder>widget</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>xmlBox</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

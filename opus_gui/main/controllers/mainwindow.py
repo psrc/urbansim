@@ -11,42 +11,48 @@
 # other acknowledgments.
 #
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
-from PyQt4.QtCore import QFile, QSettings, QRegExp, QFileInfo
-from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QPixmap, QMessageBox
-from PyQt4.QtGui import QSplashScreen, QLabel, QWidget, QPushButton, QHBoxLayout
-from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
-from PyQt4.QtXml import QDomDocument
-from opus_gui.main.controllers.dialogs.message_box import MessageBox
+import time, os
 
-# UI specific includes
+from xml.etree.cElementTree import ElementTree
+from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
+from PyQt4.QtCore import QSettings, QRegExp, QFileInfo
+from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
+from PyQt4.QtGui import QLabel, QWidget, QPushButton, QHBoxLayout
+from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
+
+# Pull in all the instance handler functions before importing classes that might
+# use them.
+from opus_gui.main.controllers.instance_handlers import * #@UnusedWildImport
+
 from opus_gui.main.views.ui_mainwindow import Ui_MainWindow
 from opus_gui.main.controllers.dialogs.opusabout import UrbansimAboutGui
 from opus_gui.main.controllers.dialogs.opuspreferences import UrbansimPreferencesGui
 from opus_gui.main.controllers.dialogs.databasesettings import DatabaseSettingsEditGui
-from opus_gui.main.controllers.toolboxbase import ToolboxBase
-
-#from opus_gui.util.consolebase import ConsoleBase
-
-from opus_gui.scenarios_manager.scenario_manager_base import ScenariosManagerBase
-from opus_gui.results_manager.results_manager_base import ResultsManagerBase
-from opus_gui.models_manager.models_manager_base import ModelsManagerBase
-
-from opus_gui.results_manager.xml_helper_methods import get_child_values
+from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
+from opus_gui.main.controllers.opus_project import OpusProject
+from opus_gui.scenarios_manager.scenario_manager import ScenariosManager
+from opus_gui.results_manager.results_manager import ResultsManager
+from opus_gui.models_manager.models_manager import ModelsManager
+from opus_gui.general_manager.general_manager import GeneralManager
+from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
-
 from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
 
-# General system includes
-import time, tempfile, os
+try:
+    import opus_gui.util.editorbase
+except ImportError:
+    pass
 
-# Main window used for houseing the canvas, toolbars, and dialogs
 class OpusGui(QMainWindow, Ui_MainWindow):
+    '''
+    Main window used for housing the canvas, toolbars, and dialogs
+    '''
 
-    # This is the output override for the app to catch stdout and stderr and
-    # placing it in the log tab
     class Output:
+        '''
+        Output override for the app to catch stdout and stderr and
+        placing it in the log tab
+        '''
         def __init__( self, writefunc ):
             self.writefunc = writefunc
         def write( self, line ):
@@ -55,243 +61,168 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
-
-        # required by Qt4 to initialize the UI
         self.setupUi(self)
-        for i in range(2,-1,-1):
+
+        # Bind the application global instance for to this window
+        set_opusgui_instance(self)
+
+        # this is to remove the three tabs that are in the UI file
+        for i in range(2, -1, -1):
             self.tabWidget.removeTab(i)
 
         self.thread().setPriority(QThread.HighestPriority)
 
         # This is the output for stdout
         self.output = OpusGui.Output(self.writeOutput)
-        #sys.stdout, sys.stderr = self.output, self.output
 
-        self.toolboxBase = ToolboxBase(self)
+        self.splitter.setSizes([400, 500])
 
-        # Loading startup options from gui configuration xml file
-        startup_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('startup_options').item(0)
-        splash_pix = get_child_values(parent = startup_node,
-                                 child_names = ['splash_logo'])
-        # get image from ../views/Images/<splashimage>
-        images_path = os.path.split(os.path.abspath(__file__))[0] # path to file
-        # cd ../views/Images
-        images_path = images_path.split(os.sep)[:-1]  + ['views', 'Images']
-        images_path = os.sep.join(images_path) # merge back to path
-        splash_pix = os.path.join(images_path, str(splash_pix['splash_logo']))
-        self.splashPix = QPixmap(QString(splash_pix))
-        self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
-        self.splash = QSplashScreen(self.splashPixScaled)
-        self.splash.show()
+        # Initialize empty project
+        self.project = OpusProject(self)
 
-        # Loading main window title from gui configuration xml file
-        application_options_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('application_options').item(0)
-        application_title_dict = get_child_values(parent = application_options_node,
-                                             child_names = ['application_title'])
-        self.application_title = application_title_dict['application_title']
+        # Read database connection names
+        settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
+        db_con_file = os.path.join(settings_directory,
+                                   'database_server_configurations.xml')
+        db_config_node = ElementTree(file=db_con_file).getroot()
+        self.db_connection_names = [node.tag for node in db_config_node if
+                                    node.get('hidden') != "True"
+                                    # hack?
+                                    and node.tag != 'xml_version']
 
-        self.updateWindowTitle()
+        # Application default configuration
+        self.gui_config = OpusGuiConfiguration()
+        self.gui_config.load()
 
-        # Loading settings from gui configuration xml file regarding font sizes
-        try:
-            #font settings
-            font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+        # Show splash screen
+        self.gui_config.splash_screen.show()
 
-            self.menu_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['menu_font_size'])['menu_font_size'])
-            self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
-            self.general_text_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['general_text_font_size'])['general_text_font_size'])
+        # Bind actions
+        self._setupActions()
 
-
-        except:
-            #font settings
-            self.toolboxBase.reemit_reinit_default_gui_configuration_file()
-            font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-
-            self.menu_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['menu_font_size'])['menu_font_size'])
-            self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
-            self.general_text_font_size = int(get_child_values(parent = font_settings_node,
-                                              child_names = ['general_text_font_size'])['general_text_font_size'])
-
-        #loading settings from gui xml regarding previous project
-        try:
-            prev_proj_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
-            self.latest_project_file_name = QString(get_child_values(parent = prev_proj_node,
-                                              child_names = ['previous_project'])['previous_project'])
-            self.open_latest_project = "True" == str(get_child_values(parent = prev_proj_node,
-                                              child_names = ['open_latest_project_on_start'])['open_latest_project_on_start'])
-        except:
-            self.latest_project_file_name = ' '
-            self.open_latest_project = False
-            self.toolboxBase.reemit_reinit_default_gui_configuration_file()
-            self.updateFontSettingsNode()
-            self.saveGuiConfig()
-
-        self.splitter.setSizes([400,500])
-
-        self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
-        self.actionSave_Project_2.setShortcut(QString('Ctrl+S'))
-        self.actionSave_Project_As_2.setShortcut(QString('Ctrl+Shift+S'))
-        self.actionClose_Project.setShortcut(QString('Ctrl+W'))
-        self.actionEdit_all_variables.setShortcut(QString('Ctrl+V'))
-        self.actLaunchResultBrowser.setShortcut(QString('Ctrl+R'))
-        self.actionDatabaseSettings.setShortcut(QString('Ctrl+D'))
-        self.actionPreferences.setShortcut(QString('Ctrl+P'))
-
-        # Play with the project and config load/save
-        QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
-        QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
-        QObject.connect(self.actionClose_Project, SIGNAL("triggered()"), self.closeConfig)
-        QObject.connect(self.actionSave_Project_As_2, SIGNAL("triggered()"), self.saveConfigAs)
-        # Exit
-        QObject.connect(self.actionExit, SIGNAL("triggered()"), self.close)
-        # About
-        QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
-        # Preferences
-        QObject.connect(self.actionPreferences, SIGNAL("triggered()"), self.openPreferences)
-        # Database Settings
-        QObject.connect(self.actionDatabaseSettings, SIGNAL("triggered()"), self.openDatabaseSettings)
-
-        # Model System menus
-        QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
-        self.actionEdit_all_variables.setEnabled(False)
-        self.actLaunchResultBrowser.setEnabled(False)
-
-        # QGIS References are removed for the time being...
-        #Add map tab
-        #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
-
-        #Add editor tab
-#        QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
-        #Add python tab
-#        QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
-        #Add result browser tab
-        QObject.connect(self.actLaunchResultBrowser, SIGNAL("triggered()"), self.openResultBrowser)
-        #Add log tab
-        QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
-
-        self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
-
-        # QGIS References are removed for the time being...
-        #try:
-        #  import qgis.core
-        #  import map.mapbase
-        #  # Only load the map stuff if QGIS is loadable
-        #  self.mapStuff = map.mapbase.MapBase(self)
-        #except ImportError:
-        #  self.mapStuff = None
-
-        self.scenariosManagerBase = ScenariosManagerBase(self)
-        self.scenariosManagerBase.setGui(self)
-
-        self.resultsManagerBase = ResultsManagerBase(self)
-        self.resultsManagerBase.setGui(self)
-
-        self.modelsManagerBase = ModelsManagerBase(self)
-        self.modelsManagerBase.setGui(self)
+        # Manager collection -- initialized by openProject()
+        self.managers = {}
 
         try:
-            import opus_gui.util.editorbase
-            self.editorStatusLabel = QLabel(self)
-            self.editorStatusLabel.setAlignment(Qt.AlignCenter)
-            self.editorStatusLabel.setObjectName("editorStatusLabel")
-            self.editorStatusLabel.setText(QString(" - No files currently loaded..."))
-            self.tab_editorView.layout().addWidget(self.editorStatusLabel)
-            self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
-            self.tab_editorView.layout().addWidget(self.editorStuff)
-            # Some buttons to control open,save,saveas,close
-            # First the container and layout
-            self.editorButtonWidget = QWidget(self)
-            self.editorButtonWidgetLayout = QHBoxLayout(self.editorButtonWidget)
-            # Make it center justified
+            self._setupEditor()
+        except Exception:
+            print 'OPUSGUI-INIT: Could not setup PythonEditor.'
 
-            # Now we add the buttons
-            # Open File
-            self.editorOpenFileButton = QPushButton(self.editorButtonWidget)
-            self.editorOpenFileButton.setObjectName("editorOpenFileButton")
-            self.editorOpenFileButton.setText(QString("Open File"))
-            QObject.connect(self.editorOpenFileButton, SIGNAL("released()"),
-                            self.editorOpenFileButton_released)
-            self.editorButtonWidgetLayout.addWidget(self.editorOpenFileButton)
-            # Save File
-            self.editorSaveFileButton = QPushButton(self.editorButtonWidget)
-            self.editorSaveFileButton.setObjectName("editorSaveFileButton")
-            self.editorSaveFileButton.setText(QString("Save File"))
-            QObject.connect(self.editorSaveFileButton, SIGNAL("released()"),
-                            self.editorSaveFileButton_released)
-            self.editorButtonWidgetLayout.addWidget(self.editorSaveFileButton)
-            # Save As File
-            self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
-            self.editorSaveAsFileButton.setObjectName("editorSaveAsFileButton")
-            self.editorSaveAsFileButton.setText(QString("Save File As"))
-            # Gray out for now until implemented
-            self.editorSaveAsFileButton.setDisabled(True)
-            QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
-                            self.editorSaveAsFileButton_released)
-            self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
-            self.tab_editorView.layout().addWidget(self.editorButtonWidget)
-            QObject.connect(self.editorStuff, SIGNAL("textChanged()"),
-                            self.editorStuffTextChanged)
-            self.editorDirty = False
-
-        except ImportError:
-            self.editorStuff = None
-
+        # Delay before hiding the splash screen
         time.sleep(1)
-        self.splash.hide()
-
-        # This stuff adds the 'X' button for closing tabs
-        self.actionCloseCurrentTab = QAction(self)
-        self.actionCloseCurrentTab.setIcon(QIcon(":/Images/Images/cross.png"))
-        self.actionCloseCurrentTab.setObjectName("actionCloseCurrentTab")
-        self.tabCornerWidget = QToolButton()
-        self.tabCornerWidget.setDefaultAction(self.actionCloseCurrentTab)
-        self.tabCornerWidget.setWhatsThis(QString("Close Current Tab"))
-        self.tabCornerWidget.setToolTip(QString("Close Current Tab"))
-        self.tabWidget.setCornerWidget(self.tabCornerWidget)
-        QObject.connect(self.actionCloseCurrentTab,
-                        SIGNAL("triggered()"), self.closeCurrentTab)
+        self.gui_config.splash_screen.hide()
 
         # Restoring application geometry from last shut down
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
-        self.changeFontSize()
+        self.updateFontSize()
         self.setFocus()
 
         # Variable library
         self.all_variables = None
 
-        if os.path.exists(self.latest_project_file_name) and self.open_latest_project:
-            self.openConfig(self.latest_project_file_name)
+        # Load the latest project file if that flag is set in GUI configuration
+        if self.gui_config.load_latest_on_start:
+            self.openProject(self.gui_config.latest_project_filename or '')
 
         ###T: removing these until they serve a purpose
-        #self.menuUtilities.removeAction(self.actionPython_View)
+        self.menuUtilities.removeAction(self.actPythonView)
         #self.menuUtilities.removeAction(self.actionLog_View)
-        #self.menuUtilities.removeAction(self.actionEditor_View)
+        self.menuUtilities.removeAction(self.actEditorView)
 
+        self.updateWindowTitle()
 
-    def getDbConnectionNames(self):
-        '''
-        Fetch a list of the names of database connections available in the
-        database_server_configurations.xml document.
-        @return: ([String]) list of database connection names.
-        '''
-        settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
-        database_server_configuration_file = os.path.join(settings_directory, 'database_server_configurations.xml')
-        configFile = QFile(database_server_configuration_file)
-        doc = QDomDocument()
-        doc.setContent(configFile)
+    def _setupActions(self):
+        ''' Bind actions to callbacks and setup keyboard shortcuts '''
 
-        list_of_db_connections = []
-        for i in range(0, doc.documentElement().childNodes().length()):
-            db_connection_name = doc.documentElement().childNodes().item(i).nodeName()
-            if db_connection_name != '#comment':
-                list_of_db_connections.append(str(db_connection_name))
-        return list_of_db_connections
+        # Keyboard shortcuts
+        self.actOpenProject.setShortcut('Ctrl+O')
+        self.actSaveProject.setShortcut('Ctrl+S')
+        self.actSaveProjectAs.setShortcut('Ctrl+Shift+S')
+        self.actCloseProject.setShortcut('Ctrl+W')
+        self.actVariableLibrary.setShortcut('Ctrl+V')
+        self.actLaunchResultBrowser.setShortcut('Ctrl+R')
+        self.actDatabaseSettings.setShortcut('Ctrl+D')
+        self.actPreferences.setShortcut('Ctrl+P')
+
+        # Connect trigger slots using a little quickie function
+        def connect(action, callback):
+            QObject.connect(action, SIGNAL("triggered()"), callback)
+        connect(self.actOpenProject, self.openProject)
+        connect(self.actSaveProject, self.saveProject)
+        connect(self.actSaveProjectAs, self.saveProjectAs)
+        connect(self.actCloseProject, self.closeProject)
+        connect(self.actExit, self.close)
+        connect(self.actAbout, self.openAbout)
+        connect(self.actPreferences, self.openPreferences)
+        connect(self.actDatabaseSettings, self.openDatabaseSettings)
+        connect(self.actVariableLibrary, self.editAllVariables)
+        connect(self.actEditorView, self.openEditorTab)
+        connect(self.actPythonView, self.openPythonTab)
+        connect(self.actLogView, self.openLogTab)
+        connect(self.actLaunchResultBrowser, self.openResultBrowser)
+
+        # Create a 'Close tab' widget
+        action = QAction(self)
+        action.setIcon(QIcon(':/Images/Images/cross.png'))
+        connect(action, self.closeCurrentTab)
+        widget = QToolButton(self)
+        widget.setDefaultAction(action)
+        widget.setWhatsThis('Close tab')
+        widget.setToolTip('Close tab')
+        self.tabWidget.setCornerWidget(widget)
+
+        # GIS -- disabled for time being
+        # connect(self.actionMap_View, self.openMapTab)
+
+        # Disable some options by default
+        self.actVariableLibrary.setEnabled(False)
+        self.actLaunchResultBrowser.setEnabled(False)
+
+    def _setupEditor(self):
+        ''' Setup the editor widget '''
+        # TODO Move this to it's own class?
+        self.editorStatusLabel = QLabel(self)
+        self.editorStatusLabel.setAlignment(Qt.AlignCenter)
+        self.editorStatusLabel.setObjectName("editorStatusLabel")
+        self.editorStatusLabel.setText(QString(" - No files currently loaded..."))
+        self.tab_editorView.layout().addWidget(self.editorStatusLabel)
+        self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
+        self.tab_editorView.layout().addWidget(self.editorStuff)
+        # Some buttons to control open,save,saveas,close
+        # First the container and layout
+        self.editorButtonWidget = QWidget(self)
+        self.editorButtonWidgetLayout = QHBoxLayout(self.editorButtonWidget)
+        # Make it center justified
+
+        # Now we add the buttons
+        # Open File
+        self.editorOpenFileButton = QPushButton(self.editorButtonWidget)
+        self.editorOpenFileButton.setObjectName("editorOpenFileButton")
+        self.editorOpenFileButton.setText(QString("Open File"))
+        QObject.connect(self.editorOpenFileButton, SIGNAL("released()"),
+                        self.editorOpenFileButton_released)
+        self.editorButtonWidgetLayout.addWidget(self.editorOpenFileButton)
+        # Save File
+        self.editorSaveFileButton = QPushButton(self.editorButtonWidget)
+        self.editorSaveFileButton.setObjectName("editorSaveFileButton")
+        self.editorSaveFileButton.setText(QString("Save File"))
+        QObject.connect(self.editorSaveFileButton, SIGNAL("released()"),
+                        self.editorSaveFileButton_released)
+        self.editorButtonWidgetLayout.addWidget(self.editorSaveFileButton)
+        # Save As File
+        self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
+        self.editorSaveAsFileButton.setObjectName("editorSaveAsFileButton")
+        self.editorSaveAsFileButton.setText(QString("Save File As"))
+        # Gray out for now until implemented
+        self.editorSaveAsFileButton.setDisabled(True)
+        QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
+                        self.editorSaveAsFileButton_released)
+        self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
+        self.tab_editorView.layout().addWidget(self.editorButtonWidget)
+        QObject.connect(self.editorStuff, SIGNAL("textChanged()"),
+                        self.editorStuffTextChanged)
+        self.editorDirty = False
 
     def writeOutput(self, result):
         ''' Write non empty results to logView '''
@@ -302,7 +233,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def editAllVariables(self):
         ''' Open the variable library GUI '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        self.all_variables = AllVariablesEditGui(self,flags)
+        self.all_variables = AllVariablesEditGui(self, flags)
 
         self.all_variables.setModal(True)
         self.all_variables.show()
@@ -311,60 +242,53 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         ''' Close the currently showing tab '''
         widget = self.tabWidget.currentWidget()
 
-        if widget in self.resultsManagerBase.guiElements:
-            self.resultsManagerBase.removeGuiElement(guiElement = widget)
-        elif widget in self.modelsManagerBase.guiElements:
-            self.resultsManagerBase.removeGuiElement(guiElement = widget)
-        elif widget in self.scenariosManagerBase.guiElements:
-            self.resultsManagerBase.removeGuiElement(guiElement = widget)
+        # Check which manager the tab belongs to and ask it to close the tab
+        # TODO maybe implement a generic tab element that knows which parent
+        # it belongs to?
+        for manager in self.managers.values():
+            if widget in manager.tab_widgets:
+                manager.close_tab(widget)
+                break
         else:
+            # Finished loop w/o finding the parent of the tab so close manually
             self.tabWidget.removeTab(self.tabWidget.currentIndex())
-        try:
-            widget.hide()
-        except:
-            pass
-
 
     def openMapTab(self):
         ''' Open up a tab containing a map view '''
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
-            self.changeFontSize()
-            self.tabWidget.insertTab(0,self.tab_mapView,
-                                     QIcon(":/Images/Images/map.png"),"Map View")
+            self.updateFontSize()
+            map_icon = QIcon(":/Images/Images/map.png")
+            self.tabWidget.insertTab(0, self.tab_mapView, map_icon, "Map View")
             self.tabWidget.setCurrentWidget(self.tab_mapView)
-
 
     def openPythonTab(self):
         ''' Open an interactive Python console '''
         if self.tabWidget.indexOf(self.tab_pythonView) == -1:
             self.tab_pythonView.show()
-            self.changeFontSize()
+            self.updateFontSize()
             self.tabWidget.insertTab(0,self.tab_pythonView,
                                      QIcon(":/Images/Images/python_type.png"),"Python Console")
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
-
     def openResultBrowser(self):
         ''' Open a Results browser '''
-        self.resultsManagerBase.add_result_browser()
-
+        self.managers['results_manager'].add_result_browser()
 
     def openEditorTab(self):
         ''' Open a Python file editor '''
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
-            self.changeFontSize()
+            self.updateFontSize()
             self.tabWidget.insertTab(0,self.tab_editorView,
                                      QIcon(":/Images/Images/table_lightning.png"),"Editor View")
             self.tabWidget.setCurrentWidget(self.tab_editorView)
-
 
     def openLogTab(self):
         ''' Open a log viewer '''
         if self.tabWidget.indexOf(self.tab_logView) == -1:
             self.tab_logView.show()
-            self.changeFontSize()
+            self.updateFontSize()
             self.tabWidget.insertTab(0,self.tab_logView,
                                      QIcon(":/Images/Images/table.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
@@ -375,15 +299,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd = UrbansimAboutGui(self,flags)
         wnd.setModal(True)
         wnd.show()
-        self.changeFontSize()
+        self.updateFontSize()
 
     def openPreferences(self):
         ''' Open the preferences window '''
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        wnd = UrbansimPreferencesGui(self, flags)
+        wnd = UrbansimPreferencesGui(self)
         wnd.setModal(True)
         wnd.show()
-        self.changeFontSize()
+        self.updateFontSize()
 
     def openDatabaseSettings(self):
         ''' Open the database settings window '''
@@ -391,117 +315,113 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #wnd = UrbansimDatabaseSettingsGUI(self, flags)
         # Commented out the previous line and added the following line
         # to test out the APR added database connection editing GUI (082908)
-        wnd = DatabaseSettingsEditGui(self, flags)
+        wnd = DatabaseSettingsEditGui(self)
         wnd.setModal(True)
         wnd.setWindowTitle('Database Server Connections')
         wnd.show()
-        self.changeFontSize()
+        self.updateFontSize()
 
     def updateWindowTitle(self):
         '''update the window title to reflect the state of the project'''
-        # assemble a title consisting of file name and project name
-        app_name = self.application_title
-        proj_name = self.toolboxBase.project_name
-        file_name  = self.toolboxBase.xml_file
-        dirty_flag = self.toolboxBase.projectIsDirty()
+        # assemble a title consisting of application title (at),
+        # project file name (pfn) and project name (pn)
+        at = self.gui_config.application_title
+        pn = self.project.name
+        pfn = (self.project.filename or '').split(os.sep)[-1]
 
-        if file_name is not None:
-            file_name = os.path.basename(str(file_name))
-        title = app_name # default to only app name
-        if proj_name: # proj_name is None when no project is loaded
-            if dirty_flag:
-                title = '%s - (*) %s - [file: %s]' %(app_name, proj_name, file_name)
+        if self.project.is_open():
+            if self.project.dirty:
+                title = '%s - (*) %s - [file: %s]' % (at, pn, pfn)
             else:
-                title = '%s - %s - [file: %s]' %(app_name, proj_name, file_name)
-        self.setWindowTitle(title)
-
-    def openConfig(self, config=None):
-        ''' Open a configuration file.
-        @param config: (String) filename of configuration to open. 
-        If config is None, the user is presented with a dialog to select which 
-        file to open.
-        '''
-        # optionally save the project before opening
-        if self.saveOrDiscardChanges() == False:
-            return # user cancelled operation
-
-        # open the provided configuration file if one is given, otherwise
-        # ask the user for a file to open
-        loaded_xml_success = False
-        if config:
-            loaded_xml_success = self.toolboxBase.openXMLTree(config)
+                title = '%s - %s - [file: %s]' % (at, pn, pfn)
         else:
-            start_dir = ''
-            opus_home = os.environ.get('OPUS_HOME')
-            if opus_home:
-                start_dir_test = os.path.join(opus_home, 'project_configs')
-                if start_dir_test:
-                    start_dir = start_dir_test
-            configDialog = QFileDialog()
-            filter_str = QString("*.xml")
-            fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                              QString(start_dir), filter_str)
-            if len(fd) == 0:
-                return
-            config = QString(fd)
-            fileNameInfo = QFileInfo(QString(fd))
-            fileNameBaseName = fileNameInfo.completeBaseName()
-            # Open the file and add to the Run tab...
-            loaded_xml_success = self.toolboxBase.openXMLTree(config)
+            title = at or '' # Show just application title
 
-        # stop setting up the project if the xml file did not load
-        if not loaded_xml_success == True:
+        self.setWindowTitle(QString(title))
+
+    def openProject(self, project_filename = None):
+        '''
+        Open and initialize a project.
+        If the project_filename parameter is None, the user is asked for a file
+        @param project_filename (String): absolute path to project file to load
+        '''
+        # Ask to save any changes before openeing a new project
+        if self.okToCloseProject() == False: return
+
+        # Close the currently opened project
+        self.closeProject()
+
+        # Ask for filename if one was not provided
+        if project_filename is None:
+            start_dir = ''
+            project_configs = os.path.join((os.environ.get('OPUS_HOME') or '.'),
+                                           'project_configs')
+            if os.path.exists(project_configs):
+                start_dir = project_configs
+
+            filter_str = QString("*.xml")
+            msg = "Select project file to load"
+            project_filename = QFileDialog().getOpenFileName(self, msg,
+                                                     start_dir, filter_str)
+            if not project_filename:
+                return # Cancel
+
+        loaded_ok, msg = self.project.open(project_filename)
+        if not loaded_ok:
+            QMessageBox.warning(self, 'Failed to load project', msg)
             return
 
         # update latest project config
-        self.latest_project_file_name = config
-        self.updateProjectHistoryNode()
-        self.saveGuiConfig()
+        self.gui_config.latest_project_filename = self.project.filename
+        self.gui_config.save()
 
-        self.resultsManagerBase.scanForRuns()
+        # Initialize managers for the different tabs
+
+        self.managers['general'] = \
+        GeneralManager(self.generalmanager_page, self.tabWidget, self.project)
+
+        self.managers['model_manager'] = \
+        ModelsManager(self.modelmanager_page, self.tabWidget, self.project)
+
+        self.managers['scenario_manager'] = \
+        ScenariosManager(self.runmanager_page, self.tabWidget, self.project)
+
+        self.managers['results_manager'] = \
+        ResultsManager(self.resultsmanager_page, self.tabWidget, self.project)
+
+        # DataManager is a little special since it has two "base_widgets"
+        self.managers['data_manager'] = \
+        DataManager(self.datamanager_xmlconfig, # XmlController
+                    self.datamanager_dirview, # FileController
+                    self.tabWidget, self.project)
+
+        self.managers['results_manager'].scanForRuns()
+
+        # Enable actions on opened project
         self.actLaunchResultBrowser.setEnabled(True)
-        self.actionEdit_all_variables.setEnabled(True)
+        self.actVariableLibrary.setEnabled(True)
 
-        self.scenariosManagerBase.removeAllElements()
-        self.resultsManagerBase.removeAllElements()
-        self.modelsManagerBase.removeAllElements()
-
-        if self.all_variables is not None:
-            self.all_variables.close()
-
-        self.actionClose_Project.setEnabled(True)
-        self.actionSave_Project_2.setEnabled(True)
-        self.actionSave_Project_As_2.setEnabled(True)
-        self.changeFontSize()
+        self.actCloseProject.setEnabled(True)
+        self.actSaveProject.setEnabled(True)
+        self.actSaveProjectAs.setEnabled(True)
+        self.updateFontSize()
 
         self.updateWindowTitle()
 
-
-    def saveConfig(self):
+    def saveProject(self, filename = None):
         '''
         Save the configuration file to disk.
+        @param filename (String): filename to save to
         @return: True if save was successful, False otherwise
         '''
-        try:
-            domDocument = self.toolboxBase.doc
-            opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
-            indentSize = 2
-
-            data = str(domDocument.toString(indentSize))
-
-            opus_core_xml_configuration.update(data)
-            opus_core_xml_configuration.save()
-            self.toolboxBase.markProjectAsClean()
-            return True
-        except:
-            errorMessage = formatExceptionInfo(custom_message = '')
-            MessageBox.error(mainwindow = self.mainwindow,
-                              text = "Unexpected error saving config.",
-                              detailed_text = errorMessage)
+        ok_flag, msg = self.project.save(filename)
+        if not ok_flag:
+            QMessageBox.critical(self, 'Could not save project', msg)
             return False
+        return True
 
-    def saveConfigAs(self):
-        ''' Save the configuration under a different name '''
+    def saveProjectAs(self):
+        ''' Save the project configuration under a different name '''
         try:
             # get the location for the new config file on disk
             start_dir = os.path.join(os.environ['OPUS_HOME'], 'project_configs')
@@ -510,105 +430,83 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             fd = configDialog.getSaveFileName(self,QString("Save As..."),
                                               QString(start_dir), filter_str)
             # Check for cancel
-            if len(fd) == 0:
+            if not fd:
                 return
-            fileName = QString(fd)
+
+            filename = QString(fd)
             # append xml extension if no extension was given
-            if not fileName.endsWith('.xml') and len(fileName.split('.')) == 1:
-                fileName = fileName + '.xml'
-            domDocument = self.toolboxBase.doc
-            opus_core_xml_configuration = self.toolboxBase.opus_core_xml_configuration
-            indentSize = 2
-            opus_core_xml_configuration.update(str(domDocument.toString(indentSize)))
-            opus_core_xml_configuration.save_as(str(fileName))
-            # mark all trees as clean
-            self.toolboxBase.markProjectAsClean()
-            # reopen the file that was just saved to make it the active one
-            self.openConfig(fileName)
-        except:
-            errorMessage = formatExceptionInfo(custom_message = '')
-            MessageBox.error(mainwindow = self.mainwindow,
-                              text = "Unexpected error saving config.",
-                              detailed_text = errorMessage)
+            if not filename.endsWith('.xml') and len(filename.split('.')) == 1:
+                filename = filename + '.xml'
 
-    def saveOrDiscardChanges(self):
+            if not self.saveProject(filename):
+                return
+
+            # hack: open the project right after save to properly change the
+            # 'active project' related parameters
+            self.openProject(filename)
+
+        except:
+            errorMessage = formatExceptionInfo(custom_message = \
+                                               'Unexpected error saving config')
+            QMessageBox.warning(self, 'Warning', errorMessage)
+
+    def okToCloseProject(self):
         '''
-        Prompts the user to save any changes to the project.
-        Saves the project if the user selects 'Save'.
-        Marks the project as clean if user selects 'Discard'
-        @return: True if the project is saved or discarded, False if cancelled.
+        Called before an operation that causes this project to close.
+        If the project contains changes; ask if the user wants to save them,
+        discard them or cancel the operation.
+        @return: True if the user wishes to proceed with the closing operation.
         '''
-        if self.toolboxBase.projectIsDirty():
-            doSave = QMessageBox.Discard
-            question = ('Current project contains changes.\n'
-                        'Do you want to save or discard those changes?')
-            buttons = (QMessageBox.Discard,QMessageBox.Save, QMessageBox.Cancel)
-            doSave = QMessageBox.question(self, "Warning", question, *buttons)
-            if doSave == QMessageBox.Save:
-                return self.saveConfig() # cancels on failed save
-            elif doSave == QMessageBox.Discard:
-                self.toolboxBase.markProjectAsClean()
-                return True
-            else:
+        if not self.project.dirty: return True
+
+        question = ('Current project contains changes.\n'
+                    'Do you want to save or discard those changes?')
+        buttons = (QMessageBox.Discard, QMessageBox.Save, QMessageBox.Cancel)
+        doSave = QMessageBox.question(self, "Warning", question, *buttons)
+        if doSave == QMessageBox.Save:
+            ok_flag, msg = self.project.save() # cancels on failed save
+            if not ok_flag:
+                QMessageBox.critical(self, "Could not save project", str(msg))
                 return False
+            return True
+        elif doSave == QMessageBox.Discard:
+            self.project.dirt = False
+            return True
+        else:
+            return False
 
-
-    def closeConfig(self):
+    def closeProject(self):
         ''' Closes the current project. '''
-        try:
-            configFile = self.toolboxBase.runManagerTree.model.configFile
-        except:
-            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
-            MessageBox.error(mainwindow = self.mainwindow,
-                              text = "Unexpected error closing config.",
-                              detailed_text = errorMessage)
+        if not self.okToCloseProject(): return
 
+        for manager in self.managers.values():
+            manager.close()
 
-        # Check to see if there are changes to the current project, if a project is open
-        if self.saveOrDiscardChanges() == False:
-            return # user cancelled
+        self.project.close()
 
-        self.toolboxBase.close_controllers()
-
-#        self.setWindowTitle(self.application_title)
-        self.actionEdit_all_variables.setEnabled(False)
+        self.actVariableLibrary.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
 
-        os.environ['OPUSPROJECTNAME'] = 'misc'
-        self.scenariosManagerBase.removeAllElements()
-        self.resultsManagerBase.removeAllElements()
-        self.modelsManagerBase.removeAllElements()
-
-        self.actionClose_Project.setEnabled(False)
-        self.actionSave_Project_2.setEnabled(False)
-        self.actionSave_Project_As_2.setEnabled(False)
-
-        self.toolboxBase.project_name = None
-        self.updateWindowTitle()
+        self.actCloseProject.setEnabled(False)
+        self.actSaveProject.setEnabled(False)
+        self.actSaveProjectAs.setEnabled(False)
 
     def closeEvent(self, event):
-        ''' 
+        '''
         Callback for close window event.
         Give the user a change to save any project changes or continue working.
         '''
-        # Check to see if there are changes to the current project
-        if self.toolboxBase.projectIsDirty():
-            doSave = QMessageBox.Discard
-            question = ('Do you want to save your changes before quitting?')
-            buttons = (QMessageBox.Cancel, QMessageBox.Discard,
-                       QMessageBox.Save)
-            doSave = QMessageBox.question(self, "Unsaved changes",
-                                          question,
-                                          *buttons)
-            if doSave == QMessageBox.Save:
-                self.saveConfig()
-            elif doSave == QMessageBox.Cancel:
-                event.ignore() # don't close window
-                return
+        if not self.okToCloseProject():
+            event.ignore()
+            return
 
-        # Save application geometry on shut down
+        # Save application geometry and gui configuration on shut down
+        self.gui_config.save()
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))
+
+# TODO Move this into a separate class
+# ------------------------------------------------------------------------------
 
     def editorOpenFileButton_released(self):
         ''' Callback for open file button '''
@@ -682,9 +580,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.editorDirty = True
         self.editorSaveFileButton.setEnabled(True)
 
+# ------------------------------------------------------------------------------
 
-    def changeFontSize(self):
+    def updateFontSize(self):
         ''' Update various widgets with the font size from GUI settings '''
+        # TODO -- this could use some clean up
         #menubar...
         menuFontSizeFamily = self.menubar.findChildren(QMenu)
         menuFontSizeFamily.append(self.menubar)
@@ -722,124 +622,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             except:
                 return
 
-        map(lambda qw: fontSizeChange(qw,self.general_text_font_size),
+        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['general']),
             widgetChildren)
-        map(lambda qw: fontSizeChange(qw,self.menu_font_size),
+        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['menu']),
             menuFontSizeFamily)
-        map(lambda qw: fontSizeChange(qw,self.main_tabs_font_size),
+        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
             menuActionFontSizeFamily)
-        map(lambda qw: fontSizeChange(qw,self.main_tabs_font_size),
+        map(lambda qw: fontSizeChange(qw,self.gui_config.fonts['tabs']),
             mainTabsFontSizeFamily)
         self.updateGeometry()
         self.update()
-
-
-    def getMenuFontSize(self):
-        ''' 
-        Get the font size used in menus.
-        @return: (int) Font size in points
-        '''
-        return self.menu_font_size
-
-    def setMenuFontSize(self, pointSize):
-        ''' 
-        Set the menu font size.
-        @param: pointSize (int) Font size (in points) to use
-        '''
-        self.menu_font_size = pointSize
-
-    def getMainTabsFontSize(self):
-        ''' 
-        Get the font size used in tab titles.
-        @return: (int) Font size in points
-        '''
-        return self.main_tabs_font_size
-
-    def setMainTabsFontSize(self, pointSize):
-        self.main_tabs_font_size = pointSize
-
-    def getGeneralTextFontSize(self):
-        ''' 
-        Get the font size used for various text elements.
-        @return: (int) Font size in points
-        '''
-        return self.general_text_font_size
-
-    def setGeneralTextFontSize(self, pointSize):
-        self.general_text_font_size = pointSize
-
-    def getOpenLatestProject(self):
-        '''
-        Get the GUI option "Open latest project on load"
-        @return: True if the latest project should be loaded, False otherwise
-        '''
-        return self.open_latest_project
-
-    def setOpenLatestProject(self, open_latest_project):
-        '''
-        Set GUI option "Open latest project on load"
-        @param: open_latest_project (bool) setting value
-        '''
-        self.open_latest_project = open_latest_project
-
-
-    def updateFontSettingsNode(self):
-        ''' Update font settings in the GUI configuration file '''
-        
-        #get the font settings node from xml
-        font_settings_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-        nodesToSave = {"menu_font_size":self.menu_font_size,
-                       "main_tabs_font_size":self.main_tabs_font_size,
-                       "general_text_font_size":self.general_text_font_size}
-        #go through the children of the font settings node and set the text size correctly
-        node = font_settings_node.firstChild()
-        while not node.isNull():
-            if node.isElement() and str(node.nodeName()) in nodesToSave:
-
-                #we have a match for size_adjust, now we need to find the text node
-                #in its children and set it to the value of font_size_adjust
-                childElement = node.toElement()
-                if childElement.hasChildNodes():
-                    children = childElement.childNodes()
-                    for x in xrange(0,children.count(),1):
-                        if children.item(x).isText():
-                            textNode = children.item(x).toText()
-                            # Finally set the text node value
-                            textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
-
-            node = node.nextSibling()
-
-    def updateProjectHistoryNode(self):
-        ''' Update project history list in the GUI configuration file '''
-        #get the project history node from xml
-        proj_hist_node = self.toolboxBase.gui_configuration_doc.elementsByTagName('project_history').item(0)
-        nodesToSave = {"previous_project":str(self.latest_project_file_name),
-                       "":str(self.open_latest_project)}
-        #go through the children of the project history node and set the value accordingly
-        node = proj_hist_node.firstChild()
-        while not node.isNull():
-            if node.isElement() and str(node.nodeName()) in nodesToSave:
-                element = node.toElement()
-                hasTextNode = False
-                if element.hasChildNodes():
-                    child = element.firstChild()
-                    while not child.isNull():
-                        if child.isText():
-                            hasTextNode = True
-                            textNode = child.toText()
-                            # Finally set the text node value
-                            textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
-                        child = child.nextSibling()
-                if hasTextNode == False:
-                    newText = self.toolboxBase.gui_configuration_doc.createTextNode(\
-                                    QString(str(nodesToSave[str(node.nodeName())])))
-                    element.appendChild(newText)
-            node = node.nextSibling()
-
-    def saveGuiConfig(self):
-        ''' Save the GUI configuration file '''
-        try:
-            self.toolboxBase.save_gui_configuration_file()
-        except:
-            errorInfo = formatExceptionInfo(custom_message = 'Unexpected error saving the gui config')
-            self.errorCallback(errorInfo)

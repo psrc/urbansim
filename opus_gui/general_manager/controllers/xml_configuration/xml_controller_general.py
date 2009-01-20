@@ -1,117 +1,42 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
-# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and  
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
+from PyQt4.QtGui import QMenu, QCursor
 
-
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QObject, SIGNAL
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor
-
-from opus_gui.abstract_manager.controllers.xml_configuration.clonenode import CloneNodeGui
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
+from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
 
 class XmlController_General(XmlController):
-    def __init__(self, toolboxbase, parentWidget): 
-        XmlController.__init__(self, toolboxbase = toolboxbase, xml_type = 'general', parentWidget = parentWidget) 
-
-        self.currentColumn = None
-        self.currentIndex = None
-
-        self.editExpressionLibIcon = QIcon(":/Images/Images/book_edit.png")
-        self.removeIcon = QIcon(":/Images/Images/delete.png")
-        self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-        self.cloneIcon = QIcon(":/Images/Images/application_double.png")
-        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
-
-        self.actEditAllVariables = self.createAction(self.editExpressionLibIcon, "Edit Variable Library", self.editAllVariables)
-        self.actRemoveNode = self.createAction(self.removeIcon, "Remove node from current project", self.removeNode)
-        self.actMakeEditable = self.createAction(self.makeEditableIcon, "Add to current project", self.makeEditableAction)
-        self.actCloneNode = self.createAction(self.cloneIcon, "Copy Node", self.cloneNode)
+    def __init__(self, manager):
+        XmlController.__init__(self, manager)
 
     def editAllVariables(self):
-        self.mainwindow.editAllVariables()
+        ''' Start the variable library GUI '''
+        get_mainwindow_instance().editAllVariables()
 
-    def removeNode(self):
-        #print "Remove Node Pressed"
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
-                                            self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+    def processCustomMenu(self, point):
+        ''' See XmlConfig.processCustomMenu for documentation '''
+        item = self.selectItemAt(point)
+        if not item: return
 
-    def cloneNode(self):
-        #print "cloneNode Pressed"
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parentIndex = self.currentIndex.model().parent(self.currentIndex)
-        model = self.currentIndex.model()
-        window = CloneNodeGui(self,clone,parentIndex,model)
-        window.setModal(True)
-        window.show()
+        node = item.node
 
-    def makeEditableAction(self):
-        thisNode = self.currentIndex.internalPointer().node()
-        self.currentIndex.model().makeEditable(thisNode)
-        # Finally we refresh the tree to indicate that there has been a change
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        menu = QMenu(self.view)
+        if node.get('type') in ('variable_definition', 'expression_library'):
+            menu.addAction(get_mainwindow_instance().actVariableLibrary)
 
+        self.addDefaultMenuItems(node, menu)
 
-    def processCustomMenu(self, position):
-        if self.view.indexAt(position).isValid() and \
-               self.view.indexAt(position).column() == 0:
-            self.currentColumn = self.view.indexAt(position).column()
-            self.currentIndex = self.view.indexAt(position)
-            parentElement = None
-            parentIndex = self.currentIndex.model().parent(self.currentIndex)
-            if parentIndex and parentIndex.isValid():
-                parentNode = parentIndex.internalPointer().node()
-                parentElement = parentNode.toElement()
-            item = self.currentIndex.internalPointer()
-            domNode = item.node()
-            if domNode.isNull():
-                return
-            # Handle ElementNodes
-            if domNode.isElement():
-                domElement = domNode.toElement()
-                if domElement.isNull():
-                    return
-
-                self.menu = QMenu(self.mainwindow)
-
-                
-                if (domElement.attribute(QString("type")) == QString("variable_definition")) or \
-                       (domElement.tagName() == QString("expression_library")):
-                    self.menu.addAction(self.actEditAllVariables)
-                
-                if self.menu:
-                    # Last minute chance to add items that all menues should have
-                    if domElement.hasAttribute(QString("inherited")):
-                        # Tack on a make editable if the node is inherited
-                        self.menu.addSeparator()
-                        self.menu.addAction(self.actMakeEditable)
-                    else:
-                        if domElement.hasAttribute(QString("copyable")) and \
-                               domElement.attribute(QString("copyable")) == QString("True"):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actCloneNode)
-                        if domElement and (not domElement.isNull()) and \
-                               domElement.hasAttribute(QString("type")) and \
-                               ((domElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (domElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (domElement.attribute(QString("type")) == QString("list"))):
-                            self.menu.addSeparator()
-                            self.menu.addAction(self.actRemoveNode)
-                # Check if the menu has any elements before exec is called
-                if not self.menu.isEmpty():
-                    self.menu.exec_(QCursor.pos())
-        return
-
+        if not menu.isEmpty():
+            menu.exec_(QCursor.pos())
 

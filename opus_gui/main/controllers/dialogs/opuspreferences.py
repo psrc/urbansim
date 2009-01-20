@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QObject, SIGNAL
@@ -19,47 +19,45 @@ from PyQt4.QtGui import QDialog
 from opus_gui.main.views.ui_opuspreferences import Ui_PreferencesDialog
 
 class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
-    def __init__(self, mainwindow, fl):
-        QDialog.__init__(self, mainwindow, fl)
+    def __init__(self, opus_gui_window):
+        '''
+        Dialogbox for editing GUI preferences.
+        @param opus_gui_window (OpusGui): Parent Opus Main Window
+        '''
+        QDialog.__init__(self, opus_gui_window)
         self.setupUi(self)
-        self.mainwindow = mainwindow
+        self.opus_gui_window = opus_gui_window
+        self.gui_config = opus_gui_window.gui_config
         self._initSpinBoxes()
         self._initRadioButtions()
-        
-        #hook up the buttons
-        QObject.connect(self.okButton, SIGNAL("released()"), self.okay)
-        QObject.connect(self.applyButton, SIGNAL("released()"), self.apply)
-        QObject.connect(self.cancelButton, SIGNAL("released()"), self.cancel)
-        
-        #make the font size of the new window match the mainwindow
-        #this only needs to happen on init, once the window is a child of
-        #the main window it's font will be changed through the main window
-        #self.changeFontSize(self.mainwindow.font_size_adjust)
-        
+
     def _initSpinBoxes(self):
-        self.menuFontSizeSpinBox.setValue(self.mainwindow.getMenuFontSize())
-        self.mainTabsFontSizeSpinBox.setValue(self.mainwindow.getMainTabsFontSize())
-        self.generalTextFontSizeSpinBox.setValue(self.mainwindow.getGeneralTextFontSize())
+        fonts = self.gui_config.fonts
+        self.menuFontSizeSpinBox.setValue(fonts['menu'])
+        self.mainTabsFontSizeSpinBox.setValue(fonts['tabs'])
+        self.generalTextFontSizeSpinBox.setValue(fonts['general'])
 
     def _initRadioButtions(self):
-        self.prevProjPrefCheckBox.setChecked(self.mainwindow.getOpenLatestProject())
-    
-    
-    def apply(self):
-        #apply font change
-        self.mainwindow.setMenuFontSize(self.menuFontSizeSpinBox.value())
-        self.mainwindow.setMainTabsFontSize(self.mainTabsFontSizeSpinBox.value())
-        self.mainwindow.setGeneralTextFontSize(self.generalTextFontSizeSpinBox.value())
-        self.mainwindow.setOpenLatestProject(self.prevProjPrefCheckBox.isChecked())
-        self.mainwindow.changeFontSize()
-        self.mainwindow.updateFontSettingsNode()
-        self.mainwindow.updateProjectHistoryNode()
-        self.mainwindow.saveGuiConfig()
+        load_on_start = self.gui_config.load_latest_on_start
+        self.prevProjPrefCheckBox.setChecked(load_on_start)
 
+    def on_applyButton_released(self):
+        # Apply the changes
+        fonts = self.gui_config.fonts
+        fonts['menu'] = self.menuFontSizeSpinBox.value()
+        fonts['tabs'] = self.mainTabsFontSizeSpinBox.value()
+        fonts['general'] = self.generalTextFontSizeSpinBox.value()
 
-    def okay(self):
-        self.apply()
+        self.gui_config.load_latest_on_start = \
+            self.prevProjPrefCheckBox.isChecked()
+
+        self.opus_gui_window.updateFontSize()
+
+        self.gui_config.save()
+
+    def on_okButton_released(self):
+        self.on_applyButton_released()
         self.close()
 
-    def cancel(self):
+    def on_cancelButton_released(self):
         self.close()

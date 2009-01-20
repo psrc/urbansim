@@ -1,37 +1,36 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 import os
 
 from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
 from opus_gui.results_manager.run.indicator_framework_interface import IndicatorFrameworkInterface
 from opus_gui.util.exception_formatter import formatExceptionInfo
-from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 
 class OpusResultGenerator(object):
-    
-    def __init__(self, toolboxBase, ignore_cache = False):
-        self.finishedCallback = None
-        self.errorCallback = None
+
+    def __init__(self, project, ignore_cache = False):
+        self.project = project
+        # Dummy callbacks
+        self.finishedCallback = lambda x: ()
+        self.errorCallback = lambda x: ()
         self.guiElement = None
         self.cache_directory = None
         self.firstRead = True
-        self.toolboxBase = toolboxBase
-        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = toolboxBase)
-        self.interface = IndicatorFrameworkInterface(toolboxBase = toolboxBase)
+        self.interface = IndicatorFrameworkInterface(project)
         self.computed_indicators = []
         self.ignore_cache = ignore_cache
-        
+
     def set_data(self,
                  source_data_name,
                  indicator_name,
@@ -45,34 +44,32 @@ class OpusResultGenerator(object):
         self.years = years
         self.cache_directory = cache_directory
         self.indicator_definition = indicator_definition
-        
+
     def run(self, args = {}, raise_exception = False):
-        
+
         succeeded = False
         try:
 #                try:
 #                    import pydevd;pydevd.settrace()
 #                except:
 #                    pass
-            
+
             self._generate_results()
             succeeded = True
         except Exception, e:
             succeeded = False
             errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
-            if self.errorCallback is not None:
-                self.errorCallback(errorinfo)
+            self.errorCallback(errorinfo)
             if raise_exception:
                 raise e
-        if self.finishedCallback is not None:
-            self.finishedCallback(succeeded)
+        self.finishedCallback(succeeded)
 
     def _generate_results(self):
 
         self.computed_indicators = []
-        
+
         source_data = self.interface.get_source_data(
-                             source_data_name = self.source_data_name, 
+                             source_data_name = self.source_data_name,
                              years = self.years)
 
         self.cache_directory = source_data.cache_directory
@@ -81,10 +78,9 @@ class OpusResultGenerator(object):
                                  indicator_name = self.indicator_name,
                                  dataset_name = self.dataset_name,
                                  indicator_definition = self.indicator_definition)
-        
-        maker = Maker(project_name = os.environ['OPUSPROJECTNAME'], 
-                      expression_library = self.toolboxBase.opus_core_xml_configuration.get_expression_library(),
-                      ignore_cache = self.ignore_cache)
+
+        maker = Maker(self.project.name, False,
+                      self.project.xml_config.get_expression_library())
 
 #        try:
 #            import pydevd;pydevd.settrace()
@@ -94,7 +90,7 @@ class OpusResultGenerator(object):
         computed_indicator = maker.create(indicator = indicator,
                                           source_data = source_data)
         self.computed_indicators.append(computed_indicator)
-#                        
+#
     def _get_current_log(self, key):
         newKey = key
         # We attempt to keep up on the current progress of the model run.  We pass into this
@@ -109,7 +105,7 @@ class OpusResultGenerator(object):
                 log_file = os.path.join(self.cache_directory,
                                       'indicators',
                                       'indicators.log')
-                
+
                 f = open(log_file)
                 f.seek(key)
                 lines = f.read()

@@ -26,18 +26,19 @@ from opus_gui.general_manager.views.ui_all_variables_select import Ui_AllVariabl
 from opus_gui.general_manager.views.ui_all_variables_new import Ui_AllVariablesNewGui
 from opus_gui.general_manager.run.variable_validator import VariableValidator
 from opus_core.variables.variable_name import VariableName
+from xml.etree.cElementTree import Element
 
 import random,pprint,string
 
 class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
-    def __init__(self, mainwindow, fl, allVariablesGui, row = 0, initialParams = None, create_new_from_old = False):
-        QDialog.__init__(self, mainwindow, fl)
+    def __init__(self, opus_gui, fl, allVariablesGui, row = 0, initialParams = None, create_new_from_old = False):
+        QDialog.__init__(self, opus_gui, fl)
         self.setupUi(self)
         self.allVariablesGui = allVariablesGui
         self.initialParams = initialParams
         self.row = row
-        self.mainwindow = mainwindow.mainwindow
-        self.parent = mainwindow
+        self.opus_gui = opus_gui
+        self.parent = opus_gui
 
         if create_new_from_old:
             self.variableBox.setTitle(QString('Creating new variable (based on %s)'%initialParams[0]))
@@ -122,26 +123,27 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         self.close()
 
     def on_cboCheckSyntax_released(self):
-        success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_parse_errors(variables = [self._get_variable_definition()])
+        project = self.opus_gui.project
+        success, errors = VariableValidator(project).check_parse_errors(variables = [self._get_variable_definition()])
 
         if success:
-            MessageBox.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self,
                               text = 'Variable syntax check successful!',
                               detailed_text = '')
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
-            MessageBox.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self,
                               text = "There is a variable syntax error.",
                               detailed_text = errorString)
 
     def on_cboCheckData_released(self):
         success, errors = VariableValidator(toolboxBase=self.mainwindow.toolboxBase).check_data_errors(variables = [self._get_variable_definition()])
         if success:
-            MessageBox.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self,
                               text = 'Variable checked successfully against baseyear data!',
                               detailed_text = '')
         else:
-            MessageBox.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self,
                               text = "There was an error executing the variable on the baseyear data.",
                               detailed_text = "<br><br>".join(errors))
 
@@ -158,7 +160,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         elif self.cbModelUse.isChecked():
             use = 'model variable'
         else:
-            MessageBox.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self,
                               text = 'The variable must have a use (Indicator and/or Model variable) specified!',
                               detailed_text = '')
             
@@ -178,13 +180,23 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
 
 
 class AllVariablesGui(object):
-    def __init__(self, mainwindow, editable):
+    def __init__(self, opus_gui, editable):
         #if edit_select:
         #    print "Select GUI"
         #else:
         #    print "Edit GUI"
-        self.mainwindow = mainwindow
-        self.all_variables_index = None
+        self.opus_gui = opus_gui
+        model = opus_gui.managers['general'].xml_controller.model
+        index = None
+        for i in range(0, model.rowCount(QModelIndex())):
+            index = model.index(i, 0, QModelIndex())
+            if index.internalPointer().node.tag == 'expression_library':
+                break
+        if index is None:
+            print 'Could not find expression_library in general managers visible tree'
+            return
+
+        self.all_variables_index = index
 
         # Is the tableview dirty?
         self.dirty = False
@@ -203,47 +215,29 @@ class AllVariablesGui(object):
         tabledata = []
         self.tabledata = tabledata
         # Grab the general section...
-        tree = self.mainwindow.toolboxBase.generalManagerTree
+        tree = self.opus_gui.managers['general'].xml_controller
         self.tree = tree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
-        all_variables_list = tree.model.findElementIndexByName("expression_library",dbxml,True)
-        for all_variables in all_variables_list:
-            # Should just be one all_variables section
-            if all_variables.isValid():
-                self.all_variables_index = all_variables
-                # Now we have to loop through all the variables and create the data grid for the display
-                tsindexlist = tree.model.findElementIndexByType("variable_definition",all_variables,True)
-                self.tsindexlist = tsindexlist
-                for tsindex in tsindexlist:
-                    if tsindex.isValid():
-                        # Now we have a valid variable, we fill in the set for display
-                        tsitem = tsindex.internalPointer()
-                        tsnode = tsitem.node()
-                        if tsnode.isElement():
-                            tselement = tsnode.toElement()
-                            tselement_text = ""
-                            if tselement.hasChildNodes():
-                                classchildren = tselement.childNodes()
-                                for x in xrange(0,classchildren.count(),1):
-                                    if classchildren.item(x).isText():
-                                        #print "Found some text in the classification element"
-                                        tselement_text = classchildren.item(x).nodeValue()
-                            tslist = ["",tselement.tagName(),
-                                      tselement.attribute(QString("dataset")),
-                                      tselement.attribute(QString("use")),
-                                      tselement.attribute(QString("source")),
-                                      tselement_text]
-                            # Add on 3 slots for keeping track of:
-                            # inherited,checked,dirty
-                            if tselement.hasAttribute(QString("inherited")):
-                                tslist.extend([1,0,0])
-                            else:
-                                tslist.extend([0,0,0])
-                            tabledata.append(tslist)
-        self.originalList = list(tabledata)
-        for i,origListItem in enumerate(tabledata):
+        expression_lib_node = self.opus_gui.project.find('./general/expression_library')
+        if not expression_lib_node:
+            print 'No expression library in project'
+            return
+        all_variables = []
+        self.variable_nodes = expression_lib_node[:]
+        for var in expression_lib_node:
+            tslist = ['', var.tag, var.get('dataset'), var.get('use'),
+                      var.get('source'), var.text ]
+            if var.get('inherited'):
+                tslist.extend([1, 0, 0])
+            else:
+                tslist.extend([0, 0, 0])
+            all_variables.append(tslist)
+        self.originalList = list(all_variables)
+
+        for i,origListItem in enumerate(all_variables):
             self.originalList[i] = list(origListItem)
-        tm = AllVariablesTableModel(tabledata, header, self, editable)
+
+        tm = AllVariablesTableModel(all_variables, header, self, editable, self.opus_gui)
         tm.sort()
         self.tm = tm
         self.tv = tv
@@ -281,14 +275,17 @@ class AllVariablesGui(object):
             pass
 
 class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
-    def __init__(self, mainwindow, fl):
-        QDialog.__init__(self, mainwindow, fl)
+    def __init__(self, opus_gui, flags):
+        '''
+        @param opus_gui (OpusGui): application main window
+        '''
+        QDialog.__init__(self, opus_gui, flags)
         self.setupUi(self)
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
-        AllVariablesGui.__init__(self, mainwindow, True)
+        AllVariablesGui.__init__(self, opus_gui, True)
 
-        self.mainwindow = mainwindow
+        self.opus_gui = opus_gui
 
         # For now, disable the save button until we implement the write in the model...
 #        self.saveChanges.setEnabled(False)
@@ -298,21 +295,21 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
         self.actRemoveRow = QAction(self.removeIcon,
                                     "Remove Variable",
-                                    mainwindow)
+                                    self)
         QObject.connect(self.actRemoveRow,
                         SIGNAL("triggered()"),
                         self.removeRow)
 
         self.actEditRow = QAction(self.editIcon,
                                   "Edit Variable",
-                                  mainwindow)
+                                  self)
         QObject.connect(self.actEditRow,
                         SIGNAL("triggered()"),
                         self.editRow)
 
         self.actCreateNewFromOld = QAction(self.editIcon,
                                   "Create new variable based on this variable",
-                                  mainwindow)
+                                  self)
         QObject.connect(self.actCreateNewFromOld,
                         SIGNAL("triggered()"),
                         self.createVariableLike)
@@ -320,14 +317,14 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
         self.actCheckSyntax = QAction(self.editIcon,
                                   "Check Syntax",
-                                  mainwindow)
+                                  self)
         QObject.connect(self.actCheckSyntax,
                         SIGNAL("triggered()"),
                         self.checkSyntax)
 
         self.actCheckAgainstData = QAction(self.editIcon,
                                   "Check Against Data",
-                                  mainwindow)
+                                  self)
         QObject.connect(self.actCheckAgainstData,
                         SIGNAL("triggered()"),
                         self.checkAgainstData)
@@ -348,7 +345,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         row = self.currentIndex.row()
         initialParams = self.currentIndex.model().getRowDataList(self.currentIndex)
-        window = AllVariablesNewGui(self,flags,self,row,initialParams)
+        window = AllVariablesNewGui(self.opus_gui, flags,self,row,initialParams)
         window.setModal(True)
         window.show()
 
@@ -357,17 +354,16 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         row = self.currentIndex.row()
         initialParams = self.currentIndex.model().getRowDataList(self.currentIndex)
-        window = AllVariablesNewGui(self,flags,self, initialParams = initialParams, create_new_from_old = True)
+        window = AllVariablesNewGui(self.opus_gui, flags,self, initialParams = initialParams, create_new_from_old = True)
         window.setModal(True)
         window.show()
-
 
     def processCustomMenu(self, position):
         #print "Custom Menu"
         if self.tv.indexAt(position).isValid():
             self.currentColumn = self.tv.indexAt(position).column()
             self.currentIndex = self.tv.indexAt(position)
-            self.menu = QMenu(self.mainwindow)
+            self.menu = QMenu(self.tv)
             if self.menu:
                 # Tack on a remove row item
                 self.menu.addAction(self.actEditRow)
@@ -381,44 +377,21 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
 
-    def findOriginalNode(self,list):
-        for tsindex in self.tsindexlist:
-            if tsindex.isValid():
-                # Now we have a valid variable, we check if it is the one we want
-                tsitem = tsindex.internalPointer()
-                tsnode = tsitem.node()
-                if tsnode.isElement():
-                    tselement = tsnode.toElement()
-                    if tselement.tagName() == list[1]:
-                        return tsnode
+    def findOriginalNode(self, list):
+        for node in self.variable_nodes:
+            if node.tag == list[1]:
+                return node
         return None
 
-
     def updateNodeFromList(self,node,list):
-        if not node.isNull():
-            # We only want to check out this node if it is of type "element"
-            if node.isElement():
-                domElement = node.toElement()
-                if not domElement.isNull():
-                    # First set the tagName
-                    domElement.setTagName(QString(list[1]))
-                    # Now the attributes
-                    domElement.setAttribute(QString("dataset"),QString(list[2]))
-                    domElement.setAttribute(QString("use"),QString(list[3]))
-                    domElement.setAttribute(QString("source"),QString(list[4]))
-                    # Finally the description text
-                    # We need to grab the text node from the element
-                    if domElement.hasChildNodes():
-                        children = domElement.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                textNode = children.item(x).toText()
-                                # Finally set the text node value
-                                textNode.setData(list[5])
-                    # Here we have to manually mark the model as dirty since
-                    # we are changing out the XML DOM under the models nose
-                    self.tree.model.markAsDirty()
-                    self.tree.model.emit(SIGNAL("layoutChanged()"))
+        if node is None: return
+        node.tag = str(list[1])
+        node.set('dataset', str(list[2]))
+        node.set('use', str(list[3]))
+        node.set('source', str(list[4]))
+        node.text = str(list[5])
+        self.opus_gui.project.dirty = True
+        self.tree.model.emit(SIGNAL("layoutChanged()"))
 
     def on_saveChanges_released(self):
         #print "save pressed"
@@ -438,39 +411,48 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
             ##    and check if an inherited parent needs to be placed back in.
 
             # Loop through the list of lists and find the node in the XML and update it
-            for i,testCase in enumerate(self.tm.arraydata):
+            for i, testCase in enumerate(self.tm.arraydata):
                 # Find the XML node that has the tag name in column 1
                 nameToSearchFor = testCase[1]
                 foundInOriginal = False
-                for tsindex in self.tsindexlist:
-                    if tsindex.isValid():
-                        # Now we have a valid variable, we fill in the set for display
-                        tsitem = tsindex.internalPointer()
-                        tsnode = tsitem.node()
-                        if tsnode.isElement():
-                            tselement = tsnode.toElement()
-                            if tselement.tagName() == nameToSearchFor:
-                                # We have a match...
-                                foundInOriginal = True
+                for node in self.variable_nodes:
+                    # Now we have a valid variable, we fill in the set for display
+                    if node.tag == nameToSearchFor:
+                        foundInOriginal = True
+
                 if foundInOriginal:
                     # print "We have a match %s" % (nameToSearchFor)
                     # If the data is dirty we need to update the node
                     if testCase[-1]:
                         nodeToUpdate = self.findOriginalNode(testCase)
                         self.updateNodeFromList(nodeToUpdate,testCase)
-                        self.tree.model.makeEditable(nodeToUpdate)
+                        # Temporary hack until we have a new variable library editor
+                        # we normally make items editable but here we only have
+                        # the node as a reference. So first we resolve the node path
+                        # and then we select the item in that path
+                        def node_item_in_subtree(node, this_item):
+                            if this_item.node == node:
+                                return this_item
+                            else:
+                                # check if any of the children contains the node
+                                for child_item in this_item.child_items:
+                                    found_item = node_item_in_subtree(node, child_item)
+                                    if found_item is not None:
+                                        return found_item
+                            return None
+                        item = node_item_in_subtree(nodeToUpdate,
+                                                    self.tree.model.root_item())
+                        if item is not None:
+                            self.tree.model.makeItemEditable(item)
                 else:
-                    # print "We dont have a match %s" % (nameToSearchFor)
+                    # print "We don't have a match %s" % (nameToSearchFor)
                     # Here we must have a new node (or renamed node) so
                     # we go ahead and add a new node to the XML
-                    newElement = self.tree.model.domDocument.createElement(QString(testCase[1]))
-                    newElement.setAttribute(QString("type"),QString("variable_definition"))
-                    newElementText = self.tree.model.domDocument.createTextNode(QString(""))
-                    newElement.appendChild(newElementText)
-                    self.updateNodeFromList(newElement,testCase)
+                    node = Element('', {'type':'variable_definition'})
+                    self.updateNodeFromList(node,testCase)
                     self.tree.model.insertRow(self.tree.model.rowCount(self.all_variables_index),
                                               self.all_variables_index,
-                                              newElement)
+                                              node)
                     self.tree.model.emit(SIGNAL("layoutChanged()"))
             # Now we look for any original nodes that are not in the new list...
             # These have either been renamed or deleted, so we have to look to see if
@@ -485,9 +467,14 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                         break
                 if not weFoundIt:
                     # print "We have a missing node...%s" % (origTestCase[1])
-                    testCaseIndex = self.tree.model.findElementIndexByName(origTestCase[1],self.all_variables_index,False)
-                    self.tree.model.removeRow(testCaseIndex[0].internalPointer().row(),
-                                              self.tree.model.parent(testCaseIndex[0]))
+                    start_index = self.tree.model.index(0, 0, self.all_variables_index)
+                    row_count = self.tree.model.rowCount(self.all_variables_index)
+                    index = None
+                    for i in range(0, row_count):
+                        index = self.tree.model.index(i, 0, self.all_variables_index)
+                        if index.internalPointer().node.tag == origTestCase[1]:
+                            break
+                    self.tree.model.removeRow(index.row(), self.all_variables_index)
                     self.tree.model.emit(SIGNAL("layoutChanged()"))
         else:
             #print "Dont need to save"
@@ -518,7 +505,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #                     "New_Node","Dataset","model variable","primary attribute","Description",
         #                     0,0,0])
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = AllVariablesNewGui(self,flags,self)
+        window = AllVariablesNewGui(self.opus_gui, flags,self)
         window.setModal(True)
         window.show()
 
@@ -527,12 +514,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         success, errors = self.tm.checkSyntax(row = row)
         
         if success:
-            MessageBox.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self,
                               text = 'Variable syntax check successful!',
                               detailed_text = '')
         else:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(errors)
-            MessageBox.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self,
                               text = "There is a variable syntax error.",
                               detailed_text = errorString)
 
@@ -540,14 +527,13 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         row = self.currentIndex.row()
         success, errors = self.tm.checkAgainstData(row = row)
         if success:
-            MessageBox.information(mainwindow = self.mainwindow,
+            MessageBox.information(mainwindow = self,
                               text = 'Variable checked successfully against baseyear data!',
                               detailed_text = '')
         else:
-            MessageBox.warning(mainwindow = self.mainwindow,
+            MessageBox.warning(mainwindow = self,
                               text = "There was an error executing the variable on the baseyear data.",
                               detailed_text = "<br><br>".join(errors))
-
 
     def on_checkSelectedVariables_released(self):
 #        saveBeforeCheck = QMessageBox.Yes
@@ -571,74 +557,40 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
-    def __init__(self, mainwindow, nodeToUpdate=None, callback=None):
+    def __init__(self, opus_gui, nodeToUpdate=None, callback=None):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
             Qt.WindowMaximizeButtonHint
-        QDialog.__init__(self, mainwindow, flags)
+        QDialog.__init__(self,opus_gui, flags)
         self.setupUi(self)
 
         self.setModal(True)
 
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
-        AllVariablesGui.__init__(self, mainwindow, False)
+        AllVariablesGui.__init__(self, opus_gui, False)
         self.pp = pprint.PrettyPrinter(indent=4)
-        if nodeToUpdate:
-            self.nodeToUpdate = nodeToUpdate
-        else:
-            self.nodeToUpdate = QDomNode()
+        self.nodeToUpdate = nodeToUpdate
         self.callback = callback
         self.tm.initCheckBoxes(self.getCurrentList(self.nodeToUpdate))
 
-    def getCurrentList(self,node):
-        element = node.toElement()
-        if element.isNull():
+    def getCurrentList(self, node):
+        node_text = node.text
+        if node is None:
             return []
-        # Only set the text field to be the string representation of the
-        # python list of selections.
-        # We need to grab the text node from the element
-        if element.hasChildNodes():
-            children = element.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    textNode = children.item(x).toText()
-                    # Finally set the text node value
-
-                    return map(lambda s: s.strip(), str(textNode.data()).split(','))
-        return []
+        node_text = node_text.strip()
+        return [var_name for var_name in node_text.split(',')]
 
     def updateNodeFromListString(self,node,listString):
-        element = node.toElement()
-        if element.isNull():
-            return
-        # Only set the text field to be the string representation of the
-        # python list of selections.
-        # We need to grab the text node from the element
-        if element.hasChildNodes():
-            children = element.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    textNode = children.item(x).toText()
-                    # Finally set the text node value
-                    textNode.setData(listString)
-        else:
-            # child does not have child elements, create and append a text node
-            doc = self.mainwindow.toolboxBase.doc
-            spawn_text = doc.createTextNode(listString)
-            element.insertBefore(spawn_text, QDomNode())
-
-        # Here we have to manually mark the model as dirty since
-        # we are changing out the XML DOM under the models nose
-        self.tree.model.markAsDirty()
+        node.text = listString
+        self.opus_gui.project.dirty = True
         self.tree.model.emit(SIGNAL("layoutChanged()"))
 
-
     def on_saveSelections_released(self):
-        #print "save pressed"
+        # print "save pressed"
         returnList = []
         # Loop through the list of lists and test the check box... if checked then add to the
         # Python list that is returned with selected items
-        for i,testCase in enumerate(self.tabledata):
+        for i, testCase in enumerate(self.tabledata):
             if testCase[-2]:
                 # We have one that is checked... push it into the return list
                 returnList.append(str(testCase[1]))

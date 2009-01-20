@@ -1,58 +1,66 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
+from xml.etree.cElementTree import Element, SubElement
 
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox
+from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, \
+    QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
-from opus_gui.util.xmlhelper import getChildElementsText, getElementsByType, getNodeText, getElementText
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
 
 class FileDialogSignal(QWidget):
+    ''' NO DOCUMENTATION '''
+
     def __init__(self, parent=None, typeName=None, param=None):
+        ''' NO DOCUMENTATION '''
         QWidget.__init__(self, parent)
         self.o = QObject()
         self.param = param
         self.type = typeName
-        #print "FileDialogSignal created..."
 
     def updateParam(self,param):
+        ''' NO DOCUMENTATION '''
         self.param = param
 
     def updateType(self,typeName):
+        ''' NO DOCUMENTATION '''
         self.type = typeName
 
     def relayButtonSignal(self):
+        ''' NO DOCUMENTATION '''
         #print "relayButtonSignal"
         self.o.emit(SIGNAL("buttonPressed(PyQt_PyObject,PyQt_PyObject)"),self.type,self.param)
-        
-
-
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
-    def __init__(self,mainwindow,model,currentElement,execToolConfigGen,fl,optional_params = None):
-        QDialog.__init__(self, mainwindow, fl)
+
+    def __init__(self, parent_widget, tool_node, tool_library_node, params = {}):
+        ''' NO DOCUMENTATION '''
+        window_flags = (Qt.WindowTitleHint |
+                        Qt.WindowSystemMenuHint |
+                        Qt.WindowMaximizeButtonHint)
+        QDialog.__init__(self, parent_widget, window_flags)
         self.setupUi(self)
-        self.mainwindow = mainwindow
-        self.model = model
+
         # Grab the tool we are interested in...
-        self.currentElement = currentElement
-        self.optional_params = optional_params
-        #self.execToolConfigGen = execToolConfigGen
+        self.tool_node = tool_node
+        self.tool_library_node = tool_library_node
+
         self.vars = {}
+
+        self.optional_params = params
+
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
         self.vboxlayout.setMargin(9)
@@ -70,36 +78,30 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         # If we have a too_file, then we need to traverse the XML and create a temporary
         # config to be used.
         # If we have a config we just extract the params and create the GUI elements
+
+        # Note about conversion from QtXml to ElementTree
+        # The code below is an interpretation of the original codes intent --
+        # TODO test that this does what it's supposed to do
         self.tooltypearray = []
-        if self.currentElement.hasAttribute(QString('type')) and \
-           self.currentElement.attribute(QString('type')) == QString('tool_file'):
-            self.typeSelection = self.currentElement.tagName()
-            
-            #Jesse
-            #getting tool_name
-            child_nodes = self.currentElement.childNodes()
-            self.tool_name = getNodeText(child_nodes.item(0))
-            
+        if tool_node.get('type') == 'tool_file':
+            self.type_selection = self.tool_node.tag
+            self.tool_name = tool_node.find('name').text
             self.presentToolFileGUI()
         else:
-            # We assume config
-            typeSelections = getChildElementsText(self.currentElement,
-                                                  [QString('tool_hook')],
-                                                  True,False)
-            self.typeSelection = typeSelections[QString('tool_hook')]
-            #self.typeSelection = getElementText(self.currentElement.elementsByTagName(QString("tool_hook")).item(0))
-            
-            #Jesse
-            #getting tool_name
-            tool_names = getElementsByType(self.model.domDocument, 'tool_name', True, True)
-            for i in tool_names:
-                if getNodeText(i) == self.typeSelection:
-                    self.tool_name = getNodeText(i)
-            
+            tool_hook_node = tool_node.find('tool_hook')
+            # tag name of the 'hooked' tool
+            self.type_selection = tool_hook_node.text
+            # Find the 'hooked' tool and get it's <name>
+            for tool in self.tool_library_node[:]:
+                if tool.tag == self.type_selection:
+                    self.tool_name = tool.find('name').text
+                    break
+            print('ExecuteToolGui: Could not find tool for tool_hook "%s"'
+                  % self.type_selection)
+            self.tool_name = ''
             self.presentToolConfigGUI()
-            
-        #Setting tool title:
-        self.tool_title = self.model.domDocument.createTextNode(self.typeSelection).data()
+
+        self.setWindowTitle(self.type_selection.replace('_', ' '))
 
     def on_execTool_released(self):
         #print "create pressed"
@@ -116,102 +118,58 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.execTool.setEnabled(False)
         self.textEdit.clear()
         self.progressBar.setValue(0)
-        
-        #toolname = self.test_line[0].text()
-        # First is the connection node with the connection name
-        newNode = self.model.domDocument.createElement(QString("temp_config"))
-        newNode.setAttribute(QString("type"),QString("tool_config"))
-        # Add the tool hook back in
-        newChild = self.model.domDocument.createElement(QString("tool_hook"))
-        newChild.setAttribute(QString("type"),QString("tool_library_ref"))
-        newText = self.model.domDocument.createTextNode(self.typeSelection)
-        newChild.appendChild(newText)
-        newNode.appendChild(newChild)
-        # for key,val in self.vars.iteritems():
-        for x in xrange(0,len(self.test_text)):
-            #self.vars[self.test_text[x].text()] = self.test_line[x].text()
-            key = self.test_text[x].text()
-            if type(self.test_line[x]) == QComboBox:
-                val = self.test_line[x].currentText()
+
+        # self.test_text contains the parameter name  (stored as a QLabel instance)
+        # self.test_line contains the editor (QLineEdit or QComboBox) for the parameter value
+        # self.test_text_type contains the value for the type attribute (QLineEdit)
+        # for each parameter; construct a XML node in the following format
+        #  <parameter-name type="type-value"> parameter-value </parameter-name>
+
+        tmp_config_node = Element('temp_config', {'type': 'tool_config'})
+        SubElement(tmp_config_node, 'tool_hook',
+                   {'type': 'tool_library_ref'}).text = self.type_selection
+        for i in range(0, len(self.test_text)):
+            param_name = str(self.test_text[i].text())
+            if type(self.test_line[i]) == QComboBox:
+                param_value = str(self.test_line[i].currentText())
             else:
-                val = self.test_line[x].text()
-            typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
-            #print "Key: %s , Val: %s" % (key,val)
-            # Next we add each of the child nodes with the user defined values
-            newChild = self.model.domDocument.createElement(key)
-            newChild.setAttribute(QString("type"),typeVal)
-            newText = self.model.domDocument.createTextNode(val)
-            newChild.appendChild(newText)
-            newNode.appendChild(newChild)
-        self.execToolConfigGen(newNode)
-        #self.close()
+                param_value = str(self.test_line[i].text())
+            type_value = self.test_text_type[i].text().remove(QRegExp("[\(\)]"))
+            type_value = str(type_value)
+            SubElement(tmp_config_node, param_name,
+                       {'type': type_value}).text = param_value
+
+        self.execToolConfigGen(tmp_config_node)
 
     def on_cancelExec_released(self):
         #print "cancel pressed"
         self.close()
 
-    def fillInToolTypeArrayFromToolFile(self,qDomNodeList):
-        for xx in xrange(0,qDomNodeList.count(),1):
-            if qDomNodeList.item(xx).isElement():
-                tool_file_child = qDomNodeList.item(xx).toElement()
-                # Find the name element and compare
-                if tool_file_child.hasAttribute(QString("type")) and \
-                       (tool_file_child.attribute(QString("type")) == QString("param_template")):
-                    if tool_file_child.hasChildNodes():
-                        params = tool_file_child.childNodes()
-                        # Here we loop through the params
-                        for xxx in xrange(0,params.count(),1):
-                            if params.item(xxx).isElement():
-                                param = params.item(xxx).toElement()
-                                tagName = param.tagName()
-                                typeName = QString('')
-                                nodeVal = QString('')
-                                # Now we look inside to find the discriptions of the params
-                                if param.hasChildNodes():
-                                    desc = param.childNodes()
-                                    # Here we loop through the desc's
-                                    for xxxx in xrange(0,desc.count(),1):
-                                        if desc.item(xxxx).isElement():
-                                            desc_el = desc.item(xxxx).toElement()
-                                            if desc_el.tagName() == QString('type'):
-                                                # We have a type
-                                                if desc_el.hasChildNodes():
-                                                    textSearch = desc_el.childNodes()
-                                                    for xxxxx in xrange(0,textSearch.count(),1):
-                                                        if textSearch.item(xxxxx).isText():
-                                                            typeName = textSearch.item(xxxxx).nodeValue()
-                                            if desc_el.tagName() == QString('default'):
-                                                if desc_el.hasChildNodes():
-                                                    textSearch = desc_el.childNodes()
-                                                    for xxxxx in xrange(0,textSearch.count(),1):
-                                                        if textSearch.item(xxxxx).isText():
-                                                            nodeVal = textSearch.item(xxxxx).nodeValue()
-                                self.tooltypearray.append([tagName,typeName,nodeVal])
+    def fillInToolTypeArrayFromToolFile(self):
+        # Find params subnode
+        param_nodes = self.tool_node.find('params') or []
+        for param_node in param_nodes:
+            type_ = param_node.find('type').text or ''
+            default_value = param_node.find('default').text or ''
+            self.tooltypearray.append([param_node.tag, type_, default_value])
 
-        
-    def fillInToolTypeArrayFromToolConfig(self,toolConfigElement):
-        # Loop through children and build up the params
-        if toolConfigElement and not toolConfigElement.isNull() and \
-               toolConfigElement.hasChildNodes():
-            children = toolConfigElement.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isElement() and \
-                       children.item(x).toElement().hasAttribute(QString('type')) and \
-                       children.item(x).toElement().attribute(QString('type')) != QString('tool_library_ref'):
-                    child = children.item(x).toElement()
-                    tagName = child.tagName()
-                    typeName = child.attribute(QString('type'))
-                    nodeVal = getElementText(child)
-                    #print 'nodeVal = %s' % nodeVal
-                    self.tooltypearray.append([tagName,typeName,nodeVal])
-
+    def fillInToolTypeArrayFromToolConfig(self):
+        ''' NO DOCUMENTATION '''
+        for child in self.tool_node.find('params'):
+            if not child.get('type') == 'tool_library_ref':
+                print 'adding parameter %s (%s): %s' %(child.tag, child.get('type'), child.text)
+                self.tooltypearray.append([child.tag,
+                                           child.get('type'),
+                                           child.text])
 
     def createGUIElements(self):
-        for i,param in enumerate(self.tooltypearray):
+        ''' Build the GUI based on the parameters for the tool '''
+        for i, param in enumerate(self.tooltypearray):
+            print 'creatgui element %d, %s' %(i, param)
             #Swap in the passed params if they exist... loop through each passed
             #param and see if it matches... if so swap it in
-            if self.optional_params and self.optional_params.has_key(str(param[0])):
-                param[2] = QString(self.optional_params[str(param[0])])
+            if self.optional_params.has_key(str(param[0])):
+                param[2] = self.optional_params[str(param[0])]
             #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
@@ -224,8 +182,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_text = QLabel(widgetTemp)
             self.test_text.append(test_text)
             test_text.setObjectName(QString("test_text").append(QString(i)))
-            paramName = param[0].trimmed()
-            if param[2].trimmed() == QString("Required"):
+            paramName = param[0].strip()
+            if param[2].strip() == "Required":
                 palette = test_text.palette()
                 palette.setColor(QPalette.WindowText,Qt.red)
                 test_text.setPalette(palette)
@@ -233,13 +191,13 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_text_type = QLabel(widgetTemp)
             self.test_text_type.append(test_text_type)
             test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
-            paramName = param[1].trimmed()
+            paramName = param[1].strip()
             test_text_type.setText(QString("(").append(paramName).append(QString(")")))
             hlayout.addWidget(test_text)
             hlayout.addWidget(test_text_type)
             if param[1] == 'db_connection_hook':
                 test_line = QComboBox(widgetTemp)
-                db_connection_choices = self.mainwindow.getDbConnectionNames()
+                db_connection_choices = get_db_connection_names()
                 for i in db_connection_choices:
                     test_line.addItem(QString(i))
                 self.test_line.append(test_line)
@@ -271,18 +229,17 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             self.vboxlayout.addWidget(widgetTemp)
             self.adjustSize()
         # Jesse adding help text from opusHelp
-        tool_path_elements = getElementsByType(self.model.domDocument, 'tool_path', True, True)
-        for i in tool_path_elements:
-            try:
-                tool_path = getElementText(i)
-                exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
-                exec exec_stmt
-                help = QString(opusHelp()) # wont this always fail with 'undef variable?'
-                self.toolhelpEdit.insertPlainText(help)
-            except:
-                help = 'could not find opusHelp function in tool module'
-                self.toolhelpEdit.insertPlainText(help)
-        
+        tool_path_node = self.tool_library_node.find('tool_path')
+        tool_path = tool_path_node.text if tool_path_node is not None else ''
+        try:
+            exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
+            exec exec_stmt
+            help = QString(opusHelp())
+            self.toolhelpEdit.insertPlainText(help)
+        except:
+            help = 'could not find opusHelp function in tool module'
+            self.toolhelpEdit.insertPlainText(help)
+
     def on_pbnSelect_released(self,typeName,line):
         #print "on_pbnSelect_released recieved"
         editor_file = QFileDialog()
@@ -290,51 +247,26 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         editor_file.setFilter(filter_str)
         editor_file.setAcceptMode(QFileDialog.AcceptOpen)
         if typeName == QString("file_path"):
-            fd = editor_file.getOpenFileName(self.mainwindow,QString("Please select a file..."),
+            fd = editor_file.getOpenFileName(self, self.QString("Please select a file..."),
                                              line.text())
         else:
-            fd = editor_file.getExistingDirectory(self.mainwindow,QString("Please select a directory..."),
+            fd = editor_file.getExistingDirectory(self,QString("Please select a directory..."),
                                                   line.text())
         # Check for cancel
         if len(fd) != 0:
             fileName = QString(fd)
             line.setText(fileName)
 
-    
     def presentToolFileGUI(self):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
-
-        # Now look up the selected connection type and present to the user...
-        # First we start at the Tool_Library
-        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-        if templates_root and templates_root.hasChildNodes():
-            # These are tool groups
-            groups = templates_root.childNodes()
-            for x in xrange(0,groups.count(),1):
-                if groups.item(x).isElement():
-                    group = groups.item(x).toElement()
-                    if group and group.hasChildNodes():
-                        # These are tools within a group
-                        tools = group.childNodes()
-                        for x in xrange(0,tools.count(),1):
-                            if tools.item(x).isElement():
-                                tool = tools.item(x).toElement()
-                                foundOurTool = False
-                                if tool.hasAttribute(QString("type")) and \
-                                       (tool.attribute(QString("type")) == QString("tool_file")):
-                                    if tool.tagName() == self.typeSelection:
-                                        foundOurTool = True
-                                if foundOurTool:
-                                    tool_file = tool.childNodes()
-                                    self.fillInToolTypeArrayFromToolFile(tool_file)
+        self.fillInToolTypeArrayFromToolFile()
         self.createGUIElements()
 
     def presentToolConfigGUI(self):
-        #print "Got a new selection"
-
         # First, fillInToolTypeArrayFromToolConfig
-        self.fillInToolTypeArrayFromToolConfig(self.currentElement)
+        print 'Filling in type array from tool config'
+        self.fillInToolTypeArrayFromToolConfig()
         self.createGUIElements()
 
     def toolFinishedFromThread(self,success):
@@ -347,66 +279,39 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def toolLogPingFromThread(self,log):
         #print "toolLogPingFromThread - %s" % (log)
         self.textEdit.insertPlainText(log)
-        
+
     def toolProgressPingFromThread(self,progress):
         #print "toolProgressPingFromThread - %s" % (progress)
         self.progressBar.setValue(progress)
-        
-    def execToolConfigGen(self,configNode,statusElement=None,progressElement=None):
-        library = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-        tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
-        tool_name = QString("")
-        if tool_hook.hasChildNodes():
-            children = tool_hook.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    tool_name = children.item(x).nodeValue()
-        # This will be in the Tool_Library
-        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
-        tool_file = library.toElement().elementsByTagName(tool_name).item(0)
-        
-        # First find the tool path text...
-        if tool_path.hasChildNodes():
-            children = tool_path.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    toolPath = children.item(x).nodeValue()
-        # Next if the tool_file has a tool_name we grab it
-        filePath = ""
-        if tool_file.hasChildNodes():
-            children = tool_file.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isElement():
-                    thisElement = children.item(x).toElement()
-                    if thisElement.hasAttribute(QString("type")) and \
-                           (thisElement.attribute(QString("type")) == QString("tool_name")):
-                        if thisElement.hasChildNodes():
-                            children2 = thisElement.childNodes()
-                            for x2 in xrange(0,children2.count(),1):
-                                if children2.item(x2).isText():
-                                    filePath = children2.item(x2).nodeValue()
-        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-        #print "New import ", importPath
 
-        #Now loop and build up the parameters...
-        params = {}
-        childNodes = configNode.childNodes()
-        for x in xrange(0,childNodes.count(),1):
-            thisElement = childNodes.item(x)
-            thisElementText = QString("")
-            if thisElement.hasChildNodes():
-                children = thisElement.childNodes()
-                for x in xrange(0,children.count(),1):
-                    if children.item(x).isText():
-                        thisElementText = children.item(x).nodeValue()
-            params[thisElement.toElement().tagName()] = thisElementText
+    def execToolConfigGen(self,config_node,statusElement=None,progressElement=None):
+        # CK: This is only called from on_execTool_released() where the
+        # config_node is generated from values in the GUI dialog.
+        # Is it possible to remove that intermediate step and just run the
+        # OpusTool directly?
+        tool_hook = config_node.find('tool_hook').text
+        # look in all groups for the tool_name -- NOTE this requires the tool
+        # to be uniquely named regardless of which group it's in or this code
+        # will execute the wrong tool.
+        for tool_group_node in self.tool_library_node:
+            tool_node = tool_group_node.find(tool_hook)
+            if tool_node is not None:
+                break
+        if tool_node is None:
+            QMessageBox.warning(None, 'Invalid tool hook',
+                                'Could not find a tool named %s' %tool_hook)
+            return
+        tool_file = tool_node.find('name').text
+        tool_path = self.tool_library_node.find('tool_path').text
+        import_path = tool_path + '.' + tool_file
+        params = dict((node.tag, node.text) for node in config_node)
 
-        x = OpusTool(self.mainwindow,importPath,params)
-        y = RunToolThread(self.mainwindow,x)
-        QObject.connect(y, SIGNAL("toolFinished(PyQt_PyObject)"),
+        opus_tool = OpusTool(import_path, params)
+        run_tool_thread = RunToolThread(opus_tool)
+        QObject.connect(run_tool_thread, SIGNAL("toolFinished(PyQt_PyObject)"),
                         self.toolFinishedFromThread)
-        QObject.connect(y, SIGNAL("toolProgressPing(PyQt_PyObject)"),
+        QObject.connect(run_tool_thread, SIGNAL("toolProgressPing(PyQt_PyObject)"),
                         self.toolProgressPingFromThread)
-        QObject.connect(y, SIGNAL("toolLogPing(PyQt_PyObject)"),
+        QObject.connect(run_tool_thread, SIGNAL("toolLogPing(PyQt_PyObject)"),
                         self.toolLogPingFromThread)
-        y.start()
+        run_tool_thread.start()

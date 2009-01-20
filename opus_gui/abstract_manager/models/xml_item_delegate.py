@@ -13,109 +13,119 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt, QSignalMapper, QVariant
+from PyQt4.QtCore import QString, Qt, QVariant
 from PyQt4.QtGui import QFileDialog, QItemDelegate, QComboBox, QLineEdit
 
 class XmlItemDelegate(QItemDelegate):
-    def __init__(self, parentView):
-        QItemDelegate.__init__(self, parentView)
-        self.parentView = parentView
-        self.signalMapper = QSignalMapper(self)
+    '''
+    Handles creation of editors depending on attributes for the node to edit
+    '''
 
-    def createEditor(self, parentView, option, index):
+    def __init__(self, parent_view):
+        '''
+        @param parent_view (QAbstractItemView): parent view for this item editor
+        '''
+        QItemDelegate.__init__(self, parent_view)
+        self.parent_view = parent_view
+
+        # List of database connection names -- used for populating the editor
+        # for a db_connection_hook
+        self.known_db_connection_names = []
+
+    def createEditor(self, parent_view, option, index):
+        ''' PyQt API Method -- See the PyQt documentation for a description '''
+
+        default_editor = QItemDelegate.createEditor(self, parent_view,
+                                                    option, index)
         if not index.isValid():
-            return QItemDelegate.createEditor(self, parentView, option, index)
-        # Get the item associated with the index
-        item = index.internalPointer()
-        domNode = item.node()
-        if domNode.isNull():
-            return QItemDelegate.createEditor(self, parentView, option, index)
-        # Handle ElementNodes
-        if domNode.isElement():
-            domElement = domNode.toElement()
-            if domElement.isNull():
-                return QItemDelegate.createEditor(self, parentView, option, index)
-            # So we have a valid element and our column is 1 we need to make a editor
-            if index.column() == 1:
-                if domElement.hasAttribute(QString("choices")):
-                    editor = QComboBox(parentView)
-                    choices = domElement.attribute(QString("choices"))
-                    currentIndex = 0
-                    for i,choice in enumerate(choices.split("|")):
-                        editor.addItem(choice)
-                        if index.model().data(index,Qt.DisplayRole).toString() == choice:
-                            currentIndex = i
-                    editor.setCurrentIndex(currentIndex)
-                    #QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
-                    return editor
-                elif domElement.attribute(QString("type")) == QString("db_connection_hook"):
-                    editor = QComboBox(parentView)
-                    # Get the choices from the database_server_connections.xml
-                    choices = self.parentView.mainwindow.getDbConnectionNames()
-                    # Populate the editor with the choices
-                    for i in choices:
-                        editor.addItem(i)
-                    return editor
-                elif domElement.attribute(QString("type")) == QString("file_path") or \
-                         domElement.attribute(QString("type")) == QString("dir_path"):
-                    # We have a file path we need to fill in...
-                    editor_file = QFileDialog()
-                    filter_str = QString("*.*")
-                    editor_file.setFilter(filter_str)
-                    editor_file.setAcceptMode(QFileDialog.AcceptOpen)
-                    if domElement.attribute(QString("type")) == QString("file_path"):
-                        fd = editor_file.getOpenFileName(self.parentView.mainwindow,QString("Please select a file..."),
-                                                         index.model().data(index,Qt.DisplayRole).toString())
-                    elif domElement.attribute(QString("type")) == QString("dir_path"):
-                        fd = editor_file.getExistingDirectory(self.parentView.mainwindow,QString("Please select a directory..."),
-                                                              index.model().data(index,Qt.DisplayRole).toString())
-                    # Check for cancel
-                    if len(fd) == 0:
-                        fileName = index.model().data(index,Qt.DisplayRole).toString()
-                    else:
-                        fileName = QString(fd)
-                    editor = QItemDelegate.createEditor(self, parentView, option, index)
-                    if type(editor) == QLineEdit:
-                        editor.setText(fileName)
-                    return editor
-                elif domElement.attribute(QString("type")) == QString("password"):
-                    editor = QLineEdit(parentView)
-                    editor.setEchoMode(QLineEdit.PasswordEchoOnEdit)
-                    valueToDisplay = QString("")
-                    if domElement.hasChildNodes():
-                        children = domElement.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                valueToDisplay = children.item(x).nodeValue()
-                                break
-                    editor.setText(valueToDisplay)
-                    return editor
-                else:
-                    editor = QItemDelegate.createEditor(self, parentView, option, index)
-                    if type(editor) == QLineEdit:
-                        editor.setText(index.model().data(index,Qt.DisplayRole).toString())
-                    return editor
-            elif index.column() == 0:
-                editor = QItemDelegate.createEditor(self, parentView, option, index)
-                if type(editor) == QLineEdit:
-                    editor.setText(index.model().data(index,Qt.DisplayRole).toString())
-                return editor
-            else:
-                return QItemDelegate.createEditor(self, parentView, option, index)
+            # Use default editor
+            return default_editor
 
-    def setEditorData(self,editor,index):
+        item = index.internalPointer()
+        node = item.node
+
+        if index.column() == 0:
+            # Use the default editor for tag name editing
+            # Note: Editing the first column is currently disabled in XmlModel
+            if type(default_editor) == QLineEdit:
+                # Fill in the tag
+                default_editor.setText(node.tag)
+            return default_editor
+
+        elif index.column() == 1:
+            # Combobox for multiple choices
+            editor = default_editor
+            if node.get('choices') is not None:
+                editor = QComboBox(parent_view)
+                choices = [s.strip() for s in node.get('choices').split('|')]
+                for item in choices:
+                    editor.addItem(item)
+                # Select the current choice
+                choice = node.text.strip() if node.text else ''
+                if choice in choices:
+                    editor.setCurrentIndex(choices.index(choice))
+            # Select database connection
+            elif node.get('type') == 'db_connection_hook':
+                editor = QComboBox(parent_view)
+                # Get connection names from database_server_connections.xml
+                choices = self.known_db_connection_names
+                # Populate the editor with the choices
+                for i in choices:
+                    editor.addItem(i)
+            # Select files and folders
+            elif node.get('type') in ('file_path', 'dir_path'):
+                editor_file = QFileDialog()
+                filter_str = QString("*.*")
+                editor_file.setFilter(filter_str)
+                editor_file.setAcceptMode(QFileDialog.AcceptOpen)
+                current_value = \
+                    index.model().data(index, Qt.DisplayRole).toString()
+                if node.get('type') == 'file_path':
+                    method = editor_file.getOpenFileName
+                    title = 'Please select a file...'
+                else:
+                    method = editor_file.getExistingDirectory
+                    title = 'Please select a directory...'
+                fd = method(self.parent_view, title, current_value)
+
+                # Check for cancel
+                if len(fd) == 0:
+                    new_value = current_value
+                else:
+                    new_value = QString(fd)
+                editor = QItemDelegate.createEditor(self, self.parent_view,
+                                                    option, index)
+                if type(editor) == QLineEdit:
+                    editor.setText(new_value)
+            # Edit passwords
+            elif node.get('type') == 'password':
+                editor.setText(str(node.text or ''))
+                editor.setStyleSheet('QLineEdit { background-color: red }')
+                # If we want to never show the characters, use
+                # QLineEdit.Password
+                editor.setEchoMode(QLineEdit.PasswordEchoOnEdit)
+            # Use default editor
+            else:
+                if type(editor) == QLineEdit:
+                    txt = index.model().data(index, Qt.DisplayRole).toString()
+                    editor.setText(txt)
+
+            return editor
+
+    def setEditorData(self, editor, index):
+        ''' PyQt API Method -- See the PyQt documentation for a description '''
         pass
 
-    def setModelData(self,editor,model,index):
-        #print "setModelData"
+    def setModelData(self,editor, model, index):
+        ''' PyQt API Method -- See the PyQt documentation for a description '''
         if type(editor) == QComboBox:
-            model.setData(index,QVariant(editor.currentText()),Qt.EditRole)
+            model.setData(index, QVariant(editor.currentText()), Qt.EditRole)
         else:
-            QItemDelegate.setModelData(self,editor,model,index)
+            QItemDelegate.setModelData(self, editor, model, index)
 
     def updateEditorGeometry(self, editor, option, index):
+        ''' PyQt API Method -- See the PyQt documentation for a description '''
         if type(editor) == QComboBox:
             editor.setGeometry(option.rect)
         else:
-            QItemDelegate.updateEditorGeometry(self,editor,option,index)
-
+            QItemDelegate.updateEditorGeometry(self, editor, option, index)

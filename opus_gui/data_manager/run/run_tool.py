@@ -1,26 +1,26 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QThread, SIGNAL
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
+from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
 
 class RunToolThread(QThread):
-    def __init__(self, mainwindow,opusTool):
-        QThread.__init__(self, mainwindow)
-        self.mainwindow = mainwindow
+    def __init__(self,opusTool):
+        QThread.__init__(self, get_mainwindow_instance())
         self.opusTool = opusTool
 
     def run(self):
@@ -52,8 +52,7 @@ class RunToolThread(QThread):
 
 
 class OpusTool(object):
-    def __init__(self,mainwindow,toolInclude,toolVars=[]):
-        self.mainwindow = mainwindow
+    def __init__(self, toolInclude, toolVars=[]):
         self.toolInclude = toolInclude
         self.toolVars = toolVars
         self.startingCallback = None

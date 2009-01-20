@@ -1,42 +1,39 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 #
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QThread, QString, SIGNAL, QFileInfo
-
 import os
-from opus_gui.util.exception_formatter import formatExceptionInfo
+
+from PyQt4.QtCore import QThread, QString, SIGNAL
 
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import SimulationRunError
-#from opus_gui.configurations.xml_configuration import XMLConfiguration
-from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
-from opus_gui.results_manager.run.batch_processor import BatchProcessor
 from opus_core.services.run_server.run_manager import RunManager
+from opus_gui.results_manager.results_manager import update_available_runs,\
+    get_batch_configuration
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
+from opus_gui.util.exception_formatter import formatExceptionInfo
+from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 
 class RunModelThread(QThread):
-    def __init__(self, mainwindow, modelguielement, xml_file, batch_name = None, run_name = None):
+    def __init__(self, mainwindow, modelguielement, batch_name = None, run_name = None):
         QThread.__init__(self, mainwindow)
-        self.run_name = run_name
         self.modelguielement = modelguielement
         self.modelguielement.model.run_name = run_name
-        self.xml_file = xml_file
         self.batch_name = batch_name
-        self.toolboxBase = self.modelguielement.mainwindow.toolboxBase
-        self.xml_helper = ResultsManagerXMLHelper(toolboxBase = self.toolboxBase)
-        self.mainwindow = mainwindow
+        self.run_name = run_name
+        self.project = get_mainwindow_instance().project
 
     def run(self):
         self.modelguielement.model.progressCallback = self.progressCallback
@@ -62,44 +59,41 @@ class RunModelThread(QThread):
     def finishedCallback(self,success):
         if success:
             print "Success returned from Model"
-            
+
             if self.modelguielement.model.cancelled:
                 self.modelguielement.model.run_manager.cancel_run()
             else:
                 if self.batch_name is not None:
                     self.runIndicatorBatch()
-                self.add_run_to_run_manager_xml()
+                update_available_runs(self.project)
         else:
             print "Error returned from Model"
         self.modelguielement.model.run_manager.close()
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
-    def add_run_to_run_manager_xml(self):
-        '''add this completed run to the run manager section of the results manager'''
-        self.xml_helper.update_available_runs()
-        
     def get_run_name(self):
         return self.modelguielement.model.run_name
-    
+
     def get_years(self):
         return self.modelguielement.model.config['years']
-    
+
     def runIndicatorBatch(self):
-        visualizations = self.xml_helper.get_batch_configuration(
-                            batch_name =  self.batch_name) 
+        visualizations = get_batch_configuration(
+                            project = self.project,
+                            batch_name =  self.batch_name)
         start, end = self.get_years()
-        
-        self.batch_processor = BatchProcessor(toolboxBase = self.toolboxBase)           
+
+        self.batch_processor = BatchProcessor(project = self.project)
         self.batch_processor.errorCallback = self.errorCallback
         self.batch_processor.finishedCallback = self.indicatorBatchFinishedCallback
-        
+
         self.batch_processor.set_data(
-            visualizations = visualizations, 
+            visualizations = visualizations,
             source_data_name = self.get_run_name(),
             years = range(start, end + 1))
-        
+
         self.batch_processor.run()
-                
+
     def indicatorBatchFinishedCallback(self, success):
 #        results_manager = self.mainwindow.resultsManagerBase
 #        all_visualizations = self.batch_processor.get_visualizations()
@@ -108,25 +102,27 @@ class RunModelThread(QThread):
 #               indicator_type == 'matplotlib_chart':
 #                form_generator = results_manager.addViewImageIndicator
 #            elif indicator_type == 'tab':
-#                form_generator = results_manager.addViewTableIndicator            
-#        
-#            if form_generator is not None:    
+#                form_generator = results_manager.addViewTableIndicator
+#
+#            if form_generator is not None:
 #                for visualization in visualizations:
-#                    form_generator(visualization = visualization, indicator_type = indicator_type)    
-        return 
-    
+#                    form_generator(visualization = visualization, indicator_type = indicator_type)
+        return
+
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
 
 class OpusModel(object):
-    def __init__(self,xmltreeobject,xml_path,modeltorun):
-        self.xmltreeobject = xmltreeobject
-        self.xml_path = xml_path
+    def __init__(self, manager, xml_config, modeltorun):
+        self.xml_config = xml_config
         self.modeltorun = modeltorun
+        self.manager = manager
+
         self.progressCallback = None
         self.finishedCallback = None
         self.errorCallback = None
+
         self.guiElement = None
         self.config = None
         self.statusfile = None
@@ -140,19 +136,19 @@ class OpusModel(object):
         # simulate 0 command line arguments by passing in []
         self.cancelled = False
         self.run_manager = None
-        
+
     def pause(self):
         success = self._write_command_file('pause')
-        if success: 
+        if success:
             self.paused = True
         return success
-    
+
     def resume(self):
         success = self._write_command_file('resume')
         if success:
             self.paused = False
         return success
-    
+
     def cancel(self):
         success = self._write_command_file('stop')
         if success:
@@ -160,12 +156,12 @@ class OpusModel(object):
             self.paused = False
             self.cancelled = True
         return success
-    
+
     def get_run_name(self, config, run_name = None):
         if run_name is None:
             cache_directory = config['cache_directory']
             run_name = 'Run_%s'%os.path.basename(cache_directory)
-            
+
         return run_name
 
     def run(self):
@@ -175,23 +171,21 @@ class OpusModel(object):
         # regarding the progress of the simulation - the progress bar reads this file
         statusdir = None
         succeeded = False
-        
+
         try:
-            # find the directory containing the eugene xml configurations
-            fileNameInfo = QFileInfo(self.xml_path)
-            fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-            config = self.xmltreeobject.toolboxbase.opus_core_xml_configuration.get_run_configuration(str(self.modeltorun))
-                
+            config = self.xml_config.get_run_configuration(str(self.modeltorun))
+            # self.xmltreeobject.toolboxbase.opus_core_xml_configuration.get_run_configuration(str(self.modeltorun))
+
             cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
-            run_name = self.get_run_name(config = config, run_name = self.run_name)                
+            run_name = self.get_run_name(config = config, run_name = self.run_name)
             config['cache_directory'] = os.path.join(cache_directory_root, run_name)
-            
+
             #insert_auto_generated_cache_directory_if_needed(config)
             (self.start_year, self.end_year) = config['years']
 
             server_config = ServicesDatabaseConfiguration()
             run_manager = RunManager(server_config)
-    
+
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                       configuration = config)
 
@@ -286,7 +280,7 @@ class OpusModel(object):
             else:
                 logText.append(QString("."))
         return [newKey,logText]
-    
+
     def _get_current_log(self, key):
         newKey = key
         # We attempt to keep up on the current progress of the model run.  We pass into this
@@ -295,10 +289,10 @@ class OpusModel(object):
         # what has happened since last time this function was called.
         # In this example we use the key to indicate where in a logfile we last stopped reading
         # and seek into that file point and read to the end of the file and append to the
-        # log text edit field in the GUI. 
-        # Since there is a different log file for each simulation year, we also need to figure out 
+        # log text edit field in the GUI.
+        # Since there is a different log file for each simulation year, we also need to figure out
         # the name of the current log file. The current year is found by looking in the status.txt
-        # file (also used by the progress bar).  If this file doesn't exist, the current year is 
+        # file (also used by the progress bar).  If this file doesn't exist, the current year is
         # the start year.  (We open the status.txt file separately from the compute progress method,
         # since there are separate threads that may be using these methods.)
         year = self.start_year

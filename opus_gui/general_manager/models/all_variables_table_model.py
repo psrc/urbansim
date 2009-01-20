@@ -1,19 +1,16 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
-
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import Qt, QVariant, QAbstractTableModel, SIGNAL, QModelIndex
 from PyQt4.QtGui import QColor
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
@@ -21,14 +18,15 @@ from opus_gui.main.controllers.dialogs.message_box import MessageBox
 import operator
 from opus_gui.general_manager.run.variable_validator import VariableValidator
 
-class AllVariablesTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parentWidget, editable=True, *args): 
-        QAbstractTableModel.__init__(self, parentWidget, *args) 
+class AllVariablesTableModel(QAbstractTableModel):
+    def __init__(self, datain, headerdata, parentWidget, editable=True, opus_gui = None):
+        QAbstractTableModel.__init__(self, parentWidget)
         self.arraydata = datain
         self.headerdata = headerdata
         self.parentWidget = parentWidget
         self.editable = editable
- 
+        self.opus_gui = opus_gui
+
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
@@ -39,20 +37,20 @@ class AllVariablesTableModel(QAbstractTableModel):
         else:
             return Qt.ItemIsEnabled
 
-    def rowCount(self, parent): 
-        return len(self.arraydata) 
- 
-    def columnCount(self, parent): 
+    def rowCount(self, parent):
+        return len(self.arraydata)
+
+    def columnCount(self, parent):
         if self.rowCount(parent):
             # We store the state of the row (checked and hidden) as
             # hidden last elements, so subtract 3
             return len(self.arraydata[0]) - 3
         else:
             return 0
-        
-    def data(self, index, role): 
-        if not index.isValid(): 
-            return QVariant() 
+
+    def data(self, index, role):
+        if not index.isValid():
+            return QVariant()
         if role == Qt.DisplayRole:
             return QVariant(self.arraydata[index.row()][index.column()])
         if role == Qt.CheckStateRole:
@@ -98,7 +96,6 @@ class AllVariablesTableModel(QAbstractTableModel):
             if order == Qt.DescendingOrder:
                 self.arraydata.reverse()
             self.emit(SIGNAL("layoutChanged()"))
-        
 
     def checkStateOfCheckBoxes(self,newItemAdded):
 #        if newItemAdded and self.editable:
@@ -111,9 +108,9 @@ class AllVariablesTableModel(QAbstractTableModel):
             if testCase[-2]:
                 foundOne = True
 #        if (not foundOne) and self.editable:
-#            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(False)        
-#            self.parentWidget.checkSelectedVariables.setEnabled(False)        
-        
+#            # REMOVED APR - self.parentWidget.deleteSelectedVariables.setEnabled(False)
+#            self.parentWidget.checkSelectedVariables.setEnabled(False)
+
     def initCheckBoxes(self,checkList):
         # Loop through the items and see if it needs a check mark
         for testCase in self.arraydata:
@@ -123,7 +120,7 @@ class AllVariablesTableModel(QAbstractTableModel):
 
     def setData(self,index,value,role):
         # print "Set Data Pressed with %s" % (value.toString())
-        # when setting the appropriate element of arraydata, trim off whitespace at the end 
+        # when setting the appropriate element of arraydata, trim off whitespace at the end
         # (this handles the common case of typing a cr after editing some data)
         if not index.isValid():
             return False
@@ -139,7 +136,7 @@ class AllVariablesTableModel(QAbstractTableModel):
                 if self.parentWidget:
                     self.parentWidget.dirty = True
 #                if self.parentWidget and self.parentWidget.saveChanges:
-#                    self.parentWidget.saveChanges.setEnabled(True)  
+#                    self.parentWidget.saveChanges.setEnabled(True)
                 return True
         if role == Qt.CheckStateRole:
             if index.column() == 0:
@@ -178,7 +175,7 @@ class AllVariablesTableModel(QAbstractTableModel):
         if self.parentWidget:
             self.parentWidget.dirty = True
 #        if self.parentWidget and self.parentWidget.saveChanges:
-#            self.parentWidget.saveChanges.setEnabled(True)  
+#            self.parentWidget.saveChanges.setEnabled(True)
         return returnval
 
     def deleteAllChecked(self):
@@ -192,23 +189,23 @@ class AllVariablesTableModel(QAbstractTableModel):
         for index in listIndexToRemove:
             self.removeRow(index)
         self.checkStateOfCheckBoxes(False)
-        
+
     def checkSyntax(self, row):
         variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
-        return VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).check_parse_errors(variables = variables)
-        
+        return VariableValidator(self.opus_gui.project).check_parse_errors(variables = variables)
+
     def checkAgainstData(self, row):
         variables = [(str(self.arraydata[row][1]), str(self.arraydata[row][2]), str(self.arraydata[row][3]), str(self.arraydata[row][4]), str(self.arraydata[row][5]))]
-        return VariableValidator(self.parentWidget.mainwindow.toolboxBase).check_data_errors(variables = variables)
+        return VariableValidator(self.opus_gui.project).check_data_errors(variables = variables)
 
-    
+
     def checkSelectedVariables(self):
         # check the variables in the expression library that have check boxes checked
         tocheck = []
         for i,testCase in enumerate(self.arraydata):
             if testCase[-2]:
                 tocheck.append((str(self.arraydata[i][1]), str(self.arraydata[i][2]), str(self.arraydata[i][3]), str(self.arraydata[i][4]), str(self.arraydata[i][5])))
-        success, msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = tocheck,
+        success, msg = VariableValidator(self.opus_gui.project).validate(variables = tocheck,
                                      ok_msg = 'All expressions for selected variables parse correctly and can be executed on the baseyear data!')
         if success:
             MessageBox.information(mainwindow = self.parentWidget,
@@ -221,21 +218,21 @@ class AllVariablesTableModel(QAbstractTableModel):
             
     def checkAllVariables(self):
         # check all the variables in the expression library
-        
+
 #        1 variable_name
 #        2 dataset_name
 #        4 source
 #        5 expression
         vars = [(str(v[1]), str(v[2]), str(v[3]), str(v[4]), str(v[5])) for v in self.arraydata]
-        success,msg = VariableValidator(toolboxBase = self.parentWidget.mainwindow.toolboxBase).validate(variables = vars,
+        success,msg = VariableValidator(self.opus_gui.project).validate(variables = vars,
                                      ok_msg = 'All expressions parse correctly and can be executed on the baseyear data!')
         if success:
             MessageBox.information(mainwindow = self.parentWidget,
                               text = 'The expressions passed the tests.',
                               detailed_text = msg)            
-        else:   
+        else:
             MessageBox.warning(mainwindow = self.parentWidget,
                               text = 'Some or all expressions failed a test.',
                               detailed_text = msg)
-    
-    
+
+

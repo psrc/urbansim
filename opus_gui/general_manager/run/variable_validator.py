@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 from opus_core.variables.variable_name import VariableName
@@ -23,18 +23,18 @@ from opus_core.datasets.interaction_dataset import InteractionDataset
 import numpy
 
 class VariableValidator(object):
-    def __init__(self, toolboxBase):
-        self.toolboxBase = toolboxBase
+    def __init__(self, project):
+        self.project = project
         # maximum number of lines in the error report (to prevent overlong dialogs)
         self.max_lines = 100
-        
+
     def validate(self, variables, ok_msg):
         parsing_successful, parsing_errors = self.check_parse_errors(variables)
-        
+
         if not parsing_successful:
             errorString = "Parse errors: <br><br>  " + "<br><br>".join(parsing_errors)
             return (False, errorString)
-                    
+
         data_successful, data_errors = self.check_data_errors(variables)
 
         if data_successful:
@@ -42,8 +42,8 @@ class VariableValidator(object):
         else:
             errorString = "Errors executing expression on baseyear data: <br><br>  " + "<br><br>".join(data_errors)
             return False, errorString
-        
-        
+
+
     def check_parse_errors(self, variables):
         # check the variables in the expression library as indexed by the list 'variables'.
         errors = []
@@ -79,12 +79,12 @@ class VariableValidator(object):
                     errors.append("Unknown source type %s: (%s, %s): %s" % (source, var_name, dataset_name, expr))
             except (SyntaxError, ValueError), e:
                 errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
+
             # check whether there are too many errors; if so stop to prevent the list from getting too long
             if self._too_many_errors(errors):
                 errors.append("[*** rest of error report truncated ***]")
                 return False, errors
         return len(errors) == 0, errors
-
 
     def check_data_errors(self, variables):
         errors = []
@@ -109,12 +109,28 @@ class VariableValidator(object):
         
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
 
-        interface = IndicatorFrameworkInterface(self.toolboxBase)
-        node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data', 
-                                                                 child_attributes = ['start_year'],
-                                                                 node_type = 'source_data')
-        year = int(str(vals['start_year']))
-        
+        # grab the first base_year_data in results_manager/Simulation_runs and
+        # fetch the year for it
+        base_year = self.project.find('./results_manager/Simulation_runs/base_year_data/start_year')
+        print 'byd:', self.project.find('./results_manager/Simulation_runs/')[:]
+        if base_year is None:
+            return False, "Project doesn't have any base year data to check against"
+
+        start_year = int(base_year.text)
+#        node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data',
+#                                                                 child_attributes = ['start_year'],
+#                                                                 node_type = 'source_data')
+#        years = [int(str(vals['start_year']))]
+
+        result_generator = OpusResultGenerator(self.project)
+        result_generator.set_data(
+               source_data_name = 'base_year_data',
+               indicator_name = indicator_name,
+               dataset_name = dataset_name,
+               years = [start_year,],
+               indicator_definition = (expression, source))
+
+        interface = IndicatorFrameworkInterface(self.project)
         src_data = interface.get_source_data(source_data_name = 'base_year_data', years = [year])
         SimulationState().set_current_time(year)
         SimulationState().set_cache_directory(src_data.cache_directory)
