@@ -123,7 +123,7 @@ def update_available_runs(project):
     run_nodes = get_available_run_nodes(project)
     existing_cache_directories = set()
     for run_node in run_nodes:
-        cache_directory = run_node.find('cache_directory').text
+        cache_directory = os.path.normpath(run_node.find('cache_directory').text)
         if not os.path.exists(cache_directory):
             results_manager.delete_run(run_node)
             removed_runs.append(run_node.tag)
@@ -135,6 +135,7 @@ def update_available_runs(project):
 
     # Make sure that the base_year_data is in the list of available runs
     baseyear_dir = os.path.join(project.data_path(), 'base_year_data')
+    baseyear_dir = os.path.normpath(baseyear_dir)
     years = []
     if not baseyear_dir in existing_cache_directories:
         for dir in os.listdir(baseyear_dir):
@@ -160,7 +161,7 @@ def update_available_runs(project):
     # Make sure all runs with unique directories are list on the project
     added_runs = []
     for run_id, run_name, _, _, run_resources in runs:
-        cache_directory = run_resources['cache_directory']
+        cache_directory = os.path.normpath(run_resources['cache_directory'])
 
         if cache_directory in existing_cache_directories or \
            not os.path.exists(cache_directory): continue
