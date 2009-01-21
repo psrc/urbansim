@@ -11,7 +11,27 @@
 # other acknowledgments.
 #
 
-# Module global instance reference to the application main window
+'''
+Provides access functions to get instance references of the currently active
+main window.
+
+Functions of most general interest:
+
+    get_manager_instance(manager_name)
+        Fetches a reference to any of the loaded managers or None if no such
+        manager exists.
+
+    update_window_title()
+        Updates the title of the main window to reflect any changes to the
+        dirty state of the project.
+
+    get_db_connection_names()
+        Retrieve a list of names for database connections that are configured
+        in the Database Manager.
+
+'''
+
+# Instance of the application main window
 __OPUS_GUI_INSTANCE = None
 
 def set_opusgui_instance(opusgui):
@@ -34,7 +54,7 @@ def get_manager_instance(manager_name):
     Get an instance handle for the named manager
     @param manager_name (String): Name of the instance to get a handle to
     (i.e 'data_manager', results_manager' etc)
-    @return: the instance to the given manager or None
+    @return: the instance of the given manager or None
     '''
     instance = __get_instance()
     if instance is not None and manager_name in \
