@@ -210,7 +210,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             is_matched_type = building_type_ids == type_id
                 
             self.existing_units[type_id] = buildings.get_attribute(self.unit_name[is_residential[index]])[is_matched_type].astype("float32").sum()
-            self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
+            self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % self.unit_name)[is_matched_type].astype("float32").sum()          
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = self._get_vacancy_rates(type_id)
