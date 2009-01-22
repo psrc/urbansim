@@ -24,8 +24,7 @@ from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageF
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_core.logger import logger
 
-from opus_gui.general_manager.general_manager import get_available_indicator_nodes,\
-    get_available_indicator_names
+from opus_gui.general_manager.general_manager import get_available_indicator_nodes,get_available_indicator_names
 from opus_gui.results_manager.results_manager import get_simulation_runs,\
     get_years_for_simulation_run
 from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
