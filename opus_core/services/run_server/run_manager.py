@@ -346,6 +346,7 @@ class RunManager(AbstractService):
     def add_row_to_history(self, run_id, resources, status, run_name = None):
         """update the run history table to indicate changes to the state of this run history trail."""
         
+        self.update_environment_variables(run_resources = resources)
         resources['run_id'] = run_id
         pickled_resources = pickle.dumps(resources)
         description = resources.get('description', 'No description')
