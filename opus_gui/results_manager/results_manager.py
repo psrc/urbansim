@@ -88,14 +88,9 @@ class ResultsManager(AbstractManager):
         dlg = ImportRunDialog(self, self.base_widget)
         dlg.show()
 
-    def removeGuiElement(self, guiElement):
-        self.about_to_close(guiElement)
-        if guiElement == self.resultBrowser:
-            self.resultBrowser = None
-
     def add_result_browser(self):
         if self.resultBrowser is not None:
-            self.removeGuiElement(guiElement = self.resultBrowser)
+            self.close_tab(self.resultBrowser)
         self.resultBrowser = ResultBrowser(resultsManagerBase = self)
         self._attach_tab(tab_widget = self.resultBrowser)
 
