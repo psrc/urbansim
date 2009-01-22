@@ -68,6 +68,9 @@ class AgentRelocationModel(Model):
                         sample_rates=False, n=100, multiplicator=1, flush_rates=True):
         from opus_core.datasets.dataset_factory import DatasetFactory
         from opus_core.session_configuration import SessionConfiguration
+        resources = Resources()
+        if (rate_storage is None) or ((rate_table is None) and (rate_dataset_name is None)):
+            return resources
         if not rate_dataset_name:
             rate_dataset_name = DatasetFactory().dataset_name_for_table(rate_table)
         
@@ -77,7 +80,7 @@ class AgentRelocationModel(Model):
                                                                'in_table_name':rate_table,
                                                            }
                                                     )
-        resources = Resources()
+        
         if sample_rates:
             cache_storage=None
             if flush_rates:
