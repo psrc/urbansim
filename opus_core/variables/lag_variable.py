@@ -74,7 +74,7 @@ class LagVariable(Variable):
         if self.package_name is None:
             attr_full_name = '.'.join([self.dataset_name, self.attribute_name])
         else:
-            attr_full_name = '.'.join([self.dataset_name, self.dataset_name, self.attribute_name])
+            attr_full_name = '.'.join([self.package_name, self.dataset_name, self.attribute_name])
         lag_data = self._compute_variable_for_prior_year(dataset, attr_full_name, lag_time, arguments)
 
         # Also need the index data from prior year.
