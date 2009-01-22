@@ -14,8 +14,7 @@
 from xml.etree.cElementTree import Element, SubElement
 
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
-from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, \
-    QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
+from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
