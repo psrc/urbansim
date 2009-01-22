@@ -19,8 +19,7 @@ from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.results_manager.views.ui_run_indicator_batch import Ui_runIndicatorBatch
-from opus_gui.results_manager.results_manager import get_simulation_runs, \
-    get_batch_configuration
+from opus_gui.results_manager.results_manager import get_simulation_runs, get_batch_configuration
 
 class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
     def __init__(self, mainwindow, resultsManagerBase, batch_name = None,
