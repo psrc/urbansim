@@ -15,8 +15,7 @@ from PyQt4.QtCore import QString
 
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from xml.etree.cElementTree import Element, SubElement
-from opus_gui.results_manager.results_manager import \
-    add_batch_indicator_visualization
+from opus_gui.results_manager.results_manager import add_batch_indicator_visualization
 
 class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, project, batch_node, parent_widget = None):
