@@ -20,8 +20,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.\
 from opus_gui.abstract_manager.views.xml_view import XmlView
 import os
 
-from opus_gui.main.views.ui_databasesettingsedit import \
-    Ui_DatabaseSettingsEditGui
+from opus_gui.main.views.ui_databasesettingsedit import Ui_DatabaseSettingsEditGui
 
 class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
     def __init__(self, parent_widget):

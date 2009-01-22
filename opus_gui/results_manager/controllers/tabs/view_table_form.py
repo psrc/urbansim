@@ -12,8 +12,7 @@
 #
 
 from PyQt4.QtCore import QString
-from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, \
-                        QTableWidget, QTableWidgetItem
+from PyQt4.QtGui import QWidget, QVBoxLayout, QIcon, QSizePolicy, QTableWidget, QTableWidgetItem
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 

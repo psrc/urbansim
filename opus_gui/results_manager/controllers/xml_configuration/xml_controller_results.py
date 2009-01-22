@@ -22,8 +22,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.results_manager.controllers.dialogs.configure_existing_batch_indicator_visualization import ConfigureExistingBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization import ConfigureNewBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.indicator_batch_run_form import IndicatorBatchRunForm
-from opus_gui.results_manager.results_manager import \
-    get_available_run_nodes, get_run_manager
+from opus_gui.results_manager.results_manager import get_available_run_nodes, get_run_manager
 
 class XmlController_Results(XmlController):
     ''' XmlController for the Results Manager '''

@@ -19,8 +19,7 @@ from PyQt4.QtCore import QThread, QString, SIGNAL
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import SimulationRunError
 from opus_core.services.run_server.run_manager import RunManager
-from opus_gui.results_manager.results_manager import update_available_runs,\
-    get_batch_configuration
+from opus_gui.results_manager.results_manager import update_available_runs, get_batch_configuration
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.results_manager.run.batch_processor import BatchProcessor

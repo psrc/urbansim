@@ -13,8 +13,7 @@
 
 
 from PyQt4.QtCore import QString
-from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, \
-                        QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
+from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon, QGridLayout, QLabel, QImage, QPainter, QPixmap, QScrollArea, QSizePolicy
 
 
 class ViewImageForm(QWidget):

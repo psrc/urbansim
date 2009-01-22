@@ -24,8 +24,7 @@ from opus_gui.results_manager.results_manager import get_available_batch_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
-from opus_gui.general_manager.general_manager import \
-    get_available_dataset_names, get_variable_nodes_per_dataset
+from opus_gui.general_manager.general_manager import get_available_dataset_names, get_variable_nodes_per_dataset
 from opus_gui.results_manager.results_manager import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
