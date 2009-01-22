@@ -12,8 +12,7 @@
 #
 
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
-from opus_gui.data_manager.controllers.xml_configuration.\
-    xml_controller_data_tools import XmlController_DataTools
+from opus_gui.data_manager.controllers.xml_configuration.xml_controller_data_tools import XmlController_DataTools
 from opus_gui.data_manager.controllers.files.file_controller_opus_data import FileController_OpusData
 
 class DataManager(AbstractManager):

@@ -21,8 +21,7 @@ from opus_gui.main.controllers.mainwindow import get_db_connection_names
 from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.abstract_manager.models.xml_item_delegate import XmlItemDelegate
-from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog \
-    import RenameDialog
+from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import RenameDialog
 
 # List node types that are removable (which also makes them rename-able)
 _REMOVABLE_NODE_TYPES = (
