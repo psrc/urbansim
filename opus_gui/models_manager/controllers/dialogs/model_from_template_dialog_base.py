@@ -15,8 +15,7 @@ from PyQt4.QtCore import QString, SIGNAL, QSize, Qt
 from PyQt4.QtGui import QHBoxLayout, QSizePolicy, QDialog
 from PyQt4.QtXml import QDomElement
 
-from opus_gui.models_manager.views.ui_model_from_template_dialog_base import \
-     Ui_ModelFromTemplateDialogBase
+from opus_gui.models_manager.views.ui_model_from_template_dialog_base import Ui_ModelFromTemplateDialogBase
 
 class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
     '''Base dialog class to allow for easy creation of more specific model
