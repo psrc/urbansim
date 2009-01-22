@@ -13,8 +13,7 @@
 
 from PyQt4.QtGui import QLabel, QLineEdit
 
-from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import \
-    ModelFromTemplateDialogBase
+from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
 
 class AgentLocationChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
