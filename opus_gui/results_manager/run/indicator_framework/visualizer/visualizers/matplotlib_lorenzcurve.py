@@ -14,8 +14,7 @@
 
 import os, re, sys, time, traceback
 from copy import copy
-from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.abstract_visualization\
-    import Visualization
+from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
     
 from opus_core.logger import logger
 from numpy import array, arange

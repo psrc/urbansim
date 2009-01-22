@@ -15,8 +15,7 @@
 import os
 
 from opus_core.logger import logger
-from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.abstract_visualization\
-    import Visualization
+from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
 from opus_core.store.attribute_cache import AttributeCache
 from numpy import where, ma, ndarray
 from opus_core.storage_factory import StorageFactory

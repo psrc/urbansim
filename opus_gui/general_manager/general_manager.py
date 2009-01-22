@@ -12,8 +12,7 @@
 #
 
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
-from opus_gui.general_manager.controllers.xml_configuration.\
-    xml_controller_general import XmlController_General
+from opus_gui.general_manager.controllers.xml_configuration.xml_controller_general import XmlController_General
 
 '''
 Methods and Classes related to the General Manager

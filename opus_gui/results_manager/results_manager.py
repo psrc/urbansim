@@ -54,8 +54,7 @@ class ResultsManager(AbstractManager):
                          % '\n'.join(added_runs))
         if len(removed_runs) > 0:
             removed_msg = ('The following simulation runs have been '
-                         'automatically removed from the results manager:\n\n%s'
-                         % '\n'.join(removed_runs))
+                         'automatically removed from the results manager:\n\n%s% '\n'.join(removed_runs))
         if added_msg or removed_msg:
             self.project.dirty = True
             detailed_text = '%s\n\n%s' % (added_msg or '', removed_msg or '')

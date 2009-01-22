@@ -13,8 +13,7 @@
 
 from PyQt4.QtGui import QLineEdit, QComboBox, QLabel
 
-from opus_gui.models_manager.controllers.dialogs.\
-    model_from_template_dialog_base import ModelFromTemplateDialogBase
+from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
 from opus_gui.general_manager.general_manager import get_available_dataset_names
 
 class SimpleModelFromTemplateDialog(ModelFromTemplateDialogBase):
