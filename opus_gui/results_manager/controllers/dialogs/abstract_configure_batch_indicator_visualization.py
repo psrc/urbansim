@@ -17,9 +17,7 @@ from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
-from opus_gui.general_manager.general_manager import \
-    get_available_indicator_names, get_available_dataset_names,\
-    get_available_indicator_nodes
+from opus_gui.general_manager.general_manager import get_available_indicator_names, get_available_dataset_names, get_available_indicator_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
