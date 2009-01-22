@@ -29,8 +29,7 @@ from xml.etree.cElementTree import SubElement
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
-from opus_gui.results_manager.results_manager import \
-    update_batch_indicator_visualization
+from opus_gui.results_manager.results_manager import update_batch_indicator_visualization
 
 class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, project, batch_indicator_visualization_node, parent_widget = None):
