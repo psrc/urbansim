@@ -323,8 +323,8 @@ class BayesianMelding(MultipleRuns):
         return self.mu
 
     def get_expected_values_by_index(self, index, transformed_back=True):
+        transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(index).get_transformation_pair()
         if transformed_back and (transformation is not None):
-            transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(index).get_transformation_pair()
             return try_transformation(self.mu[index], inverse_transformation)
         return self.mu[index]
         
