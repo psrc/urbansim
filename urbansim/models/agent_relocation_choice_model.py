@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import where, concatenate
+from numpy import where, concatenate, arange
 from opus_core.choice_model import ChoiceModel
 from opus_core.logger import logger
 from opus_core.misc import unique_values
@@ -30,13 +30,15 @@ class AgentRelocationChoiceModel(ChoiceModel):
         ChoiceModel.__init__(self, choice_set, **kwargs)
 
 
-    def run(self, specification, coefficients, agent_set, **kwargs):
-        choices = ChoiceModel.run(self, specification, coefficients, agent_set, **kwargs)
-        movers_indices = where(choices>0)[0]
+    def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
+        choices = ChoiceModel.run(self, specification, coefficients, agent_set, agents_index=agents_index, **kwargs)
+        if agents_index is None:
+            agents_index=arange(agent_set.size())
+        movers_indices = agents_index[where(choices>0)]
         # add unplaced agents
-        unplaced_agents = where(agent_set.get_attribute(self.location_id_name) <= 0)[0]
+        unplaced_agents = where(agent_set.get_attribute_by_index(self.location_id_name, agents_index) <= 0)[0]
         logger.log_status("%s agents selected by the logit model; %s agents without %s." % 
                           (movers_indices.size, unplaced_agents.size, self.location_id_name))
         movers_indices = unique_values(concatenate((movers_indices, unplaced_agents)))
-        logger.log_status("Number of movers: " + str(movers_indices.size), 2)
+        logger.log_status("Number of movers: " + str(movers_indices.size))
         return movers_indices
