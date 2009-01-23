@@ -110,7 +110,10 @@ class DatasetPool(object):
                 arguments[key] = self.get_dataset(dataset_names[i])
         else:
             arguments['in_storage'] = self._storage
-        dataset = DatasetFactory().search_for_dataset(dataset_name, self._package_order, subdir='datasets', arguments=arguments)        
+        if len(dataset_arguments.get('id_name', ['dummy'])) == 0:
+            dataset = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, self._package_order, subdir='datasets', arguments=arguments)
+        else:
+            dataset = DatasetFactory().search_for_dataset(dataset_name, self._package_order, subdir='datasets', arguments=arguments)        
         self._add_dataset(dataset_name, dataset)
     
     def _create_dataset(self, module_path, dataset_arguments):
