@@ -12,6 +12,7 @@
 # other acknowledgments.
 # 
 
+import os
 from baseline import Baseline
 
 class BaselineHana(Baseline):
@@ -24,10 +25,9 @@ class BaselineHana(Baseline):
         config['years'] = (2001, 2001)
         config['number_of_runs'] = 20
         config['seed'] = 1
-        config['cache_directory'] = '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
         #config['cache_directory'] = '/Users/hana/urbansim_cache/psrc/parcel/relocation_models_estimation/cache_source_parcel'
-        config['creating_baseyear_cache_configuration'].cache_directory_root = '/Users/hana/urbansim_cache/psrc/parcel'
-        config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
+        config['creating_baseyear_cache_configuration'].cache_directory_root = os.path.join(
+                                                    config['creating_baseyear_cache_configuration'].cache_directory_root, 'bm')
         #config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = '/Users/hana/urbansim_cache/psrc/parcel/relocation_models_estimation/cache_source_parcel'
         config['creating_baseyear_cache_configuration'].tables_to_cache = [
                     'households',
