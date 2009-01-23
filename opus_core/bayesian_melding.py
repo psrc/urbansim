@@ -205,13 +205,14 @@ class BayesianMelding(MultipleRuns):
     bias_file_name = "bias"
     
     def __init__(self, cache_file_location, observed_data,
-                 base_year=0,  prefix='run_', package_order=['core']):
+                 base_year=0,  prefix='run_', package_order=['core'], additional_datasets={}):
         """ Class used in the Bayesian melding analysis.
         'cache_file_location' is location (either file or directory) with information about all caches
         (see doc string for MultipleRuns).
         'observed_data' is an object of ObservedData that contains all the information about observed data.
         """
-        MultipleRuns.__init__(self, cache_file_location, prefix=prefix, package_order=package_order)
+        MultipleRuns.__init__(self, cache_file_location, prefix=prefix, package_order=package_order, 
+                              additional_datasets=additional_datasets)
         self.output_directory = os.path.join(os.path.split(self.full_cache_file_name)[0], 'bm_output')
         logger.log_status('Output directory set to %s.' % self.output_directory)
         if not os.path.exists(self.output_directory):
@@ -251,7 +252,7 @@ class BayesianMelding(MultipleRuns):
         return self.weights
     
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, quantity):
-        dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
+        dataset_pool = self._setup_environment(self.cache_set[run_index], year)
         for mds_name, ids in quantity.get_matching_datasets().iteritems():
             mds = dataset_pool.get_dataset(mds_name)
             mds.subset_by_ids(ids, flush_attributes_if_not_loaded=False)
@@ -322,8 +323,8 @@ class BayesianMelding(MultipleRuns):
         return self.mu
 
     def get_expected_values_by_index(self, index, transformed_back=True):
-        transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(index).get_transformation_pair()
         if transformed_back and (transformation is not None):
+            transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(index).get_transformation_pair()
             return try_transformation(self.mu[index], inverse_transformation)
         return self.mu[index]
         
