@@ -24,7 +24,7 @@ class BaselineEstimationHana(BaselineHana):
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
         self['cache_directory'] = '/Users/hana/urbansim_cache/psrc/parcel/relocation_models_estimation/cache_source_parcel'
         self['estimation_database_configuration'] = EstimationDatabaseConfiguration(
-                                                             database_name = 'psrc_activity2006_ver2_hana',
+                                                             database_name = 'psrc_activity2006_ver2_hana_est',
                                                              )
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(
                                                                       package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],

@@ -22,7 +22,7 @@ class BaselineEstimation(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
-        self['cache_directory'] = '/Users/hana/urbansim_cache/psrc/cache_source_parcel_est'
+        self['cache_directory'] = '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
         self['estimation_database_configuration'] = EstimationDatabaseConfiguration(
                                                              database_name = 'psrc_2005_parcel_baseyear_change_20080305',
                                                              )

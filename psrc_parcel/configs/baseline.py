@@ -22,6 +22,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 
 class Baseline(UrbansimParcelConfiguration):
     multiple_runs = False
+    multiple_runs_config = 'psrc_parcel.configs.multiple_runs_modification'
     
     def __init__(self):
         config = UrbansimParcelConfiguration()
@@ -207,5 +208,9 @@ class Baseline(UrbansimParcelConfiguration):
             self.sample_inputs()
 
     def sample_inputs(self):
-        from multiple_runs_modification import MultipleRunsModification
+        from opus_core.misc import get_camel_case_class_name_from_opus_path
+        exec("from %s  import %s as MultipleRunsModification" % (self.multiple_runs_config, get_camel_case_class_name_from_opus_path(self.multiple_runs_config)))
         MultipleRunsModification().modify_configuration(self)
+
+#if __name__ == "__main__":
+#    Baseline()
