@@ -23,7 +23,7 @@ specification = {
          #'change_in_tt_to_work = psrc_parcel.household.max_drive_alone_hbw_am_travel_time_from_home_to_work - psrc_parcel.household.max_drive_alone_hbw_am_travel_time_from_home_to_work_lag1', 'change_in_tt_to_work'
          'tt_to_work = psrc_parcel.household.max_drive_alone_hbw_am_travel_time_from_home_to_work': ('b1_tt', 0),
          #'urbansim.household.has_workers': ('b1_hasw', 0),
-         #'has_nhb_workers_with_job = urbansim_parcel.household.number_of_non_home_based_workers_with_job > 0': ('b1_haswj', 0)
+         'has_nhb_workers_with_job = urbansim_parcel.household.number_of_non_home_based_workers_with_job > 0': ('b1_haswj', 0),
          'has_tt_to_work = psrc_parcel.household.max_drive_alone_hbw_am_travel_time_from_home_to_work > 0': ('b1_htt', 0),
          }
     }
