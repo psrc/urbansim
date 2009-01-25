@@ -91,7 +91,7 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
                 'urbansim_zone.models.development_project_transition_model': 'DevelopmentProjectTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 0},
+                'arguments': {'debuglevel': 'debuglevel'},
                 'name': 'DevelopmentProjectTransitionModel'
                 },
             'run': {
