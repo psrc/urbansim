@@ -29,5 +29,7 @@ class WorkersInitialization(Baseline):
         config.replace(config_changes)
         
         self.merge(config)
-        self['models_configuration']['work_at_home_choice_model']['controller']['run']['arguments']['choose_job_only_in_residence_zone'] = True
+        self['models_configuration']['work_at_home_choice_model']['controller']['run']['arguments']['run_choice_model'] = False
+        self['models_configuration']['work_at_home_choice_model']['controller']['run']['arguments']['choose_job_only_in_residence_zone'] = False
+        
 

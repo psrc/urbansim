@@ -38,16 +38,28 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.location_id_name = location_id_name
         ChoiceModel.__init__(self, [0, 1], choice_attribute_name=choice_attribute_name, **kwargs)
         
-    def run(self, choose_job_only_in_residence_zone=True, *args, **kwargs):
-        choices = ChoiceModel.run(self, *args, **kwargs)
-        #prob_work_at_home = self.upc_sequence.probabilities[:, 0]
+    def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, *args, **kwargs):
         agent_set = kwargs['agent_set']
-
+        if run_choice_model:
+            choices = ChoiceModel.run(self, *args, **kwargs)
+            #prob_work_at_home = self.upc_sequence.probabilities[:, 0]
+                
+            agent_set.set_values_of_one_attribute(self.choice_attribute_name, 
+                                                  choices, 
+                                                  index=kwargs['agents_index'])
+            at_home_worker_index = kwargs['agents_index'][choices==1]
+        else:
+            at_home_worker_index = where(logical_and( 
+                                                     agent_set.get_attribute('work_at_home'),
+                                                     agent_set.get_attribute('job_id') <= 0
+                                                     )
+                                        )[0]
+        
         if self.filter is not None:
             jobs_set_index = where( self.job_set.compute_variables(self.filter) )[0]
         else:
             jobs_set_index = arange( self.job_set.size() )
-        at_home_worker_index = kwargs['agents_index'][choices==1]
+
 
         if not choose_job_only_in_residence_zone:
             assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
@@ -69,9 +81,6 @@ class WorkAtHomeChoiceModel(ChoiceModel):
 
         ## each worker can only be assigned to 1 job
         #assert assigned_worker_index.size == unique_values(assigned_worker_index).size
-        agent_set.set_values_of_one_attribute(self.choice_attribute_name, 
-                                              choices, 
-                                              index=kwargs['agents_index'])
         agent_set.set_values_of_one_attribute(self.job_set.get_id_name()[0], 
                                               self.job_set.get_id_attribute()[assigned_job_index], 
                                               index=assigned_worker_index)
