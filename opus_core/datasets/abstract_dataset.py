@@ -36,6 +36,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
+import opus_core.ndimage
 
 class DataElement(object):
     """Represents one individual of the Dataset object. It is created by the method
@@ -933,17 +934,21 @@ class AbstractDataset(object):
         """
         myids = self.get_id_attribute()
         if is_masked_array(what):
-            where_masked = where(what.mask)[0]
             ids_local = ids.copy()
-            ids_local[where_masked] = 0 # do not consider those elements in the computation
+            w = where(ma.getmask(what))
+            if len(w)>0:
+                where_masked = w[0]
+                ids_local[where_masked] = 0 # do not consider those elements in the computation
             filled_what = ma.filled(what, 0)
         else:
             filled_what = what
             ids_local = ids
         try:
+            # Work around  numpy/scipy bug -- need to fix the char and num attributes of arrays with dtype==int32
             # formerly: values = eval("ndimage."+function+"(filled_what, labels=ids, index=myids)")
             # f is the function from ndimage
-            f = getattr(ndimage, function)
+            # f = getattr(ndimage, function)
+            f = getattr(opus_core.ndimage, function)
             values = f(*[filled_what], **{'labels': ids_local, 'index': myids})
             result = array(values)
         except Exception, e:

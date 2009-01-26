@@ -22,7 +22,7 @@ from opus_core.session_configuration import SessionConfiguration
         
 from opus_core.tests import opus_unittest
 from numpy import array, arange, allclose
-import tempfile, os, shutil
+import tempfile, os, shutil, sys
 from glob import glob
 import urbansim.tools.do_refinement
 
@@ -160,8 +160,8 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
 
     def test_do_nothing_if_no_refinements_specified_between_start_year_and_end_year(self):
         self.prepare_cache(2000)
-        os.system("python %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s" % 
-                  {'script': self.script, 'cache_directory':self.cache_dir,
+        os.system("%(python)s  %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s" % 
+                  {'python': sys.executable, 'script': self.script, 'cache_directory':self.cache_dir,
                    'start_year': 2005, 'end_year': 2010 }
                   )
 
@@ -179,8 +179,8 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
 
     def test_backup(self):
         self.prepare_cache()
-        os.system("python %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s --backup-before-refinement" % 
-                  {'script': self.script, 'cache_directory':self.cache_dir,
+        os.system("%(python)s  %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s --backup-before-refinement" % 
+                  {'python': sys.executable, 'script': self.script, 'cache_directory':self.cache_dir,
                    'start_year': 2020, 'end_year': 2020 }
                   )
         backup_dir = os.path.join(self.cache_dir, "backup", "2020")
@@ -193,8 +193,8 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
 
     def test_doing_refinements_from_specified_refinement_dataset(self):
         self.prepare_cache()
-        os.system("python %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s --refinements-directory=%(refinement_directory)s" % 
-                  {'script': self.script, 'cache_directory':self.cache_dir,
+        os.system("%(python)s %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s --refinements-directory=%(refinement_directory)s" % 
+                  {'python': sys.executable, 'script': self.script, 'cache_directory': self.cache_dir,
                    'start_year': 2021, 'end_year': 2022,
                    'refinement_directory': os.path.join(self.cache_dir, '2000')}
                   )
@@ -247,8 +247,8 @@ class TestDoingRefinement(opus_unittest.OpusTestCase):
         
     def test_doing_other_refinements(self):
         self.prepare_cache()
-        os.system("python %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s" % 
-                  {'script': self.script, 'cache_directory':self.cache_dir,
+        os.system("%(python)s  %(script)s -c %(cache_directory)s -s %(start_year)s -e %(end_year)s" % 
+                  {'python': sys.executable, 'script': self.script, 'cache_directory':self.cache_dir,
                    'start_year': 2023, 'end_year': 2027 }
                   )        
         

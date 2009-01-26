@@ -32,9 +32,15 @@ class building_age(Variable):
     def compute(self, dataset_pool):
         ds = self.get_dataset()
         age = ds.get_attribute(self.building_age)
-        whole_area_average_age = int(age.sum()/float(ds.size() - age.mask.sum()))
-        age_wwd_values = ma.filled(ds.get_attribute(self.age_wwd), whole_area_average_age)
-        result = ma.filled(age, age_wwd_values[age.mask])
+        result = ma.filled(age, -1)
+        mask = ma.getmask(age)
+        if mask is not ma.nomask and mask.any():
+            # If there are bad ages then mask won't be ma.nomask and will have some non-False values.  In this case compute
+            # the average age for all buildings, then find the ages of buildings within walking distance, and use those
+            # to fill in the bad values.
+            whole_area_average_age = int(age.sum()/float(ds.size() - age.mask.sum()))
+            age_wwd_values = ma.filled(ds.get_attribute(self.age_wwd), whole_area_average_age)
+            result[mask] = age_wwd_values[mask]
         return result
 
     def post_check(self, values, dataset_pool):
@@ -68,6 +74,29 @@ class Tests(opus_unittest.OpusTestCase):
 
         SimulationState().set_current_time(2005)
         should_be = array([10, 10, 0, 0])
+        tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
+
+    def test_my_inputs_with_no_mask(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                'gridcell':{
+                    'grid_id': array([1,2,3,4]),
+                    'relative_x': array([1,2,1,2]),
+                    'relative_y': array([1,1,2,2]),
+                    'year_built': array([1995, 1801, 2006, 2009])
+                    },
+                'urbansim_constant':{
+                    'absolute_min_year': array([1800]),
+                    "walking_distance_circle_radius": array([150]),
+                    'cell_size': array([150]),
+                }
+            }
+        )
+
+        SimulationState().set_current_time(2009)
+        should_be = array([14, 208, 3, 0])
         tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':

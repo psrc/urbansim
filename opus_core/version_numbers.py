@@ -86,4 +86,3 @@ def get_opus_version_number(package_name='opus_core'):
     except:
         pass
     return "%s-dev%s" % (opus_version, revision)
-    

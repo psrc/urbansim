@@ -14,7 +14,8 @@
 
 from opus_core.variables.variable import Variable
 from numpy import array
-from scipy.ndimage import sum as ndimage_sum
+# from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class employment_within_DDD_minutes_travel_time_hbw_am_drive_alone(Variable):
     """total number of jobs for zones within DDD minutes travel time,

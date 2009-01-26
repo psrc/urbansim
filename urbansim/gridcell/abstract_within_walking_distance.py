@@ -12,7 +12,8 @@
 # other acknowledgments.
 #
 
-from scipy.ndimage import correlate
+# from scipy.ndimage import correlate
+from opus_core.ndimage import correlate
 from numpy import ma
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
