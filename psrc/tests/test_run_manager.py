@@ -33,7 +33,7 @@ from sqlalchemy.sql import select, func
 ###       Once this has been done, move everything from this file and
 ###       delete_run_tests back into opus_core.
 from psrc.configs.subset_configuration import SubsetConfiguration
-    
+
 def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     """Runs model system with a single model (for speed).
     Sets the .resources property of the caller before starting the run.
@@ -81,6 +81,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
     def test_restart_simple_run(self):
         _do_run_simple_test_run(self, self.temp_dir, self.config)
         runs_manager = RunManager(self.config)
+        runs_manager.update_environment_variables(run_resources = SubsetConfiguration())
         
         run_activity = runs_manager.services_db.get_table('run_activity')
         s = select([func.max(run_activity.c.run_id)])
@@ -95,6 +96,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
                         
         runs_manager.restart_run(run_id,
                                  restart_year=2001,
+                                 project_name = SubsetConfiguration()['project_name'],
                                  skip_urbansim=False)
         
         s = select([run_activity.c.status],
@@ -108,6 +110,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
         # TODO: test that no models are run this time.
         runs_manager.restart_run(run_id,
                                  restart_year=2002,
+                                 project_name = SubsetConfiguration()['project_name'],
                                  skip_urbansim=True)
         s = select([run_activity.c.status],
                    whereclause = run_activity.c.run_id == run_id)
