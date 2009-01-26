@@ -31,7 +31,7 @@ class RestartRunOptionGroup(GenericOptionGroup):
                                 default=False, action="store_true", 
                                 help="Skip removing year caches for this and future years.")
         self.parser.add_option("--project-name", dest="project_name", 
-                                default='misc', action="store_true", 
+                                default='misc', action="store", 
                                 help="The name of the project that the restarted run is part of (e.g. eugene_gridcell)")                                
 if __name__ == "__main__":
     option_group = RestartRunOptionGroup()
