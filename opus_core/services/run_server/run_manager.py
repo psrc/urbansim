@@ -131,11 +131,13 @@ class RunManager(AbstractService):
     def cancel_run(self):
         self.delete_everything_for_this_run(run_id = self.run_id, cache_directory = self.current_cache_directory)
         
-    def restart_run(self, run_id, restart_year,
+    def restart_run(self, run_id, restart_year, project_name,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
                     skip_cache_cleanup=False):
         """Restart the specified run."""
+
+        self.update_environment_variables(run_resources = {'project_name':project_name}) 
 
         run_resources = self.create_run_resources_from_history(
            run_id=run_id,
@@ -145,7 +147,6 @@ class RunManager(AbstractService):
         s = select([run_tbl.c.run_name], whereclause = run_tbl.c.run_id == run_id)
         run_name = self.services_db.execute(s).fetchone()[0]
         
-        self.update_environment_variables(run_resources)
         try:
             if create_baseyear_cache_if_not_exists:
                 cache_directory = run_resources['cache_directory']

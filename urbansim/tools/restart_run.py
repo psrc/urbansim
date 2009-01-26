@@ -30,7 +30,9 @@ class RestartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--skip-cache-cleanup", dest="skip_cache_cleanup", 
                                 default=False, action="store_true", 
                                 help="Skip removing year caches for this and future years.")
-                                
+        self.parser.add_option("--project-name", dest="project_name", 
+                                default='misc', action="store_true", 
+                                help="The name of the project that the restarted run is part of (e.g. eugene_gridcell)")                                
 if __name__ == "__main__":
     option_group = RestartRunOptionGroup()
     parser = option_group.parser
@@ -44,6 +46,7 @@ if __name__ == "__main__":
         run_id, year = (int(args[0]), int(args[1]))
         run_manager.restart_run(run_id, 
                                 year, 
+                                project_name = options.project_name,
                                 skip_urbansim=options.skip_urbansim,
                                 skip_travel_model=options.skip_travel_model,
                                 skip_cache_cleanup=options.skip_cache_cleanup)

@@ -18,16 +18,16 @@ from opus_core.services.run_server.run_manager import RunManager as CoreRunManag
 
 class RunManager(CoreRunManager):
     def restart_run(self, run_id, restart_year,
+                    project_name,
                     skip_urbansim=False,
                     skip_travel_model=False,
                     skip_cache_cleanup=False):
         """override restart_run method from core RunManager to accept argument to skip-travel-model
 
         Restart the specified run."""
-
+        self.update_environment_variables(run_resources = {'project_name':project_name}) 
         run_resources = self.create_run_resources_from_history(run_id=run_id,
                                                                restart_year=restart_year)
-        self.update_environment_variables(run_resources)
 
         try:
 
