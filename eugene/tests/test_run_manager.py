@@ -38,6 +38,7 @@ config_template = """<opus_project>
   <xml_version>1.0</xml_version>
   <general>
     <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
+    <project_name hidden="True" type="string">eugene_gridcell</project_name>
     </general>
   <scenario_manager>
     <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
@@ -51,20 +52,24 @@ config_template = """<opus_project>
   </scenario_manager>
 </opus_project>
 """
+def _get_run_config(temp_dir):
+    config_path = os.path.join(temp_dir, 'testconfig.xml')
+    f = open(config_path, 'w')
+    f.write(config_template % temp_dir)
+    f.close()
+    run_configuration = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
+
+    return run_configuration
 
 def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     """Runs model system with a single model (for speed).
     Sets the .resources property of the caller before starting the run.
     """
-    
-    config_path = os.path.join(temp_dir, 'testconfig.xml')
-    f = open(config_path, 'w')
-    f.write(config_template % temp_dir)
-    f.close()
 
     runs_manager = RunManager(config)
 
-    run_configuration = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
+    run_configuration = _get_run_config(temp_dir = temp_dir)
+    
     insert_auto_generated_cache_directory_if_needed(run_configuration)
     run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = temp_dir
     run_configuration['models'] = ['land_price_model']
@@ -106,6 +111,8 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
     def test_restart_simple_run(self):
         _do_run_simple_test_run(self, self.temp_dir, self.config, end_year = 1983)
         runs_manager = RunManager(self.config)
+        config = _get_run_config(temp_dir = self.temp_dir)
+        runs_manager.update_environment_variables(run_resources = config)
         
         run_activity = runs_manager.services_db.get_table('run_activity')
         s = select([func.max(run_activity.c.run_id)])
@@ -120,6 +127,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
                         
         runs_manager.restart_run(run_id,
                                  restart_year=1981,
+                                 project_name = 'eugene_gridcell',
                                  skip_urbansim=False)
         
         s = select([run_activity.c.status],
@@ -133,6 +141,7 @@ class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
         # TODO: test that no models are run this time.
         runs_manager.restart_run(run_id,
                                  restart_year=1982,
+                                 project_name = 'eugene_gridcell',
                                  skip_urbansim=True)
         s = select([run_activity.c.status],
                    whereclause = run_activity.c.run_id == run_id)
