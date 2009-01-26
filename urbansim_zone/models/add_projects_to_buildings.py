@@ -25,13 +25,12 @@ class AddProjectsToBuildings(Model):
            By default the same attribute name as in the project dataset is taken. 
         """
         project_types = projects.keys()
-        project_units_names = units_names
+        project_units_names = units_names.copy()
         for ptype in project_types:
             if projects[ptype] is None:
                 continue
             if (ptype not in project_units_names.keys()):
-                 # attributes that are not id names 
-                project_units_names[ptype] = [x for x in projects[ptype].get_primary_attribute_names() if x not in projects[ptype].get_id_name()][0]
+                project_units_names[ptype] = projects[ptype].get_attribute_name()
             type_id = building_type_set.get_code(ptype)
             bldgs_ids = building_set.get_ids_of_locations_and_type(locations= projects[ptype].get_attribute(location_id_name), type_id=type_id)
             idx = building_set.get_id_index(bldgs_ids)
@@ -75,9 +74,9 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
         projects = {'residential': None, 'commercial': None, 'industrial': None}
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, self.building_types)
-        self.assert_(ma.equal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("commercial_job_spaces"), array(10*[0, 100, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])).all())
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(10*[0, 100, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
 
     def test_add_one_project(self):
         projects = {'residential': None, 
@@ -88,9 +87,9 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
                     'industrial': None}
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, self.building_types)
-        self.assert_(ma.equal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])).all())
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
 
     def test_add_three_projects(self):
         projects = {'residential': self.get_projects('residential', {'project_id': arange(1,6),
@@ -109,11 +108,11 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
 }
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, self.building_types)
-        self.assert_(ma.equal(self.buildings.get_attribute("residential_units"), 
-                                        array([200, 0, 0, 200, 0, 0, 200, 0, 0, 200, 0, 0, 200, 0, 0, 200, 0, 0, 200, 0, 0, 200,0, 0, 200, 0, 0, 200, 0, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])).all())
-        self.assert_(ma.equal(self.buildings.get_attribute("industrial_job_spaces"), 
-                                        array([0,0,100, 0,0,150] + 7*[0, 0, 100] + [0,0,130])).all())
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), 
+                                        array([200,0,0, 200,0,0, 300,0,0, 200,0,0, 500,0,0, 200,0,0, 201,0,0, 250,0,0, 200,0,0, 206,0,0,])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), 
+                                        array([0,0,100, 0,0,150] + 7*[0, 0, 100] + [0,0,130])), True)
 
     def get_projects(self, project_type, data, units_attribute):
         storage = StorageFactory().get_storage('dict_storage')
