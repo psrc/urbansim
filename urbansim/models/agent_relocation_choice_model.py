@@ -36,7 +36,7 @@ class AgentRelocationChoiceModel(ChoiceModel):
             agents_index=arange(agent_set.size())
         movers_indices = agents_index[where(choices>0)]
         # add unplaced agents
-        unplaced_agents = where(agent_set.get_attribute_by_index(self.location_id_name, agents_index) <= 0)[0]
+        unplaced_agents = agents_index[agent_set.get_attribute_by_index(self.location_id_name, agents_index) <= 0]
         logger.log_status("%s agents selected by the logit model; %s agents without %s." % 
                           (movers_indices.size, unplaced_agents.size, self.location_id_name))
         movers_indices = unique_values(concatenate((movers_indices, unplaced_agents)))
