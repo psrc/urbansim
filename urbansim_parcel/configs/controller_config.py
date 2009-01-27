@@ -43,10 +43,12 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                        "sample_size_locations":30,
                        "weights_for_estimation_string":"is_placed_job=(urbansim_parcel.job.zone_id > 0).astype(int32)",
                        "compute_capacity_flag":True,
-                       "capacity_string":"(job.building_type==2).astype(int32)",  
+                       "capacity_string":"urbansim_parcel.job.is_untaken_non_home_based_job",
+                       #"capacity_string":"(job.building_type==2).astype(int32)",  
                          ### each non home-based job can only be chosen once by one person
                        "number_of_units_string":"(job.building_type==2).astype(int32)",
-
+                        'lottery_max_iterations': 10,
+                        'number_of_agents_string': 'job.number_of_agents(person)',
 #                       "sampler":"opus_core.samplers.stratified_sampler",
 #                       "stratum":"district_id = job.disaggregate(psrc_parcel.building.district_id)",
 #                       "sample_size_from_each_stratum": 5,
@@ -434,7 +436,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                "agents_index": None,
                                "agents_filter":"'urbansim_parcel.person.is_non_home_based_worker_without_job'",
                                "data_objects": "datasets",
-                               "chunk_specification":"{'records_per_chunk':100000}",
+                               "chunk_specification":"{'records_per_chunk':50000}",
                                "debuglevel": 'debuglevel',
                                },
                  },
