@@ -24,7 +24,9 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.variables.variable_factory import VariableFactory
 from numpy import where, array
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from optparse import OptionParser
 import os
+import sys
 
 factory = VariableFactory()
 
@@ -147,9 +149,9 @@ def tree_to_dot(trees):
     ret.append("    rankdir=LR\ndpi=60")
     return ret
 
-def graph_all_models(var_tree):
-    return tree_to_dot(map(get_dep_tree_from_name, extract_leaves(var_tree))
-                     + map(lambda x: (x[0],x[1],"shape=box"), var_tree))
+def all_models_tree(var_tree):
+    return map(get_dep_tree_from_name, extract_leaves(var_tree)) \
+         + map(lambda x: (x[0],x[1],"shape=box"), var_tree)
 
 def find(f, seq):
   for item in seq:
@@ -163,23 +165,53 @@ def lookup_model(var_tree, name):
     else:
         return model
 
-def graph_model(model):
-    return tree_to_dot(map(get_dep_tree_from_name, extract_leaves(model[1]))
-                       + [(model[0], model[1],"shape=box")])
+def model_tree(model):
+    return map(get_dep_tree_from_name, extract_leaves(model[1])) \
+            + [(model[0], model[1],"shape=box")]
 
-def graph_vars(var_list):
-    return tree_to_dot(map(get_dep_tree_from_name, extract_leaves(var_list)))
+def vars_tree(var_list):
+    return map(get_dep_tree_from_name, extract_leaves(var_list))
 
-def writeFile(fi, txt):
+def write_file(fi, txt):
     f = open(fi, 'w')
     f.write(txt)
     f.close()
 
-var_tree = get_config_dep_tree("/home/mgsloan/opus/src/eugene/configs/eugene_gridcell.xml")
-
-for x in var_tree:
-    print "Processing " + x[0] + "..."
-    out = graph_model(x)
+def graph_tree(fi, tree):
+    out = tree_to_dot(tree)
     out.append("}")
-    writeFile(x[0] + ".gv", '\n'.join(out))
-    os.system("dot -Tpng -o" + x[0] + ".png " + x[0] + ".gv")
+    write_file(fi + ".gv", '\n'.join(out))
+    os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
+
+if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
+                      help="file name of xml configuration")
+    parser.add_option("-v", "--variable", dest="variable", default=None,
+                      help="variable for which you want to chart dependencies")
+    parser.add_option("-m", "--model", dest="model", default=None,
+                      help="model for which you want to chart dependencies")
+    parser.add_option("-o", "--output", dest="output", default=None,
+                      help="output image")
+    (options, args) = parser.parse_args()
+    
+    if options.xml_configuration == None:
+        raise "Requires an xml configuration argument."
+
+    var_tree = get_config_dep_tree(options.xml_configuration)
+    
+    tree = []
+    out_file = options.output
+    if options.variable != None:
+        graph_tree(options.variable if options.output == None else options.output,
+                   vars_tree([options.variable]))
+    elif options.model != None:
+        graph_tree(options.model if options.output == None else options.output,
+                   model_tree(lookup_model(var_tree, options.model)))
+    else:
+        if options.output == None:
+            for x in var_tree:
+                print "Processing " + x[0] + "..."
+                graph_tree(x[0], model_tree(x))
+        else:
+            graph_tree(options.output, all_models_tree(var_tree))
