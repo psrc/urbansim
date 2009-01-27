@@ -28,76 +28,102 @@ from optparse import OptionParser
 import os
 import sys
 
-factory = VariableFactory()
-
-#loads an xml configuration file, and returns a list of models paired with a list of vars they depend upon
-#also sets the nasty evil factory global's expression library
-def get_config_dep_tree(fi):
-
-    config = XMLConfiguration(fi)
-
-    lib = config.get_expression_library()
-    factory.set_expression_library(lib)
-
-    #TODO: there seems to be an issue with the (xml)dictionary approach -there can be
-    # multiple, indexed, submodels. This only seems to retrieve the first
-
-    #this collects all the variables models depend on
-    var_tree = []
-    for x in config.get_section('model_manager/model_system'):
-        spec = config.get_section('model_manager/model_system/' + x + '/specification')
-        if spec != None:
-            fst = spec.keys()[0]
-            if fst != 'submodel': spec = spec[fst]
-            l = []
-            for y in spec['submodel']['variables']:
-                for k in lib.keys():
-                    if k[1] == y:
-                        l.append((lib[k], []))
-            var_tree.append((x, l))
-    return var_tree
-
-#creates a fake dataset, required for variable resolution
-def create_fake_dataset(dataset_name):
-    storage = StorageFactory().get_storage('dict_storage')
+class ConfigVariableTree:
+    def __init__(self, conf):
+        #loads an xml configuration file, and returns a list of models paired with a list of vars they depend upon
     
-    storage.write_table(
-        table_name='fake_dataset',
-        table_data={
-            'id':array([], dtype='int32')
-            }
-        )
+        self.factory = VariableFactory()
 
-    dataset = Dataset(in_storage=storage, in_table_name='fake_dataset', dataset_name=dataset_name, id_name="id")
-    return dataset
+        config = XMLConfiguration(conf)
 
-#given a name, return an instance of Variable
-def get_var(name):
-    var = VariableName(name)
-    dataset = var.get_dataset_name()
-    try:
-        return factory.get_variable(var, create_fake_dataset(dataset), quiet=True)
-    except LookupError:
-#        print "LOOKUP ERROR: " + name
-        return None
+        lib = config.get_expression_library()
+        self.factory.set_expression_library(lib)
 
-#get a dependency tree for a variable given its name
-def get_dep_tree_from_name(name):
-    varclass = get_var(name)
-    if(varclass == None): return (name, [], "shape = diamond")
-    return get_dep_tree(varclass)
+        #TODO: there seems to be an issue with the (xml)dictionary approach -there can be
+        # multiple, indexed, submodels. This only seems to retrieve the first
 
-#returns a dependency tree given a particular variable
-def get_dep_tree(inp):
-    result_others = []
-    dependencies_list = inp.get_current_dependencies()
-    for x in dependencies_list:
-        dep_item = x[0]
-        if isinstance(dep_item, str):
-            result_others.append(get_dep_tree_from_name(dep_item))
+        #this collects all the variables models depend on
+        self.var_tree = []
+        self.var_list = []
+        for x in config.get_section('model_manager/model_system'):
+            spec = config.get_section('model_manager/model_system/' + x + '/specification')
+            if spec != None:
+                fst = spec.keys()[0]
+                if fst != 'submodel': spec = spec[fst]
+                l = []
+                for y in spec['submodel']['variables']:
+                    for k in lib.keys():
+                        if k[1] == y:
+                            l.append((lib[k], []))
+                            self.var_list.append(lib[k])
+                self.var_tree.append((x, l))
+
+    #given a name, return an instance of Variable
+    def get_var(self, name):
+        #creates a fake dataset, required for variable resolution
+        def create_fake_dataset(dataset_name):
+            storage = StorageFactory().get_storage('dict_storage')
+            
+            storage.write_table(
+                table_name='fake_dataset',
+                table_data={
+                    'id':array([], dtype='int32')
+                    }
+                )
+
+            dataset = Dataset(in_storage=storage, in_table_name='fake_dataset', dataset_name=dataset_name, id_name="id")
+            return dataset
+        var = VariableName(name)
+        dataset = var.get_dataset_name()
+        try:
+            return self.factory.get_variable(var, create_fake_dataset(dataset), quiet=True)
+        except LookupError:
+            print "LOOKUP ERROR: " + name
+            return None
+    
+    #given a name, returns the tree with the model at the root, and the vars it depends on as leaves
+    def get_model_vars(self, name):
+        def find(f, seq):
+            for item in seq:
+                if f(item): 
+                    return item
+        model = find(lambda x: x[0] == name, self.var_tree)
+        if model == None:
+            raise "Model " + name + " not found."
         else:
-            print "Attribute!"
-    return (inp.name(), elim_dups(result_others))
+            return model
+
+    #get a dependency tree for a variable given its name
+    def get_dep_tree_from_name(self, name):
+        varclass = self.get_var(name)
+        if(varclass == None): return (name, [], "shape = diamond")
+        return self.get_dep_tree(varclass)
+
+    #returns a dependency tree given a particular variable
+    def get_dep_tree(self, inp):
+        result_others = []
+        dependencies_list = inp.get_current_dependencies()
+        for x in dependencies_list:
+            dep_item = x[0]
+            if isinstance(dep_item, str):
+                result_others.append(self.get_dep_tree_from_name(dep_item))
+            else:
+                print "Attribute!"
+        return (inp.name(), elim_dups(result_others))
+
+    def all_models_tree(self):
+        return map(self.get_dep_tree_from_name, extract_leaves(self.var_tree)) \
+             + map(lambda x: (x[0],x[1],"shape=box"), self.var_tree)
+
+    def model_tree(self, name):
+        model = self.get_model_vars(name)
+        return map(self.get_dep_tree_from_name, extract_leaves(model[1])) \
+                + [(model[0], model[1],"shape=box")]
+
+    def vars_tree(self, vl):
+        return map(self.get_dep_tree_from_name, extract_leaves(vl))
+
+#Utility Funcs
 
 #removes the leaves of a tree constructed of tuples and lists.
 #assumes the input is a list, and that the 2nd part of the tuple is the nested content.
@@ -131,7 +157,14 @@ def elim_dups(xs):
     for x in xs:
         if x in ret: continue
         ret.append(x)
-    return ret;
+    return ret
+
+#Graph Functionality Specific
+
+def write_file(fi, txt):
+    f = open(fi, 'w')
+    f.write(txt)
+    f.close()
 
 #processes a tree into a list of lines, in dot format
 #final } is left off, so that more attributes may be added.
@@ -149,34 +182,6 @@ def tree_to_dot(trees):
     ret.append("    rankdir=LR\ndpi=60")
     return ret
 
-def all_models_tree(var_tree):
-    return map(get_dep_tree_from_name, extract_leaves(var_tree)) \
-         + map(lambda x: (x[0],x[1],"shape=box"), var_tree)
-
-def find(f, seq):
-  for item in seq:
-    if f(item): 
-      return item
-
-def lookup_model(var_tree, name):
-    model = find(lambda x: x[0] == name, var_tree)
-    if model == None:
-        raise "Model " + name + " not found."
-    else:
-        return model
-
-def model_tree(model):
-    return map(get_dep_tree_from_name, extract_leaves(model[1])) \
-            + [(model[0], model[1],"shape=box")]
-
-def vars_tree(var_list):
-    return map(get_dep_tree_from_name, extract_leaves(var_list))
-
-def write_file(fi, txt):
-    f = open(fi, 'w')
-    f.write(txt)
-    f.close()
-
 def graph_tree(fi, tree):
     out = tree_to_dot(tree)
     out.append("}")
@@ -193,25 +198,26 @@ if __name__ == '__main__':
                       help="model for which you want to chart dependencies")
     parser.add_option("-o", "--output", dest="output", default=None,
                       help="output image")
+# TODO
+#    parser.add_option("-b", "--nobase", dest="nobase", default=None,
+#                      help="indicates to strip out base variables")
     (options, args) = parser.parse_args()
     
     if options.xml_configuration == None:
         raise "Requires an xml configuration argument."
 
-    var_tree = get_config_dep_tree(options.xml_configuration)
+    tree = ConfigVariableTree(options.xml_configuration)
     
-    tree = []
-    out_file = options.output
     if options.variable != None:
         graph_tree(options.variable if options.output == None else options.output,
-                   vars_tree([options.variable]))
+                   tree.vars_tree([options.variable]))
     elif options.model != None:
         graph_tree(options.model if options.output == None else options.output,
-                   model_tree(lookup_model(var_tree, options.model)))
+                   tree.model_tree(options.model))
     else:
         if options.output == None:
-            for x in var_tree:
+            for x in tree.var_tree:
                 print "Processing " + x[0] + "..."
-                graph_tree(x[0], model_tree(x))
+                graph_tree(x[0], tree.model_tree(x[0]))
         else:
-            graph_tree(options.output, all_models_tree(var_tree))
+            graph_tree(options.output, tree.all_models_tree())
