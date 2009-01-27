@@ -94,19 +94,19 @@ class VariableValidator(object):
             successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name, expression = expr, source = source)
             if not successful:
                 errors.append("Expression %s could not be run on <br>dataset %s on the baseyear data.<br>Details:<br>%s"%(
-                                var_name, dataset_name, str(error) )) 
+                                var_name, dataset_name, str(error) ))
             if self._too_many_errors(errors):
                 errors.append("[*** rest of error report truncated ***]")
                 return False, errors
         return len(errors) == 0, errors
-    
+
     def _too_many_errors(self, errors):
         # count how many lines there will be in the error report, and if over the max, return true
         lines = 0
         for e in errors:
             lines = lines + e.count('<br>') + 2
         return lines>self.max_lines
-        
+
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
 
         # grab the first base_year_data in results_manager/Simulation_runs and
@@ -131,26 +131,26 @@ class VariableValidator(object):
                indicator_definition = (expression, source))
 
         interface = IndicatorFrameworkInterface(self.project)
-        src_data = interface.get_source_data(source_data_name = 'base_year_data', years = [year])
-        SimulationState().set_current_time(year)
+        src_data = interface.get_source_data(source_data_name = 'base_year_data', years = [start_year,])
+        SimulationState().set_current_time(start_year)
         SimulationState().set_cache_directory(src_data.cache_directory)
         SessionConfiguration(
             new_instance = True,
             package_order = src_data.dataset_pool_configuration.package_order,
-            in_storage = AttributeCache()) 
-        
-    
+            in_storage = AttributeCache())
+
+
         dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
-        if isinstance(dataset,InteractionDataset): 
+        if isinstance(dataset,InteractionDataset):
             #create a subset if its an interaction dataset...
             dataset_arguments = {
                  'index1':numpy.random.randint(0,dataset.dataset1.size(), size=100),
-                 'index2':numpy.random.randint(0,dataset.dataset2.size(), size=100) 
+                 'index2':numpy.random.randint(0,dataset.dataset2.size(), size=100)
             }
             SessionConfiguration().delete_datasets()
-            dataset = SessionConfiguration().get_dataset_from_pool(dataset_name, 
+            dataset = SessionConfiguration().get_dataset_from_pool(dataset_name,
                                                                    dataset_arguments = dataset_arguments)
-            
+
         try:
             dataset.compute_variables(names = [expression])
             return True, None
