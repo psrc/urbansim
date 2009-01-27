@@ -147,7 +147,7 @@ def extract_leaves(inp):
                 if len(x[1]) == 0:
                     ret.append(x[0])
                 else:
-                    map(process, x[1])
+                    process(x[1])
     process(inp)
     return ret
 
@@ -188,6 +188,16 @@ def graph_tree(fi, tree):
     write_file(fi + ".gv", '\n'.join(out))
     os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
 
+def pretty_tree(tree):
+    ret = []
+    def helper(ix, xs):
+        ret.append("  " * ix + xs[0])
+        for x in xs[1]:
+            helper(ix + 1, x)
+    for x in tree:
+        helper(0, x)
+    return '\n'.join(ret)
+
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
@@ -201,12 +211,17 @@ if __name__ == '__main__':
 # TODO
 #    parser.add_option("-b", "--nobase", dest="nobase", default=None,
 #                      help="indicates to strip out base variables")
+
     (options, args) = parser.parse_args()
     
     if options.xml_configuration == None:
         raise "Requires an xml configuration argument."
 
     tree = ConfigVariableTree(options.xml_configuration)
+
+    temp = tree.vars_tree(tree.var_list)
+    print pretty_tree(temp)
+    print elim_dups(extract_leaves(temp))
     
     if options.variable != None:
         graph_tree(options.variable if options.output == None else options.output,
