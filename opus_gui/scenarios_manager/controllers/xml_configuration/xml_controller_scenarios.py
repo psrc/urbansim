@@ -13,15 +13,15 @@
 
 from xml.etree.cElementTree import Element
 
-from PyQt4.QtCore import QString, QFileInfo, SIGNAL
-from PyQt4.QtGui import QIcon, QMenu, QCursor
+from PyQt4.QtGui import QMenu, QCursor
 
 from opus_gui.scenarios_manager.run.run_simulation import OpusModel
-from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlView
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
 from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
+from opus_gui.models_manager.models_manager import get_model_names
+from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 
 
 class XmlController_Scenarios(XmlController):
@@ -47,18 +47,7 @@ class XmlController_Scenarios(XmlController):
 #        self.actEditXMLFileGlobal = self.createAction(self.calendarIcon,"Edit XML File Global", self.editXMLFileGlobal)
 #        self.actEditXMLFileLocal = self.createAction(self.calendarIcon,"Edit XML File Local", self.editXMLFileLocal)
 
-        self.validate_models_to_run_list()
-
-    def _get_available_models(self):
-        '''
-        Get a list of names for available models in the project
-        @return list of all models names in this project ([String])
-        '''
-        # Get all model specifications
-        model_system_node = self.manager.project\
-            .find('model_manager/model_system')
-        return [node.tag for node in (model_system_node or [])
-                if node.get('type') == 'model']
+        # validate_models_to_run_lists()
 
     def setupModelViewDelegate(self):
         ''' See XmlModel for documentation '''
@@ -75,6 +64,10 @@ class XmlController_Scenarios(XmlController):
         newModel = OpusModel(self.manager, self.manager.project.xml_config,
                              scenario_node.tag)
         self.manager.addNewSimulationElement(newModel)
+
+    def validate_models_to_run(self):
+        ''' Mark up missing models in models to run lists '''
+        self.model.validate_models_to_run()
 
     def moveNodeUp(self):
         ''' Move the selected node up one step '''
@@ -102,10 +95,10 @@ class XmlController_Scenarios(XmlController):
         elif node.get('config_name') == 'models':
             models_menu = QMenu(menu)
             models_menu.setTitle('Add model to run')
-            available_models = self._get_available_models()
-            for model in available_models:
-                cb = lambda x=model: self.addModel(self.selectedIndex(), x)
-                action = self.createAction(self.model.addIcon, model, cb)
+            available_model_names = get_model_names(self.project)
+            for model_name in available_model_names:
+                cb = lambda x=model_name: self.addModel(self.selectedIndex(), x)
+                action = self.createAction(self.model.addIcon, model_name, cb)
                 models_menu.addAction(action)
             menu.addMenu(models_menu)
 
@@ -113,7 +106,6 @@ class XmlController_Scenarios(XmlController):
 
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
-
 
     def addModel(self, models_to_run_list_index, model_name):
         '''
@@ -126,74 +118,9 @@ class XmlController_Scenarios(XmlController):
         model_node.text = 'Run'
         last_row_num = self.model.rowCount(models_to_run_list_index)
         self.model.insertRow(last_row_num, models_to_run_list_index, model_node)
+        # Validate models to run
+        update_models_to_run_lists()
 
-
-    def validate_models_to_run_list(self, display_warning = False):
-        '''
-        Check each model in the models to run list to be present in the
-        model configuration tab.
-
-        The method tags the XmlItems that have missing models with an
-        additional attribute named "is_missing_model" with a value of True
-        for all items that represents missing models.
-
-        @param display_warning (boolean): If True, a popup warning
-        with the missing models is displayed. No warning is displayed if all
-        models are present.
-        @return: True if all models are present, False otherwise.
-        '''
-        # TODO implement this
-        return True
-        # fetch list of project scenarios
-#
-#        scenarios_node = self.xml_root
-#        return [node.tag for node in (model_system_node or [])
-#                if node.get('type') == 'model']
-#
-#        scenarios = [node.tag for node in ]
-#        xml = self.xml
-#        manager_root = xml.manager_root()
-#        scenarios = [child for child in
-#                     xml.children(manager_root) if
-#                     xml.get_attrib('type', child) == 'scenario']
-#        # fetch list of model names
-#        existing_model_names = [model.tagName() for model in
-#                                xml.children('/model_manager/model_system') if
-#                                xml.get_attrib('type', model) == 'model']
-#        # validate existence of models in models_to_run lists
-#        for scenario in scenarios:
-#            models_to_run_section = xml.get('models_to_run', scenario)
-#            if not models_to_run_section:
-#                continue # no models_to_run section
-#            models_to_run = xml.children(models_to_run_section)
-#            if not models_to_run:
-#                continue # no models in models_to_run
-#            missing_models = []
-#            for model in models_to_run:
-#                # compare by tagName (model name)
-#                if not model.tagName() in existing_model_names:
-#                    # set missing model flag
-#                    item = xml._item_for_element(model)
-#                    if item:
-#                        item.is_missing_model = True
-#                    missing_models.append(model)
-#                else:
-#                    # clear missing model flag
-#                    item = xml._item_for_element(model)
-#                    if item:
-#                        item.is_missing_model = False
-#            # handle result of the validation
-#            if missing_models:
-#                if display_warning:
-#                    msg = ("The following models are listed to run, but they are "
-#                           "not part of this (or any inherited) project.\n")
-#                    for model in missing_models:
-#                        msg = msg + '    %s\n' %model.tagName()
-#                        item = xml._item_for_element(model)
-#                    QMessageBox.error(self, 'Error - Missing models', msg)
-#                return False
-#            else:
-#                return True
 
 # Could not find anything that uses this -- commenting out for now.
 

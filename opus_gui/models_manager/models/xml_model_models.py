@@ -16,6 +16,7 @@ from PyQt4.QtCore import QVariant, QString, Qt, QModelIndex, SIGNAL
 from PyQt4.QtGui import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
+from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 
 class XmlModel_Models(XmlModel):
 
@@ -56,8 +57,21 @@ class XmlModel_Models(XmlModel):
     def add_model_node(self, model_node):
         '''
         Appends a node representing a model to the project's list of models.
-        @param model_node (Element): node representing the model
+        This method is a callback from the 'Add model from template' - dialogs
+        @param model_node (Element) node representing the model
         '''
         model_system_node = self.root_node.find('model_system')
         model_system_node.append(model_node)
         self.rebuild_tree()
+
+    def removeRow(self, row, parent_index):
+        '''
+        Override the default removeRow to also update the models_to_run
+        lists.
+        '''
+        # Whenever we delete a model, we need to also reverify the list of
+        # models to run for all the scenarios that might been using it
+        # As long as we have the models names as their node tags, we don't need
+        # to do anything special for renaming nodes.
+        XmlModel.removeRow(self, row, parent_index)
+        update_models_to_run_lists()

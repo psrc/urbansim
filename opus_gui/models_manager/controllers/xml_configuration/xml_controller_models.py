@@ -11,10 +11,10 @@
 # other acknowledgments.
 #
 from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 
 import copy
 
-from PyQt4.QtCore import QString
 from PyQt4.QtGui import QMenu, QCursor
 
 from opus_gui.models_manager.run.run_estimation import OpusEstimation
@@ -35,6 +35,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
 
 from opus_gui.models_manager.models.xml_model_models import XmlModel_Models
+
 
 class XmlController_Models(XmlController):
 
@@ -116,16 +117,15 @@ class XmlController_Models(XmlController):
         # Expected place is <model_item>/specfication/<group_item>
         group_index = self.selectedIndex()
         model_index = self.model.parent(self.model.parent(group_index))
+        xml_config = self.manager.project.xml_config
 
         group_node = group_index.internalPointer().node
         model_node = model_index.internalPointer().node
 
-#        newEstimation = OpusEstimation(self,
-#                                       self.toolboxbase.xml_file,
-#                                       model_name = model_node.tag,
-#                                       model_group = group_node.tag)
-#        self.opus_gui_window.modelsManagerBase.addEstimationElement(newEstimation)
-
+        newEstimation = OpusEstimation(xml_config,
+                                       model_node.tag,
+                                       group_node.tag)
+        self.opus_gui_window.modelsManagerBase.addEstimationElement(newEstimation)
 
     def createModelFromTemplate(self, model_name):
         ''' select element to clone and present the correct dialog for it '''
@@ -174,6 +174,7 @@ class XmlController_Models(XmlController):
 
     def create_model_from_template_callback(self, new_model_node):
         self.model.insertRow(0, self.selectedIndex(), new_model_node)
+        update_models_to_run_lists()
 
     def processCustomMenu(self, point):
         ''' See XmlConfig.processCustomMenu for documentation '''
