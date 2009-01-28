@@ -18,6 +18,7 @@ from opus_gui.main.controllers.mainwindow import update_mainwindow_title
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 
+
 class OpusProject(object):
     '''
     Methods and attributes for handling an OPUS project file.
@@ -55,6 +56,9 @@ class OpusProject(object):
         @return: flag and message (tuple(boolean, String))
         The flag is only True if the project loaded without problems.
         '''
+        # Always close the project before loading another one to avoid mixing
+        # data if the load is only partly successful
+        self.close()
         filename = str(filename)
         if not os.path.exists(filename):
             return (False, "Tried to load project from file '%s', but that file "
@@ -85,7 +89,9 @@ class OpusProject(object):
         the working tree and get the root node for that tree.
         @return: the new tree root (Element).
         '''
-        # TODO -- maybe consider doing this another way?
+        # TODO -- a better way to do this is to keep two layers from the loaded
+        # XML file. One that is the inherited layer (one level above) and one
+        # that is this level.
 
         # Write out a temporary file to use when initializing XMLConfig
         tmp_dir = tempfile.mkdtemp('xml_tmp', 'opus_gui')
@@ -166,19 +172,6 @@ class OpusProject(object):
         opus_data_path = self.xml_config.get_opus_data_path()
         return os.path.join(opus_data_path, self.name)
 
-#    def node_path(self, node):
-#        '''
-#        Uses XMLConfiguration's parent_map to get a node's path from root.
-#        @param node (Element): Node to get full path for
-#        @return The full path for the node (String) or None if the node was not
-#        in the parent_map (i.e was created after the XML file was loaded from
-#        disk)
-#        '''
-#        if not node in self.xml_config.parent_map:
-#            return None
-#        parent_path = self.node_path(self.xml_config.parent_map[node]) or ''
-#        return parent_path + node.tag + '/'
-
     def root_node(self):
         '''
         Get the project root node or None
@@ -186,9 +179,11 @@ class OpusProject(object):
         '''
         return self._root_node
 
+
 class DummyProject(OpusProject):
     '''
-    Dummy project to be used for testing and project-agnostic XmlControllers
+    Dummy project to be used for testing and for XmlControllers that don't
+    have a real dependency of a project.
     '''
 
     def __init__(self):
@@ -212,3 +207,107 @@ class DummyProject(OpusProject):
     def data_path(self): return None
 
     def node_path(self, node): return ''
+
+
+from opus_core.tests import opus_unittest
+class TestOpusProject(opus_unittest.OpusTestCase):
+    ''' Test suite for Opus Project '''
+
+    def setUp(self):
+        # Validate that the test data is present
+        self.testdatapath = os.path.split(__file__)[0]
+        self.testdatapath = os.path.join(self.testdatapath, 'testdata')
+        self.testfile_valid = os.path.join(self.testdatapath,
+                                           'project_valid.xml')
+        self.testfile_invalid = os.path.join(self.testdatapath,
+                                             'project_invalid.xml')
+
+    def test_verify_testdata_available(self):
+        for file in [self.testfile_invalid, self.testfile_valid]:
+            self.assertTrue(os.path.exists(file),
+                            'Required test data (%s) don not exist' % file )
+
+    def project_is_closed(self, instance):
+        '''
+        Returns True of the values of the project are set to their defaults
+        '''
+        set_to_default = True
+        if 'OPUSPROJECTNAME' in os.environ:
+            set_to_default = os.environ['OPUSPROJECTNAME'] == 'misc'
+
+        return set_to_default and \
+            (instance.name == '') and \
+            (instance.filename == '') and \
+            (instance.xml_config == None) and \
+            (instance._root_node == None) and \
+            (instance.dirty == False) and \
+            (instance._parent_map == None)
+
+    def test_close(self):
+        ''' Make sure that the project closed up OK '''
+        instance = OpusProject()
+
+        TESTVALUE = 'A TEST VALUE'
+
+        instance.name = TESTVALUE
+        instance.filename = TESTVALUE
+        instance.xml_config = TESTVALUE
+        instance._root_node = TESTVALUE
+        instance.dirty = TESTVALUE
+
+        # We also want to test that the environment variable 'OPUSPROJECTNAME'
+        # is reset as it should, but need to be careful not to leave any side
+        # effects from the test
+        prev_environ = None
+        if 'OPUSPROJECTNAME' in os.environ:
+            prev_environ = os.environ['OPUSPROJECTNAME']
+        os.environ['OPUSPROJECTNAME'] = TESTVALUE
+        try:
+            instance.close()
+            self.assertTrue(self.project_is_closed(instance), 'Not all values where reset when the project was closed')
+            self.assertFalse(instance.is_open())
+        finally:
+            if prev_environ is not None:
+                os.environ['OPUSPROJECTNAME'] = prev_environ
+            else:
+                del os.environ['OPUSPROJECTNAME']
+
+    def test_open(self):
+        p = OpusProject()
+        dont_exist = p.open('__I__WONT__EXIST__')
+        self.assertTrue(len(dont_exist) == 2 and
+                        dont_exist[0] == False)
+        del dont_exist
+        invalid = p.open(self.testfile_invalid)
+        self.assertTrue(len(invalid) == 2 and
+                        invalid[0] == False)
+        self.assertFalse
+        del invalid
+        valid = p.open(self.testfile_valid)
+        self.assertTrue(len(valid) == 2 and
+                        valid[0] == True)
+        self.assertTrue(p.dirty is False)
+        # Test that it's actually a link to the xml tree and not a copy
+        self.assertTrue(p.root_node() is p.xml_config.full_tree.getroot())
+        # Test that the XML is correct
+        self.assertTrue(p.root_node().tag == 'opus_project')
+        # Test that the find method is equivalent to using nodes find
+        self.assertTrue(p.find('general/project_name') is
+                        p.root_node().find('general/project_name'))
+        # Test that the name got parsed OK
+        self.assertEquals(p.name, 'test_project')
+        # Test that the data path is based on the name
+        self.assertTrue(p.data_path().endswith('/test_project'))
+        # Make sure no data is left arond when we open another file and fails
+        p.open('__I__WONT__EXIST__')
+        self.assertTrue(self.project_is_closed(p))
+
+    def test_save(self):
+        p = OpusProject()
+        pass
+
+    def test_data_path(self):
+        pass
+
+if __name__ == '__main__':
+    opus_unittest.main()
