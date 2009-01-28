@@ -11,6 +11,8 @@
 # other acknowledgments.
 #
 
+from opus_gui.scenarios_manager.scenario_manager_functions import * #@UnusedWildImport
+
 from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import SimulationGuiElement
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
@@ -28,3 +30,7 @@ class ScenariosManager(AbstractManager):
         tab_widget = SimulationGuiElement(get_mainwindow_instance(),
                                           self, model, self.project.xml_config)
         self._attach_tab(tab_widget)
+
+    def validate_models_to_run(self):
+        if self.xml_controller is not None:
+            self.xml_controller.validate_models_to_run()

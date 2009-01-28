@@ -65,13 +65,21 @@ class XmlModel_Models(XmlModel):
         self.rebuild_tree()
 
     def removeRow(self, row, parent_index):
-        '''
-        Override the default removeRow to also update the models_to_run
-        lists.
-        '''
-        # Whenever we delete a model, we need to also reverify the list of
-        # models to run for all the scenarios that might been using it
-        # As long as we have the models names as their node tags, we don't need
-        # to do anything special for renaming nodes.
+        ''' Override the default removeRow to catch updates to models. '''
+        # Catch the events where we alter the list of available models and
+        # notify interested objects
+        node = self.index(row, 0, parent_index).internalPointer().node
+        notify = False
+        if node and node.get('type') == 'model':
+            notify = True
         XmlModel.removeRow(self, row, parent_index)
-        update_models_to_run_lists()
+        if notify:
+            update_models_to_run_lists()
+
+    def insertRow(self, row, parent_index, node, node_is_local = True):
+        ''' Override the default insertRow to catch updates to models. '''
+        # Catch the events where we alter the list of available models and
+        # notify interested objects
+        XmlModel.insertRow(self, row, parent_index, node, node_is_local)
+        if node.get('type') == 'model':
+            update_models_to_run_lists()
