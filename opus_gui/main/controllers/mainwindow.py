@@ -31,6 +31,7 @@ from opus_gui.main.controllers.dialogs.databasesettings import DatabaseSettingsE
 from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
 from opus_gui.main.controllers.opus_project import OpusProject
 from opus_gui.scenarios_manager.scenario_manager import ScenariosManager
+from opus_gui.scenarios_manager.scenario_manager_functions import update_models_to_run_lists
 from opus_gui.results_manager.results_manager import ResultsManager
 from opus_gui.models_manager.models_manager import ModelsManager
 from opus_gui.general_manager.general_manager import GeneralManager
@@ -407,6 +408,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.updateFontSize()
 
         self.updateWindowTitle()
+        update_models_to_run_lists()
 
     def saveProject(self, filename = None):
         '''
