@@ -17,7 +17,7 @@ from opus_core.resources import Resources
 from opus_core.choice_model import ChoiceModel
 from opus_core.model import prepare_specification_and_coefficients
 from opus_core.model import get_specification_for_estimation
-from numpy import array, arange, where, ones, concatenate
+from numpy import array, arange, where, ones, concatenate, logical_and
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.misc import unique_values
