@@ -105,23 +105,28 @@ class AutogenVariableFactory(object):
     def generate_variable_name_tuple(self):
         """return a tuple (package_name, dataset_names, short_name, alias, autogen_class)
         corresponding to my expression."""
-        self._parse_expr()
-        # Hack: always generate a new variable class if there is an alias.  (In theory we shouldn't
-        # need a new class if we are just providing an alias for fully-qualified variable, 
+        # Hack: always generate a new variable class if there is an alias, unless the expression is just a
+        # reference to a variable and the alias is equal to its shortname  (See note below.)  In theory we 
+        # shouldn't need a new class if we are just providing an alias for fully-qualified variable, 
         # dataset-qualified variable, or an attribute; but fixing this would require that datasets
         # keep a dictionary of additional aliases, since the alias is used as the name of the attribute.
         # This change should be made sometime when there is a rewrite of Dataset.)
-        if self._alias is None:
-            # first check if expr is a fully-qualified variable, dataset-qualified variable, or an attribute
-            same, vars = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, self._expr_parsetree)
-            if same:
-                return (vars['package'], (vars['dataset'],), vars['shortname'], self._alias, None)
-            same, vars = match(EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE, self._expr_parsetree)
-            if same:
-                return (None, (vars['dataset'],), vars['shortname'], self._alias, None)
-            same, vars = match(EXPRESSION_IS_ATTRIBUTE, self._expr_parsetree)
-            if same:
-                return (None, (), vars['shortname'], self._alias, None)
+        #
+        # Note regarding an expression that is just a reference to a variable and the alias is equal to its shortname:
+        # this handles cases like 
+        #       population = urbansim.gridcell.population
+        # in which the alias is the same as the shortname.  In this case we just drop the alias.
+        #
+        # first check if expr is a fully-qualified variable, dataset-qualified variable, or an attribute
+        same, vars = match(EXPRESSION_IS_FULLY_QUALIFIED_VARIABLE, self._expr_parsetree)
+        if same and (self._alias is None or vars['shortname']==self._alias):
+            return (vars['package'], (vars['dataset'],), vars['shortname'], None, None)
+        same, vars = match(EXPRESSION_IS_DATASET_QUALIFIED_VARIABLE, self._expr_parsetree)
+        if same and (self._alias is None or vars['shortname']==self._alias):
+            return (None, (vars['dataset'],), vars['shortname'], None, None)
+        same, vars = match(EXPRESSION_IS_ATTRIBUTE, self._expr_parsetree)
+        if same and (self._alias is None or vars['shortname']==self._alias):
+            return (None, (), vars['shortname'], None, None)
         # it's a more complex expression -- need to generate a new variable class
         (short_name, autogen_class) = self._generate_new_variable()
         return (None, self._dataset_names, short_name, self._alias, autogen_class)

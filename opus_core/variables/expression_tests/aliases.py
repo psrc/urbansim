@@ -43,6 +43,25 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(name.get_alias(), 'p', msg="bad value for alias")
         self.assertNotEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
         
+    def test_alias_attribute_same_name(self):
+        # this tests an expression consisting of an alias for a primary attribute that is the same name as the primary attribute
+        expr = "persons = persons"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='tests',
+            table_data={
+                "persons":array([1,5,10]),
+                "id":array([1,3,4])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
+        result = dataset.compute_variables([expr])
+        self.assertEqual(ma.allclose(result, [1,5,10], rtol=1e-7), True, msg="error in test_alias_attribute")
+        name = VariableName(expr)
+        self.assertEqual(name.get_short_name(), 'persons', msg="bad value for shortname")
+        self.assertEqual(name.get_alias(), 'persons', msg="bad value for alias")
+        self.assertEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
+        
     def test_alias_attribute_with_modification(self):
         # this tests an expression consisting of an alias for a primary attribute that is modified
         expr = "p = persons"
@@ -105,6 +124,28 @@ class Tests(opus_unittest.OpusTestCase):
         # check that the alias has the correct value
         result2 = dataset.compute_variables(['x'])
         self.assert_(ma.allclose(result2, should_be, rtol=1e-6), "Error in accessing a_test_variable")
+
+    def test_alias_fully_qualified_variable_same_name(self):
+        expr = "a_test_variable = opus_core.tests.a_test_variable"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='tests',
+            table_data={
+                "a_dependent_variable":array([1,5,10]),
+                "id":array([1,3,4])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
+        result = dataset.compute_variables([expr])
+        should_be = array([10,50,100])
+        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_alias_fully_qualified_variable")
+        result2 = dataset.compute_variables(['a_test_variable'])
+        self.assert_(ma.allclose(result2, should_be, rtol=1e-6), "Error in accessing a_test_variable")
+        v = VariableName(expr)
+        # check that no autogen class was generated
+        self.assertEqual(v.get_autogen_class(), None, msg="bad value for autogen_class")        
+        # check that the alias is correct
+        self.assertEqual(v.get_alias(), 'a_test_variable', msg="bad value for alias")
 
     def test_alias_with_delete_computed_attributes(self):
         # Make an alias for an expression, then delete all computed attributes, then use the same alias
