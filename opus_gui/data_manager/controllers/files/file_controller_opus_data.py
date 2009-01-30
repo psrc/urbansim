@@ -87,7 +87,6 @@ class FileController_OpusData(FileController):
         # data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order,
         #    arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
-        tabs = self.manager.tab_widget
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
@@ -129,10 +128,9 @@ class FileController_OpusData(FileController):
 
         widgetLayout.addWidget(tableGroupBox)
 
-        tabIcon = QIcon(":/Images/Images/cog.png")
-        tabLabel = QString(table_name)
-        tabs.insertTab(0,container,tabIcon,tabLabel)
-        tabs.setCurrentIndex(0)
+        container.tabIcon = QIcon(":/Images/Images/cog.png")
+        container.tabLabel = QString(table_name)
+        self.manager._attach_tab(container)
 
     def parse_dataset_summary(self, summary):
         html = ['''<style type="text/css">
