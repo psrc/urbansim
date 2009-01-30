@@ -10,6 +10,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
+from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 
 import copy
 

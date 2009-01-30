@@ -18,6 +18,7 @@ from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFile
 
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
+from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 
 class FileDialogSignal(QWidget):
     ''' NO DOCUMENTATION '''
