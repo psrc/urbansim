@@ -1,10 +1,10 @@
 #
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
@@ -13,10 +13,7 @@
 #
 
 '''
-
-Things to watch out for,
-check that 'christofferklang' is not in the tree (from OPUS_HOME)
-
+Rough tool for doing some of the translating from dict -> xml
 '''
 
 from xml.etree.cElementTree import *
@@ -30,7 +27,10 @@ def typestring(obj):
             type_str = 'quoted_string'
         else:
             type_str = "string"
-
+    elif obj is True or obj is False:
+        type_str = "boolean"
+    elif isinstance(obj, float):
+        type_str = "float"
     elif isinstance(obj, int):
         type_str = "integer"
     elif isinstance(obj, list):
