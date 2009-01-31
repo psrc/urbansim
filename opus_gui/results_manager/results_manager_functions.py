@@ -77,35 +77,35 @@ def get_available_run_nodes(project):
 
 def add_simulation_run(project, cache_directory, scenario_name, run_name,
                        start_year, end_year, run_id):
-        '''
-        Creates a simulation run node and adds it to the project
-        @param project (OpusProject): currently loaded project
-        @param cache_directory (String): absolute path to the cache directory
-        @param scenario_name (String): name of the scenario that was run
-        @param run_name (String): name of the run
-        @param start_year (int): start year of run
-        @param end_year (int): end year of run
-        @param run_id (int): ID number for the run
-        '''
-        # XML-ify the name
-        run_name = run_name.replace(' ', '_')
-        run_id = str(run_id)
+    '''
+    Creates a simulation run node and adds it to the project
+    @param project (OpusProject): currently loaded project
+    @param cache_directory (String): absolute path to the cache directory
+    @param scenario_name (String): name of the scenario that was run
+    @param run_name (String): name of the run
+    @param start_year (int): start year of run
+    @param end_year (int): end year of run
+    @param run_id (int): ID number for the run
+    '''
+    # XML-ify the name
+    run_name = run_name.replace(' ', '_')
+    run_id = str(run_id)
 
-        # Assemble the new run node
-        str_atr = {'type': 'string', 'hidden': 'True'}
-        int_atr = {'type': 'integer', 'hidden': 'True'}
+    # Assemble the new run node
+    str_atr = {'type': 'string', 'hidden': 'True'}
+    int_atr = {'type': 'integer', 'hidden': 'True'}
 
-        run_node = Element(run_name, {'type': 'source_data'})
-        SubElement(run_node, 'run_id', int_atr).text = run_id
-        SubElement(run_node, 'scenario_name', str_atr).text = scenario_name
-        SubElement(run_node, 'run_name', str_atr).text = run_name
-        SubElement(run_node, 'cache_directory', str_atr).text = cache_directory
-        SubElement(run_node, 'start_year', str_atr).text = str(start_year)
-        SubElement(run_node, 'end_year', int_atr).text = str(end_year)
+    run_node = Element(run_name, {'type': 'source_data'})
+    SubElement(run_node, 'run_id', int_atr).text = run_id
+    SubElement(run_node, 'scenario_name', str_atr).text = scenario_name
+    SubElement(run_node, 'run_name', str_atr).text = run_name
+    SubElement(run_node, 'cache_directory', str_atr).text = cache_directory
+    SubElement(run_node, 'start_year', str_atr).text = str(start_year)
+    SubElement(run_node, 'end_year', int_atr).text = str(end_year)
 
-        # Grab the results manager instance for the GUI and insert the new node
-        get_manager_instance('results_manager').add_run(run_node)
-        print 'added run', run_node.tag
+    # Grab the results manager instance for the GUI and insert the new node
+    get_manager_instance('results_manager').add_run(run_node)
+    print 'added run', run_node.tag
 
 def update_available_runs(project):
     '''
@@ -138,9 +138,9 @@ def update_available_runs(project):
     baseyear_dir = os.path.normpath(baseyear_dir)
     years = []
     if not baseyear_dir in existing_cache_directories:
-        for dir in os.listdir(baseyear_dir):
-            if len(dir) == 4 and dir.isdigit():
-                years.append(int(dir))
+        for dir_ in os.listdir(baseyear_dir):
+            if len(dir_) == 4 and dir_.isdigit():
+                years.append(int(dir_))
         start_year = min(years)
         end_year = max(years)
         run_name = 'base_year_data'
