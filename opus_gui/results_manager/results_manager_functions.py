@@ -115,7 +115,7 @@ def update_available_runs(project):
     the runs that have been removed (tuple(list(String), list(String)))
     '''
     if not os.path.exists(project.data_path()):
-        return [] # Project data path doesn't exist -- so no runs to add
+        return ([], []) # Project data path doesn't exist -- so no runs to add
 
     results_manager = get_manager_instance('results_manager')
     removed_runs = []
