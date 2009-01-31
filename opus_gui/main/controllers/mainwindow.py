@@ -15,9 +15,9 @@ import time, os
 
 from xml.etree.cElementTree import ElementTree
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
-from PyQt4.QtCore import QSettings, QRegExp, QFileInfo
+from PyQt4.QtCore import QSettings, QRegExp
 from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
-from PyQt4.QtGui import QLabel, QWidget, QPushButton, QHBoxLayout
+from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 
 # Pull in all the instance handler functions before importing classes that might
@@ -38,11 +38,6 @@ from opus_gui.general_manager.general_manager import GeneralManager
 from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
-
-try:
-    import opus_gui.util.editorbase
-except ImportError:
-    pass
 
 class OpusGui(QMainWindow, Ui_MainWindow):
     '''
@@ -104,11 +99,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Manager collection -- initialized by openProject()
         self.managers = {}
 
-        try:
-            self._setupEditor()
-        except Exception:
-            print 'OPUSGUI-INIT: Could not setup PythonEditor.'
-
         # Delay before hiding the splash screen
         time.sleep(1)
         self.gui_config.splash_screen.hide()
@@ -158,8 +148,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         connect(self.actPreferences, self.openPreferences)
         connect(self.actDatabaseSettings, self.openDatabaseSettings)
         connect(self.actVariableLibrary, self.editAllVariables)
-        connect(self.actEditorView, self.openEditorTab)
-        connect(self.actPythonView, self.openPythonTab)
         connect(self.actLogView, self.openLogTab)
         connect(self.actLaunchResultBrowser, self.openResultBrowser)
 
@@ -179,51 +167,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Disable some options by default
         self.actVariableLibrary.setEnabled(False)
         self.actLaunchResultBrowser.setEnabled(False)
-
-    def _setupEditor(self):
-        ''' Setup the editor widget '''
-        # TODO Move this to it's own class?
-        self.editorStatusLabel = QLabel(self)
-        self.editorStatusLabel.setAlignment(Qt.AlignCenter)
-        self.editorStatusLabel.setObjectName("editorStatusLabel")
-        self.editorStatusLabel.setText(QString(" - No files currently loaded..."))
-        self.tab_editorView.layout().addWidget(self.editorStatusLabel)
-        self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
-        self.tab_editorView.layout().addWidget(self.editorStuff)
-        # Some buttons to control open,save,saveas,close
-        # First the container and layout
-        self.editorButtonWidget = QWidget(self)
-        self.editorButtonWidgetLayout = QHBoxLayout(self.editorButtonWidget)
-        # Make it center justified
-
-        # Now we add the buttons
-        # Open File
-        self.editorOpenFileButton = QPushButton(self.editorButtonWidget)
-        self.editorOpenFileButton.setObjectName("editorOpenFileButton")
-        self.editorOpenFileButton.setText(QString("Open File"))
-        QObject.connect(self.editorOpenFileButton, SIGNAL("released()"),
-                        self.editorOpenFileButton_released)
-        self.editorButtonWidgetLayout.addWidget(self.editorOpenFileButton)
-        # Save File
-        self.editorSaveFileButton = QPushButton(self.editorButtonWidget)
-        self.editorSaveFileButton.setObjectName("editorSaveFileButton")
-        self.editorSaveFileButton.setText(QString("Save File"))
-        QObject.connect(self.editorSaveFileButton, SIGNAL("released()"),
-                        self.editorSaveFileButton_released)
-        self.editorButtonWidgetLayout.addWidget(self.editorSaveFileButton)
-        # Save As File
-        self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
-        self.editorSaveAsFileButton.setObjectName("editorSaveAsFileButton")
-        self.editorSaveAsFileButton.setText(QString("Save File As"))
-        # Gray out for now until implemented
-        self.editorSaveAsFileButton.setDisabled(True)
-        QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
-                        self.editorSaveAsFileButton_released)
-        self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
-        self.tab_editorView.layout().addWidget(self.editorButtonWidget)
-        QObject.connect(self.editorStuff, SIGNAL("textChanged()"),
-                        self.editorStuffTextChanged)
-        self.editorDirty = False
 
     def writeOutput(self, result):
         ''' Write non empty results to logView '''
@@ -263,27 +206,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.tabWidget.insertTab(0, self.tab_mapView, map_icon, "Map View")
             self.tabWidget.setCurrentWidget(self.tab_mapView)
 
-    def openPythonTab(self):
-        ''' Open an interactive Python console '''
-        if self.tabWidget.indexOf(self.tab_pythonView) == -1:
-            self.tab_pythonView.show()
-            self.updateFontSize()
-            self.tabWidget.insertTab(0,self.tab_pythonView,
-                                     QIcon(":/Images/Images/python_type.png"),"Python Console")
-            self.tabWidget.setCurrentWidget(self.tab_pythonView)
-
     def openResultBrowser(self):
         ''' Open a Results browser '''
         self.managers['results_manager'].add_result_browser()
-
-    def openEditorTab(self):
-        ''' Open a Python file editor '''
-        if self.tabWidget.indexOf(self.tab_editorView) == -1:
-            self.tab_editorView.show()
-            self.updateFontSize()
-            self.tabWidget.insertTab(0,self.tab_editorView,
-                                     QIcon(":/Images/Images/table_lightning.png"),"Editor View")
-            self.tabWidget.setCurrentWidget(self.tab_editorView)
 
     def openLogTab(self):
         ''' Open a log viewer '''
@@ -304,7 +229,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openPreferences(self):
         ''' Open the preferences window '''
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimPreferencesGui(self)
         wnd.setModal(True)
         wnd.show()
@@ -312,7 +236,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openDatabaseSettings(self):
         ''' Open the database settings window '''
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         #wnd = UrbansimDatabaseSettingsGUI(self, flags)
         # Commented out the previous line and added the following line
         # to test out the APR added database connection editing GUI (082908)
@@ -506,83 +429,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.gui_config.save()
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))
-
-# TODO Move this into a separate class
-# ------------------------------------------------------------------------------
-
-    def editorOpenFileButton_released(self):
-        ''' Callback for open file button '''
-        #print "Open"
-        # First find the file to open
-        start_dir = ''
-        opus_home = os.environ.get('OPUS_HOME')
-        if opus_home:
-            start_dir = opus_home
-            start_dir_test = os.path.join(opus_home, 'project_configs')
-            if start_dir_test:
-                start_dir = start_dir_test
-        configDialog = QFileDialog()
-        filter_str = QString("*.py")
-        fd = configDialog.getOpenFileName(self,QString("Please select a file..."),
-                                          QString(start_dir), filter_str)
-        # Check for cancel
-        if len(fd) == 0:
-            return
-        fileName = QString(fd)
-        fileNameInfo = QFileInfo(QString(fd))
-        fileNameBaseName = fileNameInfo.completeBaseName()
-        self.editorCurrentFileName = fileName
-
-        # Clear out the old file
-        self.editorStuff.clear()
-        try:
-            f = open(fileName,'r')
-        except:
-            return
-        self.editorStuff.setText(f.read())
-        f.close()
-        self.editorStatusLabel.setText(QString("- ").append(QString(fileName)))
-        self.editorDirty = False
-        self.editorSaveFileButton.setDisabled(True)
-
-    def editorSaveFileButton_released(self):
-        ''' Callback for save file button '''
-        #print "Save"
-        if self.editorDirty == True:
-            # Save the file TODO...
-            if self.editorCurrentFileName:
-                try:
-                    f = open(self.editorCurrentFileName,'w')
-                except:
-                    return
-                f.write(self.editorStuff.text())
-                f.close()
-                # Mark as clean
-                wintitle = self.editorStatusLabel.text().replace("* ", "- ")
-                self.editorStatusLabel.setText(wintitle)
-                self.editorDirty = False
-                self.editorSaveFileButton.setDisabled(True)
-
-    def editorSaveAsFileButton_released(self):
-        ''' Callback for save file as button '''
-        #print "Save As"
-        if self.editorDirty == True:
-            # Save the file TODO...
-            # Mark as clean
-            wintitle = self.editorStatusLabel.text().replace("* ", "- ")
-            self.editorStatusLabel.setText(wintitle)
-        self.editorDirty = False
-
-    def editorStuffTextChanged(self):
-        ''' Callback for when the text has changed in the editor '''
-        #print "text changed = " + str(self.editorDirty)
-        if self.editorDirty == False:
-            wintitle = self.editorStatusLabel.text().replace("- ", "* ")
-            self.editorStatusLabel.setText(wintitle)
-        self.editorDirty = True
-        self.editorSaveFileButton.setEnabled(True)
-
-# ------------------------------------------------------------------------------
 
     def updateFontSize(self):
         ''' Update various widgets with the font size from GUI settings '''
