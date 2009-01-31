@@ -96,13 +96,13 @@ class ResultsManager(AbstractManager):
 
     def addViewImageIndicator(self, visualization, indicator_type = None):
         new_form = ViewImageForm(visualization = visualization,
-                                 parent_widget = self.tab_widget)
+                                 parent_widget = self.tab_base_widget)
         self._attach_tab(tab_widget = new_form)
 
     def addViewTableIndicator(self, visualization, indicator_type):
         if indicator_type != 'arcgis_map' and visualization.output_type in \
             ['fixed_field','tab','csv']:
             new_form = ViewTableForm(visualization = visualization,
-                                 parent_widget = self.tab_widget)
+                                 parent_widget = self.tab_base_widget)
             self._attach_tab(tab_widget = new_form)
 
