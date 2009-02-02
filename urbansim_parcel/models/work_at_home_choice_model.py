@@ -48,6 +48,9 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                                   choices, 
                                                   index=kwargs['agents_index'])
             at_home_worker_index = kwargs['agents_index'][choices==1]
+            logger.log_status("%s workers choose to work at home, %s workers chose to work out of home." % 
+                              (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
+                               where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))            
         else:
             at_home_worker_index = where(logical_and( 
                                                      agent_set.get_attribute('work_at_home'),
@@ -59,7 +62,13 @@ class WorkAtHomeChoiceModel(ChoiceModel):
             jobs_set_index = where( self.job_set.compute_variables(self.filter) )[0]
         else:
             jobs_set_index = arange( self.job_set.size() )
-
+            
+        logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s to %s jobs." % 
+                          (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
+                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size,
+                          at_home_worker_index.size,
+                          jobs_set_index.size
+                          ))
 
         if not choose_job_only_in_residence_zone:
             assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
@@ -72,6 +81,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
             assigned_worker_index = array([], dtype="int32")
             assigned_job_index = array([], dtype="int32")
             for this_zone in unique_zones:
+                logger.log_status("zone_id: %s" % this_zone)
                 if this_zone <= 0: continue
                 at_home_worker_in_this_zone = where(agent_zone_ids == this_zone)[0]
                 job_set_in_this_zone = where(job_zone_ids == this_zone)[0]
@@ -88,21 +98,17 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
                                       index=assigned_job_index)
-        logger.log_status("%s workers chose to work at home, %s workers chose to work out of home." % 
-                          (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
-                           where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))
-        logger.log_status("Total: %s workers work at home, %s workers work out of home." % 
-                          (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
-                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size))
 
     def _assign_job_to_worker(self, worker_index, job_index):
+        logger.log_status("Atempt to assign %s jobs to %s workers" % (worker_index.size, job_index.size))
         if worker_index.size >= job_index.size: 
            #number of at home workers is greater than the available choice (home_based jobs by default)
             assigned_worker_index = sample_noreplace(worker_index, job_index.size)
-            assigned_job_index = job_index
+            assigned_job_index = job_index            
         else:
             assigned_worker_index = worker_index
             assigned_job_index=sample_noreplace(job_index,worker_index.size)
+        logger.log_status("Assigned %s jobs to %s workers" % (assigned_worker_index.size, assigned_job_index.size))
         
         return (assigned_worker_index, assigned_job_index)
  
