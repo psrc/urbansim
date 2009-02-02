@@ -53,7 +53,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))            
         else:
             at_home_worker_index = where(logical_and( 
-                                                     agent_set.get_attribute('work_at_home'),
+                                                     agent_set.get_attribute(self.choice_attribute_name) == 1,
                                                      agent_set.get_attribute('job_id') <= 0
                                                      )
                                         )[0]
@@ -63,7 +63,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         else:
             jobs_set_index = arange( self.job_set.size() )
             
-        logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s to %s jobs." % 
+        logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s workers to %s jobs." % 
                           (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
                            where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size,
                           at_home_worker_index.size,
@@ -104,7 +104,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         if worker_index.size >= job_index.size: 
            #number of at home workers is greater than the available choice (home_based jobs by default)
             assigned_worker_index = sample_noreplace(worker_index, job_index.size)
-            assigned_job_index = job_index            
+            assigned_job_index = job_index
         else:
             assigned_worker_index = worker_index
             assigned_job_index=sample_noreplace(job_index,worker_index.size)
