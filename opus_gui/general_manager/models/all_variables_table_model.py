@@ -143,6 +143,8 @@ class AllVariablesTableModel(QAbstractTableModel):
                 state = value.toInt()[0]
                 self.arraydata[index.row()][-2] = state
                 self.checkStateOfCheckBoxes(state)
+                self.emit(SIGNAL('dataChanged(const QModelIndex &, '
+                 'const QModelIndex &)'), index, index)
         return False
 
     def insertRow(self, row, listToInsert, parent = QModelIndex()):
