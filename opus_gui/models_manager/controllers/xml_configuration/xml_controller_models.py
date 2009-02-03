@@ -221,7 +221,7 @@ class XmlController_Models(XmlController):
             if parent_node.tag == 'specification':
                 menu.addAction(self.actRunEstimationGroup)
 
-        if node.get('type') == "variable_list":
+        if node.get('type') == "variable_list" and not node.get('inherited'):
             menu.addAction(self.actSelectVariables)
 
         self.addDefaultMenuItems(node, menu)
