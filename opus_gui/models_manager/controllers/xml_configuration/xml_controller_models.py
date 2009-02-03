@@ -125,7 +125,7 @@ class XmlController_Models(XmlController):
         newEstimation = OpusEstimation(xml_config,
                                        model_node.tag,
                                        group_node.tag)
-        self.opus_gui_window.modelsManagerBase.addEstimationElement(newEstimation)
+        self.manager.addEstimationElement(newEstimation)
 
     def createModelFromTemplate(self, model_name):
         ''' select element to clone and present the correct dialog for it '''
