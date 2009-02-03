@@ -28,7 +28,8 @@ _REMOVABLE_NODE_TYPES = (
     "dictionary", "selectable_list", "list", "tool_file", "tool_config",
     "tool_set", "param_template", "model", "submodel", "source_data",
     "batch_visualization", "indicator_batch", "indicator",
-    "indicator_result", "scenario"
+    "indicator_result", "scenario", 'tool_file', 'tool_library', 'tool_group',
+    'class'
 )
 
 class XmlController(object):
