@@ -58,9 +58,10 @@ class ResultsManager(AbstractManager):
                          % '\n'.join(removed_runs))
         if added_msg or removed_msg:
             self.project.dirty = True
+            text = 'The list of simulation runs has been automatically updated.'
             detailed_text = '%s\n\n%s' % (added_msg or '', removed_msg or '')
             MessageBox.information(mainwindow = self.base_widget,
-                                   text = 'Simulation runs added',
+                                   text = text,
                                    detailed_text = detailed_text)
 
     def update_viz_node(self, updated_viz_node):
