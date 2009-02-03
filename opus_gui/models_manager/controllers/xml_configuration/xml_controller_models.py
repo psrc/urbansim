@@ -94,7 +94,7 @@ class XmlController_Models(XmlController):
 #            def __init__(self, opus_gui, nodeToUpdate=None, callback=None):
         window = AllVariablesSelectGui(get_mainwindow_instance(),
                                        node,
-                                       lambda x: ())
+                                       None)
         window.show()
 
     def runEstimationForSelected(self):
