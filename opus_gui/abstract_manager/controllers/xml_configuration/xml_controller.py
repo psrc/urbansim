@@ -211,9 +211,30 @@ class XmlController(object):
         self.model.insertRow(item_row, parent_index, node)
 
         return False
+    
+    def _get_unique_name(self, item):
+        '''
+        looks at the other node in this level in order to generate a name 
+        that is unique.
+        @param item (XmlItem) the item holding the node to find a new name for
+        @return (String) a unique name for the new node.
+        '''
+        # Get all the names that currently exist in the same level
+        parent_node = item.parent_item.node
+        node = item.node
+        taken_names = [n.tag for n in parent_node if n.get('type') == node.get('type')]
+        copy_number = 0
+        # The base case is to just append '_copy' to the base name.
+        # If that name is not available -- try _copy_1, _copy_2 etc 
+        # until we find a unique name
+        try_name = '%s_copy' % (node.tag)
+        while try_name in taken_names:
+            copy_number += 1
+            try_name = '%s_copy_%d' % (node.tag, copy_number)
+        return try_name
 
     def cloneSelectedNode(self):
-        ''' Clones the selected item using the CloneNode Gui. '''
+        ''' Clones the selected item using the CloneNode GUI. '''
         if not self.hasSelectedItem():
             return
         index = self.selectedIndex()
@@ -222,16 +243,13 @@ class XmlController(object):
         # Clone the node with a new name and let the user rename it
         cloned_node = deepcopy(item.node)
 
-        cloned_node.tag = cloned_node.tag + '_copy'
+        cloned_node.tag = self._get_unique_name(item)
 
-        # Insert the cloned node into the tree and ask the user to rename it
+        # Insert the cloned node into the tree
         if self.model.insertSibling(cloned_node, index) is True:
             index_of_clone = self.model.last_inserted_index
             # Select the new clone for visual clue
             self.view.setCurrentIndex(index_of_clone)
-            cloned_item = index_of_clone.internalPointer()
-            renamer = lambda x: self._change_item_tag(cloned_item, x)
-            RenameDialog(cloned_node.tag, renamer, self.view).show()
 
     def makeSelectedNodeEditable(self):
         '''
