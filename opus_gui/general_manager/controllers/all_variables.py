@@ -16,7 +16,6 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QObject, SIGNAL, QModelIndex, QTimer
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog
-from PyQt4.QtXml import QDomNode
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.all_variables_table_model import AllVariablesTableModel
@@ -28,7 +27,7 @@ from opus_gui.general_manager.run.variable_validator import VariableValidator
 from opus_core.variables.variable_name import VariableName
 from xml.etree.cElementTree import Element
 
-import random,pprint,string
+import pprint,string
 
 class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
     def __init__(self, opus_gui, fl, allVariablesGui, row = 0, initialParams = None, create_new_from_old = False):
@@ -586,11 +585,10 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         self.tree.model.emit(SIGNAL("layoutChanged()"))
 
     def on_saveSelections_released(self):
-        # print "save pressed"
         returnList = []
         # Loop through the list of lists and test the check box... if checked then add to the
         # Python list that is returned with selected items
-        for i, testCase in enumerate(self.tabledata):
+        for i, testCase in enumerate(self.tm.arraydata):
             if testCase[-2]:
                 # We have one that is checked... push it into the return list
                 returnList.append(str(testCase[1]))
@@ -603,10 +601,8 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         # For now we 'solve' this by just filter out duplicates.
         returnList = list({}.fromkeys(returnList))
 
-        #self.pp.pprint(returnList)
         returnString = string.join(returnList,', ')
-        #print returnString
-        if self.nodeToUpdate:
+        if self.nodeToUpdate is not None:
             # We need to fill in the XML node for the client
             self.updateNodeFromListString(self.nodeToUpdate,returnString)
         if self.callback:
@@ -615,6 +611,5 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
         self.close()
 
     def on_cancelWindow_released(self):
-        #print "cancel pressed"
         self.close()
 
