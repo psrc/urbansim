@@ -39,13 +39,13 @@ class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVis
 
         viz_name = str(self.leVizName.text()).replace(' ','_')
 
-        viz_type_text = str(self.cboVizType.currentText())
-        viz_type = self._get_type_mapper()[viz_type_text]
+#        viz_type_text = str(self.cboVizType.currentText())
+#        viz_type = self._get_type_mapper()[viz_type_text]
 
         # Assemble the visualization node
         viz_node = Element(viz_name, {'type':'batch_visualization'})
-        SubElement(viz_node, 'visualization_type',
-                   _t('string')).text = viz_type
+#        SubElement(viz_node, 'visualization_type',
+#                   _t('string')).text = viz_type
         for viz_param in viz_params:
             tag = viz_param['name']
             value = viz_param['value']
