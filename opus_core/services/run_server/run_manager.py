@@ -127,6 +127,7 @@ class RunManager(AbstractService):
             self.add_row_to_history(self.run_id, run_resources, "done", run_name = run_name)
             
         self.ready_to_run = False
+        return self.run_id
         
     def cancel_run(self):
         self.delete_everything_for_this_run(run_id = self.run_id, cache_directory = self.current_cache_directory)
@@ -289,7 +290,7 @@ class RunManager(AbstractService):
  
         query = select(columns = cols)
         if run_ids is not None:
-            query = query.where(run_activity.c.run_id in run_ids)
+            query = query.where(run_activity.c.run_id.in_(run_ids))
             
         if status is not None:
             query = query.where(run_activity.c.status == status)
