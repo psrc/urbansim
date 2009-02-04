@@ -1,0 +1,8 @@
+<root>
+    <child_1 type="password">
+    </child_1>
+    <child_2 type="string" inherited="true">
+        <child_21>some text</child_21>
+    </child_2>
+</root>
+
