@@ -179,10 +179,16 @@ def update_available_runs(project):
         added_runs.append(cache_directory)
     return (added_runs, removed_runs)
 
-def get_years_for_simulation_run(simulation_run_node):
+def get_years_for_simulation_run(project, simulation_run_node):
     run_manager = get_run_manager()
     cache_dir = simulation_run_node.find('cache_directory').text
-    return run_manager.get_years_run(cache_dir)
+    try:
+        scenario_name = simulation_run_node.find('scenario_name').text
+        baseyear = int(project.find('scenario_manager/%s/base_year'%scenario_name).text)
+    except:
+        baseyear = -1
+    
+    return run_manager.get_years_run(cache_dir, baseyear = baseyear)
 
 def get_simulation_runs(project, update = False):
     if update:

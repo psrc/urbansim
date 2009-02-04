@@ -138,7 +138,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             if run_name == 'base_year_data':
                 idx = i
 
-            years = get_years_for_simulation_run(simulation_run_node = run)
+            years = get_years_for_simulation_run(project = self.project, 
+                                                 simulation_run_node = run)
             self.available_years_for_simulation_runs[run_name] = years
 
             self.lstAvailableRuns.addItem(QString(run_name))
