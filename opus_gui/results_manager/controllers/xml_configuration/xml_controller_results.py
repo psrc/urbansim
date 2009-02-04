@@ -118,22 +118,23 @@ class XmlController_Results(XmlController):
         ''' NO DOCUMENTATION '''
         self.manager.importRun()
 
-    def _createBatchRunMenu(self):
+    def _createBatchRunMenu(self, attach_to_menu):
         '''
         Create and populate a 'Run indicator batch' menu for all avialable runs
-        @return: the populated menu (QMenu) or None
+        @param attach_to_menu (QMenu) menu to attach actions to
         '''
         # TODO Verify that this is correct -- it was based on looking in a xml
         # file for 'source_data' and Simulation_runs was the only section I
         # could find it in.
         run_nodes = get_available_run_nodes(self.project)
-
-        menu = QMenu()
+        
+        if not run_nodes:
+            attach_to_menu.setEnabled(False)
+            return
         for run_node in run_nodes:
             cb = lambda x = run_node: self._indicatorBatchRun(run_node.tag)
             action = self.createAction(self.model.acceptIcon, run_node.tag, cb)
-            menu.addAction(action)
-        return None if menu.isEmpty() else menu
+            attach_to_menu.addAction(action)
 
     def _indicatorBatchRun(self, run_name):
         ''' NO DOCUMENTATION '''
@@ -178,11 +179,7 @@ class XmlController_Results(XmlController):
             # as well as a sub menu for selecting cached runs to run the batch on
             menu.addAction(self.actAddVisualizationToBatch)
             run_batch_on_menu = QMenu('Run indicator batch on...')
-            runs_menu = self._createBatchRunMenu()
-            if runs_menu is None:
-                runs_menu = QMenu('No available runs')
-                runs_menu.setEnabled(False)
-            run_batch_on_menu.addMenu(runs_menu)
+            self._createBatchRunMenu(run_batch_on_menu)
             menu.addMenu(run_batch_on_menu)
 
         elif node.get('type') == 'batch_visualization':
