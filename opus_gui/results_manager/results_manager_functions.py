@@ -107,7 +107,7 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     get_manager_instance('results_manager').add_run(run_node)
     print 'added run', run_node.tag
 
-def update_available_runs(project):
+def update_available_runs(project, scenario_name = '?'):
     '''
     Update the list of available runs and return a list of added runs.
     @param project (OpusProject): currently loaded project
@@ -162,14 +162,17 @@ def update_available_runs(project):
     added_runs = []
     for run_id, run_name, _, _, run_resources in runs:
         cache_directory = os.path.normpath(run_resources['cache_directory'])
-
+        if run_name == 'base_year_data':
+            found_scenario_name = ''
+        else:
+            found_scenario_name = scenario_name
+            
         if cache_directory in existing_cache_directories or \
            not os.path.exists(cache_directory): continue
         start_year, end_year = run_resources['years']
-        # TODO scenario name is being incorrectly defined
         add_simulation_run(project,
                            cache_directory = cache_directory,
-                           scenario_name = project.name,
+                           scenario_name = found_scenario_name,
                            run_name = run_name,
                            start_year = start_year,
                            end_year = end_year,

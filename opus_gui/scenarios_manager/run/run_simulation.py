@@ -16,14 +16,12 @@ import os
 
 from PyQt4.QtCore import QThread, QString, SIGNAL
 
-from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import SimulationRunError
-from opus_core.services.run_server.run_manager import RunManager
 from opus_gui.results_manager.results_manager import update_available_runs, get_batch_configuration
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
-
+from opus_gui.results_manager.results_manager_functions import get_run_manager, add_simulation_run
 
 class RunModelThread(QThread):
     def __init__(self, mainwindow, modelguielement, batch_name = None, run_name = None):
@@ -55,7 +53,7 @@ class RunModelThread(QThread):
         print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
 
-    def finishedCallback(self,success):
+    def finishedCallback(self, success, run_id, scenario_name):
         if success:
             print "Success returned from Model"
 
@@ -64,7 +62,26 @@ class RunModelThread(QThread):
             else:
                 if self.batch_name is not None:
                     self.runIndicatorBatch()
-                update_available_runs(self.project)
+
+                run_manager = get_run_manager()                
+                runs = run_manager.get_run_info(run_ids = [run_id], resources = False, status = 'done')
+                run_manager.close()
+            
+                runs = run_manager.get_run_info(run_ids = [run_id], resources = True, status = 'done')
+                if len(runs) == 0: 
+                    raise Exception('Could not find new simulation run')
+                (run_id, run_name, _, _, run_resources) = runs[0]
+                cache_directory = os.path.normpath(run_resources['cache_directory'])                        
+
+                start_year, end_year = run_resources['years']
+                add_simulation_run(self.project,
+                                   cache_directory = cache_directory,
+                                   scenario_name = scenario_name,
+                                   run_name = run_name,
+                                   start_year = start_year,
+                                   end_year = end_year,
+                                   run_id = run_id)
+
         else:
             print "Error returned from Model"
         self.modelguielement.model.run_manager.close()
@@ -170,6 +187,7 @@ class OpusModel(object):
         # regarding the progress of the simulation - the progress bar reads this file
         statusdir = None
         succeeded = False
+        run_id = None
 
         try:
             config = self.xml_config.get_run_configuration(str(self.modeltorun))
@@ -182,8 +200,7 @@ class OpusModel(object):
             #insert_auto_generated_cache_directory_if_needed(config)
             (self.start_year, self.end_year) = config['years']
 
-            server_config = ServicesDatabaseConfiguration()
-            run_manager = RunManager(server_config)
+            run_manager = get_run_manager()
 
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                       configuration = config)
@@ -202,7 +219,7 @@ class OpusModel(object):
             self.running = True
             self.run_name = run_name
             self.run_manager = run_manager
-            run_manager.run_run(config, run_name = run_name)
+            run_id = run_manager.run_run(config, run_name = run_name)
             self.running = False
             succeeded = True
         except SimulationRunError:
@@ -215,7 +232,7 @@ class OpusModel(object):
             self.errorCallback(errorInfo)
         if self.statusfile is not None:
             os.remove(self.statusfile)
-        self.finishedCallback(succeeded)
+        self.finishedCallback(succeeded, run_id = run_id, scenario_name = self.modeltorun)
 
     def _compute_progress(self):
         if self.statusfile is None:
