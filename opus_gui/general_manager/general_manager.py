@@ -57,6 +57,20 @@ def get_variable_nodes_per_dataset(project):
         var_nodes_per_dataset[dataset_name].append(variable_node)
     return var_nodes_per_dataset
 
+def get_indicator_nodes_per_dataset(project):
+    '''
+    Get all XML nodes for variables arranged as a dict based on their dataset.
+    @param project (OpusProject): project to extract variables from
+    @return mapping of datasets and variable nodes
+        dict(dataset (String), variable nodes (list(Element))
+    '''
+    variable_nodes_per_dataset = get_variable_nodes_per_dataset(project)
+    indicators_per_dataset = {}
+    for dataset, variables in variable_nodes_per_dataset.items():
+        indicators_per_dataset[dataset] = [node for node in variables if node.get('use') in ('both', 'indicator')]
+        
+    return indicators_per_dataset
+
 def get_available_indicator_nodes(project):
     '''
     Get node objects for all the indicator variables in the project.
