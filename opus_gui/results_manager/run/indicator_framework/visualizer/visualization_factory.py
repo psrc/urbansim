@@ -47,8 +47,9 @@ class VisualizationFactory:
             visualization = visualization.visualize(
                indicators_to_visualize = indicators_to_visualize,
                computed_indicators = computed_indicators, *args)
-        except: 
-            logger.log_error('Could not create the %s visualization for %s'%(visualization_type, module_composed_name))
-            visualization = None
-            
+        except Exception, e: 
+            msg = 'Could not create the %s visualization for %s'%(visualization_type, module_composed_name)
+            logger.log_error(msg)
+            raise
+        
         return visualization
