@@ -21,7 +21,7 @@ class GenericOptionGroup(object):
     def __init__(self, usage="python %prog [options]", description=""):
             
         self.parser = OptionParser(usage=usage, description=description)                     
-        self.parser.add_option("--database", dest="database_name", default='services', 
+        self.parser.add_option("--services_database", dest="database_name", default='services', 
                        action="store", help="Name of services database")        
         self.parser.add_option("--database_configuration", dest="database_configuration", default = "services_database_server",
                                action="store", help="Name of the database server configuration in database_server_configurations.xml that is to be used to connect to the services database. Defaults to 'services_database_server'.")

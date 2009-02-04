@@ -25,7 +25,7 @@ class CreateFlattenedDatabaseOptionGroup(GenericOptionGroup):
             description="Create flattened database from a scenario database chain. "
                 "Argument 'configuration' is a python module containing dictionary called 'run_configuration'"
                 " or a class with the CamelCase version of the module name.")
-        self.parser.remove_option('--database')
+        #self.parser.remove_option('--database')
         self.parser.add_option("--database", dest="database_name", default=None, 
                                action="store", help="Name of flattened database")
         

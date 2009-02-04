@@ -60,7 +60,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         self.assert_(os.path.exists(os.path.join(cache_dir, '1981')))
         path = module_path_from_opus_path('opus_core.tools.delete_run')
         
-        cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test'
+        cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --services_database=services_test'
         
         # First just delete 2 years of data.
         python_cmd = cmd_template % {
@@ -106,7 +106,7 @@ class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         self.assert_(not os.path.exists(os.path.join(cache_dir, '1984')))
         
         # Now try to delete the rest of the years of data
-        python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test' % {
+        python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --services_database=services_test' % {
             'executable':sys.executable,
             'path':path,
             'run_id':self.resources['run_id']}
