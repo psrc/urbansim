@@ -387,11 +387,12 @@ class RunManager(AbstractService):
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
         return resources['cache_directory']
         
-    def get_years_run(self, cache_directory):
+    def get_years_run(self, cache_directory, baseyear = -1):
         years = []
+        
         if os.path.exists(cache_directory):
             for dir in os.listdir(cache_directory):
-                if len(dir) == 4 and dir.isdigit():
+                if len(dir) == 4 and dir.isdigit() and int(dir) >= baseyear:
                     years.append(int(dir))
         return years
         
