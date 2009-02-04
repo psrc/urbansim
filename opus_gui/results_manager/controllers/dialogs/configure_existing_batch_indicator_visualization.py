@@ -130,7 +130,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                 if child_node is None:
                     # TODO Check that type actually should be 'String' for all nodes.
                     child_node = SubElement(self.base_node, key,
-                                            {'type':'string'})
+                                            {'type':'string', 'hidden': True})
                 child_node.text = str(value)
             update_batch_indicator_visualization(self.base_node)
 
