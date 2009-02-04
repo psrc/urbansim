@@ -116,8 +116,10 @@ class fixed_field_storage(Storage):
 
         column_size, column_names = self._get_column_size_and_names(table_data)
         format_et = self._parse_format_to_et(format)
-        python_format, target_size = self._convert_et_format_to_python_format_and_get_target_size(format_et)
-
+        try:
+            python_format, target_size = self._convert_et_format_to_python_format_and_get_target_size(format_et)
+        except:
+            raise Exception('Could not parse the format string for the fixed field indicator: %s'%format)
         # Normalize the format XML string
         format = ET.tostring(format_et).replace('\n','').replace('\r','')
 
