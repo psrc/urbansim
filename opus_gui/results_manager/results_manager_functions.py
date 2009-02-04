@@ -185,11 +185,17 @@ def update_available_runs(project, scenario_name = '?'):
 def get_years_for_simulation_run(project, simulation_run_node):
     run_manager = get_run_manager()
     cache_dir = simulation_run_node.find('cache_directory').text
+    scenario_name = simulation_run_node.find('scenario_name').text
     try:
-        scenario_name = simulation_run_node.find('scenario_name').text
         baseyear = int(project.find('scenario_manager/%s/base_year'%scenario_name).text)
     except:
-        baseyear = -1
+        node = project.find('scenario_manager')
+        baseyear = -1    
+        for child in node.getchildren():
+            try:
+                baseyear = int(child.find('base_year').text)
+                break
+            except: continue
     
     return run_manager.get_years_run(cache_dir, baseyear = baseyear)
 
