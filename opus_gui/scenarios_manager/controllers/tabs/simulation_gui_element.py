@@ -24,7 +24,7 @@ from opus_gui.results_manager.results_manager import get_available_batch_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
-from opus_gui.general_manager.general_manager import get_available_dataset_names, get_variable_nodes_per_dataset
+from opus_gui.general_manager.general_manager import get_available_dataset_names, get_indicator_nodes_per_dataset
 from opus_gui.results_manager.results_manager import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
@@ -154,9 +154,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def setup_diagnostic_indicators(self):
         dataset = str(self.diagnostic_dataset_name.currentText())
-        all_variable_nodes = get_variable_nodes_per_dataset(self.project)
-        if dataset in all_variable_nodes:
-            indicators = all_variable_nodes[dataset]
+        indicator_variable_nodes = get_indicator_nodes_per_dataset(self.project)
+        if dataset in indicator_variable_nodes:
+            indicators = indicator_variable_nodes[dataset]
         else:
             indicators = []
 
