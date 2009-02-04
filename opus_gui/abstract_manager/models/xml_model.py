@@ -17,7 +17,6 @@ from PyQt4.QtCore import QString
 from PyQt4.QtGui import QColor, QIcon, QStyle, QMessageBox
 from PyQt4.Qt import qApp # For generating platform specific icons
 
-from opus_gui.main.controllers.opus_project import DummyProject
 from opus_gui.abstract_manager.models.xml_item import XmlItem
 
 # What node types we want checkboxes for
@@ -30,6 +29,16 @@ class XmlModel(QAbstractItemModel):
         The model exposes a subset of the entire XML tree containing only
         XML nodes that do not have the attribute "hidden" set to "True".
     '''
+    
+    def __is_dirty(self):
+        return self._dirty
+
+    def __set_dirty(self, dirty):
+        self._dirty = dirty
+        if self.project is not None:
+            self.project.dirty = True
+
+    dirty = property(__is_dirty, __set_dirty)
 
     def __init__(self, model_root_node, project = None, parent_widget = None):
         '''
@@ -48,14 +57,11 @@ class XmlModel(QAbstractItemModel):
         # Rebuild the (whole) tree of visible items
         self._root_item.rebuild()
 
-        # Reference to loaded project.
-        # if none is given we use a dummy project
-        if project is None:
-            project = DummyProject()
+        # Optional reference to loaded project for inheritance handling.
         self.project = project
 
-        # Dirty flag for keeping track of edits...
-        self.dirty = False
+        # Dirty flag (NOTE: use self.dirty instead)
+        self._dirty = False
 
         # Column headers
         self._headers = ['Name', 'Value']
@@ -236,6 +242,10 @@ class XmlModel(QAbstractItemModel):
         child_item.suicide()
         self.endRemoveRows()
         self.emit(SIGNAL("layoutChanged()"))
+        
+        # Dont check for inheritance for project agnostic models
+        if self.project is None:
+            return True
 
         # Check if this node was inherited by reloading the XML tree from disk
         # and looking up the old node path in the loaded tree.
@@ -250,7 +260,7 @@ class XmlModel(QAbstractItemModel):
             # Throw away the temporary tree
             del reloaded_tree
 
-        self.project.dirty = True
+        self.dirty = True
         return True
 
     def data(self, index, role):
@@ -507,7 +517,7 @@ class XmlModel(QAbstractItemModel):
         changed_value = node.text != value
         if changed_value:
             node.text = str(value) # Element doesn't play that well with QString
-            self.project.dirty = True
+            self.dirty = True
             s = SIGNAL("dataChanged(const QModelIndex &, const QModelIndex &)")
             self.emit(s, index, index)
         return True
@@ -553,7 +563,7 @@ class XmlModel(QAbstractItemModel):
         if node_is_local:
             item = parent_item.child_item(row)
             self.makeItemEditable(item)
-            self.project.dirty = True
+            self.dirty = True
 
         # Store the last inserted index for access by XmlViews
         self.last_inserted_index = self.index(row, 0, parent_index)
@@ -596,7 +606,7 @@ class XmlModel(QAbstractItemModel):
         self.makeItemEditable(this_item)
         self.makeItemEditable(above_item)
         self.emit(SIGNAL('layoutChanged()'))
-        self.project.dirty = True
+        self.dirty = True
         return self.index(row - 1, 0, self.parent(index))
 
     def moveDown(self, index):
@@ -618,7 +628,7 @@ class XmlModel(QAbstractItemModel):
         self.makeItemEditable(this_item)
         self.makeItemEditable(below_item)
         self.emit(SIGNAL('layoutChanged()'))
-        self.project.dirty = True
+        self.dirty = True
         return self.index(row + 1, 0, self.parent(index))
 
     def _stripAttributeDown(self, attribute, parent_node):
@@ -631,7 +641,7 @@ class XmlModel(QAbstractItemModel):
         '''
         if parent_node.get(attribute):
             del parent_node.attrib[attribute]
-            self.project.dirty = True
+            self.dirty = True
         # Strip (recursively) from all child nodes
         map(lambda x: self._stripAttributeDown(attribute, x),
             parent_node.getchildren())
@@ -646,7 +656,7 @@ class XmlModel(QAbstractItemModel):
         node = parent_item.node
         if node.get(attribute):
             del node.attrib[attribute]
-            self.project.dirty = True
+            self.dirty = True
         if parent_item.parent_item:
             self._stripAttributeUp(attribute, parent_item.parent_item)
 
