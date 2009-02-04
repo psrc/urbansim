@@ -135,6 +135,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def setupDiagnosticIndicatorTab(self):
         years = range(self.config["years"][0], self.config["years"][1]+1)
+        # yearItems is a list of [int, boolean] pairs, where the integer is a year
+        #  and the boolean is true if the year has already been added to the drop
         self.yearItems = []
         for year in years:
             #the second value in the list determines if it is already added to the drop down
@@ -181,12 +183,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
-
         dataset_name = self.diagnostic_dataset_name.currentText()
-        year = self.diagnostic_year.currentText()
-        if year is None: return
-
-        year = int(str(year))
+        s = str(self.diagnostic_year.currentText())
+        if s=='': return
+        year = int(s)
         cache_directory = self.model.config['cache_directory']
         indicator_type = str(self.diagnostic_indicator_type.currentText())
 
@@ -229,11 +229,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         for indicator_type, visualizations in all_visualizations:
             for visualization in visualizations:
                 if indicator_type == 'matplotlib_map':
-                    form = ViewImageForm(mainwindow = self.mainwindow,
-                                         visualization = visualization)
+                    form = ViewImageForm(visualization = visualization)
                 else:
-                    form = ViewTableForm(mainwindow = self.mainwindow,
-                         visualization = visualization)
+                    form = ViewTableForm(visualization = visualization)
                 self.indicatorResultsTab.insertTab(0,form,form.tabIcon,form.tabLabel)
 
 
@@ -267,7 +265,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 existing_run_name = run_node.tag
                 if run_name == existing_run_name:
                     duplicate = True
-                    run_id = int(run_node.get('run_id'))
+                    r = run_node.get('run_id')
+                    if r is not None:
+                        run_id = int(r)
                     break
             if duplicate:
                 dlg_dup = OverwriteRunDialog(self)
@@ -458,9 +458,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
                     boxTitle = current_model_display_name
 
-                    #detect if a year has been completed
+                    # detect if a year has been completed
                     for item in self.yearItems:
-                        if (int(item[0]) < int(current_year) and not item[1]) :
+                        if item[0] < current_year and not item[1] :
                             self.diagnostic_year.addItem(QString(str(item[0])))
                             item[1] = True
                             #hook into indicator group computation here
