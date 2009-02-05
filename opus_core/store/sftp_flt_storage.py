@@ -16,69 +16,42 @@ from opus_core.store.storage import Storage
 from shutil import rmtree
 from urlparse import urlparse
 from file_flt_storage import file_flt_storage, FltError
+from opus_core.ssh_client import get_ssh_client, convertntslash
 from glob import glob
 import tempfile
 import stat
 import os, re
 
-if os.name == 'nt':
-    from nturl2path import pathname2url
-    convertpath = pathname2url
-else:
-    def convertpath(arg):
-        return arg
-
-try:
-    import paramiko
-except ImportError:
-    paramiko = None
-
-
 class sftp_flt_storage(file_flt_storage): 
     """ this class derives from file_flt_storage and handles flt stored on a remote computer through sftp
     """
        
-    def __init__(self, storage_location):
+    def __init__(self, storage_location, client_type='paramiko'):
         """
         storage_location = 'sftp://[username:passwd@]my.hostname.com/home/users/cache_dir'
         it is recommended to store sftp user and password in system environment variables or in a security key,
         instead of passing in as plain text.
         """
+        server_config = {'port':22}
         o = urlparse(storage_location)
-        hostname = o.hostname
-        username = o.username or os.environ.get('URBANSIMUSERNAME', None) or os.environ.get('TRAVELMODELUSERNAME', None)
-        password = o.password or os.environ.get('URBANSIMPASSWORD', None) or os.environ.get('TRAVELMODELPASSWORD', None)
+        server_config['hostname'] = o.hostname
+        server_config['username'] = o.username or os.environ.get('URBANSIMUSERNAME', None) or os.environ.get('TRAVELMODELUSERNAME', None)
+        server_config['password'] = o.password or os.environ.get('URBANSIMPASSWORD', None) or os.environ.get('TRAVELMODELPASSWORD', None)
         if o.port is not None:
-            port = o.port
-        else:
-            port = 22
+            server_config['port'] = o.port
+        
+        self.ssh_client = get_ssh_client(ssh_server_config=server_config, client_type=client_type)
+        
         self._base_directory_remote = o.path
         self._base_directory = self._base_directory_local = tempfile.mkdtemp(prefix='opus_tmp')
 
-        self.ssh = paramiko.SSHClient()
-        self.ssh.load_system_host_keys()
-        self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.ssh.connect(hostname=hostname,
-                         port = port,
-                         username=username,
-                         password=password,
-                         pkey=load_key_if_exists())
-        #self.ssh._transport.set_keepalive(60)
-
-        self.sftp = self.ssh.open_sftp()
 
     def __del__(self):
-        #if hasattr(self, 'ssh') or hasattr(self, 'sftp'):
-        try:
-            self.sftp.close()
-            self.ssh.close()
-        except:
-            pass
         rmtree(self._get_base_directory())
         
     def has_table(self, table):
-        if exists_remotely(self.sftp, self._get_base_directory_remote()):
-            files = self.sftp.listdir(self._get_base_directory_remote())
+        if self.ssh_client.exists_remotely(self._get_base_directory_remote()):
+            files = self.ssh_client.listdir(self._get_base_directory_remote())
             if table in files:
                 return True
         return False
@@ -87,15 +60,10 @@ class sftp_flt_storage(file_flt_storage):
         return self._base_directory_local
 
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
-        local_files = self._get_files(table_name=table_name)
-        remote_files = self._get_remote_files(table_name=table_name)
-        for i in range(len(local_files)):
-            local_file = local_files[i]
-            if not os.path.exists(os.path.dirname(local_file.get_name())):
-                os.makedirs(os.path.dirname(local_file.get_name()))
-            remote_file = remote_files[i]
-            self.sftp.get(remote_file.get_name(), local_file.get_name())
-            
+        remote_dataset_path = convertntslash( os.path.join(self._get_base_directory_remote(), table_name) )
+        local_dataset_path = self._get_base_directory()
+        self.ssh_client.mget( remote_dataset_path,  local_dataset_path)
+
         return file_flt_storage.load_table(self, table_name, column_names=column_names, lowercase=lowercase)
     
     def get_column_names(self, table_name, lowercase=True):
@@ -115,11 +83,16 @@ class sftp_flt_storage(file_flt_storage):
         return self._base_directory_remote
     
     def get_table_names(self):
-        dataset_path = self._get_base_directory_remote()
-        if exists_remotely(self.sftp, dataset_path):
-            file_names = self.sftp.listdir(dataset_path)
-            return [os.path.basename(name) for name in file_names 
-                    if _isdir(self.sftp, name) and len(self.get_column_names(name))>0 ]
+        dataset_path = convertntslash(self._get_base_directory_remote())
+        if self.ssh_client.exists_remotely(dataset_path):
+            result = []
+            file_paths = self.ssh_client.glob(dataset_path+'/*')
+            for file_path in file_paths:
+                if self.ssh_client.isdir(file_path):
+                    file_name = os.path.basename(file_path)
+                    if len(self.get_column_names(file_name))>0:
+                        result.append(file_name)
+            return result
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
     
@@ -133,10 +106,11 @@ class sftp_flt_storage(file_flt_storage):
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
         
         local_dir = os.path.join(self._get_base_directory(), table_name)
-        remote_dir = convertpath( os.path.join(self._get_base_directory_remote(), table_name) )
+        remote_dir = convertntslash( os.path.join(self._get_base_directory_remote(),table_name ))
+        remote_base_dir = convertntslash( self._get_base_directory_remote() )
 
-        if not exists_remotely(self.sftp, remote_dir):
-            _makedirs(self.sftp, remote_dir)
+        if not self.ssh_client.exists_remotely(remote_dir):
+            self.ssh_client.makedirs(remote_dir)
         else:
             ## handle existing files with column_name
             existing_files = self._get_remote_files(table_name=table_name)
@@ -148,7 +122,7 @@ class sftp_flt_storage(file_flt_storage):
                     continue
                 elif n == 1:
                     i = existing_file_short_names.index(column_name)
-                    self.sftp.remove(existing_files[i].get_name())
+                    self.ssh_client.remove(existing_files[i].get_name())
                 elif n > 1:
                     message = "Column '%s' has multiple files with different file extensions:\n" % column_name
                     message += "Either the process of copying files into this directory is flawed, or there is a bug in Opus."
@@ -156,10 +130,7 @@ class sftp_flt_storage(file_flt_storage):
                     
         file_flt_storage.write_table(self, table_name, table_data)
         
-        for column_name in column_names:
-            local_file = glob(os.path.join(local_dir, '%s.*' % column_name))[0]
-            remote_file = convertpath( os.path.join(remote_dir, os.path.basename(local_file) ) )
-            self.sftp.put(local_file, remote_file)
+        self.ssh_client.mput(local_dir, remote_base_dir)
         
     def _get_files(self, table_name=''):
         return self._get_local_files(table_name=table_name)
@@ -171,130 +142,21 @@ class sftp_flt_storage(file_flt_storage):
         return [self.storage_file(os.path.join(dataset_path, os.path.basename(remote_file.get_name()))) for remote_file in remote_files]
     
     def _get_remote_files(self, table_name=''):        
-        dataset_path = convertpath( os.path.join(self._get_base_directory_remote(), table_name) )
-        if exists_remotely(self.sftp, dataset_path):
-            file_names = self.sftp.listdir(dataset_path)
-            return [self.storage_file( convertpath(os.path.join(dataset_path, name))) for name in file_names]
+        dataset_path = convertntslash( os.path.join(self._get_base_directory_remote(), table_name) )
+        if self.ssh_client.exists_remotely(dataset_path):
+            dataset_file_pattern = dataset_path + '/*.*'
+            file_names = self.ssh_client.glob(dataset_file_pattern)
+            return [self.storage_file( name ) for name in file_names]
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
     
     def listdir_in_base_directory(self):
-        return self.sftp.listdir( self._get_base_directory_remote() )
+        return self.ssh_client.listdir( self._get_base_directory_remote() )
 
-
-def load_key_if_exists(key_file=None):
-    key=None
-    if key_file is None:  #look into ~/[.]ssh/id_*
-        patterns = ['~/.ssh/id_rsa', '~/ssh/id_rsa']
-    else:
-        patterns = [key_file] + ['~/.ssh/id_rsa', '~/ssh/id_rsa']
-        
-    key_file = [os.path.expanduser(file) for file in patterns if os.path.exists(os.path.expanduser(file))]
-    if len(key_file) != 0:
-        key_file = key_file[0]    
-        key = paramiko.RSAKey.from_private_key_file(key_file)
-    
-    return key
-
-def exists_remotely(sftp, name):
-    """
-    check whether name (file name or directory name) exists on sftp
-    sftp is a SFTPClient object in paramiko module
-    """
-    try:
-        stat = sftp.stat(name)
-        return True
-    except IOError:
-        return False
-    else:
-        raise RuntimeError, "Error checking file status for %s on remote host" % (name)
-
-def _isdir(sftp, name):
-    """return True if name is an existing directory
-    """
-    isdir = False
-    if not exists_remotely(sftp, name):
-        return isdir
-    
-    try:
-        mode = sftp.lstat(name).st_mode
-    except os.error:
-        mode = 0
-    if stat.S_ISDIR(mode):
-        isdir = True
-    else:
-        isdir = False
-    
-    return isdir
-
-def _makedirs(sftp, path):
-    """ make recursive directories on sftp server
-    sftp is a SFTPClient object in paramiko module
-    """
-    head, tail = os.path.split(path)
-    if not exists_remotely(sftp, head):
-        _makedirs(sftp, head)
-    if not exists_remotely(sftp, path):
-        sftp.mkdir(path)
-
-def _rmtree(sftp, path, ignore_errors=False, onerror=None):
-    """Recursively delete a directory tree.
-    sftp is a SFTPClient object in paramiko module
-    (adapted from rmtree in shutils module)
-    """
-    if ignore_errors:
-        def onerror(*args):
-            pass
-    elif onerror is None:
-        def onerror(*args):
-            raise
-    names = []
-    try:
-        names = sftp.listdir(path)
-    except os.error, err:
-        onerror(sftp.listdir, path, sys.exc_info())
-    for name in names:
-        fullname = os.path.join(path, name)
-        try:
-            mode = sftp.lstat(fullname).st_mode
-        except os.error:
-            mode = 0
-        if stat.S_ISDIR(mode):
-            _rmtree(sftp, fullname, ignore_errors, onerror)
-        else:
-            try:
-                sftp.remove(fullname)
-            except os.error, err:
-                onerror(os.remove, fullname, sys.exc_info())
-    try:
-        sftp.rmdir(path)
-    except os.error:
-        onerror(os.rmdir, path, sys.exc_info())
-
-def get_stdout_for_ssh_cmd(ssh, cmdline):
-    """get stdout after running cmdline through ssh channel
-    ssh is a SSHClient object from paramiko module
-    """
-    stdin, stdout, stderr = ssh.exec_command(cmdline)
-    stderr_msg = stderr.readlines() 
-    if len(stderr_msg) > 0:
-        raise RuntimeError, "Error encountered executing cmd through ssh:\n" + ''.join(stderr_msg)
-
-    results = stdout.readlines()
-    if len(results)==1:
-        results=results[0].strip()
-        
-    stdin.close(); stdout.close(); stderr.close()
-    return results
-
-def get_temp_dir_remote(ssh):
-    """
-    """
-    cmdline = "python -c 'import tempfile, sys; print tempfile.mkdtemp()'"
-    return get_stdout_for_ssh_cmd(ssh, cmdline)
 
 def redirect_sftp_url_to_local_tempdir(filename):
     """ if filename is a remote sftp URL, redirect file to local tempdir
+    For log file location
     """
     if type(filename) == str and re.search("^sftp://", filename):
         local_filename = urlparse(filename).path
@@ -330,11 +192,11 @@ def skip_test():
     sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
     try:
         storage = sftp_flt_storage(sftp_location)
-        return True
+        return False
     except:
         from opus_core.logger import logger 
         logger.log_warning('Skipping sftp_flt_storage unit tests -- no ssh access or could not authenticate.')
-        return False
+        return True
 
 class SftpFltStorageTests(opus_unittest.OpusTestCase):
     
@@ -347,7 +209,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         opus_core_path = OpusPackage().get_opus_core_path()
         sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
         self.storage = sftp_flt_storage(sftp_location)
-        self.remote_temp_dir = get_temp_dir_remote(self.storage.sftp.sock.get_transport())
+        self.remote_temp_dir = self.storage.ssh_client.get_remote_temp_dir()
         self.storage._base_directory_remote = os.path.join(self.remote_temp_dir, 'data', 'test_cache', '1980')
 
         for year in years:
@@ -357,17 +219,14 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
 
             for dataset in datasets:
                 local_dir_name = os.path.join(local_test_data_path, dataset)
-                remote_dir_name = os.path.join(base_directory_remote, dataset)
-                _makedirs(self.storage.sftp, remote_dir_name)
-                for file in glob(os.path.join(local_dir_name, '*.*')):
-                    short_file_name = os.path.basename(file)
-                    self.storage.sftp.put(file, os.path.join(remote_dir_name, short_file_name))
+                remote_dir_name = base_directory_remote
+                self.storage.ssh_client.mput(local_dir_name, remote_dir_name)
             
     def tearDown(self):
         if skip_test():
             return
-        if exists_remotely(self.storage.sftp, self.remote_temp_dir):
-            _rmtree(self.storage.sftp, self.remote_temp_dir)
+        if self.storage.ssh_client.exists_remotely(self.remote_temp_dir):
+            self.storage.ssh_client.rmtree(self.remote_temp_dir)
     
     def test_get_files(self):
         if skip_test():
@@ -376,7 +235,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         expected.sort()
         actual = self.storage.get_column_names('cities')
         actual.sort()
-        self.assertEqual(expected, actual)
+        self.assertEquals(expected, actual)
         
     def test_load_table(self):
         if skip_test():
@@ -391,7 +250,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
     def test_get_table_names_1981(self):
         if skip_test():
             return
-        self.storage._base_directory_remote = os.path.join(self.remote_temp_dir, 'data', 'test_cache', '1981')
+        self.storage._base_directory_remote = convertntslash( os.path.join(self.remote_temp_dir, 'data', 'test_cache', '1981') )
         expected = ['base_year', 'cities']
         actual = self.storage.get_table_names()
         expected.sort()
@@ -408,16 +267,16 @@ class StorageWriteTests(TestStorageInterface):
             opus_core_path, 'data', 'test_cache', '1980')
         sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
         self.storage = sftp_flt_storage(sftp_location)
-        self.remote_temp_dir = get_temp_dir_remote(self.storage.sftp.sock.get_transport())
-        self.storage._base_directory_remote = os.path.join(self.remote_temp_dir)
+        self.remote_temp_dir = self.storage.ssh_client.get_remote_temp_dir()
+        self.storage._base_directory_remote = self.remote_temp_dir
         self.sftp_location = sftp_location + self.remote_temp_dir
         self.table_name = 'testtable'
             
     def tearDown(self):
         if skip_test():
             return
-        if exists_remotely(self.storage.sftp, self.remote_temp_dir):
-            _rmtree(self.storage.sftp, self.remote_temp_dir)
+        if self.storage.ssh_client.exists_remotely(self.remote_temp_dir):
+            self.storage.ssh_client.rmtree(self.remote_temp_dir)
             
     def test_write_char_array(self):
         if skip_test():
@@ -427,11 +286,11 @@ class StorageWriteTests(TestStorageInterface):
             'char_column': expected,
             }
 
-        remote_file_name = os.path.join(self.storage._get_base_directory_remote(), self.table_name, 'char_column.iS9')
+        remote_file_name = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, 'char_column.iS9'))
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, 'char_column.iS9')
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(exists_remotely(self.storage.sftp, remote_file_name))
+        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
@@ -450,11 +309,11 @@ class StorageWriteTests(TestStorageInterface):
         # numpy_dtype is e.g. '<i4' for a little-endian 32 bit machine
         numpy_dtype = '%(numpy_endian)si%(bytes)u' % replacements
 
-        remote_file_name = os.path.join(self.storage._get_base_directory_remote(), self.table_name, file_name)
+        remote_file_name = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, file_name))
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, file_name)
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(exists_remotely(self.storage.sftp, remote_file_name))
+        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
@@ -479,11 +338,11 @@ class StorageWriteTests(TestStorageInterface):
             numpy_ext = '>f8'
 
 
-        remote_file_name = os.path.join(self.storage._get_base_directory_remote(), self.table_name, file_name)
+        remote_file_name = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, file_name))
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, file_name)
         
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(exists_remotely(self.storage.sftp, remote_file_name))
+        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)
@@ -491,10 +350,10 @@ class StorageWriteTests(TestStorageInterface):
         self.assert_((expected_float==actual).all())
 
 
-        remote_file_name = os.path.join(self.storage._get_base_directory_remote(), self.table_name, 'bool_column.ib1')
+        remote_file_name = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, 'bool_column.ib1'))
         local_file_name = os.path.join(self.storage._get_base_directory(), self.table_name, 'bool_column.ib1')
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(exists_remotely(self.storage.sftp, remote_file_name))
+        self.assert_(self.storage.ssh_client.exists_remotely(remote_file_name))
 
         os.remove(local_file_name)
         self.storage.load_table(self.table_name)        
@@ -509,19 +368,19 @@ class StorageWriteTests(TestStorageInterface):
         os.mkdir(os.path.join(self.storage._get_base_directory(), self.table_name)) 
         existing_file = file(os.path.join(self.storage._get_base_directory(), self.table_name, column_name + ".li4"), "w")
         existing_file.close()
-        remote_file = os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li4")
-        if not exists_remotely(self.storage.sftp, os.path.dirname(remote_file)):
-            _makedirs(self.storage.sftp, os.path.dirname(remote_file))
-        self.storage.sftp.put(existing_file.name, remote_file)
+        remote_file = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li4"))
+        if not self.storage.ssh_client.exists_remotely(os.path.dirname(remote_file)):
+            self.storage.ssh_client.makedirs(os.path.dirname(remote_file))
+        self.storage.ssh_client.mput(existing_file.name, remote_file)
         
         storage = sftp_flt_storage(storage_location=self.sftp_location)
         ## Test writing 
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         
         storage.write_table(table_name=self.table_name, table_data=my_data)
-        self.assert_(not (exists_remotely(self.storage.sftp, remote_file)))
-        self.assert_(exists_remotely(self.storage.sftp, os.path.join(self.storage._get_base_directory_remote(), 
-                                                                self.table_name, column_name + ".li8")))
+        self.assert_(not (self.storage.ssh_client.exists_remotely(remote_file)))
+        new_remote_file = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))
+        self.assert_(self.storage.ssh_client.exists_remotely(new_remote_file))
 
     def test_writing_column_to_file_when_two_files_of_same_column_name_and_different_type_already_exist(self):        
         if skip_test():
@@ -534,20 +393,21 @@ class StorageWriteTests(TestStorageInterface):
         existing_file_2 = file(os.path.join(self.storage._get_base_directory() , self.table_name, column_name + ".bi4"), "w")
         existing_file_2.close()           
 
-        remote_file_1 = os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li4")
-        if not exists_remotely(self.storage.sftp, os.path.dirname(remote_file_1)):
-            _makedirs(self.storage.sftp, os.path.dirname(remote_file_1))
-        self.storage.sftp.put(existing_file_1.name, remote_file_1)
-        remote_file_2 = os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".bi4")
-        if not exists_remotely(self.storage.sftp, os.path.dirname(remote_file_2)):
-            _makedirs(self.storage.sftp, os.path.dirname(remote_file_2))
-        self.storage.sftp.put(existing_file_2.name, remote_file_2)
+        remote_file_1 = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li4"))
+        if not self.storage.ssh_client.exists_remotely(os.path.dirname(remote_file_1)):
+            self.storage.ssh_client.makedirs(os.path.dirname(remote_file_1))
+        self.storage.ssh_client.mput(existing_file_1.name, remote_file_1)
+        remote_file_2 = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".bi4"))
+        if not self.storage.ssh_client.exists_remotely(os.path.dirname(remote_file_2)):
+            self.storage.ssh_client.makedirs(os.path.dirname(remote_file_2))
+        self.storage.ssh_client.mput(existing_file_2.name, remote_file_2)
 
         storage = sftp_flt_storage(storage_location=self.sftp_location)        
         # Test writing 
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         self.assertRaises(FltError, storage.write_table, self.table_name, my_data)
-        self.assert_(not (exists_remotely(self.storage.sftp, os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))))        
+        new_remote_file = convertntslash(os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))
+        self.assert_(not (self.storage.ssh_client.exists_remotely(new_remote_file)))        
 
     def test_write_table_columns_with_different_sizes(self):
         if not skip_test():
