@@ -24,9 +24,9 @@ class bm_normal_posterior:
         variance = bm_object.get_posterior_component_variance()
         weights = bm_object.get_weights()
         rnN01 = normal(0,1, (K, I, replicates))
-        logger.log_status("RNs:") 
-        logger.log_status("**********")
-        logger.log_status(rnN01[0:50,0,0])
+        #logger.log_status("RNs:") 
+        #logger.log_status("**********")
+        #logger.log_status(rnN01[0:50,0,0])
         rns = reshape(pmean, (K, I, 1)) + reshape(sqrt(variance), (1, I, 1)) * rnN01
         result = sum(reshape(weights, (1,I,1)) * rns, axis=1)
         if truncate_at_zero:

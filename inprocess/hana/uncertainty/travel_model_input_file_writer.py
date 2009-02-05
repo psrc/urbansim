@@ -121,7 +121,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
     def _determine_current_share(self, zone_set):
         for dataset_name in self.variables_to_scale.keys():
             number_of_agents = zone_set.compute_variables(['zone.number_of_agents(%s)' % dataset_name], dataset_pool=self.dataset_pool).astype('float32')
-            logger.log_status('Current number of %ss' % dataset_name)
+            #logger.log_status('Current number of %ss' % dataset_name)
             #logger.log_status(number_of_agents)
             nvars = len(self.variables_to_scale[dataset_name].keys())
             for var in self.variables_to_scale[dataset_name].keys():
@@ -150,8 +150,8 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
         n = eval('%s().run(bm, replicates=1)' % post_class)
         simulated_number_of_agents = n.ravel()*n.ravel()
-        logger.log_status('Simulated number of %ss' % dataset_name)
-        logger.log_status(round_(simulated_number_of_agents[0:50]))
+        #logger.log_status('Simulated number of %ss' % dataset_name)
+        #logger.log_status(round_(simulated_number_of_agents[0:50]))
         scale_to_ct = False
         if self.configuration['travel_model_configuration'].get('scale_to_control_totals', False):
             control_totals = self.configuration['travel_model_configuration'].get('control_totals')
@@ -163,13 +163,13 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             var_alias = VariableName(var).get_alias()
             self.simulated_values[var_alias] = zeros(zone_set.size())
             self.simulated_values[var_alias][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var_alias].dtype)
-            logger.log_status(var)
+            #logger.log_status(var)
             #logger.log_status(self.simulated_values[var_alias])
             logger.log_status('Total number of %s: %s' % (var, self.simulated_values[var_alias].sum()))
             
         # simulate jobs
         dataset_name = 'job'
-        logger.log_status('Generated values of bm variables for %ss:' % dataset_name)
+        #logger.log_status('Generated values of bm variables for %ss:' % dataset_name)
         bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
         self.total_number_of_jobs = zeros(zone_set.size(), dtype='int32')
         for bmvar in bmvars:
@@ -181,7 +181,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                     if bmvar.endswith(key):
                         simulated_number_of_agents = simulated_number_of_agents/float(simulated_number_of_agents.sum()) * ct
                         break
-            logger.log_status(bmvar)
+            #logger.log_status(bmvar)
             #logger.log_status(zone_set.get_attribute(bmvar))
             logger.log_status('Total number of %s: %s' % (bmvar, simulated_number_of_agents.sum()))
             zone_set.modify_attribute(bmvar, round_(simulated_number_of_agents))

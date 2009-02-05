@@ -29,7 +29,7 @@ class BaselineMultipleTravelModels2020(BaselineHana):
                                                                        mode='null', years_to_run={2020: '2020'})
         config['travel_model_configuration'] = travel_model_configuration
         
-        config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer_land_use_distr'
+        config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer'
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
                 
         config['travel_model_configuration']['export_macros']['get_link_attributes.mac'] = {'bank':'bank1', 'scenario':-1, 'path':'export_macros'}
