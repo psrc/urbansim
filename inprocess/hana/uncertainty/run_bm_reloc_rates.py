@@ -22,86 +22,46 @@ from opus_core.plot_functions import plot_histogram
 from opus_core.misc import unique_values
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
+from opus_core.datasets.dataset import Dataset
 
 
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     # What directory contains the multiple runs'
-    cache_directory = "/Users/hana/urbansim_cache/psrc_parcel/runs/bm/0127"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/relocation/0122"
 
     # Where the observed data is stored
-    observed_data_dir = "/Users/hana/bm/observed_data/"
+    observed_data_dir = "/Users/hana/urbansim/census"
 
     observed_data = ObservedData(observed_data_dir, 
-                                 year=2005, # from what year are the observed data 
+                                 year=2001, # from what year are the observed data 
                                  storage_type='tab_storage', # in what format
-                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
+                                 package_order=['inprocess', 'psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
     known_output=[
-                  {'variable_name': "urbansim_parcel.zone.number_of_households", # What variable does the observed data correspond to
-                   'filename': "PSRC2005TAZDataNew", # In what file are values of this variable
-                   'transformation': "sqrt", # What transformation should be performed (can be set to None)
+                  {'variable_name': 'inprocess.household_relocation_rate.annual_relocation_rate', # What variable does the observed data correspond to
+                   'filename': "household_relocation_rates", # In what file are values of this variable
+                   'transformation': 'sqrt', # What transformation should be performed (can be set to None)
                    # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
                    #'filter': "urbansim_parcel.zone.number_of_households", 
+                   "id_name":[]
                    },
-#                    {'variable_name': "travel_data.am_single_vehicle_to_work_travel_time",
-#                     'filename': "travel_times", 
-#                     'transformation': "sqrt",
-#                   #'filter': "urbansim_parcel.zone.number_of_households",
-#                   },
-#                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
-#                   'filename': "PSRC2005TAZDataNew", 
-#                   'transformation': "sqrt",
-#                   #'filter': "urbansim_parcel.zone.number_of_jobs",
-#                   },
-#                   {'variable_name': "urbansim_parcel.zone_x_employment_sector.number_of_jobs",
-#                   'filename': "jobs_by_zones_and_sectors_flatten", 
-#                   'transformation': "sqrt",
-#                   "id_name":  ["zone_id", "sector_id"]
-#                   },
-#                   {'variable_name': "psrc_parcel.screenline.traffic_volume_eh",
-#                    'filename': "screenlines",
-#                    'filter': "psrc_parcel.screenline.traffic_volume_eh",
-#                    'transformation': "sqrt",
-#                    'dependent_datasets': {'screenline_node': {'filename':'tv2006', 'match': True}}
-#                    }
-#                  {'variable_name': "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft",
-#                   'filename': "avg_total_value_per_unit_by_faz", 
-#                   'transformation': "log",
-#                   'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
-#                   "id_name":  ["faz_id", "land_use_type_id"]
-#                   },
-#                  {'variable_name': "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft",
-#                   'filename': "avg_total_value_per_unit_by_la", 
-#                   'transformation': "log",
-                   #'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
-#                   "id_name":  ["large_area_id", "land_use_type_id"]
-#                   }
                   ]
-                  
-#    for sector in range(1,20):
-#        known_output = known_output + [
-#                {'variable_name': "urbansim_parcel.zone.number_of_jobs_of_sector_%s" % sector,
-#                   'filename': "jobs_by_zones_and_sectors", 
-#                   'transformation': "sqrt",
-#                   }]
-        
-    for group in ['mining', 'constr', 'retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
-        known_output = known_output + [
-                {'variable_name': "urbansim_parcel.zone.number_of_jobs_of_sector_group_%s" % group,
-                   'filename': "jobs_by_zones_and_groups", 
-                   'transformation': "sqrt",
-                   }]
           
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
         
+    rate_storage = StorageFactory().get_storage('tab_storage',  storage_location = observed_data_dir)
+    rates = Dataset(in_storage = rate_storage, 
+                in_table_name='household_relocation_rates', id_name=[], dataset_name='household_relocation_rate')
+    rates.delete_one_attribute('annual_relocation_rate')
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
                          base_year=2000, 
                          prefix='run_', # within 'cache_directory' filter only directories with this prefix
-                         package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
+                         package_order=['inprocess', 'psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
+                         additional_datasets = {'household_relocation_rate': rates})
     
     weights = bm.compute_weights()
     print weights
@@ -128,7 +88,9 @@ if __name__ == "__main__":
         maxi = argsort(wc)[-1]
         print "%s: max = %s, index = %s, w[%s] = %s" % (name, wc[maxi], maxi, maxiall, wc[maxiall])
         print wc[maxi3all], wc[miniall]
-
+        
+    bm.write_expected_values('/Users/hana/urbansim_cache/psrc/parcel/bm/relocation/0122/bm_output/mu', 0)
+    
     #bm.export_bm_parameters('/Users/hana/bm/psrc_parcel/simulation_results/0818/2005', filename='bm_parameters')
     #bmf = BayesianMeldingFromFile("/Users/hana/bm/psrc_parcel/simulation_results/0818/2005/bm_parameters", package_order=['urbansim_parcel', 'urbansim', 'core'])
     
@@ -162,25 +124,3 @@ if __name__ == "__main__":
     #print std
     #prob = bm.get_probability_interval(0.8)
     #print prob
-    
-def convert_screenline_report_to_dataset(report_name, cache_directory, years):
-    """This is an obsolete function (not used)."""
-    for year in years:
-        dir = os.path.join(cache_directory, str(year))
-        flt_storage = StorageFactory().get_storage('flt_storage',storage_location = dir)
-        pool = DatasetPool(storage=flt_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
-        scnodes = pool.get_dataset('screenline_node')
-        scnodes.add_primary_attribute(name='traffic_volume_eh', data=zeros(scnodes.size(), dtype='float32'))
-        full_report_name = os.path.join(dir, report_name)
-        file = open(full_report_name, 'r')
-        file_contents = map(str.strip, file.readlines())
-        not_found_counter = 0
-        for line in file_contents[1:len(file_contents)]:
-            node_i, node_j, value, dummy = str.split(line)
-            try:
-                scnodes.set_value_of_attribute_by_id(attribute='traffic_volume_eh', value=float(value), 
-                                                             id=(int(node_i), int(node_j)))
-            except:
-                not_found_counter+=1
-        print "%s nodes not found in year %s" % (not_found_counter, year)
-        scnodes.write_dataset(out_storage=flt_storage)    

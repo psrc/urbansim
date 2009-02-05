@@ -43,6 +43,6 @@ def check_if_directory_exists(base_directory, subdirectories=[], prefix=''):
     logger.end_block()
     
 if __name__ == "__main__":
-    directory = '/Users/hana/urbansim_cache/psrc/parcel/bm/0307/run_5737_point_est'
-    create_file_cache_directories(directory, prefix='run_')
-    check_if_directory_exists(os.path.join(os.path.split(directory)[0:-1])[0], subdirectories=['2005'], prefix='run_')
+    directory = '/Users/hana/urbansim_cache/psrc/parcel/bm/0416'
+    #create_file_cache_directories(directory, prefix='run_')
+    check_if_directory_exists(directory, subdirectories=['2005'], prefix='run_')

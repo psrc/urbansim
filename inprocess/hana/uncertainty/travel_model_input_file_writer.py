@@ -27,8 +27,6 @@ from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 from opus_core.variables.variable_name import VariableName
 from psrc_parcel.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
-from opus_core.bayesian_melding import BayesianMeldingFromFile
-from opus_core.bm_normal_posterior import bm_normal_posterior
 from opus_core.misc import safe_array_divide
 from opus_core.sampling_toolbox import sample_replace
 from urbansim.lottery_choices import lottery_choices
@@ -124,14 +122,23 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         for dataset_name in self.variables_to_scale.keys():
             number_of_agents = zone_set.compute_variables(['zone.number_of_agents(%s)' % dataset_name], dataset_pool=self.dataset_pool).astype('float32')
             logger.log_status('Current number of %ss' % dataset_name)
-            logger.log_status(number_of_agents)
+            #logger.log_status(number_of_agents)
             nvars = len(self.variables_to_scale[dataset_name].keys())
             for var in self.variables_to_scale[dataset_name].keys():
                 self.variables_to_scale[dataset_name][var] = safe_array_divide(zone_set.get_attribute(var), number_of_agents,
                                                                                return_value_if_denominator_is_zero=1.0/float(nvars))
             
     def _determine_simulated_values(self, zone_set, file):
-        bm = BayesianMeldingFromFile(file)
+        bm_module, bm_class = self.configuration['travel_model_configuration'].get('bm_module_class_pair', 
+                                                                                   ('opus_core.bayesian_melding', 
+                                                                                        'BayesianMeldingFromFile'))
+        exec('from %s import %s' % (bm_module, bm_class))
+        post_module, post_class = self.configuration['travel_model_configuration'].get('bm_posterior_procedure', 
+                                                                                   ('opus_core.bm_normal_posterior', 
+                                                                                        'bm_normal_posterior'))
+        exec('from %s import %s' % (post_module, post_class))
+        
+        bm = eval('%s(file)' % bm_class)
         variables_to_compute = [var for var in bm.get_variable_names() if VariableName(var).get_alias() not in zone_set.get_primary_attribute_names()]
         if len(variables_to_compute) > 0:
             zone_set.compute_variables(variables_to_compute, dataset_pool=self.dataset_pool)
@@ -141,10 +148,10 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         dataset_name = 'household'
         bmvar = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())[0] # this should be a list with one element ('number_of_households')
         bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
-        n = bm_normal_posterior().run(bm, replicates=1)
+        n = eval('%s().run(bm, replicates=1)' % post_class)
         simulated_number_of_agents = n.ravel()*n.ravel()
         logger.log_status('Simulated number of %ss' % dataset_name)
-        logger.log_status(round_(simulated_number_of_agents))
+        logger.log_status(round_(simulated_number_of_agents[0:50]))
         scale_to_ct = False
         if self.configuration['travel_model_configuration'].get('scale_to_control_totals', False):
             control_totals = self.configuration['travel_model_configuration'].get('control_totals')
@@ -157,7 +164,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             self.simulated_values[var_alias] = zeros(zone_set.size())
             self.simulated_values[var_alias][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var_alias].dtype)
             logger.log_status(var)
-            logger.log_status(self.simulated_values[var_alias])
+            #logger.log_status(self.simulated_values[var_alias])
             logger.log_status('Total number of %s: %s' % (var, self.simulated_values[var_alias].sum()))
             
         # simulate jobs
@@ -167,7 +174,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         self.total_number_of_jobs = zeros(zone_set.size(), dtype='int32')
         for bmvar in bmvars:
             bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
-            n = bm_normal_posterior().run(bm, replicates=1)
+            n = eval('%s().run(bm, replicates=1)' % post_class)
             simulated_number_of_agents = n.ravel()*n.ravel()
             if scale_to_ct:
                 for key, ct in job_control_total.iteritems():
@@ -175,7 +182,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                         simulated_number_of_agents = simulated_number_of_agents/float(simulated_number_of_agents.sum()) * ct
                         break
             logger.log_status(bmvar)
-            logger.log_status(zone_set.get_attribute(bmvar))
+            #logger.log_status(zone_set.get_attribute(bmvar))
             logger.log_status('Total number of %s: %s' % (bmvar, simulated_number_of_agents.sum()))
             zone_set.modify_attribute(bmvar, round_(simulated_number_of_agents))
             self.total_number_of_jobs = self.total_number_of_jobs + simulated_number_of_agents

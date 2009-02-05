@@ -76,7 +76,7 @@ class RunTravelModel:
             return False
         for full_model_path in config['travel_model_configuration'][year].get('models'):
             optional_args=['-y', year]
-            ForkProcess().fork_new_process(full_model_path, config, optional_args=optional_args)
+            ForkProcess().fork_new_process(full_model_path, config, optional_args=optional_args, delete_temp_dir=False)
         return True    
 
     
