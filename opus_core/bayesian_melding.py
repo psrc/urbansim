@@ -388,9 +388,6 @@ class BayesianMelding(MultipleRuns):
 
     def get_posterior_component_mean(self):
         return self.get_bias_for_quantity()*self.get_propagation_factor() + self.get_predicted_values()
-        # for zone-specific bias
-        #bias = self.get_bias_for_quantity()
-        #return reshape(bias, (bias.size, 1)) + self.get_predicted_values()
 
     def get_posterior_component_variance(self):
         return self.get_variance_for_quantity()*self.get_propagation_factor()
@@ -422,7 +419,7 @@ class BayesianMelding(MultipleRuns):
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
                                         use_bias_and_variance_from=None, transformed_back=True, **kwargs):
         """
-        'quantity_of_interest' is a varible name about which we want to get the posterior distribution.
+        'quantity_of_interest' is a variable name about which we want to get the posterior distribution.
         If there is multiple known_output, it must be made clear from which one the bias and variance
         is to be used (argument use_bias_and_variance_from) If it is None, the first known output is used.
         """
@@ -626,7 +623,7 @@ class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
     """
-    def __init__(self, filename, package_order=['core']):
+    def __init__(self, filename, package_order=['core'], additional_datasets={}):
         """The file 'filename' has the following structure:
         1. line: base_year calibration_year 
         2 lines per each variable: 
@@ -651,6 +648,7 @@ class BayesianMeldingFromFile(BayesianMelding):
             counter += 1
         self.weights = array([1.])
         self.number_of_runs = 1
+        self.additional_datasets = additional_datasets
                  
     def get_calibration_year(self):
         return self.year
@@ -708,9 +706,3 @@ class BayesianMeldingFromFile(BayesianMelding):
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, dummy=None):
         return MultipleRuns._compute_variable_for_one_run(self, run_index, variable, dataset_name, year)
 
-    def get_posterior_component_mean(self):
-        # temporarily without bias (for experimentation)
-        return self.get_predicted_values()
-
-    def get_posterior_component_variance(self):
-        return self.get_variance_for_quantity()*self.get_propagation_factor()
