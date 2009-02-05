@@ -12,24 +12,24 @@
 # other acknowledgments.
 # 
 
-from baseline import Baseline
+from baseline_hana import BaselineHana
 
-class BaselineMultipleTravelModels2020(Baseline):
+class BaselineMultipleTravelModels2020(BaselineHana):
     
-    tm_scenario = 'baseline_tm_no_hbw_v1.0a'
+    tm_scenario = 'baseline_v1.0bb_C1'
     multiple_runs=True
     
     def __init__(self):
-        config = Baseline()
-        config['number_of_runs'] = 2
+        config = BaselineHana()
+        config['number_of_runs'] = 5
         config['seed'] = 1
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
         travel_model_configuration = create_travel_model_configuration(self.tm_scenario, 
                                                                        emme2_batch_file='./model1-0.sh',
-                                                                       mode='full', years_to_run={2020: '2020'})
+                                                                       mode='null', years_to_run={2020: '2020'})
         config['travel_model_configuration'] = travel_model_configuration
         
-        config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer'
+        config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer_land_use_distr'
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
                 
         config['travel_model_configuration']['export_macros']['get_link_attributes.mac'] = {'bank':'bank1', 'scenario':-1, 'path':'export_macros'}

@@ -80,7 +80,7 @@ class MultipleRunsModification:
             config["models_configuration"][new_model_name] = config["models_configuration"][model_name]
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_rates"] = True
         for model_name, coef_config in self.models_with_mixed_sampled_coefficients.iteritems():
-            new_model_name = "%s_with_sampled_coef" % model_name
+            new_model_name = "%s_with_mixed_sampled_coef" % model_name
             config["models_configuration"][new_model_name] = Configuration(config["models_configuration"][model_name])
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_coefficients"] = \
                                                 True
