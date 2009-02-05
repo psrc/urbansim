@@ -20,4 +20,4 @@ class BaselineTravelModel2020NobiaspfNovarpf(BaselineTravelModel2020BiaspfVarpf)
     def __init__(self):
         BaselineTravelModel2020BiaspfVarpf.__init__(self)
         self['travel_model_configuration']['bm_module_class_pair'] = ('inprocess.hana.uncertainty.bm_no_biaspf_no_varpf', 'BmNoBiaspfNoVarpf')
-
+        self['travel_model_configuration'][2020]['bank'] = [ '2020_nbpf_nvpf', ]
