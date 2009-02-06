@@ -92,9 +92,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.runProgressBarModel.reset()
 
         self.setupDiagnosticIndicatorTab()
-        self.runProgressBarModel.hide()
-        self.runProgressBarModelLabel.hide()
-        self.summaryCurrentPieceValue.hide()
+        
+        self.gb_model_progress.hide()
 
     def updateConfigAndGuiForRun(self):
         config = self.xml_config.get_run_configuration(str(self.model.modeltorun))
@@ -105,33 +104,19 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def on_cbYear_stateChanged(self, state):
         if self.cbYear.isChecked():
-            self.runProgressBarYear.show()
-            self.runProgressBarYearLabel.show()
-            self.summaryCurrentModelValue.show()
+            self.gb_year_progress.show()
             self.cbModel.setChecked(False)
-            self.cbModel.show()
-#            self.runProgressBarModel.show()
-#            self.runProgressBarModelLabel.show()
-#            self.summaryCurrentPieceValue.show()
         else:
-            self.runProgressBarYear.hide()
-            self.cbModel.hide()
-            self.runProgressBarYearLabel.hide()
-            self.summaryCurrentModelValue.hide()
-
-            self.runProgressBarModel.hide()
-            self.runProgressBarModelLabel.hide()
-            self.summaryCurrentPieceValue.hide()
+            self.gb_year_progress.hide()
+            self.gb_model_progress.hide()
 
     def on_cbModel_stateChanged(self, state):
         if self.cbModel.isChecked():
-            self.runProgressBarModel.show()
-            self.runProgressBarModelLabel.show()
-            self.summaryCurrentPieceValue.show()
+            self.gb_model_progress.show()
         else:
-            self.runProgressBarModel.hide()
-            self.runProgressBarModelLabel.hide()
-            self.summaryCurrentPieceValue.hide()
+            self.setUpdatesEnabled(False)
+            self.gb_model_progress.hide()
+            self.setUpdatesEnabled(True)
 
     def setupDiagnosticIndicatorTab(self):
         years = range(self.config["years"][0], self.config["years"][1]+1)
@@ -384,10 +369,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 form_generator = None
                 if indicator_type == 'matplotlib_map' or \
                    indicator_type == 'matplotlib_chart':
-                    form_generator = self.mainwindow.resultsManagerBase.addViewImageIndicator
+                    form_generator = self.mainwindow.managers['results_manager'].addViewImageIndicator
                 elif indicator_type == 'table_per_year' or \
                      indicator_type == 'table_per_attribute':
-                    form_generator = self.mainwindow.resultsManagerBase.addViewTableIndicator
+                    form_generator = self.mainwindow.managers['results_manager'].addViewTableIndicator
 
                 if form_generator is not None:
                     for visualization in visualizations:
