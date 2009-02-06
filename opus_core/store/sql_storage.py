@@ -312,7 +312,7 @@ else:
                                    db.user_name, 
                                    db.password, 
                                    db.host_name, 
-                                   'misc')
+                                   'test')
                     else:
                         expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
                                    db.user_name, 
@@ -321,12 +321,6 @@ else:
                                    db.database_name)
                     actual_url = storage.get_storage_location()
                     urls_are_equal = expected_url==actual_url
-                    f = open("/projects/urbansim10/urbbuild/result.txt", "w")
-                    f.write(expected_url)
-                    f.write("\n")
-                    f.write(actual_url)
-                    f.write("\n")
-                    f.close()
                     # Careful!  Don't put the URLs in the assertion, so if there is a failure they don't get printed in the CruiseControl log
                     self.assert_(urls_are_equal, "expected and actual URLs not equal")
 
