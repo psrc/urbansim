@@ -112,18 +112,6 @@ class RunModelThread(QThread):
         self.batch_processor.run()
 
     def indicatorBatchFinishedCallback(self, success):
-#        results_manager = self.mainwindow.resultsManagerBase
-#        all_visualizations = self.batch_processor.get_visualizations()
-#        for indicator_type, visualizations in all_visualizations:
-#            if indicator_type == 'matplotlib_map' or \
-#               indicator_type == 'matplotlib_chart':
-#                form_generator = results_manager.addViewImageIndicator
-#            elif indicator_type == 'tab':
-#                form_generator = results_manager.addViewTableIndicator
-#
-#            if form_generator is not None:
-#                for visualization in visualizations:
-#                    form_generator(visualization = visualization, indicator_type = indicator_type)
         return
 
     def errorCallback(self,errorMessage):
