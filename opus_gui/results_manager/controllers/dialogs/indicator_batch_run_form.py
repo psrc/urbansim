@@ -60,7 +60,6 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
             self.co_start_year.addItem(yr)
             self.co_end_year.addItem(yr)
         for i in range(1, end - start + 2):
-            if i not in years: continue            
             yr = QString(repr(i))
             self.co_every_year.addItem(yr)
 
