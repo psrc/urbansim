@@ -16,7 +16,6 @@ import os,tempfile
 
 from PyQt4.QtCore import QString, Qt, QFileInfo, QObject, SIGNAL, QFile, QIODevice
 from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QFileDialog
-from PyQt4.QtXml import QDomDocument
 
 from xml.etree.cElementTree import Element, SubElement, ElementTree
 
@@ -35,88 +34,81 @@ class XmlController_DataTools(XmlController):
 
         self.actExecToolFile = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
         self.actExecToolConfig = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
-        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool to Library", self.addToolFile)
-        self.actAddRequiredStringParam = self.createAction(self.model.addIcon,"Add Required String Parameter",self.addRequiredStringParam)
-        self.actAddRequiredDirParam = self.createAction(self.model.addIcon,"Add Required Directory Parameter",self.addRequiredDirParam)
-        self.actAddRequiredFileParam = self.createAction(self.model.addIcon,"Add Required File Parameter",self.addRequiredFileParam)
-        self.actAddOptionalStringParam = self.createAction(self.model.addIcon,"Add Optional String Parameter",self.addOptionalStringParam)
-        self.actAddOptionalDirParam = self.createAction(self.model.addIcon,"Add Optional Directory Parameter",self.addOptionalDirParam)
-        self.actAddOptionalFileParam = self.createAction(self.model.addIcon,"Add Optional File Parameter",self.addOptionalFileParam)
-        self.actAddNewToolSet = self.createAction(self.model.addIcon,"Add New Tool Set",self.addNewToolSet)
-        self.actNewConfig = self.createAction(self.model.addIcon,"Add Tool to Tool Set",self.newConfig)
+        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool to Group", self.addToolFile)
+        self.actAddToolGroup = self.createAction(self.model.addIcon,"Create Tool Group", self.addNewToolGroup)
+
+        # Batch create the 'add XXX parameter' actions
+        self.add_parameter_actions = []
+        parameter_types = (('String', 'string'), 
+                           ('Directory', 'dir_path'), 
+                           ('File', 'file_path'))
+        for required in (True, False):
+            for type_name, type_value in parameter_types:
+                req_text = "Required" if required else "Optional"
+                label = "Create %s %s parameter" % (req_text, type_name)
+                act = self._create_add_param_action(label, type_value, required)
+                self.add_parameter_actions.append(act)
+
+        self.actAddNewToolSet = self.createAction(self.model.addIcon,"Create Tool Set",self.addNewToolSet)
+        self.actNewConfig = self.createAction(self.model.addIcon,"Add Tool Configuration to Set",self.newConfig)
         self.actOpenDocumentation = self.createAction(self.model.calendarIcon,"Open Documentation",self.openDocumentation)
         self.actMoveNodeUp = self.createAction(self.model.arrowUpIcon,"Move Up",self.moveNodeUp)
         self.actMoveNodeDown = self.createAction(self.model.arrowDownIcon,"Move Down",self.moveNodeDown)
         self.actExecBatch = self.createAction(self.model.executeIcon,"Execute Tool Set",self.execBatch)
         self.actExportXMLToFile = self.createAction(self.model.cloneIcon,"Export XML Node To File",self.exportXMLToFile)
         self.actImportXMLFromFile = self.createAction(self.model.cloneIcon,"Import XML Node From File",self.importXMLFromFile)
+        
+    def _create_add_param_action(self, label, type_name, required = False):
+        '''
+        Creates and returns a new action for creating a parameter node.
+        The parameter node will have the attribute 'type' set to type_name
+        and, if required is True, the attribute "required" will be "Required" 
+        (if required is False, attribute "required" will be "Optional")
+        @param label (str) text to show on the menu
+        @param type_name (str) the parameters type
+        @param required (boolean) whether the param is required or not
+        @return the created action or None
+        '''        
+        # Make a node and a callback and use them to assemble the action
+        node = Element("Unnamed_Parameter")
+        attributes = {'type': "string", 'choices': "Required|Optional"}
+        choice = "Required" if required else "Optional"
+        SubElement(node, 'required', attributes).text = choice
+        SubElement(node, 'type', {'type': "string"}).text = str(type_name)
+        SubElement(node, 'default', {'type': str(type_name) }).text = ""
+        def action():
+            self.model.insertRow(0, self.selectedIndex(), node)
+            self.view.expand(self.selectedIndex())
+        return self.createAction(self.model.addIcon, label, action)
 
     def addToolFile(self):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
 
-        toolname = 'Tool_Name_Rename_Me'
-        filename = 'File_Name_Rename_Me'
+        toolname = 'Unnamed_Tool_Name'
+        filename = 'Unnamed_File_Name'
         tool_node = Element(toolname, {'type':'tool_file'})
         SubElement(tool_node, "name", {'type':'tool_name'}).text = filename
         SubElement(tool_node, "param", {'type':'param_template'})
 
         self.model.insertRow(0, self.selectedIndex(), tool_node)
 
-    def newToolParam(self, toolType, choices):
-        ''' NO DOCUMENTATION '''
-        param_node = Element("New_Param_Rename_Me")
-
-        attributes = {'type': "string", 'choices': "Required|Optional"}
-        SubElement(param_node, 'required', attributes).text = choices
-
-        SubElement(param_node, 'type', {'type': "string"}).text = toolType
-        SubElement(param_node, 'default', {'type': toolType }).text = ""
-        return param_node
-
-    def addRequiredStringParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        req_node = self.newToolParam("string", "Required")
-        self.model.insertSibling(req_node, self.selectedIndex())
-
-    def addRequiredDirParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        newNode = self.newToolParam("dir_path", "Required")
-        self.model.insertSibling(newNode, self.selectedIndex())
-
-    def addRequiredFileParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        newNode = self.newToolParam("file_path", "Required")
-        self.model.insertSibling(newNode, self.selectedIndex())
-
-    def addOptionalStringParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        newNode = self.newToolParam("string", "Optional")
-        self.model.insertSibling(newNode, self.selectedIndex())
-
-    def addOptionalDirParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        newNode = self.newToolParam("dir_path", "Optional")
-        self.model.insertSibling(newNode, self.selectedIndex())
-
-    def addOptionalFileParam(self):
-        ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        newNode = self.newToolParam("dir_path", "Optional")
-        self.model.insertSibling(newNode, self.selectedIndex())
-
     def addNewToolSet(self):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
-
+        
         # First add the dummy toolset shell
-        toolset_node = Element('Rename_Me', {'type': "tool_set"})
+        toolset_node = Element('Unnamed_Tool_Set', {'type': "tool_set"})
         self.model.insertRow(0, self.selectedIndex(), toolset_node)
+
+    def addNewToolGroup(self):
+        ''' NO DOCUMENTATION '''
+        assert self.hasSelectedItem()
+        
+        # First add the dummy toolset shell
+        node = Element('Unnamed_Tool_Group', {'type': "tool_group", 
+                                     'setexpanded':'True'})
+        self.model.insertRow(0, self.selectedIndex(), node)
 
     def newConfig(self):
         ''' NO DOCUMENTATION '''
@@ -374,27 +366,42 @@ class XmlController_DataTools(XmlController):
         node = item.node
 
         menu = QMenu(self.view)
+        
+        # Tool files are the "actual" tools
         if node.get('type') == "tool_file":
             menu.addAction(self.actExecToolFile)
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
+            
+        # "Tool library is a collection of tool groups
+        elif node.get('type') == "tool_library":
+            menu.addAction(self.actAddToolGroup)
+
+        # Tool groups are groups of "tool files"
         elif node.get('type') == "tool_group":
             menu.addAction(self.actAddToolFile)
+
+        # Param Template is the parameter node for the tools -- where 
+        # users can build up a list of parameters that gets passed to the
+        # tool function
         elif node.get('type') == "param_template":
-            menu.addAction(self.actAddRequiredStringParam)
-            menu.addAction(self.actAddRequiredDirParam)
-            menu.addAction(self.actAddRequiredFileParam)
-            menu.addAction(self.actAddOptionalStringParam)
-            menu.addAction(self.actAddOptionalDirParam)
-            menu.addAction(self.actAddOptionalFileParam)
+            map(menu.addAction, self.add_parameter_actions)
+
+        # Tool Config is an alternative configuration for a tool that can be 
+        # put in a Tool Set
         elif node.get('type') == "tool_config":
             menu.addAction(self.actExecToolConfig)
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
+            
+        # "Tool sets" is a collection of multiple tool sets
         elif node.get('type') == "tool_sets":
             menu.addAction(self.actAddNewToolSet)
+            
+        # A Tool set is a collection of (alternative) configurations for 
+        # existing tools.
         elif node.get('type') == "tool_set":
             menu.addAction(self.actExecBatch)
             menu.addSeparator()
@@ -402,6 +409,8 @@ class XmlController_DataTools(XmlController):
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
+        
+        # ?
         elif node.get('type') == "documentation_path":
             menu.addAction(self.actOpenDocumentation)
             menu.addSeparator()
