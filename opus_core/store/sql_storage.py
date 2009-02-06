@@ -278,7 +278,6 @@ else:
             self.database_name = 'test_database'
             self.dbs = []
             for config in db_configs:
-                if config.protocol == 'mssql': continue
                 try:
                     server = DatabaseServer(config)
                     if server.has_database(self.database_name):
