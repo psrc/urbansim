@@ -26,7 +26,7 @@ class BaselineMultipleTravelModels2020(BaselineHana):
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
         travel_model_configuration = create_travel_model_configuration(self.tm_scenario, 
                                                                        emme2_batch_file='./model1-0.sh',
-                                                                       mode='null', years_to_run={2020: '2020'})
+                                                                       mode='full', years_to_run={2020: '2020'})
         config['travel_model_configuration'] = travel_model_configuration
         
         config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer'
