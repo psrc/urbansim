@@ -116,6 +116,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         else:
             self.setUpdatesEnabled(False)
             self.gb_model_progress.hide()
+            self.adjustSize()
             self.setUpdatesEnabled(True)
 
     def setupDiagnosticIndicatorTab(self):
@@ -237,7 +238,6 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         return success
 
     def on_pbnStartModel_released(self):
-        proceed = True
         duplicate = False
 
         run_name = str(self.leRunName.text())
@@ -258,9 +258,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 dlg_dup = OverwriteRunDialog(self)
 
                 if dlg_dup.exec_() == QDialog.Rejected:
-                    proceed = False
-
-        if not proceed: return
+                    return
+                
+                self.mainwindow.managers['results_manager'].delete_run(run_node = run_node)
 
 
         if self.running and not self.paused:
@@ -367,11 +367,11 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             all_visualizations = self.runThread.batch_processor.get_visualizations()
             for indicator_type, visualizations in all_visualizations:
                 form_generator = None
+                print indicator_type
                 if indicator_type == 'matplotlib_map' or \
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.managers['results_manager'].addViewImageIndicator
-                elif indicator_type == 'table_per_year' or \
-                     indicator_type == 'table_per_attribute':
+                elif indicator_type == 'tab':
                     form_generator = self.mainwindow.managers['results_manager'].addViewTableIndicator
 
                 if form_generator is not None:
