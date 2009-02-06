@@ -185,6 +185,11 @@ from getpass import getuser
 TESTUSERNAME = getuser()
 TESTHOSTNAME = 'localhost'
 
+try:
+    import paramiko    
+except:
+    paramiko = None
+
 def skip_test():
     if paramiko is None:
         return True
