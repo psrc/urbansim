@@ -199,7 +199,6 @@ class XmlController(object):
         @param new_tag (String): the new tag value
         @return: True if the tag was changed, False otherwise
         '''
-        print 'RENAMING %s to "%s"' %(item.node.tag, new_tag)
         # TODO prevent renaming tag to the same name as an inherited
         # node in the same list
 
