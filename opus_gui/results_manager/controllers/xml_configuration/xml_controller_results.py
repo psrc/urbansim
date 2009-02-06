@@ -120,7 +120,7 @@ class XmlController_Results(XmlController):
 
     def _createBatchRunMenu(self, attach_to_menu):
         '''
-        Create and populate a 'Run indicator batch' menu for all avialable runs
+        Create and populate a 'Run indicator batch' menu for all available runs
         @param attach_to_menu (QMenu) menu to attach actions to
         '''
         # TODO Verify that this is correct -- it was based on looking in a xml
@@ -131,15 +131,27 @@ class XmlController_Results(XmlController):
         if not run_nodes:
             attach_to_menu.setEnabled(False)
             return
-        for run_node in run_nodes:
-            cb = lambda x = run_node: self._indicatorBatchRun(run_node.tag)
-            action = self.createAction(self.model.acceptIcon, run_node.tag, cb)
-            attach_to_menu.addAction(action)
+        
+        #T: the following loop causes a problem where 
+        #   only "baseyear_data" will be passed to the _indicatorBatchRun method.
+        #   I don't know why.
+        
+#        for run_node in run_nodes:
+#            cb = lambda x = run_node: self._indicatorBatchRun(run_name = run_node.tag)
+#            action = self.createAction(self.model.acceptIcon, run_node.tag, cb)
+#            attach_to_menu.addAction(action)
+
+        #T:  The following loop works, but its kind of a nasty method.
+        for i in range(len(run_nodes)):
+            exec 'cb%i=lambda x = run_nodes[%i]: self._indicatorBatchRun(run_name = run_nodes[%i].tag)'%(i,i,i) in locals()
+            exec 'action%i=self.createAction(self.model.acceptIcon, run_nodes[%i].tag, cb%i)'%(i,i,i) in locals()
+            exec 'attach_to_menu.addAction(action%i)'%i in locals()
 
     def _indicatorBatchRun(self, run_name):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
         node = self.selectedItem().node
+            
         window = IndicatorBatchRunForm(mainwindow = self.view,
                                        resultsManagerBase = self.manager,
                                        batch_name = node.tag,
