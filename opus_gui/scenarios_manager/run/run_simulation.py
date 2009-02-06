@@ -74,11 +74,12 @@ class RunModelThread(QThread):
                 cache_directory = os.path.normpath(run_resources['cache_directory'])                        
 
                 start_year, end_year = run_resources['years']
+                baseyear = run_resources['base_year']
                 add_simulation_run(self.project,
                                    cache_directory = cache_directory,
                                    scenario_name = scenario_name,
                                    run_name = run_name,
-                                   start_year = start_year,
+                                   start_year = baseyear,
                                    end_year = end_year,
                                    run_id = run_id)
 
