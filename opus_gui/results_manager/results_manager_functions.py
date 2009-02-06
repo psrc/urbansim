@@ -105,7 +105,6 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
 
     # Grab the results manager instance for the GUI and insert the new node
     get_manager_instance('results_manager').add_run(run_node)
-    print 'added run', run_node.tag
 
 def update_available_runs(project, scenario_name = '?'):
     '''
