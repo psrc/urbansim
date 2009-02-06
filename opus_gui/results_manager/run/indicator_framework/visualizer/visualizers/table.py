@@ -203,10 +203,13 @@ class Table(Visualization):
 
         viz_metadata = []
         for name, data_subset in per_attribute_data.items():
-            table_name = self.get_name(
-                dataset_name = dataset_name,
-                years = years,
-                attribute_names = [name])
+            if self.name is not None:
+                table_name = self.name + '_%s'%name
+            else:
+                table_name = self.get_name(
+                    dataset_name = dataset_name,
+                    years = years,
+                    attribute_names = [name])
 
             self._write_to_storage(
                 table_name = table_name,
@@ -240,7 +243,9 @@ class Table(Visualization):
             dataset_name = dataset_name,
             years = years,
             attribute_names = [name for name, computed_name in attributes])
-
+        if self.name is not None:
+            table_name = '%s__%s'%(self.name, table_name)
+            
         self._write_to_storage(
             table_name = table_name,
             table_data = new_data,
