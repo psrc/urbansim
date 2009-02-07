@@ -61,6 +61,7 @@
       <!-- automatically generated variables end -->
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
+    <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
     <dataset_pool_configuration type="class">
       <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
