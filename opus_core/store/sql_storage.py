@@ -312,7 +312,7 @@ else:
                                    db.user_name, 
                                    db.password, 
                                    db.host_name, 
-                                   'test')
+                                   os.environ.get('OPUSPROJECTNAME','misc'))
                     else:
                         expected_url = '%s://%s:%s@%s/%s'%(db.protocol,
                                    db.user_name, 
