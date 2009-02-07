@@ -30,13 +30,15 @@ from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.results_manager.results_manager import update_batch_indicator_visualization
+from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
 
 class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, project, batch_indicator_visualization_node, parent_widget = None):
         AbstractConfigureBatchIndicatorVisualization.__init__(self, project, parent_widget)
 
+        
         self.base_node = base_node = batch_indicator_visualization_node
-
+        self.spatial_datasets = get_available_spatial_dataset_names(project = project)
         self.leVizName.setText(base_node.tag)
 
         prev_dataset = str(base_node.find('dataset_name').text or '')
@@ -109,14 +111,14 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
         viz_type = viz_params['visualization_type']
 
         close = True
-        if viz_type == 'matplotlib_map' and dataset_name == 'parcel':
-            msg = ('Cannot create a Matplotlib map for parcel dataset. Please '
-                   'plot at a higher geographic aggregation or export to an '
-                   'external GIS tool.')
+        if viz_type == 'matplotlib_map' and dataset_name not in self.spatial_datasets:
+            MessageBox.warning(mainwindow = self.mainwindow,
+                      text = "That indicator cannot be visualized as a map.",
+                      detailed_text = ('The dataset %s is either not spatial or cannot be '
+                                       'rendered as a grid. If the latter, please try '
+                                       'exporting to an external GIS tool.'%dataset_name))
             close = False
-            MessageBox.warning(mainwindow = self,
-                            text = msg,
-                            detailed_text = '')
+
         else:
             # Update the XML node with new data
             viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')

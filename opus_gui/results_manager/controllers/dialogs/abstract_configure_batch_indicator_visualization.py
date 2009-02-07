@@ -17,15 +17,11 @@ from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
-from opus_gui.general_manager.general_manager import get_available_indicator_names, get_available_dataset_names, get_available_indicator_nodes
+from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names, get_available_dataset_names, get_available_indicator_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.util.exception_formatter import formatExceptionInfo
-
-
-MAPPABLE_DATASETS = ['gridcell', 'zone', 'faz', 'large_area', 'city', 'county']
-
 
 class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatchIndicatorVisualization):
     def __init__(self, project, parent_widget = None):
@@ -51,7 +47,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         self.leOption1.hide()
         self.pbn_set_storage_location.hide()
         #self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
-
+        self.spatial_datasets = get_available_spatial_dataset_names(project = project)
+        
     def _setup_indicators(self, existing_indicators = []):
         if self.dataset_name is None: return
 
@@ -218,10 +215,10 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self._setup_indicators()
 
         map_pos = self.cboVizType.findText(QString('Map'))
-        if self.dataset_name not in MAPPABLE_DATASETS and map_pos > -1:
+        if self.dataset_name not in self.spatial_datasets and map_pos > -1:
             self.cboVizType.removeItem(map_pos)
             self._setup_co_viz_type()
-        elif self.dataset_name in MAPPABLE_DATASETS and map_pos == -1:
+        elif self.dataset_name in self.spatial_datasets and map_pos == -1:
             self.cboVizType.addItem(QString('Map'))
             self._setup_co_viz_type()
 
