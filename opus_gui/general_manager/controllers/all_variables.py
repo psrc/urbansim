@@ -136,7 +136,7 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
                               detailed_text = errorString)
 
     def on_cboCheckData_released(self):
-        success, errors = VariableValidator(toolboxBase=self.opus_gui.toolboxBase).check_data_errors(variables = [self._get_variable_definition()])
+        success, errors = VariableValidator(project = self.opus_gui.project).check_data_errors(variables = [self._get_variable_definition()])
         if success:
             MessageBox.information(mainwindow = self,
                               text = 'Variable checked successfully against baseyear data!',
