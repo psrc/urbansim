@@ -24,16 +24,29 @@ def get_available_dataset_names(project):
     @param project (OpusProject): project to extract datasets from
     @return: list of dataset names (list(String))
     '''
+    return _get_list(project = project,
+                     xpath = 'general/available_datasets')
+
+def get_available_spatial_dataset_names(project):
+    '''
+    Get a list of the spatial dataset names that are available in the project.
+    @param project (OpusProject): project to extract datasets from
+    @return: list of dataset names (list(String))
+    '''
+    return _get_list(project = project,
+                     xpath = 'general/spatial_datasets')
+
+def _get_list(project, xpath):
     if project is None:
         return []
-    available_datasets_node = project.find('general/available_datasets')
-    dataset_name_list = available_datasets_node.text
+    list_node = project.find(xpath)
+    list_text = list_node.text
     # turn the Python syntax list into a clean, comma separated, list
     for char in '[]\'"':
-        dataset_name_list = dataset_name_list.replace(char, '')
-    return [dataset_name.strip() for dataset_name in
-           dataset_name_list.split(',')]
-
+        list_text = list_text.replace(char, '')
+    return [element.strip() for element in
+           list_text.split(',')] 
+    
 def get_variable_nodes_per_dataset(project):
     '''
     Get all XML nodes for variables arranged as a dict based on their dataset.
