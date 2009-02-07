@@ -13,8 +13,8 @@
 
 from time import localtime, strftime
 
-from PyQt4.QtCore import QFileInfo, SIGNAL, QObject, Qt, QVariant, QString, QTimer
-from PyQt4.QtGui import QWidget, QIcon, QDialog, QMessageBox
+from PyQt4.QtCore import SIGNAL, QObject, Qt, QVariant, QString, QTimer
+from PyQt4.QtGui import QWidget, QIcon, QDialog
 
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
@@ -34,6 +34,8 @@ from opus_gui.scenarios_manager.views.ui_overwrite_dialog import Ui_dlgOverwrite
 
 from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+
+from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
 
 class OverwriteRunDialog(QDialog,Ui_dlgOverwriteRun):
     def __init__(self, parent):
@@ -66,10 +68,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.config = None
         self.xml_config = xml_config
 
-        config = xml_config.get_run_configuration(str(self.model.modeltorun))
-        self.config = config
-        insert_auto_generated_cache_directory_if_needed(config)
-        (self.start_year, self.end_year) = config['years']
+        self.config = xml_config.get_run_configuration(str(self.model.modeltorun))
+
+        insert_auto_generated_cache_directory_if_needed(self.config)
+        (self.start_year, self.end_year) = self.config['years']
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = model.modeltorun
@@ -94,6 +96,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.setupDiagnosticIndicatorTab()
         
         self.gb_model_progress.hide()
+
+        self.spatial_datasets = get_available_spatial_dataset_names(project = self.project)
+        self.diagnostic_go_button.setEnabled(False)
 
     def updateConfigAndGuiForRun(self):
         config = self.xml_config.get_run_configuration(str(self.model.modeltorun))
@@ -150,7 +155,10 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.diagnostic_indicator_name.clear()
         for indicator in indicators:
             self.diagnostic_indicator_name.addItem(indicator.tag)
-
+        
+#        if add_baseyear:
+#            self.diagnostic_year.addItem(str(self.config['base_year']))
+        
     def on_diagnostic_dataset_name_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
@@ -167,15 +175,23 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
         self.leRunName.setText(QString(run_name))
 
-    def on_indicatorBox(self):
+    def on_indicatorBox(self):                        
         indicator_name = str(self.diagnostic_indicator_name.currentText())
         dataset_name = self.diagnostic_dataset_name.currentText()
-        s = str(self.diagnostic_year.currentText())
-        if s=='': return
-        year = int(s)
-        cache_directory = self.model.config['cache_directory']
         indicator_type = str(self.diagnostic_indicator_type.currentText())
-
+        year = str(self.diagnostic_year.currentText())
+        if year=='': return
+        year = int(year)
+        
+        if dataset_name not in self.spatial_datasets and indicator_type == 'map':
+            MessageBox.warning(mainwindow = self.mainwindow,
+                      text = "That indicator cannot be visualized as a map.",
+                      detailed_text = ('The dataset %s is either not spatial or cannot be '
+                                       'rendered as a grid. If the latter, please try '
+                                       'exporting to an external GIS tool.'%dataset_name))
+            return
+        
+        cache_directory = self.model.config['cache_directory']
         params = {'indicators':[indicator_name]}
         if indicator_type == 'table':
             indicator_type = 'tab'
@@ -239,7 +255,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
 
     def on_pbnStartModel_released(self):
         duplicate = False
-
+        self.diagnostic_go_button.setEnabled(True)
+        
         run_name = str(self.leRunName.text())
         if run_name == '':
             run_name = None
