@@ -60,6 +60,11 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
 
     def on_createConfig_released(self):
         toolname = str(self.test_line[0].text())
+        if(len(toolname) < 1):
+            self.test_line[0].setText('must specify configuration name')
+            self.test_line[0].selectAll()
+            self.test_line[0].setFocus()
+            return
 
         newNode = Element(toolname, {'type': 'tool_config'})
         newChild = SubElement(newNode, 'tool_hook', {'type': 'tool_library_ref'})
@@ -83,11 +88,11 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         #print "cancel pressed"
         self.close()
 
-    def toolTypeSelected(self,index):
+    def toolTypeSelected(self, index):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
 
-        self.typeSelection = self.comboBox.itemText(index)
+        self.typeSelection = str(self.comboBox.itemText(index))
         for testw in self.test_widget:
             self.vboxlayout.removeWidget(testw)
             testw.hide()
@@ -101,7 +106,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
 
         # Now look up the selected connection type and present to the user...
         # First we start at the Tool_Library
-        tool_name = str(self.comboBox.itemText(index))
+        tool_name = str(self.typeSelection)
         tool_node = self.tool_nodes[tool_name]
         for param_node in tool_node.find('params'):
             type_val = param_node.find('type').text
