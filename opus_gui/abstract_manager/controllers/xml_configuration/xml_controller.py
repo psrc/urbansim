@@ -201,7 +201,12 @@ class XmlController(object):
         '''
         # TODO prevent renaming tag to the same name as an inherited
         # node in the same list
-
+        
+        # XML-ify the name (since it's a tag)
+        new_tag = new_tag.replace(' ', '_')
+        # TODO this needs a more elaborate validation/renaming scheme
+        # to catch odd naming
+        
         # Clone the node, remove it from the model and reinsert it
         node = deepcopy(item.node)
         node.tag = str(new_tag)
