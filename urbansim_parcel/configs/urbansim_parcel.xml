@@ -5,6 +5,7 @@
         <project_name hidden="True" type="string">urbansim_parcel</project_name>
         <parent type="file">urbansim/configs/urbansim.xml</parent>
         <expression_library type="dictionary">
+            <population_per_acre type="variable_definition" dataset="zone" use="both" source="Python class">urbansim_parcel.zone.population_per_acre</population_per_acre>
             <constant dataset="parcel" source="built-in" type="variable_definition" use="model variable">constant</constant>
             <hwy200 dataset="parcel" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
             <hwy600 dataset="parcel" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
@@ -72,20 +73,18 @@
             <ln_empden_zone_retail dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(zone.aggregate(urbansim.job.is_in_employment_sector_group_retail))/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_retail>
             <ln_empden_zone_service dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(zone.aggregate(urbansim.job.is_in_employment_sector_group_service))/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</ln_empden_zone_service>
             <ln_unit_price_trunc dataset="building" source="expression" type="variable_definition" use="model variable">ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))</ln_unit_price_trunc>
-            <unit_price dataset="building" source="Python class" type="variable_definition" use="both">urbansim_parcel.building.unit_price</unit_price>
+            <unit_price dataset="building" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.building.unit_price</unit_price>
             <has_children_x_is_single_family_residential dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * urbansim.building.is_single_family_residential</has_children_x_is_single_family_residential>
             <has_children_x_percent_households_with_children_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * building.disaggregate(psrc_parcel.parcel.percent_households_with_children_within_walking_distance)</has_children_x_percent_households_with_children_within_walking_distance>
             <is_high_income_x_ln_sqft_per_unit dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</is_high_income_x_ln_sqft_per_unit>
             <is_young_x_percent_young_households_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_young * building.disaggregate(psrc_parcel.parcel.percent_young_households_within_walking_distance)</is_young_x_percent_young_households_within_walking_distance>
             <ln_residential_units dataset="building" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</ln_residential_units>
         </expression_library>
-        <advanced type="category">
-            <dataset_pool_configuration hidden="True" type="class">
-                <Class_name type="string">DatasetPoolConfiguration</Class_name>
-                <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-                <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
-            </dataset_pool_configuration>
-        </advanced>
+        <dataset_pool_configuration hidden="True" type="class">
+            <Class_name type="string">DatasetPoolConfiguration</Class_name>
+            <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+            <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
         <available_datasets type="list">['parcel','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     </general>
     <data_manager>
