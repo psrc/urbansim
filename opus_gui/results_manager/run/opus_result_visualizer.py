@@ -19,7 +19,7 @@ from opus_gui.results_manager.run.indicator_framework_interface import Indicator
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_core.storage_factory import StorageFactory
 from opus_gui.util.exception_formatter import formatExceptionInfo
-
+from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
 
 class OpusResultVisualizer(object):
     def __init__(self,
@@ -36,6 +36,8 @@ class OpusResultVisualizer(object):
         self.indicator_type = indicator_type
         self.indicators = indicators
         self.visualizations = []
+        
+        self.spatial_datasets = get_available_spatial_dataset_names(project = self.project)
 
         if kwargs == None: kwargs = {}
         self.kwargs = kwargs
@@ -44,7 +46,7 @@ class OpusResultVisualizer(object):
         succeeded = False
         try:
             # find the directory containing the eugene xml configurations
-            self._visualize(args, cache_directory = cache_directory)
+            not_visualized = self._visualize(args, cache_directory = cache_directory)
             succeeded = True
         except:
             succeeded = False
@@ -61,7 +63,8 @@ class OpusResultVisualizer(object):
         self.visualizations = []
         indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(self.project)
-
+        not_visualized = []
+        
         #get common years
         years = set([])
         for indicator in self.indicators:
@@ -72,6 +75,10 @@ class OpusResultVisualizer(object):
             indicator_name = indicator['indicator_name']
             source_data_name = indicator['source_data_name']
             dataset_name = indicator['dataset_name']
+            
+            if self.indicator_type == 'matplotlib_map' and dataset_name not in self.spatial_datasets:
+                not_visualized.append(indicator)
+                continue
 
             if source_data_name not in source_data_objs:
                 source_data = interface.get_source_data(
@@ -154,6 +161,8 @@ class OpusResultVisualizer(object):
 
         if self.visualizations is None:
             self.visualizations = []
+
+        return not_visualized
 
     def get_visualizations(self):
         return self.visualizations
