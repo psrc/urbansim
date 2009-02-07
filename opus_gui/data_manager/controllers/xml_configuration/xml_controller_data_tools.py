@@ -34,7 +34,7 @@ class XmlController_DataTools(XmlController):
 
         self.actExecToolFile = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
         self.actExecToolConfig = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
-        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool to Group", self.addToolFile)
+        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool", self.addToolFile)
         self.actAddToolGroup = self.createAction(self.model.addIcon,"Create Tool Group", self.addNewToolGroup)
 
         # Batch create the 'add XXX parameter' actions
