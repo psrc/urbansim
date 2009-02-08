@@ -52,7 +52,7 @@ class RunToolThread(QThread):
 
 
 class OpusTool(object):
-    def __init__(self, toolInclude, toolVars=[]):
+    def __init__(self, toolInclude, toolVars={}):
         self.toolInclude = toolInclude
         self.toolVars = toolVars
         self.startingCallback = None
@@ -84,7 +84,7 @@ class OpusTool(object):
             self.params = self.buildparams()
             if self.startingCallback != None:
                 self.startingCallback()
-            success = opusRun(self.progressCallback,self.logCallback,self.toolVars)
+            success = opusRun(self.progressCallback,self.logCallback,self.toolVars) #@UndefinedVariable
             if self.finishedCallback != None:
                 self.progressCallback(100)
                 self.finishedCallback(success)
