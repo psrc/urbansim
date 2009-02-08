@@ -56,13 +56,13 @@ def main(argv):
     # Ensure that we have an existing OPUS_HOME directory that we can write to
     valid_opus_home = True
     if not 'OPUS_HOME' in os.environ:
-        msg = ('There appears to be no environment variable named OPUS_HOME.\n'
+        msg = ('Opus GUI could not find the environment variable "OPUS_HOME".\n'
                'Opus GUI relies on this variable to function properly. '
                'Please set it to the directory containing Opus data and '
                'restart the application.')
         valid_opus_home = False
     elif not os.path.exists(os.environ['OPUS_HOME']):
-        msg = ('The directory pointed to by environment variable OPUS_HOME '
+        msg = ('The directory pointed to by environment variable "OPUS_HOME" '
                '("%s") appears to be missing. Please make sure that the '
                'directory pointed to by this variable is valid and restart the '
                'application.' %
