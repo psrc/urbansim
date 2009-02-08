@@ -21,13 +21,13 @@ from opus_gui.abstract_manager.views.ui_renamedialog import Ui_RenameDialog
 
 class RenameDialog(QDialog, Ui_RenameDialog):
     '''
-    Dialogbox for renaming objects
+    Dialog box for renaming objects
     '''
     def __init__(self, old_name, callback, parent_widget):
         '''
-        @param old_name (String): the name to change
-        @param callback (Function (String)): callback function
-        @param parent_widget (QWidget): owning widget
+        @param old_name (String) the name to change from
+        @param callback (Function (String)) callback function
+        @param parent_widget (QWidget) parent widget for dialog
         '''
         QDialog.__init__(self, parent_widget)
         self.setupUi(self)
