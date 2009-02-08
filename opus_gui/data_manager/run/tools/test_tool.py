@@ -36,5 +36,5 @@ def opusRun(progressCB, logCB, params=[]):
     return 1 # 1 = Success
     
 def opusHelp():
-    return 'This is a tool provided strictly for testing purposes.'
+    return 'This is a tool provided for testing purposes.'
 
