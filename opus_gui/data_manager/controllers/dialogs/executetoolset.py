@@ -17,34 +17,29 @@ from opus_gui.data_manager.views.ui_executetoolset import Ui_ExecuteToolSetGui
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 
 class ExecuteToolSetGui(QDialog, Ui_ExecuteToolSetGui):
-    def __init__(self, mainwindow, fl, tools, tool_hook_to_tool_name_dict):
-        QDialog.__init__(self, mainwindow, fl)
+    def __init__(self, mainwindow, tool_config_nodes, config_to_filename):
+        QDialog.__init__(self, mainwindow)
         self.setupUi(self)
         self.mainwindow = mainwindow
-        self.tools = tools
-        self.tool_hook_to_tool_name_dict = tool_hook_to_tool_name_dict
+        self.tool_config_nodes = tool_config_nodes
+        self.config_to_filename = config_to_filename
+        self.setWindowTitle('Executing set of %d nodes' % \
+                            len(self.tool_config_nodes))
 
     def on_cancelExec_released(self):
         #print "cancelPushButton pressed"
         self.close()
     
     def on_execToolSet_released(self):
-        tool_batch = []
-        for i in range(0, self.tools.length(), 1):
-            node = self.tools.item(i) #this is a QDomNode
-            #print 'tool name: ', node.nodeName()
-            #toolName = node.nodeName()            
-            nodeChildren = node.childNodes() #this is a QDomNodeList
-            params = {}
-            for j in range(0, nodeChildren.length(), 1):
-                child = nodeChildren.item(j) #this is a QDomNode
-                #print 'parameter: ', child.nodeName(), ' = ', child.toElement().text()
-                params[child.nodeName()] = child.toElement().text()
-            toolname = self.getToolName(params[QString('tool_hook')])
-            importpath = 'opus_gui.data_manager.run.tools.%s' % toolname
-            tool = OpusTool(self.mainwindow, importpath, params)
-            y = RunToolThread(self.mainwindow, tool)
-            y.run()
-    
-    def getToolName(self, tool_hook):
-        return self.tool_hook_to_tool_name_dict[tool_hook]
+        # Execute each tool in the set in a separate thread
+        for config_node in self.tool_config_nodes:
+            # Create a dict that maps of child node tags to their text values
+            params = {} 
+            for child in config_node:
+                key = str(child.tag).strip()
+                value = str(child.text).strip()
+                params[key] = value
+            tool_filename = self.config_to_filename[config_node]
+            import_path = 'opus_gui.data_manager.run.tools.%s' % tool_filename
+            thread = RunToolThread(OpusTool(import_path, tool_filename))
+            thread.run()
