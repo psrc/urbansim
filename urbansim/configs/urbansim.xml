@@ -503,7 +503,7 @@
             <table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </table_name>
             <opus_data_directory>
               <required choices="Required|Optional" type="string">Required</required>
@@ -513,7 +513,7 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
           </params>
         </sql_data_to_opus_tool>
@@ -538,7 +538,7 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
           </params>
         </esri_data_to_opus_tool>
@@ -565,12 +565,12 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
           </params>
         </opus_data_to_sql_tool>
@@ -592,12 +592,12 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
           </params>
         </opus_data_to_esri_tool>
@@ -619,12 +619,12 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
           </params>
         </opus_data_to_csv_tool>
@@ -652,12 +652,12 @@
             <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
           </params>
         </opus_dataset_to_sql_tool>
@@ -679,12 +679,12 @@
                 <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
                 <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
               </params>
         </opus_dataset_to_esri_tool>
@@ -706,12 +706,12 @@
                 <opus_data_year>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_data_year>
                 <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string">ALL</default>
+              <default type="string"></default>
             </opus_table_name>
               </params>
         </opus_dataset_to_csv_tool>
