@@ -66,25 +66,17 @@ sample data.</p>
 
 <h2><a name="stable_source">Getting the Source Code for a Stable Release</h2>
 
-<p>The zip file has a subdirectory <tt>src</tt> that already has the code for the basic packages for running
-Opus/UrbanSim.  If you don't need any additional packages, and if you aren't modifying the code,
-this is all you need.</p>
-
-<p>If you want to get the rest of the packages, to upgrade to a new stable release, or to switch to the development version of the code, 
-you should check out the
-source code directly from our subversion repository. &nbsp;(For you modeler
+<p>The zip file has an empty subdirectory <tt>src</tt> that will hold the source code for Opus/UrbanSim.
+After unzipping the file, you should check out the code
+directly from our subversion repository into <tt>src</tt>. &nbsp;(For you modeler
 types, <a href="http://subversion.tigris.org/">subversion</a>
 in this context is the name of a version control system that nicely
 manages keeping track of different versions of the code; we're not
-talking politics.) &nbsp;Using subversion, it is easy to update to newer versions of
+talking politics.) &nbsp;Using subversion, it is easy to update to new releases of
 Opus/UrbanSim and merge in any changes you've made. &nbsp;You can also
 request any particular version of the code from subversion.
 &nbsp;However, you do have to have a subversion client installed on
 your machine.</p>
-
-<p>Before getting the code using subversion, delete all the files in the <tt>src</tt> directory that come
-with the zip file.  (We will be
-replacing them with files from the repository, augmented with svn information.)</p>
 
 <p>Here are two ways to get the code. The source code directory will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
