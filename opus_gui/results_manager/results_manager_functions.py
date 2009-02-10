@@ -142,12 +142,13 @@ def update_available_runs(project, scenario_name = '?'):
                 years.append(int(dir_))
         start_year = min(years)
         end_year = max(years)
+        base_year = end_year
         run_name = 'base_year_data'
         run_id = run_manager._get_new_run_id()
         resources = {
              'cache_directory': baseyear_dir,
              'description': 'base year data',
-             'years': (start_year, end_year)
+             'years': (base_year, end_year)
         }
         run_manager.add_row_to_history(run_id = run_id,
                                        resources = resources,
