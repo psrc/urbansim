@@ -137,23 +137,26 @@ def update_available_runs(project, scenario_name = '?'):
     baseyear_dir = os.path.normpath(baseyear_dir)
     years = []
     if not baseyear_dir in existing_cache_directories:
-        for dir_ in os.listdir(baseyear_dir):
-            if len(dir_) == 4 and dir_.isdigit():
-                years.append(int(dir_))
-        start_year = min(years)
-        end_year = max(years)
-        base_year = end_year
-        run_name = 'base_year_data'
-        run_id = run_manager._get_new_run_id()
-        resources = {
-             'cache_directory': baseyear_dir,
-             'description': 'base year data',
-             'years': (base_year, end_year)
-        }
-        run_manager.add_row_to_history(run_id = run_id,
-                                       resources = resources,
-                                       status = 'done',
-                                       run_name = run_name)
+        try:
+            run_manager.get_run_id_from_name(run_name = 'base_year_data')
+        except:
+            for dir_ in os.listdir(baseyear_dir):
+                if len(dir_) == 4 and dir_.isdigit():
+                    years.append(int(dir_))
+            start_year = min(years)
+            end_year = max(years)
+            base_year = end_year
+            run_name = 'base_year_data'
+            run_id = run_manager._get_new_run_id()
+            resources = {
+                 'cache_directory': baseyear_dir,
+                 'description': 'base year data',
+                 'years': (base_year, end_year)
+            }
+            run_manager.add_row_to_history(run_id = run_id,
+                                           resources = resources,
+                                           status = 'done',
+                                           run_name = run_name)
 
     runs = run_manager.get_run_info(resources = True, status = 'done')
     run_manager.close()
