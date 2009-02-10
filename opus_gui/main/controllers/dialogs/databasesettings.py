@@ -85,4 +85,5 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
             elif doSave == QMessageBox.Discard:
                 self.close()
             else:
-                pass # Cancel
+                return # Cancel
+        self.close()
