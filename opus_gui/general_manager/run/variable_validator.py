@@ -111,8 +111,7 @@ class VariableValidator(object):
 
         # grab the first base_year_data in results_manager/Simulation_runs and
         # fetch the year for it
-        base_year = self.project.find('./results_manager/Simulation_runs/base_year_data/start_year')
-        print 'byd:', self.project.find('./results_manager/Simulation_runs/')[:]
+        base_year = self.project.find('./results_manager/Simulation_runs/base_year_data/end_year')
         if base_year is None:
             return False, "Project doesn't have any base year data to check against"
 
