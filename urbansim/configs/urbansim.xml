@@ -503,7 +503,7 @@
             <table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </table_name>
             <opus_data_directory>
               <required choices="Required|Optional" type="string">Required</required>
@@ -570,7 +570,7 @@
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
           </params>
         </opus_data_to_sql_tool>
@@ -597,7 +597,7 @@
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
           </params>
         </opus_data_to_esri_tool>
@@ -624,7 +624,7 @@
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
           </params>
         </opus_data_to_csv_tool>
@@ -657,7 +657,7 @@
             <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
           </params>
         </opus_dataset_to_sql_tool>
@@ -684,7 +684,7 @@
                 <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
               </params>
         </opus_dataset_to_esri_tool>
@@ -711,7 +711,7 @@
                 <opus_table_name>
               <required choices="Required|Optional" type="string">Required</required>
               <type choices="string" type="string">string</type>
-              <default type="string"></default>
+              <default type="string">ALL</default>
             </opus_table_name>
               </params>
         </opus_dataset_to_csv_tool>
