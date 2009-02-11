@@ -105,8 +105,12 @@ class ModelFromTemplateDialogBase(QDialog, Ui_ModelFromTemplateDialogBase):
         # Set correct type
         self.model_node.set('type', 'model')
 
-        # Make sure all strings are str
+        # Make sure we don't have any QStrings left in the node
         for node in self.model_node.getiterator():
+            # Make sure all nodes tag, attribute values and texts are str()
+            node.tag = str(node.tag)
+            for key, value in node.attrib.items():
+                node.attrib[key] = str(value)
             if node.text is not None:
                 node.text = str(node.text)
         if self.callback:
