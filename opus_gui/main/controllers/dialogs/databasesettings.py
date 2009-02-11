@@ -50,9 +50,9 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
             return
 
         except IOError, ex:
-            MessageBox.error(mainwindow=self,
-                          text='Could not initialize Database Settings',
-                          detailed_text=str(ex))
+            MessageBox.error(mainwindow = self,
+                          text = 'Could not initialize Database Settings',
+                          detailed_text = str(ex))
             self.xml_root = None
             self._config_filename = ''
             self.configFile = None
@@ -61,13 +61,13 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         try:
             ElementTree(self.xml_root).write(self._config_filename)
         except IOError, ex:
-            MessageBox.error(mainwindow = self,
-                          text = 'A disk error occurred when saving the ' +
+            MessageBox.error(self,
+                          text = 'A disk error occured when saving the ' +
                           'settings.',
                           detailed_text = str(ex))
         except Exception, ex:
             MessageBox.error(mainwindow = self,
-                          text = 'An unknown error occurred when saving ' +
+                          text = 'An unknown error occured when saving ' +
                           'your changes.',
                           detailed_text = str(ex))
         finally:

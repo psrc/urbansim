@@ -37,9 +37,7 @@ from opus_gui.models_manager.models_manager import ModelsManager
 from opus_gui.general_manager.general_manager import GeneralManager
 from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
-
 from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
-from opus_gui.general_manager.controllers.variable_library import VariableLibrary
 
 class OpusGui(QMainWindow, Ui_MainWindow):
     '''
@@ -65,7 +63,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         set_opusgui_instance(self)
 
         # this is to remove the three tabs that are in the UI file
-        # TODO remove them from the UI file instead
         for i in range(2, -1, -1):
             self.tabWidget.removeTab(i)
 
@@ -113,7 +110,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setFocus()
 
         # Variable library
-        self.variable_library = None
+        self.all_variables = None
 
         # Load the latest project file if that flag is set in GUI configuration
         if self.gui_config.load_latest_on_start:
@@ -179,13 +176,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def editAllVariables(self):
         ''' Open the variable library GUI '''
-        # flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        if self.project is None or not self.project.is_open():
-            return
-        self.variable_library = VariableLibrary(self.project, self) # AllVariablesEditGui(self, flags)
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        self.all_variables = AllVariablesEditGui(self, flags)
 
-        # self.all_variables.setModal(True)
-        self.variable_library.show()
+        self.all_variables.setModal(True)
+        self.all_variables.show()
 
     def closeCurrentTab(self):
         ''' Close the currently showing tab '''
