@@ -24,8 +24,6 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
                                    #{"tour_schedule_model": ["run"]},
                                    {"household_location_choice_model": ["estimate"]},
                                    ],
-                                   'base_year': 2006,                                                   
-                                   'years':(2006, 2006),
                                }
         self['employment_location_choice_model'] = {
                         'non_home_based': {'models': [

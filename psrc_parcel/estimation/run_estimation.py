@@ -39,19 +39,22 @@ models = {
 if __name__ == '__main__':
     try: import wingdbstub
     except: pass
-    #model = 'hlcm'
+    model = 'hlcm'
     #model = 'elcm-non-home-based'
     #model = 'elcm-home_based'
     #model = 'repm'
     #model = 'wcm'
     #model = 'wahcm'
-    model = 'dppcm'
+    #model = 'dppcm'
 
     config = Baseline()
     if 'models_in_year' in config.keys():
         del config['models_in_year']    
     config.merge(my_configuration)
     config['config_changes_for_estimation'] = ConfigChangesForEstimation()
+    ## set base_year and years to 2006 for HLCM for the psrc_parcel project
+    config['config_changes_for_estimation']['household_location_choice_model'].merge({'base_year': 2006, 'years':(2006, 2006)})
+    
     er = EstimationRunner(models[model][0], specification_module=models[model][1], model_group=models[model][2],
                            configuration=config, save_estimation_results=False)
     er.estimate()

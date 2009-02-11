@@ -22,9 +22,12 @@ class BaselineEstimation(Baseline):
     def __init__(self):
         Baseline.__init__(self)
         self['config_changes_for_estimation'] = ConfigChangesForEstimation()
+        ## set base_year and years to 2006 for HLCM for the psrc_parcel project
+        #self['config_changes_for_estimation']['household_location_choice_model'].merge({'base_year': 2006, 'years':(2006, 2006)})
+
         self['cache_directory'] = '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
         self['estimation_database_configuration'] = EstimationDatabaseConfiguration(
-                                                             database_name = 'psrc_2005_parcel_baseyear_change_20080305',
+                                                             database_name = 'psrc_2005_parcel_baseyear_change_estimation',
                                                              )
         self['dataset_pool_configuration'] = DatasetPoolConfiguration(
                                                                       package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],
