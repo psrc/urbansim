@@ -12,7 +12,12 @@
 # other acknowledgments.
 # 
 
-sampled_shares = { 
+# The shares are computed as: 
+# number of buildings of that building type / total number of buildings
+# and scaled to give sum=1
+
+sampled_shares = {
+# shares computed on estimation data
 #4: 0.007159353,
 #11: 0.02517321,
 #12: 0.037413395, 
@@ -32,6 +37,7 @@ sampled_shares = {
 }
 
 observed_shares = {
+# shares computed on observed data (or the baseyear)
 #2000 buildings
 4: 0.080947425, #condo
 11:0.019761348, #mobile home
