@@ -17,16 +17,12 @@ from opus_gui.results_manager.run.indicator_framework.representations.indicator 
 from opus_gui.results_manager.run.indicator_framework.representations.computed_indicator import ComputedIndicator
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
-from opus_core.services.run_server.run_manager import RunManager
 
-from sqlalchemy.sql import select
 from opus_gui.general_manager.general_manager import get_available_indicator_nodes
 
 class IndicatorFrameworkInterface:
     def __init__(self, project):
         self.project = project
-        self.run_manager = RunManager(ServicesDatabaseConfiguration())
 
     def _get_dataset_pool_configuration(self):
 
@@ -43,21 +39,13 @@ class IndicatorFrameworkInterface:
         return dataset_pool_configuration
 
     def get_source_data(self, source_data_name, years):
-        source_data_name = str(source_data_name)
+        simulation_run_path = 'results_manager/Simulation_runs/%s'%str(source_data_name)
+        print simulation_run_path
+        run_node = self.project.find(simulation_run_path)
+        run_id = run_node.find('run_id').text
+        cache_directory = run_node.find('cache_directory').text
+        
         dataset_pool_configuration = self._get_dataset_pool_configuration()
-        run_tbl = self.run_manager.services_db.get_table('run_activity')
-
-        if 'cache_directory' in run_tbl.c:
-
-            s = select([run_tbl.c.run_id, run_tbl.c.cache_directory],
-                       whereclause=run_tbl.c.run_name == source_data_name)
-            res = self.run_manager.services_db.execute(s).fetchone()
-            run_id, cache_directory = res
-        else:
-            s = select([run_tbl.c.run_id],
-                       whereclause=run_tbl.c.run_name == source_data_name)
-            run_id = self.run_manager.services_db.execute(s).fetchone()[0]
-            cache_directory = self.run_manager.get_cache_directory(run_id = run_id)
 
         source_data = SourceData(
                  dataset_pool_configuration = dataset_pool_configuration,
