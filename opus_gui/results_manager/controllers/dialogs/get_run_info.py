@@ -32,6 +32,9 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
 
         self.lblRun_name.setText(run_name)
         self.lblYears_run.setText('%s - %s' % (start_year, end_year))
+        
+        if scenario_name is None:
+            scenario_name = ''
         self.lblScenario_name.setText(scenario_name)
         self.lblCache_directory.setText(cache_directory)
         self.lblRunId.setText(run_id)
