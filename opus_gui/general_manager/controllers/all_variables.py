@@ -574,7 +574,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
 
     def getCurrentList(self, node):
         node_text = node.text
-        if node is None:
+        if node_text is None:
             return []
         node_text = node_text.strip()
         return [var_name for var_name in node_text.split(',')]
