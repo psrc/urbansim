@@ -7,6 +7,8 @@
         <expression_library type="dictionary">
             <population_per_acre type="variable_definition" dataset="zone" use="both" source="Python class">urbansim_parcel.zone.population_per_acre</population_per_acre>
             <constant dataset="parcel" source="expression" type="variable_definition" use="model variable">constant</constant>
+            <constant dataset="building" source="expression" type="variable_definition" use="model variable">constant</constant>
+            <constant dataset="zone" source="expression" type="variable_definition" use="model variable">constant</constant>
             <hwy200 dataset="parcel" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
             <hwy600 dataset="parcel" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
             <hwy1000 dataset="parcel" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
