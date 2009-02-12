@@ -4,7 +4,7 @@
     <description type="string">Base UrbanSim project</description>
     <project_name type="string" hidden="True">urbansim</project_name>
     <available_datasets type="list">[]</available_datasets>
-    <expression_library hidden="True" type="dictionary"/>
+    <expression_library type="dictionary"/>
   </general>
   <model_manager>
     <model_system setexpanded="True" type="model_system">
