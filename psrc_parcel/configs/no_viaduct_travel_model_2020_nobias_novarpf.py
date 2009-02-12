@@ -14,6 +14,6 @@
 
 from baseline_travel_model_2020_nobias_novarpf import BaselineTravelModel2020NobiasNovarpf
 
-class NoViaductMultipleTravelModels2020(BaselineTravelModel2020NobiasNovarpf):
+class NoViaductTravelModel2020NobiasNovarpf(BaselineTravelModel2020NobiasNovarpf):
     tm_scenario = 'no_viaduct_v1.0bb_C1'
     
