@@ -23,7 +23,7 @@ class BaselineHana(Baseline):
     def __init__(self):
         config = Baseline()
         config['years'] = (2001, 2005)
-        config['number_of_runs'] = 1
+        config['number_of_runs'] = 50
         config['seed'] = 1
         #config['cache_directory'] = '/Users/hana/urbansim_cache/psrc/parcel/relocation_models_estimation/cache_source_parcel'
         config['creating_baseyear_cache_configuration'].cache_directory_root = os.path.join(
@@ -109,12 +109,12 @@ class BaselineHana(Baseline):
                 'job_person_consistency_keeper',
                 "household_relocation_choice_model",
                 "household_location_choice_model",
-                #"modify_workers_jobs_after_moving_households",
+#                "modify_workers_jobs_after_moving_households",
                 "employment_relocation_model",
                 {"employment_location_choice_model":{'group_members': ['non_home_based']}},
                 'distribute_unplaced_jobs_model',
                 'distribute_unplaced_mining_utilities_jobs_model',
-                #"modify_workers_jobs_after_moving_jobs",
+                "modify_workers_jobs_after_moving_jobs",
                 'work_at_home_choice_model',
                 'workplace_relocation_choice_model',
                 'workplace_choice_model_for_resident'
@@ -128,6 +128,7 @@ class BaselineHana(Baseline):
                 'arguments': {
                     'location_id_name': "'building_id'",
                     'choice_attribute_name': "'move'",
+                    'movers_ratio': 0.15,
                     'dataset_pool': 'dataset_pool'
                     },
                 'name': 'AgentRelocationChoiceModel'
@@ -179,6 +180,7 @@ class BaselineHana(Baseline):
                 'arguments': {
                     'location_id_name': "'job_id'",
                     'choice_attribute_name': "'changed_job'",
+                    'movers_ratio': 0.1,
                     'dataset_pool': 'dataset_pool'
                     },
                 'name': 'AgentRelocationChoiceModel'
@@ -191,7 +193,7 @@ class BaselineHana(Baseline):
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'workplace_relocation_choice_model_specification'",
                     'agent_set': 'person',
-                    'agent_filter': "'urbansim_parcel.person.is_non_home_based_worker'"
+                    'agent_filter': "'urbansim_parcel.person.is_non_home_based_worker'",
                     },
                 'output': '(specification, coefficients, _index)'
                 },
