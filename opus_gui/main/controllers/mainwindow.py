@@ -74,7 +74,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.splitter.setSizes([400, 500])
 
         # Initialize empty project
-        self.project = OpusProject(self)
+        self.project = OpusProject()
 
         # Read database connection names
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
