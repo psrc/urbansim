@@ -31,6 +31,7 @@ class bm_normal_posterior:
         result = sum(reshape(weights, (1,I,1)) * rns, axis=1)
         if truncate_at_zero:
             result[where(result < 0)] = 0
+        result[where(pmean) == 0,:] = 0 # for experimentation purposes
         return result
 
 
