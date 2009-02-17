@@ -12,10 +12,6 @@
 # other acknowledgments.
 #
 
-# This isn't intentionally overengineered into many functions, that's just the influence of haskell ;)
-
-# Here, trees are represented as tuples, where the first element is the label, and the second is a list of more tuples
-
 from opus_core.datasets.dataset import Dataset
 from opus_core.variables.attribute_box import AttributeBox
 from opus_core.storage_factory import StorageFactory
@@ -24,17 +20,13 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.variables.variable_factory import VariableFactory
 from numpy import where, array
 from opus_core.configurations.xml_configuration import XMLConfiguration
+
+import os, sys
 from optparse import OptionParser
-import os
-import sys
 
-class ConfigVariableTree:
-    def __init__(self, conf):
-        #loads an xml configuration file, and returns a list of models paired with a list of vars they depend upon
-    
+class DependencyQuery:
+    def __init__(self, config):
         self.factory = VariableFactory()
-
-        config = XMLConfiguration(conf)
 
         lib = config.get_expression_library()
         self.factory.set_expression_library(lib)
@@ -96,7 +88,7 @@ class ConfigVariableTree:
     #get a dependency tree for a variable given its name
     def get_dep_tree_from_name(self, name):
         varclass = self.get_var(name)
-        if(varclass == None): return (name, [], "shape = diamond")
+        if(varclass == None): return (name, [], "primary")
         return self.get_dep_tree(varclass)
 
     #returns a dependency tree given a particular variable
@@ -113,15 +105,49 @@ class ConfigVariableTree:
 
     def all_models_tree(self):
         return map(self.get_dep_tree_from_name, extract_leaves(self.var_tree)) \
-             + map(lambda x: (x[0],x[1],"shape=box"), self.var_tree)
+             + map(lambda x: (x[0],x[1],"model"), self.var_tree)
 
     def model_tree(self, name):
         model = self.get_model_vars(name)
         return map(self.get_dep_tree_from_name, extract_leaves(model[1])) \
-                + [(model[0], model[1],"shape=box")]
+                + [(model[0], model[1],"model")]
 
     def vars_tree(self, vl):
         return map(self.get_dep_tree_from_name, extract_leaves(vl))
+
+class DependencyChart:
+    def __init__(self, config):
+        self.query = DependencyQuery(config)
+    
+    def graph_variable(self, out, var, lr=True, dpi=60):
+        self.graph_tree(var if out == None else out, self.query.vars_tree([var]), lr, dpi)
+    def graph_model(self, out, model, lr=True, dpi=60):
+        self.graph_tree(model if out == None else out, self.query.model_tree(model), lr, dpi)
+    def graph_all(self, out, lr=True, dpi=60):
+        self.graph_tree(out, self.query.all_models_tree(), lr, dpi)
+    
+    #processes a tree into a list of lines, in dot format
+    #final } is left off, so that more attributes may be added.
+    def tree_to_dot(self, trees, lr=True, dpi=60):
+        ret = []
+        trans = {"primary":"[ shape=diamond ]", "model":"[ shape=box ]"}
+        def write_edges(tree):
+            for x in tree[1]:
+                ret.append("    \"" + tree[0] + "\" -> \"" + x[0] + "\"")
+                write_edges(x)
+            if len(tree) > 2:
+                ret.append("    \"" + tree[0] + "\"" + trans[tree[2]])
+        map(write_edges, trees)
+        ret = elim_dups(ret)
+        ret.insert(0, "digraph G {")
+        ret.append("    " + ("rankdir=LR\n" if lr else "") + "dpi=%d" % dpi)
+        return ret
+
+    def graph_tree(self, fi, tree, lr, dpi):
+        out = self.tree_to_dot(tree, lr, dpi)
+        out.append("}")
+        write_file(fi + ".gv", '\n'.join(out))
+        os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
 
 #Utility Funcs
 
@@ -159,34 +185,11 @@ def elim_dups(xs):
         ret.append(x)
     return ret
 
-#Graph Functionality Specific
-
+# writes a text file
 def write_file(fi, txt):
     f = open(fi, 'w')
     f.write(txt)
     f.close()
-
-#processes a tree into a list of lines, in dot format
-#final } is left off, so that more attributes may be added.
-def tree_to_dot(trees):
-    ret = []
-    def write_edges(tree):
-        for x in tree[1]:
-            ret.append("    \"" + tree[0] + "\" -> \"" + x[0] + "\"")
-            write_edges(x)
-        if len(tree) > 2:
-            ret.append("    \"" + tree[0] + "\"[ " + tree[2] + " ]")
-    map(write_edges, trees)
-    ret = elim_dups(ret)
-    ret.insert(0, "digraph G {")
-    ret.append("    rankdir=LR\ndpi=60")
-    return ret
-
-def graph_tree(fi, tree):
-    out = tree_to_dot(tree)
-    out.append("}")
-    write_file(fi + ".gv", '\n'.join(out))
-    os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
 
 def pretty_tree(tree):
     ret = []
@@ -197,6 +200,22 @@ def pretty_tree(tree):
     for x in tree:
         helper(0, x)
     return '\n'.join(ret)
+
+#To use:
+#
+#python deep_deps.py -xeugene/configs/eugene_gridcell.xml
+#This outputs each model in seperate gv files, and processes them with dot
+#
+#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout
+#This outputs all of the models and their dependencies into out.gv/.png
+#
+#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout -vurbansim.gridcell.total_improvement_value
+#This outputs out.gv, and runs dot to yield out.png, with the dependencies of urbansim.gridcell.total_improvement_value charted.
+#
+#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout -mland_price_model
+#This outputs out.gv, and runs dot to yield out.png, with the dependencies of land_price_model charted.
+#
+#if -o is not given and -v or -m are, the variable or model name are used for the .gv/.png
 
 if __name__ == '__main__':
     parser = OptionParser()
@@ -217,22 +236,19 @@ if __name__ == '__main__':
     if options.xml_configuration == None:
         raise "Requires an xml configuration argument."
 
-    tree = ConfigVariableTree(options.xml_configuration)
+    chart = DependencyChart(XMLConfiguration(options.xml_configuration))
 
-    temp = tree.vars_tree(tree.var_list)
+    temp = chart.query.vars_tree(chart.query.var_list)
     print pretty_tree(temp)
-    print elim_dups(extract_leaves(temp))
     
     if options.variable != None:
-        graph_tree(options.variable if options.output == None else options.output,
-                   tree.vars_tree([options.variable]))
+        chart.graph_variable(options.output, options.variable)
     elif options.model != None:
-        graph_tree(options.model if options.output == None else options.output,
-                   tree.model_tree(options.model))
+        chart.graph_model(options.output, options.model)
     else:
         if options.output == None:
-            for x in tree.var_tree:
+            for x in chart.query.var_tree:
                 print "Processing " + x[0] + "..."
-                graph_tree(x[0], tree.model_tree(x[0]))
+                chart.graph_model(None, x[0])
         else:
-            graph_tree(options.output, tree.all_models_tree())
+            chart.graph_all(options.output)

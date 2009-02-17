@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QObject, SIGNAL, QModelIndex, QTimer
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog
+from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog, QImage, QPixmap
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.all_variables_table_model import AllVariablesTableModel
@@ -23,9 +23,13 @@ from opus_gui.general_manager.views.all_variables_table_view_delegate import All
 from opus_gui.general_manager.views.ui_all_variables_edit import Ui_AllVariablesEditGui
 from opus_gui.general_manager.views.ui_all_variables_select import Ui_AllVariablesSelectGui
 from opus_gui.general_manager.views.ui_all_variables_new import Ui_AllVariablesNewGui
+from opus_gui.general_manager.views.ui_all_variables_view_deps import Ui_AllVariablesViewDepsGui
 from opus_gui.general_manager.run.variable_validator import VariableValidator
 from opus_core.variables.variable_name import VariableName
+from opus_core.variables.dependency_query import DependencyChart
 from xml.etree.cElementTree import Element
+
+from opus_gui.results_manager.views.ui_results_browser import Ui_ResultsBrowser
 
 import pprint,string
 
@@ -328,6 +332,12 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                         SIGNAL("triggered()"),
                         self.checkAgainstData)
 
+        self.actViewDependencies = QAction(self.editIcon,
+                                           "View Dependencies",
+                                           self)
+        QObject.connect(self.actViewDependencies,
+                        SIGNAL("triggered()"),
+                        self.viewDependencies)
 
         self.tv.setContextMenuPolicy(Qt.CustomContextMenu)
         QObject.connect(self.tv,SIGNAL("customContextMenuRequested(const QPoint &)"),
@@ -370,6 +380,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                 self.menu.addSeparator()
                 self.menu.addAction(self.actCheckSyntax)
                 self.menu.addAction(self.actCheckAgainstData)
+                self.menu.addAction(self.actViewDependencies)
                 if not self.tm.isInherited(self.currentIndex):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actRemoveRow)
@@ -534,6 +545,15 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                               text = "There was an error executing the variable on the baseyear data.",
                               detailed_text = "<br><br>".join(errors))
 
+    def viewDependencies(self):
+        chart = DependencyChart(self.opus_gui.project.xml_config)
+        chart.graph_variable("temp", str(self.tm.arraydata[self.currentIndex.row()][5]), False)
+        #chart.graph_all("temp")
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = AllVariablesViewDependenciesGui(self.opus_gui, flags, "temp.png",
+                               str(self.tm.arraydata[self.currentIndex.row()][1]))
+        window.show()
+
     def on_checkSelectedVariables_released(self):
 #        saveBeforeCheck = QMessageBox.Yes
 #        if self.dirty:
@@ -613,3 +633,17 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
     def on_cancelWindow_released(self):
         self.close()
 
+class AllVariablesViewDependenciesGui(QDialog, Ui_AllVariablesViewDepsGui):
+    def __init__(self, opus_gui, fl, file_path, name):
+        QDialog.__init__(self, opus_gui, fl)
+        self.setupUi(self)
+        self.setModal(True)  #TODO: this shouldn't be necessary, but without it the window is unresponsive
+        self.setWindowTitle("Dependency graph of %s" % name)
+
+        pix = QPixmap.fromImage(QImage(QString(file_path)))
+        self.label.setPixmap(pix)
+        self.scrollAreaWidgetContents.setMinimumSize(pix.width(), pix.height())
+        self.resize(pix.width() + 35, pix.height() + 80)
+        
+    def on_closeWindow_released(self):
+        self.close()
