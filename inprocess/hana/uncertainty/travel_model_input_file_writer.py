@@ -150,7 +150,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
         n = eval('%s().run(bm, replicates=1)' % post_class)
         simulated_number_of_agents = n.ravel()*n.ravel()
-        #logger.log_status('Simulated number of %ss' % dataset_name)
+        logger.log_status('Simulated number of %ss' % dataset_name)
         #logger.log_status(round_(simulated_number_of_agents[0:50]))
         scale_to_ct = False
         if self.configuration['travel_model_configuration'].get('scale_to_control_totals', False):
@@ -169,7 +169,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             
         # simulate jobs
         dataset_name = 'job'
-        #logger.log_status('Generated values of bm variables for %ss:' % dataset_name)
+        logger.log_status('Generated values of bm variables for %ss:' % dataset_name)
         bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
         self.total_number_of_jobs = zeros(zone_set.size(), dtype='int32')
         for bmvar in bmvars:
