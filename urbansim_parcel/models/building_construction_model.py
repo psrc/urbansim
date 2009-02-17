@@ -19,7 +19,7 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
-from numpy import where, arange, resize, array, cumsum, concatenate, round_, any, logical_or, logical_and, logical_not
+from numpy import where, arange, resize, array, cumsum, concatenate, rint, any, logical_or, logical_and, logical_not
 
 class BuildingConstructionModel(Model):
     """Process any (pre-)scheduled development projects (those that have status 'active'). New buildings are 
@@ -143,18 +143,18 @@ class BuildingConstructionModel(Model):
                 # what is proposed on this parcel
                 amount_proposed = to_be_built[pidx].sum()
                 # build if needed
-                if amount_proposed > amount_built:
+                if rint(amount_proposed) > amount_built:
                     if unit_name == "residential_units":
                         bunit = "residential_units"
                         bnunit = "non_residential_sqft"
                     else:
                         bnunit = "residential_units"
                         bunit = "non_residential_sqft"
-                    to_be_built_cumsum = round_(cumsum(to_be_built[pidx])).astype("int32")
+                    to_be_built_cumsum = rint(cumsum(to_be_built[pidx])).astype("int32")
                     idx_to_be_built = where(to_be_built_cumsum > amount_built)[0]
                     new_buildings["parcel_id"] = concatenate((new_buildings["parcel_id"], 
                                                               array(idx_to_be_built.size * [parcel_id], dtype="int32")))
-                    new_buildings[bunit] = concatenate((new_buildings[bunit], round_(to_be_built[pidx][idx_to_be_built]).astype(new_buildings[bunit].dtype)))
+                    new_buildings[bunit] = concatenate((new_buildings[bunit], rint(to_be_built[pidx][idx_to_be_built]).astype(new_buildings[bunit].dtype)))
                     new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0], dtype="int32")))
                     new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
                              array(idx_to_be_built.size * [this_building_type], dtype="int32")))
