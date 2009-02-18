@@ -291,7 +291,7 @@ class IndicatorResultsTests(TestWithAttributeData):
         
     def test__output_indicators(self):
         try:
-            from opus_gui.results_manager.run.indicator_framework.image_types.matplotlib_map import Map
+            from opus_gui.results_manager.run.indicator_framework.image_types.mapnik_map import Map
             from opus_gui.results_manager.run.indicator_framework.image_types.matplotlib_chart import Chart
             from opus_gui.results_manager.run.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
         except: pass

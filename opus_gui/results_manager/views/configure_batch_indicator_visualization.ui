@@ -263,7 +263,25 @@
            </item>
           </layout>
          </item>
+         <item row="5" column="0" >
+          <widget class="QPushButton" name="mapnikOptions" >
+           <property name="maximumSize" >
+            <size>
+             <width>150</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string>Mapnik Map Options</string>
+           </property>
+          </widget>
+         </item>
         </layout>
+        <zorder>rbSingleTable</zorder>
+        <zorder>rbTablePerYear</zorder>
+        <zorder>rbTablePerIndicator</zorder>
+        <zorder>mapnikOptions</zorder>
+        <zorder>horizontalSpacer</zorder>
        </widget>
       </item>
       <item row="2" column="0" >

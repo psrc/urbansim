@@ -50,17 +50,17 @@ class CountyDataset(UrbansimDataset):
         self.__id_mapping_array = -1*ones(ids.max())
         self.__id_mapping_array[self.get_id_attribute()-1] = self.get_id_index(ids)
 
-    def plot_map(self, name, gridcell=None, **opt_args):
-        if gridcell is None:
-            gridcell = Resources()["gridcell"]
-        gridcell.compute_variables("urbansim.gridcell.county_id")
-
-        name = VariableName(name).get_alias()
-        if name in self.get_known_attribute_names(): # attribute of fazes
-            new_name = name+'_of_county'
-            gridcell.join(self, name=name, new_name=new_name)
-        elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
-            new_name = name
-        else:
-            raise StandardError, "Attribute " + name + " not known."
-        gridcell.plot_map(new_name, **opt_args)
+#    def plot_map(self, name, gridcell=None, **opt_args):
+#        if gridcell is None:
+#            gridcell = Resources()["gridcell"]
+#        gridcell.compute_variables("urbansim.gridcell.county_id")
+#
+#        name = VariableName(name).get_alias()
+#        if name in self.get_known_attribute_names(): # attribute of fazes
+#            new_name = name+'_of_county'
+#            gridcell.join(self, name=name, new_name=new_name)
+#        elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
+#            new_name = name
+#        else:
+#            raise StandardError, "Attribute " + name + " not known."
+#        gridcell.plot_map(new_name, **opt_args)

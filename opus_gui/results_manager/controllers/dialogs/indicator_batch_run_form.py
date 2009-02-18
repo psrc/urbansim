@@ -100,7 +100,7 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
     def runFinishedFromThread(self,success):
         all_visualizations = self.batch_processor.get_visualizations()
         for indicator_type, visualizations in all_visualizations:
-            if indicator_type == 'matplotlib_map' or \
+            if indicator_type == 'mapnik_map' or \
                indicator_type == 'matplotlib_chart':
                 form_generator = self.resultsManagerBase.addViewImageIndicator
             elif indicator_type == 'tab':

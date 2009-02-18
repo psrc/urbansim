@@ -27,6 +27,12 @@ class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVis
         self._setup_co_output_type()
 
         self.batch_node = batch_node
+        self.set_default_mapnik_options()
+
+    def set_default_mapnik_options(self):
+        self.mapnik_options['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
+        self.mapnik_options['bucket_ranges'] = 'linear_scale'
+        self.mapnik_options['bucket_labels'] = 'range_labels'
 
     def on_buttonBox_accepted(self):
         # Quickie for defining attrib dicts

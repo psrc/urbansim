@@ -1011,7 +1011,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
     def test_remove_all(self):
         self.assertEqual(remove_all((),()), [])
         self.assertEqual(remove_all((1,'a'),'b'), [1,'a'])
-        self.assertEqual(remove_all((1,'a'),'a'), [1])
+        self.assertEqual(remove_all(('a', 1,'a', 'a'),'a'), [1])
 
 if __name__ == "__main__":
     opus_unittest.main()

@@ -197,7 +197,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             indicator_type = 'tab'
             params['output_type'] = 'tab'
         else:
-            indicator_type = 'matplotlib_map'
+            indicator_type = 'mapnik_map'
 
         visualizations = [
             (indicator_type, str(dataset_name), params)
@@ -230,7 +230,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         all_visualizations = self.batch_processor.get_visualizations()
         for indicator_type, visualizations in all_visualizations:
             for visualization in visualizations:
-                if indicator_type == 'matplotlib_map':
+                if indicator_type == 'mapnik_map':
                     form = ViewImageForm(visualization = visualization)
                 else:
                     form = ViewTableForm(visualization = visualization)
@@ -385,7 +385,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             for indicator_type, visualizations in all_visualizations:
                 form_generator = None
                 print indicator_type
-                if indicator_type == 'matplotlib_map' or \
+                if indicator_type == 'mapnik_map' or \
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.managers['results_manager'].addViewImageIndicator
                 elif indicator_type == 'tab':

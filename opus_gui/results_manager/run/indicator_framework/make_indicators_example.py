@@ -95,13 +95,14 @@ from opus_core.database_management.configurations.database_configuration import 
 visualizer = VisualizationFactory()
 visualizations = []
 
-# View an indicator as a matplotlib Map
+# View an indicator as a Map
 maps = ['zone_population',
         'gridcell_population']
 visualizations += visualizer.visualize(
     indicators_to_visualize = maps, #override default indicators to visualize (all)
     computed_indicators = computed_indicators,
-    visualization_type = 'matplotlib_map',
+    #visualization_type = 'matplotlib_map',
+    visualization_type = 'mapnik_map',
     name = 'my_maps'
     )
 

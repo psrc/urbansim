@@ -257,7 +257,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         visualizations = [
             ('table_per_year', dataset, table_params),
-            ('matplotlib_map', dataset, map_params)
+            ('mapnik_map', dataset, map_params)
         ]
 
         batch_processor = BatchProcessor(self.resultsManagerBase.project)
@@ -306,7 +306,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         tab_widget = None
         for (visualization_type, visualizations) in self.batch_processor.get_visualizations():
             if len(visualizations) > 0:
-                if visualization_type == 'matplotlib_map':
+                if visualization_type == 'mapnik_map':
                     viz = visualizations[0]
                     map_widget = ViewImageForm(viz, new_tab)
                     map_widget.setSizePolicy(size)

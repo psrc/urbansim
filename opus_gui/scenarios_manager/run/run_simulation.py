@@ -13,6 +13,7 @@
 #
 
 import os
+import gc
 
 from PyQt4.QtCore import QThread, QString, SIGNAL
 
@@ -220,6 +221,7 @@ class OpusModel(object):
             errorInfo = formatExceptionInfo(custom_message = 'Unexpected Error From Model')
             self.errorCallback(errorInfo)
         if self.statusfile is not None:
+            gc.collect()
             os.remove(self.statusfile)
         self.finishedCallback(succeeded, run_id = run_id, scenario_name = self.modeltorun)
 

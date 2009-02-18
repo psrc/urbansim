@@ -25,8 +25,6 @@ class Map(AbstractIndicator):
                  years = None, operation = None, name = None,
                  scale = None,
                  storage_location = None):
-        if dataset_name == 'parcel':
-            raise Exception('Cannot create a Matplotlib map for parcel dataset. Please plot at a higher geographic aggregation')
         AbstractIndicator.__init__(self, source_data, dataset_name, 
                                    [attribute], years, operation, name,
                                    storage_location)
@@ -48,6 +46,10 @@ class Map(AbstractIndicator):
         """Create a map for the given indicator, save it to the cache
         directory's 'indicators' sub-directory.
         """
+        
+        #TODO: determine the shapefile location and pass it to plot_map() as an arg
+        print 'cache dir', self.cache_directory
+        print 'storage_loc: ', self.get_storage_location()
 
         values = self._get_indicator(year, wrap = False)
         
@@ -66,7 +68,7 @@ class Map(AbstractIndicator):
         file_path = self.get_file_path(year = year) 
 
         dataset = self._get_dataset(year)
-        dataset.plot_map(dataset_name=self.dataset_name, name=attribute_alias,
+        dataset.plot_map(name=attribute_alias,
                  my_title=title, file=file_path,
                  filter='urbansim.gridcell.is_fully_in_water',
                  min_value=min_value, max_value=max_value)
@@ -102,8 +104,8 @@ class Tests(AbstractIndicatorTest):
 
 if __name__ == '__main__':
     try: 
-        import matplotlib
+        import mapnik
     except:
-        print 'could not import matplotlib'
+        print 'could not import mapnik'
     else:
         opus_unittest.main()

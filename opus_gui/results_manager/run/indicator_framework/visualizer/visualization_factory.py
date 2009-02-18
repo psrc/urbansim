@@ -24,7 +24,7 @@ class VisualizationFactory:
                   *args, **kwargs):
         
         class_names = {
-           'matplotlib_map':'MatplotlibMap',
+           'mapnik_map':'MapnikMap',
            'matplotlib_chart':'MatplotlibChart',
            'table':'Table'
         }

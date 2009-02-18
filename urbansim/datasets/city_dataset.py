@@ -50,17 +50,56 @@ class CityDataset(UrbansimDataset):
         self.__id_mapping_array = -1*ones(ids.max())
         self.__id_mapping_array[self.get_id_attribute()-1] = self.get_id_index(ids)
 
-    def plot_map(self, name, gridcell=None, **opt_args):
+
+    # TODO: delete commented out code as soon as mapping by city is tested with Mapnik (JLM)
+    
+#    def plot_map(self, name, gridcell=None, **opt_args):
+#        if gridcell is None:
+#            gridcell = Resources()["gridcell"]
+#        gridcell.compute_variables("urbansim.gridcell.city_id")
+#
+#        name = VariableName(name).get_alias()
+#        if name in self.get_known_attribute_names():
+#            new_name = name+'_of_city'
+#            gridcell.join(self, name=name, new_name=new_name)
+#        elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
+#            new_name = name
+#        else:
+#            raise StandardError, "Attribute " + name + " not known."
+#        gridcell.plot_map(new_name, **opt_args)
+
+#<<<<<<< .mine
+    def openev_plot(self, name, gridcell=None, **opt_args):
         if gridcell is None:
             gridcell = Resources()["gridcell"]
         gridcell.compute_variables("urbansim.gridcell.city_id")
 
-        name = VariableName(name).get_alias()
-        if name in self.get_known_attribute_names():
+#        if prototype_dataset is None and self.default_prototype_dataset is not None:
+#            prototype_dataset = self.default_prototype_dataset
+#        if template_project is None and self.default_template_project is not None:
+#            template_project = self.default_template_project
+#        if legend_file is None and self.default_legend_file is not None:
+#            legend_file = self.default_legend_file
+
+        if name in self.get_known_attribute_names(): # attribute of fazes
             new_name = name+'_of_city'
             gridcell.join(self, name=name, new_name=new_name)
         elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
             new_name = name
         else:
             raise StandardError, "Attribute " + name + " not known."
-        gridcell.plot_map(new_name, **opt_args)
+
+        gridcell.openev_plot(new_name, **opt_args)
+
+#=======
+#        name = VariableName(name).get_alias()
+#        if name in self.get_known_attribute_names():
+#            new_name = name+'_of_city'
+#            gridcell.join(self, name=name, new_name=new_name)
+#        elif name in gridcell.get_known_attribute_names(): # attribute of gridcells
+#            new_name = name
+#        else:
+#            raise StandardError, "Attribute " + name + " not known."
+#        gridcell.plot_map(new_name, **opt_args)
+#>>>>>>> .r5247
+

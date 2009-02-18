@@ -1,27 +1,31 @@
 # UrbanSim software. Copyright (C) 2005-2008 University of Washington
-#
+# 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-#
+# 
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-#
+# 
 
 import os
+import sys
 
 from PyQt4.QtCore import QString, Qt, QFileInfo
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
 
 from opus_core.logger import logger
 from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names, get_available_dataset_names, get_available_indicator_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
+#from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.util.exception_formatter import formatExceptionInfo
+from opus_gui.results_manager.run.get_mapnik_options import MapOptions
+
 
 class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatchIndicatorVisualization):
     def __init__(self, project, parent_widget = None):
@@ -32,7 +36,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         # self.resultManagerBase = resultManagerBase
 
         self.project = project
-
+        self.mapnik_options = {}
+        
 #        self.model = resultManagerBase.toolboxBase.resultsManagerTree.model
 #        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
         self.leVizName.setText(QString('New visualization'))
@@ -147,7 +152,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             }
         elif str(viz_type) == 'Map':
             available_output_types = {
-                'Matplotlib map (.png)':'matplotlib_map',
+                'Mapnik map (.png)':'mapnik_map',
             }
         else:
             available_output_types = {}
@@ -226,7 +231,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     def _get_type_mapper(self):
         return {
             'Table': 'tab',
-            'Map': 'matplotlib_map'
+            'Map': 'mapnik_map'
         }
     def _get_inverse_type_mapper(self):
         mapper = self._get_type_mapper()
@@ -247,8 +252,13 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 'dataset_name': dataset_name,
                 'visualization_type': QString(self._get_type_mapper()[str(viz_type)])
         }
-
-        if output_type == 'fixed_field':
+        
+        if output_type == 'mapnik_map' :
+            vals['bucket_labels'] = self.mapnik_options['bucket_labels']
+            vals['bucket_colors'] = self.mapnik_options['bucket_colors']
+            vals['bucket_ranges'] = self.mapnik_options['bucket_ranges']
+        
+        elif output_type == 'fixed_field':
             try:
                 fixed_field_params = QString(str(self._get_column_values(column = 1)))
             except:
@@ -290,7 +300,11 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             item = self.twIndicatorsToVisualize.item(row,column)
             col_vals.append(str(item.text()))
         return col_vals
-
+    
+    def on_mapnikOptions_released(self):
+        options = MapOptions(self, options_dict=self.mapnik_options)
+        options.show()
+        
     def on_cboOutputType_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
@@ -305,6 +319,9 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.rbSingleTable.hide()
             self.rbTablePerIndicator.hide()
             self.rbTablePerYear.hide()
+            self.mapnikOptions.hide()
+        elif output_type == 'Mapnik map (.png)':
+            self.mapnikOptions.show()
         else:
             self.lblOption1.hide()
             self.leOption1.hide()
@@ -312,6 +329,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 self.rbSingleTable.show()
                 self.rbTablePerIndicator.show()
                 self.rbTablePerYear.show()
+                self.mapnikOptions.hide()
             else:
                 self.rbSingleTable.hide()
                 self.rbTablePerIndicator.hide()

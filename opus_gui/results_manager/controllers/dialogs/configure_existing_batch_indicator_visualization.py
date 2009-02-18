@@ -11,18 +11,6 @@
 # other acknowledgments.
 #
 
-
-
-#        <some_kind_of_viz type="batch_visualization">
-#          <indicators hidden="True" type="string">['population']</indicators>
-#          <visualization_type hidden="True" type="string">matplotlib_map</visualization_type>
-#          <visualization_type hidden="True" type="string">matplotlib_map</visualization_type>
-#          <output_type hidden="True" type="string">matplotlib_map</output_type>
-#          <dataset_name hidden="True" type="string">gridcell</dataset_name>
-#        </some_kind_of_viz>
-
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString
 from xml.etree.cElementTree import SubElement
 
@@ -91,6 +79,10 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                     self.rbTablePerIndicator.setChecked(True)
                 else:
                     self.rbTablePerYear.setChecked(True)
+        elif prev_output_type == 'mapnik_map':
+            self.mapnik_options['bucket_ranges'] = base_node.find('bucket_ranges').text
+            self.mapnik_options['bucket_colors'] = base_node.find('bucket_colors').text
+            self.mapnik_options['bucket_labels'] = base_node.find('bucket_labels').text
 
     def _process_xml_stored_list_of_strings(self, value):
         '''
@@ -111,7 +103,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
         viz_type = viz_params['visualization_type']
 
         close = True
-        if viz_type == 'matplotlib_map' and dataset_name not in self.spatial_datasets:
+        if viz_type == 'mapnik_map' and dataset_name not in self.spatial_datasets:
             MessageBox.warning(mainwindow = self.mainwindow,
                       text = "That indicator cannot be visualized as a map.",
                       detailed_text = ('The dataset %s is either not spatial or cannot be '

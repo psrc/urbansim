@@ -14,6 +14,7 @@
 
 import gc
 import copy
+import os
 
 from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any, abs
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
@@ -1233,7 +1234,169 @@ class AbstractDataset(object):
         if file:
             r.dev_off()
 
-    def plot_map(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None,
+    def stringToList(self, string):
+        list = string.split(',')
+        for i in range(list.__len__()):
+            list[i] = str(list[i]).strip()
+        return list
+
+    # This function is used to create a vector-based image for non-gridcell maps
+    def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
+                 max_value=None, file=None, my_title="", filter=None, background=None, coordinate_system=None, # TODO: delete coordintate_system
+                 color_list=None, range_list=None, label_list=None):
+        """
+        Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
+        Arguements:
+        'name' is the name of the attribute that is to be mapped
+        'xlab' is an optional label for the x-axis (not yet implemented)
+        'ylab' is an optional label for the y-axis (not yet implemented)
+        'min_value' is the minimum value that will be included in the color bar range (not yet implemented)
+        'max_value' is the maximum value that will be included in the color bar range (not yet implemented)
+        'file' is the output filename of the PNG map 
+        'my_title' is the text that will be printed at the top of the map image file
+        'filter' (not yet implemented)
+        'background' (not yet implemented)
+        'color_list' is a list of colors to use in the map
+        'range_list' is a list of range boundaries that specify each bucket of values
+        'label_list' is a list of labels that will be applied to the buckets of values
+        """
+        
+        useDefaultValues = color_list == None or range_list == None or label_list == None
+        
+        if (useDefaultValues):
+            color_list = ['#e0eee0', '#c7e9c0', '#a1d99b', '#7ccd7c', '#74c476', '#41ab5d', '#238b45', '#006400', '#00441b', '#00340b'] # green
+        else:
+            if color_list.__class__ == str:
+                color_list = self.stringToList(color_list)
+            if range_list.__class__ == str:
+                range_list = self.stringToList(range_list)
+            if label_list.__class__ == str:
+                label_list = self.stringToList(label_list)
+        
+        name = VariableName(name).get_alias()
+        if name not in self.get_known_attribute_names():
+            raise StandardError, "Attribute " + name + " not known."
+
+        # Determine the column header of the attributes to be used.
+        # .dbf files can only have a max of 10 chars in a single cell
+        col_header = None
+        if (name.__len__() > 10):
+            col_header = name[name.__len__()-10:].upper()
+        else:
+            col_header = name.upper()
+        
+        # Sort the ID array elements and their corresponding attribute array elements to have the 
+        #    same order as the master .dbf file and write the arrays out to a .dbf shapefile.
+        from opus_core.store.dbf_storage import dbf_storage   
+        shapefile_dir = os.path.join(os.environ['OPUS_DATA_PATH'], os.environ['OPUSPROJECTNAME'], 'shapefiles') # OPUSPROJECTNAME is only defined when this function is called by the GUI
+        storage_for_dbf = dbf_storage(storage_location=shapefile_dir)
+        unique_id = storage_for_dbf.get_column_names(table_name='MASTER_'+self.dataset_name)[0]
+        unique_id_arr = storage_for_dbf.load_table(table_name='MASTER_'+self.dataset_name)[unique_id]
+        index_arr = self.get_id_index(unique_id_arr)
+        attrib_arr = self.get_attribute_by_index(name, index_arr)
+        dataset_dict = {unique_id:unique_id_arr, col_header:attrib_arr}
+        storage_for_dbf.write_table(table_name=self.dataset_name, table_data=dataset_dict)
+
+        # Use Mapnik to draw the map
+        from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, render_to_file
+        m = Map(600,300,"+proj=latlong +datum=WGS84")
+        m.background = Color('#f2eff9')
+        s = Style()
+        
+        max_val = attrib_arr.max()
+        min_val = attrib_arr.min()
+        num_buckets = color_list.__len__()
+
+        if (useDefaultValues or range_list == ['linear_scale']):
+            # set linearly increasing ranges for the range list
+            range_list = []
+            range_list.append(min_val)
+            bucket_range = (max_val - min_val) / num_buckets
+            for i in range(1,num_buckets):
+                range_list.append(i * bucket_range)
+            range_list.append(max_val)
+        else:
+            if range_list[0].upper() == 'MIN':
+                range_list[0] = min_val
+            if range_list[range_list.__len__()-1].upper() == 'MAX':
+                range_list[range_list.__len__()-1] = max_val 
+        
+        if (useDefaultValues or label_list == ['range_labels']):
+            # set linearly increasing labels for the label list
+            label_list = []
+            for i in range(range_list.__len__()-1):
+                label_list.append(str(range_list[i]) + " to " + str(range_list[i+1]))
+
+        # Assign rules to the style
+        for i in range(num_buckets):
+            r = Rule()
+            r.symbols.append(PolygonSymbolizer(Color(color_list[i])))
+            if (not unique_id == 'grid_id'):
+                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
+            r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
+            s.rules.append(r)
+        
+        # Assign a default color to all polygons not covered by the given range
+        r = Rule()
+        r.symbols.append(PolygonSymbolizer(Color('#dedede')))
+        r.filter = Filter('[' + col_header + '] < ' + str(range_list[0]) + ' or [' + col_header + '] > ' + str(range_list[num_buckets]))
+        s.rules.append(r)
+        
+        m.append_style('Map Style',s)
+        lyr = Layer('Map Layer')
+        lyr.datasource = Shapefile(file=os.path.join(shapefile_dir,self.dataset_name))
+        lyr.styles.append('Map Style')
+        m.layers.append(lyr)
+        m.zoom_to_box(lyr.envelope())
+        render_to_file(m, file, 'png')
+        
+        # Add labels and color bar to image file
+        from Image import open, new
+        from ImageDraw import Draw
+        
+        map_file = open(file)
+        result_file_width = 850
+        result_file_height = 450
+        result_file = new('RGB', (result_file_width,result_file_height),color='#ffffff')
+        
+        # copy map image to a larger canvas
+        (map_width, map_height) = map_file.size
+        box = (0,0,map_width, map_height)
+        map_horiz_spacing = 10
+        map_vert_spacing = 100
+        result_file.paste(map_file.crop(box), (map_horiz_spacing,map_vert_spacing,map_horiz_spacing+map_width, map_vert_spacing+map_height))
+        
+        # draw the map header text
+        draw = Draw(result_file)
+        title_horiz_spacing = map_horiz_spacing
+        title_vert_spacing = map_vert_spacing / 3
+        draw.text( (title_horiz_spacing,title_vert_spacing), str(my_title), fill='#000000')
+        
+        filepath_horiz_spacing = map_horiz_spacing
+        filepath_vert_spacing = 2 * map_vert_spacing / 3
+        draw.text( (filepath_horiz_spacing,filepath_vert_spacing), file, fill='#000000')
+        
+        # draw the color bar
+        cb_horiz_spacing = map_horiz_spacing + map_width + 10
+        cb_vert_spacing = map_vert_spacing
+        box_height = 25
+        box_width = 25
+        label_spacing = 10
+
+        # This only works if there is a value range for every bucket. Map will not be produced if range values are missing
+        for i in range(num_buckets):
+            # If label values are missing, fill them in with empty strings
+            while label_list.__len__() < num_buckets:
+                label_list.append('')
+            # Draw a box on the color bar
+            draw.rectangle((cb_horiz_spacing, cb_vert_spacing+i*box_height, cb_horiz_spacing+box_width, cb_vert_spacing+(i+1)*box_height), outline='#000000', fill=color_list[num_buckets-1-i])
+            draw.text((cb_horiz_spacing+box_width+label_spacing, cb_vert_spacing+i*box_height+(box_height/2)), label_list[num_buckets-1-i], fill='#000000')
+        
+        del draw
+        result_file.save(file, 'PNG')
+
+    # This function is used to create a raster image for gridcell maps
+    def plot_map_matplotlib(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None,
                  my_title="", filter=None, background=None, coordinate_system=None):
         """ Plots a 2D image of attribute given by 'name'. matplotlib required.
             The dataset must have a method 'get_2d_attribute' defined that returns
@@ -1247,6 +1410,7 @@ class AbstractDataset(object):
             If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names 
             that define the x and y axis, respectively.
         """
+    
         import matplotlib
         matplotlib.use('Agg') 
         
@@ -1832,8 +1996,6 @@ class AbstractDataset(object):
         for attr_name in self.get_known_attribute_names():
             attr_values.append(self.get_attribute(attr_name))
             attr_names.append(attr_name.encode("ascii"))
-            #print attr_name, self.get_attribute(attr_name).dtype
-        #print attr_names
         recarray = rec.fromarrays(attr_values, names=attr_names)
         return fileh.createTable(where, name, recarray, *args, **kwargs)
 

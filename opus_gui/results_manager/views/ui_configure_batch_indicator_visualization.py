@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/travis/Documents/workspace/opus/opus_gui/results_manager/views/configure_batch_indicator_visualization.ui'
+# Form implementation generated from reading ui file 'configure_batch_indicator_visualization.ui'
 #
-# Created: Mon Sep 29 13:27:13 2008
-#      by: PyQt4 UI code generator 4.3.3
+# Created: Fri Jan 09 11:18:13 2009
+#      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -58,6 +58,8 @@ class Ui_dlgConfigureBatchIndicatorVisualization(object):
         self.cboVizType.setSizePolicy(sizePolicy)
         self.cboVizType.setMinimumSize(QtCore.QSize(0, 0))
         self.cboVizType.setObjectName("cboVizType")
+        self.cboVizType.addItem(QtCore.QString())
+        self.cboVizType.addItem(QtCore.QString())
         self.gridLayout.addWidget(self.cboVizType, 1, 1, 1, 1)
         self.label_6 = QtGui.QLabel(self.gbOutputOptions)
         self.label_6.setObjectName("label_6")
@@ -98,6 +100,10 @@ class Ui_dlgConfigureBatchIndicatorVisualization(object):
         self.cboOutputType.setSizePolicy(sizePolicy)
         self.cboOutputType.setMinimumSize(QtCore.QSize(0, 0))
         self.cboOutputType.setObjectName("cboOutputType")
+        self.cboOutputType.addItem(QtCore.QString())
+        self.cboOutputType.addItem(QtCore.QString())
+        self.cboOutputType.addItem(QtCore.QString())
+        self.cboOutputType.addItem(QtCore.QString())
         self.horizontalLayout_2.addWidget(self.cboOutputType)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.rbSingleTable = QtGui.QRadioButton(self.groupBox)
@@ -138,6 +144,10 @@ class Ui_dlgConfigureBatchIndicatorVisualization(object):
         self.pbn_set_storage_location.setObjectName("pbn_set_storage_location")
         self.horizontalLayout.addWidget(self.pbn_set_storage_location)
         self.gridLayout_2.addLayout(self.horizontalLayout, 4, 0, 1, 1)
+        self.mapnikOptions = QtGui.QPushButton(self.groupBox)
+        self.mapnikOptions.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.mapnikOptions.setObjectName("mapnikOptions")
+        self.gridLayout_2.addWidget(self.mapnikOptions, 5, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBox, 0, 1, 2, 2)
         self.groupBox_2 = QtGui.QGroupBox(self.frame)
         self.groupBox_2.setFlat(True)
@@ -241,15 +251,15 @@ class Ui_dlgConfigureBatchIndicatorVisualization(object):
         self.gbOutputOptions.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output options", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Visualization name:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Type:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboVizType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Table", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboVizType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Map", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboVizType.setItemText(0, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Table", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboVizType.setItemText(1, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Map", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Dataset name:", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Format options", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Format:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Tab delimited file (.tab)", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Fixed field file (.dat)", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Export to SQL database", None, QtGui.QApplication.UnicodeUTF8))
-        self.cboOutputType.addItem(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "ESRI database", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.setItemText(0, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Tab delimited file (.tab)", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.setItemText(1, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Fixed field file (.dat)", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.setItemText(2, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Export to SQL database", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboOutputType.setItemText(3, QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "ESRI database", None, QtGui.QApplication.UnicodeUTF8))
         self.rbSingleTable.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "The table will have the values of all indicators for each year the indicator batch is run on.", None, QtGui.QApplication.UnicodeUTF8))
         self.rbSingleTable.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output a single table", None, QtGui.QApplication.UnicodeUTF8))
         self.rbTablePerYear.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Each table will have the values of the selected indicators for the given year.", None, QtGui.QApplication.UnicodeUTF8))
@@ -258,6 +268,7 @@ class Ui_dlgConfigureBatchIndicatorVisualization(object):
         self.rbTablePerIndicator.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Output a table for each indicator", None, QtGui.QApplication.UnicodeUTF8))
         self.lblOption1.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.pbn_set_storage_location.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.mapnikOptions.setText(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Mapnik Map Options", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Available indicators", None, QtGui.QApplication.UnicodeUTF8))
         self.twAvailableIndicators.setSortingEnabled(False)
         self.pbnAddIndicator.setToolTip(QtGui.QApplication.translate("dlgConfigureBatchIndicatorVisualization", "Add currently selected indicator on the left to this indicator visualization.", None, QtGui.QApplication.UnicodeUTF8))
