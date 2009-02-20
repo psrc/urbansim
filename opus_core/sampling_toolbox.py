@@ -16,7 +16,7 @@ import os,sys
 import copy
 import numpy
 from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
-from numpy import sometrue, where, equal, not_equal, ndarray
+from numpy import sometrue, where, equal, not_equal, ndarray, clip
 from numpy import reshape, sort, searchsorted, repeat, argsort
 from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, unique1d
 from opus_core.misc import ncumsum, unique_values, is_masked_array
@@ -160,7 +160,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
     while True:
         sample_prob = uniform(0, totalmass, to_be_sampled).astype(float32)
         proposed_index = searchsorted(cum_prob, sample_prob) #, 0, cum_prob.size-1)
-
+        proposed_index = clip(proposed_index, 0, cum_prob.size-1) # due to precision problems
 #         dup_indicator = find_duplicates_self(proposed_index)
 #         valid_index = proposed_index[dup_indicator==0]
 #         sampled_index = concatenate((sampled_index, source_array[valid_index]))
