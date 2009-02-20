@@ -20,10 +20,8 @@ from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
 from PyQt4.QtGui import QWidget
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 
-# Pull in all the instance handler functions before importing classes that might
-# use them.
-from opus_gui.main.controllers.instance_handlers import * #@UnusedWildImport
 
+from opus_gui.main.controllers.instance_handlers import set_opusgui_instance
 from opus_gui.main.views.ui_mainwindow import Ui_MainWindow
 from opus_gui.main.controllers.dialogs.opusabout import UrbansimAboutGui
 from opus_gui.main.controllers.dialogs.opuspreferences import UrbansimPreferencesGui

@@ -19,8 +19,7 @@ from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.results_manager.views.ui_run_indicator_batch import Ui_runIndicatorBatch
-from opus_gui.results_manager.results_manager \
-    import get_simulation_runs, get_batch_configuration, get_years_for_simulation_run
+from opus_gui.results_manager.results_manager_functions import get_simulation_runs, get_batch_configuration, get_years_for_simulation_run
 
 
 class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
@@ -50,12 +49,12 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
 
         for run in runs:
             if run.tag == self.run_name:
-                years = get_years_for_simulation_run(project = self.project, 
+                years = get_years_for_simulation_run(project = self.project,
                                                      simulation_run_node = run)
                 (start,end) = (min(years), max(years))
 
         for i in range(start, end + 1):
-            if i not in years: continue            
+            if i not in years: continue
             yr = QString(repr(i))
             self.co_start_year.addItem(yr)
             self.co_end_year.addItem(yr)
@@ -69,7 +68,7 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
     def on_buttonBox_accepted(self):
 
         self.buttonBox.setEnabled(False)
-        
+
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
         increment = int(self.co_every_year.currentText())

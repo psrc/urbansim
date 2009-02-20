@@ -22,7 +22,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.results_manager.controllers.dialogs.configure_existing_batch_indicator_visualization import ConfigureExistingBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization import ConfigureNewBatchIndicatorVisualization
 from opus_gui.results_manager.controllers.dialogs.indicator_batch_run_form import IndicatorBatchRunForm
-from opus_gui.results_manager.results_manager import get_available_run_nodes, get_run_manager
+from opus_gui.results_manager.results_manager_functions import get_available_run_nodes, get_run_manager
 
 class XmlController_Results(XmlController):
     ''' XmlController for the Results Manager '''
@@ -127,15 +127,15 @@ class XmlController_Results(XmlController):
         # file for 'source_data' and Simulation_runs was the only section I
         # could find it in.
         run_nodes = get_available_run_nodes(self.project)
-        
+
         if not run_nodes:
             attach_to_menu.setEnabled(False)
             return
-        
-        #T: the following loop causes a problem where 
+
+        #T: the following loop causes a problem where
         #   only "baseyear_data" will be passed to the _indicatorBatchRun method.
         #   I don't know why.
-        
+
 #        for run_node in run_nodes:
 #            cb = lambda x = run_node: self._indicatorBatchRun(run_name = run_node.tag)
 #            action = self.createAction(self.model.acceptIcon, run_node.tag, cb)
@@ -151,7 +151,7 @@ class XmlController_Results(XmlController):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
         node = self.selectedItem().node
-            
+
         window = IndicatorBatchRunForm(mainwindow = self.view,
                                        resultsManagerBase = self.manager,
                                        batch_name = node.tag,

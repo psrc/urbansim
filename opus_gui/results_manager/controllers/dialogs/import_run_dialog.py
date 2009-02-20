@@ -23,7 +23,7 @@ from opus_core.logger import logger
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_gui.results_manager.views.ui_import_run_dialog import Ui_dlgImportRun
-from opus_gui.results_manager.results_manager import update_available_runs
+from opus_gui.results_manager.results_manager_functions import update_available_runs
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.util.exception_formatter import formatExceptionInfo
 

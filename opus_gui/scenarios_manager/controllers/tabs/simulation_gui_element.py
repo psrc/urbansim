@@ -20,12 +20,12 @@ from opus_core.services.run_server.run_manager import insert_auto_generated_cach
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
-from opus_gui.results_manager.results_manager import get_available_batch_nodes
+from opus_gui.results_manager.results_manager_functions import get_available_batch_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
 from opus_gui.general_manager.general_manager import get_available_dataset_names, get_indicator_nodes_per_dataset
-from opus_gui.results_manager.results_manager import get_available_run_nodes
+from opus_gui.results_manager.results_manager_functions import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm

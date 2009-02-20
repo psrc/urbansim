@@ -17,14 +17,14 @@ from xml.etree.cElementTree import SubElement
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
-from opus_gui.results_manager.results_manager import update_batch_indicator_visualization
+from opus_gui.results_manager.results_manager_functions import update_batch_indicator_visualization
 from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
 
 class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, project, batch_indicator_visualization_node, parent_widget = None):
         AbstractConfigureBatchIndicatorVisualization.__init__(self, project, parent_widget)
 
-        
+
         self.base_node = base_node = batch_indicator_visualization_node
         self.spatial_datasets = get_available_spatial_dataset_names(project = project)
         self.leVizName.setText(base_node.tag)

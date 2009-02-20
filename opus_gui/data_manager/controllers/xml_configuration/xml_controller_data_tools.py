@@ -18,7 +18,7 @@ from PyQt4.QtCore import QString
 from PyQt4.QtGui import QMenu, QCursor, QFileDialog
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.data_manager.data_manager import get_tool_node_by_name, get_tool_library_node
+from opus_gui.data_manager.data_manager_functions import get_tool_node_by_name, get_tool_library_node
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui

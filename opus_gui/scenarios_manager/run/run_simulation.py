@@ -18,7 +18,7 @@ import gc
 from PyQt4.QtCore import QThread, QString, SIGNAL
 
 from opus_core.services.run_server.run_manager import SimulationRunError
-from opus_gui.results_manager.results_manager import update_available_runs, get_batch_configuration
+from opus_gui.results_manager.results_manager_functions import update_available_runs, get_batch_configuration
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
@@ -64,15 +64,15 @@ class RunModelThread(QThread):
                 if self.batch_name is not None:
                     self.runIndicatorBatch()
 
-                run_manager = get_run_manager()                
+                run_manager = get_run_manager()
                 runs = run_manager.get_run_info(run_ids = [run_id], resources = False, status = 'done')
                 run_manager.close()
-            
+
                 runs = run_manager.get_run_info(run_ids = [run_id], resources = True, status = 'done')
-                if len(runs) == 0: 
+                if len(runs) == 0:
                     raise Exception('Could not find new simulation run')
                 (run_id, run_name, _, _, run_resources) = runs[0]
-                cache_directory = os.path.normpath(run_resources['cache_directory'])                        
+                cache_directory = os.path.normpath(run_resources['cache_directory'])
 
                 start_year, end_year = run_resources['years']
                 baseyear = run_resources['base_year']

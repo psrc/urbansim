@@ -13,9 +13,6 @@
 
 from PyQt4.QtCore import QString
 
-# External functions defined in a separate to avoid cyclic dependencies.
-from opus_gui.results_manager.results_manager_functions import * #@UnusedWildImport
-
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
@@ -23,6 +20,8 @@ from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrowser
 from opus_gui.results_manager.controllers.dialogs.import_run_dialog import ImportRunDialog
 from opus_gui.results_manager.controllers.xml_configuration.xml_controller_results import XmlController_Results
+from opus_gui.results_manager.results_manager_functions import get_run_manager,\
+    update_available_runs
 
 
 class ResultsManager(AbstractManager):
