@@ -1,13 +1,13 @@
 \chapter{The Variable Library}
 \label{chap:variable-library}
 
-Variables in Opus and UrbanSim represent quantities of interest.  These
+Variable\index{variables} in Opus and UrbanSim represent quantities of interest.  These
 variables can be used in two principal ways: in specifying models and in
 computing indicators to assess simulation results.  For example, a
 \variable{distance_to_highway} variable might be used to help predict land
 values or or household location choices; and a \variable{population_density}
 variable might be used in computing indicators that are useful for
-evaluating simulation results.  The variable library is a repository for
+evaluating simulation results.  The variable library\index{variable library} is a repository for
 variables defined in the system that are accessible from the GUI\@.  Since
 it provides a resource that is used throughout the GUI, we access it from
 the tools menu on the menu bar at the top of the main window, as in Figure
@@ -23,7 +23,7 @@ Briefly for now, there are three ways to define a variable:
 
 \begin{itemize}
 
-\item A variable can be defined using an expression written in a
+\item A variable can be defined using an expression\index{expression} written in a
   domain-specific programming language.  There is a short description of
   the language later in this chapter, and a more complete description in
   Chapter~\ref{chapter:expressions}.  In this chapter 
@@ -85,7 +85,7 @@ leave ``Will this variable be used as an indicator?'' unchecked.  Which
 boxes you check show up in the ``Use'' column of the variable library
 popup window, and also determine whether the new variable appears in 
 lists of variables that you can add to a model specification or use to
-produce an indicator map; but don't matter for the underlying definition.
+produce an indicator map\index{indicator map}; but don't matter for the underlying definition.
 
 The dialog box provides two buttons at the bottom to help you check your
 new variable.  The check syntax button tests whether the expression you
@@ -108,7 +108,7 @@ the variables are in a state that can be computed on the available data.
 We just saw an example of using an expression to define the
 \variable{ln_population_density} variable.  More generally, an expression
 for a new variable will be written in terms of existing variables, where
-these existing variables are referenced as a ``qualified name'' consisting
+these existing variables are referenced as a ``qualified name''\index{qualified name} consisting
 of the dataset name and the variable name, for example,
 \variable{gridcell.population_density}.  Or our new variable can be used in
 yet another definition by writing \emph{its} qualified name:
@@ -128,7 +128,7 @@ of the appropriate size, all filled with the constant value.  For example,
 \variable{ln(2*gridcell.population_density)} is an array, consisting of the
 logs of 2 times the population density of each grid cell. 
 
-Two subexpressions that are arrays of integers or floats can be compared
+Two subexpressions\index{subexpressions} that are arrays of integers or floats can be compared
 using one of the relational operators \code{<}, \code{<=}, \code{==},
 \code{>=}, \code{>}, or \code{!=} (not equal).  We saw an an example of
 using a relational operation in the \variable{gridcell.percent_wetland>50}

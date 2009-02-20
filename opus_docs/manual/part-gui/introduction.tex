@@ -16,7 +16,7 @@ Appendix~\ref{appendix:installation}.
 
 \section{Main Features}
 
-The GUI is cross-platform compatible, and has been developed using the open
+The GUI is cross-platform\index{cross-platform} compatible, and has been developed using the open
 source Qt4 library and the PyQt Python interface to it.  Screenshots
 included in this section will be taken from all three platforms, to give a
 sense of the look and feel of the GUI on each platform.  After launching
@@ -28,8 +28,8 @@ for developing and using models can be effectively organized into tasks
 that follow an ordering of data management, model management, scenario
 management, and results management.  The main window of the GUI reflects
 this work flow expectation, by implementing four tabs in the left-hand
-panel of the main window labeled \emph{Data}, \emph{Models},
-\emph{Scenarios}, and \emph{Results}, plus a \emph{General} tab.  Each of
+panel of the main window labeled \emph{Data}\index{Data tab}, \emph{Models},
+\emph{Scenarios}\index{Scenarios}, and \emph{Results}, plus a \emph{General} tab.  Each of
 the four tabs provides a container for configuring and running a variety of
 tasks, organized into the main functional areas involved in developing and
 using a simulation model.
@@ -51,7 +51,7 @@ using a simulation model.
   interact with a running simulation are provided here.
 \item The \emph{Results} tab provides the tools to explore results once one
   or more scenarios have been simulated.  It integrates an Indicator
-  Framework that makes it possible to generate a variety of indicators, for
+  Framework\index{Indicator Framework} that makes it possible to generate a variety of indicators, for
   diagnostic and for evaluation purposes.  It also provides functionality
   to visualize indicators as charts, maps, and tables, and to export
   results to other formats for use outside of Opus.  \squishend
@@ -99,7 +99,7 @@ this window until after exiting the Opus GUI, or Opus will close also.
 Notice that at this point there are no contents in any of the tabs.
 Opus uses XML-based configuration files to flexibly specify the various
 aspects of a project.  In addition, the appearance of the different tabs is
-also driven from the XML configuration files, so that different parts of
+also driven from the XML configuration files\index{XML configuration files}, so that different parts of
 the underlying functionality can be dynamically enabled and displayed, or
 hidden.  XML stands for eXtensible Markup Language, and is a generalization
 of the HTML markup language used to display web pages.  It is more
@@ -133,8 +133,8 @@ inherit from other project configurations.  In practical terms for a user,
 this means that you can use default projects as templates, or parents, for
 another project you want to create that is mostly the same as an existing
 project, but has some changes from it.  The new project is called a
-\emph{child} project.  By default, it inherits all the information
-contained in the \emph{parent} project.  However, it can override any
+\emph{child} project\index{child project}.  By default, it inherits all the information
+contained in the \emph{parent} project\index{parent project}.  However, it can override any
 information inherited from the parent, and add additional information.
 
 Users should create their own projects in the \file{opus/project_configs}
