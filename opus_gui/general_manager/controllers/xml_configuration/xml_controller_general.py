@@ -14,7 +14,7 @@
 from PyQt4.QtGui import QMenu, QCursor
 
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class XmlController_General(XmlController):
     def __init__(self, manager):

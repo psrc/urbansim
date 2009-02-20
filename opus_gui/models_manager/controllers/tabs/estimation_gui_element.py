@@ -16,7 +16,7 @@ from PyQt4.QtGui import QWidget, QIcon, QMessageBox
 from opus_gui.models_manager.run.run_estimation import RunEstimationThread
 from opus_gui.models_manager.views.ui_estimation_gui_element import Ui_EstimationGuiElement
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class EstimationGuiElement(QWidget, Ui_EstimationGuiElement):
     def __init__(self, mainwindow, modelsManagerBase, estimation):

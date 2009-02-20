@@ -10,7 +10,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 
 import copy

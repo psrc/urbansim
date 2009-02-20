@@ -20,7 +20,7 @@ from PyQt4.QtGui import QMenu, QCursor, QFileDialog
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.data_manager.data_manager import get_tool_node_by_name, get_tool_library_node
 from opus_core.configurations.xml_configuration import XMLConfiguration
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
@@ -66,7 +66,7 @@ class XmlController_DataTools(XmlController):
         '''
         Creates and returns a new action for creating a parameter node.
         The parameter node will have the attribute 'type' set to type_name
-        and, if required is True, the attribute "required" will be "Required" 
+        and, if required is True, the attribute "required" will be "Required"
         (if required is False, attribute "required" will be "Optional")
         @param label (str) text to show on the menu
         @param type_name (str) the parameters type
@@ -100,7 +100,7 @@ class XmlController_DataTools(XmlController):
     def addNewToolSet(self):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
-        
+
         # First add the dummy toolset shell
         toolset_node = Element('Unnamed_Tool_Set', {'type': "tool_set"})
         self.model.insertRow(0, self.selectedIndex(), toolset_node)
@@ -108,9 +108,9 @@ class XmlController_DataTools(XmlController):
     def addNewToolGroup(self):
         ''' NO DOCUMENTATION '''
         assert self.hasSelectedItem()
-        
+
         # First add the dummy toolset shell
-        node = Element('Unnamed_Tool_Group', {'type': "tool_group", 
+        node = Element('Unnamed_Tool_Group', {'type': "tool_group",
                                      'setexpanded':'True'})
         self.model.insertRow(0, self.selectedIndex(), node)
 
@@ -169,7 +169,7 @@ class XmlController_DataTools(XmlController):
         window.show()
 
     def execToolConfig(self):
-        ''' 
+        '''
         Show the dialog box for executing a "tool config"
         A tool config is has a pointer to an existing tool (a "tool hook") but
         can provide an alternative configuration.
@@ -180,7 +180,7 @@ class XmlController_DataTools(XmlController):
         # this will run the tool with the configuration as it is specified in
         # the tool library. The configuration that is specified in the selected
         # 'tool config' is ignored.
-        
+
         # First we need to get the hooked node that we want to run
         node = self.selectedItem().node
         hooked_tool_name = node.find('tool_hook').text
@@ -192,7 +192,7 @@ class XmlController_DataTools(XmlController):
                     'but there is no tool with that name in this project.' %
                     hooked_tool_name))
             return
-        
+
         hooked_tool_node = get_tool_node_by_name(hooked_tool_name)
 
         # Open up a GUI element and populate with variable's
@@ -213,7 +213,7 @@ class XmlController_DataTools(XmlController):
         assert self.hasSelectedItem()
         # Node representing the set to execute
         tool_set_node = self.selectedItem().node
-        
+
         # map tool config nodes in set -> name of the hooked node
         tool_config_to_tool_name = {}
         tool_config_nodes = tool_set_node[:]
@@ -225,8 +225,8 @@ class XmlController_DataTools(XmlController):
             tool_file_name = str(hooked_tool_node.find('name').text).strip()
             tool_config_to_tool_name[tool_config_node] = tool_file_name
 
-        ExecuteToolSetGui(get_mainwindow_instance(), 
-            config_nodes, 
+        ExecuteToolSetGui(get_mainwindow_instance(),
+            config_nodes,
             config_to_filenames).show()
 
     def exportXMLToFile(self):
@@ -306,14 +306,14 @@ class XmlController_DataTools(XmlController):
 
         node = item.node
         menu = QMenu(self.view)
-        
+
         # Tool files are the "actual" tools
         if node.get('type') == "tool_file":
             menu.addAction(self.actExecToolFile)
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
-            
+
         # "Tool library is a collection of tool groups
         elif node.get('type') == "tool_library":
             menu.addAction(self.actAddToolGroup)
@@ -322,25 +322,25 @@ class XmlController_DataTools(XmlController):
         elif node.get('type') == "tool_group":
             menu.addAction(self.actAddToolFile)
 
-        # Param Template is the parameter node for the tools -- where 
+        # Param Template is the parameter node for the tools -- where
         # users can build up a list of parameters that gets passed to the
         # tool function
         elif node.get('type') == "param_template":
             map(menu.addAction, self.add_parameter_actions)
 
-        # A "tool config" is an alternative configuration for a tool that can be 
+        # A "tool config" is an alternative configuration for a tool that can be
         # put in a Tool Set
         elif node.get('type') == "tool_config":
             menu.addAction(self.actExecToolConfig)
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
-            
+
         # "Tool sets" is a collection of multiple tool sets
         elif node.get('type') == "tool_sets":
             menu.addAction(self.actAddNewToolSet)
-            
-        # A Tool set is a collection of (alternative) configurations for 
+
+        # A Tool set is a collection of (alternative) configurations for
         # existing tools.
         elif node.get('type') == "tool_set":
             menu.addAction(self.actExecBatch)
@@ -349,7 +349,7 @@ class XmlController_DataTools(XmlController):
             menu.addSeparator()
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
-        
+
         # ?
         elif node.get('type') == "documentation_path":
             menu.addAction(self.actOpenDocumentation)

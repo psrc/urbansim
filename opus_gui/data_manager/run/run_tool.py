@@ -16,7 +16,7 @@
 from PyQt4.QtCore import QThread, SIGNAL
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class RunToolThread(QThread):
     def __init__(self,opusTool):

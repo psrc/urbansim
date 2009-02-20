@@ -14,7 +14,7 @@ import os, copy, tempfile
 
 from xml.etree.cElementTree import tostring, Element
 
-from opus_gui.main.controllers.mainwindow import update_mainwindow_title
+from opus_gui.main.controllers.instance_handlers import update_mainwindow_title
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 

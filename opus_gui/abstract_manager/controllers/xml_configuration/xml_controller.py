@@ -16,7 +16,7 @@ from copy import deepcopy
 from PyQt4.QtCore import QObject, SIGNAL, Qt
 from PyQt4.QtGui import QAction
 
-from opus_gui.main.controllers.mainwindow import get_db_connection_names
+from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 
 from opus_gui.abstract_manager.views.xml_view import XmlView
 from opus_gui.abstract_manager.models.xml_model import XmlModel
@@ -201,12 +201,12 @@ class XmlController(object):
         '''
         # TODO prevent renaming tag to the same name as an inherited
         # node in the same list
-        
+
         # XML-ify the name (since it's a tag)
         new_tag = new_tag.replace(' ', '_')
         # TODO this needs a more elaborate validation/renaming scheme
         # to catch odd naming
-        
+
         # Clone the node, remove it from the model and reinsert it
         node = deepcopy(item.node)
         node.tag = str(new_tag)
@@ -216,10 +216,10 @@ class XmlController(object):
         self.model.insertRow(item_row, parent_index, node)
 
         return False
-    
+
     def _get_unique_name(self, item):
         '''
-        looks at the other node in this level in order to generate a name 
+        looks at the other node in this level in order to generate a name
         that is unique.
         @param item (XmlItem) the item holding the node to find a new name for
         @return (String) a unique name for the new node.
@@ -230,7 +230,7 @@ class XmlController(object):
         taken_names = [n.tag for n in parent_node if n.get('type') == node.get('type')]
         copy_number = 0
         # The base case is to just append '_copy' to the base name.
-        # If that name is not available -- try _copy_1, _copy_2 etc 
+        # If that name is not available -- try _copy_1, _copy_2 etc
         # until we find a unique name
         try_name = '%s_copy' % (node.tag)
         while try_name in taken_names:

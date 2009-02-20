@@ -18,7 +18,7 @@ from opus_core.database_management.configurations.services_database_configuratio
 from opus_core.services.run_server.run_manager import RunManager
 from xml.etree.cElementTree import Element, SubElement
 
-from opus_gui.main.controllers.mainwindow import get_manager_instance
+from opus_gui.main.controllers.instance_handlers import get_manager_instance
 import os
 
 def get_batch_configuration(project, batch_name):
@@ -169,7 +169,7 @@ def update_available_runs(project, scenario_name = '?'):
             found_scenario_name = ''
         else:
             found_scenario_name = scenario_name
-            
+
         if cache_directory in existing_cache_directories or \
            not os.path.exists(cache_directory): continue
         start_year, end_year = run_resources['years']
@@ -193,13 +193,13 @@ def get_years_for_simulation_run(project, simulation_run_node):
         baseyear = int(project.find('scenario_manager/%s/base_year'%scenario_name).text)
     except:
         node = project.find('scenario_manager')
-        baseyear = -1    
+        baseyear = -1
         for child in node.getchildren():
             try:
                 baseyear = int(child.find('base_year').text)
                 break
             except: continue
-    
+
     return run_manager.get_years_run(cache_dir, baseyear = baseyear)
 
 def get_simulation_runs(project, update = False):

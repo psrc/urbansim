@@ -17,7 +17,7 @@ from opus_gui.scenarios_manager.controllers.tabs.simulation_gui_element import S
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.scenarios_manager.controllers.xml_configuration.xml_controller_scenarios import XmlController_Scenarios
 
-from opus_gui.main.controllers.mainwindow import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class ScenariosManager(AbstractManager):
     def __init__(self, base_widget, tab_widget, project):
