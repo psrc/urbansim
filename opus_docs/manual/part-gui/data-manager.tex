@@ -30,8 +30,8 @@ a \file{base_year_data} folder\index{base\_year\_data}, and a \file{runs} folder
 base_year_data folder will normally contain an Opus \file{database} folder.
 An Opus database folder\index{Opus database folder} is any folder containing Opus \file{datasets}.
 Often Opus database folders are titled with a year, such as 2000.  Opus
-datasets are folders containing Opus `data arrays.'  Opus datasets are
-equivalent to the tables in a database.  Opus data arrays are equivalent to
+datasets are folders containing Opus `data arrays.'  Opus datasets\index{Opus datasets} are
+equivalent to the tables in a database.  Opus data arrays\index{Opus data arrays} are equivalent to
 the columns in a table, and are simply numpy arrays that have been written
 to disk in a binary format.  See Figure \ref{fig:db-dataset-array}.
 
@@ -55,7 +55,7 @@ in a model and would be computed as needed.  See Chapter~\ref{chapter:expression
 for more details on expressions.
 
 \subsection{Viewing and Browsing an Opus Data table}
-To view and browse the contents of an Opus dataset, right-click a data table, then select 'View Dataset'.  This will bring up a new tab on the right-hand side of the Opus GUI window that will display some summary statistics about the dataset, and a table view of the raw data that can be browsed and sorted by clicking the column name.  See Figure \ref{view-and-browse} for an example of browsing a data table.
+To view and browse the contents of an Opus dataset\index{viewing datasets}, right-click a data table, then select 'View Dataset'.  This will bring up a new tab on the right-hand side of the Opus GUI window that will display some summary statistics about the dataset, and a table view of the raw data that can be browsed and sorted by clicking the column name.  See Figure \ref{view-and-browse} for an example of browsing a data table.
 
 \begin{figure}[htp]
 \begin{center}
@@ -66,7 +66,7 @@ To view and browse the contents of an Opus dataset, right-click a data table, th
 \end{figure}
 
 \subsection{Exporting an Opus Data table}
-An Opus dataset can be exported to another format for use in other applications.  By default there are 3 options: ESRI, SQL, and CSV.  To export a dataset, right-click a dataset, choose 'Export Opus dataset to,' then click your choice.  See Figure \ref{exporting} for the right-click menu.  You will then see a pop-up window with the respective export tool with the parameters partially filled in based on which dataset you clicked.  These are the same tools that you will find in the Tools tab of the Data Manager.  For more information on the individual tools see the help tab on each tool.
+An Opus dataset can be exported\index{exporting Opus dataset} to another format for use in other applications.  By default there are 3 options: ESRI, SQL, and CSV.  To export a dataset, right-click a dataset, choose 'Export Opus dataset to,' then click your choice.  See Figure \ref{exporting} for the right-click menu.  You will then see a pop-up window with the respective export tool with the parameters partially filled in based on which dataset you clicked.  These are the same tools that you will find in the Tools tab of the Data Manager.  For more information on the individual tools see the help tab on each tool.
 
 \begin{figure}[htp]
 \begin{center}
@@ -98,7 +98,7 @@ At the time of this writing new tools must be placed in the source tree at /opus
 Once a new tool and its associated XML is written properly, the Tool Library will display the tool and dynamically populate the pop-up dialog box with the proper parameters based on the XML configuration.  The tools are quite flexible.  Although the initial tool must be written using Python, there is no limit placed upon what one can do.  For starters, there are tools provided in the interface that make OS calls to external executables (e.g. ogr2ogr.exe), databases, and myriad other libraries to accomplish various tasks (e.g. ESRI geoprocessing).  Feel free to browse the source code for any provided tool along with the XML configuration to see some possibilities.
 
 \subsection{Tool Sets}
-Tool Sets are simply collections of tools from the Tool Library with parameters stored so they can be executed repeatedly or in order in a batch manner.  Tool Sets can contain any number of tools from the Library.  A new Tool Set can be created by right-clicking Tool_Sets and choosing 'Add new tool set.'  This adds a new Tool Set to the bottom of the list.  It can be renamed by double-clicking it and typing in a name, taking care to not use spaces or a leading integer as these are invalid in XML nodes.  Once you have a new Tool Set, tools from the Library can be added to it by right-clicking a Tool Set and choosing 'Add Tool to Tool set.'  See Figure \ref{addtool} for an example of what this looks like.
+Tool Sets\index{Tool sets} are simply collections of tools from the Tool Library with parameters stored so they can be executed repeatedly or in order in a batch manner.  Tool Sets can contain any number of tools from the Library.  A new Tool Set can be created by right-clicking Tool_Sets and choosing 'Add new tool set.'\index{adding new tool set}  This adds a new Tool Set to the bottom of the list.  It can be renamed\index{renaming new tool set} by double-clicking it and typing in a name, taking care to not use spaces or a leading integer as these are invalid in XML nodes.  Once you have a new Tool Set, tools from the Library can be added to it by right-clicking a Tool Set and choosing 'Add Tool to Tool set.'  See Figure \ref{addtool} for an example of what this looks like.
 
 \begin{figure}[htp]
 \begin{center}
