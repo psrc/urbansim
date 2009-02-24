@@ -31,7 +31,7 @@ from xml.etree.cElementTree import Element
 
 from opus_gui.results_manager.views.ui_results_browser import Ui_ResultsBrowser
 
-import pprint,string
+import pprint,string,os
 
 class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
     def __init__(self, opus_gui, fl, allVariablesGui, row = 0, initialParams = None, create_new_from_old = False):
@@ -635,6 +635,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
 
 class AllVariablesViewDependenciesGui(QDialog, Ui_AllVariablesViewDepsGui):
     def __init__(self, opus_gui, fl, file_path, name):
+        self.image_file = file_path
         QDialog.__init__(self, opus_gui, fl)
         self.setupUi(self)
         self.setModal(True)  #TODO: this shouldn't be necessary, but without it the window is unresponsive
@@ -647,3 +648,4 @@ class AllVariablesViewDependenciesGui(QDialog, Ui_AllVariablesViewDepsGui):
         
     def on_closeWindow_released(self):
         self.close()
+        os.remove(self.image_file)

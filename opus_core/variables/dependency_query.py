@@ -84,7 +84,21 @@ class DependencyQuery:
             raise "Model " + name + " not found."
         else:
             return model
-
+    
+    # returns a list of VariableNames a model depends on
+    def get_model_var_list(self, name):
+        ret = []
+        def rec(xs):
+           print xs
+           for x in xs:
+               if x == None: continue
+               v = self.get_var(x[0])
+               ret.append(VariableName(x[0]))
+               if v == None: continue
+               rec(v.get_current_dependencies())
+        rec(self.get_model_vars(name)[1])
+        return elim_dups(ret)
+    
     #get a dependency tree for a variable given its name
     def get_dep_tree_from_name(self, name):
         varclass = self.get_var(name)
@@ -142,12 +156,28 @@ class DependencyChart:
         ret.insert(0, "digraph G {")
         ret.append("    " + ("rankdir=LR\n" if lr else "") + "dpi=%d" % dpi)
         return ret
-
+    
+    #generates an image file (using shell calls to graphviz) from a tree
     def graph_tree(self, fi, tree, lr, dpi):
         out = self.tree_to_dot(tree, lr, dpi)
         out.append("}")
         write_file(fi + ".gv", '\n'.join(out))
         os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
+    
+    #return latex-formatted table of a model's depndencies
+    def model_table(self, model):
+        vs = groupBy(self.query.get_model_var_list(model), lambda x: x.get_dataset_name())
+        ret = []
+        for k in vs:
+            ret += [k, "\\begin{tabular}{|l|l|l|}","\\hline", \
+             "\\textbf{Column Name} & \\textbf{Data Type} & \\textbf{Description} \\"]
+            for x in vs[k]:
+                ret.append("\\hline")
+                ret.append("%s & integer & \\" % x.get_short_name())
+            ret.append("\\hline")
+            ret.append("\\end{tabular}")
+            ret.append("")
+        return '\n'.join(ret)
 
 #Utility Funcs
 
@@ -176,13 +206,33 @@ def extract_leaves(inp):
                     process(x[1])
     process(inp)
     return ret
+                
 
-#eliminates duplicates in a list.  
-def elim_dups(xs):
+#eliminates duplicates in a list.
+#if given a function uses that to generate the identifier for each item
+def elim_dups(xs, f=None):
     ret = []
+    if f == None:
+        for x in xs:
+            if x in ret: continue
+            ret.append(x)
+    else:
+        test_list = []
+        for x in xs:
+            v = f(x)
+            if v in test_list: continue
+            ret.append(x)
+            test_list.append(v)
+    return ret
+
+def groupBy(xs, f):
+    ret = {}
     for x in xs:
-        if x in ret: continue
-        ret.append(x)
+        v = f(x)
+        if(v in ret):
+            ret[v].append(x)
+        else:
+            ret[v] = [x]
     return ret
 
 # writes a text file
@@ -203,23 +253,26 @@ def pretty_tree(tree):
 
 #To use:
 #
-#python deep_deps.py -xeugene/configs/eugene_gridcell.xml
+#python dependency_query.py -xeugene/configs/eugene_gridcell.xml
 #This outputs each model in seperate gv files, and processes them with dot
 #
-#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout
+#python dependency_query.py -xeugene/configs/eugene_gridcell.xml -oout
 #This outputs all of the models and their dependencies into out.gv/.png
 #
-#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout -vurbansim.gridcell.total_improvement_value
+#python dependency_query.py -xeugene/configs/eugene_gridcell.xml -oout -vurbansim.gridcell.total_improvement_value
 #This outputs out.gv, and runs dot to yield out.png, with the dependencies of urbansim.gridcell.total_improvement_value charted.
 #
-#python deep_deps.py -xeugene/configs/eugene_gridcell.xml -oout -mland_price_model
+#python dependency_query.py -xeugene/configs/eugene_gridcell.xml -oout -mland_price_model
 #This outputs out.gv, and runs dot to yield out.png, with the dependencies of land_price_model charted.
+#
+#python dependency_query.py -xeugene/configs/eugene_gridcell.xml -ltable.tex -mland_price_model
+#This outputs a table.tex file which is a template for a table of the land_price_model dependencies.
 #
 #if -o is not given and -v or -m are, the variable or model name are used for the .gv/.png
 
 if __name__ == '__main__':
     parser = OptionParser()
-    parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
+    parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None,
                       help="file name of xml configuration")
     parser.add_option("-v", "--variable", dest="variable", default=None,
                       help="variable for which you want to chart dependencies")
@@ -227,6 +280,9 @@ if __name__ == '__main__':
                       help="model for which you want to chart dependencies")
     parser.add_option("-o", "--output", dest="output", default=None,
                       help="output image")
+    parser.add_option("-l", "--latex", dest="latex", default=None,
+                      help="latex output file")
+
 # TODO
 #    parser.add_option("-b", "--nobase", dest="nobase", default=None,
 #                      help="indicates to strip out base variables")
@@ -237,11 +293,14 @@ if __name__ == '__main__':
         raise "Requires an xml configuration argument."
 
     chart = DependencyChart(XMLConfiguration(options.xml_configuration))
-
-    temp = chart.query.vars_tree(chart.query.var_list)
-    print pretty_tree(temp)
+    #print chart.model_table(options.model)
+    #temp = chart.query.vars_tree(chart.query.var_list)
+    #print pretty_tree(chart.query.all_models_tree())
     
-    if options.variable != None:
+    if options.latex != None:
+        if options.model == None: raise "latex output requires specification of model"
+        write_file(options.latex, chart.model_table(options.model))
+    elif options.variable != None:
         chart.graph_variable(options.output, options.variable)
     elif options.model != None:
         chart.graph_model(options.output, options.model)
