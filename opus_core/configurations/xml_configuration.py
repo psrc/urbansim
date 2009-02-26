@@ -167,7 +167,7 @@ class XMLConfiguration(object):
         mtr_path = ('model_manager/model_system/%s/structure/prepare_for_estimate/models_to_run/' 
                     % model_name)
         mtr_node = self._find_node(mtr_path)
-        mtr_list = self._convert_node_to_data(mtr_node) if mtr_node is not None else None
+        mtr_list = self._convert_node_to_data(mtr_node) if mtr_node is not None else []
 
         # if config_changes_for_estimation is given, the model system only sees that list of models
         # so we need to manually append the given model
