@@ -154,40 +154,38 @@ class XMLConfiguration(object):
         self._merge_controllers(config)
         self._insert_expression_library(config)
 
-        # ignore the configuration changes for unspecified models
+        # we only need to check model specific overrides if the model is specified
         if model_name is None:
             return config
 
-        # get the model specific configuration changes
-        changes_dict = {}
+        config['model_name'] = model_name
 
-        # look for a models to run list in prepare for estimate
-        mtr_path = ('model_manager/model_system/%s/structure/'
-                'prepare_for_estimate/models_to_run/' %model_name)
-        mtr_element = self._find_node(mtr_path)
+        model_specific_overrides = {}
 
-        if mtr_element is None:
-            return config
+        # look if the configuration specifies a list of models to run before the given model when 
+        # estimating it.
+        mtr_path = ('model_manager/model_system/%s/structure/prepare_for_estimate/models_to_run/' 
+                    % model_name)
+        mtr_node = self._find_node(mtr_path)
+        mtr_list = self._convert_node_to_data(mtr_node) if mtr_node is not None else None
 
-        # list of models to run before estimating the model
-        mtr_list = self._convert_node_to_data(mtr_element)
-
-        # if config_changes_for_estimation is given, the model system uses it
-        # exclusively to specifiy what models to run. So we need to manually add
-        # this model. Model groups are specified different from regular models.
+        # if config_changes_for_estimation is given, the model system only sees that list of models
+        # so we need to manually append the given model
         if model_group is None:
-            mtr_list.append({model_name: ["estimate"]}) # regular model
+            mtr_list.append({model_name: ["estimate"]}) # append regular model
         else:
             group_members = {'group_members': [{model_group:['estimate']}]}
             mtr_list.append({model_name: group_members})
 
-        # override the list of models to run
-        changes_dict['models'] = mtr_list
+        if mtr_list is not None:
+            model_specific_overrides['models'] = mtr_list
 
-        # NOTE -- Here is the place to add support for additional model specific
+        # NOTE -- This is the place to add support for additional model specific
         # configuration like datasets_to_preload etc.
-
-        config['config_changes_for_estimation'] = {model_name: changes_dict}
+        
+        # The model system doesn't like it when it gets an empty config_changes_for_estimation
+        if len(model_specific_overrides) > 0:
+            config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):
@@ -211,9 +209,8 @@ class XMLConfiguration(object):
                 all_vars.append(v.text)
         # sort the list of variables to make it easier to test the results
         all_vars.sort()
-        # look for list of submodels
-        submodel_list = self.get_section('model_manager/model_system/' +
-                                         model_name + '/specification/')
+        # fetch list of submodels
+        submodel_list = self.get_section('model_manager/model_system/%s/specification/' % model_name)
         result = {}
         result['_definition_'] = all_vars
         if model_group is not None:
