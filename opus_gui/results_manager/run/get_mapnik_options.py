@@ -12,8 +12,8 @@
 # other acknowledgments.
 #
 
-from PyQt4.QtCore import SIGNAL, QString
-from PyQt4.QtGui import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog
+from PyQt4.QtCore import SIGNAL, QString, Qt
+from PyQt4.QtGui import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip, QPalette
 from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Dialog
 
 class MapOptions(QDialog, Ui_Dialog):
@@ -46,9 +46,61 @@ class MapOptions(QDialog, Ui_Dialog):
 
     def applyChanges(self, options_dict):
         def applyChangesHelper():
+            self.verifyInputCorrectness()
             self.setColorTableRows(options_dict)
             self.writeXML(options_dict)
         return applyChangesHelper
+    
+    def verifyInputCorrectness(self):
+        """
+        Verify correctness of the custom scale and custom labels, if necessary
+        """
+        # Verify custom scale
+        error_message = None
+        if self.cb_colorScalingType.currentText() == 'Custom Scaling':
+            scale_input = self.stringToList(self.le_customScale.text())
+            if (scale_input.__len__() != self.num_buckets+1):
+                error_message = 'Must have '+str(self.num_buckets+1)+' scale values'
+            else:
+                if scale_input[0].toUpper() == 'MIN':
+                    start_index = 1
+                else:
+                    start_index = 0
+                if scale_input[scale_input.__len__()-1].toUpper() == 'MAX':
+                    end_index = scale_input.__len__()-1
+                else:
+                    end_index = scale_input.__len__()
+                try:
+                    for i in range(start_index, end_index-1):
+                        if int(scale_input[i]) > int(scale_input[i+1]):
+                            error_message = 'The range \''+scale_input[i]+' to '+scale_input[i+1]+'\' is invalid'
+                except ValueError:
+                    error_message = 'Not all values are valid'       
+        
+        if error_message == None:
+            self.le_customScale.palette().setColor(QPalette.Base, Qt.white)
+            self.le_customScale.setToolTip('')
+        else:
+            self.le_customScale.palette().setColor(QPalette.Base, Qt.red)
+            self.le_customScale.setToolTip('Error: '+error_message)
+        
+        self.le_customScale.repaint()
+        
+        # Verify custom labels
+        error_message = None
+        if self.cb_labelType.currentText() == 'Custom Labels':
+            label_input = self.stringToList(self.le_customLabels.text())
+            if label_input.__len__() != self.num_buckets:
+                error_message = 'The number of labels does not equal the number of color buckets'
+        
+        if error_message == None:
+            self.le_customLabels.palette().setColor(QPalette.Base, Qt.white)
+            self.le_customLabels.setToolTip('')
+        else:
+            self.le_customLabels.palette().setColor(QPalette.Base, Qt.yellow)
+            self.le_customLabels.setToolTip('Warning: '+error_message)
+            
+        self.le_customLabels.repaint()
     
     def setColorTableRows(self, options_dict):
         """ set the rows of the color table """
@@ -251,7 +303,7 @@ class MapOptions(QDialog, Ui_Dialog):
         for i in range(list.__len__()-1):
             text += str(list[i]).strip() + ','
         if list.__len__() > 0:
-            text += list[list.__len__() -1]
+            text += list[list.__len__()-1]
         return text
     
     def stringToList(self, string):
