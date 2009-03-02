@@ -1,0 +1,39 @@
+<opus_project>
+  <general>
+    <project_name type="string">eugene_zone</project_name>
+    <description type="string">Eugene zone baseline</description>
+    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+    <dataset_pool_configuration type="class">
+      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['eugene_zone', 'eugene', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
+    </dataset_pool_configuration>
+
+  </general>
+
+  
+  <scenario_manager>
+    <Zone_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
+      <scenario_database_configuration type="string">mysql://urbansim:None@trondheim.cs.washington.edu/eugene_1980_baseyear_zone</scenario_database_configuration>
+      <others type="category">
+        <base_year type="integer">1980</base_year>
+        <years_to_run config_name="years" type="tuple">
+          <firstyear type="integer">1981</firstyear>
+          <lastyear type="integer">1985</lastyear>
+        </years_to_run>
+      </others>
+      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+      <creating_baseyear_cache_configuration type="class">
+        <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/runs</cache_directory_root>
+        <baseyear_cache type="class">
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</existing_cache_to_copy>
+        </baseyear_cache>
+      </creating_baseyear_cache_configuration>
+    </Zone_baseline>
+  </scenario_manager>
+
+  <!-- <years type="">(1981, 1985)</years> -->
+  <debuglevel type="integer">4</debuglevel>
+  <base_year type="integer">1980</base_year>
+  <cache_directory type="string"></cache_directory>
+</opus_project>
