@@ -247,17 +247,17 @@ Map visualizations\index{indicator visualizations!visualization types!map format
 indicator for every available year when it is executed on a
 simulation run. 
 
-Currently, the only availabe map format is Matplotlib, a Python mapping
-module that quickly produces low-quality images. Note that Matplotlib
-map is not intended to replace GIS-based mapping, which allows far more
-control and the overlay of other features for visual reference.  It is
-merely a quick tool to visualize data to get a sense of the spatial
-patterns in it. In order to support visualization in a GIS environment
-such as ArcGIS or QGIS, the results may be exported to a database or
-geodatabase environment, and the GIS software used to create a more
-interactive and flexible display of the data. See the following section
-for a description of how to export indicator results to a SQL database
-or a DBF file for use in external GIS tools.
+The available map format is Mapnik, a free toolkit for developing 
+mapping applications (http://mapnik.org/).  Note that the Mapnik maps 
+are not intended to replace GIS-based mapping, which allows far more 
+control and the overlay of other features for visual reference. It 
+is merely a quick tool to visualize data to get a sense of the 
+spatial patterns in it.  In order to support visualization in a 
+GIS environment such as ArcGIS or QGIS, the results may be exported 
+to a database or geodatabase environment, and the GIS software used 
+to create a more interactive and flexible display of the data. See 
+the following section for a description of how to export indicator 
+results to a SQL database or a DBF file for use in external GIS tools.
 
 \fbox{
 \begin{minipage}{.5\linewidth}
@@ -281,6 +281,214 @@ simulation results from before.
 \end{enumerate}
 \end{minipage}
 }
+
+To set the Mapnik map options, in the batch visualization creation 
+dialog window (shown above) select "Map" from the "Type:" drop-down menu, 
+then click the "Mapnik Map Options" button that will appear directly below the 
+"Format:" drop-down menu. In the Mapnik Map Options dialog window, all 
+of the mapping options can be set.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-dialog.png}
+\end{center}
+\caption{The map options dialog window showing default settings.}
+\label{fig:result-manager-mapnik-options-dialog}
+\end{figure}
+
+\emph{Number of Color Ranges}. This sets the number of 
+buckets to split the range of the values 
+being mapped in to. The drop-down menu allows you to choose a 
+number between 1 and 10.
+
+\emph{Color Scaling Type}. This drop-down menu 
+allows you to choose between "Linear Scaling" 
+and "Custom Scaling". Linear scaling will evenly divide of the 
+range of values to be mapped into buckets of the same size.  
+Custom scaling will let you specify how to divide the range of values 
+into the buckets. 
+
+\emph{Custom Scale}. If "Custom Scaling" is selected 
+as the Color Scaling Type, then 
+the values in this text field will be used to define the bucket 
+ranges. For example, if the following string is entered in 
+the Custom Scale text field "5, 100, 2000, 40000", then the bucket 
+ranges will be '5 to 100', '100 to 2000', and '2000 to 40000'.  
+Also, if either "min", "MIN", "max", or "MAX" is entered in the 
+Custom Scale text field, they will be replaced with the minimum 
+or maximum values of the values that are being mapped. For example, 
+"min,100,max" is a valid entry for Custom Scale.
+
+\emph{Label Type}. This drop-down menu allows 
+you to choose between "Range Values" and 
+"Custom Labels" to use as the labels on the color bar that will 
+be drawn in to the map image. Using range values means that the 
+boxes in the color bar will be labeled with the range of values that 
+are being colored with the color contained in the corresponding box. 
+Using custom labels allows you to manually enter the labels 
+for each box.
+
+\emph{Custom Labels:}. If "Custom Labels" is 
+selected as the Label Type, then the values 
+in this text field will be used to label the colored boxes in the 
+color bar. For example, if the following string is entered in 
+the Custom Labels text field "a,b,c,", then the first box will 
+be labeled "a", the second will be labeled "b", and the third 
+will be labeled "c".
+
+\emph{Color Scheme}. This drop-down menu allows you to choose between "Custom Color Scheme", 
+"Green", "Blue", "Red", and "Custom Graduated Colors". The color 
+buttons in the legend are buttons, that when pushed, cause a color 
+chooser dialog window to pop up that can be used to pick the color of 
+the box. If Custom Color Scheme is selected, then all manually-set colors 
+will be saved when the "Apply Changes" button is pushed, whereas all colors 
+will be over-written when the "Apply Changes" button is clicked if any other 
+color scheme option is selected. If Green, Blue, or Red is selected, the 
+boxes will be colored with pre-defined colors. Lastly, if Custom Graduated 
+Colors is selected, then the boxes will be colored in an even, graduated 
+scale where the range of colors starts at the current color of the box at 
+index 1 and ends at the current color of the box at the highest index.
+
+\emph{Diverge Colors On}. This gives you the option to 
+have two diverging colors. You have to option 
+"None" to split on none of the indices to use just one color scale, or 
+you have the option to split on any index from 1 to 10. The box at the 
+selected index will be set to white and the two color scales above and 
+below it will be set based on what color option is selected in the Color 
+Scheme and Diverging Color drop-down menus. Note that if "Custom Graduated Colors" 
+is selected in the Color Scheme drop-down menu, then the two color 
+scales above and below the box at the diverging index will have graduated 
+color scales and the option selected in the Diverging Color drop-down menu 
+will be ignored.
+
+\emph{Diverging Color}. This drop-down menu allows 
+you to choose between "Red", "Green", and "Blue".  
+This will set the color for the boxes with an index number lower than 
+the index number selected in the Diverge Colors On drop-down menu.
+
+\clearpage
+\heading{Examples of how to create default and custom maps}
+
+\emph{Create a default map}. To create a map with the default settings 
+(using the Eugene gridcell project), create an indicator batch and 
+in the batch indicator visualization dialog window, , set Type to 
+"Map", set Dataset name to "zone", and select "number_of_jobs" to be 
+included in the current visualization.  Then run the indicator batch on 
+a simulation. This will produce a map with the default 
+settings of 10 color ranges, colored green, where each color range is 
+the same size and linearly increasing from light green to dark green.
+For instructions on how to create and run an indicator batch see section
+\ref{sec:batch-indicator-configuration}. The map will look like the 
+map shown below.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=\textwidth]{part-gui/images/sample-map-default-settings.png}
+\end{center}
+\caption{A Mapnik map colored with the default color scheme.}
+\label{fig:sample-map-default-settings}
+\end{figure}
+\clearpage
+
+\emph{Create a custom map}. To create a customized map, 
+open the batch indicator visualization window (see section 
+\ref{sec:batch-indicator-configuration} for information on 
+how to do this), for the map created in the \emph{Create a default map}
+section and click on the Mapnik Map Options button that is directly 
+below the Format drop-down menu.
+
+Suppose that we would like to create the same map again, but this time 
+with 9 color ranges, custom ranges, custom labels, and a diverging color 
+scheme where all values from 0 to 300 are colored with gradually lighter 
+shades of blue and all values from 300 to 4000 are colored with gradually 
+darker shades of red. As a side note, the option to use a diverging color 
+scheme exists primarily to allow the coloring scheme to differentiate 
+between positive and negative values.  However, all values in 
+this example are all greater than or equal to zero.
+
+Select "9" in the Number of Color Ranges drop-down menu, select 
+"Custom Scaling" in the Color Scaling Type menu, enter 
+"0,50,100,150,200,300,400,500,1000,4000" in the Custom Scale text field, 
+select "Custom Labels" in the Label Type menu, enter "a,b,c,d,e,f,g,h,i" 
+in the Custom Labels text field, select"Red" in the Color Scheme menu, 
+select "6" in the Diverge Colors On menu, select "Blue" in the Diverging 
+Color menu, and the press the Apply Changes button.
+
+The color box at the index specified in the Diverge Colors On menu 
+will be set to white. This color can be changed to a light pink 
+color by clicking on the box to bring up a dialog window that lets 
+you choose a new color. From the color chooser dialog window, select 
+a light pink color and press OK.  Change the selected option in the 
+Color Scheme menu to "Custom Color Scheme" so that your custom color 
+for the box at index 6 will be saved when the Apply Changes button 
+is pressed, and then press the Apply Changes button. The mapnik 
+options dialog window should look like the screenshot pictured below. 
+The map that will be created after the indicator batch has been run 
+is also shown below. (see section \ref{sec:batch-indicator-configuration}
+for information on how to run an indicator batch)
+
+\begin{figure}[hb]
+\begin{center}
+\includegraphics[width=3in]{part-gui/images/result-manager-custom-mapnik-settings.png}
+\end{center}
+\caption{The Mapnik map options window showing custom settings.}
+\label{fig:result-manager-custom-mapnik-settings}
+\end{figure}
+\clearpage
+
+\begin{figure}[hbp]
+\begin{center}
+\includegraphics[width=\textwidth]{part-gui/images/sample-map-custom-settings.png}
+\end{center}
+\caption{A Mapnik map with a custom color scheme.}
+\label{fig:sample-map-custom-settings}
+\end{figure}
+\clearpage
+
+\emph{Create a custom graduated color scheme}. 
+To create a map with a custom graduated color scale, 
+re-open the Mapnik Options dialog window for the map 
+created in the \emph{Create a custom map} section and select 
+"Custom Graduated Colors" from the Color Scheme menu.  Click 
+on the box in row 1 and select a light shade yellow, click on 
+the box in row 9 and select a bright shade of blue, and click 
+Apply Changes. The colors in boxes 2 through 8 will then be automatically set 
+to create a graduated color scheme that spans from light 
+yellow to bright blue. The mapnik options window and resulting 
+map are shown below.
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-example-2.png}
+\end{center}
+\caption{The Mapnik map options window showing a custom graduated color scheme.}
+\label{fig:result-manager-mapnik-options-example-2}
+\end{figure}
+
+\begin{figure}[hbp]
+\begin{center}
+\includegraphics[width=\textwidth]{part-gui/images/sample-map-custom-settings-2.png}
+\end{center}
+\caption{A Mapnik map with a custom graduated color scheme.}
+\label{fig:sample-map-custom-settings-2}
+\end{figure}
+\clearpage
+
+\emph{Create a diverging custom graduated color scheme}. The graduated color 
+schemes can also diverge on an index. Shown below is the Mapnik options 
+dialog window with the same settings as set in the 
+\emph{Create a custom graduated color scheme} section, 
+but the selected option in the Diverge Colors On has been changed 
+from "None" to "5".
+
+\begin{figure}[hb]
+\begin{center}
+\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-example-3.png}
+\end{center}
+\caption{The Mapnik map options window showing a diverging custom graduated color scheme.}
+\label{fig:result-manager-mapnik-options-example-3}
+\end{figure}
+\clearpage
 
 \heading{Format options for tables}
 
