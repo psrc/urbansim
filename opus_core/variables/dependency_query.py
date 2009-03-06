@@ -18,6 +18,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from opus_core.variables.variable_factory import VariableFactory
+from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
 from numpy import where, array
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
@@ -37,18 +38,20 @@ class DependencyQuery:
         #this collects all the variables models depend on
         self.var_tree = []
         self.var_list = []
-        for x in config.get_section('model_manager/model_system'):
-            spec = config.get_section('model_manager/model_system/' + x + '/specification')
-            if spec != None:
-                fst = spec.keys()[0]
-                if fst != 'submodel': spec = spec[fst]
-                l = []
-                for y in spec['submodel']['variables']:
-                    for k in lib.keys():
-                        if k[1] == y:
-                            l.append((lib[k], []))
-                            self.var_list.append(lib[k])
-                self.var_tree.append((x, l))
+        #TODO: if we update to ElementTree 1.3, use
+        # model_manager/model_system//specification/[@type='submodel']/variables
+        for x in config._find_node('model_manager/model_system//specification'):
+            l = []
+            for y in x:
+                if y.get('type') == 'submodel':
+                    t = y.find('variables')
+                    if len(t) > 0:
+                        for z in config._convert_variable_list_to_data(t[0]):
+                            for k in lib.keys():
+                                if k[1] == z:
+                                    l.append((lib[k], []))
+                                    self.var_list.append(lib[k])
+            self.var_tree.append((x, l))
 
     #given a name, return an instance of Variable
     def get_var(self, name):
@@ -89,14 +92,10 @@ class DependencyQuery:
     def get_model_var_list(self, name):
         ret = []
         def rec(xs):
-           print xs
-           for x in xs:
-               if x == None: continue
-               v = self.get_var(x[0])
-               ret.append(VariableName(x[0]))
-               if v == None: continue
-               rec(v.get_current_dependencies())
-        rec(self.get_model_vars(name)[1])
+            for x in xs:
+                ret.append(VariableName(x[0]))
+                rec(x[1])
+        rec(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name)[1])))
         return elim_dups(ret)
     
     #get a dependency tree for a variable given its name
@@ -169,7 +168,8 @@ class DependencyChart:
         vs = groupBy(self.query.get_model_var_list(model), lambda x: x.get_dataset_name())
         ret = []
         for k in vs:
-            ret += [k, "\\begin{tabular}{|l|l|l|}","\\hline", \
+            if k == None: continue
+            ret += [k,"\\begin{tabular}{|l|l|l|}","\\hline", \
              "\\textbf{Column Name} & \\textbf{Data Type} & \\textbf{Description} \\"]
             for x in vs[k]:
                 ret.append("\\hline")
@@ -206,7 +206,6 @@ def extract_leaves(inp):
                     process(x[1])
     process(inp)
     return ret
-                
 
 #eliminates duplicates in a list.
 #if given a function uses that to generate the identifier for each item
@@ -283,10 +282,6 @@ if __name__ == '__main__':
     parser.add_option("-l", "--latex", dest="latex", default=None,
                       help="latex output file")
 
-# TODO
-#    parser.add_option("-b", "--nobase", dest="nobase", default=None,
-#                      help="indicates to strip out base variables")
-
     (options, args) = parser.parse_args()
     
     if options.xml_configuration == None:
@@ -296,6 +291,11 @@ if __name__ == '__main__':
     #print chart.model_table(options.model)
     #temp = chart.query.vars_tree(chart.query.var_list)
     #print pretty_tree(chart.query.all_models_tree())
+    
+    auto = AutogenVariableFactory("(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)")
+    auto._analyze_tree(auto._expr_parsetree)
+    auto._analyze_dataset_names()
+    print(auto._generate_compute_method())
     
     if options.latex != None:
         if options.model == None: raise "latex output requires specification of model"
