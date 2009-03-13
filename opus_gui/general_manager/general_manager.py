@@ -18,6 +18,14 @@ from opus_gui.general_manager.controllers.xml_configuration.xml_controller_gener
 Methods and Classes related to the General Manager
 '''
 
+def get_available_interaction_dataset_names(project):
+    '''
+    Get a list of the interaction dataset names that are available in the project.
+    @param project (OpusProject): project to extract datasets from
+    @return: list of dataset names (list(String))
+    '''
+    return [x for x in get_available_dataset_names(project) if x.find('_x_')>-1]
+
 def get_available_dataset_names(project):
     '''
     Get a list of the dataset names that are available in the project.

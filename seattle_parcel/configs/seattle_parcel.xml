@@ -9,7 +9,6 @@
       <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim','opus_core']</package_order>
     </dataset_pool_configuration>
-    <available_datasets type="list">['building','parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
     <model_system>

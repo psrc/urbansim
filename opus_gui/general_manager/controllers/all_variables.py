@@ -29,7 +29,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.variables.dependency_query import DependencyChart
 from xml.etree.cElementTree import Element
 
-from opus_gui.results_manager.views.ui_results_browser import Ui_ResultsBrowser
+from opus_gui.general_manager.general_manager import get_available_interaction_dataset_names
 
 import pprint,string,os
 
@@ -172,11 +172,18 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         definition = str(self.textEdit.toPlainText())
         n = VariableName(expression = definition)
         dataset_name = n.get_dataset_name()
+        project = self.opus_gui.project
+        
         if dataset_name is None:
             # TODO: FIX THIS -- LOOK UP THE TUPLE IN THE AVAILABLE DATASETS
             p = n.get_interaction_set_names()
+            interaction_datasets = get_available_interaction_dataset_names(project = project)
             if len(p)==2:
                 dataset_name = p[0] + '_x_' + p[1]
+                if dataset_name not in interaction_datasets:
+                    dataset_name = p[1] + '_x_' + p[0]
+                    if dataset_name not in interaction_datasets:
+                        raise Exception('Could not find the %s interaction dataset in the available datasets.'%dataset_name)
             else:
                 raise ValueError, "couldn't determine interaction set name for %s" % definition
         return (variable_name, dataset_name, use, source, definition)
