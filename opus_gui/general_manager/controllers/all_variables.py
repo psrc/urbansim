@@ -175,7 +175,6 @@ class AllVariablesNewGui(QDialog, Ui_AllVariablesNewGui):
         project = self.opus_gui.project
         
         if dataset_name is None:
-            # TODO: FIX THIS -- LOOK UP THE TUPLE IN THE AVAILABLE DATASETS
             p = n.get_interaction_set_names()
             interaction_datasets = get_available_interaction_dataset_names(project = project)
             if len(p)==2:
