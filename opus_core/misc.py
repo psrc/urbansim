@@ -240,7 +240,7 @@ def replace_string_in_files(directory, find, replace):
     Replace (recursively) all instances of find with replace for any file
     in directory.
     """
-    from opus_core.path import path
+    from opus_core.third_party.path import path
 
     dir = path(directory)
     for file in dir.walkfiles():

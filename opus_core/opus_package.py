@@ -13,7 +13,7 @@
 #
 
 import os, shutil
-from opus_core.path import path
+from opus_core.third_party.path import path
 from opus_core.logger import logger
 from opus_core.misc import copytree
 from opus_core.misc import replace_string_in_files
