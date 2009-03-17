@@ -1242,20 +1242,21 @@ class AbstractDataset(object):
 
     # This function is used to create a vector-based image for non-gridcell maps
     def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
-                 max_value=None, file=None, my_title="", filter=None, background=None, coordinate_system=None, # TODO: delete coordintate_system
-                 color_list=None, range_list=None, label_list=None):
+                 max_value=None, file=None, my_title="", filter=None, background=None,
+                color_list=None, range_list=None, label_list=None):
+
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
         'name' is the name of the attribute that is to be mapped
-        'xlab' is an optional label for the x-axis (not yet implemented)
-        'ylab' is an optional label for the y-axis (not yet implemented)
-        'min_value' is the minimum value that will be included in the color bar range (not yet implemented)
-        'max_value' is the maximum value that will be included in the color bar range (not yet implemented)
+        'xlab' is an optional label for the x-axis (not yet implemented - this was an option used for matplotlib maps)
+        'ylab' is an optional label for the y-axis (not yet implemented - this was an option used for matplotlib maps)
+        'min_value' is the minimum value that will be included in the color bar range (used for linear scale and replacing 'min' and 'max' keywords)
+        'max_value' is the maximum value that will be included in the color bar range (used for linear scale and replacing 'min' and 'max' keywords)
         'file' is the output filename of the PNG map 
         'my_title' is the text that will be printed at the top of the map image file
-        'filter' (not yet implemented)
-        'background' (not yet implemented)
+        'filter' (not yet implemented - this was an option used for matplotlib maps)
+        'background' (not yet implemented - this was an option used for matplotlib maps)
         'color_list' is a list of colors to use in the map
         'range_list' is a list of range boundaries that specify each bucket of values
         'label_list' is a list of labels that will be applied to the buckets of values
@@ -1303,8 +1304,14 @@ class AbstractDataset(object):
         m.background = Color('#f2eff9')
         s = Style()
         
-        max_val = attrib_arr.max()
-        min_val = attrib_arr.min()
+        if (max_value != None):
+            max_val = min(attrib_arr.max(), max_value)
+        else:
+            max_val = attrib_arr.max()
+        if (min_value != None):
+            min_val = max(attrib_arr.min(), min_value)
+        else:
+            min_val = attrib_arr.min()
         num_buckets = color_list.__len__()
 
         if (useDefaultValues or range_list == ['linear_scale']):
@@ -1331,8 +1338,8 @@ class AbstractDataset(object):
         for i in range(num_buckets):
             r = Rule()
             r.symbols.append(PolygonSymbolizer(Color(color_list[i])))
-            if (not unique_id == 'grid_id'):
-                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
+            #if (not unique_id == 'grid_id'): # a seperate function will be made for mapping gridcell maps
+            r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
             r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
             s.rules.append(r)
         

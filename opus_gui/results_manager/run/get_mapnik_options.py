@@ -17,15 +17,20 @@ from PyQt4.QtGui import QDialog, QApplication, QMainWindow, QTableWidgetItem, QP
 from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Dialog
 
 class MapOptions(QDialog, Ui_Dialog):
-    def __init__(self, parent = None, options_dict = None): #deleted: project = None, viz_name = 'default visualization name', 
+    def __init__(self, parent = None, options_dict = None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.show()
         self.connect(self.pb_applyChanges, SIGNAL("clicked()"), self.applyChanges(options_dict))
+        self.connect(self.cb_colorScalingType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
+        self.connect(self.cb_labelType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
+        self.connect(self.cb_colorScheme, SIGNAL("currentIndexChanged(int)"), self.greyOutComboBoxes)
+        self.connect(self.cb_divergeIndex, SIGNAL("currentIndexChanged(int)"), self.greyOutComboBoxes)
         self.loadXML(options_dict)
         self.initWindow(options_dict)
 
     def initWindow(self, options_dict):
+        # Perform actions that need to be executed once when the options window first opens
         if (options_dict['bucket_ranges'] == 'linear_scale'):
             self.cb_colorScalingType.setCurrentIndex(0)
         else:
@@ -38,6 +43,13 @@ class MapOptions(QDialog, Ui_Dialog):
             self.cb_labelType.setCurrentIndex(1)
             self.le_customLabels.setText(QString(options_dict['bucket_labels']))
             
+        self.greyOutLineEdits()
+        self.greyOutComboBoxes()
+        
+        self.le_customScale.setToolTip('This text field is only editable if "Custom Scaling" \nis selected as the Color Scaling Type')
+        self.le_customLabels.setToolTip('This text field is only editable if "Custom Labels" \nis selected as the Label Type')
+        self.cb_divergeIndex.setToolTip('The color boxes at indexes higher than the selected \nindex will be colored with the scheme selected in the \nColor Scheme menu and the color boxes with indexes \nless than the selected index will be colored with the \nscheme selected in the Diverging Color menu')
+ 
         self.cb_NumColRanges.setCurrentIndex(10-self.num_buckets)
         
         self.setRangeColumn(options_dict)
@@ -46,6 +58,7 @@ class MapOptions(QDialog, Ui_Dialog):
 
     def applyChanges(self, options_dict):
         def applyChangesHelper():
+            self.num_buckets = int(self.cb_NumColRanges.currentText())
             self.verifyInputCorrectness()
             self.setColorTableRows(options_dict)
             self.writeXML(options_dict)
@@ -102,9 +115,32 @@ class MapOptions(QDialog, Ui_Dialog):
             
         self.le_customLabels.repaint()
     
+    def greyOutLineEdits(self):
+        if self.cb_colorScalingType.currentText() == 'Linear Scaling':        
+            self.le_customScale.setEnabled(False)
+        else:
+            self.le_customScale.setEnabled(True)
+        if self.cb_labelType.currentText() == 'Range Values':
+            self.le_customLabels.setEnabled(False)
+        else:
+            self.le_customLabels.setEnabled(True)
+    
+    def greyOutComboBoxes(self):
+        color_scheme_sel = self.cb_colorScheme.currentText()
+        divergeIndex = self.cb_divergeIndex.currentIndex()
+        
+        if (color_scheme_sel == 'Custom Color Scheme'):
+            self.cb_divergeIndex.setEnabled(False)
+            self.cb_colorSchemeNeg.setEnabled(False)
+        elif (divergeIndex == 0 or color_scheme_sel == 'Custom Graduated Colors'):
+            self.cb_divergeIndex.setEnabled(True)
+            self.cb_colorSchemeNeg.setEnabled(False)
+        else:
+            self.cb_divergeIndex.setEnabled(True)
+            self.cb_colorSchemeNeg.setEnabled(True)
+
     def setColorTableRows(self, options_dict):
         """ set the rows of the color table """
-        self.num_buckets = int(self.cb_NumColRanges.currentText())
         self.tbl_Colors.setRowCount (self.num_buckets)
         
         self.setRangeList(options_dict)
@@ -165,7 +201,7 @@ class MapOptions(QDialog, Ui_Dialog):
         if (self.cb_colorScalingType.currentText() == 'Linear Scaling'):
             options_dict['bucket_ranges'] = 'linear_scale'
         elif(self.cb_colorScalingType.currentText() == 'Custom Scaling'): # use the custom scale
-            self.range_list = str(self.le_customScale.text()).split(',')
+            self.range_list = self.stringToList(self.le_customScale.text())
             options_dict['bucket_ranges'] = self.listToString(self.range_list)
             
     def setLabelList(self, options_dict):
@@ -173,13 +209,13 @@ class MapOptions(QDialog, Ui_Dialog):
             options_dict['bucket_labels'] = 'range_labels'
             self.setLabelListForRangeValues(options_dict)
         elif (self.cb_labelType.currentText() == 'Custom Labels'): # use the custom scale
-            self.label_list = str(self.le_customLabels.text()).split(',')
+            self.label_list = self.stringToList(self.le_customLabels.text())
             options_dict['bucket_labels'] = self.listToString(self.label_list)
         
     def setColorList(self):
         color_scheme_sel = self.cb_colorScheme.currentText()
         divergeIndex = self.cb_divergeIndex.currentIndex()
-                
+                        
         if (color_scheme_sel == 'Green' or color_scheme_sel == 'Red' or color_scheme_sel == 'Blue'):
             from numpy import array
             pre_defined_green = array( ['#e0eee0', '#c7e9c0', '#a1d99b', '#7ccd7c', '#74c476', '#41ab5d', '#238b45', '#006400', '#00441b', '#00340b'] ) 
@@ -267,6 +303,7 @@ class MapOptions(QDialog, Ui_Dialog):
         def chooseAndSaveColor():
             self.color_list[index] = QColorDialog.getColor().name()
             pb.setStyleSheet("QWidget { background-color: %s }" % self.color_list[index])
+            self.cb_colorScheme.setCurrentIndex(0) # set color scheme option to "Custom Color Scheme"
         return chooseAndSaveColor 
 
     def setLabelListForRangeValues(self, options_dict):

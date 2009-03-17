@@ -81,9 +81,16 @@ class BatchProcessor(object):
                     args['output_style'] = int(str(params['output_style']))
 
         elif visualization_type == 'mapnik_map':
-            args['bucket_labels'] = params['bucket_labels']
-            args['bucket_ranges'] = params['bucket_ranges']
-            args['bucket_colors'] = params['bucket_colors']
+            try:
+                args['bucket_labels'] = params['bucket_labels']
+                args['bucket_ranges'] = params['bucket_ranges']
+                args['bucket_colors'] = params['bucket_colors']
+            except KeyError: 
+                # these are the default bucket label, range, and color values
+                # these default values are also hard-coded in opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization.py
+                args['bucket_labels'] = 'range_labels'
+                args['bucket_ranges'] = 'linear_scale'
+                args['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
         
         return args
 

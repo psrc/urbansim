@@ -46,10 +46,6 @@ class Map(AbstractIndicator):
         """Create a map for the given indicator, save it to the cache
         directory's 'indicators' sub-directory.
         """
-        
-        #TODO: determine the shapefile location and pass it to plot_map() as an arg
-        print 'cache dir', self.cache_directory
-        print 'storage_loc: ', self.get_storage_location()
 
         values = self._get_indicator(year, wrap = False)
         
