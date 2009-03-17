@@ -15,7 +15,7 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QObject, SIGNAL, QModelIndex, QTimer
-from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog, QImage, QPixmap
+from PyQt4.QtGui import QIcon, QAction, QMenu, QCursor, QMessageBox, QTableView, QDialog, QImage, QPixmap, QApplication
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.all_variables_table_model import AllVariablesTableModel
@@ -30,6 +30,8 @@ from opus_core.variables.dependency_query import DependencyChart
 from xml.etree.cElementTree import Element
 
 from opus_gui.general_manager.general_manager import get_available_interaction_dataset_names
+
+from opus_core.third_party.pydot import InvocationException
 
 import pprint,string,os
 
@@ -553,7 +555,11 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
     def viewDependencies(self):
         chart = DependencyChart(self.opus_gui.project.xml_config)
-        chart.graph_variable("temp", str(self.tm.arraydata[self.currentIndex.row()][5]), False)
+        try:
+            chart.graph_variable("temp", str(self.tm.arraydata[self.currentIndex.row()][5]), False)
+        except InvocationException, x:
+            QMessageBox.critical(self, "Critical", "Viewing variable dependencies requires GraphViz.\n" + str(x))
+            raise
         #chart.graph_all("temp")
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = AllVariablesViewDependenciesGui(self.opus_gui, flags, "temp.png",
@@ -650,7 +656,8 @@ class AllVariablesViewDependenciesGui(QDialog, Ui_AllVariablesViewDepsGui):
         pix = QPixmap.fromImage(QImage(QString(file_path)))
         self.label.setPixmap(pix)
         self.scrollAreaWidgetContents.setMinimumSize(pix.width(), pix.height())
-        self.resize(pix.width() + 35, pix.height() + 80)
+        rect = QApplication.desktop().screenGeometry(self)
+        self.resize(min(rect.width(), pix.width() + 35), min(rect.height(), pix.height() + 80))
         
     def on_closeWindow_released(self):
         self.close()

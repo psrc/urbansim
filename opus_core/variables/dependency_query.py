@@ -25,6 +25,8 @@ from opus_core.configurations.xml_configuration import XMLConfiguration
 import os, sys
 from optparse import OptionParser
 
+from opus_core.third_party.pydot import Dot, Edge, Node
+
 class DependencyQuery:
     def __init__(self, config):
         self.factory = VariableFactory()
@@ -144,24 +146,23 @@ class DependencyChart:
     def tree_to_dot(self, trees, lr=True, dpi=60):
         ret = []
         trans = {"primary":"[ shape=diamond ]", "model":"[ shape=box ]"}
-        def write_edges(tree):
-            for x in tree[1]:
-                ret.append("    \"" + tree[0] + "\" -> \"" + x[0] + "\"")
-                write_edges(x)
-            if len(tree) > 2:
-                ret.append("    \"" + tree[0] + "\"" + trans[tree[2]])
-        map(write_edges, trees)
+
         ret = elim_dups(ret)
         ret.insert(0, "digraph G {")
         ret.append("    " + ("rankdir=LR\n" if lr else "") + "dpi=%d" % dpi)
         return ret
     
-    #generates an image file (using shell calls to graphviz) from a tree
-    def graph_tree(self, fi, tree, lr, dpi):
-        out = self.tree_to_dot(tree, lr, dpi)
-        out.append("}")
-        write_file(fi + ".gv", '\n'.join(out))
-        os.system("dot -Tpng -o" + fi + ".png " + fi + ".gv")
+    #generates an image file (using pydot) from a tree
+    def graph_tree(self, fi, trees, lr, dpi):
+        dot = Dot(rankdir=("LR" if lr else "TB"), dpi=str(dpi))
+        def write_edges(tree):
+            for x in tree[1]:
+                dot.add_edge(Edge(tree[0], x[0]))
+                write_edges(x)
+            if len(tree) > 2:
+                dot.add_node(Node(tree[0], shape = {"primary":"diamond", "model":"box"}[tree[2]]))
+        map(write_edges, trees)
+        dot.write_png(fi + ".png")
     
     #return latex-formatted table of a model's depndencies
     def model_table(self, model):
