@@ -90,15 +90,17 @@ class BuildingConstructionModel(Model):
 
         # from the velocity function determine the amount to be built for each component (in %)
         if velocity_function_set is not None:
-            development_amount = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development"], 
+            cummulative_amount_of_development = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development"], 
+                                                                      dataset_pool=dataset_pool)
+            percent_of_development_this_year = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.percent_of_development_this_year"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
-            development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
-        
+            percent_of_development_this_year = resize(array([100], dtype="int32"), proposal_component_set.size())
+                    
         # amount to be built
         to_be_built = proposal_component_set.compute_variables([
                     'urbansim_parcel.development_project_proposal_component.units_proposed'],
-                                                 dataset_pool=dataset_pool)/100.0 * development_amount
+                                                 dataset_pool=dataset_pool)/100.0 * percent_of_development_this_year
         
         # initializing for new buildings
         max_building_id = building_dataset.get_id_attribute().max()
@@ -193,15 +195,15 @@ class BuildingConstructionModel(Model):
         # recompute the cummulative development amount
         if velocity_function_set is not None:
             # determine, if everything has been built or if it should be considered next year
-            development_amount = development_proposal_set.compute_variables([
+            cummulative_amount_of_development = development_proposal_set.compute_variables([
               "development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development)/urbansim_parcel.development_project_proposal.number_of_components"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
             ## TODO: need to be reviewed, probably by Hana
             ## changed from proposal_component_set to development_proposal_set
             ## so it will have the same shape as is_delayed_or_active
-            development_amount = resize(array([100], dtype="int32"), development_proposal_set.size())
-        will_be_delayed = development_amount < 100
+            cummulative_amount_of_development = resize(array([100], dtype="int32"), development_proposal_set.size())
+        will_be_delayed = cummulative_amount_of_development < 100
         velocity_idx = where(logical_and(is_delayed_or_active, will_be_delayed))[0]
         if velocity_idx.size > 0:
             # for the unfinished projects set the status_id to id_with_velocity 
