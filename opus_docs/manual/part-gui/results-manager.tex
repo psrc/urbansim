@@ -283,7 +283,10 @@ simulation results from before.
 }
 
 To set the Mapnik map options, in the batch visualization creation 
-dialog window (shown above) select "Map" from the "Type:" drop-down menu, 
+dialog window (shown above) by clicking on the Results tab, right-clicking 
+"`Indicator_batches"', right-clicking the new indicator batch, and 
+selecting the "`Add new indicator visualization..."' option. 
+Select "Map" from the "Type:" drop-down menu, 
 then click the "Mapnik Map Options" button that will appear directly below the 
 "Format:" drop-down menu. In the Mapnik Map Options dialog window, all 
 of the mapping options can be set.
@@ -365,6 +368,14 @@ will be ignored.
 you to choose between "Red", "Green", and "Blue".  
 This will set the color for the boxes with an index number lower than 
 the index number selected in the Diverge Colors On drop-down menu.
+Note: any selection made in this menu will be ignored if 
+"`Custom Color Scheme"' is selected in the Color Scheme drop-down menu.
+
+\emph{Apply Changes}. This will save the current settings to 
+the project XML file as well as update the Legend showing in this window.
+
+\emph{Close Window}. This will close the options window and discard any unsaved settings.
+
 
 \clearpage
 \heading{Examples of how to create default and custom maps}
@@ -374,10 +385,11 @@ the index number selected in the Diverge Colors On drop-down menu.
 in the batch indicator visualization dialog window, , set Type to 
 "Map", set Dataset name to "zone", and select "number_of_jobs" to be 
 included in the current visualization.  Then run the indicator batch on 
-a simulation. This will produce a map with the default 
+a simulation by right-clicking the indicator batch in the results 
+tab and selecting "`Run indicator batch on..."'. This will produce a map with the default 
 settings of 10 color ranges, colored green, where each color range is 
 the same size and linearly increasing from light green to dark green.
-For instructions on how to create and run an indicator batch see section
+For more instructions on how to create and run an indicator batch see section
 \ref{sec:batch-indicator-configuration}. The map will look like the 
 map shown below.
 
@@ -416,12 +428,16 @@ Color menu, and the press the Apply Changes button.
 
 The color box at the index specified in the Diverge Colors On menu 
 will be set to white. This color can be changed to a light pink 
-color by clicking on the box to bring up a dialog window that lets 
+color by clicking on the color box in the row specified in 
+the Diverge Colors On menu to bring up a dialog window that lets 
 you choose a new color. From the color chooser dialog window, select 
 a light pink color and press OK.  Change the selected option in the 
 Color Scheme menu to "Custom Color Scheme" so that your custom color 
 for the box at index 6 will be saved when the Apply Changes button 
-is pressed, and then press the Apply Changes button. The mapnik 
+is pressed, and then press the Apply Changes button. If 
+"`Custom Color Scheme is not selected, then when the Apply Changes 
+button is pressed, all colors will be reset based on the color scheme
+options currently selected. The mapnik 
 options dialog window should look like the screenshot pictured below. 
 The map that will be created after the indicator batch has been run 
 is also shown below. (see section \ref{sec:batch-indicator-configuration}
@@ -455,7 +471,8 @@ the box in row 9 and select a bright shade of blue, and click
 Apply Changes. The colors in boxes 2 through 8 will then be automatically set 
 to create a graduated color scheme that spans from light 
 yellow to bright blue. The mapnik options window and resulting 
-map are shown below.
+map are shown below. (see section \ref{sec:batch-indicator-configuration}
+for information on how to run an indicator batch)
 
 \begin{figure}[htp]
 \begin{center}
