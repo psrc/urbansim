@@ -25,7 +25,7 @@ class TestPackageSyntax(opus_unittest.OpusTestCase):
             OpusSyntaxChecker().check_syntax_for_opus_package(
                 self.modul, 
                 file_names_that_do_not_need_gpl = 
-                    ['wingdbstub\.py', 'ez_setup\.py', 'path\.py', 'opusmain_rc\.py', 'qrc_opusmain\.py', 'biogeme\.py', '.*_ui\.py$', '^ui_.*\.py$'])
+                    ['wingdbstub\.py', 'ez_setup\.py', 'path\.py', 'opusmain_rc\.py', 'qrc_opusmain\.py', 'biogeme\.py', '.*_ui\.py$', '^ui_.*\.py$', "pydot\.py"])
 
 if __name__ == "__main__":
     opus_unittest.main()
