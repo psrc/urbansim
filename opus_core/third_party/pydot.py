@@ -1,4 +1,3 @@
-# -*- coding: Latin-1 -*-
 """Graphviz's dot language Python interface.
 
 This module provides with a full interface to create handle modify
@@ -6,12 +5,12 @@ and process graphs in Graphviz's dot language.
 
 References:
 
-pydot Homepage:	http://www.dkbza.org/pydot.html
-Graphviz:	http://www.research.att.com/sw/tools/graphviz/
-DOT Language:	http://www.research.att.com/~erg/graphviz/info/lang.html
+pydot Homepage: http://www.dkbza.org/pydot.html
+Graphviz:       http://www.research.att.com/sw/tools/graphviz/
+DOT Language:   http://www.research.att.com/~erg/graphviz/info/lang.html
 
 Programmed and tested with Graphviz 1.16 and Python 2.3.4 on GNU/Linux
-by Ero Carrera (c) 2004	[ero@dkbza.org]
+by Ero Carrera (c) 2004 [ero@dkbza.org]
 
 Distributed under MIT license [http://opensource.org/licenses/mit-license.html].
 """
@@ -304,8 +303,8 @@ def graph_from_incidence_matrix(matrix, node_prefix='', directed=False):
             nodes.sort()
             
         if len(nodes) == 2:
-            graph.add_edge(	
-                Edge( node_prefix + abs(nodes[0]),	
+            graph.add_edge(
+                Edge( node_prefix + abs(nodes[0]),
                     node_prefix + nodes[1] ))
 
     if not directed:
@@ -750,7 +749,7 @@ class Edge(object,  Common ):
     All the attributes defined in the Graphviz dot language should
     be supported.
     
- 	Attributes can be set through the dynamically generated methods:
+    Attributes can be set through the dynamically generated methods:
     
      set_[attribute name], i.e. set_label, set_fontname
      
@@ -823,7 +822,7 @@ class Edge(object,  Common ):
             # If the graph is undirected, the edge has neither
             # source nor destination.
             #
-            if	( ( self.get_source()==edge.get_source() and self.get_destination()==edge.get_destination() ) or
+            if ( ( self.get_source()==edge.get_source() and self.get_destination()==edge.get_destination() ) or
                 ( edge.get_source() == get_destination() and self.get_destination() == edge.get_source() ) ):
                 return True
                 
@@ -877,7 +876,7 @@ class Edge(object,  Common ):
         else:
             edge = [ src ]
         
-        if	(self.get_parent_graph() and
+        if (self.get_parent_graph() and
             self.get_parent_graph().get_top_graph_type() and
             self.get_parent_graph().get_top_graph_type() == 'digraph' ):
             
@@ -1106,7 +1105,7 @@ class Graph(object, Common):
     def set_suppress_disconnected(self, val):
         """Suppress disconnected nodes in the output graph.
         
-        This option will skip nodes in the graph with no	incoming or outgoing
+        This option will skip nodes in the graph with no incoming or outgoing
         edges. This option works also for subgraphs and has effect only in the
         current graph/subgraph.
         """
@@ -1319,7 +1318,7 @@ class Graph(object, Common):
         Given a subgraph's name the corresponding
         Subgraph instance will be returned.
         
-        If multiple subgraphs exist with the same name,	a list of
+        If multiple subgraphs exist with the same name, a list of
         Subgraph instances is returned.
         If only one Subgraph exists, the instance is returned.
         None is returned otherwise.
@@ -1497,7 +1496,7 @@ class Subgraph(Graph):
     or using the instance's attributes:
     
      Subgraph.[attribute name], i.e.
-     	subgraph_instance.label, subgraph_instance.fontname
+     subgraph_instance.label, subgraph_instance.fontname
     """
     
     
@@ -1542,7 +1541,7 @@ class Cluster(Graph):
     or using the instance's attributes:
     
      Cluster.[attribute name], i.e.
-     	cluster_instance.color, cluster_instance.fontname
+     cluster_instance.color, cluster_instance.fontname
     """
     
 
@@ -1612,7 +1611,7 @@ class Dot(Graph):
         for attr in self.attributes:
             del dict['set_'+attr]
             del dict['get_'+attr]
-   			
+
         for k in [ x for x in dict.keys() if
             x.startswith('write_') or  x.startswith('create_') ]:
             
