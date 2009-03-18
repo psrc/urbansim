@@ -16,7 +16,7 @@ in Chapter~\ref{chap:scenarios-manager}) is to launch it from a command
 line. Opus contains a set of scripts that simplify the process of
 creating a base year cache, starting, and restarting a set of
 simulation runs. These scripts are a set of command line applications,
-or tools, in the \file{opus_core/tools} directory. This sectiondescribes how to run a simulation using these tools. 
+or tools, in the \file{opus_core/tools} directory. This sectiondescribes how to run a simulation using these tools. 
 
 All scripts described below print a help message when called with the
 \verb|-h| or \verb|--help| option.
@@ -38,7 +38,7 @@ it will use sqlite (a database management system that just uses local
 files). You can, however, update the appropriate settings in the XML
 to configure the services database to use a mysql, postgres, or mssql
 server. The services database is created automatically on the
-specified database server by Opus if it does not yet exist when it is needed.
+specified database server by Opus if it does not yet exist when it is needed.
 \subsubsection{Create Baseyear Cache}
 \label{sec:run-manager-baseyearcache}
 %
@@ -60,7 +60,7 @@ specified in the configuration as an entry \verb|'cache_directory'|. See also
 Section~\ref{sec:configuration} for configuration and cache control options.
 
 \subsubsection{Start a simulation using a Python Dictionary Configuration}
-\index{start a simulation}
+\index{starting a simulation}
 
 The configuration for a simulation is specified by a configuration object.
 Opus supports a configuration defined either as a Python dictionary, or as an xml project file
@@ -140,7 +140,7 @@ with the \verb|run_id| value, e.g. \file{run_342.2006_04_25_09_40}.
 \end{itemize}
 
 \subsubsection{Restart a simulation}
-\index{restart a simulation}
+\index{restarting a simulation}
 If you halt a run or it fails, you can restart it at the beginning of any year.
 To restart the run with \verb|run_id| 42 at the beginning of year 2005, do:
 
