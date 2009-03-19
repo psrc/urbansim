@@ -52,7 +52,7 @@ class OpusSyntaxChecker(object):
                 lines_with_tabs.append(line_counter)
         return lines_with_tabs
         
-    gpl_text = "under the terms of the GNU General Public License"
+    gpl_text = "See opus_docs/LICENSE"
     gpl_text = re.sub('[ ]+', '.*', gpl_text)    # replace white spaces with *, for regular expression
     def _has_GPL(self, file_name):
         """Return false if there is no GPL in this file's header. """
