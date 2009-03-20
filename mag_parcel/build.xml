@@ -1,5 +1,0 @@
-<project name="mag_parcel" default="unit-tests">
-
-	<import file="${basedir}/../opus_core/common.xml" />
-
-</project>
