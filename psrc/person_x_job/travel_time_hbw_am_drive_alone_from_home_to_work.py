@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class travel_time_hbw_am_drive_alone_from_home_to_work(abstract_travel_time_variable):

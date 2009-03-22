@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 from numpy import array, concatenate, sqrt, float32, logical_and

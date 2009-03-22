@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 from opus_core.store.storage import Storage
 #from opus_core.store.old.dbf_storage import dbf_storage as dbf_storage_old
 from opus_core.tests import opus_unittest

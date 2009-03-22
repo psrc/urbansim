@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.general_manager.controllers.xml_configuration.xml_controller_general import XmlController_General

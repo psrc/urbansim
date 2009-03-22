@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 # Note: even if PyDev complains that some of these imports are unused, generally they ARE
 # in fact used when executing the generated code.

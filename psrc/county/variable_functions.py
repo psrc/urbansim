@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
  
 def my_attribute_label(attribute_name):

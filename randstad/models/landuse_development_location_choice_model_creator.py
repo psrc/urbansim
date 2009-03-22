@@ -1,11 +1,11 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from randstad.models.landuse_development_location_choice_model import LandUseDevelopmentLocationChoiceModel

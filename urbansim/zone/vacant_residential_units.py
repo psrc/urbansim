@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 
 from variable_functions import my_attribute_label
 from urbansim.gridcell.vacant_residential_units import vacant_residential_units as gc_vacant_residential_units

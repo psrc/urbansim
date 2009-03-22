@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 # Parse tree patterns for use in autogenerating variable classes.
 # See the file utils/parsetree_pattern_generator for utility functions for generating new tree fragments.

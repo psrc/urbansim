@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 
 from numpy import arange, array, where, zeros, ones, concatenate, int32, int8, logical_not
 from opus_core.misc import ismember

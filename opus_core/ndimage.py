@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 # Functions to work around  numpy/scipy bug -- need to fix the char and num attributes of arrays with dtype==int32
 # to get them to work with ndimage.sum etc.  TODO: remove this if scipy bug gets fixed.

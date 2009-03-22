@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 from rpy import r, set_default_mode, NO_CONVERSION
 from numpy import zeros, float32, array
 from opus_core.estimation_procedure import EstimationProcedure

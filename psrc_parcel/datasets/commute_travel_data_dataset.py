@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 from urbansim.datasets.node_travel_data_dataset import NodeTravelDataDataset as UrbansimNodeTravelDataDataset
 from opus_core.logger import logger

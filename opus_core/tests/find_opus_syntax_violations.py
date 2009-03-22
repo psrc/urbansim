@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
 
 import os, re
 import glob
@@ -52,7 +52,7 @@ class OpusSyntaxChecker(object):
                 lines_with_tabs.append(line_counter)
         return lines_with_tabs
         
-    gpl_text = "See opus_docs/LICENSE"
+    gpl_text = "See opus_core/LICENSE"
     gpl_text = re.sub('[ ]+', '.*', gpl_text)    # replace white spaces with *, for regular expression
     def _has_GPL(self, file_name):
         """Return false if there is no GPL in this file's header. """
@@ -78,8 +78,8 @@ from shutil import rmtree
 class TestSyntaxChecker(opus_unittest.OpusTestCase):
     license = """
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE""" 
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE""" 
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')

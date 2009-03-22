@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 University of Washington
-# See opus_docs/LICENSE
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
 
 from urbansim.estimation.hlcm_parcel_estimation_config import run_configuration
 from urbansim.estimation.estimator import update_controller_by_specification_from_module
