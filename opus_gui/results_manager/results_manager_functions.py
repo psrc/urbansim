@@ -65,6 +65,12 @@ def get_available_run_nodes(project):
         return []
     return [node for node in runs_node if
             node.get('type') == 'source_data']
+    
+def delete_simulation_run(project, run_name):
+    run_node = project.find('results_manager/Simulation_runs/%s'%run_name)
+    get_manager_instance('results_manager').delete_run(run_node)
+
+    
 
 def add_simulation_run(project, cache_directory, scenario_name, run_name,
                        start_year, end_year, run_id):
