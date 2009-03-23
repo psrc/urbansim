@@ -198,8 +198,7 @@ class OpusModel(object):
             self.running = True
             self.run_name = run_name
             self.run_manager = run_manager
-            self.startedCallback(succeeded, 
-                                 run_id = run_id, 
+            self.startedCallback(run_id = run_id, 
                                  run_name = run_name, 
                                  scenario_name = self.modeltorun, 
                                  run_resources = config)
