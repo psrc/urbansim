@@ -555,7 +555,7 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
     def test_sample_uniform_coefficients(self):
         """Coefficients are sampled from U(x-0.5, x+0.5), where x is the coefficient value."""
         
-        from opus_core.pstat import chisqprob
+        from opus_core.third_party.pstat import chisqprob
         coef_values = array([0.5, -0.00001], dtype="float32")
         coef = Coefficients(names=array(["coef1", "coef2"]), values = coef_values)
 
@@ -580,7 +580,7 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
     def test_sample_uniform_0_1_coefficients(self):
         """ All coefficients are sampled from U(5,10). """
         
-        from opus_core.pstat import chisqprob
+        from opus_core.third_party.pstat import chisqprob
         coef_values = array([0,0], dtype="float32")
         coef = Coefficients(names=array(["coef1", "coef2"]), values = coef_values)
 
@@ -602,7 +602,7 @@ class CoefficientsTests(opus_unittest.OpusTestCase):
     def test_sample_coefficients_mixed_distr(self):
         """ 2 coefficients are sampled from different distributions, one stays the same. """
         
-        from opus_core.pstat import chisqprob
+        from opus_core.third_party.pstat import chisqprob
         coef_values = array([1, 0.5, 0.2], dtype="float32")
         se = array([0, 0.02, 0.001], dtype="float32")
         coef = Coefficients(names=array(["coef_uniform", "coef_const", "coef_normal"]), values = coef_values,

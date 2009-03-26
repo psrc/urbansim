@@ -6,7 +6,7 @@ from opus_core.bhhh_mnl_estimation import bhhh_mnl_estimation
 from opus_core.logger import logger
 from numpy import zeros,log,transpose,float32,dot,reshape,diagonal,sqrt, array, ones, where, arange
 from numpy.linalg import inv
-from opus_core.pstat import chisqprob
+from opus_core.third_party.pstat import chisqprob
 from opus_core.misc import get_indices_of_matched_items
 import time
 #import pdb

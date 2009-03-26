@@ -13,7 +13,7 @@ from numpy import ma
 
 from opus_core.variables.variable import ln
 from opus_core.logger import logger
-from opus_core.pstat import chisqprob
+from opus_core.third_party.pstat import chisqprob
 from opus_core.misc import get_host_name, try_transformation
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.configurations.database_server_configuration import DatabaseServerConfiguration
