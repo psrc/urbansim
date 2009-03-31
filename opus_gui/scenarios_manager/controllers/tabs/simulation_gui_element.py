@@ -11,7 +11,7 @@ from opus_core.services.run_server.run_manager import insert_auto_generated_cach
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 from opus_gui.results_manager.run.batch_processor import BatchProcessor
-from opus_gui.results_manager.results_manager_functions import get_available_batch_nodes
+from opus_gui.results_manager.results_manager_functions import get_available_batch_nodes, delete_simulation_run
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
@@ -248,29 +248,6 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         duplicate = False
         self.diagnostic_go_button.setEnabled(True)
 
-        run_name = str(self.leRunName.text())
-        if run_name == '':
-            run_name = None
-        else:
-            run_id = None
-            run_nodes = get_available_run_nodes(self.project)
-            for run_node in run_nodes:
-                existing_run_name = run_node.tag
-                if run_name == existing_run_name:
-                    duplicate = True
-                    r = run_node.get('run_id')
-                    if r is not None:
-                        run_id = int(r)
-                    break
-            if duplicate:
-                dlg_dup = OverwriteRunDialog(self)
-
-                if dlg_dup.exec_() == QDialog.Rejected:
-                    return
-
-                self.mainwindow.managers['results_manager'].delete_run(run_node = run_node)
-
-
         if self.running and not self.paused:
             # Take care of pausing a run
             success = self.runThread.pause()
@@ -286,6 +263,26 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 self.timer.start(1000)
                 self.pbnStartModel.setText(QString("Pause simulation run..."))
         elif not self.running:
+            run_name = str(self.leRunName.text())
+            if run_name == '':
+                run_name = None
+            else:
+                run_id = None
+                run_nodes = get_available_run_nodes(self.project)
+                for run_node in run_nodes:
+                    existing_run_name = run_node.tag
+                    if run_name == existing_run_name:
+                        duplicate = True
+                        r = run_node.get('run_id')
+                        if r is not None:
+                            run_id = int(r)
+                        break
+                if duplicate:
+                    dlg_dup = OverwriteRunDialog(self)
+
+                    if dlg_dup.exec_() == QDialog.Rejected:
+                        return
+                    delete_simulation_run(self.project, run_node.tag) # todo change to run_node.get('name')
             # Update the XML
             self.project.update_xml_config()
             self.updateConfigAndGuiForRun()
