@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog" >
+ <class>Mapnik_Options</class>
+ <widget class="QDialog" name="Mapnik_Options" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -103,6 +103,11 @@
       <item>
        <property name="text" >
         <string>Custom Scaling</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Custom Linear Scaling</string>
        </property>
       </item>
      </widget>
@@ -358,10 +363,13 @@
     <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="editTriggers" >
-    <set>QAbstractItemView::NoEditTriggers</set>
+    <set>QAbstractItemView::DoubleClicked</set>
    </property>
    <property name="showDropIndicator" stdset="0" >
     <bool>false</bool>
+   </property>
+   <property name="selectionMode" >
+    <enum>QAbstractItemView::SingleSelection</enum>
    </property>
    <row/>
    <row/>
@@ -437,12 +445,12 @@
   <connection>
    <sender>pb_closeWindow</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>Mapnik_Options</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>120</x>
-     <y>588</y>
+     <x>489</x>
+     <y>608</y>
     </hint>
     <hint type="destinationlabel" >
      <x>94</x>

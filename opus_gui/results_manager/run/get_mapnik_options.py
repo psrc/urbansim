@@ -4,9 +4,9 @@
 
 from PyQt4.QtCore import SIGNAL, QString, Qt
 from PyQt4.QtGui import QDialog, QApplication, QMainWindow, QTableWidgetItem, QPushButton, QColorDialog, QWidget, QToolTip, QPalette
-from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Dialog
+from opus_gui.results_manager.views.ui_mapnik_options_dialog import Ui_Mapnik_Options
 
-class MapOptions(QDialog, Ui_Dialog):
+class MapOptions(QDialog, Ui_Mapnik_Options):
     def __init__(self, parent = None, options_dict = None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -18,7 +18,8 @@ class MapOptions(QDialog, Ui_Dialog):
         self.connect(self.cb_divergeIndex, SIGNAL("currentIndexChanged(int)"), self.greyOutComboBoxes)
         self.loadXML(options_dict)
         self.initWindow(options_dict)
-
+        self.connect(self.tbl_Colors, SIGNAL('itemChanged(QTableWidgetItem *)'), self.readTableCellInput)
+            
     def initWindow(self, options_dict):
         # Perform actions that need to be executed once when the options window first opens
         if (options_dict['bucket_ranges'] == 'linear_scale'):
@@ -41,8 +42,9 @@ class MapOptions(QDialog, Ui_Dialog):
         self.cb_divergeIndex.setToolTip('The color boxes at indexes higher than the selected \nindex will be colored with the scheme selected in the \nColor Scheme menu and the color boxes with indexes \nless than the selected index will be colored with the \nscheme selected in the Diverging Color menu')
  
         self.cb_NumColRanges.setCurrentIndex(10-self.num_buckets)
+        self.tbl_Colors.setRowCount(self.num_buckets)
         
-        self.setRangeColumn(options_dict)
+        self.setRangeColumn()
         self.setLabelColumn()
         self.setColorColumn()
 
@@ -62,7 +64,7 @@ class MapOptions(QDialog, Ui_Dialog):
         error_message = None
         if self.cb_colorScalingType.currentText() == 'Custom Scaling':
             scale_input = self.stringToList(self.le_customScale.text())
-            if (scale_input.__len__() != self.num_buckets+1):
+            if scale_input.__len__() != self.num_buckets+1:
                 error_message = 'Must have '+str(self.num_buckets+1)+' scale values'
             else:
                 if scale_input[0].toUpper() == 'MIN':
@@ -75,10 +77,20 @@ class MapOptions(QDialog, Ui_Dialog):
                     end_index = scale_input.__len__()
                 try:
                     for i in range(start_index, end_index-1):
-                        if int(scale_input[i]) > int(scale_input[i+1]):
+                        if float(scale_input[i]) > float(scale_input[i+1]):
                             error_message = 'The range \''+scale_input[i]+' to '+scale_input[i+1]+'\' is invalid'
                 except ValueError:
-                    error_message = 'Not all values are valid'       
+                    error_message = 'Not all values are valid'
+                    
+        if self.cb_colorScalingType.currentText() == 'Custom Linear Scaling':
+            scale_input = self.stringToList(self.le_customScale.text())
+            if scale_input.__len__() != 2:
+                error_message = 'Must have 2 scale values'
+            try:
+                if float(scale_input[0]) > float(scale_input[1]):
+                    error_message = 'The range \''+scale_input[0]+' to '+scale_input[1]+'\' is invalid'
+            except ValueError:
+                error_message = 'Both values must be numbers'
         
         if error_message == None:
             self.le_customScale.palette().setColor(QPalette.Base, Qt.white)
@@ -131,19 +143,20 @@ class MapOptions(QDialog, Ui_Dialog):
 
     def setColorTableRows(self, options_dict):
         """ set the rows of the color table """
-        self.tbl_Colors.setRowCount (self.num_buckets)
+        self.tbl_Colors.setRowCount(self.num_buckets)
         
         self.setRangeList(options_dict)
-        self.setRangeColumn(options_dict)
+        self.setRangeColumn()
         
         self.setLabelList(options_dict)
+        
         self.setLabelColumn()
             
         self.setColorList()
         self.setColorColumn()
         
-    def setRangeColumn(self, options_dict):
-        if (options_dict['bucket_ranges'] == 'linear_scale'):
+    def setRangeColumn(self):
+        if self.cb_colorScalingType.currentText() == 'Linear Scaling':
             for i in range(self.num_buckets):
                 if i == 0:
                     input_str = 'MIN'
@@ -155,9 +168,9 @@ class MapOptions(QDialog, Ui_Dialog):
                     self.tbl_Colors.item(i, 1).setText(input_str)
                 else:
                     self.tbl_Colors.setItem(i, 1, QTableWidgetItem(input_str))
-        else:
+        else: # self.cb_colorScalingType.currentText() == 'Custom Scaling' or 'Custom Linear Scaling'
             self.range_list = self.range_list[0:self.num_buckets+1]
-            for i in range(self.num_buckets):
+            for i in range(0,self.num_buckets):
                 if i < self.range_list.__len__()-1:
                     input_str = str(self.range_list[i]).strip() + " to " + str(self.range_list[i+1]).strip()
                 else:
@@ -181,7 +194,7 @@ class MapOptions(QDialog, Ui_Dialog):
 
     def setColorColumn(self):
         self.color_list = self.color_list[0:self.num_buckets]
-        for i in range(self.color_list.__len__()):
+        for i in range(self.num_buckets):
             colorPB = QPushButton()
             colorPB.setStyleSheet("QWidget { background-color: %s }" % self.color_list[i])
             colorPB.connect(colorPB, SIGNAL('clicked()'), self.makeChooseColor(colorPB,i))
@@ -189,10 +202,27 @@ class MapOptions(QDialog, Ui_Dialog):
     
     def setRangeList(self, options_dict):
         if (self.cb_colorScalingType.currentText() == 'Linear Scaling'):
+            self.range_list = []
+            self.range_list.append('MIN')
+            for i in range(self.num_buckets-1):
+                self.range_list.append('')
+            self.range_list.append('MAX')
             options_dict['bucket_ranges'] = 'linear_scale'
-        elif(self.cb_colorScalingType.currentText() == 'Custom Scaling'): # use the custom scale
+        elif (self.cb_colorScalingType.currentText() == 'Custom Scaling'): # use the custom scale
             self.range_list = self.stringToList(self.le_customScale.text())
             options_dict['bucket_ranges'] = self.listToString(self.range_list)
+        elif (self.cb_colorScalingType.currentText() == 'Custom Linear Scaling'):
+            new_input = str(self.le_customScale.text()).split(',')
+            if (new_input.__len__() == 2):
+                lower_bound = float(new_input[0])
+                upper_bound = float(new_input[1])
+                bucket_range = (upper_bound-lower_bound)/self.num_buckets
+                self.range_list = []
+                self.range_list.append(str(lower_bound))
+                for i in range(1,self.num_buckets):
+                    self.range_list.append(str(lower_bound+(i*bucket_range)))
+                self.range_list.append(str(upper_bound))
+                options_dict['bucket_ranges'] = self.listToString(self.range_list)
             
     def setLabelList(self, options_dict):
         if (self.cb_labelType.currentText() == 'Range Values'):
@@ -289,6 +319,42 @@ class MapOptions(QDialog, Ui_Dialog):
             else: # hex_val has more than one digits
                 return hex_val[hex_val.__len__()-2:]
 
+    def readTableCellInput(self, item):
+        row = self.tbl_Colors.row(item)
+        column = self.tbl_Colors.column(item)
+
+        if column == 1 and self.cb_colorScalingType.currentIndex() == 1: # option at index 1 is "Custom Scaling"
+            new_input = str(item.text()).split() 
+            
+            self.range_list = self.stringToList(self.le_customScale.text())
+            if self.range_list.__len__() < self.num_buckets:
+                for i in range(self.num_buckets - self.range_list.__len__() + 1):
+                    self.range_list.append('')
+            
+            if new_input.__len__() >= 2:
+                first_token = new_input[0].upper()
+                if first_token == 'TO': # ignore the keyword "TO"
+                    first_token = ''
+                last_token = new_input[new_input.__len__()-1].upper()
+                if last_token == 'TO': # ignore the keyword "TO"
+                    last_token = ''
+                self.range_list[row] = first_token
+                self.range_list[row+1] = last_token
+                self.le_customScale.setText(self.listToString(self.range_list))
+                self.verifyInputCorrectness()
+                self.setRangeColumn()
+                
+        # else a cell in the Label column was edited
+        elif column == 2 and self.cb_labelType.currentIndex() == 1: # option at index 1 is "Custom Labels"
+            self.label_list = self.stringToList(self.le_customLabels.text())
+            if self.label_list.__len__() < self.num_buckets:
+                for i in range(self.num_buckets - self.label_list.__len__()):
+                    self.label_list.append('')
+            self.label_list[row] = item.text()
+            self.le_customLabels.setText(self.listToString(self.label_list))
+            self.verifyInputCorrectness()
+            self.setLabelColumn()
+
     def makeChooseColor(self, pb, index):
         def chooseAndSaveColor():
             self.color_list[index] = QColorDialog.getColor().name()
@@ -330,7 +396,7 @@ class MapOptions(QDialog, Ui_Dialog):
         for i in range(list.__len__()-1):
             text += str(list[i]).strip() + ','
         if list.__len__() > 0:
-            text += list[list.__len__()-1]
+            text += str(list[list.__len__()-1]).strip()
         return text
     
     def stringToList(self, string):
@@ -390,12 +456,12 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
             self.assertEqual(self.mapOptionsInst.tbl_Colors.item(i, 1).text(), self.label_lst[i])
         # test that custom ranges are set correctly
         self.mapOptionsInst.range_list = ['0','1','2','3','4','5']
-        self.mapOptionsInst.setRangeColumn(self.options_dict)
+        self.mapOptionsInst.setRangeColumn()
         for i in range(self.mapOptionsInst.num_buckets-1):
             self.assertEqual(str(self.mapOptionsInst.tbl_Colors.item(i, 1).text()), self.mapOptionsInst.range_list[i] + ' to ' + self.mapOptionsInst.range_list[i+1])
         # test that linear range is set correctly
-        self.options_dict['bucket_ranges'] = 'linear_scale'
-        self.mapOptionsInst.setRangeColumn(self.options_dict)
+        self.mapOptionsInst.cb_colorScalingType.setCurrentIndex(0) # option at index 0 is Linear Scaling
+        self.mapOptionsInst.setRangeColumn()
         for i in range(self.mapOptionsInst.num_buckets):
             if (i == 0):
                 expected_val = 'MIN'
@@ -483,7 +549,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
                 for i in range(self.mapOptionsInst.color_list.__len__()):
                     self.assertEqual(self.mapOptionsInst.color_list[i], full_color_list[i])
     
-    # Not sure how to test this yet...
+    # TODO: Not sure how to test this...
     def test_getGraduatedColorsList(self):
         pass
 
@@ -516,6 +582,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.mapOptionsInst.color_list = []
         self.mapOptionsInst.tbl_Colors.clear()
         self.mapOptionsInst.num_buckets = 10
+        self.mapOptionsInst.tbl_Colors.setRowCount(10)
         self.mapOptionsInst.updateColorList()
         for i in range(10):
             self.assertEqual(self.mapOptionsInst.color_list[i], default_color)
@@ -523,6 +590,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
             
     def test_makeColorButton(self):
         self.mapOptionsInst.tbl_Colors.clear()
+        self.mapOptionsInst.tbl_Colors.setRowCount(10)
         for i in range(10):
             self.mapOptionsInst.makeColorButton(i, '#ffffff')
             self.assertNotEqual(self.mapOptionsInst.tbl_Colors.cellWidget(i, 0), None)
