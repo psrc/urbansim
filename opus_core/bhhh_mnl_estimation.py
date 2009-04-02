@@ -13,21 +13,22 @@ import time
 
 class bhhh_mnl_estimation(EstimationProcedure):
     maximum_iterations = 200
-    minimum_probability = exp(-745.)
     
     def run(self, data, upc_sequence, resources):
         """
         'data' is of shape (nobservations, nchoices, nvariables).
         """
-        start= time.clock()
+        return EstimationProcedure.run_dcm(self, data, upc_sequence, resources)
+        
+    def estimate_dcm(self, data):
         maxiter=self.maximum_iterations #Maximum iterations allowed
         eps=0.001 #Convergence criterion for gradient*hessian-inv*gradient
         tags = ["estimate", "result"]
         vl = 2
         nobs, alts, nvars = data.shape
-        depm = resources["selected_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
-        coef_names = resources.get("coefficient_names", None)
-        fixed_coefs, fixed_values = resources.get("fixed_values", (array([]), array([])))
+        depm = self.resources["selected_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
+        coef_names = self.resources.get("coefficient_names", None)
+        fixed_coefs, fixed_values = self.resources.get("fixed_values", (array([]), array([])))
         if (coef_names is not None) and (fixed_coefs.size > 0):
             index_of_fixed_values = get_indices_of_matched_items(coef_names, fixed_coefs)
             index_of_not_fixed_values = ones(nvars, dtype="bool8")
@@ -38,12 +39,9 @@ class bhhh_mnl_estimation(EstimationProcedure):
             index_of_not_fixed_values = arange(nvars)
 #        pdb.set_trace()
         b2=zeros(nvars).astype(float32)
-        b2[index_of_fixed_values] = fixed_values.astype(b2.dtype)
-        self.upc_sequence=upc_sequence
-        
+        b2[index_of_fixed_values] = fixed_values.astype(b2.dtype)        
         se = zeros(nvars).astype(float32)
         tvalues = zeros(nvars).astype(float32)
-        self.resources = resources
         l_2=self.mnl_loglikelihood(data, b2, depm).sum()
         l_0 = l_2
         s=1
@@ -102,7 +100,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         for i in index_of_not_fixed_values:
             logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],b1[i],se[i],tvalues[i]), tags=tags, verbosity_level=vl)
         logger.log_status('***********************************************', tags=tags, verbosity_level=vl)
-        logger.log_status('Elapsed time: ',time.clock()-start, 'seconds', tags=tags, verbosity_level=vl)
+        logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=vl)
         est = b1
         df=nvars-index_of_fixed_values.size
         lrts = -2*(l_0-l_1)
@@ -112,12 +110,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
                     "ll_ratio_test_statistics":lrts, "df": df,  "nobs":nobs}}
 
     def mnl_loglikelihood(self, data, b, depm):
-        self.upc_sequence.compute_utilities(data, b, self.resources)
-        p = self.upc_sequence.compute_probabilities(self.resources)
-        #assure that we can get log from p (replace 0 by minimum  value for 0)
-        p[where(p==0)] = self.minimum_probability
-        ll = (depm*log(p)).sum(axis=0)
-        return ll
+        return EstimationProcedure.dcm_loglikelihood(self, data, b, depm)
 
     def mnl_gradient(self, data, b, depm, index_of_not_fixed_values):
         nobs, alts, nvars = data.shape
