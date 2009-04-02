@@ -25,8 +25,8 @@ class SubareaScalingJobsModel(ScalingJobsModel):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         regions = agent_set.get_attribute(self.subarea_id_name)
-        location_region = location_set.compute_variables(["urbansim_parcel.%s.%s" % (location_set.get_dataset_name(), self.subarea_id_name)],
-                                                  dataset_pool=self.dataset_pool)
+
+        location_region = location_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]
         if valid_region.size > 0:
             unique_regions = unique_values(regions[agents_index][valid_region])

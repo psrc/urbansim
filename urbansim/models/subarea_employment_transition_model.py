@@ -23,7 +23,7 @@ class SubareaEmploymentTransitionModel(EmploymentTransitionModel):
     def run(self, year, job_set, control_totals, job_building_types, data_objects=None, resources=None):
         self._do_initialize_for_run(job_set, job_building_types, data_objects)
         subarea_ids = control_totals.get_attribute(self.subarea_id_name)
-        jobs_subarea_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
+        jobs_subarea_ids = job_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
         unique_subareas = unique_values(subarea_ids)
         is_year = control_totals.get_attribute("year")==year
         all_jobs_index = arange(job_set.size())
@@ -47,7 +47,7 @@ class SubareaEmploymentTransitionModel(EmploymentTransitionModel):
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
         self._update_job_set(job_set)
         idx_new_jobs = arange(job_set.size()-self.new_jobs[self.subarea_id_name].size, job_set.size())
-        jobs_subarea_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
+        jobs_subarea_ids = job_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
         jobs_subarea_ids[idx_new_jobs] = self.new_jobs[self.subarea_id_name]
         job_set.delete_one_attribute(self.subarea_id_name)
         job_set.add_attribute(jobs_subarea_ids, self.subarea_id_name, metadata=AttributeType.PRIMARY)

@@ -23,14 +23,14 @@ class SubareaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSampling
                                 "units_for_jobs = urbansim_parcel.building.total_non_home_based_job_space",
                                 "occupied_residential_units = urbansim_parcel.building.number_of_households",
                                 "urbansim_parcel.building.existing_units",
-                                "urbansim_parcel.building.%s" % self.subarea_id_name,
                                     ], dataset_pool=self.dataset_pool)
+        buildings.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
         # keep copy of the weights
         original_weight = self.weight.copy()
         self.all_demolished_buildings = array([], dtype='int32')
         
-        regions = self.proposal_set.compute_variables(["urbansim_parcel.%s.%s" % (self.proposal_set.get_dataset_name(), self.subarea_id_name)],
-                                                  dataset_pool=self.dataset_pool)
+        regions = self.proposal_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
+
         unique_regions = unique_values(regions)
         original_status = self.proposal_set.get_attribute("status_id").copy()
         bldgs_regions = buildings.get_attribute(self.subarea_id_name)

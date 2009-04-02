@@ -22,9 +22,10 @@ class HouseholdTransitionModel(Model):
 
     model_name = "Household Transition Model"
 
-    def __init__(self, location_id_name="grid_id", debuglevel=0):
+    def __init__(self, location_id_name="grid_id", dataset_pool=None, debuglevel=0):
         self.debug = DebugPrinter(debuglevel)
         self.location_id_name = location_id_name
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
 
     def run(self, year, household_set, control_totals, characteristics, resources=None):
         self._do_initialize_for_run(household_set)

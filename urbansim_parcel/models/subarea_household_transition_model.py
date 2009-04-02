@@ -12,7 +12,7 @@ from copy import copy
 class SubareaHouseholdTransitionModel(HouseholdTransitionModel):
     """Creates and removes households from household_set. It runs the urbansim HTM with control totals for each subarea."""
 
-    model_name = "Subarea Household Transition Model with Persons update"
+    model_name = "Subarea Household Transition Model"
     
 
     def __init__(self, subarea_id_name, **kwargs):
@@ -32,7 +32,8 @@ class SubareaHouseholdTransitionModel(HouseholdTransitionModel):
         self.marginal_characteristic_names.remove("year")
         self.marginal_characteristic_names.remove(self.subarea_id_name)
         region_ids = control_totals.get_attribute(self.subarea_id_name)
-        households_region_ids = household_set.compute_variables("urbansim_parcel.household.%s" % self.subarea_id_name)
+        households_region_ids = household_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
+
         unique_regions = unique_values(region_ids)
         is_year = control_totals.get_attribute("year")==year
         all_households_index = arange(household_set.size())

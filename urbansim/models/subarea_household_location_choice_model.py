@@ -27,8 +27,8 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
             agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
         regions = agent_set.get_attribute(self.subarea_id_name)
         
-        self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.subarea_id_name)],
-                                                  dataset_pool=self.dataset_pool)
+        self.choice_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
+        
         valid_region = where(regions[agents_index] > 0)[0]
 # this loop handles subarea_id_name households        
         if valid_region.size > 0:
