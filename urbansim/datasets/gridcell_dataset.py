@@ -24,11 +24,6 @@ class GridcellDataset(UrbansimDataset):
         UrbansimDataset.__init__(self, *args, **kwargs)
         self.development_capacity = None
 
-    def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
-                 max_value=None, file=None, my_title="", filter=None, background=None, coordinate_system=None,
-                 color_list=None, range_list=None, label_list=None):
-        self.plot_map_matplotlib(name, main, xlab, ylab, min_value, max_value, file, my_title, filter, background, coordinate_system)
-        
     def get_development_constrained_capacity(self,
             constraints,
             dataset_pool,

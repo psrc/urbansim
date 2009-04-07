@@ -1230,11 +1230,10 @@ class AbstractDataset(object):
             list[i] = str(list[i]).strip()
         return list
 
-    # This function is used to create a vector-based image for non-gridcell maps
+    # This function is used to create a vector-based map
     def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
                  max_value=None, file=None, my_title="", filter=None, background=None,
                 color_list=None, range_list=None, label_list=None):
-
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
@@ -1283,8 +1282,29 @@ class AbstractDataset(object):
         storage_for_dbf = dbf_storage(storage_location=shapefile_dir)
         unique_id = storage_for_dbf.get_column_names(table_name='MASTER_'+self.dataset_name)[0]
         unique_id_arr = storage_for_dbf.load_table(table_name='MASTER_'+self.dataset_name)[unique_id]
-        index_arr = self.get_id_index(unique_id_arr)
-        attrib_arr = self.get_attribute_by_index(name, index_arr)
+
+        # Check if the number of IDs in the .dbf is greater than, less than, or equal to the number of IDs in the dataset
+        dataset_id_arr = self.get_id_attribute()
+        if unique_id_arr.__len__() > dataset_id_arr.__len__():
+            from numpy import intersect1d, zeros
+            unique_id_arr_trunc = intersect1d(unique_id_arr, dataset_id_arr)
+            index_arr = self.get_id_index(unique_id_arr_trunc)
+            attrib_arr = self.get_attribute_by_index(name, index_arr)
+            longer_arr_ptr = 0
+            shorter_arr_ptr = 0
+            full_attrib_arr = zeros(shape=unique_id_arr.__len__(), dtype=int)
+            while longer_arr_ptr < unique_id_arr.__len__():
+                if unique_id_arr[longer_arr_ptr] == unique_id_arr_trunc[shorter_arr_ptr]:
+                    full_attrib_arr[longer_arr_ptr] = attrib_arr[shorter_arr_ptr]
+                    shorter_arr_ptr += 1
+                longer_arr_ptr += 1 
+            attrib_arr = full_attrib_arr
+        elif unique_id_arr.__len__() > dataset_id_arr.__len__():
+            raise Exception('Error: .dbf shapefile has too few values for ' + unique_id + '.')
+        else: # unique_id_arr.__len__() == dataset_id_arr.__len__():
+            index_arr = self.get_id_index(unique_id_arr)
+            attrib_arr = self.get_attribute_by_index(name, index_arr)
+
         dataset_dict = {unique_id:unique_id_arr, col_header:attrib_arr}
         storage_for_dbf.write_table(table_name=self.dataset_name, table_data=dataset_dict)
 
@@ -1328,8 +1348,8 @@ class AbstractDataset(object):
         for i in range(num_buckets):
             r = Rule()
             r.symbols.append(PolygonSymbolizer(Color(color_list[i])))
-            #if (not unique_id == 'grid_id'): # a seperate function will be made for mapping gridcell maps
-            r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
+            if (unique_id != 'grid_id'): # do not draw lines between each gridcell
+                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
             r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
             s.rules.append(r)
         
@@ -1392,7 +1412,7 @@ class AbstractDataset(object):
         del draw
         result_file.save(file, 'PNG')
 
-    # This function is used to create a raster image for gridcell maps
+    # This function will be deleted when Mapnik completely replaces Matplotlib.  It will be left here temporarily for reference while Mapnik features are still being developed
     def plot_map_matplotlib(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None,
                  my_title="", filter=None, background=None, coordinate_system=None):
         """ Plots a 2D image of attribute given by 'name'. matplotlib required.
