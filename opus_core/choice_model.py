@@ -196,6 +196,7 @@ class ChoiceModel(ChunkModel):
             if self.model_interaction.is_there_data(submodel): # observations for this submodel available
                 if index is not None:
                     self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
+                self.run_config.merge({"specified_coefficients": coef[submodel]})
                 coefficients = coef[submodel].get_coefficient_values()
                 res = self.simulate_submodel(self.get_all_data(submodel), coefficients, submodel)
                 restmp = res.astype(int32)

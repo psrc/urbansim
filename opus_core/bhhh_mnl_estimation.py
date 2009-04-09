@@ -42,7 +42,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         b2[index_of_fixed_values] = fixed_values.astype(b2.dtype)        
         se = zeros(nvars).astype(float32)
         tvalues = zeros(nvars).astype(float32)
-        l_2=self.mnl_loglikelihood(data, b2, depm).sum()
+        l_2=self.mnl_loglikelihood(data, b2, depm)
         l_0 = l_2
         s=1
 
@@ -62,7 +62,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
                 break
             d=dot(h,g)
             b2[index_of_not_fixed_values]=(b1[index_of_not_fixed_values]+s*d).astype(b2.dtype)
-            l_2=self.mnl_loglikelihood(data,b2, depm).sum()
+            l_2=self.mnl_loglikelihood(data,b2, depm)
             if l_2 <= l_1:
                 s=s/2.0
             if s <= .001:

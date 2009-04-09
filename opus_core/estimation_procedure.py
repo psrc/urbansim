@@ -25,5 +25,5 @@ class EstimationProcedure(ModelComponent):
         p = self.upc_sequence.compute_probabilities(self.resources)
         #assure that we can get log from p (replace 0 by minimum  value for 0)
         p[where(p==0)] = self.minimum_probability
-        ll = (depm*log(p)).sum(axis=0)
+        ll = (depm*log(p)).sum()
         return ll

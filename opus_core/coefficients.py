@@ -12,7 +12,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.logger import logger
 from opus_core.variables.attribute_type import AttributeType
 from numpy import int32, array, zeros, float32, arange, nan, resize, newaxis
-from numpy import apply_along_axis, ndarray
+from numpy import apply_along_axis, ndarray, concatenate
 from numpy.random import normal, uniform
 import sys
 import os
@@ -282,6 +282,20 @@ class Coefficients(object):
             self.other_info[submodel] = new_coef[submodel].other_info
 
 
+    def add_item(self, name, value, standard_error=0.0, submodel=None, other_measures=None):
+        self.names = concatenate((self.names, array([name])))
+        self.values = concatenate((self.values, array([value])))
+        self.standard_errors = concatenate((self.standard_errors, array([standard_error])))
+        if submodel is not None:
+            self.submodels = concatenate((self.submodels, array([submodel])))
+        elif self.get_submodels().size > 0:
+            self.submodels = concatenate((self.submodels, array([-2])))
+        if other_measures is not None:
+            for field in other_measures.keys():
+                self.other_measures[field] = concatenate((self.other_measures[field], array([other_measures[field]],
+                                                                               dtype=self.other_measures[field].dtype)))
+                
+                
     def make_tex_table(self, table_name, path='.', header_submodel='Submodel',
                        header_coef_name='Coefficient Name',
                        header_value='Estimate', header_se='Standard Error', other_headers={},

@@ -385,7 +385,9 @@ class InteractionDataset(Dataset):
                 if neqs < nparenteqs:
                     data = take(data, coefficients.get_equations_index(), axis=1)
                 if x.ndim > 3:
-                    data = resize(data, tuple(list(x.shape[0:2]) + list(other_dims)))
+                    data = reshape(data, tuple(list(x.shape[0:2]) + len(other_dims)*[1]))
+                    for iodim in range(len(other_dims)):
+                        data = repeat(data, other_dims[iodim], axis=2+iodim)
                 x[:,:,ivar] = data
                 w = where(coefvalues[:,ivar] == 0)
                 if x.ndim > 3:

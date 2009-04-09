@@ -176,10 +176,16 @@ class EquationSpecification(object):
         self.coefficients = concatenate((self.coefficients, array([coefficient_name])))
         if submodel is not None:
             self.submodels = concatenate((self.submodels, array([submodel], dtype=self.submodels.dtype)))
+        elif self.get_submodels().size > 0:
+            self.submodels = concatenate((self.submodels, array([-2], dtype=self.submodels.dtype)))
         if equation is not None:
             self.equations = concatenate((self.equations, array([equation], dtype=self.equations.dtype)))
+        elif self.get_equations().size > 0:
+            self.equations = concatenate((self.equations, array([-2], dtype=self.equations.dtype)))
         if fixed_value is not None:
             self.fixed_values = concatenate((self.fixed_values, array([fixed_value], dtype=self.fixed_values.dtype)))
+        elif self.get_fixed_values().size > 0:
+            self.fixed_values = concatenate((self.fixed_values, array([0], dtype=self.fixed_values.dtype)))
         if other_fields is not None:
             for field in other_fields.keys():
                 self.other_fields[field] = concatenate((self.other_fields[field], array([other_fields[field]],
@@ -343,6 +349,29 @@ class EquationSpecification(object):
             for i in range(idx.size):
                 variables[idx[i]] = VariableName(new_expr)
         self.variables = tuple(variables)
+        
+    def copy_equations_for_dim_if_needed(self, eqs_ids, dim_name, dim_value):
+        """If there are equations equal -2 for the specified dim_name and value, it 
+        is copied for each eqs_id.
+        """
+        idx = where(self.other_fields[dim_name] == dim_value)[0]
+        idx_to_copy = idx[where(self.get_equations()[idx] == -2)[0]]
+        for i in idx_to_copy:
+            for eq in eqs_ids:
+                if eq == eqs_ids[0]: # first call
+                    self.equations[i] = eq
+                    continue
+                other_fields={}
+                for of_name, of_values in self.other_fields.iteritems():
+                    other_fields[of_name] = of_values[i]
+                subm = None
+                if self.get_submodels().size>0:
+                    subm = self.get_submodels()[i]
+                fv = None
+                if self.get_fixed_values().size > 0:
+                    fv = self.get_fixed_values()[i]
+                self.add_item(self.get_long_variable_names()[i], coefficient_name=self.get_coefficient_names()[i], 
+                          submodel=subm, equation=eq, fixed_value=fv, other_fields=other_fields)        
         
 #Functions
 class SpecLengthException(Exception):

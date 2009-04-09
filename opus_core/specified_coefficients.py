@@ -139,9 +139,9 @@ class SpecifiedCoefficients(object):
         index = create_combination_indices(tuple([self.nequations(), self.size()] + list(self.get_other_ndim())))
         for k in submodels:
             for l in range(index.shape[0]):
-                if index[l].size > 3:
-                    tidx = tuple(index[l][0:2].tolist() + [k] + index[3:].tolist())
-                    tidx_alt = tuple([index[l][0], self.coefmap[tidx], k] + index[3:].tolist())
+                if index[l].size > 2:
+                    tidx = tuple(index[l][0:2].tolist() + [k] + index[l][2:].tolist())
+                    tidx_alt = tuple([index[l][0], self.coefmap[tidx], k] + index[l][2:].tolist())
                 else:
                     tidx = tuple(index[l][0:2].tolist() + [k])
                     tidx_alt = tuple([index[l][0], self.coefmap[tidx], k])
@@ -176,6 +176,9 @@ class SpecifiedCoefficients(object):
             if l > 0:
                 for i in range(l):
                     index_list.append(matches[i])
+        # don't remove reserved names, i.e. starting with '__'
+        #idx = where(map(lambda x: x.startswith('__'), coefnames))[0]
+        #[index_list.append(i) for i in idx if i not in index_list]
         return coefficients.copy_and_truncate(array(index_list, dtype=int16))
 
     def initialize_coefficient_1d_arrays(self):
@@ -455,8 +458,9 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         self.used_variables_idx = array(used) #index of variables that are used by this submodel
         self.used_coef_idx = array(coef_used)
         self.used_equations_idx = array(eqs_used)
+        self.other_measures = {}
         self.other_info = {}
-
+        
     def get_equations_index(self):
         return self.used_equations_idx
 
