@@ -88,7 +88,7 @@
             <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
         </dataset_pool_configuration>
         <available_datasets type="list">['parcel','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
-        <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
+        <spatial_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county']</spatial_datasets>
     </general>
     <data_manager>
         <Tool_Library setexpanded="True" type="tool_library">

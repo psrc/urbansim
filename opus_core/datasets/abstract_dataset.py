@@ -1285,29 +1285,40 @@ class AbstractDataset(object):
 
         # Check if the number of IDs in the .dbf is greater than, less than, or equal to the number of IDs in the dataset
         dataset_id_arr = self.get_id_attribute()
-        if unique_id_arr.__len__() > dataset_id_arr.__len__():
+        if self.dataset_name == 'gridcell' and unique_id_arr.__len__() > dataset_id_arr.__len__():
             from numpy import intersect1d, zeros
             unique_id_arr_trunc = intersect1d(unique_id_arr, dataset_id_arr)
             index_arr = self.get_id_index(unique_id_arr_trunc)
             attrib_arr = self.get_attribute_by_index(name, index_arr)
             longer_arr_ptr = 0
             shorter_arr_ptr = 0
-            full_attrib_arr = zeros(shape=unique_id_arr.__len__(), dtype=int)
+            # The zeros function is used so that all IDs that exist in the .dbf file, but not the dataset are matched to an attribute value of 0
+            if attrib_arr.__len__() > 0:
+                full_attrib_arr = zeros(shape=unique_id_arr.__len__(), dtype=attrib_arr[0].__class__)
+            # This loop will only work for gridcells because it requires that the IDs in the shapefile be in numerical order
             while longer_arr_ptr < unique_id_arr.__len__():
                 if unique_id_arr[longer_arr_ptr] == unique_id_arr_trunc[shorter_arr_ptr]:
                     full_attrib_arr[longer_arr_ptr] = attrib_arr[shorter_arr_ptr]
                     shorter_arr_ptr += 1
                 longer_arr_ptr += 1 
             attrib_arr = full_attrib_arr
-        elif unique_id_arr.__len__() > dataset_id_arr.__len__():
+        elif self.dataset_name == 'gridcell' and unique_id_arr.__len__() < dataset_id_arr.__len__():
             raise Exception('Error: .dbf shapefile has too few values for ' + unique_id + '.')
-        else: # unique_id_arr.__len__() == dataset_id_arr.__len__():
+        else: # unique_id_arr.__len__() == dataset_id_arr.__len__() or self.dataset_name != 'gridcell':
             index_arr = self.get_id_index(unique_id_arr)
             attrib_arr = self.get_attribute_by_index(name, index_arr)
-
+        
+        # If attrib_arr contains boolean values, it needs to be converted to type int so that the Mapnik filter can be applied
+        if attrib_arr.dtype.str == '|b1':
+            from numpy import empty
+            equiv_int_arr = empty(shape=attrib_arr.__len__(), dtype=int)
+            for i in range(attrib_arr.__len__()): 
+                equiv_int_arr[i] = attrib_arr[i]
+            attrib_arr = equiv_int_arr
+        
         dataset_dict = {unique_id:unique_id_arr, col_header:attrib_arr}
         storage_for_dbf.write_table(table_name=self.dataset_name, table_data=dataset_dict)
-
+        
         # Use Mapnik to draw the map
         from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, render_to_file
         m = Map(600,300,"+proj=latlong +datum=WGS84")
@@ -1325,6 +1336,9 @@ class AbstractDataset(object):
         num_buckets = color_list.__len__()
 
         if (useDefaultValues or range_list == ['linear_scale']):
+            # convert min_val and max_val to floats
+            min_val *= 1.0
+            max_val*= 1.0
             # set linearly increasing ranges for the range list
             range_list = []
             range_list.append(min_val)
@@ -1348,8 +1362,10 @@ class AbstractDataset(object):
         for i in range(num_buckets):
             r = Rule()
             r.symbols.append(PolygonSymbolizer(Color(color_list[i])))
-            if (unique_id != 'grid_id'): # do not draw lines between each gridcell
+            if (unique_id != 'grid_id' or unique_id != 'parcel_id'): # do not draw black lines between gridcells or parcels
                 r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
+            if (unique_id == 'parcel_id'):
+                r.symbols.append(LineSymbolizer(Color(color_list[i]),0.3))
             r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
             s.rules.append(r)
         
