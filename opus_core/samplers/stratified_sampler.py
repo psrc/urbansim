@@ -28,7 +28,7 @@ class stratified_sampler(Sampler):
             include_chosen_choice=False, resources=None):
         """this function samples number of sample_size (scalar value) alternatives from dataset2
         for agent set specified by dataset1.
-        If index1 is not None, only samples alterantives for agents with indices in index1;
+        If index1 is not None, only samples alternatives for agents with indices in index1;
         if index2 is not None, only samples alternatives from indices in index2.
         sample_size specifies number of alternatives to be sampled from each stratum, and is overwritten
           by sample_size_from_each_stratum if it's not None
@@ -97,6 +97,8 @@ class stratified_sampler(Sampler):
         prob = normalize(weight)
 
         stratum = local_resources.get("stratum", None)
+        if stratum is None:
+            raise StandardError, "'stratum' must be defined for stratified sampling."
         if isinstance(stratum, str):
             choice.compute_variables(stratum,
                 resources = local_resources )
@@ -120,17 +122,17 @@ class stratified_sampler(Sampler):
 
 #        sampled_index = zeros((index1.size,1)) - 1
 
-        sample_rate = local_resources.get("sample_rate", None)
         sample_size = local_resources.get("sample_size", None)
         sample_size_from_each_stratum = local_resources.get("sample_size_from_each_stratum", None)
         if sample_size_from_each_stratum is None:
             sample_size_from_each_stratum = sample_size
         strata_sample_size = ones(unique_strata.size, dtype="int32") * sample_size_from_each_stratum
+        sample_rate = local_resources.get("sample_rate", None)
         if sample_rate is not None:
-            raise UnSupportedError, "unimplemented"
+            raise UnSupportedError, "Using sample_rate not implemented yet."
             ##BUG: to be finished
-            num_elements_in_strata = histogram(selectable_strata, unique_strata)
-            strata_sample_size = round(num_elements_in_strata * sample_rate)
+            #num_elements_in_strata = histogram(selectable_strata, unique_strata)
+            #strata_sample_size = round(num_elements_in_strata * sample_rate)
 
         sample_size_from_chosen_stratum = local_resources.get("sample_size_from_chosen_stratum", None)
         if sample_size_from_chosen_stratum is None:
@@ -198,7 +200,7 @@ class stratified_sampler(Sampler):
                                                        this_prob[this_sampled_index]),
                                                        axis=1)
             self._stratum_id = concatenate( (self._stratum_id,
-                                             ones( (this_sampled_index.size,1) , dtype="int32") * this_stratum ),
+                                             ones( (this_sampled_index.shape[0],1) , dtype="int32") * this_stratum ),
                                              axis=1)
 
         self._sampling_probability = self._sampling_probability[:, 1:]

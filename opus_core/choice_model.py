@@ -12,6 +12,7 @@ from opus_core.equation_specification import EquationSpecification
 from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 from opus_core.upc_factory import UPCFactory
+from opus_core.sampler_factory import SamplerFactory
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import DebugPrinter
 from opus_core.sampling_toolbox import sample_noreplace
@@ -37,6 +38,7 @@ class ChoiceModel(ChunkModel):
     def __init__(self, choice_set, utilities="opus_core.linear_utilities",
                         probabilities="opus_core.mnl_probabilities",
                         choices="opus_core.random_choices",
+                        sampler=None, sampler_size=None,
                         submodel_string=None,
                         choice_attribute_name="choice_id",
                         interaction_pkg="opus_core",
@@ -49,6 +51,8 @@ class ChoiceModel(ChunkModel):
             utilities - name of utilities module
             probabilities - name of probabilities module
             choices - name of module for computing agent choices
+            sampler - name of sampling module to be used for sampling alternatives. If it is None, no sampling is performed
+                        and all alternatives are considered for choice.
             submodel_string - character string specifying what agent attribute determines submodels.
             choice_attribute_name - name of the attribute that identifies the choices. This argument is
                 only relevant if choice_set is not an instance of Dataset.
@@ -92,6 +96,11 @@ class ChoiceModel(ChunkModel):
         self.choice_set = choice_set
         self.upc_sequence = UPCFactory().get_model(
             utilities=utilities, probabilities=probabilities, choices=choices, debuglevel=debuglevel)
+        self.sampler_class = SamplerFactory().get_sampler(sampler)
+        if (sampler <> None) and (self.sampler_class == None):
+            logger.log_warning("Error in loading sampler class. No sampling will be performed.")
+        self.sampler_size=sampler_size
+        self.weights = None
         self.submodel_string = submodel_string # which attribute determines submodels
         self.run_config = run_config
         if self.run_config == None:
@@ -156,7 +165,7 @@ class ChoiceModel(ChunkModel):
         index = self.get_choice_index(agent_set, agents_index, agentsubset)
         nchoices = self.get_choice_set_size()
         
-        self.debug.print_debug("Choice set size: " + str(nchoices), 2)
+        logger.log_status("Choice set size: " + str(nchoices))
         
         if isinstance(index, ndarray):
             if (index.size <= 0) or ((index.ndim > 1) and (index.shape[1]<=0)):
@@ -312,7 +321,7 @@ class ChoiceModel(ChunkModel):
             self.get_choice_index_for_estimation_and_selected_choice(agent_set,
                         agents_for_estimation_idx, estimation_set, submodels)
 
-        self.debug.print_debug("Choice set size: " + str(nchoices),2)
+        logger.log_status("Choice set size: " + str(nchoices))
 
         # create interaction set
         self.model_interaction.create_interaction_datasets(agents_for_estimation_idx, {0: index})
@@ -458,23 +467,87 @@ class ChoiceModel(ChunkModel):
         return permutation(agents.size())
 
     def set_choice_set_size(self):
-        self.choice_set_size = self.choice_set.size()
+        if self.sampler_class is not None and self.sampler_size is None:
+            logger.log_warning("'sample_size' is not given. Alternatives will not be sampled.")
+            self.choice_set_size = self.choice_set.size()
+        if self.sampler_size is None:
+            self.sampler_size = self.choice_set.size()
+        self.choice_set_size =  min(self.sampler_size, self.choice_set.size())
         
     def get_choice_set_size(self):
         return self.choice_set_size
 
     def get_choice_index(self, agent_set=None, agents_index=None, agent_subset=None):
-        return None
+        """ Return index of (possibly sampled) alternatives."""
+        self.weights = None
+        nchoices = self.get_choice_set_size()
+        if nchoices == self.choice_set.size():
+            return None            
+        self.weights, alt_index = self.get_weights_for_sampling_alternatives(agent_set, agents_index)
+        logger.log_status("Sampling alternatives ...")
+        # the following model component must return a 2D array of sampled alternatives per agent
+        try:
+            index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=alt_index, sample_size=nchoices,
+                weight=self.weights, resources=self.run_config)
+            return index
+        except Exception, e:
+            logger.log_warning("Problem with sampling alternatives.\n%s" % e)
+            return None
 
     def get_choice_index_for_estimation_and_selected_choice(self, agent_set=None,
                                                             agents_index=None, agent_subset=None,
-                                                            submodels=[1]):
-        """ Return tuple of index of choices to be considered for each agent that will be passed
+                                                            submodels=[]):
+        """ Performs sampling if required. Return tuple of index of choices to be considered for each agent that will be passed
         to the interaction, and index of selected choices (within the whole choice_set).
         """
-        self.model_interaction.set_selected_choice(agents_index)
-        selected_choice = self.model_interaction.get_selected_choice()
-        return (None, selected_choice)
+        self.weights = None
+        nchoices = self.get_choice_set_size()
+        if nchoices == self.choice_set.size():
+            self.model_interaction.set_selected_choice(agents_index)
+            return (None, self.model_interaction.get_selected_choice())
+        logger.log_status("Sampling alternatives for estimation ...")
+        index = zeros((agents_index.size, nchoices), dtype='int32')
+        selected_choice = zeros((agents_index.size,), dtype='int32')
+        if (len(submodels) > 1) or ((len(submodels) > 0) and (self.observations_mapping[submodels[0]].size < agents_index.size)):
+            for submodel in submodels:
+                nagents_in_submodel = self.observations_mapping[submodel].size
+                if nagents_in_submodel <= 0:
+                    continue
+                alt_index, index1, chosen_choice = self.sample_and_choose_choice(agent_set, self.observations_mapping[submodel], nchoices)
+                index[self.observations_mapping[submodel], :] = index1
+                selected_choice[self.observations_mapping[submodel]] = chosen_choice.astype(selected_choice.dtype)
+        else:
+            location_index, index, selected_choice = self.sample_and_choose_choice(agent_set, agents_index, nchoices)
+        self.model_interaction.set_given_selected_choice(selected_choice)     
+        return (index, selected_choice)
+
+    def sample_and_choose_choice(self, agent_set, agents_index, nchoices):
+        self.weights, alt_index = self.get_weights_for_sampling_alternatives_for_estimation(agent_set, agents_index)
+        index1, chosen_choice = self.sampler_class.run(agent_set, self.choice_set,
+            index1=agents_index, index2=alt_index, sample_size=nchoices,
+            weight=self.weights, include_chosen_choice=True, resources=self.estimate_config)
+        return (alt_index, index1, chosen_choice)
+
+    def get_weights_for_sampling_alternatives(self, agent_set=None, agents_index=None):
+        """Return a tuple where the first element is as array of weights and the second is an index of alternatives which
+        the weight array corresponds to. The array of weights can be a 2D array (if weights are agent specific).
+        Weights can be determined by a variable name given in 'weights_for_simulation_string' in run_config.
+        If it is not given, the weights are equal.
+        """
+        weight_string = self.run_config.get("weights_for_simulation_string", None)
+        if weight_string is None:
+            return (None, None)
+        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
+        weight_name = VariableName(weight_string)
+        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
+    
+    def get_weights_for_sampling_alternatives_for_estimation (self, agent_set=None, agents_index=None):
+        weight_string = self.estimate_config.get("weights_for_estimation_string", None)
+        if weight_string == None:
+            return (None, None)
+        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
+        weight_name = VariableName(weight_string)
+        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
 
     def plot_histogram(self, main="", file=None):
         """Plots histogram of choices and probabilities for the last chunk."""
@@ -689,6 +762,9 @@ class ModelInteraction:
                                         self.agent_set.get_attribute_by_index(self.choice_sets[i].get_id_name()[0],
                                         agents_index))
             
+    def set_given_selected_choice(self, selected_choice):
+        self.selected_choice[0] = selected_choice
+        
     def get_selected_choice(self):
         if self.number_of_choice_sets == 1:
             return self.selected_choice[0]
@@ -1029,49 +1105,4 @@ if __name__=="__main__":
             #check aggregated demand
             self.assertEqual(ma.allclose(self.demand, array([7200, 2800]) , rtol=0.1), True)
              
-        def test_estimate_cross_nested_logit(self):
-            ## BUG: What is this test doing?
-            """
-            This is in an experimental mode, since nested logit is not implemented yet.
-            100 households choose between 4 modes: bus, train, car, bike (1,2,3,4)
-            There are 2 nests: public = {bus, train}, private = {car, bike}
-            """
-            storage = StorageFactory().get_storage('dict_storage')
-
-            household_data = {
-                'household_id': arange(100)+1,
-                't_public': array(30*[10]+30*[20]+30*[25]+10*[30]),
-                't_private': array(30*[20]+30*[10]+30*[25]+10*[10]),
-                'mode_id': array(30*[1] + 30*[4] + 15*[2] + 15*[3] + 10*[3], dtype="int32"),
-                'nest_id': array(30*[1] + 30*[2] + 15*[1] + 15*[2] + 10*[2], dtype="int32"),
-                'has_car': array(30*[1]+30*[0]+30*[1]+10*[0], dtype="bool8"),
-                'dist_to_train': array(30*[100]+30*[50]+30*[10]+10*[70])
-                }
-
-            storage.write_table(table_name='households', table_data=household_data)
-            storage.write_table(table_name='modes',
-                table_data={"mode_id": arange(1,5), "nest_id": array([1,1,2,2])}
-                )
-            storage.write_table(table_name='nests',
-                table_data = {"nest_id": array([1,2])}
-                )
-
-            # create datasets
-            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id",
-                                 dataset_name="household")
-            modes = Dataset(in_storage=storage, in_table_name='modes', id_name="mode_id",
-                                 dataset_name="mode")
-            nests = Dataset(in_storage=storage, in_table_name='nests', id_name="nest_id",
-                                 dataset_name="nest")
-
-            specification = EquationSpecification(variables=("household.t_public", "household.t_private", "__lambda",
-                                                             "household.dist_to_train", "__alpha",
-                                                             "household.has_car", "__alpha"),
-                                                  coefficients=( "tpub", "tpriv", "l", "dtt", "a1", "hc", "a2"),
-                                                  other_fields={"dim_nest_id": array([0, 0, 0, 1, 1, 2, 2])})
-
-            cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices", upper_level_choice_set=nests)
-#            coef, dummy = cm.estimate(specification, agent_set = households,
-#                                       procedure="opus_core.bhhh_cnl_two_levels_estimation", debuglevel=4)
-
     opus_unittest.main()
