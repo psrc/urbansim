@@ -57,15 +57,12 @@ class LocationChoiceModel(ChoiceModel):
         """
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
         ChoiceModel.__init__(self, choice_set=location_set, utilities=utilities,
-                        probabilities=probabilities, choices=choices,
+                        probabilities=probabilities, choices=choices, sampler=sampler,
                         submodel_string=submodel_string,
                         interaction_pkg=interaction_pkg,
                         run_config=run_config, estimate_config=estimate_config,
                         debuglevel=debuglevel, dataset_pool=dataset_pool)
         self.model_interaction = ModelInteractionLCM(self, interaction_pkg, [self.choice_set])
-        self.sampler_class = SamplerFactory().get_sampler(sampler)
-        if (sampler <> None) and (self.sampler_class == None):
-            logger.log_warning("Error in loading sampler class. No sampling will be performed.")
         self.filter = filter
         self.location_id_string = location_id_string
         if self.location_id_string is not None:
@@ -234,7 +231,7 @@ class LocationChoiceModel(ChoiceModel):
         return permutation(movers.size())
 
     def set_choice_set_size(self):
-        """If "sample_size_locations" is specified in resources, it is considered as the choice set size. Otherwise
+        """If "sample_size_locations" is specified in run_config, it is considered as the choice set size. Otherwise
         the value of resources entry "sample_proportion_locations" is considered as determining the proportion of
         all locations to be the choice set size.
         """
