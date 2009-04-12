@@ -33,7 +33,7 @@ collection of tools for building other opus packages.
 \section{Datasets}
 \label{sec:opus-core-datasets}
 %
-The basic class for dealing with data is called \class{Dataset}\index{Dataset@class{Dataset} class}.
+The basic class for dealing with data is called \class{Dataset}\index{Dataset@\class{Dataset} class}.
 A dataset is a collection of attributes\index{attributes} for a particular type of entity,
 such as a set of grid cells, or a set of households.  Each member in this set
 has the same set of characteristics, such as income of households.  In Opus,
@@ -55,26 +55,26 @@ see Appendix~\ref{appendix:selected-methods-dataset}.
 %
 The \class{Dataset} class is initialized by the following arguments:
 \begin{description}
-\item[resources] \index{resources} - on object of class \class{Resources}\index{Resources} (dictionary). It can
+\item[resources] \index{resources@\code{resources} argument} - on object of class \class{Resources}\index{Resources} (dictionary). It can
   contain any of the remaining arguments, but if an argument of the
   constructor is not None, it has a priority over the entry in
   \verb|resources|.
-\item[in_storage] \index{in_storage} - an object of class \class{Storage}\index{Storage} for reading the data
+\item[in_storage] \index{in_storage@\code{in_storage} argument} - an object of class \class{Storage}\index{Storage} for reading the data
   from (see Section~\ref{sec:data-storage}).
-\item[id_name] \index{in_name} - a list of character strings giving the names of the unique
+\item[id_name] \index{id_name@\code{id_name} argument} - a list of character strings giving the names of the unique
   identifiers of the dataset. If it is an empty list, a ``hidden'' identifier\index{hidden identifier}
   will be created, i.e. an additional attribute of the dataset that enumerates the entries. Note that the unique identifier 
   must have integer values larger than 0.
-\item[dataset_name] \index{database_name} - a character string giving the name of the dataset. 
-\item[out_storage] \index{out_storage} - an object of class \class{Storage}\index{Storage} for writing the data
+\item[dataset_name] \index{dataset_name@\code{dataset_name} argument} - a character string giving the name of the dataset. 
+\item[out_storage] \index{out_storage@\code{out_storage} argument} - an object of class \class{Storage}\index{Storage} for writing the data
   into (see Section~\ref{sec:data-storage}). This argument can be omitted in
   the constructor and instead directly passed to the
   \method{write_dataset()} method, which is the only method of the class that uses this argument.
-\item[in_table_name] \index{in_table_name} - name of the table, directory or file that contains the
+\item[in_table_name] \index{in_table_name@\code{in_table_name} argument} - name of the table, directory or file that contains the
   data for this dataset (see Section~\ref{sec:data-storage} for the different
   meanings of this argument in the different storage classes).  This name also is the
   name used for this dataset in the cache (see below).
-\item[out_table_name] \index{out_table_name} - name of the table, directory or file that the dataset 
+\item[out_table_name] \index{out_table_name@\code{out_table_name} argument} - name of the table, directory or file that the dataset 
   should be written into (see Section~\ref{sec:data-storage} for the different
   meanings of this argument in the different storage classes). This argument
   can be omitted in the constructor and instead directly passed to the
@@ -250,7 +250,7 @@ given in one of the  forms from Section~\ref{sec:opus-core-attribute-names}.
 \subsection{Subsets of Dataset}
 %
 Opus implements a child class of \class{Dataset}, 
-called \class{DatasetSubset}\index{DatasetSubset@class{DatasetSubset} class},
+called \class{DatasetSubset}\index{DatasetSubset@\class{DatasetSubset} class},
 which allows to define a subset of a dataset.  Conceptually, it is a viewing
 window for the parent \class{Dataset} object, not a copy. Thus, any change in
 the parent object is seen by the child.
@@ -629,12 +629,12 @@ variable.  It also means there may be only one Opus variable per Python
 variable module.
 
 \subsubsection{Creating a Variable Object}
-\index{Variable!creating variables}
+\index{Variable class@\class{Variable} class!creating variables}
 %
 An instance of an existing variable class is
 created using the method
-\method{get_variable()}\index{VariableFactory!get_variable()}of the
-class \class{VariableFactory}. \index{VariableFactory} It takes as arguments
+\method{get_variable()}\index{VariableFactory@\class{VariableFactory} class!get_variable() method@\method{get_variable()} method} of the
+class \class{VariableFactory}\index{VariableFactory@\class{VariableFactory} class}.  It takes as arguments
 the variable name and the dataset which the variable belongs to. It performs
 template matching of the name and invokes the constructor of the corresponding
 variable. If there were any templates replaced by \verb|SSS| or \verb|DDD|,
@@ -652,7 +652,7 @@ Variable objects are created automatically within the dataset method
 (Section~\ref{sec:attribute-box}).
 
 \subsubsection{Required Method \method{compute()}}
-\index{Variable!compute()}
+\index{Variable class@\class{Variable} class!compute() method@\method{compute()} method}
 %
 Each variable class has a required method \method{compute()} which defines how
 to compute this variable.
@@ -672,7 +672,7 @@ The \method{compute()} method should return a numpy array of the size of number
 of elements in the ``owner'' dataset. 
 
 \subsubsection{Optional Method \method{dependencies()}}
-\index{Variable!dependencies()} \index{dependencies}
+\index{Variable class@\class{Variable} class!dependencies() method@\method{dependencies()} method} \index{dependencies}
 \label{sec:dependencies}
 %
 This optional method takes no arguments and returns a list of variable names
@@ -1998,20 +1998,21 @@ correspond to this group member.
 %
 Opus implements a few classes that are used for configuration of objects.
 \begin{description}
-\item[GeneralResources] - \index{GeneralResources} \index{GeneralResources@\class{GeneralResources} class} it is a python dictionary with some additional methods.
-\item[SessionConfiguration] - \index{SessionConfiguration} \index{SessionConfiguration@\class{SessionConfiguration} class} a singleton (child of \class{GeneralResources} that is to be configured
+\item[\class{GeneralResources}] -- \index{GeneralResources@\class{GeneralResources} class} a Python dictionary with some additional methods.
+\item[\class{SessionConfiguration}] -- \index{SessionConfiguration@\class{SessionConfiguration} class} a singleton class
+        (subclass of \class{GeneralResources}) that is to be configured
         with global settings for a user's session.  Requires parameter
         \verb|in_storage| to not be \verb|None| if creating a new instance, so
         SessionConfiguration knows from where to get the data for any dataset it
         creates.
-\item[Configuration] - \index{Configuration}  \index{Configuration@\class{Configuration} class} 
-  it is a child of \class{GeneralResources} that implements a hierarchical
+\item[\class{Configuration}] -- \index{Configuration@\class{Configuration} class} 
+  a child of \class{GeneralResources} that implements a hierarchical
         representation of the user-specified parameters and settings.
-\item[Resources] - \index{Resources} \index{Resources@\class{Resources} class} it is a child of \class{Configuration}. It has access to the
+\item[\class{Resources}] -- \index{Resources@\class{Resources} class} a child of \class{Configuration}. It has access to the
 \class{SessionConfiguration}.
-\item[ChunkSpecification] - \index{ChunkSpecification} \index{ChunkSpecification@\class{ChunkSpecification} class} class for configuring chunks used by the \class{ChunkModel} (see 
-Section~\ref{sec:chunk-model}). It is initialized by a dictionary containing either the key 'records_per_chunk' or
-'nchunks' with the appropriate value. Method \method{nchunks()} returns number of chunks. Method \method{chunk_size()}
+\item[\class{ChunkSpecification}] -- \index{ChunkSpecification@\class{ChunkSpecification} class} class for configuring chunks used by the \class{ChunkModel} (see 
+Section~\ref{sec:chunk-model}). It is initialized by a dictionary containing either the key `records_per_chunk' or
+`nchunks' with the appropriate value. Method \method{nchunks()} returns number of chunks. Method \method{chunk_size()}
 returns the number of records in one chunk.
 \end{description}
 

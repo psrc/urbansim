@@ -784,7 +784,7 @@ array([ 971.77478027,  829.47613525,  687.17749023,  544.87878418])
 As expected, the resulting cost decreases with increasing distance to cbd.
 
 %
-\section{Opus Variables} \index{Variables!Opus}
+\section{Opus Variables}
 %
 \label{sec:variables}
 %
@@ -830,7 +830,7 @@ array([ 2.23606798,  3.16227766,  2.23606798,  1.        ,  4.47213595,
 \end{verbatim}
 
 The expressions are fed to the \method{compute_variables} method 
-\index{compute_variables} of
+\index{compute_variables@\method{compute_variables} method} of
 \class{Dataset} (Section \ref{sec:compute-variables}), just as for simple
 variable references.  (Given a new expression, Opus will compose a
 new variable definition, including a \method{compute} and a
@@ -1284,8 +1284,8 @@ It is convenient, and often more efficient
 aliases for a particular package and dataset into one place.  When using 
 XML-based configurations, the expression library component of the XML configurations
 supports this nicely.  In older parts of the code using dictionary-based
-configurations, the optional
-\file{aliases.py}\index{alias.py file} file supports this functionality instead.
+configurations, the optional \file{aliases.py}\index{alias.py@\file{alias.py} file} 
+file supports this functionality instead.
 This file should define a single variable \code{aliases} to be a list of expressions,
 each of which should define an alias.  This file is then placed in the same
 directory as variables for that package and dataset.  For example, to
@@ -1392,7 +1392,7 @@ interaction and taking its log:
 
 \subsection{Using Aggregation and Disaggregation in Expressions}
 \label{sec:urbansim-tutorial-aggregation}
-\index{Variable!aggregation} \index{Variable!disaggregation}
+\index{variable values!aggregation} \index{variable values!disaggregation}
 
 The methods \class{aggregate} and \class{disaggregate} are used to
 aggregate and disaggregate variable values over two or more datasets.  
