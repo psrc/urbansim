@@ -5,440 +5,451 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
-    <height>653</height>
+    <width>473</width>
+    <height>642</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="formLayoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>471</width>
-     <height>328</height>
-    </rect>
-   </property>
-   <layout class="QFormLayout" name="formLayout" >
-    <property name="fieldGrowthPolicy" >
-     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-    </property>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>Number of Color Ranges: </string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QComboBox" name="cb_NumColRanges" >
-      <item>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QFormLayout" name="formLayout" >
+     <property name="fieldGrowthPolicy" >
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>10</string>
+        <string>Number of Color Ranges: </string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QComboBox" name="cb_NumColRanges" >
+       <item>
+        <property name="text" >
+         <string>10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>8</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>6</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>1</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="Line" name="line" >
+       <property name="lineWidth" >
+        <number>0</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_2" >
        <property name="text" >
-        <string>9</string>
+        <string>Color Scaling Type:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QComboBox" name="cb_colorScalingType" >
+       <item>
+        <property name="text" >
+         <string>Linear Scaling</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Custom Scaling</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Custom Linear Scaling</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="label_3" >
        <property name="text" >
-        <string>8</string>
+        <string>Custom Scale:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QLineEdit" name="le_customScale" >
        <property name="text" >
-        <string>7</string>
+        <string/>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="Line" name="line_2" >
+       <property name="lineWidth" >
+        <number>0</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" >
+      <widget class="QLabel" name="label_8" >
        <property name="text" >
-        <string>6</string>
+        <string>Label Type:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="5" column="1" >
+      <widget class="QComboBox" name="cb_labelType" >
+       <item>
+        <property name="text" >
+         <string>Range Values</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Custom Labels</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="6" column="0" >
+      <widget class="QLabel" name="label_9" >
        <property name="text" >
-        <string>5</string>
+        <string>Custom Labels:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="6" column="1" >
+      <widget class="QLineEdit" name="le_customLabels" >
        <property name="text" >
-        <string>4</string>
+        <string/>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="7" column="1" >
+      <widget class="Line" name="line_3" >
+       <property name="lineWidth" >
+        <number>0</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" >
+      <widget class="QLabel" name="label_4" >
        <property name="text" >
-        <string>3</string>
+        <string>Color Scheme</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="8" column="1" >
+      <widget class="QComboBox" name="cb_colorScheme" >
+       <item>
+        <property name="text" >
+         <string>Custom Color Scheme</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Green</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Blue</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Red</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Custom Graduated Colors</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="9" column="0" >
+      <widget class="QLabel" name="label_10" >
        <property name="text" >
-        <string>2</string>
+        <string>Diverge Colors On:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="9" column="1" >
+      <widget class="QComboBox" name="cb_divergeIndex" >
+       <item>
+        <property name="text" >
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>6</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>8</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>10</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="10" column="0" >
+      <widget class="QLabel" name="label_7" >
        <property name="text" >
-        <string>1</string>
+        <string>Diverging Color:</string>
        </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="0" >
-     <widget class="QLabel" name="label_2" >
-      <property name="text" >
-       <string>Color Scaling Type:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" >
-     <widget class="QComboBox" name="cb_colorScalingType" >
-      <item>
+      </widget>
+     </item>
+     <item row="10" column="1" >
+      <widget class="QComboBox" name="cb_colorSchemeNeg" >
+       <item>
+        <property name="text" >
+         <string>Red</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Green</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Blue</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="11" column="1" >
+      <widget class="Line" name="line_4" >
+       <property name="lineWidth" >
+        <number>0</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0" >
+      <widget class="QLabel" name="label_5" >
        <property name="text" >
-        <string>Linear Scaling</string>
+        <string>Legend:</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item row="12" column="1" >
+      <widget class="QTableWidget" name="tbl_Colors" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>321</width>
+         <height>326</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="sizeIncrement" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="layoutDirection" >
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="verticalScrollBarPolicy" >
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy" >
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="editTriggers" >
+        <set>QAbstractItemView::DoubleClicked</set>
+       </property>
+       <property name="showDropIndicator" stdset="0" >
+        <bool>false</bool>
+       </property>
+       <property name="selectionMode" >
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <column>
+        <property name="text" >
+         <string>Color</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Range</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Label</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QPushButton" name="pb_applyChanges" >
        <property name="text" >
-        <string>Custom Scaling</string>
+        <string>Apply Changes</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pb_closeWindow" >
        <property name="text" >
-        <string>Custom Linear Scaling</string>
+        <string>Close Window</string>
        </property>
-      </item>
-     </widget>
-    </item>
-    <item row="3" column="0" >
-     <widget class="QLabel" name="label_3" >
-      <property name="text" >
-       <string>Custom Scale:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" >
-     <widget class="QLineEdit" name="le_customScale" >
-      <property name="text" >
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0" >
-     <widget class="QLabel" name="label_8" >
-      <property name="text" >
-       <string>Label Type:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1" >
-     <widget class="QComboBox" name="cb_labelType" >
-      <item>
-       <property name="text" >
-        <string>Range Values</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Custom Labels</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="6" column="0" >
-     <widget class="QLabel" name="label_9" >
-      <property name="text" >
-       <string>Custom Labels:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1" >
-     <widget class="QLineEdit" name="le_customLabels" >
-      <property name="text" >
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0" >
-     <widget class="QLabel" name="label_4" >
-      <property name="text" >
-       <string>Color Scheme</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1" >
-     <widget class="QComboBox" name="cb_colorScheme" >
-      <item>
-       <property name="text" >
-        <string>Custom Color Scheme</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Green</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Blue</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Red</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Custom Graduated Colors</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="9" column="0" >
-     <widget class="QLabel" name="label_10" >
-      <property name="text" >
-       <string>Diverge Colors On:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="1" >
-     <widget class="QComboBox" name="cb_divergeIndex" >
-      <item>
-       <property name="text" >
-        <string>None</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>6</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>7</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>8</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>9</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>10</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="10" column="0" >
-     <widget class="QLabel" name="label_7" >
-      <property name="text" >
-       <string>Diverging Color:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="1" >
-     <widget class="QComboBox" name="cb_colorSchemeNeg" >
-      <item>
-       <property name="text" >
-        <string>Red</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Green</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Blue</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="11" column="0" >
-     <widget class="QLabel" name="label_5" >
-      <property name="text" >
-       <string>Legend:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" >
-     <widget class="Line" name="line" >
-      <property name="lineWidth" >
-       <number>0</number>
-      </property>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1" >
-     <widget class="Line" name="line_2" >
-      <property name="lineWidth" >
-       <number>0</number>
-      </property>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1" >
-     <widget class="Line" name="line_3" >
-      <property name="lineWidth" >
-       <number>0</number>
-      </property>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="11" column="1" >
-     <widget class="Line" name="line_4" >
-      <property name="lineWidth" >
-       <number>0</number>
-      </property>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QTableWidget" name="tbl_Colors" >
-   <property name="geometry" >
-    <rect>
-     <x>160</x>
-     <y>270</y>
-     <width>321</width>
-     <height>321</height>
-    </rect>
-   </property>
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="layoutDirection" >
-    <enum>Qt::LeftToRight</enum>
-   </property>
-   <property name="verticalScrollBarPolicy" >
-    <enum>Qt::ScrollBarAlwaysOff</enum>
-   </property>
-   <property name="horizontalScrollBarPolicy" >
-    <enum>Qt::ScrollBarAlwaysOff</enum>
-   </property>
-   <property name="editTriggers" >
-    <set>QAbstractItemView::DoubleClicked</set>
-   </property>
-   <property name="showDropIndicator" stdset="0" >
-    <bool>false</bool>
-   </property>
-   <property name="selectionMode" >
-    <enum>QAbstractItemView::SingleSelection</enum>
-   </property>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <column>
-    <property name="text" >
-     <string>Color</string>
-    </property>
-   </column>
-   <column>
-    <property name="text" >
-     <string>Range</string>
-    </property>
-   </column>
-   <column>
-    <property name="text" >
-     <string>Label</string>
-    </property>
-   </column>
-  </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>20</x>
-     <y>600</y>
-     <width>471</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout" >
-    <item>
-     <widget class="QPushButton" name="pb_applyChanges" >
-      <property name="text" >
-       <string>Apply Changes</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer" >
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0" >
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pb_closeWindow" >
-      <property name="text" >
-       <string>Close Window</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-   <zorder>pb_applyChanges</zorder>
-   <zorder>pb_closeWindow</zorder>
-   <zorder>horizontalSpacer</zorder>
-  </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
