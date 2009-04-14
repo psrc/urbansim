@@ -147,7 +147,11 @@ class stratified_sampler(Sampler):
             strata_sample_setting = zeros((index1.size,unique_strata.size,2), dtype="int32")
             for i in range(index1.size):
                 agents_strata_sample_size = copy.copy(strata_sample_size)
-                agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] = sample_size_from_chosen_stratum
+                if sample_size_from_chosen_stratum == -1:
+                    ## if sample_size_from_chosen_stratum is -1, sample one less from the chosen stratum
+                    agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] += - 1
+                else:
+                    agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] = sample_size_from_chosen_stratum
                 strata_sample_pairs = array(map(lambda x,y: [x,y], unique_strata, agents_strata_sample_size))
                 strata_sample_setting[i,...] = strata_sample_pairs
 
