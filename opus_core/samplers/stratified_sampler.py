@@ -135,7 +135,7 @@ class stratified_sampler(Sampler):
             #strata_sample_size = round(num_elements_in_strata * sample_rate)
 
         sample_size_from_chosen_stratum = local_resources.get("sample_size_from_chosen_stratum", None)
-        if sample_size_from_chosen_stratum is None:
+        if sample_size_from_chosen_stratum is None and not include_chosen_choice:
             strata_sample_pairs = array(map(lambda x,y: [x,y], unique_strata, strata_sample_size))
             if rank_of_weight == 1:
                 sampled_index = self._sample_by_stratum(index1, index2, selectable_strata, prob,
@@ -147,8 +147,9 @@ class stratified_sampler(Sampler):
             strata_sample_setting = zeros((index1.size,unique_strata.size,2), dtype="int32")
             for i in range(index1.size):
                 agents_strata_sample_size = copy.copy(strata_sample_size)
-                if sample_size_from_chosen_stratum == -1:
-                    ## if sample_size_from_chosen_stratum is -1, sample one less from the chosen stratum
+                if sample_size_from_chosen_stratum is None:
+                    ## if sample_size_from_chosen_stratum is None and include_chosen_choice is True, 
+                    ## sample one less from the chosen stratum
                     agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] += - 1
                 else:
                     agents_strata_sample_size[where(unique_strata==chosen_stratum[i])] = sample_size_from_chosen_stratum
@@ -370,6 +371,29 @@ class Test(opus_unittest.OpusTestCase):
                 sampler = sampler[:,1:]
             assert alltrue([x in index2 for x in sampler.ravel()])
             assert all(not_equal(weight[sampler], 0.0)), "elements with zero weight in the sample"
+            
+    def test_1d_weight_array_variant_sample_size_using_icc(self):
+        sample_size = 2
+        index1 = where(self.households.get_attribute("lucky"))[0][1:]
+        index2 = where(self.gridcells.get_attribute("filter"))[0]
+        weight=self.gridcells.get_attribute("weight")
+        sample_results = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
+                        index2=index2, stratum="stratum_id", sample_size=sample_size,
+                        weight="weight",include_chosen_choice=True)
+        # get results
+        sampler = sample_results[0]
+        self.assertEqual(sampler.shape, (index1.size,self.num_strata*sample_size))
+
+        self.assertEqual( sample_results[1].size, index1.size)
+        placed_agents_index = self.gridcells.try_get_id_index(
+                                self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
+        chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
+        w = where(sample_results[1]>=0)[0]
+        chosen_choice_index[w] = sampler[w, sample_results[1][w]].astype(int32)
+        assert alltrue(equal(placed_agents_index, chosen_choice_index))
+        sampler = sampler[:,1:]
+        assert alltrue([x in index2 for x in sampler.ravel()])
+        assert all(not_equal(weight[sampler], 0.0)), "elements with zero weight in the sample"
 
 if __name__ == "__main__":
     opus_unittest.main()
