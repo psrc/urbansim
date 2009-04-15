@@ -32,7 +32,7 @@ class LocationChoiceModel(ChoiceModel):
                         filter=None, submodel_string=None,
                         location_id_string = None,
                         run_config=None, estimate_config=None,
-                        debuglevel=0, dataset_pool=None):
+                        debuglevel=0, dataset_pool=None, **kwargs):
         """
         Arguments:
             location_set - Dataset of locations to be chosen from.
@@ -61,7 +61,7 @@ class LocationChoiceModel(ChoiceModel):
                         submodel_string=submodel_string,
                         interaction_pkg=interaction_pkg,
                         run_config=run_config, estimate_config=estimate_config,
-                        debuglevel=debuglevel, dataset_pool=dataset_pool)
+                        debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
         self.model_interaction = ModelInteractionLCM(self, interaction_pkg, [self.choice_set])
         self.filter = filter
         self.location_id_string = location_id_string
@@ -290,7 +290,7 @@ class LocationChoiceModel(ChoiceModel):
             logger.log_status("Sampling locations for estimation ...")
             index = zeros((agents_index.size, nchoices), dtype='int32')
             selected_choice = zeros((agents_index.size,), dtype='int32')
-            if (len(submodels) > 1) or (self.observations_mapping[submodels[0]].size < agents_index.size):
+            if (len(submodels) > 1) or ((len(submodels) > 0) and (self.observations_mapping[submodels[0]].size < agents_index.size)):
                 for submodel in submodels:
                     nagents_in_submodel = self.observations_mapping[submodel].size
                     if nagents_in_submodel <= 0:
@@ -305,7 +305,11 @@ class LocationChoiceModel(ChoiceModel):
                                                                                                                              submodel, nchoices)
                         index[this_agents_index, :] = index1
                         selected_choice[this_agents_index] = chosen_choice.astype(selected_choice.dtype)
-            elif submodels.size == 1:
+            else:
+                if len(submodels) <= 0:
+                    subm = -2
+                else:
+                    subm = submodels[0]
                 nagents = agents_index.size
                 nchunks = chunk_specification.nchunks(agents_index)
                 chunksize = chunk_specification.chunk_size(agents_index)
@@ -313,12 +317,9 @@ class LocationChoiceModel(ChoiceModel):
                 for ichunk in range(nchunks):
                     this_agents_index = arange((ichunk*chunksize),min(((ichunk+1)*chunksize),nagents))
                     this_weights, location_index, index1, chosen_choice = self.apply_filter_on_weights_and_choose_choice(agent_set, agents_index[this_agents_index],
-                                                                                                                    submodels[0], nchoices)
+                                                                                                                    subm, nchoices)
                     index[this_agents_index,:] = index1
                     selected_choice[this_agents_index] = chosen_choice
-
-            else:
-                raise OpusError('There must be at least one submodel defined when sampling locations for estimation.')
             self.model_interaction.set_selected_choice_for_LCM(selected_choice)
         else:
             index, selected_choice = ChoiceModel.get_choice_index_for_estimation_and_selected_choice(self,

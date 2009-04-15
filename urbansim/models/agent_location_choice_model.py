@@ -17,14 +17,19 @@ class AgentLocationChoiceModel(LocationChoiceModel):
     for over-filled locations and in case of collisions, it runs itself again.
     """
 
-    def __init__(self, location_set, model_name, short_name,
+    model_name = "Agent Location Choice Model"
+    model_short_name = "ALCM"
+    
+    def __init__(self, location_set, model_name=None, short_name=None,
                         sampler="opus_core.samplers.weighted_sampler", utilities="opus_core.linear_utilities",
                         probabilities="opus_core.mnl_probabilities", choices="opus_core.random_choices",
                         filter=None, submodel_string=None, location_id_string = None,
                         run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None,
-                        variable_package = "urbansim"):
-        self.model_name = model_name
-        self.model_short_name = short_name
+                        variable_package = "urbansim", **kwargs):
+        if model_name is not None:
+            self.model_name = model_name
+        if short_name is not None:
+            self.model_short_name = short_name
         if (run_config is not None) and not isinstance(run_config, Resources):
             run_config = Resources(run_config)
         if (estimate_config is not None) and not isinstance(estimate_config, Resources):
@@ -39,7 +44,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                         filter=filter,
                         submodel_string=submodel_string, location_id_string=location_id_string,
                         run_config=run_config, estimate_config=estimate_config,
-                        debuglevel=debuglevel, dataset_pool=dataset_pool)
+                        debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, agents_filter=None,
@@ -149,6 +154,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
     def add_prefix_to_variable_names(self, variable_names, dataset, variable_package, resources):
         """Add a prefix of 'package.dataset_name.' to variable_names from resources.
         """
+        if resources is None:
+            return
         if not isinstance(variable_names, list):
             variable_names = [variable_names]
         for variable_name in variable_names:
