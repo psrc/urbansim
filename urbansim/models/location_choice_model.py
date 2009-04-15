@@ -251,7 +251,7 @@ class LocationChoiceModel(ChoiceModel):
 
     def get_choice_index(self, agent_set, agents_index, agent_subset):
         self.weights = None
-        nchoices = self.get_choice_set_size()
+        nchoices = self.get_number_of_elemental_alternatives()
         if (nchoices == self.choice_set.size()) and (self.filter is None):
             return None            
         self.weights, location_index = self.get_weights_for_sampling_locations(agent_set, agents_index)
@@ -284,7 +284,7 @@ class LocationChoiceModel(ChoiceModel):
         self.model_interaction.set_selected_choice(agents_index)
         selected_choice = self.model_interaction.get_selected_choice()
         self.weights = None
-        nchoices = self.get_choice_set_size()
+        nchoices = self.get_number_of_elemental_alternatives()
         if nchoices < self.choice_set.size():
             chunk_specification = self.estimate_config.get("chunk_specification_for_estimation", ChunkSpecification({"nchunks":1}))
             logger.log_status("Sampling locations for estimation ...")

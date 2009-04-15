@@ -477,10 +477,13 @@ class ChoiceModel(ChunkModel):
     def get_choice_set_size(self):
         return self.choice_set_size
 
+    def get_number_of_elemental_alternatives(self):
+        return self.get_choice_set_size()
+    
     def get_choice_index(self, agent_set=None, agents_index=None, agent_subset=None):
         """ Return index of (possibly sampled) alternatives."""
         self.weights = None
-        nchoices = self.get_choice_set_size()
+        nchoices = self.get_number_of_elemental_alternatives()
         if nchoices == self.choice_set.size():
             return None            
         self.weights, alt_index = self.get_weights_for_sampling_alternatives(agent_set, agents_index)
@@ -501,14 +504,14 @@ class ChoiceModel(ChunkModel):
         to the interaction, and index of selected choices (within the whole choice_set).
         """
         self.weights = None
-        nchoices = self.get_choice_set_size()
+        nchoices = self.get_number_of_elemental_alternatives()
         if nchoices == self.choice_set.size():
             self.model_interaction.set_selected_choice(agents_index)
             return (None, self.model_interaction.get_selected_choice())
         logger.log_status("Sampling alternatives for estimation ...")
-        index = zeros((agents_index.size, nchoices), dtype='int32')
         selected_choice = zeros((agents_index.size,), dtype='int32')
         if (len(submodels) > 1) or ((len(submodels) > 0) and (self.observations_mapping[submodels[0]].size < agents_index.size)):
+            index = zeros((agents_index.size, nchoices), dtype='int32')
             for submodel in submodels:
                 nagents_in_submodel = self.observations_mapping[submodel].size
                 if nagents_in_submodel <= 0:
