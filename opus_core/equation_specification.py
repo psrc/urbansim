@@ -174,15 +174,15 @@ class EquationSpecification(object):
         else:
             self.variables = self.variables + (VariableName(variable_name),)
         self.coefficients = concatenate((self.coefficients, array([coefficient_name])))
-        if submodel is not None:
+        if submodel is not None and self.get_submodels().size > 0:
             self.submodels = concatenate((self.submodels, array([submodel], dtype=self.submodels.dtype)))
         elif self.get_submodels().size > 0:
             self.submodels = concatenate((self.submodels, array([-2], dtype=self.submodels.dtype)))
-        if equation is not None:
+        if equation is not None and self.get_equations().size > 0:
             self.equations = concatenate((self.equations, array([equation], dtype=self.equations.dtype)))
         elif self.get_equations().size > 0:
             self.equations = concatenate((self.equations, array([-2], dtype=self.equations.dtype)))
-        if fixed_value is not None:
+        if fixed_value is not None and self.get_fixed_values().size > 0:
             self.fixed_values = concatenate((self.fixed_values, array([fixed_value], dtype=self.fixed_values.dtype)))
         elif self.get_fixed_values().size > 0:
             self.fixed_values = concatenate((self.fixed_values, array([0], dtype=self.fixed_values.dtype)))
