@@ -34,7 +34,7 @@ class ChoiceModelFromTemplateDialog(ModelFromTemplateDialogBase):
             #TODO: replace with cbo
             ('Submodel String', self.leSubModelString),
             #TODO replace with cbo
-            ('Choice Attribute Set', self.leChoiceAttributeName),
+            ('Choice Attribute Name', self.leChoiceAttributeName),
             ('Fraction of Agents for Estimation', self.leEstimationSizeAgents),
             ('Agent Set', self.leAgentSet),
             #TODO: check what filters do
