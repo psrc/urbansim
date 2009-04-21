@@ -80,10 +80,22 @@ class InteractionDataset(Dataset):
         return self.attribute_boxes[alias].get_data()
 
     def get_attribute_of_dataset(self, name, dataset_number=1):
+        """ Return values of attribute given by 'name' belonging to the given dataset, 
+        possibly filtred by the corresponding indes. It is a 1d array of size 
+        reduced_n or reduced_m.
+        """
         index = self.get_index(dataset_number)
         if index <> None:
             return self.get_dataset(dataset_number).get_attribute_by_index(name, index)
         return self.get_dataset(dataset_number).get_attribute(name)
+        
+    def get_id_attribute_of_dataset(self, dataset_number=1):
+        """Like 'get_attribute_of_dataset' where name is the id_name of the given dataset.
+        """
+        index = self.get_index(dataset_number)
+        if index <> None:
+            return self.get_dataset(dataset_number).get_id_attribute()[index]
+        return self.get_dataset(dataset_number).get_id_attribute()
 
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
         """ Compute variable given by the argument 'name' only if this variable
@@ -469,6 +481,30 @@ class InteractionDataset(Dataset):
         attr2 = reshape(self.get_attribute_of_dataset(name2),(self.get_reduced_n(), 1))
         return self.get_2d_dataset_attribute(name1) / ma.masked_where(attr2 == 0.0, attr2.astype(float32))
 
+    def match_agent_attribute_to_choice(self, name, dataset_pool=None):
+        """ Return a 2D array of the attribute 'name_{postfix}'. It is assumed to be an attribute
+        of dataset1 (possibly computed). {postfix} is created either by values of the attribute
+        'name' of dataset2 (if it has any such attribute), or by the id values of dataset2.
+        """
+        if 'name' in self.get_dataset(2).get_known_attribute_names():
+            name_postfix = self.get_attribute_of_dataset('name', 2)
+        else:
+            name_postfix = self.get_id_attribute_of_dataset(2)
+        name_postfix_alt = self.get_id_attribute_of_dataset(2)
+        
+        for i in range(self.get_reduced_m()):
+            full_name = "%s_%s" % (name, name_postfix[i])
+            try:
+                self.get_dataset(1).compute_variables(full_name, dataset_pool=dataset_pool)
+            except:
+                full_name = "%s_%s" % (name, name_postfix_alt[i])
+                self.get_dataset(1).compute_variables(full_name, dataset_pool=dataset_pool)
+            if i == 0:
+                result = self.get_attribute(full_name)
+            else:
+                result[:,i] = self.get_attribute_of_dataset(full_name, 1)
+        return result
+            
     def load_datasets(self):
         if self.dataset1.size() <= 0:
             self.dataset1.get_id_attribute()
@@ -576,6 +612,7 @@ class InteractionDataset(Dataset):
         if name!=self.get_dataset_name() and name!=self.get_dataset(1).get_dataset_name() and name!=self.get_dataset(2).get_dataset_name():
             raise ValueError, 'different dataset names for variable and dataset or a component'
 
+from numpy import ma
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -592,6 +629,30 @@ class Tests(opus_unittest.OpusTestCase):
         result = test_x_test.get_dataset_named('test')
         self.assertEqual(result.get_dataset_name(), 'test', msg="error in get_dataset_named")
         self.assertRaises(ValueError, test_x_test.get_dataset_named, 'squid')
-
+        
+    def test_match_agent_attribute_to_choice(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='agents', 
+            table_data={'id': array([1, 2, 3, 4, 5]), 'attr_2': array([3,   2,   4,   10, 20]), 
+                                                      'attr_3': array([10, 100, 1000, 500, 0]),
+                                                      'attr_4': array([100, 500, 0, 20, -30])
+                        }
+            )
+        storage.write_table(table_name='choices', 
+            table_data={'id': array([1, 2, 3, 4])}
+            )
+        agents = Dataset(in_storage=storage, in_table_name='agents', dataset_name='agent', id_name='id')
+        choices = Dataset(in_storage=storage, in_table_name='choices', dataset_name='choice', id_name='id')
+        ids = InteractionDataset(dataset1=agents, dataset2=choices, index1=array([0,1,3,4]), index2=array([1,2,3])) 
+        result = ids.match_agent_attribute_to_choice('attr')
+        should_be = array([[3, 10, 100], [2,100,500], [10,500, 20], [20, 0, -30]])
+        self.assertEqual(ma.allequal(result, should_be), True)
+        
+        choices.add_primary_attribute(name='name', data=array(['bus', 'car', 'tran', 'walk']))
+        agents.add_primary_attribute(name='attr_tran', data=array([100, 1000, 10000, 5000,10]))
+        result = ids.match_agent_attribute_to_choice('attr')
+        should_be = array([[3, 100, 100], [2,1000,500], [10,5000, 20], [20, 10, -30]])
+        self.assertEqual(ma.allequal(result, should_be), True)
+        
 if __name__=='__main__':
     opus_unittest.main()
