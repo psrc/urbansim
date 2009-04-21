@@ -482,9 +482,11 @@ class InteractionDataset(Dataset):
         return self.get_2d_dataset_attribute(name1) / ma.masked_where(attr2 == 0.0, attr2.astype(float32))
 
     def match_agent_attribute_to_choice(self, name, dataset_pool=None):
-        """ Return a 2D array of the attribute 'name_{postfix}'. It is assumed to be an attribute
+        """ Return a tuple where the first element is a 2D array of the attribute 'name_{postfix}'. 
+        It is assumed to be an attribute
         of dataset1 (possibly computed). {postfix} is created either by values of the attribute
         'name' of dataset2 (if it has any such attribute), or by the id values of dataset2.
+        The second value of the resulting tuple is a list of dependent variables.
         """
         if 'name' in self.get_dataset(2).get_known_attribute_names():
             name_postfix = self.get_attribute_of_dataset('name', 2)
@@ -492,18 +494,25 @@ class InteractionDataset(Dataset):
             name_postfix = self.get_id_attribute_of_dataset(2)
         name_postfix_alt = self.get_id_attribute_of_dataset(2)
         
+        dependencies = []
         for i in range(self.get_reduced_m()):
-            full_name = "%s_%s" % (name, name_postfix[i])
+            full_name = VariableName("%s_%s" % (name, name_postfix[i]))
+            if full_name.get_dataset_name() is None:
+                full_name = VariableName("%s.%s" % (self.get_dataset(1).get_dataset_name(), full_name.get_expression()))
             try:
                 self.get_dataset(1).compute_variables(full_name, dataset_pool=dataset_pool)
             except:
-                full_name = "%s_%s" % (name, name_postfix_alt[i])
+                full_name = VariableName("%s_%s" % (name, name_postfix_alt[i]))
+                if full_name.get_dataset_name() is None:
+                    full_name = VariableName("%s.%s" % (self.get_dataset(1).get_dataset_name(), full_name.get_expression()))
                 self.get_dataset(1).compute_variables(full_name, dataset_pool=dataset_pool)
+            
+            dependencies.append(full_name.get_expression())
             if i == 0:
                 result = self.get_attribute(full_name)
             else:
                 result[:,i] = self.get_attribute_of_dataset(full_name, 1)
-        return result
+        return result, dependencies
             
     def load_datasets(self):
         if self.dataset1.size() <= 0:
@@ -644,15 +653,16 @@ class Tests(opus_unittest.OpusTestCase):
         agents = Dataset(in_storage=storage, in_table_name='agents', dataset_name='agent', id_name='id')
         choices = Dataset(in_storage=storage, in_table_name='choices', dataset_name='choice', id_name='id')
         ids = InteractionDataset(dataset1=agents, dataset2=choices, index1=array([0,1,3,4]), index2=array([1,2,3])) 
-        result = ids.match_agent_attribute_to_choice('attr')
+        result, dep = ids.match_agent_attribute_to_choice('attr')
         should_be = array([[3, 10, 100], [2,100,500], [10,500, 20], [20, 0, -30]])
         self.assertEqual(ma.allequal(result, should_be), True)
-        
+        self.assertEqual((array(dep) == array(['agent.attr_2', 'agent.attr_3', 'agent.attr_4'])).sum() == 3, True)
         choices.add_primary_attribute(name='name', data=array(['bus', 'car', 'tran', 'walk']))
         agents.add_primary_attribute(name='attr_tran', data=array([100, 1000, 10000, 5000,10]))
-        result = ids.match_agent_attribute_to_choice('attr')
+        result, dep = ids.match_agent_attribute_to_choice('attr')
         should_be = array([[3, 100, 100], [2,1000,500], [10,5000, 20], [20, 10, -30]])
         self.assertEqual(ma.allequal(result, should_be), True)
+        self.assertEqual((array(dep) == array(['agent.attr_2', 'agent.attr_tran', 'agent.attr_4'])).sum()==3, True)
         
 if __name__=='__main__':
     opus_unittest.main()

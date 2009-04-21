@@ -339,6 +339,26 @@ SUBPATTERN_NUMBER_OF_AGENTS = \
                    (symbol.atom,
                     (token.NAME,
                      ['agent'])))))))))))))))))
+    
+SUBPATTERN_AGENT_TIMES_CHOICE = \
+    (symbol.arglist,
+     (symbol.argument,
+      (symbol.test,
+       _or_test_subtree(
+        (symbol.and_test,
+         (symbol.not_test,
+          (symbol.comparison,
+           (symbol.expr,
+            (symbol.xor_expr,
+             (symbol.and_expr,
+              (symbol.shift_expr,
+               (symbol.arith_expr,
+                (symbol.term,
+                 (symbol.factor,
+                  (symbol.power,
+                   (symbol.atom,
+                    (token.NAME,
+                     ['attribute'])))))))))))))))))
 
 # Pattern that matches the arguments to a call to aggregate(...) and disaggregate(...)
 # The first argument is required.  The remaining 2 arguments are optional.

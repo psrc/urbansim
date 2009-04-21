@@ -4,6 +4,7 @@
 
 from numpy import array
 from opus_core.variables.variable_name import VariableName
+from opus_core.datasets.interaction_dataset import InteractionDataset
 
 class DummyDataset(object):
     """Instances of DummyDataset are used to construct local environments for evaluating the expression
@@ -92,6 +93,14 @@ class DummyDataset(object):
         result = dataset.sum_dataset_over_ids(agents, constant=1)
         return self._coerce_result(result, dataset)
     
+    def agent_times_choice(self, attribute_name):
+        dataset = self._get_dataset()
+        if not isinstance(dataset, InteractionDataset):
+            raise StandardError, "The method 'agent_times_choice' must be called for an interaction dataset."
+        result, dependencies = dataset.match_agent_attribute_to_choice(attribute_name.name, dataset_pool=self._dataset_pool)
+        self._var.add_and_solve_dependencies(dependencies, dataset_pool=self._dataset_pool)
+        return result
+        
     def _get_dataset(self):
         # get the actual dataset associated with this dummy dataset.  For ordinary datasets, this will be the same as
         # the dataset for self._var; but for interaction sets, it might be one of the components

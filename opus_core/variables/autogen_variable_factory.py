@@ -76,8 +76,7 @@ class AutogenVariableFactory(object):
         # literals is a set of strings that should be compiled as literals, so that the expression
         # will evaluate correctly.  
         self._literals = Set()
-        self._uses_number_of_agents  = False
-        self._number_of_agents_receivers = Set()
+        self._special_dataset_receivers = Set()
         # aggregation_calls is a set of calls to aggregation/disaggregation methods.
         #     Each element of aggregation_calls is a tuple 
         #     (receiver, method, package, dataset_to_aggregate, variable_to_aggregate, [intermediate_datasets], operation)
@@ -265,6 +264,8 @@ class AutogenVariableFactory(object):
             self._analyze_number_of_agents_method_call(receiver, method, args)
         elif method in ['aggregate', 'disaggregate', 'aggregate_all']: 
             self._analyze_aggregation_method_call(receiver, method, args)
+        elif method=='agent_times_choice':
+            self._analyze_agent_times_choice_method_call(receiver, method, args)
         else:
             # it's some other kind of method call - just analyze the args (omit the initial symbol.arglist token)
             self._analyze_arguments(args[1:])
@@ -273,9 +274,15 @@ class AutogenVariableFactory(object):
         same, vars = match(SUBPATTERN_NUMBER_OF_AGENTS, args)
         if not same:
             raise ValueError, "syntax error for number_of_agents function call"
-        self._uses_number_of_agents  = True
-        self._number_of_agents_receivers.add(receiver)
+        self._special_dataset_receivers.add(receiver)
         self._literals.add(vars['agent'])
+        
+    def _analyze_agent_times_choice_method_call(self, receiver, method, args):
+        same, vars = match(SUBPATTERN_AGENT_TIMES_CHOICE, args)
+        if not same:
+            raise ValueError, "syntax error for agent_times_choice function call"
+        self._special_dataset_receivers.add(receiver)
+        self._literals.add(vars['attribute'])
 
     def _analyze_aggregation_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_AGGREGATION, args)
@@ -390,7 +397,7 @@ class AutogenVariableFactory(object):
                 self._analyze_one_dataset_name(ds)
         for receiver, method, pkg, aggregated_dataset, aggregated_attr, intermediates, op in self._aggregation_calls:
             self._analyze_one_dataset_name(receiver)
-        for receiver in self._number_of_agents_receivers:
+        for receiver in self._special_dataset_receivers:
             self._analyze_one_dataset_name(receiver)
 
     def _analyze_one_dataset_name(self, name):
@@ -510,7 +517,7 @@ class AutogenVariableFactory(object):
                     already_generated.add( (pkg,aggregated_dataset,aggregated_attr) )
                 compute_method = compute_method + 8*' ' + '%s.%s.%s.name = ("%s", "%s", "%s") \n' % \
                         (pkg, aggregated_dataset, aggregated_attr, pkg, aggregated_dataset, aggregated_attr)
-        for receiver in self._number_of_agents_receivers:
+        for receiver in self._special_dataset_receivers:
             if (None,receiver) not in already_generated:
                 compute_method = compute_method + 8*' ' + '%s = DummyDataset(self, "%s", dataset_pool) \n' % (receiver, receiver)
                 already_generated.add( (None,receiver) )

@@ -5,6 +5,8 @@
 from opus_core.variables.variable_name import VariableName
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
+from opus_core.datasets.dataset import Dataset
+from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from numpy import array, ma
 
@@ -127,5 +129,31 @@ class Tests(opus_unittest.OpusTestCase):
         result3 = test_agent_x_test_location.compute_variables(['squid'])
         self.assert_(ma.allclose(result3, should_be, rtol=1e-6), msg = "Error in " + expr)
 
+    def test_agent_times_choice(self):
+        expression = 'agent_x_choice.agent_times_choice(attr)'
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='agents', 
+            table_data={'id': array([1, 2, 3, 4, 5]), 'attr_2': array([3,   2,   4,   10, 20]), 
+                                                      'attr_3': array([10, 100, 1000, 500, 0]),
+                                                      'attr_4': array([100, 500, 0, 20, -30])
+                        }
+            )
+        storage.write_table(table_name='choices', 
+            table_data={'id': array([1, 2, 3, 4])}
+            )
+        agents = Dataset(in_storage=storage, in_table_name='agents', dataset_name='agent', id_name='id')
+        choices = Dataset(in_storage=storage, in_table_name='choices', dataset_name='choice', id_name='id')
+        ids = InteractionDataset(dataset1=agents, dataset2=choices, index1=array([0,1,3,4]), index2=array([1,2,3])) 
+        result = ids.compute_variables(expression)
+        should_be = array([[3, 10, 100], [2,100,500], [10,500, 20], [20, 0, -30]])
+        self.assertEqual(ma.allequal(result, should_be), True)
+        
+        agents.touch_attribute('attr_2') # in order to recompute the expression
+        choices.add_primary_attribute(name='name', data=array(['bus', 'car', 'tran', 'walk']))
+        agents.add_primary_attribute(name='attr_tran', data=array([100, 1000, 10000, 5000,10]))
+        result = ids.compute_variables(expression)
+        should_be = array([[3, 100, 100], [2,1000,500], [10,5000, 20], [20, 10, -30]])
+        self.assertEqual(ma.allequal(result, should_be), True)
+        
 if __name__=='__main__':
     opus_unittest.main()
