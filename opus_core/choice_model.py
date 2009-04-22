@@ -42,7 +42,6 @@ class ChoiceModel(ChunkModel):
                         submodel_string=None,
                         choice_attribute_name="choice_id",
                         interaction_pkg="opus_core",
-                        upper_level_choice_set=None,
                         run_config=None, estimate_config=None, debuglevel=0,
                         dataset_pool=None):
         """
@@ -59,8 +58,6 @@ class ChoiceModel(ChunkModel):
                 Otherwise the choices are identified by the unique identifier of choice_set.
             interaction_pkg - only relevant if there is an implementation of an interaction dataset
                 that corresponds to interaction between agents and choices.
-            upper_level_choice_set - Dataset for hierarchical choice models, e.g. nested logit. It is either a Dataset or
-                                    dataset name. In the latter case it is loaded from dataset_pool.
             run_config - collection of additional arguments that control a simulation run. It is of class Resources.
             estimate_config - collection of additional arguments that control an estimation run. It is of class Resources.
             debuglevel - debuglevel for the constructor. The level is overwritten by the argument in the run and estimate method.
@@ -111,7 +108,7 @@ class ChoiceModel(ChunkModel):
         self.result_choices = None
         self.dataset_pool = self.create_dataset_pool(dataset_pool)
         self.coefficient_names = {}
-        self.model_interaction = ModelInteraction(self, interaction_pkg, [self.choice_set, upper_level_choice_set])
+        self.model_interaction = ModelInteraction(self, interaction_pkg, self.choice_set)
         ChunkModel.__init__(self)
         self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
@@ -171,7 +168,7 @@ class ChoiceModel(ChunkModel):
             if (index.size <= 0) or ((index.ndim > 1) and (index.shape[1]<=0)):
                 return zeros(agents_index.size, dtype="int32")
         #create interaction set
-        self.model_interaction.create_interaction_datasets(agents_index, {0: index})
+        self.model_interaction.create_interaction_datasets(agents_index, index)
 
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
@@ -324,7 +321,7 @@ class ChoiceModel(ChunkModel):
         logger.log_status("Choice set size: " + str(nchoices))
 
         # create interaction set
-        self.model_interaction.create_interaction_datasets(agents_for_estimation_idx, {0: index})
+        self.model_interaction.create_interaction_datasets(agents_for_estimation_idx, index)
         
         self.estimate_config.merge({"index":index})
         self.coefficients = create_coefficient_from_specification(specification)
@@ -625,111 +622,80 @@ class ChoiceModel(ChunkModel):
 
        
 class ModelInteraction:
-    """ This class handles all the work that involves the interaction dataset of the Choice model. It supports
-    hierarchical models, i.e. when there are more choice sets."""
-    def __init__(self, model, package=None, choice_sets = []):
+    """ This class handles all the work that involves the interaction dataset of the Choice model."""
+    def __init__(self, model, package=None, choice_set=None):
         self.interaction_package = package
-        self.choice_sets = {}
-        for i in range(len(choice_sets)):
-            set = choice_sets[i]
-            if (set is not None):
-                if isinstance(set, str): # can be a dataset name
-                    set = model.dataset_pool.get_dataset(set)
-                self.choice_sets[i] = set
-        self.number_of_choice_sets = len(self.choice_sets.keys())
-        self.interaction_modules = {}
-        self.interaction_class_names = {}
-        self.interaction_datasets = {}
+        self.choice_set = choice_set
+        if (choice_set is not None):
+            if isinstance(choice_set, str): # can be a dataset name
+                self.choice_set = model.dataset_pool.get_dataset(choice_set)
+        self.interaction_module = None
+        self.interaction_class_name = None
+        self.interaction_dataset = None
         self.model = model
         self.interaction_resources = None
         self.data = {}
-        self.specified_coefficients = {}
-        self.selected_choice = {}
+        self.specified_coefficients = None
+        self.selected_choice = None
         self.submodel_coefficients = {}
         
     def set_agent_set(self, agent_set):
         self.agent_set = agent_set
         factory = DatasetFactory()
-        for i in range(self.number_of_choice_sets):
-            self.interaction_modules[i], self.interaction_class_names[i] = \
+        self.interaction_module, self.interaction_class_name = \
                 factory.compose_interaction_dataset_name(self.agent_set.get_dataset_name(),
-                                                         self.choice_sets[i].get_dataset_name())
+                                                         self.choice_set.get_dataset_name())
 
     def create_interaction_datasets(self, agents_index, choice_set_index):
-        # free memory of existing interaction sets
-        for i in self.interaction_datasets.keys():
-            if isinstance(self.interaction_datasets[i], InteractionDataset):
-                self.interaction_datasets[i].unload_all_attributes()
-                gc.collect()
+        # free memory of existing interaction set
+        if isinstance(self.interaction_dataset, InteractionDataset):
+            self.interaction_dataset.unload_all_attributes()
+            gc.collect()
                 
         self.interaction_resources = Resources({"debug":self.model.debug})
-        for i in range(self.number_of_choice_sets):
-            index = choice_set_index.get(i, None)
-            try:
-                self.interaction_datasets[i] = ClassFactory().get_class(
-                                self.interaction_package+"."+self.interaction_modules[i],
-                                class_name=self.interaction_class_names[i],
-                                    arguments={"dataset1":self.agent_set, "dataset2":self.choice_sets[i],
-                                               "index1":agents_index, "index2":index})
-            except ImportError:
-                self.interaction_datasets[i] = InteractionDataset(dataset1=self.agent_set, dataset2=self.choice_sets[i],
-                                              index1=agents_index, index2=index, debug=self.model.debug)
+        try:
+            self.interaction_dataset = ClassFactory().get_class(
+                                self.interaction_package+"."+self.interaction_module,
+                                class_name=self.interaction_class_name,
+                                    arguments={"dataset1":self.agent_set, "dataset2":self.choice_set,
+                                               "index1":agents_index, "index2":choice_set_index})
+        except ImportError:
+                self.interaction_dataset = InteractionDataset(dataset1=self.agent_set, dataset2=self.choice_set,
+                                              index1=agents_index, index2=choice_set_index, debug=self.model.debug)
 
     def compute_variables(self, variables=None):
-        for i in range(self.number_of_choice_sets):
-            if variables is not None:
-                if self.number_of_choice_sets == 1:
-                    var_list_for_this_choice_set = variables
-                else:
-                    var_list_for_this_choice_set = []
-                    for var in variables: # choose variables for this choice set
-                        dataset_name = var.get_dataset_name()
-                        if (dataset_name == self.interaction_datasets[i].get_dataset_name()) or \
-                            (self.interaction_datasets[i].get_owner_dataset_and_index(dataset_name)[0] is not None):
-                            var_list_for_this_choice_set.append(var)
-            else:
-                var_list_for_this_choice_set = \
-                        self.specified_coefficients[i].get_variables_without_constants_and_reserved_names()
-            self.interaction_datasets[i].compute_variables(var_list_for_this_choice_set,
-                                                           dataset_pool=self.model.dataset_pool,
-                                                           resources = self.interaction_resources)
+        if variables is not None:
+            var_list_for_this_choice_set = variables
+        else:
+            var_list_for_this_choice_set = \
+                    self.specified_coefficients.get_variables_without_constants_and_reserved_names()
+        self.interaction_dataset.compute_variables(var_list_for_this_choice_set,
+                                                       dataset_pool=self.model.dataset_pool,
+                                                       resources = self.interaction_resources)
 
     def prepare_data_for_simulation(self, submodel):
         # free up memory from previous chunks
         if submodel in self.data.keys():
             del self.data[submodel]
             gc.collect()
-            
-        self.data[submodel] = {}
-        self.submodel_coefficients[submodel] = {}
-        for i in range(self.number_of_choice_sets):
-            self.submodel_coefficients[submodel][i] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients[i], 
-                                                                                        submodel)
-            self.data[submodel][i] = self.interaction_datasets[i].create_logit_data(self.submodel_coefficients[submodel][i], 
+             
+        self.submodel_coefficients[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients, submodel)
+        self.data[submodel] = self.interaction_dataset.create_logit_data(self.submodel_coefficients[submodel], 
                                                                             index = self.model.observations_mapping[submodel])
 
     def prepare_data_for_estimation(self, submodel):
-        self.data[submodel] = {}
-        self.submodel_coefficients[submodel] = {}
-        for i in range(self.number_of_choice_sets):
-            self.submodel_coefficients[submodel][i] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients[i], 
-                                                                                        submodel)
-            self.data[submodel][i] = self.interaction_datasets[i].create_logit_data_from_beta_alt(
-                                                                      self.submodel_coefficients[submodel][i], 
+        self.submodel_coefficients[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients, submodel)
+        self.data[submodel] = self.interaction_dataset.create_logit_data_from_beta_alt(
+                                                                      self.submodel_coefficients[submodel], 
                                                                       index=self.model.observations_mapping[submodel])
 
-            
     def get_submodel_coefficients(self, submodel):
-        if self.number_of_choice_sets == 1:
-            return self.submodel_coefficients[submodel][0]
         return self.submodel_coefficients[submodel]
         
-    def remove_rows_from_data(self, where_not_remove, submodel, idx):
-        self.data[submodel][idx] = compress(where_not_remove, self.data[submodel][idx], axis=0)
+    def remove_rows_from_data(self, where_not_remove, submodel):
+        self.data[submodel] = compress(where_not_remove, self.data[submodel], axis=0)
         
     def get_data(self, submodel):
-        if self.number_of_choice_sets == 1:
-            return self.data[submodel][0]
         return self.data[submodel]
         
     def create_specified_coefficients(self, coefficients, specification, choice_ids=None):
@@ -744,76 +710,62 @@ class ModelInteraction:
                 equation_ids = choice_ids[0,:]
         else:
             equation_ids = choice_ids
-        for i in range(self.number_of_choice_sets):
-            if i == 0:
-                nchoices = self.model.get_choice_set_size()
-            else:
-                nchoices = self.choice_sets[i].size()
-            self.specified_coefficients[i] = SpecifiedCoefficients().create(coefficients, specification, neqs=nchoices, equation_ids=equation_ids)
+
+        nchoices = self.model.get_choice_set_size()
+        self.specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=nchoices, 
+                                                                     equation_ids=equation_ids)
             
     def get_specified_coefficients(self):
-        if self.number_of_choice_sets == 1:
-            return self.specified_coefficients[0]
         return self.specified_coefficients
     
     def get_submodels(self):
-        return self.specified_coefficients[0].get_submodels()
+        return self.specified_coefficients.get_submodels()
         
     def set_selected_choice(self, agents_index):
-        for i in range(self.number_of_choice_sets):
-            self.selected_choice[i] = self.choice_sets[i].get_id_index(id=
-                                        self.agent_set.get_attribute_by_index(self.choice_sets[i].get_id_name()[0],
+        self.selected_choice = self.choice_set.get_id_index(id=
+                                        self.agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
                                         agents_index))
             
     def set_given_selected_choice(self, selected_choice):
-        self.selected_choice[0] = selected_choice
+        self.selected_choice = selected_choice
         
     def get_selected_choice(self):
-        if self.number_of_choice_sets == 1:
-            return self.selected_choice[0]
         return self.selected_choice
     
     def get_selected_choice_2d(self):
-        selected_choice_2d = {}
-        for i in range(self.number_of_choice_sets):
-            selected_choice_2d[i] = zeros((self.selected_choice[i].size, self.specified_coefficients[i].nequations()), 
+        selected_choice_2d = zeros((self.selected_choice.size, self.specified_coefficients.nequations()), 
                                           dtype="int32")
-            selected_choice_2d[i][arange(self.selected_choice[i].size), self.selected_choice[i]] = 1
+        selected_choice_2d[arange(self.selected_choice.size), self.selected_choice] = 1
         return selected_choice_2d
 
     def get_selected_choice_for_submodel_and_update_data(self, submodel):
-        is_submodel_selected_choice = {}
         selected_choice_2d = self.get_selected_choice_2d()
-        for i in range(self.number_of_choice_sets):           
-            is_submodel_selected_choice[i] = take (selected_choice_2d[i], indices=self.model.observations_mapping[submodel],
-                                                                                                axis=0)
-            # remove not used choices
-            is_submodel_selected_choice[i] = take (is_submodel_selected_choice[i], 
-                                                   indices=self.submodel_coefficients[submodel][i].get_equations_index(), 
-                                                   axis=1)
-            sumchoice = is_submodel_selected_choice[i].sum(axis=1, dtype=int32)
-            where_not_remove = where(sumchoice == 0, False, True)
-            if False in where_not_remove:
-                is_submodel_selected_choice[i] = compress(where_not_remove, is_submodel_selected_choice[i], axis=0)
-                self.remove_rows_from_data(where_not_remove, submodel, i)
-
-        if self.number_of_choice_sets == 1:
-            return is_submodel_selected_choice[0]
+       
+        is_submodel_selected_choice = take (selected_choice_2d, indices=self.model.observations_mapping[submodel],
+                                                                                            axis=0)
+        # remove not used choices
+        is_submodel_selected_choice = take (is_submodel_selected_choice, 
+                                               indices=self.submodel_coefficients[submodel].get_equations_index(), 
+                                               axis=1)
+        sumchoice = is_submodel_selected_choice.sum(axis=1, dtype=int32)
+        where_not_remove = where(sumchoice == 0, False, True)
+        if False in where_not_remove:
+            is_submodel_selected_choice = compress(where_not_remove, is_submodel_selected_choice, axis=0)
+            self.remove_rows_from_data(where_not_remove, submodel)
         return is_submodel_selected_choice
     
     def get_coefficient_names(self, submodel):
-        return self.submodel_coefficients[submodel][0].get_coefficient_names_from_alt()
+        return self.submodel_coefficients[submodel].get_coefficient_names_from_alt()
         
     def get_variable_names(self, submodel):
-        return self.submodel_coefficients[submodel][0].get_variable_names_from_alt()
+        return self.submodel_coefficients[submodel].get_variable_names_from_alt()
         
     def get_coefficient_fixed_values(self, submodel):
-        return self.specified_coefficients[0].specification.get_coefficient_fixed_values_for_submodel(submodel)
+        return self.specified_coefficients.specification.get_coefficient_fixed_values_for_submodel(submodel)
         
     def is_there_data(self, submodel):
-        for i in range(self.number_of_choice_sets):
-            if (self.data[submodel][i].shape[0] <= 0) or (self.data[submodel][i].size <= 0):
-                return False
+        if (self.data[submodel].shape[0] <= 0) or (self.data[submodel].size <= 0):
+            return False
         return True
     
 if __name__=="__main__":
