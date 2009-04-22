@@ -32,7 +32,8 @@ class EquationSpecification(object):
             see doc string for get_specification_attributes_from_dictionary.
         """
         if (variables is None) and (specification_dict is not None):
-            variables, coefficients, equations, submodels, fixed_values = get_specification_attributes_from_dictionary(specification_dict)
+            variables, coefficients, equations, submodels, fixed_values, other_fields = \
+                                            get_specification_attributes_from_dictionary(specification_dict)
         self.variables = tuple(map(lambda x: VariableName(x), self._none_or_array_to_array(variables)))
         self.coefficients = self._none_or_array_to_array(coefficients)
         if not isinstance(self.coefficients, ndarray):
@@ -287,6 +288,9 @@ class EquationSpecification(object):
     def get_nsubmodels(self):
         return maximum(1, self.get_distinct_submodels().size)
 
+    def get_other_fields(self):
+        return self.other_fields
+    
     def get_other_field_names(self):
         return self.other_fields.keys()
         
@@ -380,17 +384,28 @@ class SpecLengthException(Exception):
         
 def get_specification_attributes_from_dictionary(specification_dict):
     """ Creates a specification object from a dictionary specification_dict. Keys of the dictionary are submodels. If there
-    is only one submodel, use -2 as key. A value of specification_dict for each submodel entry is a list containing specification for the particular submodel.
-    The elements of each list can be defined in one of the following forms:
+    is only one submodel, use -2 as key. A value of specification_dict for each submodel entry is either a list 
+    or a dictionary containing specification for the particular submodel.
+    
+    If it is a list, each element can be defined in one of the following forms:
         - a character string specifying a variable in its fully qualified name or as an expression - in such a case 
-                                the coeficient name will be the alias of the variable
+                                the coefficient name will be the alias of the variable
         - a tuple of length 2: variable name as above, and the corresponding coefficient name
         - a tuple of length 3: variable name, coefficient name, fixed value of the coefficient (if the 
                                 coefficient should not be estimated)
         - a dictionary with pairs variable name, coefficient name
-    specification_dict can contain an entry '_definition_' which should be a list of elements in one of the forms above.
+        
+    If it is a dictionary, it can contain specification for each equation or for elements of other fields.
+    It can contain an entry 'name' which specifies the name of the field (by default the name is 'equation').
+    If it is another name, the values are stored in the dictionary attribute 'other_fields'. Each element of the 
+    submodel dictionary can be again a list (see the previous paragraph), or a dictionary 
+    (like the one described in this paragraph).
+    
+    specification_dict can contain an entry '_definition_' which should be a list of elements in one of the forms
+    described in the second paragraph.
     In such a case, the entries defined for submodels can contain only the variable aliases. The corresponding 
     coefficient names and fixed values (if defined) are taken from the definition section. 
+    
     See examples in unit tests below.
     """
     variables = []
@@ -399,20 +414,26 @@ def get_specification_attributes_from_dictionary(specification_dict):
     submodels = []
     fixed_values = []
     definition = {}
+    other_fields = {}
     try:
         if "_definition_" in specification_dict.keys():
-            definition["variables"], definition["coefficients"], definition["equations"], dummy, definition["fixed_values"] = \
+            definition["variables"], definition["coefficients"], definition["equations"], dummy1, definition["fixed_values"], dummy2 = \
                             get_variables_coefficients_equations_for_submodel(specification_dict["_definition_"], "_definition_")
             definition["alias"]  = map(lambda x: VariableName(x).get_alias(), definition["variables"])
             del specification_dict["_definition_"]
         for sub_model, submodel_spec in specification_dict.items():
-            variable, coefficient, equation, submodel, fixed_value = get_variables_coefficients_equations_for_submodel(
+            variable, coefficient, equation, submodel, fixed_value, other_field = get_variables_coefficients_equations_for_submodel(
                                                                          submodel_spec, sub_model, definition)
             variables += variable
             coefficients += coefficient
             equations += equation
             submodels += submodel
             fixed_values += fixed_value
+            for key, value in other_field.iteritems():
+                if key in other_fields:
+                    other_fields[key] = concatenate((other_fields[key], value))
+                else:
+                    other_fields[key] = array(value)
 
     except Exception, e:
         logger.log_stack_trace()
@@ -420,88 +441,115 @@ def get_specification_attributes_from_dictionary(specification_dict):
 
     if where(array(fixed_values) <> 0)[0].size == 0: # no fixed values defined
         fixed_values = []
-    return (array(variables), array(coefficients), array(equations, dtype="int16"), array(submodels, dtype="int16"), array(fixed_values))
+    return (array(variables), array(coefficients), array(equations, dtype="int16"), array(submodels, dtype="int16"), 
+            array(fixed_values), other_fields)
 
 def load_specification_from_dictionary(specification_dict):
     """See the doc string at get_specification_attributes_from_dictionary
     """
-    variables, coefficients, equations, submodels, fixed_values = get_specification_attributes_from_dictionary(specification_dict)
-    return EquationSpecification(variables=variables, coefficients=coefficients, equations = equations, submodels = submodels, fixed_values = fixed_values)
+    variables, coefficients, equations, submodels, fixed_values, other_fields = get_specification_attributes_from_dictionary(specification_dict)
+    return EquationSpecification(variables=variables, coefficients=coefficients, equations = equations, submodels = submodels, 
+                                 fixed_values = fixed_values, other_fields=other_fields)
 
 def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, definition={}):
     variables = []
     coefficients = []
+    fixed_values = []
     equations = []
     submodels = []
-    fixed_values = []
-    if isinstance(submodel_spec, tuple) or isinstance(submodel_spec, list):
-        variable, coefficient, fixed_value, error = get_variables_coefficients_equations_for_submodel_part(
-                                                                         submodel_spec, definition)
-        if error:
-            logger.log_error("Error in specification of submodel %s." % sub_model)
-        variables += variable
-        coefficients += coefficient
-        fixed_values += fixed_value
-        submodels += len(variable)*[sub_model]
+    other_fields = {}
+    error = False
+    if isinstance(submodel_spec, tuple) or isinstance(submodel_spec, list): # no equations or other fields given
+        variables, coefficients, fixed_values, error = get_variables_coefficients_from_list(submodel_spec, definition)
     elif isinstance(submodel_spec, dict):
-        speckeys = submodel_spec.keys()
-        if sum(map(lambda(x): isinstance(x, int), speckeys)) == len(speckeys): # keys are the equations
-            for eq, spec in submodel_spec.iteritems():
-                variable, coefficient, fixed_value, error = get_variables_coefficients_equations_for_submodel_part(
-                                                                         spec, definition)
-                if error:
-                    logger.log_error("Error in specification of submodel %s equation %s" % (sub_model, eq))
+        name = submodel_spec.get('name', 'equation')
+        if name.startswith('equation'): # by default the dictionary is on an equation level
+            variables, coefficients, fixed_values, equations, error = get_variables_coefficients_equations_from_dict(submodel_spec, 
+                                                                                                              definition)
+        else:
+            del submodel_spec['name']
+            other_fields['dim_%s' % name] = []
+            for other_field_value, spec in submodel_spec.iteritems():
+                variable, coefficient, equation, submodel, fixed_value, other_field = \
+                            get_variables_coefficients_equations_for_submodel(spec, sub_model, definition)
                 variables += variable
                 coefficients += coefficient
+                equations += equation
+                submodels += submodel
                 fixed_values += fixed_value
-                submodels += len(variable)*[sub_model]
-                equations += len(variable)*[eq]
-        else:
-            if submodel_spec.has_key("equation_ids"):
-                equation_ids = submodel_spec["equation_ids"]
-                del submodel_spec["equation_ids"]
-            else:
-                equation_ids = None
-            
-            for var, coef in submodel_spec.items():
-                if not equation_ids:
-                    if ("variables" in definition.keys()) and (var in definition["alias"]):
-                        i = definition["alias"].index(var)
-                        variables.append(definition["variables"][i])
-                        coefficients.append(definition["coefficients"][i])
-                        fixed_values.append(definition["fixed_values"][i])
+                other_fields['dim_%s' % name] += len(variable)*[other_field_value]
+                for key, value in other_field.iteritems():
+                    if key in other_fields:
+                        other_fields[key] = concatenate((other_fields[key], value))
                     else:
-                        variables.append(var)
-                        coefficients.append(coef)
-                        fixed_values.append(0)
-                    submodels.append(sub_model)
-                elif type(coef) is list or type(coef) is tuple:
-                    for i in range(len(coef)):
-                        if coef[i] != 0:
-                            if ("variables" in definition.keys()) and (var in definition["alias"]):
-                                j = definition["alias"].index(var)
-                                variables.append(definition["variables"][j])
-                                fixed_values.append(definition["fixed_values"][j])
-                            else:
-                                variables.append(var)
-                                fixed_values.append(0)
-                            coefficients.append(coef[i])
-                            equations.append(equation_ids[i])
-                            submodels.append(sub_model)
-                            
-                else:
-                    logger.log_error("Wrong specification format for submodel %s variable %s; \nwith equation_ids provided, coefficients must be a list or tuple of the same length of equation_ids" % sub_model, var)
+                        other_fields[key] = array(value)
+    else:
+        logger.log_error("Error in specification of submodel %s." % sub_model)
+        return ([],[],[],[],[],{})
+    if error:
+        logger.log_error("Error in specification of submodel %s" % sub_model)
+    submodels = len(variables)*[sub_model]
+    return (variables, coefficients, equations, submodels, fixed_values, other_fields)
 
-    return (variables, coefficients, equations, submodels, fixed_values)
-
-def get_variables_coefficients_equations_for_submodel_part(submodel_spec, definition={}):
+def get_variables_coefficients_equations_from_dict(dict_spec, definition={}):
     variables = []
     coefficients = []
+    fixed_values = []
     equations = []
-    submodels = []
+    error = False
+    
+    speckeys = dict_spec.keys()
+    if sum(map(lambda(x): isinstance(x, int), speckeys)) == len(speckeys): # keys are the equations
+        for eq, spec in dict_spec.iteritems():
+            variable, coefficient, fixed_value, error = get_variables_coefficients_from_list(
+                                                                     spec, definition)
+            if error:
+                logger.log_error("Error in specification of equation %s" % eq)
+            variables += variable
+            coefficients += coefficient
+            fixed_values += fixed_value
+            equations += len(variable)*[eq]
+    else:
+        if dict_spec.has_key("equation_ids"):
+            equation_ids = dict_spec["equation_ids"]
+            del dict_spec["equation_ids"]
+        else:
+            equation_ids = None
+        
+        for var, coef in dict_spec.items():
+            if not equation_ids:
+                if ("variables" in definition.keys()) and (var in definition["alias"]):
+                    i = definition["alias"].index(var)
+                    variables.append(definition["variables"][i])
+                    coefficients.append(definition["coefficients"][i])
+                    fixed_values.append(definition["fixed_values"][i])
+                else:
+                    variables.append(var)
+                    coefficients.append(coef)
+                    fixed_values.append(0)
+            elif type(coef) is list or type(coef) is tuple:
+                for i in range(len(coef)):
+                    if coef[i] != 0:
+                        if ("variables" in definition.keys()) and (var in definition["alias"]):
+                            j = definition["alias"].index(var)
+                            variables.append(definition["variables"][j])
+                            fixed_values.append(definition["fixed_values"][j])
+                        else:
+                            variables.append(var)
+                            fixed_values.append(0)
+                        coefficients.append(coef[i])
+                        equations.append(equation_ids[i])
+            else:
+                logger.log_error("Wrong specification format for variable %s; \nwith equation_ids provided, coefficients must be a list or tuple of the same length of equation_ids" % var)
+                error = True
+    return (variables, coefficients, fixed_values, equations, error)
+
+def get_variables_coefficients_from_list(list_spec, definition={}):
+    variables = []
+    coefficients = []
     fixed_values = []
     error = False
-    for var_coef in submodel_spec:
+    for var_coef in list_spec:
         if isinstance(var_coef, str):
             #var_coef is just variables long names or alias
             if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
@@ -518,7 +566,7 @@ def get_variables_coefficients_equations_for_submodel_part(submodel_spec, defini
                 variables.append(var_coef[0])
                 coefficients.append(VariableName(var_coef[0]).get_alias())
                 fixed_values.append(0)
-            elif len(var_coef) > 1: # coefficient names explicitely given
+            elif len(var_coef) > 1: # coefficient names explicitly given
                 variables.append(var_coef[0])
                 coefficients.append(var_coef[1])
                 if len(var_coef) > 2: # third item is the coefficient fixed value 
@@ -751,7 +799,68 @@ class Tests(opus_unittest.OpusTestCase):
                                             ])),
                      msg = "Error in test_load_specification_with_definition_with_equations (long names of variables)")
 
+    def test_load_specification_with_definition_nests(self):
+        specification = {
+             "_definition_": [
+                 ("pop = urbansim.gridcell.population", "bpop"),
+                 "inc = urbansim.gridcell.average_income",
+                 "art = urbansim.gridcell.is_near_arterial",
+                 ],
+              -2: {
+                   'name': 'nest_id',
+                   1: [
+                     "pop", 
+                     "inc", 
+                     "constant" ],
+                    2: [ "art"]
+                             }
+              }
+        result = load_specification_from_dictionary(specification)
+        vars = result.get_variable_names()
+        coefs = result.get_coefficient_names()
+        other = result.get_other_fields()
+ 
+        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
+                     msg = "Error in test_load_specification_with_definition_nests (coefficients)")
+        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
+                     msg = "Error in test_load_specification_with_definition_nests (variables)")
+        self.assert_(ma.allequal(other['dim_nest_id'], array([1,1,1,2])),
+                     msg = "Error in test_load_specification_with_definition_nests (nests)")
 
+    def test_load_specification_with_definition_nest_and_equations(self):
+        specification = {
+             "_definition_": [
+                 ("pop = urbansim.gridcell.population", "bpop"),
+                 "inc = urbansim.gridcell.average_income",
+                 "art = urbansim.gridcell.is_near_arterial",
+                 ],
+              -2: {
+                   'name': 'nest_id',
+                   1: {1: [
+                     "pop", 
+                     "inc", 
+                     "constant" ],
+                      2: [ "art"]
+                      },
+                   2: {3:["pop", 
+                          "inc"
+                          ]}
+                             }
+              }
+        result = load_specification_from_dictionary(specification)
+        vars = result.get_variable_names()
+        coefs = result.get_coefficient_names()
+        eqs = result.get_equations()
+        other = result.get_other_fields()
+ 
+        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art", "bpop", "inc"])),
+                     msg = "Error in test_load_specification_with_definition_nest_and_equations (coefficients)")
+        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art", "pop", "inc"])),
+                     msg = "Error in test_load_specification_with_definition_nest_and_equations (variables)")
+        self.assert_(ma.allequal(eqs, array([1,1,1,2,3,3])),
+                     msg = "Error in test_load_specification_with_definition_nest_and_equations (equations)")
+        self.assert_(ma.allequal(other['dim_nest_id'], array([1,1,1,1,2,2])),
+                     msg = "Error in test_load_specification_with_definition_nest_and_equations (nests)")
 if __name__=='__main__':
     opus_unittest.main()
 
