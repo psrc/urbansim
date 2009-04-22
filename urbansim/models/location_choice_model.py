@@ -62,7 +62,7 @@ class LocationChoiceModel(ChoiceModel):
                         interaction_pkg=interaction_pkg,
                         run_config=run_config, estimate_config=estimate_config,
                         debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
-        self.model_interaction = ModelInteractionLCM(self, interaction_pkg, [self.choice_set])
+        self.model_interaction = ModelInteractionLCM(self, interaction_pkg, self.choice_set)
         self.filter = filter
         self.location_id_string = location_id_string
         if self.location_id_string is not None:
@@ -380,4 +380,4 @@ class LocationChoiceModel(ChoiceModel):
 from opus_core.choice_model import ModelInteraction
 class ModelInteractionLCM(ModelInteraction):
     def set_selected_choice_for_LCM(self, selected_choice):
-        self.selected_choice[0] = selected_choice
+        self.selected_choice = selected_choice
