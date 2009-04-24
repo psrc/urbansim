@@ -333,7 +333,7 @@ class SpecifiedCoefficients(object):
 
     def get_variable_names(self):
         if self.variable_names.size <= 0:
-            return []
+            return array([])
         return array(map(lambda x: x.get_alias(), self.variable_names))
 
     def get_full_variable_names(self):

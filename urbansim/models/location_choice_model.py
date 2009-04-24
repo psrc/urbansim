@@ -236,8 +236,10 @@ class LocationChoiceModel(ChoiceModel):
         all locations to be the choice set size.
         """
         if self.sampler_class is not None:
-            pchoices =     self.run_config.get("sample_proportion_locations", None)
-            nchoices =     self.run_config.get("sample_size_locations", None)
+            pchoices = self.run_config.get("sample_proportion_locations", None)
+            nchoices = self.sampler_size
+            if self.sampler_size is None:
+                nchoices = self.run_config.get("sample_size_locations", None)
             if nchoices == None:
                 if pchoices == None:
                     logger.log_warning("Neither 'sample_proportion_locations' nor 'sample_size_locations' " +

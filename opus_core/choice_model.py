@@ -375,8 +375,8 @@ class ChoiceModel(ChunkModel):
                 if self.estimate_config.get("export_estimation_data", False):
                     self.export_estimation_data(submodel, is_submodel_selected_choice, self.get_all_data(submodel),
                                                 coef[submodel].get_coefficient_names_from_alt(),
-                                                self.estimate_config["estimation_data_file_name"],
-                                                self.estimate_config["use_biogeme_data_format"])
+                                                self.estimate_config.get("estimation_data_file_name", 'estimation_data.tab'),
+                                                self.estimate_config.get("use_biogeme_data_format", False))
 
             self.coefficients.fill_coefficients(coef)
             self.estimate_config["coefficient_names"]=None
