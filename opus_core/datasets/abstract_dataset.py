@@ -1277,8 +1277,13 @@ class AbstractDataset(object):
         
         # Sort the ID array elements and their corresponding attribute array elements to have the 
         #    same order as the master .dbf file and write the arrays out to a .dbf shapefile.
-        from opus_core.store.dbf_storage import dbf_storage   
-        shapefile_dir = os.path.join(os.environ['OPUS_DATA_PATH'], os.environ['OPUSPROJECTNAME'], 'shapefiles') # OPUSPROJECTNAME is only defined when this function is called by the GUI
+        from opus_core.store.dbf_storage import dbf_storage
+        
+        data_path = os.environ.get('OPUS_DATA_PATH')
+        if data_path is None:
+            data_path = os.path.join(os.environ.get('OPUS_HOME'), 'data')
+        
+        shapefile_dir = os.path.join(data_path, os.environ['OPUSPROJECTNAME'], 'shapefiles') # OPUSPROJECTNAME is only defined when this function is called by the GUI
         storage_for_dbf = dbf_storage(storage_location=shapefile_dir)
         unique_id = storage_for_dbf.get_column_names(table_name='MASTER_'+self.dataset_name)[0]
         unique_id_arr = storage_for_dbf.load_table(table_name='MASTER_'+self.dataset_name)[unique_id]
