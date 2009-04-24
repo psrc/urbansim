@@ -194,9 +194,18 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             if idx != -1:
                 self.cboVizType.setCurrentIndex(idx)
 
+    def set_default_mapnik_options(self):
+        # these default values are also hard-coded in opus_gui.results_manager.run.batch_processor.py
+        self.mapnik_options['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
+        self.mapnik_options['bucket_ranges'] = 'linear_scale'
+        self.mapnik_options['bucket_labels'] = 'range_labels'
+
     def on_cboVizType_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
+
+        if param == 'Map': 
+            self.set_default_mapnik_options()
 
         self._setup_co_output_type()
 
@@ -229,12 +238,6 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         return inv
 
-    def set_default_mapnik_options(self):
-        # these default values are also hard-coded in opus_gui.results_manager.run.batch_processor.py
-        self.mapnik_options['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
-        self.mapnik_options['bucket_ranges'] = 'linear_scale'
-        self.mapnik_options['bucket_labels'] = 'range_labels'
-
     def _get_viz_spec(self, convert_to_node_dictionary = True):
         viz_type = self.cboVizType.currentText()
         translation = self._get_output_types(viz_type)
@@ -250,11 +253,6 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         }
         
         if output_type == 'mapnik_map' :
-            if (not (self.mapnik_options.__contains__('bucket_labels') or \
-                     self.mapnik_options.__contains__('bucket_colors') or \
-                     self.mapnik_options.__contains__('bucket_ranges'))):
-                self.set_default_mapnik_options()
-            
             vals['bucket_labels'] = self.mapnik_options['bucket_labels']
             vals['bucket_colors'] = self.mapnik_options['bucket_colors']
             vals['bucket_ranges'] = self.mapnik_options['bucket_ranges']
