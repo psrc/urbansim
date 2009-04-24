@@ -264,7 +264,7 @@ class LocationChoiceModel(ChoiceModel):
         self.debug.print_debug("Sampling locations ...",3)
         # the following model component must return a 2D array of sampled locations per agent
         try:
-            index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=location_index, sample_size=nchoices,
+            index, chosen_choice = self.run_sampler_class(agent_subset, index2=location_index, sample_size=nchoices,
                 weight=self.weights, resources=self.run_config)
         except Exception, e:
             logger.log_warning("Problem with sampling alternatives.\n%s" % e)
@@ -333,8 +333,7 @@ class LocationChoiceModel(ChoiceModel):
         ### TODO: self.weight must be transformed in a local variable
         self.weights, location_index = self.get_weights_for_sampling_locations_for_estimation(agent_set, agents_index)
         this_weights = self.apply_filter(self.filter, self.weights, agent_set, agents_index, submodel)
-        index1, chosen_choice = self.sampler_class.run(agent_set, self.choice_set,
-            index1=agents_index, index2=location_index, sample_size=nchoices,
+        index1, chosen_choice = self.run_sampler_class(agent_set, index1=agents_index, index2=location_index, sample_size=nchoices,
             weight=this_weights, include_chosen_choice=True, resources=self.estimate_config)
         return (this_weights, location_index, index1, chosen_choice)
 

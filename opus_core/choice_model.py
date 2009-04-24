@@ -487,13 +487,19 @@ class ChoiceModel(ChunkModel):
         logger.log_status("Sampling alternatives ...")
         # the following model component must return a 2D array of sampled alternatives per agent
         try:
-            index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=alt_index, sample_size=nchoices,
-                weight=self.weights, resources=self.run_config)
+            index, chosen_choice = self.run_sampler_class(agent_subset, index2=alt_index, sample_size=nchoices,
+                                                          weight=self.weights, resources=self.run_config)
             return index
         except Exception, e:
             logger.log_warning("Problem with sampling alternatives.\n%s" % e)
             return None
 
+    def run_sampler_class(self, agent_set, index1=None, index2=None, sample_size=None, weight=None, 
+                          include_chosen_choice=False, resources=None):
+        return self.sampler_class.run(agent_set, self.choice_set, index1=index1, index2=index2, sample_size=sample_size,
+                                      weight=weight, include_chosen_choice=include_chosen_choice, resources=resources)
+        
+        
     def get_choice_index_for_estimation_and_selected_choice(self, agent_set=None,
                                                             agents_index=None, agent_subset=None,
                                                             submodels=[]):
@@ -523,9 +529,9 @@ class ChoiceModel(ChunkModel):
 
     def sample_and_choose_choice(self, agent_set, agents_index, nchoices):
         self.weights, alt_index = self.get_weights_for_sampling_alternatives_for_estimation(agent_set, agents_index)
-        index1, chosen_choice = self.sampler_class.run(agent_set, self.choice_set,
-            index1=agents_index, index2=alt_index, sample_size=nchoices,
-            weight=self.weights, include_chosen_choice=True, resources=self.estimate_config)
+        index1, chosen_choice = self.run_sampler_class(agent_set, index1=agents_index, index2=alt_index, sample_size=nchoices,
+                                                       weight=self.weights, include_chosen_choice=True, 
+                                                       resources=self.estimate_config)
         return (alt_index, index1, chosen_choice)
 
     def get_weights_for_sampling_alternatives(self, agent_set=None, agents_index=None):

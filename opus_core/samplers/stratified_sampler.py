@@ -273,6 +273,8 @@ class stratified_sampler(Sampler):
 
         return maxc
 
+    def get_sampled_stratum(self):
+        return self._stratum_id
 
 from opus_core.tests import opus_unittest
 from numpy import all, alltrue, not_equal, equal, int32
