@@ -8,6 +8,7 @@ from numpy import array, where, int32, float32, ones, zeros, setdiff1d
 from numpy import logical_and, reshape, apply_along_axis, maximum
 from numpy.random import normal, seed
 from opus_core.logger import logger
+import re
 
 class RateDataset(UrbansimDataset):
 
@@ -28,7 +29,9 @@ class RateDataset(UrbansimDataset):
     def get_rate(self, dataset):
         probability_attribute = self.get_probability_attribute_name()
         column_names = set( self.get_known_attribute_names() ) - set( [ probability_attribute, 'rate_id', '_hidden_id_'] )
-        self.independent_variables = list(set([col.rstrip('_min').rstrip('_max') for col in column_names]))
+        self.independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
+        ## rstip below could turn 'sex' --> 'se'
+        ##self.independent_variables = list(set([col.rstrip('_min').rstrip('_max') for col in column_names]))
         self._compute_variables_for_dataset_if_needed(dataset, self.independent_variables)
         known_attributes = dataset.get_known_attribute_names()
         prob = -1 + zeros( dataset.size(), dtype='float64')
