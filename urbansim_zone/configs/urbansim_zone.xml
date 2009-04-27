@@ -3,24 +3,18 @@
     <project_name type="string">urbansim_zone</project_name>
     <description type="string">UrbanSim zone baseline</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
+    <expression_library type="dictionary">
+	    <constant dataset="zone" source="expression" type="variable_definition" use="model variable">constant</constant>
+	</expression_library>
     <dataset_pool_configuration type="class">
       <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
     </dataset_pool_configuration>
-
+        <available_datasets type="list">['pseudo_building','household_x_pseudo_building','zone','city','county','alldata']</available_datasets>
+        <spatial_datasets type="list">['zone','city','county']</spatial_datasets>
   </general>
 
-  <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-    <pseudo_building type="dataset" choices="Load|Skip">Load</pseudo_building>
-    <zone type="dataset" choices="Load|Skip">Load</zone>
-    <household type="dataset" choices="Load|Skip">Load</household>
-    <job type="dataset" choices="Load|Skip">Load</job>
-    <development_event_history type="dataset" choices="Load|Skip">Load</development_event_history>
-    <target_vacancy type="dataset" choices="Load|Skip">Load</target_vacancy>
-    <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
-    <building_type type="dataset" choices="Load|Skip">Load</building_type>
-  </datasets_to_preload>
 
   <model_manager>
     <model_system type="model_system">
@@ -147,7 +141,7 @@
           </import>
           <estimate type="dictionary">
             <output type="string">(coefficients, _)</output>
-d
+
               <specification type="string">specification</specification>
               <debuglevel type="string">debuglevel</debuglevel>
               <data_objects type="string">datasets</data_objects>
@@ -174,10 +168,19 @@ d
               <specification_storage type="string">base_cache_storage</specification_storage>
               <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
               <base_year type="string">base_year</base_year>
+              <models_to_run type="list" parser_action="skip">[]</models_to_run>
 
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </commercial_development_project_location_choice_model>
       <employment_location_choice_model type="model">
         <structure type="dictionary">
@@ -243,7 +246,7 @@ d
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
             <output type="string">(specification, index)</output>
-
+              <models_to_run type="list" parser_action="skip">['employment_relocation_model']</models_to_run>
               <portion_to_unplace type="integer">0</portion_to_unplace>
               <specification_table type="quoted_string">'employment_location_choice_model_specification'</specification_table>
               <agent_set type="string">job</agent_set>
@@ -257,6 +260,14 @@ d
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </employment_location_choice_model>
       <residential_development_project_location_choice_model type="model">
         <structure type="dictionary">
@@ -313,10 +324,18 @@ d
               <specification_storage type="string">base_cache_storage</specification_storage>
               <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
               <base_year type="string">base_year</base_year>
-
+              <models_to_run parser_action="skip" type="list">[]</models_to_run>
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </residential_development_project_location_choice_model>
       <development_project_transition_model type="model">
         <structure type="dictionary">
@@ -471,10 +490,19 @@ d
               <agents_for_estimation_table type="string" parser_action="blank_to_None" />
               <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
               <join_datasets type="boolean">False</join_datasets>
+              <models_to_run type="list" parser_action="skip">[]</models_to_run>
 
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </home_based_employment_location_choice_model>
       <household_location_choice_model type="model">
         <structure type="dictionary">
@@ -538,8 +566,8 @@ d
             <name type="string">prepare_for_run</name>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
 
+              <output type="string">(specification, index)</output>
               <portion_to_unplace type="float">0.333333333333</portion_to_unplace>
               <specification_table type="quoted_string">'household_location_choice_model_specification'</specification_table>
               <agent_set type="string">household</agent_set>
@@ -550,10 +578,19 @@ d
               <agents_for_estimation_table type="quoted_string">'households_for_estimation'</agents_for_estimation_table>
               <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
               <data_objects type="string">datasets</data_objects>
+              <models_to_run type="list" parser_action="skip">['household_relocation_model']</models_to_run>
 
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </household_location_choice_model>
       <real_estate_price_model type="model">
         <structure type="dictionary">
@@ -573,7 +610,6 @@ d
               <filter_attribute type="string" parser_action="blank_to_None" />
               <submodel_string type="quoted_string">'building_type_id'</submodel_string>
               <dataset_pool type="string">dataset_pool</dataset_pool>
-              <debuglevel type="string">debuglevel</debuglevel>
 
             <name type="string">RealEstatePriceModel</name>
           </init>
@@ -609,10 +645,19 @@ d
               <specification_table type="quoted_string">'real_estate_price_model_specification'</specification_table>
               <filter_variable type="string" parser_action="blank_to_None" />
               <dataset type="string">pseudo_building</dataset>
+              <models_to_run type="list" parser_action="skip">[]</models_to_run>
 
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </real_estate_price_model>
       <add_projects_to_buildings type="model">
         <structure type="dictionary">
@@ -689,10 +734,19 @@ d
               <specification_storage type="string">base_cache_storage</specification_storage>
               <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
               <base_year type="string">base_year</base_year>
+              <models_to_run parser_action="skip" type="list">[]</models_to_run>
 
             <name type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
+        <specification type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list" />
+          </submodel>
+        </specification>
+
       </industrial_development_project_location_choice_model>
     </model_system>
   </model_manager>
@@ -788,3 +842,5 @@ d
   <base_year type="integer"></base_year>
   <cache_directory type="string"></cache_directory>
 </opus_project>
+
+

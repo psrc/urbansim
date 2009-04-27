@@ -1,39 +1,825 @@
 <opus_project>
-  <general>
-    <project_name type="string">eugene_zone</project_name>
-    <description type="string">Eugene zone baseline</description>
-    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
-    <dataset_pool_configuration type="class">
-      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-      <package_order type="list">['eugene_zone', 'eugene', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
-    </dataset_pool_configuration>
+    <general>
+        <project_name type="string">eugene_zone</project_name>
+        <description type="string">Eugene zone baseline</description>
+        <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+        <dataset_pool_configuration type="class">
+            <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+            <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+            <package_order type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
 
-  </general>
+    </general>
 
-  
-  <scenario_manager>
-    <Zone_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
-      <scenario_database_configuration type="string">mysql://urbansim:None@trondheim.cs.washington.edu/eugene_1980_baseyear_zone</scenario_database_configuration>
-      <others type="category">
-        <base_year type="integer">1980</base_year>
-        <years_to_run config_name="years" type="tuple">
-          <firstyear type="integer">1981</firstyear>
-          <lastyear type="integer">1985</lastyear>
-        </years_to_run>
-      </others>
-      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <creating_baseyear_cache_configuration type="class">
-        <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/runs</cache_directory_root>
-        <baseyear_cache type="class">
-          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</existing_cache_to_copy>
-        </baseyear_cache>
-      </creating_baseyear_cache_configuration>
-    </Zone_baseline>
-  </scenario_manager>
+    <model_manager>
 
-  <!-- <years type="">(1981, 1985)</years> -->
-  <debuglevel type="integer">4</debuglevel>
-  <base_year type="integer">1980</base_year>
-  <cache_directory type="string"></cache_directory>
+        <model_system type="model_system">
+            <estimation_config type="configuration" config_name="estimation_config">
+                <save_estimation_results type="boolean">False</save_estimation_results>
+                <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</cache_directory>
+                <estimation_database_configuration type="class">
+                    <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+                    <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+                    <database_name type="string">eugene_1980_baseyear_zone</database_name>
+                </estimation_database_configuration>
+                <scenario_database_configuration type="class">
+                    <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+                    <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+                    <database_name type="string">eugene_1980_baseyear_zone</database_name>
+                </scenario_database_configuration>
+
+                <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+                <low_memory_mode type="boolean">False</low_memory_mode>
+                <base_year type="integer">1980</base_year>
+                <years type="tuple">
+                    <firstyear type="integer">1980</firstyear>
+                    <lastyear type="integer">1980</lastyear>
+                </years>
+                <seed type="integer">1</seed>
+                <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+                    <pseudo_building type="dataset" choices="Load|Skip">Load</pseudo_building>
+                    <zone type="dataset" choices="Load|Skip">Load</zone>
+                    <household type="dataset" choices="Load|Skip">Load</household>
+                    <job type="dataset" choices="Load|Skip">Load</job>
+                    <development_event_history type="dataset" choices="Load|Skip">Load</development_event_history>
+                    <target_vacancy type="dataset" choices="Load|Skip">Load</target_vacancy>
+                    <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
+                    <building_type type="dataset" choices="Load|Skip">Load</building_type>
+                </datasets_to_preload>
+        <dataset_pool_configuration type="class">
+            <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+            <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+            <package_order type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+
+            </estimation_config>
+            <employment_relocation_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.employment_relocation_model_creator</module>
+                        <classname>EmploymentRelocationModelCreator</classname>
+                    </import>
+                    <init type="dictionary">
+                        <probabilities type="quoted_string">'urbansim.employment_relocation_probabilities'</probabilities>
+                        <location_id_name type="quoted_string">'zone_id'</location_id_name>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <name type="string">EmploymentRelocationModelCreator().get_model</name>
+                    </init>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">erm_resources</output>
+                        <rate_storage type="string">base_cache_storage</rate_storage>
+                        <rate_table type="quoted_string">'annual_relocation_rates_for_jobs'</rate_table>
+                        <what type="quoted_string">'jobs'</what>
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <run type="dictionary">
+                        <output type="string">erm_index</output>
+                        <resources type="string">erm_resources</resources>
+                        <agent_set type="string">job</agent_set>
+
+                    </run>
+                </structure>
+            </employment_relocation_model>
+            <household_relocation_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.household_relocation_model_creator</module>
+                        <classname>HouseholdRelocationModelCreator</classname>
+                    </import>
+                    <init type="dictionary">
+                        <probabilities type="quoted_string">'urbansim.household_relocation_probabilities'</probabilities>
+                        <location_id_name type="quoted_string">'zone_id'</location_id_name>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <name type="string">HouseholdRelocationModelCreator().get_model</name>
+                    </init>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">hrm_resources</output>
+
+                        <rate_storage type="string">base_cache_storage</rate_storage>
+                        <rate_table type="quoted_string">'annual_relocation_rates_for_households'</rate_table>
+                        <what type="quoted_string">'households'</what>
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <run type="dictionary">
+                        <output type="string">hrm_index</output>
+                        <resources type="string">hrm_resources</resources>
+                        <agent_set type="string">household</agent_set>
+                    </run>
+                </structure>
+            </household_relocation_model>
+            <distribute_unplaced_jobs_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.distribute_unplaced_jobs_model</module>
+                        <classname>DistributeUnplacedJobsModel</classname>
+                    </import>
+                    <init type="dictionary">
+                        <filter type="string" parser_action="blank_to_None">None</filter>
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <name type="string">DistributeUnplacedJobsModel</name>
+                    </init>
+                    <run type="dictionary">
+                        <agents_filter type="string" parser_action="blank_to_None">None</agents_filter>
+                        <location_set type="string">zone</location_set>
+                        <data_objects type="string">datasets</data_objects>
+                        <agent_set type="string">job</agent_set>
+                    </run>
+                </structure>
+            </distribute_unplaced_jobs_model>
+            <household_transition_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.household_transition_model</module>
+                        <classname>HouseholdTransitionModel</classname>
+                    </import>
+                    <init type="dictionary">
+                        <location_id_name type="quoted_string">'zone_id'</location_id_name>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <name type="string">HouseholdTransitionModel</name>
+                    </init>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(control_totals, characteristics)</output>
+                        <storage type="string">base_cache_storage</storage>
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <run type="dictionary">
+                        <characteristics type="string">characteristics</characteristics>
+                        <household_set type="string">household</household_set>
+                        <control_totals type="string">control_totals</control_totals>
+                        <year type="string">year</year>
+                    </run>
+                </structure>
+            </household_transition_model>
+            <commercial_development_project_location_choice_model type="model">
+                <structure type="dictionary">
+                    <run type="dictionary">
+                        <chunk_specification type="string">{'records_per_chunk':300}</chunk_specification>
+                        <agent_set type="string">dptm_results['commercial']</agent_set>
+                        <specification type="string">specification</specification>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+                    </run>
+                    <init type="dictionary">
+                        <submodel_string type="string" parser_action="blank_to_None" />
+                        <capacity_string type="quoted_string">'urbansim_zone.zone.vacant_SSS_job_space'</capacity_string>
+                        <location_set type="string">zone</location_set>
+                        <project_type type="quoted_string">'commercial'</project_type>
+                        <sampler type="string" parser_action="blank_to_None" />
+
+                        <name type="string">DevelopmentProjectLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim_zone.models.development_project_location_choice_model</module>
+                        <classname>DevelopmentProjectLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <data_objects type="string">datasets</data_objects>
+                        <agent_set type="string">projects</agent_set>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'commercial_development_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'commercial_development_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, projects)</output>
+
+                        <events_for_estimation_table type="quoted_string">'development_event_history'</events_for_estimation_table>
+                        <units type="quoted_string">'commercial_job_spaces'</units>
+                        <specification_table type="quoted_string">'commercial_development_location_choice_model_specification'</specification_table>
+                        <urbansim_constant type="string">urbansim_constant</urbansim_constant>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
+                        <base_year type="string">base_year</base_year>
+                        <models_to_run type="list" parser_action="skip">[]</models_to_run>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </commercial_development_project_location_choice_model>
+            <employment_location_choice_model type="model">
+                <structure type="dictionary">
+                    <group_by_attribute type="list">('job_building_type', 'name')</group_by_attribute>
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+                        <agent_set type="string">job</agent_set>
+                        <specification type="string">specification</specification>
+                        <maximum_runs type="integer">3</maximum_runs>
+                        <agents_index type="string">erm_index</agents_index>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <number_of_units_string type="string" parser_action="blank_to_None" />
+                        <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+                        <capacity_string type="quoted_string">'urbansim_zone.zone.number_of_vacant_SSS_jobs'</capacity_string>
+                        <estimation_weight_string type="string" parser_action="blank_to_None" />
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <choices type="quoted_string">'urbansim.lottery_choices'</choices>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <variable_package type="quoted_string">'urbansim'</variable_package>
+                        <run_config type="dictionary">
+                            <lottery_max_iterations type="integer">3</lottery_max_iterations>
+                            <agent_units_string type="string" parser_action="blank_to_None" />
+                        </run_config>
+                        <location_set type="string">zone</location_set>
+                        <estimation_size_agents type="float">1.0</estimation_size_agents>
+                        <sampler type="quoted_string">'opus_core.samplers.weighted_sampler'</sampler>
+                        <simulation_weight_string type="string" parser_action="blank_to_None" />
+                        <estimation type="quoted_string">'opus_core.bhhh_mnl_estimation'</estimation>
+                        <sample_size_locations type="integer">30</sample_size_locations>
+
+                        <name type="string">EmploymentLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim.models.employment_location_choice_model</module>
+                        <classname>EmploymentLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <agent_set type="string">job</agent_set>
+                        <data_objects type="string">datasets</data_objects>
+                        <agents_index type="string">index</agents_index>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'employment_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'employment_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, index)</output>
+                        <models_to_run type="list" parser_action="skip">['employment_relocation_model']</models_to_run>
+                        <portion_to_unplace type="integer">0</portion_to_unplace>
+                        <specification_table type="quoted_string">'employment_location_choice_model_specification'</specification_table>
+                        <agent_set type="string">job</agent_set>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <data_objects type="string">datasets</data_objects>
+                        <agents_for_estimation_table type="quoted_string">'jobs_for_estimation'</agents_for_estimation_table>
+                        <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+                        <join_datasets type="boolean">False</join_datasets>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </employment_location_choice_model>
+            <residential_development_project_location_choice_model type="model">
+                <structure type="dictionary">
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'records_per_chunk':300}</chunk_specification>
+                        <agent_set type="string">dptm_results['residential']</agent_set>
+                        <specification type="string">specification</specification>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <submodel_string type="string" parser_action="blank_to_None" />
+                        <capacity_string type="quoted_string">'urbansim_zone.zone.developable_residential_units'</capacity_string>
+                        <location_set type="string">zone</location_set>
+                        <project_type type="quoted_string">'residential'</project_type>
+                        <sampler type="string" parser_action="blank_to_None" />
+
+                        <name type="string">DevelopmentProjectLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim_zone.models.development_project_location_choice_model</module>
+                        <classname>DevelopmentProjectLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <data_objects type="string">datasets</data_objects>
+                        <agent_set type="string">projects</agent_set>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'residential_development_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'residential_development_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, projects)</output>
+
+                        <events_for_estimation_table type="quoted_string">'development_event_history'</events_for_estimation_table>
+                        <units type="quoted_string">'residential_units'</units>
+                        <specification_table type="quoted_string">'residential_development_location_choice_model_specification'</specification_table>
+                        <urbansim_constant type="string">urbansim_constant</urbansim_constant>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
+                        <base_year type="string">base_year</base_year>
+                        <models_to_run parser_action="skip" type="list">[]</models_to_run>
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </residential_development_project_location_choice_model>
+            <development_project_transition_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim_zone.models.development_project_transition_model</module>
+                        <classname>DevelopmentProjectTransitionModel</classname>
+                    </import>
+                    <init type="dictionary">
+
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                        <name type="string">DevelopmentProjectTransitionModel</name>
+                    </init>
+                    <run type="dictionary">
+                        <output type="string">dptm_results</output>
+
+                        <vacancy_table type="string">target_vacancy</vacancy_table>
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <location_set type="string">zone</location_set>
+                        <year type="string">year</year>
+                        <history_table type="string">development_event_history</history_table>
+                        <resources type="string">{'industrial_vacant_variable': 'urbansim_zone.zone.number_of_vacant_industrial_jobs','commercial_vacant_variable': 'urbansim_zone.zone.number_of_vacant_commercial_jobs',}</resources>
+
+                    </run>
+                </structure>
+            </development_project_transition_model>
+            <governmental_employment_location_choice_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.scaling_jobs_model</module>
+                        <classname>ScalingJobsModel</classname>
+                    </import>
+                    <init type="dictionary">
+
+                        <filter type="string" parser_action="blank_to_None" />
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                        <name type="string">ScalingJobsModel</name>
+                    </init>
+                    <run type="dictionary">
+
+                        <agents_index type="string">erm_index</agents_index>
+                        <location_set type="string">zone</location_set>
+                        <data_objects type="string">datasets</data_objects>
+                        <agent_set type="string">job</agent_set>
+
+                    </run>
+                </structure>
+            </governmental_employment_location_choice_model>
+            <employment_transition_model type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim.models.employment_transition_model</module>
+                        <classname>EmploymentTransitionModel</classname>
+                    </import>
+                    <init type="dictionary">
+
+                        <location_id_name type="quoted_string">'zone_id'</location_id_name>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                        <name type="string">EmploymentTransitionModel</name>
+                    </init>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">control_totals</output>
+
+                        <storage type="string">base_cache_storage</storage>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <run type="dictionary">
+
+                        <job_building_types type="string">job_building_type</job_building_types>
+                        <job_set type="string">job</job_set>
+                        <control_totals type="string">control_totals</control_totals>
+                        <year type="string">year</year>
+
+                    </run>
+                </structure>
+            </employment_transition_model>
+            <home_based_employment_location_choice_model type="model">
+                <structure type="dictionary">
+                    <group_by_attribute type="list">('job_building_type', 'name')</group_by_attribute>
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+                        <agent_set type="string">job</agent_set>
+                        <specification type="string">specification</specification>
+                        <maximum_runs type="integer">3</maximum_runs>
+                        <agents_index type="string">erm_index</agents_index>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <number_of_units_string type="string" parser_action="blank_to_None" />
+                        <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+                        <capacity_string type="quoted_string">'urbansim.zone.number_of_households'</capacity_string>
+                        <estimation_weight_string type="quoted_string">'urbansim.zone.number_of_households'</estimation_weight_string>
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <choices type="quoted_string">'urbansim.lottery_choices'</choices>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <variable_package type="quoted_string">'urbansim'</variable_package>
+                        <run_config type="dictionary">
+                            <lottery_max_iterations type="integer">3</lottery_max_iterations>
+                            <agent_units_string type="string" parser_action="blank_to_None" />
+                        </run_config>
+                        <location_set type="string">zone</location_set>
+                        <estimation_size_agents type="float">0.5</estimation_size_agents>
+                        <sampler type="quoted_string">'opus_core.samplers.weighted_sampler'</sampler>
+                        <simulation_weight_string type="string" parser_action="blank_to_None" />
+                        <estimation type="quoted_string">'opus_core.bhhh_mnl_estimation'</estimation>
+                        <sample_size_locations type="integer">30</sample_size_locations>
+
+                        <name type="string">EmploymentLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim.models.employment_location_choice_model</module>
+                        <classname>EmploymentLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <agent_set type="string">job</agent_set>
+                        <data_objects type="string">datasets</data_objects>
+                        <agents_index type="string">index</agents_index>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'employment_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'employment_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, index)</output>
+
+                        <portion_to_unplace type="integer">0</portion_to_unplace>
+                        <specification_table type="quoted_string">'employment_location_choice_model_specification'</specification_table>
+                        <agent_set type="string">job</agent_set>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <data_objects type="string">datasets</data_objects>
+                        <agents_for_estimation_table type="string" parser_action="blank_to_None" />
+                        <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+                        <join_datasets type="boolean">False</join_datasets>
+                        <models_to_run type="list" parser_action="skip">[]</models_to_run>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </home_based_employment_location_choice_model>
+            <household_location_choice_model type="model">
+                <structure type="dictionary">
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'nchunks':3}</chunk_specification>
+                        <agent_set type="string">household</agent_set>
+                        <specification type="string">specification</specification>
+                        <maximum_runs type="integer">3</maximum_runs>
+                        <agents_index type="string">hrm_index</agents_index>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <number_of_units_string type="string" parser_action="blank_to_None" />
+                        <variable_package type="quoted_string">'urbansim'</variable_package>
+                        <location_id_string type="string" parser_action="blank_to_None" />
+                        <submodel_string type="string" parser_action="blank_to_None" />
+                        <capacity_string type="quoted_string">'urbansim_zone.zone.vacant_residential_units'</capacity_string>
+                        <estimation_weight_string type="quoted_string">'urbansim_zone.zone.vacant_residential_units'</estimation_weight_string>
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <choices type="quoted_string">'urbansim.lottery_choices'</choices>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <number_of_agents_string type="quoted_string">'number_of_households'</number_of_agents_string>
+                        <run_config type="string">Resources({'lottery_max_iterations': 3, })</run_config>
+                        <location_set type="string">zone</location_set>
+                        <estimation_size_agents type="string" parser_action="blank_to_None" />
+                        <sampler type="quoted_string">'opus_core.samplers.weighted_sampler'</sampler>
+                        <simulation_weight_string type="string" parser_action="blank_to_None" />
+                        <estimation type="quoted_string">'opus_core.bhhh_mnl_estimation'</estimation>
+                        <sample_size_locations type="integer">30</sample_size_locations>
+                        <estimate_config type="string">Resources({})</estimate_config>
+
+                        <name type="string">HouseholdLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim.models.household_location_choice_model</module>
+                        <classname>HouseholdLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <agent_set type="string">household</agent_set>
+                        <data_objects type="string">datasets</data_objects>
+                        <agents_index type="string">index</agents_index>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'household_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'household_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+
+                        <output type="string">(specification, index)</output>
+                        <portion_to_unplace type="float">0.333333333333</portion_to_unplace>
+                        <specification_table type="quoted_string">'household_location_choice_model_specification'</specification_table>
+                        <agent_set type="string">household</agent_set>
+                        <index_to_unplace type="string">hrm_index</index_to_unplace>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <filter type="string" parser_action="blank_to_None" />
+                        <join_datasets type="boolean">True</join_datasets>
+                        <agents_for_estimation_table type="quoted_string">'households_for_estimation'</agents_for_estimation_table>
+                        <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+                        <data_objects type="string">datasets</data_objects>
+                        <models_to_run type="list" parser_action="skip">['household_relocation_model']</models_to_run>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </household_location_choice_model>
+            <real_estate_price_model type="model">
+                <structure type="dictionary">
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'nchunks':1}</chunk_specification>
+                        <specification type="string">specification</specification>
+                        <dataset type="string">pseudo_building</dataset>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <outcome_attribute type="quoted_string">'ln_unit_price=ln(pseudo_building.avg_value)'</outcome_attribute>
+                        <filter_attribute type="string" parser_action="blank_to_None" />
+                        <submodel_string type="quoted_string">'building_type_id'</submodel_string>
+                        <dataset_pool type="string">dataset_pool</dataset_pool>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                        <name type="string">RealEstatePriceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim.models.real_estate_price_model</module>
+                        <classname>RealEstatePriceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <index type="string">repm_index</index>
+                        <outcome_attribute type="quoted_string">'ln_unit_price=ln(pseudo_building.avg_value)'</outcome_attribute>
+                        <specification type="string">specification</specification>
+                        <dataset type="string">pseudo_building</dataset>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'real_estate_price_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'real_estate_price_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, repm_index)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <specification_table type="quoted_string">'real_estate_price_model_specification'</specification_table>
+                        <filter_variable type="string" parser_action="blank_to_None" />
+                        <dataset type="string">pseudo_building</dataset>
+                        <models_to_run type="list" parser_action="skip">[]</models_to_run>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </real_estate_price_model>
+            <add_projects_to_buildings type="model">
+                <structure type="dictionary">
+                    <import type="dictionary">
+                        <module>urbansim_zone.models.add_projects_to_buildings</module>
+                        <classname>AddProjectsToBuildings</classname>
+                    </import>
+                    <init type="dictionary">
+                        <name type="string">AddProjectsToBuildings</name>
+                    </init>
+                    <run type="dictionary">
+
+                        <building_type_set type="string">building_type</building_type_set>
+                        <units_names type="string">{}</units_names>
+                        <building_set type="string">pseudo_building</building_set>
+                        <projects type="string">dptm_results</projects>
+                        <location_id_name type="quoted_string">'zone_id'</location_id_name>
+
+                    </run>
+                </structure>
+            </add_projects_to_buildings>
+            <industrial_development_project_location_choice_model type="model">
+                <structure type="dictionary">
+                    <run type="dictionary">
+
+                        <chunk_specification type="string">{'records_per_chunk':300}</chunk_specification>
+                        <agent_set type="string">dptm_results['industrial']</agent_set>
+                        <specification type="string">specification</specification>
+                        <data_objects type="string">datasets</data_objects>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <coefficients type="string">coefficients</coefficients>
+
+                    </run>
+                    <init type="dictionary">
+
+                        <submodel_string type="string" parser_action="blank_to_None" />
+                        <capacity_string type="quoted_string">'urbansim_zone.zone.vacant_SSS_job_space'</capacity_string>
+                        <location_set type="string">zone</location_set>
+                        <project_type type="quoted_string">'industrial'</project_type>
+                        <sampler type="string" parser_action="blank_to_None" />
+
+                        <name type="string">DevelopmentProjectLocationChoiceModel</name>
+                    </init>
+                    <import type="dictionary">
+                        <module>urbansim_zone.models.development_project_location_choice_model</module>
+                        <classname>DevelopmentProjectLocationChoiceModel</classname>
+                    </import>
+                    <estimate type="dictionary">
+                        <output type="string">(coefficients, _)</output>
+
+                        <specification type="string">specification</specification>
+                        <debuglevel type="string">debuglevel</debuglevel>
+                        <data_objects type="string">datasets</data_objects>
+                        <agent_set type="string">projects</agent_set>
+
+                    </estimate>
+                    <prepare_for_run type="dictionary">
+                        <output type="string">(specification, coefficients)</output>
+
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+                        <coefficients_table type="quoted_string">'industrial_development_location_choice_model_coefficients'</coefficients_table>
+                        <specification_table type="quoted_string">'industrial_development_location_choice_model_specification'</specification_table>
+
+                        <name type="string">prepare_for_run</name>
+                    </prepare_for_run>
+                    <prepare_for_estimate type="dictionary">
+                        <output type="string">(specification, projects)</output>
+
+                        <events_for_estimation_table type="quoted_string">'development_event_history'</events_for_estimation_table>
+                        <units type="quoted_string">'industrial_job_spaces'</units>
+                        <specification_table type="quoted_string">'industrial_development_location_choice_model_specification'</specification_table>
+                        <urbansim_constant type="string">urbansim_constant</urbansim_constant>
+                        <specification_storage type="string">base_cache_storage</specification_storage>
+                        <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
+                        <base_year type="string">base_year</base_year>
+                        <models_to_run parser_action="skip" type="list">[]</models_to_run>
+
+                        <name type="string">prepare_for_estimate</name>
+                    </prepare_for_estimate>
+                </structure>
+            </industrial_development_project_location_choice_model>
+        </model_system>
+    </model_manager>
+
+    <scenario_manager>
+        <Zone_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
+            <models_to_run type="selectable_list">
+                <real_estate_price_model choices="Run|Skip" type="model_choice">Run</real_estate_price_model>
+                <development_project_transition_model choices="Run|Skip" type="model_choice">Run</development_project_transition_model>
+                <commercial_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</commercial_development_project_location_choice_model>
+                <industrial_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</industrial_development_project_location_choice_model>
+                <residential_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</residential_development_project_location_choice_model>
+                <add_projects_to_buildings choices="Run|Skip" type="model_choice">Run</add_projects_to_buildings>
+                <household_transition_model choices="Run|Skip" type="model_choice">Run</household_transition_model>
+                <employment_transition_model choices="Run|Skip" type="model_choice">Run</employment_transition_model>
+                <household_relocation_model choices="Run|Skip" type="model_choice">Run</household_relocation_model>
+                <household_location_choice_model choices="Run|Skip" type="model_choice">Run</household_location_choice_model>
+                <employment_relocation_model choices="Run|Skip" type="model_choice">Run</employment_relocation_model>
+                <employment_location_choice_model type="model_choice" choices="Run|Skip">Run<group_members type="string">_all_</group_members>          </employment_location_choice_model>
+                <distribute_unplaced_jobs_model choices="Run|Skip" type="model_choice">Run</distribute_unplaced_jobs_model>
+            </models_to_run>
+
+            <scenario_database_configuration type="string"></scenario_database_configuration>
+
+            <others type="category">
+                <base_year type="integer"></base_year>
+                <years_to_run config_name="years" type="tuple">
+                    <firstyear type="integer"></firstyear>
+                    <lastyear type="integer"></lastyear>
+                </years_to_run>
+            </others>
+
+            <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+            <creating_baseyear_cache_configuration type="class">
+                <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+                <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+                <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">runs</cache_directory_root>
+                <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
+                <baseyear_cache type="class">
+                    <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+                    <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+                    <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory"></existing_cache_to_copy>
+                </baseyear_cache>
+                <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+                <tables_to_cache type="selectable_list">
+                    <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+                    <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+                    <households choices="Cache|Skip" type="table">Cache</households>
+                    <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+                    <building_types choices="Cache|Skip" type="table">Cache</building_types>
+                    <jobs choices="Cache|Skip" type="table">Cache</jobs>
+                    <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+                    <zones choices="Cache|Skip" type="table">Cache</zones>
+                    <pseudo_buildings choices="Cache|Skip" type="table">Cache</pseudo_buildings>
+                    <counties choices="Cache|Skip" type="table">Cache</counties>
+                    <commercial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_coefficients>
+                    <commercial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_specification>
+                    <commercial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_coefficients>
+                    <commercial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_specification>
+                    <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+                    <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+                    <industrial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_coefficients>
+                    <industrial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_specification>
+                    <industrial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_coefficients>
+                    <industrial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_specification>
+                    <residential_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_coefficients>
+                    <residential_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_specification>
+                    <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+                    <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+                    <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+                    <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+                    <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
+                    <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
+                    <base_year choices="Cache|Skip" type="table">Cache</base_year>
+                    <cities choices="Cache|Skip" type="table">Cache</cities>
+                    <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
+                    <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+                    <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+                    <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+                    <race_names choices="Cache|Skip" type="table">Cache</race_names>
+                    <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+                    <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
+                    <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+                </tables_to_cache>
+                <tables_to_cache_nchunks type="dictionary" />
+                <tables_to_copy_to_previous_years type="dictionary" />
+            </creating_baseyear_cache_configuration>
+        </Zone_baseline>
+    </scenario_manager>
+
+    <!-- <years type="">(1981, 1985)</years> -->
+    <debuglevel type="integer">4</debuglevel>
+    <base_year type="integer"></base_year>
+    <cache_directory type="string"></cache_directory>
 </opus_project>
+
