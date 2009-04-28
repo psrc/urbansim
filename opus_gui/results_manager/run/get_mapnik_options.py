@@ -196,7 +196,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.color_list = self.color_list[0:self.num_buckets]
         for i in range(self.num_buckets):
             colorPB = QPushButton()
-            colorPB.setStyleSheet("QWidget { background-color: %s }" % self.color_list[i])
+            colorPB.setStyleSheet("QPushButton { background-color: %s; margin: 1px; border: 0px; }" % self.color_list[i])
             colorPB.connect(colorPB, SIGNAL('clicked()'), self.makeChooseColor(colorPB,i))
             self.tbl_Colors.setCellWidget(i,0,colorPB)
     
@@ -358,7 +358,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
     def makeChooseColor(self, pb, index):
         def chooseAndSaveColor():
             self.color_list[index] = QColorDialog.getColor().name()
-            pb.setStyleSheet("QWidget { background-color: %s }" % self.color_list[index])
+            pb.setStyleSheet("QPushButton { background-color: %s; margin: 1px; border: 0px; }" % self.color_list[index])
             self.cb_colorScheme.setCurrentIndex(0) # set color scheme option to "Custom Color Scheme"
         return chooseAndSaveColor 
 
@@ -387,7 +387,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
     def makeColorButton(self, row, color=None):
         colorPB = QPushButton()
         if (not color is None):
-            colorPB.setStyleSheet("QWidget { background-color: %s }" % color)
+            colorPB.setStyleSheet("QPushButton { background-color: %s; margin: 1px; border: 0px; }" % color)
         colorPB.connect(colorPB, SIGNAL('clicked()'), self.makeChooseColor(colorPB,row))
         self.tbl_Colors.setCellWidget(row,0,colorPB)
         
