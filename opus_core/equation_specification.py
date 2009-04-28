@@ -574,14 +574,14 @@ def get_variables_coefficients_from_list(list_spec, definition={}):
                 else:
                     fixed_values.append(0)
             else:
-                logger.log_error("Wrong specification format for variable %s" % submodel_spec)
+                logger.log_error("Wrong specification format for variable %s" % var_coef)
                 error = True
         elif isinstance(var_coef, dict):
             variables.append(var_coef.keys()[0])
             coefficients.append(var_coef.values()[0])
             fixed_values.append(0)
         else:
-            logger.log_error("Wrong specification format for variable %s" % submodel_spec)
+            logger.log_error("Wrong specification format for variable %s" % var_coef)
             error = True
         
     return (variables, coefficients, fixed_values, error)

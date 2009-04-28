@@ -389,10 +389,11 @@ class ChoiceModel(ChunkModel):
         return {}
         
     def export_estimation_data(self, submodel, is_selected_choice, data, coef_names, file_name, use_biogeme_data_format=False):
-        from numpy import concatenate, newaxis, reshape
+        from numpy import concatenate, newaxis, reshape, repeat
         import os
         delimiter = '\t'
         if use_biogeme_data_format:
+            # there will be one row per observation
             nobs, alts, nvars = data.shape
 
             avs = ones(shape=(nobs,alts,1))  # if the choice is available, set to all ones
@@ -440,8 +441,9 @@ class ChoiceModel(ChunkModel):
             header = ['ID', 'choice'] + biogeme_var_names
             nrows, ncols = data.shape
         else:
+            # there will be as many rows per observations as there are alternatives
             nobs, alts, nvars = data.shape
-            ids = reshape(arange(nobs)+1, (nobs,1,1))
+            ids = reshape(repeat(arange(nobs)+1, alts), (nobs,alts,1))
             data = concatenate((ids, is_selected_choice[...,newaxis], data),axis=2)
             nvars += 2
             nrows = nobs * alts
