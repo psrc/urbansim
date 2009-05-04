@@ -93,6 +93,8 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
             if indicator_type == 'mapnik_map' or \
                indicator_type == 'matplotlib_chart':
                 form_generator = self.resultsManagerBase.addViewImageIndicator
+            elif indicator_type == 'mapnik_animated_map':
+                form_generator = self.resultsManagerBase.addViewAnimationIndicator
             elif indicator_type == 'tab':
                 form_generator = self.resultsManagerBase.addViewTableIndicator
 

@@ -33,11 +33,8 @@ class IndicatorFactory(object):
         logger.log_status('\n%s BEGIN %s %s' 
             % ('='*29, strftime('%Y_%m_%d_%H_%M', localtime()), '='*29))
     
-        ####### create indicators #########
-        # JLM: create is inherited from abstract_indicator.py
         for indicator in indicators:
             indicator.create(display_error_box = display_error_box)
-        ###################################
         
         logger.log_status('%s END %s %s\n' 
             % ('='*30, strftime('%Y_%m_%d_%H_%M', localtime()), '='*30))

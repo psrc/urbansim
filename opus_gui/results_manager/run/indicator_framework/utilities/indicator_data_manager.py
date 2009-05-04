@@ -191,6 +191,7 @@ class IndicatorDataManager:
            'DatasetTable': 'dataset_table',
            'GeotiffMap': 'geotiff_map',
            'Map': 'mapnik_map',
+           'Animation': 'mapnik_animated_map', 
            'Chart': 'matplotlib_chart',
            'LorenzCurve': 'matplotlib_lorenzcurve',
            'Table': 'table'

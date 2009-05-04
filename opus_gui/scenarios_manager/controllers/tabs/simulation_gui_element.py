@@ -19,6 +19,7 @@ from opus_gui.general_manager.general_manager import get_available_dataset_names
 from opus_gui.results_manager.results_manager_functions import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_animation_form import ViewAnimationForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_gui.scenarios_manager.views.ui_simulation_gui_element import Ui_SimulationGuiElement
 from opus_gui.scenarios_manager.views.ui_overwrite_dialog import Ui_dlgOverwriteRun
@@ -187,8 +188,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         if indicator_type == 'table':
             indicator_type = 'tab'
             params['output_type'] = 'tab'
-        else:
-            indicator_type = 'mapnik_map'
+        # JLM > commented this out for when implemented animations
+#        else:
+#            indicator_type = 'mapnik_map'
 
         visualizations = [
             (indicator_type, str(dataset_name), params)
@@ -223,6 +225,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
             for visualization in visualizations:
                 if indicator_type == 'mapnik_map':
                     form = ViewImageForm(visualization = visualization)
+                elif indicator_type == 'animated_map':
+                    form = ViewAnimationForm(visualization = visualization)
                 else:
                     form = ViewTableForm(visualization = visualization)
                 self.indicatorResultsTab.insertTab(0,form,form.tabIcon,form.tabLabel)
@@ -376,6 +380,8 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                 if indicator_type == 'mapnik_map' or \
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.managers['results_manager'].addViewImageIndicator
+                elif indicator_type == 'mapnik_animated_map':
+                    form_generator = self.mainwindow.managers['results_manager'].addViewAnimationIndicator
                 elif indicator_type == 'tab':
                     form_generator = self.mainwindow.managers['results_manager'].addViewTableIndicator
 

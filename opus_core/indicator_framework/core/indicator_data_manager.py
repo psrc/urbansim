@@ -193,7 +193,6 @@ class IndicatorDataManager:
         modules = {
            'DatasetTable': 'dataset_table',
            'GeotiffMap': 'geotiff_map',
-           #'Map': 'matplotlib_map',
            'Map': 'mapnik_map',
            'Chart': 'matplotlib_chart',
            'LorenzCurve': 'matplotlib_lorenzcurve',

@@ -71,7 +71,7 @@ class BatchProcessor(object):
                 if 'output_style' in params:
                     args['output_style'] = int(str(params['output_style']))
 
-        elif visualization_type == 'mapnik_map':
+        elif visualization_type == 'mapnik_map' or visualization_type == 'mapnik_animated_map' :
             try:
                 args['bucket_labels'] = params['bucket_labels']
                 args['bucket_ranges'] = params['bucket_ranges']
@@ -100,7 +100,7 @@ class BatchProcessor(object):
         try:
             self.visualizations = []
             
-            for (visualization_type, dataset_name, params) in self.visualization_configurations:
+            for (visualization_type, dataset_name, params) in self.visualization_configurations:                
                 indicator_results = []
                 indicators = self._get_indicators(params)
                 for indicator_name in indicators:

@@ -97,6 +97,11 @@
              <string>Map</string>
             </property>
            </item>
+           <item>
+            <property name="text" >
+             <string>Animation</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item row="2" column="0" >
@@ -184,39 +189,6 @@
            </item>
           </layout>
          </item>
-         <item row="1" column="0" >
-          <widget class="QRadioButton" name="rbSingleTable" >
-           <property name="toolTip" >
-            <string>The table will have the values of all indicators for each year the indicator batch is run on.</string>
-           </property>
-           <property name="text" >
-            <string>Output a single table</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" >
-          <widget class="QRadioButton" name="rbTablePerYear" >
-           <property name="toolTip" >
-            <string>Each table will have the values of the selected indicators for the given year.</string>
-           </property>
-           <property name="text" >
-            <string>Output a table for every year</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" >
-          <widget class="QRadioButton" name="rbTablePerIndicator" >
-           <property name="toolTip" >
-            <string>Each table will have the values of a given indicator across all years the batch is run on.</string>
-           </property>
-           <property name="text" >
-            <string>Output a table for each indicator</string>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="0" >
           <layout class="QHBoxLayout" name="horizontalLayout" >
            <item>
@@ -263,6 +235,39 @@
            </item>
           </layout>
          </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="rbSingleTable" >
+           <property name="toolTip" >
+            <string>The table will have the values of all indicators for each year the indicator batch is run on.</string>
+           </property>
+           <property name="text" >
+            <string>Output a single table</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QRadioButton" name="rbTablePerYear" >
+           <property name="toolTip" >
+            <string>Each table will have the values of the selected indicators for the given year.</string>
+           </property>
+           <property name="text" >
+            <string>Output a table for every year</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QRadioButton" name="rbTablePerIndicator" >
+           <property name="toolTip" >
+            <string>Each table will have the values of a given indicator across all years the batch is run on.</string>
+           </property>
+           <property name="text" >
+            <string>Output a table for each indicator</string>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="0" >
           <widget class="QPushButton" name="mapnikOptions" >
            <property name="maximumSize" >
@@ -277,11 +282,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>rbSingleTable</zorder>
-        <zorder>rbTablePerYear</zorder>
-        <zorder>rbTablePerIndicator</zorder>
-        <zorder>mapnikOptions</zorder>
-        <zorder>horizontalSpacer</zorder>
        </widget>
       </item>
       <item row="2" column="0" >

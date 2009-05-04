@@ -6,6 +6,7 @@ from PyQt4.QtCore import QString
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_animation_form import ViewAnimationForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrowser
@@ -87,6 +88,11 @@ class ResultsManager(AbstractManager):
 
     def addViewImageIndicator(self, visualization, indicator_type = None):
         new_form = ViewImageForm(visualization = visualization,
+                                 parent_widget = self.tab_base_widget)
+        self._attach_tab(tab_widget = new_form)
+
+    def addViewAnimationIndicator(self, visualization, indicator_type = None):
+        new_form = ViewAnimationForm(visualization = visualization,
                                  parent_widget = self.tab_base_widget)
         self._attach_tab(tab_widget = new_form)
 

@@ -15,6 +15,7 @@ class VisualizationFactory:
         
         class_names = {
            'mapnik_map':'MapnikMap',
+           'mapnik_animated_map': 'MapnikAnimation',
            'matplotlib_chart':'MatplotlibChart',
            'table':'Table'
         }
@@ -28,6 +29,7 @@ class VisualizationFactory:
             'indicator_directory':indicator_directory
         }
         kwargs.update(additional_args)
+
         visualization = ClassFactory().get_class(
             module_composed_name = module_composed_name,
             class_name = class_names[visualization_type],

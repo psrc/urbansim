@@ -70,7 +70,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                     self.rbTablePerIndicator.setChecked(True)
                 else:
                     self.rbTablePerYear.setChecked(True)
-        elif prev_output_type == 'mapnik_map':
+        elif prev_output_type == 'mapnik_map' or prev_output_type == 'mapnik_animated_map':
             self.mapnik_options['bucket_ranges'] = base_node.find('bucket_ranges').text
             self.mapnik_options['bucket_colors'] = base_node.find('bucket_colors').text
             self.mapnik_options['bucket_labels'] = base_node.find('bucket_labels').text
@@ -94,7 +94,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
         viz_type = viz_params['visualization_type']
 
         close = True
-        if viz_type == 'mapnik_map' and dataset_name not in self.spatial_datasets:
+        if (viz_type == 'mapnik_map' or viz_type == 'mapnik_animated_map') and dataset_name not in self.spatial_datasets:
             MessageBox.warning(mainwindow = self.mainwindow,
                       text = "That indicator cannot be visualized as a map.",
                       detailed_text = ('The dataset %s is either not spatial or cannot be '

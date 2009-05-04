@@ -11,6 +11,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.show()
+        self.setWindowTitle('Mapnik Options')
         self.connect(self.pb_applyChanges, SIGNAL("clicked()"), self.applyChanges(options_dict))
         self.connect(self.cb_colorScalingType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
         self.connect(self.cb_labelType, SIGNAL("currentIndexChanged(int)"), self.greyOutLineEdits)
@@ -37,7 +38,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.greyOutLineEdits()
         self.greyOutComboBoxes()
         
-        self.le_customScale.setToolTip('This text field is only editable if "Custom Scaling" \nis selected as the Color Scaling Type')
+        self.le_customScale.setToolTip('This text field is only editable if "Custom Scaling" \nor "Custom Linear Scaling" is selected as the Color \nScaling Type')
         self.le_customLabels.setToolTip('This text field is only editable if "Custom Labels" \nis selected as the Label Type')
         self.cb_divergeIndex.setToolTip('The color boxes at indexes higher than the selected \nindex will be colored with the scheme selected in the \nColor Scheme menu and the color boxes with indexes \nless than the selected index will be colored with the \nscheme selected in the Diverging Color menu')
  
@@ -214,16 +215,19 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         elif (self.cb_colorScalingType.currentText() == 'Custom Linear Scaling'):
             new_input = str(self.le_customScale.text()).split(',')
             if (new_input.__len__() == 2):
-                lower_bound = float(new_input[0])
-                upper_bound = float(new_input[1])
-                bucket_range = (upper_bound-lower_bound)/self.num_buckets
-                self.range_list = []
-                self.range_list.append(str(lower_bound))
-                for i in range(1,self.num_buckets):
-                    self.range_list.append(str(lower_bound+(i*bucket_range)))
-                self.range_list.append(str(upper_bound))
-                options_dict['bucket_ranges'] = self.listToString(self.range_list)
-            
+                try:
+                    lower_bound = float(new_input[0])
+                    upper_bound = float(new_input[1])
+                    bucket_range = (upper_bound-lower_bound)/self.num_buckets
+                    self.range_list = []
+                    self.range_list.append(str(lower_bound))
+                    for i in range(1,self.num_buckets):
+                        self.range_list.append(str(lower_bound+(i*bucket_range)))
+                    self.range_list.append(str(upper_bound))
+                    options_dict['bucket_ranges'] = self.listToString(self.range_list)
+                except ValueError:
+                    pass # do nothing if either new_input[0] or new_input[1] is not a number
+                                
     def setLabelList(self, options_dict):
         if (self.cb_labelType.currentText() == 'Range Values'):
             options_dict['bucket_labels'] = 'range_labels'

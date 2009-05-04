@@ -5,44 +5,16 @@
 import os
 
 from opus_core.logger import logger
-from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.abstract_visualization\
-    import Visualization
 from opus_core.store.attribute_cache import AttributeCache
-from numpy import where, ma, ndarray
-from opus_core.storage_factory import StorageFactory
-
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
+from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.mapnik_map import MapnikMap
 
-class MapnikMap(Visualization):
+class MapnikAnimation(MapnikMap):
 
-    def __init__(self,
-                 indicator_directory,
-                 name = None,
-                 scale = None,
-                 storage_location = None,
-                 bucket_colors = None,
-                 bucket_ranges = None,
-                 bucket_labels = None):
-        self.name = name
-        if storage_location is None:
-            storage_location = indicator_directory
-        self.storage_location = storage_location
-        self.indicator_directory = indicator_directory
-        self.scale = scale     #TODO: scale doesn't make sense if mixing multiple datasets
-        
-        self.color_list = bucket_colors
-        self.range_list = bucket_ranges
-        self.label_list = bucket_labels        
         
     def get_file_extension(self):
-        return 'png'
-
-    def get_visualization_type(self):
-        return 'map'
-    
-    def get_additional_metadata(self):
-        return  {'scale':self.scale}
+        return 'gif'
 
     def visualize(self, 
                   indicators_to_visualize,
@@ -73,7 +45,8 @@ class MapnikMap(Visualization):
         viz_metadata = []
         for dataset_name, indicator_names in dataset_to_attribute_map.items():  
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
-                          for name in indicator_names] 
+                          for name in indicator_names]
+                    
             for year in source_data.years:
                 SessionConfiguration(
                     new_instance = True,
@@ -108,7 +81,7 @@ class MapnikMap(Visualization):
                             min_value, max_value = (None, None)
                         
                         file_path = os.path.join(self.storage_location,
-                                             table_name+ '.' + self.get_file_extension())
+                                             table_name+ '.' + MapnikMap.get_file_extension(self))
                         
                         dataset.add_attribute(name = str(computed_name), 
                                               data = table_data[computed_name])
@@ -126,64 +99,52 @@ class MapnikMap(Visualization):
                              #filter = 'urbansim.gridcell.is_fully_in_water'                                 
                         )
         
-                        metadata = ([indicator_name], table_name, [year])
-                        viz_metadata.append(metadata)
+                        #metadata = ([indicator_name], table_name, [year])
+                        #viz_metadata.append(metadata)
                     else:
                         logger.log_warning('There is no computed indicator %s'%computed_name)
+                
+                
+        # DIFFERS FROM HERE DOWN:
         
+            for indicator_name, computed_name in attributes:                
+                self.create_animation(
+                    dataset_name = dataset_name,
+                    year_list = source_data.years,
+                    indicator_name = str(indicator_name),
+                    viz_metadata = viz_metadata
+                )
+                
         visualization_representations = []
-        for indicator_names, table_name, years in viz_metadata:
+        for indicator_names, table_name, years in viz_metadata:            
             visualization_representations.append(
                 self._get_visualization_metadata(
                     computed_indicators = computed_indicators,
                     indicators_to_visualize = indicator_names,
                     table_name = table_name,
-                    years = years
-            ))                  
+                    years = years)
+            )
         
         return visualization_representations
-
-
-
-from opus_core.tests import opus_unittest
-from opus_gui.results_manager.run.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-from opus_gui.results_manager.run.indicator_framework.representations.indicator import Indicator
-from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
-
-class Tests(AbstractIndicatorTest):
+    
+    # precondition: year_list must always have at least one element
+    # this function is called by the visualize function
+    def create_animation(self, dataset_name, year_list, indicator_name, viz_metadata):
+        map_file_list = []
+        for year in year_list:
+            map_file_list.append(os.path.join(self.storage_location,dataset_name+'_map_'+str(year)+'_'+indicator_name+'.'+MapnikMap.get_file_extension(self)))
         
-    #TODO: get 2d attribute in test code
-    def skip_test_create_indicator(self):
-        indicator = Indicator(
-                  dataset_name = 'opus_core', 
-                  attribute = 'urbansim.gridcell.population'
-        )
-                
-        maker = Maker(project_name = 'test', test = True)
-        computed_indicators = maker.create_batch(
-            indicators = {'population':indicator}, 
-            source_data = self.source_data)
-        
-        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
-        
-        map = MapnikMap(
-                  indicator_directory = self.source_data.get_indicator_directory(),
-                  name = 'map_of_opus_core.population(gridcell)')
-                
-        map.create(False)
+        table_name = dataset_name+'_animated_map_'+str(min(year_list))+'_'+indicator_name
+        animation_file_name = str(os.path.join(self.storage_location,table_name+'.'+self.get_file_extension()))
+        os.system('convert -delay 100 %s -loop 0 %s' % (' '.join(map_file_list), animation_file_name))
 
-        viz_result = map.visualize(
-                        indicators_to_visualize = ['population'], 
-                        computed_indicators = computed_indicators)[0]
-        self.assertTrue(os.path.exists(
-           os.path.join(viz_result.storage_location,
-           viz_result.table_name + '.' + viz_result.file_extension)))
+        metadata = ([indicator_name], table_name, [min(year_list)])
+        viz_metadata.append(metadata)
+
                               
 if __name__ == '__main__':
     try: 
         import mapnik
     except:
         logger.log_warning('could not import mapnik')
-    else:
-        opus_unittest.main()
+

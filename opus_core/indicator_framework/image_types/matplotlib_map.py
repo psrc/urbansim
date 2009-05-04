@@ -2,6 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
+# JLM> When matplotlib is completely replaced by Mapnik, this PyDev module can be deleted
+
 import os, re, sys, time, traceback
 from copy import copy
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator

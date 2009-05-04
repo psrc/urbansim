@@ -67,7 +67,7 @@ class OpusResultVisualizer(object):
             source_data_name = indicator['source_data_name']
             dataset_name = indicator['dataset_name']
             
-            if self.indicator_type == 'mapnik_map' and dataset_name not in self.spatial_datasets:
+            if (self.indicator_type == 'mapnik_map' or self.indicator_type == 'mapnik_animated_map') and dataset_name not in self.spatial_datasets:
                 not_visualized.append(indicator)
                 continue
 
@@ -111,7 +111,10 @@ class OpusResultVisualizer(object):
             indicators_to_visualize[name] = computed_indicator
 
         viz_args = {}
+
         if self.indicator_type == 'mapnik_map':
+            viz_type = self.indicator_type
+        elif self.indicator_type == 'mapnik_animated_map':
             viz_type = self.indicator_type
         elif self.indicator_type == 'matplotlib_chart':
             viz_type = self.indicator_type

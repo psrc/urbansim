@@ -12,6 +12,7 @@ from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.results_manager.views.ui_results_browser import Ui_ResultsBrowser
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
+from opus_gui.results_manager.controllers.tabs.view_animation_form import ViewAnimationForm
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_core.logger import logger
 
@@ -300,6 +301,10 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                 if visualization_type == 'mapnik_map':
                     viz = visualizations[0]
                     map_widget = ViewImageForm(viz, new_tab)
+                    map_widget.setSizePolicy(size)
+                elif visualization_type == 'mapnik_animated_map':
+                    viz = visualizations[0]
+                    map_widget = ViewAnimationForm(viz, new_tab)
                     map_widget.setSizePolicy(size)
                 elif visualization_type == 'table_per_year':
                     viz = visualizations[0]

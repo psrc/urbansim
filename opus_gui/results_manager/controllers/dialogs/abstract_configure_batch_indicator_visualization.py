@@ -3,7 +3,6 @@
 # See opus_core/LICENSE 
 
 import os
-import sys
 
 from PyQt4.QtCore import QString, Qt, QFileInfo
 from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
@@ -143,7 +142,11 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             }
         elif str(viz_type) == 'Map':
             available_output_types = {
-                'Mapnik map (.png)':'mapnik_map',
+                'Mapnik map (.png)':'mapnik_map'
+            }
+        elif str(viz_type) == 'Animation':
+            available_output_types = {
+                'Animated Mapnik map (.gif)':'mapnik_animated_map'
             }
         else:
             available_output_types = {}
@@ -203,8 +206,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     def on_cboVizType_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
-
-        if param == 'Map': 
+        
+        if param == 'Map' or param == 'Animation': 
             self.set_default_mapnik_options()
 
         self._setup_co_output_type()
@@ -230,7 +233,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     def _get_type_mapper(self):
         return {
             'Table': 'tab',
-            'Map': 'mapnik_map'
+            'Map': 'mapnik_map',
+            'Animation': 'mapnik_animated_map'
         }
     def _get_inverse_type_mapper(self):
         mapper = self._get_type_mapper()
@@ -252,7 +256,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 'visualization_type': QString(self._get_type_mapper()[str(viz_type)])
         }
         
-        if output_type == 'mapnik_map' :
+        if output_type == 'mapnik_map' or output_type == 'mapnik_animated_map':
             vals['bucket_labels'] = self.mapnik_options['bucket_labels']
             vals['bucket_colors'] = self.mapnik_options['bucket_colors']
             vals['bucket_ranges'] = self.mapnik_options['bucket_ranges']
@@ -319,7 +323,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.rbTablePerIndicator.hide()
             self.rbTablePerYear.hide()
             self.mapnikOptions.hide()
-        elif output_type == 'Mapnik map (.png)':
+        elif output_type == 'Mapnik map (.png)' or output_type == 'Animated Mapnik map (.gif)':
             self.mapnikOptions.show()
         else:
             self.lblOption1.hide()

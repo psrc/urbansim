@@ -281,7 +281,6 @@ class AdvancedVisualizationForm(QWidget):
                 
         indicator_type = str(self.co_result_type.currentText())
         indicator_type = {
-            #'Map (per indicator per year)':'matplotlib_map',
             'Map (per indicator per year)':'mapnik_map',
             'Chart (per indicator, spans years)':'matplotlib_chart',
             'Table (per indicator, spans years)':'table_per_attribute',
