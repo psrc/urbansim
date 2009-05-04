@@ -25,16 +25,16 @@ class ViewAnimationForm(QWidget):
         
         if QByteArray('gif') in QMovie.supportedFormats():
             # QMovie supports gif animations
-            movie = QMovie(QString("Z:\\Animations\\test_files\\animation.mpg"))
+            movie = QMovie(QString(file_path), QByteArray(), self)
             movie.setCacheMode(QMovie.CacheAll)
             self.label.setMovie(movie)
             movie.start() 
         else:
-            #QMovie does not support gif animations (this is the workaround code)
+            #QMovie does not support gif animations
             self.label.setWordWrap(True)
             self.label.setFixedHeight(450)
             self.label.setFixedWidth(600)
-            self.label.setText("The Animated Mapnik map was shown in an external viewer. This is because the version of PyQt in use does not support gif animations.")
+            self.label.setText("The Animated Mapnik map was shown in an external viewer. This is because the version of Qt/PyQt in use has not been configured to support gif animations.")
             # Note: the PATH environment variable must contain the filepath to i_view32 (Win) or to animate (Mac & Linux)
             if os.name == 'nt':
             # in Windows, view the gif with IrfanView

@@ -1367,10 +1367,10 @@ class AbstractDataset(object):
         for i in range(num_buckets):
             r = Rule()
             r.symbols.append(PolygonSymbolizer(Color(color_list[i])))
-            if (unique_id != 'grid_id' or unique_id != 'parcel_id'): # do not draw black lines between gridcells or parcels
-                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
-            if (unique_id == 'parcel_id'):
+            if (unique_id == 'grid_id' or unique_id == 'parcel_id'): # color over the lines between gridcells and parcels
                 r.symbols.append(LineSymbolizer(Color(color_list[i]),0.3))
+            else:
+                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
             r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
             s.rules.append(r)
         
