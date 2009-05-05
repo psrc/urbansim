@@ -81,7 +81,7 @@ class MapnikAnimation(MapnikMap):
                             min_value, max_value = (None, None)
                         
                         file_path = os.path.join(self.storage_location,
-                                             table_name+ '.' + MapnikMap.get_file_extension(self))
+                                             'anim_' + table_name + '.' + MapnikMap.get_file_extension(self))
                         
                         dataset.add_attribute(name = str(computed_name), 
                                               data = table_data[computed_name])
@@ -103,9 +103,6 @@ class MapnikAnimation(MapnikMap):
                         #viz_metadata.append(metadata)
                     else:
                         logger.log_warning('There is no computed indicator %s'%computed_name)
-                
-                
-        # DIFFERS FROM HERE DOWN:
         
             for indicator_name, computed_name in attributes:                
                 self.create_animation(
@@ -132,7 +129,7 @@ class MapnikAnimation(MapnikMap):
     def create_animation(self, dataset_name, year_list, indicator_name, viz_metadata):
         map_file_list = []
         for year in year_list:
-            map_file_list.append(os.path.join(self.storage_location,dataset_name+'_map_'+str(year)+'_'+indicator_name+'.'+MapnikMap.get_file_extension(self)))
+            map_file_list.append(os.path.join(self.storage_location,'anim_'+dataset_name+'_map_'+str(year)+'_'+indicator_name+'.'+MapnikMap.get_file_extension(self)))
         
         table_name = dataset_name+'_animated_map_'+str(min(year_list))+'_'+indicator_name
         animation_file_name = str(os.path.join(self.storage_location,table_name+'.'+self.get_file_extension()))
