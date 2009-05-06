@@ -14,7 +14,7 @@ class TestTutorialCode(opus_unittest.OpusTestCase):
     def test_tutorial_code(self):
         opus_docs_path = OpusPackage().get_path_for_package('opus_docs')
         error_code = os.system('%s "%s"'
-            % (sys.executable, os.path.join(opus_docs_path, 'manual', 'tutorial_code.py')))
+            % (sys.executable, os.path.join(opus_docs_path, 'manual', 'part-command-line', 'tutorial_code.py')))
         
         self.assert_(not error_code)
 
