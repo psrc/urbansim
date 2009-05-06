@@ -109,12 +109,13 @@ coef, results = hlcm.estimate(specification, agent_set=households)
 #hlcm.plot_choice_histograms(capacity=locations.get_attribute("capacity"))
 
 number_of_agents = "gridcell.number_of_agents(household)"
+vacant_capacity = "capacity - gridcell.number_of_agents(household)"
 hlcm2 = HouseholdLocationChoiceModel(
                          location_set = locations,
                          sampler=None,
                          choices="urbansim.lottery_choices",
                          compute_capacity_flag=True,
-                         capacity_string="capacity",
+                         capacity_string=vacant_capacity,
                          number_of_agents_string=number_of_agents,
                          number_of_units_string="capacity",
                          run_config={"lottery_max_iterations":10})

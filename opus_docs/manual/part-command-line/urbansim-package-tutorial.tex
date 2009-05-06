@@ -574,12 +574,13 @@ takes into account capacity and forces agents to re-decide, if there is an
 overflow in the locations capacity:
 \begin{verbatim}
 >>> number_of_agents = "gridcell.number_of_agents(household)"
+>>> vacant_capacity = "capacity - gridcell.number_of_agents(household)"
 >>> hlcm2 = HouseholdLocationChoiceModel(
                          location_set = locations,
                          sampler=None,
                          choices="urbansim.lottery_choices",
                          compute_capacity_flag=True,
-                         capacity_string="capacity",
+                         capacity_string=vacant_capacity,
                          number_of_agents_string=number_of_agents,
                          number_of_units_string="capacity",
                          run_config={"lottery_max_iterations":10})
@@ -589,8 +590,8 @@ The argument \verb|choices| is the full name of the module in which the choice
 class is implemented. This module
 must contain a class of the same name, i.e.
 \class{lottery_choices} in this case, be a child of \package{opus_core} class \class{Choices}
-(see Section~\ref{sec:choices}) and have a method \method{run()}.  Further arguments define the name of
-the capacity attribute, name of the variable that computes number of agents in
+(see Section~\ref{sec:choices}) and have a method \method{run()}.  Further arguments define an expression 
+for computing vacant capacity, expression or variable that computes number of agents in
 each location (more about variable names in Section~\ref{sec:variable-names}), name of the
 variable/attribute that determines the total number of units for each location. 
 The argument \verb|run_config| is a dictionary that contains parameters for the simulation. In this example it contains a value
