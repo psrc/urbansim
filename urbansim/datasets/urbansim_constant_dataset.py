@@ -36,6 +36,11 @@ class UrbansimConstantDataset(Dataset):
             return self.get_attribute(name)[0]
         return self.constants_dict[name]
     
+    def __setitem__(self, name, value):
+        if name in self.get_known_attribute_names():
+            self.modify_attribute(name=name, data=array([value]), index=array([0], dtype='int32'))
+        self.constants_dict[name] = value
+    
     def get_income_range_for_type(self, income_type):
         return self.constants_dict.get_income_range_for_type(income_type)
         
