@@ -1233,7 +1233,8 @@ class AbstractDataset(object):
     # This function is used to create a vector-based map
     def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
                  max_value=None, file=None, my_title="", filter=None, background=None,
-                color_list=None, range_list=None, label_list=None):
+                 color_list=None, range_list=None, label_list=None, is_animation=False,
+                 year=None):
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
@@ -1249,6 +1250,8 @@ class AbstractDataset(object):
         'color_list' is a list of colors to use in the map
         'range_list' is a list of range boundaries that specify each bucket of values
         'label_list' is a list of labels that will be applied to the buckets of values
+        'is_animation' will be set to true if plot_map is called to make a frame of an animation sequence
+        'year' will be printed at the top of each frame in an animation
         """
         
         useDefaultValues = color_list == None or range_list == None or label_list == None
@@ -1336,7 +1339,7 @@ class AbstractDataset(object):
         # Use Mapnik to draw the map
         from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, render_to_file
         m = Map(600,300,"+proj=latlong +datum=WGS84")
-        m.background = Color('#f2eff9')
+        m.background = Color('#ffffff')
         s = Style()
         
         if (max_value != None):
@@ -1355,16 +1358,16 @@ class AbstractDataset(object):
             max_val*= 1.0
             # set linearly increasing ranges for the range list
             range_list = []
-            range_list.append(min_val)
+            range_list.append(str("%.2f" % min_val))
             bucket_range = (max_val - min_val) / num_buckets
             for i in range(1,num_buckets):
-                range_list.append(i * bucket_range)
-            range_list.append(max_val)
+                range_list.append(str("%.2f" % (i * bucket_range)))
+            range_list.append(str("%.2f" % max_val))
         else:
             if range_list[0].upper() == 'MIN':
-                range_list[0] = min_val
+                range_list[0] = (str("%.2f" % min_val))
             if range_list[range_list.__len__()-1].upper() == 'MAX':
-                range_list[range_list.__len__()-1] = max_val 
+                range_list[range_list.__len__()-1] = (str("%.2f" % max_val))
         
         if (useDefaultValues or label_list == ['range_labels']):
             # set linearly increasing labels for the label list
@@ -1403,25 +1406,22 @@ class AbstractDataset(object):
         
         map_file = open(file)
         result_file_width = 850
-        result_file_height = 450
+        result_file_height = 400
         result_file = new('RGB', (result_file_width,result_file_height),color='#ffffff')
         
         # copy map image to a larger canvas
         (map_width, map_height) = map_file.size
         box = (0,0,map_width, map_height)
         map_horiz_spacing = 10
-        map_vert_spacing = 100
+        map_vert_spacing = 50
         result_file.paste(map_file.crop(box), (map_horiz_spacing,map_vert_spacing,map_horiz_spacing+map_width, map_vert_spacing+map_height))
         
-        # draw the map header text
         draw = Draw(result_file)
-        title_horiz_spacing = map_horiz_spacing
-        title_vert_spacing = map_vert_spacing / 3
-        draw.text( (title_horiz_spacing,title_vert_spacing), str(my_title), fill='#000000')
-        
-        filepath_horiz_spacing = map_horiz_spacing
-        filepath_vert_spacing = 2 * map_vert_spacing / 3
-        draw.text( (filepath_horiz_spacing,filepath_vert_spacing), file, fill='#000000')
+        # draw the year at the top if this image will be used in an animation
+        if is_animation:
+            title_horiz_spacing = map_horiz_spacing
+            title_vert_spacing = map_vert_spacing / 3
+            draw.text( (title_horiz_spacing,title_vert_spacing), str(year), fill='#000000' )
         
         # draw the color bar
         cb_horiz_spacing = map_horiz_spacing + map_width + 10

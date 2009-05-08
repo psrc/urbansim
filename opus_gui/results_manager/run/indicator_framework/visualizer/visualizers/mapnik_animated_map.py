@@ -94,7 +94,9 @@ class MapnikAnimation(MapnikMap):
                              my_title = str(indicator_name), 
                              color_list = self.color_list,
                              range_list = self.range_list,
-                             label_list = self.label_list
+                             label_list = self.label_list,
+                             is_animation = True,
+                             year = year
                              #filter = where(table_data[computed_name] != -1)
                              #filter = 'urbansim.gridcell.is_fully_in_water'                                 
                         )

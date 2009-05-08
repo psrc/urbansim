@@ -220,10 +220,10 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
                     upper_bound = float(new_input[1])
                     bucket_range = (upper_bound-lower_bound)/self.num_buckets
                     self.range_list = []
-                    self.range_list.append(str(lower_bound))
+                    self.range_list.append(str("%.2f" % lower_bound))
                     for i in range(1,self.num_buckets):
-                        self.range_list.append(str(lower_bound+(i*bucket_range)))
-                    self.range_list.append(str(upper_bound))
+                        self.range_list.append(str("%.2f" % (lower_bound+(i*bucket_range))))
+                    self.range_list.append(str("%.2f" % upper_bound))
                     options_dict['bucket_ranges'] = self.listToString(self.range_list)
                 except ValueError:
                     pass # do nothing if either new_input[0] or new_input[1] is not a number
