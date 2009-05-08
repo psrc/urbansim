@@ -286,14 +286,16 @@ simulation results from before.
 }
 
 To set the Mapnik map options\index{Mapnik!setting options}, 
-in the batch visualization creation 
-dialog window (shown above) by clicking on the Results tab, right-clicking 
-`Indicator_batches', right-clicking the new indicator batch, and 
-selecting the `Add new indicator visualization...' option. 
-Select `Map' from the `Type:' drop-down menu, 
-then click the `Mapnik Map Options' button that will appear directly below the 
-`Format:' drop-down menu. In the Mapnik Map Options dialog window, all 
-of the mapping options can be set.
+first open the batch visualization 
+creation dialog window (shown above) by clicking on the
+Results tab, right-clicking ``Indicator_batches'', selecting the 
+``Add new indicator batch...'' option, right-clicking the new 
+indicator batch, and selecting the ``Add new
+indicator visualization...'' option. Select ``Map'' from the 
+``Type:'' drop-down menu, then click the ``Mapnik Map
+Options'' button that will appear directly below the ``Format:'' 
+drop-down menu. In the Mapnik Map Options dialog
+window, all of the mapping options can be set.
 
 \begin{figure}[h]
 \begin{center}
@@ -578,6 +580,31 @@ represented as '0' and '1' respectively.
 \label{fig:sample-map-TF-map}
 \end{figure}
 \clearpage
+
+\heading{Format options for animations}
+
+Animation visualizations will produce an animation file for every 
+selected indicator that repeatedly loops through map images that 
+correspond to the years the batch was selected to run on when 
+it is executed on a simulation run.
+
+The available animation format is Mapnik, an open-source toolkit for 
+developing mapping applications (\url{http://mapnik.org/}).
+
+To set the Mapnik map options, first open the batch visualization 
+creation dialog window by clicking on the
+Results tab, right-clicking ``Indicator_batches'', selecting the 
+``Add new indicator batch...'' option, right-clicking the new 
+indicator batch, and selecting the ``Add new
+indicator visualization...'' option. Select ``Animation'' from the 
+``Type:'' drop-down menu, then click the ``Mapnik Map
+Options'' button that will appear directly below the ``Format:'' 
+drop-down menu. In the Mapnik Map Options dialog
+window, all of the animation options can be set.
+
+All of the animated map options are the same as the 
+non-animated map options. See the above section on format
+options for maps for more info.
 
 
 \heading{Format options for tables}

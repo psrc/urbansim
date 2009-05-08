@@ -1285,6 +1285,15 @@ class AbstractDataset(object):
         
         shapefile_dir = os.path.join(data_path, os.environ['OPUSPROJECTNAME'], 'shapefiles') # OPUSPROJECTNAME is only defined when this function is called by the GUI
         storage_for_dbf = dbf_storage(storage_location=shapefile_dir)
+        # create the MASTER dbf if it does not exist (the resulting MASTER file is much larger than it would have been if created manually)
+        master_dbf_filepath = os.path.join(shapefile_dir,'MASTER_'+self.dataset_name+'.dbf')
+        if not os.path.exists(master_dbf_filepath):
+            id_name = self.get_id_name()[0]
+            master_dbf_data = storage_for_dbf.load_table(table_name=self.dataset_name)[id_name]
+            storage_for_master_dbf = dbf_storage(storage_location=shapefile_dir)
+            master_dbf_dict = {id_name:master_dbf_data}
+            storage_for_master_dbf.write_table(table_name='MASTER_'+self.dataset_name, table_data=master_dbf_dict)
+        
         unique_id = storage_for_dbf.get_column_names(table_name='MASTER_'+self.dataset_name)[0]
         unique_id_arr = storage_for_dbf.load_table(table_name='MASTER_'+self.dataset_name)[unique_id]
 
