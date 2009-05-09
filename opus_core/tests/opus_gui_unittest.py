@@ -1,7 +1,10 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 import os
 from opus_core.tests import opus_unittest
 from PyQt4 import QtGui
-
 
 class OpusGUITestCase(opus_unittest.OpusTestCase):
 
