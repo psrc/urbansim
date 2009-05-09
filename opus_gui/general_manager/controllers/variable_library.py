@@ -247,7 +247,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         menu = QMenu(self.view)
 
         # Edit variable action
-        p = ('edit', 'Edit <b>%s</b>' % var['name'], lambda x=var: self._edit_variable(x), self)
+        p = ('edit', 'Edit %s' % var['name'], lambda x=var: self._edit_variable(x), self)
         edit_action = create_qt_action(*p)
         font = QFont()
         font.setBold(True)
@@ -276,15 +276,17 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         view_dependencies_action = create_qt_action(*p)
 
         if var['inherited']:
-            menu.addAction(make_local_action)
+            menu.addAction(edit_action)
+#             menu.addAction(make_local_action)
             menu.addAction(clone_action)
+            menu.addSeparator()
             menu.addAction(view_dependencies_action)
         else:
             menu.addAction(edit_action)
             menu.addAction(clone_action)
             menu.addSeparator()
             # if the node in the table is local, but the original is inherited OR
-            # if the original node is shadowing an inhertied node, allow user to 'revert'
+            # if the original node is shadowing an inherited node, allow user to 'revert'
             # instead of 'delete'. Read more about prototype nodes in opus_project.py.
             if var['originalnode'] is None:
                 menu.addAction(delete_action)

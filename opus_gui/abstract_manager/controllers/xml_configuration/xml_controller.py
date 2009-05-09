@@ -132,7 +132,6 @@ class XmlController(object):
         self.add_default_menu_items_for_node(node, menu)
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
-        raise NotImplementedError('Method processCustomMenu should be implemented by a subclass')
 
     def remove_selected_node(self):
         ''' Removes the selected item from the model. '''

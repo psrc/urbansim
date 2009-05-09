@@ -139,7 +139,7 @@ class XmlModel(QAbstractItemModel):
         # Foreground Coloring
         if role == Qt.ForegroundRole:
             if node.get('inherited'):
-                return QVariant(QColor(Qt.gray))
+                return QVariant(QColor(Qt.darkBlue))
             return QVariant() # = default color
 
         # Display
