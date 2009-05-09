@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="images" >
+    <file>images/messagebox_info.png</file>
+    <file>images/messagebox_warning.png</file>
+    <file>images/back.png</file>
+    <file>images/filesave.png</file>
+    <file>images/forward.png</file>
+    <file>images/apply.png</file>
+  </qresource>
+</RCC>
