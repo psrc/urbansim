@@ -15,7 +15,10 @@ from opus_gui.results_manager.results_manager_functions import get_available_bat
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.scenarios_manager.run.run_simulation import RunModelThread
 
-from opus_gui.general_manager.general_manager import get_available_dataset_names, get_indicator_nodes_per_dataset
+from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_indicator_nodes_per_dataset
+from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
+
 from opus_gui.results_manager.results_manager_functions import get_available_run_nodes
 
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
@@ -26,8 +29,6 @@ from opus_gui.scenarios_manager.views.ui_overwrite_dialog import Ui_dlgOverwrite
 
 from opus_gui.results_manager.run.opus_gui_thread import OpusGuiThread
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
-
-from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
 
 class OverwriteRunDialog(QDialog,Ui_dlgOverwriteRun):
     def __init__(self, parent):

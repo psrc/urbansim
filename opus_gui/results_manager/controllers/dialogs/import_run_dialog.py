@@ -7,7 +7,7 @@
 # PyQt4 includes for python bindings to QT
 import os
 
-from PyQt4.QtCore import QString, Qt
+from PyQt4.QtCore import QString
 from PyQt4.QtGui import QDialog, QFileDialog
 
 from opus_core.logger import logger

@@ -1,29 +1,29 @@
 <opus_project>
+  <xml_version>2.0</xml_version>
   <general>
-   <expression_library type="dictionary">
-     <var1 type="variable_definition" dataset="dataset" use="model variable" source="expression">package.dataset.some_variable_or_expression</var1>
-   </expression_library>
-    <project_name type="string">test_project</project_name>
+    <expression_library type="dictionary">
+      <variable dataset="dataset" source="expression" type="variable_definition" use="model variable" name="var1">package.dataset.some_variable_or_expression</variable>
+    </expression_library>
+    <project_name type="string">test_project
+    </project_name>
   </general>
   <model_manager>
-    <model_system>
-    <choice_model_with_equations_template  type="dictionary">
-    <specification>
-   <submodel type="submodel">
-      <description type="string">No submodel</description>
-      <submodel_id type="integer">-2</submodel_id>
-      <choice_1 type="dictionary">
-        <equation_id type="integer">1</equation_id>
-        <variables type="variable_list">constant</variables>
-        </choice_1>
-        <choice_2 type="dictionary">
-          <equation_id type="integer">2</equation_id>
-          <variables type="variable_list">var1</variables>
-        </choice_2>
-   </submodel>
-   </specification>
-   </choice_model_with_equations_template>
-    </model_system>
+    <models hidden="False" name="Models">
+      <model name="choice_model_with_equations_template" type="model">
+        <specification>
+          <submodel type="submodel" name="No submodel" submodel_id="-2">
+            <description type="string">No submodel</description>
+            <equation name="choice_1" equation_id="1">
+              <variables type="variable_list">constant</variables>
+            </equation>
+            <equation name="choice_2" equation_id="2">
+              <variables type="variable_list">var1</variables>
+            </equation>
+          </submodel>
+        </specification>
+      </model>
+    </models>
+    <templates hidden="True" />
   </model_manager>
-  <scenario_manager/>
+  <scenario_manager />
 </opus_project>

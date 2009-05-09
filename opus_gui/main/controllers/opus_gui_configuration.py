@@ -4,7 +4,7 @@
 
 import os
 
-from xml.etree.cElementTree import ElementTree
+from lxml.etree import ElementTree
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QSplashScreen, QPixmap
 
@@ -134,3 +134,4 @@ class OpusGuiConfiguration(object):
 
         # Write config to disk
         self.xml_node.write(self.xml_filename)
+

@@ -12,8 +12,7 @@ from opus_gui.abstract_manager.abstract_manager import AbstractManager
 from opus_gui.results_manager.controllers.tabs.results_browser import ResultBrowser
 from opus_gui.results_manager.controllers.dialogs.import_run_dialog import ImportRunDialog
 from opus_gui.results_manager.controllers.xml_configuration.xml_controller_results import XmlController_Results
-from opus_gui.results_manager.results_manager_functions import get_run_manager,\
-    update_available_runs
+from opus_gui.results_manager.results_manager_functions import get_run_manager, update_available_runs
 
 
 class ResultsManager(AbstractManager):
@@ -71,7 +70,8 @@ class ResultsManager(AbstractManager):
         self.xml_controller.model.add_node(batch_node, viz_node)
 
     def add_run(self, run_node):
-        self.xml_controller.model.add_node_to_path('Simulation_runs', run_node)
+        simulation_node = self.project.find('results_manager/simulation_runs')
+        self.xml_controller.model.insert_node(run_node, simulation_node)
 
     def delete_run(self, run_node):
         self.xml_controller.delete_run(run_node)

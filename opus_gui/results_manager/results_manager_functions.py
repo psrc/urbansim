@@ -7,9 +7,10 @@ Methods and Classes related to the Results Manager
 '''
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager
-from xml.etree.cElementTree import Element, SubElement
+from lxml.etree import Element, SubElement
 
-from opus_gui.main.controllers.instance_handlers import get_manager_instance
+from opus_gui.main.controllers.instance_handlers import get_manager_instance,\
+    update_mainwindow_savestate
 import os
 
 def get_batch_configuration(project, batch_name):
@@ -23,7 +24,7 @@ def get_batch_configuration(project, batch_name):
     # Select the batch node based on tags
     all_batch_nodes = get_available_batch_nodes(project)
     selected_batch_nodes = [node for node in all_batch_nodes if
-                            node.tag == batch_name]
+                            node.get('name') == batch_name]
     if len(selected_batch_nodes) == 0:
         print 'Could not find a batch with name "%s"' % batch_name
         return ()
@@ -34,13 +35,13 @@ def get_batch_configuration(project, batch_name):
     visualizations = []
     for viz_node in batch_node:
         # Create a dict for all child nodes, paired with their values
-        child_values = dict((node.tag, node.text) for node in viz_node)
+        child_values = dict((node.get('name'), node.text) for node in viz_node)
         # Format visualization type
         viz_type = child_values['visualization_type']
         if viz_type in ['table_per_year', 'table_per_attribute']:
             viz_type = 'tab'
         dataset_name = child_values['dataset_name']
-        child_values['name'] = viz_node.tag
+        child_values['name'] = viz_node.get('name')
         visualizations.append((viz_type, dataset_name, child_values))
     return visualizations
 
@@ -49,28 +50,18 @@ def get_available_batch_nodes(project):
     Get all the batches in the project.
     @return all the batches in the project (list(Element))
     '''
-    batches_node = project.find('results_manager/Indicator_batches')
-    if batches_node is None:
-        return []
-    return [node for node in batches_node if
-            node.get('type') == 'indicator_batch']
+    return project.findall('results_manager/indicator_batches/indicator_batch')
 
 def get_available_run_nodes(project):
     '''
     Get all the runs in the project.
     @return all the runs in the project (list(Element))
     '''
-    runs_node = project.find('results_manager/Simulation_runs')
-    if runs_node is None:
-        return []
-    return [node for node in runs_node if
-            node.get('type') == 'source_data']
-    
-def delete_simulation_run(project, run_name):
-    run_node = project.find('results_manager/Simulation_runs/%s'%run_name)
-    get_manager_instance('results_manager').delete_run(run_node)
+    return project.findall('results_manager/simulation_runs/run')
 
-    
+def delete_simulation_run(project, run_name):
+    run_node = project.find('results_manager/simulation_runs', name=run_name)
+    get_manager_instance('results_manager').delete_run(run_node)
 
 def add_simulation_run(project, cache_directory, scenario_name, run_name,
                        start_year, end_year, run_id):
@@ -84,24 +75,28 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     @param end_year (int): end year of run
     @param run_id (int): ID number for the run
     '''
-    # XML-ify the name
-    run_name = run_name.replace(' ', '_')
-    run_id = str(run_id)
+    ## XML-ify the name
+    # run_name = run_name.replace(' ', '_')
 
     # Assemble the new run node
-    str_atr = {'type': 'string', 'hidden': 'True'}
-    int_atr = {'type': 'integer', 'hidden': 'True'}
+    str_atr = {'type': 'string'}
+    int_atr = {'type': 'integer'}
 
-    run_node = Element(run_name, {'type': 'source_data'})
-    SubElement(run_node, 'run_id', int_atr).text = run_id
+    run_node = Element('run', {'type': 'source_data',
+                               'name': run_name,
+                               'hidden': 'Children',
+                               'run_id': str(run_id)})
+    # SubElement(run_node, 'run_id', int_atr).text = str(run_id)
     SubElement(run_node, 'scenario_name', str_atr).text = scenario_name
     SubElement(run_node, 'run_name', str_atr).text = run_name
     SubElement(run_node, 'cache_directory', str_atr).text = cache_directory
-    SubElement(run_node, 'start_year', str_atr).text = str(start_year)
+    SubElement(run_node, 'start_year', int_atr).text = str(start_year)
     SubElement(run_node, 'end_year', int_atr).text = str(end_year)
 
     # Grab the results manager instance for the GUI and insert the new node
     get_manager_instance('results_manager').add_run(run_node)
+    project.dirty = True
+    update_mainwindow_savestate()
 
 def update_available_runs(project, scenario_name = '?'):
     '''
@@ -122,7 +117,7 @@ def update_available_runs(project, scenario_name = '?'):
         cache_directory = os.path.normpath(run_node.find('cache_directory').text)
         if not os.path.exists(cache_directory):
             results_manager.delete_run(run_node)
-            removed_runs.append(run_node.tag)
+            removed_runs.append(run_node.get('name'))
             continue
         # Add the cachedir to the list of seen cachedirs
         existing_cache_directories.add(cache_directory)
@@ -167,8 +162,9 @@ def update_available_runs(project, scenario_name = '?'):
         else:
             found_scenario_name = scenario_name
 
-        if cache_directory in existing_cache_directories or \
-           not os.path.exists(cache_directory): continue
+        # don't add runs that we have already seen or that don't exist on disk
+        if cache_directory in existing_cache_directories or not os.path.exists(cache_directory):
+            continue
         start_year, end_year = run_resources['years']
         add_simulation_run(project,
                            cache_directory = cache_directory,
@@ -184,10 +180,11 @@ def update_available_runs(project, scenario_name = '?'):
 
 def get_years_for_simulation_run(project, simulation_run_node):
     run_manager = get_run_manager()
-    cache_dir = simulation_run_node.find('cache_directory').text
-    scenario_name = simulation_run_node.find('scenario_name').text
+    cache_dir = simulation_run_node.find('cache_directory').text.strip()
+    scenario_name = simulation_run_node.find('scenario_name').text.strip()
+    scenario_node = project.find('scenario_manager/scenario', name=scenario_name)
     try:
-        baseyear = int(project.find('scenario_manager/%s/base_year'%scenario_name).text)
+        baseyear = int(scenario_node.find('base_year').text)
     except:
         node = project.find('scenario_manager')
         baseyear = -1
@@ -202,7 +199,7 @@ def get_years_for_simulation_run(project, simulation_run_node):
 def get_simulation_runs(project, update = False):
     if update:
         update_available_runs(project)
-    return project.find('results_manager/Simulation_runs')[:]
+    return project.findall('results_manager/simulation_runs/run')
 
 def add_batch_indicator_visualization(batch_node, viz_node):
     '''

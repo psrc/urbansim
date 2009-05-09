@@ -1,22 +1,21 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <child_scenario type="scenario">
+    <scenario type="scenario" name="child_scenario">
       <parent type="scenario_name">parent_scenario</parent>
       <description type="string">this is the child</description>
-    </child_scenario>
-    <parent_scenario type="scenario">
+    </scenario>
+    <scenario type="scenario" name="parent_scenario">
       <parent type="scenario_name">grandparent_scenario</parent>
       <description type="string">this is the parent</description>
       <year type="integer">2000</year>
-    </parent_scenario>
-    <grandparent_scenario type="scenario" name="grandparent_scenario">
+    </scenario>
+    <scenario name="grandparent_scenario" type="scenario">
       <description type="string">this is the grandparent</description>
       <year type="integer">1980</year>
       <modelname type="string">widgetmodel</modelname>
-    </grandparent_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

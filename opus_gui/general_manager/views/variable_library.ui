@@ -1,0 +1,170 @@
+<ui version="4.0" >
+ <author>Aaron Racicot</author>
+ <class>VariableLibrary</class>
+ <widget class="QDialog" name="VariableLibrary" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>914</width>
+    <height>598</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Variable Library</string>
+  </property>
+  <property name="sizeGripEnabled" >
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QVBoxLayout" name="table_container" />
+   </item>
+   <item>
+    <widget class="QGroupBox" name="group_progress" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Validating variables</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout" >
+      <item>
+       <widget class="QProgressBar" name="progress_validation" >
+        <property name="value" >
+         <number>100</number>
+        </property>
+        <property name="textVisible" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_cancel_validation" >
+        <property name="text" >
+         <string>Cancel</string>
+        </property>
+        <property name="default" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" native="1" name="widget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QPushButton" name="pb_create_new" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+        <property name="text" >
+         <string>Create Variable</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_validate_selected" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="toolTip" >
+         <string>Checks all variable syntax and makes sure that it can be computed on the baseyear data.</string>
+        </property>
+        <property name="text" >
+         <string>Validate Selected</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_problems" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>441</width>
+          <height>24</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="Line" name="line" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_close" >
+        <property name="text" >
+         <string>Close</string>
+        </property>
+        <property name="autoDefault" >
+         <bool>false</bool>
+        </property>
+        <property name="default" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_apply" >
+        <property name="text" >
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_apply_and_close" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+        <property name="text" >
+         <string>Apply and Close</string>
+        </property>
+        <property name="autoDefault" >
+         <bool>true</bool>
+        </property>
+        <property name="default" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

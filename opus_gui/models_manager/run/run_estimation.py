@@ -4,7 +4,7 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QThread, SIGNAL, QFileInfo, QString
+from PyQt4.QtCore import QThread, SIGNAL, QString
 
 import os, time
 
@@ -102,7 +102,7 @@ class OpusEstimation(object):
         succeeded = False
         try:
             # get the configuration for estimations
-            estimation_section = self.xml_config.get_section('model_manager/model_system/')
+            estimation_section = self.xml_config.get_section('model_manager')
             estimation_config = estimation_section['estimation_config']
             self.config = estimation_config
             # TODO: put this option into post run dialog

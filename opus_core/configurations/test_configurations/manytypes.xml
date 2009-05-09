@@ -1,19 +1,19 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <test_section>
     <description type="string">a test configuration</description>
     <quotedthing type="quoted_string">test\test</quotedthing>
-    <empty1 type="string" />
-    <empty2 parser_action="blank_to_None" type="string" />
-    <emptypassword parser_action="blank_to_None" type="password" />
+    <quotedthing2 type="quoted_string">'test\test'</quotedthing2>
+    <empty1 type="string"/>
+    <empty2 parser_action="blank_to_None" type="string"/>
+    <emptypassword parser_action="blank_to_None" type="password"/>
     <year type="integer">1980</year>
-    <mybool type="boolean" choices="True|False">True</mybool>
+    <mybool choices="True|False" type="boolean">True</mybool>
     <ten type="float">10.0</ten>
-    <emptyint type="integer" parser_action="blank_to_None" ></emptyint>
-    <emptyfloat type="float" parser_action="blank_to_None" ></emptyfloat>
+    <emptyint parser_action="blank_to_None" type="integer"/>
+    <emptyfloat parser_action="blank_to_None" type="float"/>
     <years type="tuple">
       <firstyear type="integer">1980</firstyear>
       <lastyear type="integer">1981</lastyear>
@@ -25,18 +25,18 @@
       <str2 type="string">clam</str2>
     </dicttest>
     <models_to_run type="selectable_list">
-      <real_estate_price_model choices="Run|Skip" type="model_choice">Run</real_estate_price_model>
-      <airplane_model choices="Run|Skip" type="model_choice">Skip</airplane_model>
+      <selectable type="selectable" name="real_estate_price_model">True</selectable>
+      <selectable type="selectable" name="airplane_model">False</selectable>
     </models_to_run>
     <mytables type="selectable_list">
-      <gridcells type="table" choices="Load|Skip">Load</gridcells>
-      <zones type="table" choices="Load|Skip">Skip</zones>
-      <jobs type="table" choices="Load|Skip">Load</jobs>
+      <selectable type="selectable" name="gridcells">True</selectable>
+      <selectable type="selectable" name="zones">False</selectable>
+      <selectable type="selectable" name="jobs">True</selectable>
     </mytables>
     <mydatasets type="selectable_list">
-      <gridcell type="dataset" choices="Load|Skip">Load</gridcell>
-      <zone type="dataset" choices="Load|Skip">Skip</zone>
-      <job type="dataset" choices="Load|Skip">Load</job>
+      <selectable type="selectable" name="gridcell">True</selectable>
+      <selectable type="selectable" name="zone">False</selectable>
+      <selectable type="selectable" name="job">True</selectable>
     </mydatasets>
   </test_section>'
 </opus_project>

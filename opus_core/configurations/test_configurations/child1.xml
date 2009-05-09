@@ -1,11 +1,11 @@
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <parent type="file">parent1.xml</parent>
     <expression_library type="dictionary">
-      <ln_cost type="variable_definition" dataset="parcel" use="model variable" source="expression">ln(psrc.parcel.cost)+10</ln_cost>
-      <tax type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.tax</tax>
+      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)+10</variable>
+      <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="tax">urbansim_parcel.parcel.tax</variable>
     </expression_library>
     <project_name type="string">test_project</project_name>
-    <test_node type="string" test_attribute="child1_value">still testing attribute inheritance</test_node>
+    <test_node test_attribute="child1_value" type="string">still testing attribute inheritance</test_node>
   </general>
 </opus_project>

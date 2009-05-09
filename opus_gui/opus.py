@@ -11,14 +11,37 @@ from PyQt4.QtGui import QApplication, QIcon, QMessageBox
 import sys, os
 
 # Urbansim Tools
+
+from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
+
+# importing OpusGui could take a long time, so we want to load the configuration and display the
+# splash-screen meanwhile
+
+gui_config = None
+
+def load_gui():
+    global gui_config
+    # create Qt application
+    app = QApplication(sys.argv,True)
+    gui_config = OpusGuiConfiguration()
+    gui_config.app = app
+    gui_config.load()
+    gui_config.splash_screen.show()
+    gui_config.splash_screen.raise_()
+    gui_config.splash_screen.activateWindow()
+    gui_config.splash_screen.showMessage('Loading and compiling Python Modules...')
+
+if __name__ == '__main__':
+    load_gui() # start loading the gui before doing the heavy imports
+
 from opus_gui.main.controllers.mainwindow import OpusGui
-from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
 # Main entry to program.  Set up the main app and create a new window.
-def main(argv):
-    # create Qt application
-    app = QApplication(argv,True)
-
+def main():
+    global gui_config
+    if gui_config is None:
+        load_gui()
+    app = gui_config.app
     # Setting these items allows for saving application state via a QSettings object
     app.setOrganizationName("CUSPA")
     app.setOrganizationDomain("urbansim.org")
@@ -70,10 +93,14 @@ def main(argv):
                              msg + '\n\nOpus GUI will now quit.')
         return
 
-    # create main window
-    wnd = OpusGui()
+    # init main window
+    gui_config.splash_screen.showMessage('Initializing Opus Main Window...')
+    wnd = OpusGui(gui_configuration = gui_config)
+    gui_config.splash_screen.finish(wnd)
 
     wnd.show()
+    wnd.raise_()
+    wnd.activateWindow()
 
     # Create signal for app finish
     app.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
@@ -92,5 +119,5 @@ def main(argv):
     sys.exit(retval)
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
 

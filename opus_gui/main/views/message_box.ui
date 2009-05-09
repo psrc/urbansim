@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>dlgErrorForm</class>
- <widget class="QDialog" name="dlgErrorForm" >
+ <class>MessageBox</class>
+ <widget class="QDialog" name="MessageBox" >
   <property name="windowModality" >
    <enum>Qt::NonModal</enum>
   </property>
@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>200</height>
+    <height>324</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -28,14 +28,10 @@
    <enum>Qt::StrongFocus</enum>
   </property>
   <property name="windowTitle" >
-   <string> </string>
-  </property>
-  <property name="windowIcon" >
-   <iconset>
-    <normaloff>Images/error.png</normaloff>Images/error.png</iconset>
+   <string>Opus Message</string>
   </property>
   <property name="windowFilePath" >
-   <string> </string>
+   <string/>
   </property>
   <property name="sizeGripEnabled" >
    <bool>true</bool>
@@ -43,17 +39,8 @@
   <property name="modal" >
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <property name="topMargin" >
-    <number>6</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" colspan="2" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
     <layout class="QHBoxLayout" name="layoutErrorMessage" >
      <item>
       <widget class="QFrame" name="frame" >
@@ -109,6 +96,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize" >
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="baseSize" >
         <size>
          <width>400</width>
@@ -122,7 +115,7 @@
         <string/>
        </property>
        <property name="alignment" >
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
        <property name="wordWrap" >
         <bool>true</bool>
@@ -131,24 +124,8 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <layout class="QHBoxLayout" name="layoutShowDetails" >
-     <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
+   <item>
+    <layout class="QHBoxLayout" >
      <item>
       <widget class="QPushButton" name="pbnShowDetails" >
        <property name="text" >
@@ -159,10 +136,6 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item row="1" column="1" >
-    <layout class="QHBoxLayout" >
      <item>
       <spacer>
        <property name="orientation" >
@@ -188,45 +161,42 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QScrollArea" name="saDetails" >
-     <property name="enabled" >
-      <bool>true</bool>
+   <item>
+    <widget class="QFrame" name="frame_details" >
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
      </property>
-     <property name="widgetResizable" >
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>457</width>
-        <height>104</height>
-       </rect>
+     <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <property name="margin" >
+       <number>0</number>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
-       <item>
-        <widget class="QTextEdit" name="lblDetailText" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="readOnly" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+      <item>
+       <widget class="Line" name="line" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="lblDetailText" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="lineWrapMode" >
+         <enum>QTextEdit::NoWrap</enum>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

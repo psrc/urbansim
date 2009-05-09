@@ -7,7 +7,8 @@ from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QLabel, QComboBox
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
-from opus_gui.general_manager.general_manager import get_available_dataset_names, get_variable_nodes_per_dataset
+from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
 
 #TODO: Redo this one to have the same code formatting as the newer dialogs
 

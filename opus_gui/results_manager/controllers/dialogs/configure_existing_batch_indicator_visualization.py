@@ -3,41 +3,37 @@
 # See opus_core/LICENSE
 
 from PyQt4.QtCore import QString
-from xml.etree.cElementTree import SubElement
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_gui.results_manager.results_manager_functions import update_batch_indicator_visualization
-from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
 
 class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
     def __init__(self, project, batch_indicator_visualization_node, parent_widget = None):
         AbstractConfigureBatchIndicatorVisualization.__init__(self, project, parent_widget)
 
-
         self.base_node = base_node = batch_indicator_visualization_node
         self.spatial_datasets = get_available_spatial_dataset_names(project = project)
-        self.leVizName.setText(base_node.tag)
 
-        prev_dataset = str(base_node.find('dataset_name').text or '')
-        prev_indicators = self._process_xml_stored_list_of_strings\
-            (value = base_node.find('indicators').text or '')
-        prev_output_type = str(base_node.find('output_type').text or '')
+        viz_name = base_node.get('name')
+        viz_spec = self._get_viz_spec_from_xml_node(base_node)
 
-        # Use the specified visualization type if provided, otherwise fall back
-        # on using Table.
-        viz_type_node = base_node.find('visualization_type')
-        if viz_type_node is not None:
-            viz_type = str(viz_type_node.text or '')
+        self.leVizName.setText(viz_name)
 
-            if viz_type in ['table_per_year', 'table_per_attribute']:
-                viz_type = 'Table'
-            elif viz_type not in ['Map']:
-                viz_type = self._get_inverse_type_mapper()[viz_type]
-            prev_viz_type = QString(viz_type)
-        else:
-            prev_viz_type = QString('Table')
+        prev_dataset = str(viz_spec['dataset_name'])
+        indicator_list = viz_spec['indicators']
+        prev_indicators = self._process_xml_stored_list_of_strings(value = indicator_list)
+        prev_output_type = viz_spec['output_type']
+        viz_type = viz_spec['visualization_type']
+
+        # don't really know what's going on here...
+        if viz_type in ['table_per_year', 'table_per_attribute']:
+            viz_type = 'Table'
+        elif viz_type not in ['Map']:
+            viz_type = self._get_inverse_type_mapper()[viz_type]
+        prev_viz_type = QString(viz_type)
 
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
@@ -48,20 +44,20 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
 
         fixed_field_specification = None
         if prev_output_type == 'fixed_field':
-            fixed_field_specification = base_node.find('fixed_field_specification').text or ''
-            id_format = base_node.find('id_format').text or ''
+            fixed_field_specification = viz_spec['fixed_field_specification']
+            id_format = viz_spec['id_format'] or ''
             specs = self._process_xml_stored_list_of_strings(value = fixed_field_specification)
             self._set_column(column = 1, values = specs)
             self.leOption1.setText(QString(id_format))
         elif prev_output_type == 'esri':
-            storage_location = base_node.find('storage_location').text or ''
+            storage_location = viz_spec['storage_location'] or ''
             self.leOption1.setText(QString(storage_location))
         elif prev_output_type == 'sql':
-            database_name = base_node.find('database_name').text or ''
+            database_name = viz_spec['database_name'] or ''
             self.leOption1.setText(QString(database_name))
         elif prev_output_type == 'tab':
             try:
-                prev_output_style = int(str(base_node.find('output_style').text or ''))
+                prev_output_style = int(str(viz_spec['output_style'] or ''))
             except: pass
             else:
                 if prev_output_style == Table.ALL:
@@ -71,9 +67,9 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                 else:
                     self.rbTablePerYear.setChecked(True)
         elif prev_output_type == 'mapnik_map' or prev_output_type == 'mapnik_animated_map':
-            self.mapnik_options['bucket_ranges'] = base_node.find('bucket_ranges').text
-            self.mapnik_options['bucket_colors'] = base_node.find('bucket_colors').text
-            self.mapnik_options['bucket_labels'] = base_node.find('bucket_labels').text
+            self.mapnik_options['bucket_ranges'] = viz_spec['bucket_ranges']
+            self.mapnik_options['bucket_colors'] = viz_spec['bucket_colors']
+            self.mapnik_options['bucket_labels'] = viz_spec['bucket_labels']
 
     def _process_xml_stored_list_of_strings(self, value):
         '''
@@ -84,7 +80,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
         return [i.strip()[1:-1] for i in list_str.split(',')] # Strip quotes
 
     def on_buttonBox_accepted(self):
-        viz_params = self._get_viz_spec(convert_to_node_dictionary = False)
+        viz_params = self._get_viz_spec()
 
         if viz_params is None:
             self.close()
@@ -103,20 +99,7 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
             close = False
 
         else:
-            # Update the XML node with new data
-            viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
-
-            # Renaming must be passed through the models to enable check for
-            # inheritance and to keep the integrity of internal representations
-            self.base_node.tag = viz_name
-            # Update children values, creating new nodes if necessary
-            for key, value in viz_params.items():
-                child_node = self.base_node.find(key)
-                if child_node is None:
-                    # TODO Check that type actually should be 'String' for all nodes.
-                    child_node = SubElement(self.base_node, key,
-                                            {'type':'string', 'hidden': 'True'})
-                child_node.text = str(value)
+            self._update_xml_from_dict(self.base_node, viz_params)
             update_batch_indicator_visualization(self.base_node)
 
         if close:

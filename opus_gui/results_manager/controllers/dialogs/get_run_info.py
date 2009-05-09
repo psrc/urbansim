@@ -18,12 +18,11 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
         end_year = run_node.find('end_year').text
         scenario_name = run_node.find('scenario_name').text
         cache_directory = run_node.find('cache_directory').text
-        run_id = run_node.find('run_id').text if \
-            not run_node.find('run_id') is None else 'not available'
+        run_id = run_node.get('run_id', 'not available')
 
         self.lblRun_name.setText(run_name)
         self.lblYears_run.setText('%s - %s' % (start_year, end_year))
-        
+
         if scenario_name is None:
             scenario_name = ''
         self.lblScenario_name.setText(scenario_name)

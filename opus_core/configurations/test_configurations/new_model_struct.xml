@@ -1,5 +1,5 @@
 <opus_project>
-  <xml_version>1.0</xml_version>
+  <xml_version>2.0</xml_version>
   <general>
     <project_name type="string">test_project</project_name>
   </general>
@@ -7,65 +7,63 @@
   </scenario_manager>
   
   <model_manager>
-    <model_system setexpanded="True" type="model_system">
-      <regmodel copyable="True" hidden="True" type="model">
-        <specification type="dictionary" />
+    <models hidden="False" name="Models"><model copyable="True" hidden="True" type="model" name="regmodel">
+        <specification type="dictionary"/>
         <structure type="dictionary">
-          <import type="dictionary">
-            <module type="string">opus_core.regression_model</module>
-            <classname type="string">RegressionModel</classname>
+          <import type="dictionary" name="import">
+            <class_module type="string">opus_core.regression_model</class_module>
+            <class_name type="string">RegressionModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">RegressionModel</name>
-            <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
-            <submodel_string parser_action="blank_to_None" type="string" />
-            <run_config parser_action="blank_to_None" type="string" />
-            <estimate_config parser_action="blank_to_None" type="string" />
-            <debuglevel type="integer">0</debuglevel>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
+            <name type="string" name="name">RegressionModel</name>
+            <argument type="quoted_string" name="regression_procedure">opus_core.linear_regression</argument>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string"/>
+            <argument parser_action="blank_to_None" type="string" name="run_config"/>
+            <argument parser_action="blank_to_None" type="string" name="estimate_config"/>
+            <argument type="integer" name="debuglevel">0</argument>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
           </init>
           <run type="dictionary">
-            <specification type="string">specification</specification>
-            <coefficients type="string">coefficients</coefficients>
-            <dataset type="string">fill in</dataset>
-            <index parser_action="blank_to_None" type="string">rm_index</index>
-            <chunk_specification parser_action="blank_to_None" type="string" />
-            <data_objects type="string">datasets</data_objects>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
+            <argument type="string" name="dataset">fill in</argument>
+            <argument parser_action="blank_to_None" type="string" name="index">rm_index</argument>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification"/>
+            <argument type="string" name="data_objects">datasets</argument>
           </run>
           <prepare_for_run type="dictionary">
-            <name type="string">prepare_for_run</name>
-            <dataset parser_action="blank_to_None" type="string" />
-            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
-            <cache_storage type="string">base_cache_storage</cache_storage>
-            <sample_coefficients type="boolean">False</sample_coefficients>
-            <distribution type="quoted_string">normal</distribution>
-            <multiplicator type="integer">1</multiplicator>
-            <output type="string">(specification, coefficients, rm_index)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument parser_action="blank_to_None" type="string" name="dataset"/>
+            <argument parser_action="blank_to_None" type="quoted_string" name="dataset_filter"/>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="quoted_string" name="specification_table">regression_model_template_specification</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="quoted_string" name="coefficients_table">regression_model_template_coefficients</argument>
+            <argument type="string" name="cache_storage">base_cache_storage</argument>
+            <argument type="boolean" name="sample_coefficients">False</argument>
+            <argument type="quoted_string" name="distribution">normal</argument>
+            <argument type="integer" name="multiplicator">1</argument>
+            <output type="string" name="output">(specification, coefficients, rm_index)</output>
           </prepare_for_run>
           <estimate type="dictionary">
-            <specification type="string">specification</specification>
-            <dataset type="string">fill in</dataset>
-            <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
-            <index parser_action="blank_to_None" type="string">rm_index</index>
-            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
-            <data_objects type="string">datasets</data_objects>
-            <output type="string">(coefficients, dummy)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="dataset">fill in</argument>
+            <argument config_name="outcome_attribute" type="quoted_string" name="dependent_variable">fill in</argument>
+            <argument parser_action="blank_to_None" type="string" name="index">rm_index</argument>
+            <argument type="quoted_string" name="procedure">opus_core.estimate_linear_regression</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <output type="string" name="output">(coefficients, dummy)</output>
           </estimate>
           <prepare_for_estimate type="dictionary">
-            <name type="string">prepare_for_estimate</name>
-            <dataset parser_action="blank_to_None" type="string" />
-            <dataset_filter parser_action="blank_to_None" type="quoted_string" />
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
-            <output type="string">(specification, rm_index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument parser_action="blank_to_None" type="string" name="dataset"/>
+            <argument parser_action="blank_to_None" type="quoted_string" name="dataset_filter"/>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="quoted_string" name="specification_table">regression_model_template_specification</argument>
+            <output type="string" name="output">(specification, rm_index)</output>
           </prepare_for_estimate>
         </structure>
-      </regmodel>
-    </model_system>
-  </model_manager>
+      </model>
+    </models><templates hidden="True"/></model_manager>
   
 </opus_project>

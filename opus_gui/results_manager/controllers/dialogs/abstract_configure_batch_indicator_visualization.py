@@ -1,14 +1,17 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE 
+# See opus_core/LICENSE
 
 import os
+from lxml.etree import SubElement
 
-from PyQt4.QtCore import QString, Qt, QFileInfo
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QMessageBox
+from PyQt4.QtCore import QString,QFileInfo
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
-from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names, get_available_dataset_names, get_available_indicator_nodes
+from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 #from opus_gui.results_manager.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results_manager.views.ui_configure_batch_indicator_visualization import Ui_dlgConfigureBatchIndicatorVisualization
@@ -27,7 +30,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         self.project = project
         self.mapnik_options = {}
-        
+
 #        self.model = resultManagerBase.toolboxBase.resultsManagerTree.model
 #        self.xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxBase)
         self.leVizName.setText(QString('New visualization'))
@@ -43,7 +46,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         self.pbn_set_storage_location.hide()
         #self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
         self.spatial_datasets = get_available_spatial_dataset_names(project = project)
-        
+
     def _setup_indicators(self, existing_indicators = []):
         if self.dataset_name is None: return
 
@@ -81,14 +84,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         for indicator in indicator_nodes:
 
-            name = indicator.tag
+            name = indicator.get('name')
 
             self.indicator_nodes[name] = indicator
 
             if name not in existing_indicators:
                 if self.dataset_name == indicator.get('dataset'):
                     item = QTableWidgetItem()
-                    item.setText(indicator.tag)
+                    item.setText(name)
                     row = self.twAvailableIndicators.rowCount()
                     self.twAvailableIndicators.insertRow(row)
                     #self.twAvailableIndicators.setVerticalHeaderItem(row,QTableWidgetItem())
@@ -104,10 +107,10 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                     self.twAvailableIndicators.setItem(row,1,item)
             else:
                 if self.dataset_name != indicator.get('dataset'):
-                    logger.log_warning('Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(indicator.tag))
+                    logger.log_warning('Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(name))
                     continue
                 item = QTableWidgetItem()
-                item.setText(indicator.tag)
+                item.setText(name)
                 row = self.twIndicatorsToVisualize.rowCount()
                 self.twIndicatorsToVisualize.insertRow(row)
                 self.twIndicatorsToVisualize.setItem(row, 0, item)
@@ -197,6 +200,32 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             if idx != -1:
                 self.cboVizType.setCurrentIndex(idx)
 
+    def _update_xml_from_dict(self, xml_node, viz_params):
+        ''' convert the dictionary into XML structure and update/create child nodes of xml_node '''
+        # Update the XML node with new data
+
+        viz_name = str(self.leVizName.text()).replace('DATASET', viz_params['dataset_name'])
+
+        # Renaming must be passed through the models to enable check for
+        # inheritance and to keep the integrity of internal representations
+        xml_node.set('name', viz_name)
+        xml_node.set('hidden', 'Children') # hide all the kids
+        # Convert the dictionary to XML
+        fixed_node_names = ['dataset_name', 'visualization_type', 'indicators', 'output_type']
+        for key, value in viz_params.items():
+            if key in fixed_node_names:
+                node = xml_node.find(key)
+                if node is None:
+                    node = SubElement(xml_node, key)
+            else:
+                settings_node = xml_node.find('settings')
+                if settings_node is None:
+                    settings_node = SubElement(xml_node, 'settings')
+                node = settings_node.find("setting[@name='%s']" % key)
+                if node is None:
+                    node = SubElement(settings_node, 'setting', {'name': key})
+            node.text = str(value).strip()
+
     def set_default_mapnik_options(self):
         # these default values are also hard-coded in opus_gui.results_manager.run.batch_processor.py
         self.mapnik_options['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
@@ -206,8 +235,8 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
     def on_cboVizType_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
-        
-        if param == 'Map' or param == 'Animation': 
+
+        if param == 'Map' or param == 'Animation':
             self.set_default_mapnik_options()
 
         self._setup_co_output_type()
@@ -242,7 +271,15 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         return inv
 
-    def _get_viz_spec(self, convert_to_node_dictionary = True):
+    def _get_viz_spec_from_xml_node(self, xml_node):
+        spec = {}
+        for key in ['indicators', 'output_type', 'dataset_name', 'visualization_type']:
+            spec[key] = (xml_node.find(key).text or '').strip()
+        for setting_node in xml_node.findall('settings/setting'):
+            spec[setting_node.get('name')] = (setting_node.text or '').strip()
+        return spec
+
+    def _get_viz_spec(self):
         viz_type = self.cboVizType.currentText()
         translation = self._get_output_types(viz_type)
         dataset_name = self.dataset_name
@@ -255,12 +292,12 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                 'dataset_name': dataset_name,
                 'visualization_type': QString(self._get_type_mapper()[str(viz_type)])
         }
-        
+
         if output_type == 'mapnik_map' or output_type == 'mapnik_animated_map':
             vals['bucket_labels'] = self.mapnik_options['bucket_labels']
             vals['bucket_colors'] = self.mapnik_options['bucket_colors']
             vals['bucket_ranges'] = self.mapnik_options['bucket_ranges']
-        
+
         elif output_type == 'fixed_field':
             try:
                 fixed_field_params = QString(str(self._get_column_values(column = 1)))
@@ -288,11 +325,6 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
             vals['output_style'] = QString(str(output_style))
 
-        if convert_to_node_dictionary:
-            node_vals = []
-            for k,v in vals.items():
-                node_vals.append({'name':k, 'value':v})
-            vals = node_vals
         return vals
 
 
@@ -303,11 +335,11 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             item = self.twIndicatorsToVisualize.item(row,column)
             col_vals.append(str(item.text()))
         return col_vals
-    
+
     def on_mapnikOptions_released(self):
         options = MapOptions(self, options_dict=self.mapnik_options)
         options.show()
-        
+
     def on_cboOutputType_currentIndexChanged(self, param):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
@@ -407,7 +439,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
             self.twAvailableIndicators.setItem(last_row,0,item)
 
             item = QTableWidgetItem()
-            item.setText(indicator.tag)
+            item.setText(indicator.get('name'))
             self.twAvailableIndicators.setItem(last_row,1,item)
 
 #            item = QTableWidgetItem()

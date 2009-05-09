@@ -1,31 +1,31 @@
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <model_manager>
     <travel_model_configuration type="dictionary">
       <travel_model_base_directory type="string">base1</travel_model_base_directory>
-      <years_to_run type="category_with_special_keys" key_name="year">
+      <years_to_run key_name="year" type="category_with_special_keys">
         <run_description type="dictionary">
 		  <year type="integer">2000</year>
 		  <bank type="list">['2000_06']</bank>
-		  <emme2_batch_file_name type="string" parser_action="blank_to_None" />
+		  <emme2_batch_file_name parser_action="blank_to_None" type="string"/>
 		</run_description>
       </years_to_run>
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
-    <child_scenario type="scenario">
+    <scenario type="scenario" name="child_scenario">
       <parent type="scenario_name">parent_scenario</parent>
       <travel_model_configuration type="dictionary">
         <travel_model_base_directory type="string">base3</travel_model_base_directory>
       </travel_model_configuration>
-    </child_scenario>
-    <parent_scenario type="scenario">
+    </scenario>
+    <scenario type="scenario" name="parent_scenario">
       <travel_model_configuration type="dictionary">
         <travel_model_base_directory type="string">base2</travel_model_base_directory>
-	    <emme2_batch_file_name type="string" parser_action="blank_to_None">QUICKRUN.bat</emme2_batch_file_name>
+	    <emme2_batch_file_name parser_action="blank_to_None" type="string">QUICKRUN.bat</emme2_batch_file_name>
       </travel_model_configuration>
-    </parent_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

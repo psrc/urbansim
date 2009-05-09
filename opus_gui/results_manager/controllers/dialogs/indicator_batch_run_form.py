@@ -39,7 +39,7 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
         runs = get_simulation_runs(self.project)
 
         for run in runs:
-            if run.tag == self.run_name:
+            if run.get('name') == self.run_name:
                 years = get_years_for_simulation_run(project = self.project,
                                                      simulation_run_node = run)
                 (start,end) = (min(years), max(years))

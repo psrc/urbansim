@@ -1,9 +1,9 @@
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <parent type="file">child1.xml</parent>
     <parent type="file">child2.xml</parent>
-    <expression_library type="dictionary" >
-      <ln_cost dataset="parcel" source="expression" type="variable_definition" use="model variable">ln(psrc.parcel.cost)+100</ln_cost>
+    <expression_library type="dictionary">
+      <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)+100</variable>
     </expression_library>
     <test_node type="string">still testing attribute inheritance</test_node>
     <project_name type="string">test_project</project_name>

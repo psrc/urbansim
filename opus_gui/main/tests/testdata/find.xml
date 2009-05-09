@@ -1,0 +1,14 @@
+<opus_project>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <node name='anode'>
+    <node name='grandchild' sparkles='yep' />
+    <node name='child2' />
+    <node name='child3' />
+  </node>
+  <node name='anothernode' />
+  <node name='third'>
+    <node name='grandchild' sprinkles="of course" />
+  </node>
+</opus_project>

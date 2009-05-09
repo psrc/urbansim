@@ -5,7 +5,7 @@
 from PyQt4.QtCore import QString
 
 from opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization import AbstractConfigureBatchIndicatorVisualization
-from xml.etree.cElementTree import Element, SubElement
+from lxml.etree import Element, SubElement
 from opus_gui.results_manager.results_manager_functions import add_batch_indicator_visualization
 
 class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVisualization):
@@ -21,34 +21,12 @@ class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVis
         self.set_default_mapnik_options()
 
     def on_buttonBox_accepted(self):
-        # Quickie for defining attrib dicts
-        _t = lambda x: {'type': x, 'hidden':'True'}
-
         viz_params = self._get_viz_spec()
         if viz_params is None:
-            self.close()
-            return
+            self.reject()
 
-        viz_name = str(self.leVizName.text()).replace(' ','_')
-
-#        viz_type_text = str(self.cboVizType.currentText())
-#        viz_type = self._get_type_mapper()[viz_type_text]
-
-        # Assemble the visualization node
-        viz_node = Element(viz_name, {'type':'batch_visualization'})
-#        SubElement(viz_node, 'visualization_type',
-#                   _t('string')).text = viz_type
-        for viz_param in viz_params:
-            tag = viz_param['name']
-            value = viz_param['value']
-            type_ = ''
-            if isinstance(value, (str, QString)):
-                type_ = 'string'
-            elif isinstance(value, int):
-                type_ = 'integer'
-            elif isinstance(value, list):
-                type_ = 'list'
-            SubElement(viz_node, tag, _t(type_)).text = str(value)
+        viz_name = str(self.leVizName.text()).strip()
+        viz_node = Element('batch_visualization', {'name': viz_name, 'type':'batch_visualization'})
+        self._update_xml_from_dict(viz_node, viz_params)
         add_batch_indicator_visualization(self.batch_node, viz_node)
-
-        self.close()
+        self.accept()

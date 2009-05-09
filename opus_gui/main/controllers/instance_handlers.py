@@ -48,8 +48,7 @@ def get_manager_instance(manager_name):
     @return: the instance of the given manager or None
     '''
     instance = __get_instance()
-    if instance is not None and manager_name in \
-        instance.managers:
+    if instance is not None and manager_name in instance.managers:
         return instance.managers[manager_name]
     return None
 
@@ -71,11 +70,11 @@ def get_db_connection_names():
     else:
         return instance.db_connection_names or []
 
-def update_mainwindow_title():
+def update_mainwindow_savestate():
     '''
     Updates the application title for the main window to reflect any changes
     to the dirty flag.
     '''
     instance = __get_instance()
     if instance is not None:
-        instance.updateWindowTitle()
+        instance.update_saved_state()

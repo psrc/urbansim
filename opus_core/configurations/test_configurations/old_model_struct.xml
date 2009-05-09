@@ -1,74 +1,9 @@
 <opus_project>
-    <general>
+    <xml_version>2.0</xml_version><general>
         <project_name type="string">test_project</project_name>
     </general>
     <scenario_manager>
   </scenario_manager>
     <model_manager>
-        <model_system setexpanded="True" type="model_system">
-            <regmodel copyable="True" type="dictionary">
-                <import hidden="True" type="dictionary">
-                    <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
-                </import>
-                <init type="dictionary">
-                    <name hidden="True" type="string">RegressionModel</name>
-                    <arguments type="dictionary">
-                        <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
-                        <submodel_string parser_action="blank_to_None" type="string"/>
-                        <run_config parser_action="blank_to_None" type="string"/>
-                        <estimate_config parser_action="blank_to_None" type="string"/>
-                        <debuglevel hidden="True" type="integer">0</debuglevel>
-                        <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
-                    </arguments>
-                </init>
-                <run type="dictionary">
-                    <arguments type="dictionary">
-                        <specification hidden="True" type="string">specification</specification>
-                        <coefficients hidden="True" type="string">coefficients</coefficients>
-                        <dataset type="string">fill in</dataset>
-                        <index hidden="True" parser_action="blank_to_None" type="string">rm_index</index>
-                        <chunk_specification parser_action="blank_to_None" type="string"/>
-                        <data_objects hidden="True" type="string">datasets</data_objects>
-                    </arguments>
-                </run>
-                <prepare_for_run type="dictionary">
-                    <name hidden="True" type="string">prepare_for_run</name>
-                    <arguments type="dictionary">
-                        <dataset parser_action="blank_to_None" type="string">None</dataset>
-                        <dataset_filter parser_action="blank_to_None" type="quoted_string"/>
-                        <specification_storage type="string">base_cache_storage</specification_storage>
-                        <specification_table type="quoted_string">regression_model_template_specification</specification_table>
-                        <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-                        <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
-                        <sample_coefficients type="boolean">False</sample_coefficients>
-                        <distribution type="quoted_string">normal</distribution>
-                        <cache_storage hidden="True" type="string">base_cache_storage</cache_storage>
-                        <multiplicator type="integer">1</multiplicator>
-                    </arguments>
-                    <output hidden="True" type="string">(specification, coefficients, rm_index)</output>
-                </prepare_for_run>
-                <estimate type="dictionary">
-                    <arguments type="dictionary">
-                        <specification hidden="True" type="string">specification</specification>
-                        <dataset type="string">fill in</dataset>
-                        <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
-                        <index hidden="True" parser_action="blank_to_None" type="string">rm_index</index>
-                        <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
-                        <data_objects hidden="True" type="string">datasets</data_objects>
-                    </arguments>
-                    <output hidden="True" type="string">(coefficients, dummy)</output>
-                </estimate>
-                <prepare_for_estimate type="dictionary">
-                    <name hidden="True" type="string">prepare_for_estimate</name>
-                    <arguments type="dictionary">
-                        <dataset parser_action="blank_to_None" type="string">None</dataset>
-                        <dataset_filter parser_action="blank_to_None" type="quoted_string"/>
-                        <specification_storage type="string">base_cache_storage</specification_storage>
-                        <specification_table type="quoted_string">regression_model_template_specification</specification_table>
-                    </arguments>
-                    <output hidden="True" type="string">(specification, rm_index)</output>
-                </prepare_for_estimate>
-            </regmodel>
-        </model_system>
-    </model_manager>
+        <models hidden="False" name="Models"/><templates hidden="True"/></model_manager>
 </opus_project>

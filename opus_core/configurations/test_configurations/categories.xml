@@ -1,14 +1,13 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario type="scenario" name="test_scenario">
       <description type="string">category test</description>
       <gui_name config_name="real_name" type="string">config name test</gui_name>
       <advanced type="category">
-        <precache type="boolean" choices="True|False">True</precache>
+        <precache choices="True|False" type="boolean">True</precache>
         <chunksize type="integer">12</chunksize>
       </advanced>
       <years type="tuple">
@@ -16,11 +15,11 @@
         <lastyear type="integer">1981</lastyear>
       </years>
       <nested_advanced type="category">
-        <bool2 type="boolean" choices="True|False">False</bool2>
+        <bool2 choices="True|False" type="boolean">False</bool2>
         <inner_advanced type="category">
           <int2 type="integer">13</int2>
         </inner_advanced>
       </nested_advanced>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from xml.etree.cElementTree import Element
+from lxml.etree import Element
 
 from PyQt4.QtGui import QMenu, QCursor
 
@@ -13,6 +13,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
 from opus_gui.models_manager.models_manager import get_model_names
 from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
+from opus_gui.util.icon_library import IconLibrary
 
 
 class XmlController_Scenarios(XmlController):
@@ -21,26 +22,19 @@ class XmlController_Scenarios(XmlController):
         ''' See XmlController.__init__ for documentation '''
         XmlController.__init__(self, manager)
 
-        i, t, c = (self.model.makeEditableIcon, 'Add Model...', self.addModel)
-        self.actAddModel = self.createAction(i, t, c)
-
-        i, t, c = (self.model.acceptIcon, 'Run This Scenario', self.runScenario)
-        self.actRunScenario = self.createAction(i, t, c)
-
-        i, t, c = (self.model.arrowUpIcon, "Move Up", self.moveNodeUp)
-        self.actMoveNodeUp = self.createAction(i, t, c)
-
-        i, t, c = (self.model.arrowDownIcon, "Move Down", self.moveNodeDown)
-        self.actMoveNodeDown = self.createAction(i, t, c)
+        self.actAddModel = self.create_action('make_editable', 'Add Model', self.addModel)
+        self.actRunScenario = self.create_action('accept', 'Run This Scenario', self.runScenario)
+        self.actMoveNodeUp = self.create_action('arrow_up', "Move Up", self.moveNodeUp)
+        self.actMoveNodeDown = self.create_action('arrow_down', "Move Down", self.moveNodeDown)
 
         # CK - what's this? Removing for now...
-#        self.actOpenXMLFile = self.createAction(self.calendarIcon,"Open XML File", self.openXMLFile)
-#        self.actEditXMLFileGlobal = self.createAction(self.calendarIcon,"Edit XML File Global", self.editXMLFileGlobal)
-#        self.actEditXMLFileLocal = self.createAction(self.calendarIcon,"Edit XML File Local", self.editXMLFileLocal)
+#        self.actOpenXMLFile = self.create_action(self.calendarIcon,"Open XML File", self.openXMLFile)
+#        self.actEditXMLFileGlobal = self.create_action(self.calendarIcon,"Edit XML File Global", self.editXMLFileGlobal)
+#        self.actEditXMLFileLocal = self.create_action(self.calendarIcon,"Edit XML File Local", self.editXMLFileLocal)
 
         # validate_models_to_run_lists()
 
-    def setupModelViewDelegate(self):
+    def add_model_view_delegate(self):
         ''' See XmlModel for documentation '''
         # Use the scenarios model
         self.model = XmlModel_Scenarios(self.xml_root, self.manager.project)
@@ -49,11 +43,11 @@ class XmlController_Scenarios(XmlController):
 
     def runScenario(self):
         ''' Run the selected scenario. '''
-        assert self.hasSelectedItem()
-        scenario_node = self.selectedItem().node
+        assert self.has_selected_item()
+        scenario_node = self.selected_item().node
 
         newModel = OpusModel(self.manager, self.manager.project.xml_config,
-                             scenario_node.tag)
+                             scenario_node.get('name'))
         self.manager.addNewSimulationElement(newModel)
 
     def validate_models_to_run(self):
@@ -62,17 +56,17 @@ class XmlController_Scenarios(XmlController):
 
     def moveNodeUp(self):
         ''' Move the selected node up one step '''
-        assert self.hasSelectedItem()
-        self.view.setCurrentIndex(self.model.moveUp(self.selectedIndex()))
+        assert self.has_selected_item()
+        self.view.setCurrentIndex(self.model.move_up(self.selected_index()))
 
     def moveNodeDown(self):
         ''' Move the selected node down one step '''
-        assert self.hasSelectedItem()
-        self.view.setCurrentIndex(self.model.moveDown(self.selectedIndex()))
+        assert self.has_selected_item()
+        self.view.setCurrentIndex(self.model.move_down(self.selected_index()))
 
-    def processCustomMenu(self, point):
+    def process_custom_menu(self, point):
         ''' See XmlController for documentation '''
-        item = self.selectItemAt(point)
+        item = self.select_item_at(point)
         if not item:
             return
         menu = QMenu()
@@ -86,14 +80,15 @@ class XmlController_Scenarios(XmlController):
         elif node.get('config_name') == 'models':
             models_menu = QMenu(menu)
             models_menu.setTitle('Add model to run')
+            models_menu.setIcon(IconLibrary.icon('add'))
             available_model_names = get_model_names(self.project)
             for model_name in available_model_names:
-                cb = lambda x=model_name: self.addModel(self.selectedIndex(), x)
-                action = self.createAction(self.model.addIcon, model_name, cb)
+                cb = lambda x=model_name: self.addModel(self.selected_index(), x)
+                action = self.create_action('model', model_name, cb)
                 models_menu.addAction(action)
             menu.addMenu(models_menu)
 
-        self.addDefaultMenuItems(node, menu)
+        self.add_default_menu_items_for_node(node, menu)
 
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
@@ -104,8 +99,7 @@ class XmlController_Scenarios(XmlController):
         @param scenario_index (QModelIndex): index of the list to insert under
         @param models_name (String): name of model to add
         '''
-        model_node = Element(model_name, {'choices': 'Run|Skip',
-                                          'type': 'model_choice'})
+        model_node = Element(model_name, {'choices': 'Run|Skip', 'type': 'model_choice'})
         model_node.text = 'Run'
         last_row_num = self.model.rowCount(models_to_run_list_index)
         self.model.insertRow(last_row_num, models_to_run_list_index, model_node)
@@ -117,8 +111,8 @@ class XmlController_Scenarios(XmlController):
 
 #    def openXMLFile(self):
 #        ''' NO DOCUMENTATION '''
-#        assert self.hasSelectedItem()
-#        node = self.selectedItem().node
+#        assert self.has_selected_item()
+#        node = self.selected_item().node
 #        filePath = node.tag
 #
 #        fileInfo = QFileInfo(filePath)

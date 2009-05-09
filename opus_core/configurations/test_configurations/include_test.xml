@@ -1,13 +1,12 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario type="scenario" name="test_scenario">
       <description type="string">a test scenario</description>
-      <includeyears parser_action="include" type="path">scenario_manager/test_scenario/stuff_to_include</includeyears>
-      <includexy parser_action="include" type="path">scenario_manager/test_scenario/morestuff</includexy>
+      <includeyears parser_action="include" type="path">scenario_manager/scenario/stuff_to_include</includeyears>
+      <includexy parser_action="include" type="path">scenario_manager/scenario/morestuff</includexy>
       <stuff_to_include parser_action="only_for_includes" type="dictionary">
         <firstyear type="integer">2000</firstyear>
         <lastyear type="integer">2020</lastyear>
@@ -16,6 +15,6 @@
         <x type="integer">10</x>
         <y type="integer">20</y>
       </morestuff>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

@@ -1,10 +1,10 @@
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
    <expression_library type="dictionary">
-     <ln_cost type="variable_definition" dataset="parcel" use="model variable" source="expression">ln(psrc.parcel.cost)</ln_cost>
-     <existing_units type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.existing_units</existing_units>
+     <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="ln_cost">ln(psrc.parcel.cost)</variable>
+     <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable>
    </expression_library>
     <project_name type="string">test_project</project_name>
-    <test_node type="string" test_attribute="parent1_value" oceanic_attribute="squid">this is just to test attribute inheritance</test_node>
+    <test_node oceanic_attribute="squid" test_attribute="parent1_value" type="string">this is just to test attribute inheritance</test_node>
   </general>
 </opus_project>

@@ -2,19 +2,16 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-# PyQt4 includes for python bindings to QT
-#from PyQt4.QtCore import Qt
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
-#from opus_gui.abstract_manager.views.xml_view import XmlView
-#from opus_gui.abstract_manager.models.xml_model import OpusDataModel
-#from opus_gui.abstract_manager.models.xml_item_delegate
 
 class DatabaseConfigXMLController(XmlController):
     def __init__(self, manager):
         XmlController.__init__(manager)
 
-    def processCustomMenu(self, position):
-        pass # to avoid raising not implemented error
+    def process_custom_menu(self, position):
+        pass
+
+# TODO: Adding / removing databases ?
 
 #    def addTree(self):
 #        self.model = DatabaseConfigXMLModel(self, self.toolboxbase.doc, self.mainwindow,

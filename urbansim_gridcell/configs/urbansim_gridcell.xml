@@ -1,1004 +1,980 @@
 <opus_project>
-  <xml_version>1.0</xml_version>
+  <xml_version>2.0</xml_version>
   <general>
     <description type="string">Base UrbanSim Gridcell Project</description>
-    <project_name type="string" hidden="True">urbansim_gridcell</project_name>
+    <project_name hidden="True" type="string">urbansim_gridcell</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
-      <number_of_jobs type="variable_definition" dataset="zone" use="both" source="Python class">urbansim.zone.number_of_jobs</number_of_jobs>
-      <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
-      <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
-      <ln_du dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.residential_units)</ln_du>
-      <ln_duw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units_within_walking_distance</ln_duw>
-      <pcthiwa dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_high_income_households_within_walking_distance</pcthiwa>
-      <wetland dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.percent_wetland&gt;50</wetland>
-      <cbdtrvl dataset="gridcell" source="Python class" type="variable_definition" use="model variable">eugene.gridcell.travel_time_hbw_am_drive_alone_to_220</cbdtrvl>
-      <ln_impval dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(urbansim.gridcell.total_improvement_value)</ln_impval>
-      <pctdevwal dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_developed_within_walking_distance</pctdevwal>
-      <constant dataset="gridcell " source="expression" type="variable_definition" use="model variable">constant</constant>
-      <ln_hwy dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.distance_to_highway)</ln_hwy>
-      <flood dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.percent_floodplain&gt;50</flood>
-      <hwy600 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;600</hwy600>
-      <hwy300 dataset="gridcell" source="expression" type="variable_definition" use="model variable">gridcell.distance_to_highway&lt;300</hwy300>
-      <land_value dataset="gridcell" source="expression" type="variable_definition" use="indicator">gridcell.residential_land_value+gridcell.nonresidential_land_value</land_value>
-      <!-- These are variables that are automatically extracted from specification modules -->
-      <ble_rew dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_retail_sector_employment_within_walking_distance</ble_rew>
-      <ble_saw dataset="job_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance</ble_saw>
-      <ctir dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.cost_to_income_ratio</ctir>
-      <bpliw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_low_income_households_within_walking_distance</bpliw>
-      <hwy dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_near_highway</hwy>
-      <ldevsfi dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_industrial_sqft_capacity</ldevsfi>
-      <sfc_0 dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.has_0_commercial_sqft</sfc_0>
-      <bltv dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_value</bltv>
-      <bldhw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_distance_to_highway</bldhw>
-      <bltlv dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_land_value</bltlv>
-      <plihwwdihi dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_low_income_households_within_walking_distance_if_high_income</plihwwdihi>
-      <ruwhhc dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.residential_units_when_household_has_children</ruwhhc>
-      <bpmiw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_mid_income_households_within_walking_distance</bpmiw>
-      <blnrsfw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance</blnrsfw>
-      <yhihdr dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.young_household_in_high_density_residential</yhihdr>
-      <ldevsfc dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_developable_commercial_sqft_capacity</ldevsfc>
-      <iayb dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.income_and_year_built</iayb>
-      <nrs dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln_bounded(urbansim.gridcell.non_residential_sqft)</nrs>
-      <bart dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_near_arterial</bart>
-      <blwap_1 dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_work_access_to_population_1</blwap_1>
-      <piw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_industrial_within_walking_distance</piw>
-      <ble_sew dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_service_sector_employment_within_walking_distance</ble_sew>
-      <prw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.percent_residential_within_walking_distance</prw>
-      <ble_bw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_basic_sector_employment_within_walking_distance</ble_bw>
-      <pmhwwdim dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_minority_households_within_walking_distance_if_minority</pmhwwdim>
-      <phihwwdili dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_low_income</phihwwdili>
-      <o_ugb dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_outside_urban_growth_boundary</o_ugb>
-      <bflood dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_in_floodplain</bflood>
-      <bwet dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.is_in_wetland</bwet>
-      <yhimu dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.household_x_gridcell.young_household_in_mixed_use</yhimu>
-      <le_w dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_employment_within_walking_distance</le_w>
-      <lru dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_residential_units</lru>
-      <blimp dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_total_improvement_value</blimp>
-      <lsfiw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_industrial_sqft_within_walking_distance</lsfiw>
-      <btt_cbd dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.travel_time_to_CBD</btt_cbd>
-      <blsfcw dataset="gridcell" source="Python class" type="variable_definition" use="model variable">urbansim.gridcell.ln_commercial_sqft_within_walking_distance</blsfcw>
-      <!-- automatically generated variables end -->
+      <variable dataset="zone" source="Python class" type="variable_definition" use="both" name="number_of_jobs">urbansim.zone.number_of_jobs</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="both" name="population">urbansim.gridcell.population</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="both" name="population_density">urbansim.gridcell.population_density</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="ln_du">ln(gridcell.residential_units)</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ln_duw">urbansim.gridcell.ln_residential_units_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="pcthiwa">urbansim.gridcell.percent_high_income_households_within_walking_distance</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="wetland">gridcell.percent_wetland&gt;50</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="cbdtrvl">eugene.gridcell.travel_time_hbw_am_drive_alone_to_220</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="ln_impval">ln(urbansim.gridcell.total_improvement_value)</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="pctdevwal">urbansim.gridcell.percent_developed_within_walking_distance</variable>
+      <variable dataset="gridcell " source="expression" type="variable_definition" use="model variable" name="constant">constant</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="ln_hwy">ln(gridcell.distance_to_highway)</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="flood">gridcell.percent_floodplain&gt;50</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="hwy600">gridcell.distance_to_highway&lt;600</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="hwy300">gridcell.distance_to_highway&lt;300</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="indicator" name="land_value">gridcell.residential_land_value+gridcell.nonresidential_land_value</variable>
+      
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ble_rew">urbansim.gridcell.ln_retail_sector_employment_within_walking_distance</variable>
+      <variable dataset="job_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="ble_saw">urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="ctir">urbansim.household_x_gridcell.cost_to_income_ratio</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bpliw">urbansim.gridcell.percent_low_income_households_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="hwy">urbansim.gridcell.is_near_highway</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ldevsfi">urbansim.gridcell.ln_developable_industrial_sqft_capacity</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="sfc_0">urbansim.gridcell.has_0_commercial_sqft</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bltv">urbansim.gridcell.ln_total_value</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bldhw">urbansim.gridcell.ln_distance_to_highway</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bltlv">urbansim.gridcell.ln_total_land_value</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="plihwwdihi">urbansim.household_x_gridcell.percent_low_income_households_within_walking_distance_if_high_income</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="ruwhhc">urbansim.household_x_gridcell.residential_units_when_household_has_children</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bpmiw">urbansim.gridcell.percent_mid_income_households_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="blnrsfw">urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="yhihdr">urbansim.household_x_gridcell.young_household_in_high_density_residential</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ldevsfc">urbansim.gridcell.ln_developable_commercial_sqft_capacity</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="iayb">urbansim.household_x_gridcell.income_and_year_built</variable>
+      <variable dataset="gridcell" source="expression" type="variable_definition" use="model variable" name="nrs">ln_bounded(urbansim.gridcell.non_residential_sqft)</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bart">urbansim.gridcell.is_near_arterial</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="blwap_1">urbansim.gridcell.ln_work_access_to_population_1</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="piw">urbansim.gridcell.percent_industrial_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ble_sew">urbansim.gridcell.ln_service_sector_employment_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="prw">urbansim.gridcell.percent_residential_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="ble_bw">urbansim.gridcell.ln_basic_sector_employment_within_walking_distance</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="pmhwwdim">urbansim.household_x_gridcell.percent_minority_households_within_walking_distance_if_minority</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="phihwwdili">urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_low_income</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="o_ugb">urbansim.gridcell.is_outside_urban_growth_boundary</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bflood">urbansim.gridcell.is_in_floodplain</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="bwet">urbansim.gridcell.is_in_wetland</variable>
+      <variable dataset="household_x_gridcell" source="Python class" type="variable_definition" use="model variable" name="yhimu">urbansim.household_x_gridcell.young_household_in_mixed_use</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="le_w">urbansim.gridcell.ln_total_employment_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="lru">urbansim.gridcell.ln_residential_units</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="blimp">urbansim.gridcell.ln_total_improvement_value</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="lsfiw">urbansim.gridcell.ln_industrial_sqft_within_walking_distance</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="btt_cbd">urbansim.gridcell.travel_time_to_CBD</variable>
+      <variable dataset="gridcell" source="Python class" type="variable_definition" use="model variable" name="blsfcw">urbansim.gridcell.ln_commercial_sqft_within_walking_distance</variable>
+      
     </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
     <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
     <dataset_pool_configuration type="class">
-      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-      <package_order type="list">['urbansim', 'opus_core']</package_order>
+      <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+      <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument type="list" name="package_order">['urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
   </general>
   <model_manager>
-    <model_system>
-      <prescheduled_events type="model">
+    <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"><model type="model" name="prescheduled_events">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.process_prescheduled_development_events</module>
-              <classname>ProcessPrescheduledDevelopmentEvents</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.process_prescheduled_development_events</class_module>
+              <class_name>ProcessPrescheduledDevelopmentEvents</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">ProcessPrescheduledDevelopmentEvents</name>
+            <name type="string" name="name">ProcessPrescheduledDevelopmentEvents</name>
           </init>
           <run type="dictionary">
-            <output type="string">development_events</output>
-            <storage type="string">base_cache_storage</storage>
+            <output type="string" name="output">development_events</output>
+            <argument type="string" name="storage">base_cache_storage</argument>
           </run>
         </structure>
-      </prescheduled_events>
-      <events_coordinator type="model">
+      </model>
+      <model type="model" name="events_coordinator">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.events_coordinator_and_storing</module>
-              <classname>EventsCoordinatorAndStoring</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.events_coordinator_and_storing</class_module>
+              <class_name>EventsCoordinatorAndStoring</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">EventsCoordinatorAndStoring</name>
+            <name type="string" name="name">EventsCoordinatorAndStoring</name>
           </init>
           <run type="dictionary">
-            <output type="string">(changed_indices, processed_development_event_indices)</output>
-            <development_type_set type="string">development_type</development_type_set>
-            <location_set type="string">gridcell</location_set>
-            <current_year type="string">year</current_year>
-            <development_event_set type="string">development_events</development_event_set>
-            <development_models type="list">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</development_models>
-            <!-- hack to get model system to pass the models configuration to the run method  -->
-            <models_configuration type="string" hidden="True">models_configuration</models_configuration>
+            <output type="string" name="output">(changed_indices, processed_development_event_indices)</output>
+            <argument type="string" name="development_type_set">development_type</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="current_year">year</argument>
+            <argument type="string" name="development_event_set">development_events</argument>
+            <argument type="list" name="development_models">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</argument>
+            
+            <argument hidden="True" type="string" name="models_configuration">models_configuration</argument>
           </run>
         </structure>
-      </events_coordinator>
-      <residential_land_share_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="residential_land_share_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <index parser_action="blank_to_None" type="string">changed_indices</index>
-            <specification type="string">specification</specification>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="index">changed_indices</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">ResidentialLandShareModel</name>
+            <name type="string" name="name">ResidentialLandShareModel</name>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.residential_land_share_model</module>
-              <classname>ResidentialLandShareModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.residential_land_share_model</class_module>
+              <class_name>ResidentialLandShareModel</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <index parser_action="blank_to_None" type="string">index</index>
-            <specification type="string">specification</specification>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument parser_action="blank_to_None" type="string" name="index">index</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="procedure">'opus_core.estimate_linear_regression'</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'residential_land_share_model_coefficients'</coefficients_table>
-            <specification_table type="string">'residential_land_share_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'residential_land_share_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'residential_land_share_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
-            <name type="string">prepare_for_estimate</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'residential_land_share_model_specification'</specification_table>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <models_to_run type="list" parser_action="skip">[]</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="specification_table">'residential_land_share_model_specification'</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">-2</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="-2">
                 <description type="string">No description</description>
                 <variables type="variable_list">constant,lru,nrs</variables>
             </submodel>
         </specification>
-      </residential_land_share_model>
-      <land_price_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="land_price_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'nchunks':1}</chunk_specification>
-            <specification type="string">specification</specification>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <data_objects type="string">datasets</data_objects>
-            <n_simulated_years type="string">year-base_year</n_simulated_years>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'nchunks':1}</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="n_simulated_years">year-base_year</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">CorrectedLandPriceModel</name>
-            <filter parser_action="blank_to_None" type="string">'urbansim.gridcell.is_in_development_type_group_developable'</filter>
-            <estimate_config parser_action="blank_to_None" type="string"/>
-            <run_config parser_action="blank_to_None" type="string"/>
-            <submodel_string parser_action="blank_to_None" type="string">'development_type_id'</submodel_string>
+            <name type="string" name="name">CorrectedLandPriceModel</name>
+            <argument parser_action="blank_to_None" type="string" name="filter">'urbansim.gridcell.is_in_development_type_group_developable'</argument>
+            <argument parser_action="blank_to_None" type="string" name="estimate_config"/>
+            <argument parser_action="blank_to_None" type="string" name="run_config"/>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string">'development_type_id'</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.corrected_land_price_model</module>
-              <classname>CorrectedLandPriceModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.corrected_land_price_model</class_module>
+              <class_name>CorrectedLandPriceModel</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <index parser_action="blank_to_None" type="string">index</index>
-            <specification type="string">specification</specification>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument parser_action="blank_to_None" type="string" name="index">index</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="procedure">'opus_core.estimate_linear_regression'</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'land_price_model_coefficients'</coefficients_table>
-            <specification_table type="string">'land_price_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'land_price_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'land_price_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
-            <name type="string">prepare_for_estimate</name>
-            <threshold type="integer">1000</threshold>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'land_price_model_specification'</specification_table>
-            <filter_variable type="string">'urbansim.gridcell.total_land_value'</filter_variable>
-            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
-            <models_to_run type="list" parser_action="skip">[]</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="integer" name="threshold">1000</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="specification_table">'land_price_model_specification'</argument>
+            <argument type="string" name="filter_variable">'urbansim.gridcell.total_land_value'</argument>
+            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">-2</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="-2">
                 <description type="string">No description</description>
                 <variables type="variable_list">constant,pctdevwal,hwy,bldhw,bflood,ln_impval,cbdtrvl,bwet,lru,ln_duw,pcthiwa</variables>
             </submodel>
         </specification>
-      </land_price_model>
-      <development_project_transition_model type="model">
+      </model>
+      <model type="model" name="development_project_transition_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.development_project_transition_model</module>
-              <classname>DevelopmentProjectTransitionModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.development_project_transition_model</class_module>
+              <class_name>DevelopmentProjectTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">DevelopmentProjectTransitionModel</name>
-            <debuglevel type="integer">4</debuglevel>
+            <name type="string" name="name">DevelopmentProjectTransitionModel</name>
+            <argument type="integer" name="debuglevel">4</argument>
           </init>
           <run type="dictionary">
-            <output type="string">dptm_results</output>
-            <development_models type="list">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</development_models>
-            <!-- hack to get model system to pass the models configuration to the run method  -->
-            <models_configuration type="string" hidden="True">models_configuration</models_configuration>
-            <vacancy_table type="string">target_vacancy</vacancy_table>
-            <location_set type="string">gridcell</location_set>
-            <year type="string">year</year>
-            <history_table type="string">development_event_history</history_table>
-            <resources parser_action="blank_to_None" type="string"/>
+            <output type="string" name="output">dptm_results</output>
+            <argument type="list" name="development_models">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</argument>
+            
+            <argument hidden="True" type="string" name="models_configuration">models_configuration</argument>
+            <argument type="string" name="vacancy_table">target_vacancy</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="year">year</argument>
+            <argument type="string" name="history_table">development_event_history</argument>
+            <argument parser_action="blank_to_None" type="string" name="resources"/>
           </run>
         </structure>
-      </development_project_transition_model>
-      <!-- development models start -->
-      <residential_development_project_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      
+      <model type="model" name="residential_development_project_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':300}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">dptm_results['residential']</agent_set>
-            <specification type="string">specification</specification>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['residential']</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <submodel_string parser_action="blank_to_None" type="string">'size_category'</submodel_string>
-            <location_set type="string">gridcell</location_set>
-            <project_type type="string">'residential'</project_type>
-            <!-- <model_configuration type="string">model_configuration['development_project_types']['residential']</model_configuration> -->
-            <developable_maximum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_maximum_residential_units</developable_maximum_unit_variable_full_name>
-            <developable_minimum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_minimum_residential_units</developable_minimum_unit_variable_full_name>
-            <residential choices="True|False" type="boolean">True</residential>
-            <units type="string">'residential_units'</units>
+            <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="project_type">'residential'</argument>
+            
+            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_residential_units</argument>
+            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_residential_units</argument>
+            <argument type="boolean" name="residential">True</argument>
+            <argument type="string" name="units">'residential_units'</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.development_project_location_choice_model_creator</module>
-              <classname>DevelopmentProjectLocationChoiceModelCreator</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.development_project_location_choice_model_creator</class_module>
+              <class_name>DevelopmentProjectLocationChoiceModelCreator</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <data_objects type="string">datasets</data_objects>
-            <agent_set parser_action="blank_to_None" type="string">projects</agent_set>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'residential_development_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'residential_development_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'residential_development_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'residential_development_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, projects)</output>
-            <name type="string">prepare_for_estimate</name>
-            <events_for_estimation_table type="string">'development_event_history'</events_for_estimation_table>
-            <specification_table type="string">'residential_development_location_choice_model_specification'</specification_table>
-            <urbansim_constant type="string">urbansim_constant</urbansim_constant>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
-            <base_year type="string">resources['base_year']</base_year>
-            <categories type="list">[1, 2, 3, 5, 10, 20]</categories>
-            <models_to_run type="list" parser_action="skip">['land_price_model']</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, projects)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="string" name="events_for_estimation_table">'development_event_history'</argument>
+            <argument type="string" name="specification_table">'residential_development_location_choice_model_specification'</argument>
+            <argument type="string" name="urbansim_constant">urbansim_constant</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="events_for_estimation_storage">base_cache_storage</argument>
+            <argument type="string" name="base_year">resources['base_year']</argument>
+            <argument type="list" name="categories">[1, 2, 3, 5, 10, 20]</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">1</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
                 <description type="string">Residential</description>
                 <variables type="variable_list">blimp,prw,le_w,sfc_0,o_ugb,btt_cbd</variables>
             </submodel>
         </specification>
-      </residential_development_project_location_choice_model>
-      <commercial_development_project_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="commercial_development_project_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':300}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">dptm_results['commercial']</agent_set>
-            <specification type="string">specification</specification>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['commercial']</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <submodel_string parser_action="blank_to_None" type="string">'size_category'</submodel_string>
-            <location_set type="string">gridcell</location_set>
-            <project_type type="string">'commercial'</project_type>
-            <!--  <model_configuration type="string">model_configuration['development_project_types']['commercial']</model_configuration>  -->
-            <developable_maximum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_maximum_commercial_sqft</developable_maximum_unit_variable_full_name>
-            <developable_minimum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_minimum_commercial_sqft</developable_minimum_unit_variable_full_name>
-            <residential choices="True|False" type="boolean">False</residential>
-            <units type="string">'commercial_sqft'</units>
+            <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="project_type">'commercial'</argument>
+            
+            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_commercial_sqft</argument>
+            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_commercial_sqft</argument>
+            <argument type="boolean" name="residential">False</argument>
+            <argument type="string" name="units">'commercial_sqft'</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.development_project_location_choice_model_creator</module>
-              <classname>DevelopmentProjectLocationChoiceModelCreator</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.development_project_location_choice_model_creator</class_module>
+              <class_name>DevelopmentProjectLocationChoiceModelCreator</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <data_objects type="string">datasets</data_objects>
-            <agent_set parser_action="blank_to_None" type="string">projects</agent_set>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'commercial_development_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'commercial_development_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'commercial_development_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'commercial_development_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, projects)</output>
-            <name type="string">prepare_for_estimate</name>
-            <events_for_estimation_table type="string">'development_event_history'</events_for_estimation_table>
-            <specification_table type="string">'commercial_development_location_choice_model_specification'</specification_table>
-            <urbansim_constant type="string">urbansim_constant</urbansim_constant>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
-            <base_year type="string">resources['base_year']</base_year>
-            <categories type="list">[1000, 2000, 5000, 10000]</categories>
-            <models_to_run type="list" parser_action="skip">['land_price_model']</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, projects)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="string" name="events_for_estimation_table">'development_event_history'</argument>
+            <argument type="string" name="specification_table">'commercial_development_location_choice_model_specification'</argument>
+            <argument type="string" name="urbansim_constant">urbansim_constant</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="events_for_estimation_storage">base_cache_storage</argument>
+            <argument type="string" name="base_year">resources['base_year']</argument>
+            <argument type="list" name="categories">[1000, 2000, 5000, 10000]</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">-2</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="-2">
                 <description type="string">Commercial</description>
                 <variables type="variable_list">bltlv,prw,le_w,ldevsfc,o_ugb,bart,btt_cbd,blwap_1</variables>
             </submodel>        
         </specification>
-      </commercial_development_project_location_choice_model>
-      <industrial_development_project_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="industrial_development_project_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':300}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">dptm_results['industrial']</agent_set>
-            <specification type="string">specification</specification>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['industrial']</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <submodel_string parser_action="blank_to_None" type="string">'size_category'</submodel_string>
-            <location_set type="string">gridcell</location_set>
-            <project_type type="string">'industrial'</project_type>
-            <!-- <model_configuration type="string">[1000, 2000, 5000, 10000]</model_configuration>-->
-            <developable_maximum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_maximum_industrial_sqft</developable_maximum_unit_variable_full_name>
-            <developable_minimum_unit_variable_full_name type="quoted_string">urbansim.gridcell.developable_minimum_industrial_sqft</developable_minimum_unit_variable_full_name>
-            <residential choices="True|False" type="boolean">False</residential>
-            <units type="string">'industrial_sqft'</units>
+            <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="project_type">'industrial'</argument>
+            
+            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_industrial_sqft</argument>
+            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_industrial_sqft</argument>
+            <argument type="boolean" name="residential">False</argument>
+            <argument type="string" name="units">'industrial_sqft'</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.development_project_location_choice_model_creator</module>
-              <classname>DevelopmentProjectLocationChoiceModelCreator</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.development_project_location_choice_model_creator</class_module>
+              <class_name>DevelopmentProjectLocationChoiceModelCreator</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <data_objects type="string">datasets</data_objects>
-            <agent_set parser_action="blank_to_None" type="string">projects</agent_set>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'industrial_development_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'industrial_development_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'industrial_development_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'industrial_development_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, projects)</output>
-            <name type="string">prepare_for_estimate</name>
-            <events_for_estimation_table type="string">'development_event_history'</events_for_estimation_table>
-            <specification_table type="string">'industrial_development_location_choice_model_specification'</specification_table>
-            <urbansim_constant type="string">urbansim_constant</urbansim_constant>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <events_for_estimation_storage type="string">base_cache_storage</events_for_estimation_storage>
-            <base_year type="string">resources['base_year']</base_year>
-            <categories type="string">[1000, 2000, 5000, 10000]</categories>
-            <models_to_run type="list" parser_action="skip">['land_price_model']</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, projects)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="string" name="events_for_estimation_table">'development_event_history'</argument>
+            <argument type="string" name="specification_table">'industrial_development_location_choice_model_specification'</argument>
+            <argument type="string" name="urbansim_constant">urbansim_constant</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="events_for_estimation_storage">base_cache_storage</argument>
+            <argument type="string" name="base_year">resources['base_year']</argument>
+            <argument type="string" name="categories">[1000, 2000, 5000, 10000]</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">1</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
                 <description type="string">Industrial</description>
                 <variables type="variable_list">bltv,ln_duw,lsfiw,piw,ldevsfi</variables>
             </submodel>
         </specification>
-      </industrial_development_project_location_choice_model>
-      <!-- development models end -->
-      <development_event_transition_model type="model">
+      </model>
+      
+      <model type="model" name="development_event_transition_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.development_event_transition_model</module>
-              <classname>DevelopmentEventTransitionModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.development_event_transition_model</class_module>
+              <class_name>DevelopmentEventTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">DevelopmentEventTransitionModel</name>
+            <name type="string" name="name">DevelopmentEventTransitionModel</name>
           </init>
           <prepare_for_run type="dictionary">
-            <output type="string">(all_project_types, all_project_units)</output>
-            <name type="string">prepare_for_run</name>
-            <dev_projects type="string">dptm_results</dev_projects>
-            <development_models type="list">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</development_models>
-            <models_configuration type="string">models_configuration</models_configuration>
+            <output type="string" name="output">(all_project_types, all_project_units)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="dev_projects">dptm_results</argument>
+            <argument type="list" name="development_models">['residential_development_project_location_choice_model', 'commercial_development_project_location_choice_model', 'industrial_development_project_location_choice_model']</argument>
+            <argument type="string" name="models_configuration">models_configuration</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <output type="string">development_events</output>
-            <units type="string">all_project_units</units>
-            <year type="string">year</year>
-            <types type="string">all_project_types</types>
-            <projects type="string">dptm_results</projects>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <output type="string" name="output">development_events</output>
+            <argument type="string" name="units">all_project_units</argument>
+            <argument type="string" name="year">year</argument>
+            <argument type="string" name="types">all_project_types</argument>
+            <argument type="string" name="projects">dptm_results</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </run>
         </structure>
-      </development_event_transition_model>
-      <household_transition_model type="model">
+      </model>
+      <model type="model" name="household_transition_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.household_transition_model</module>
-              <classname>HouseholdTransitionModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.household_transition_model</class_module>
+              <class_name>HouseholdTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">HouseholdTransitionModel</name>
-            <location_id_name type="string">'grid_id'</location_id_name>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">HouseholdTransitionModel</name>
+            <argument type="string" name="location_id_name">'grid_id'</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output type="string">(control_totals, characteristics)</output>
-            <name type="string">prepare_for_run</name>
-            <storage type="string">base_cache_storage</storage>
+            <output type="string" name="output">(control_totals, characteristics)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="storage">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <characteristics type="string">characteristics</characteristics>
-            <household_set type="string">household</household_set>
-            <control_totals parser_action="blank_to_None" type="string">control_totals</control_totals>
-            <year type="string">year</year>
+            <argument type="string" name="characteristics">characteristics</argument>
+            <argument type="string" name="household_set">household</argument>
+            <argument parser_action="blank_to_None" type="string" name="control_totals">control_totals</argument>
+            <argument type="string" name="year">year</argument>
           </run>
         </structure>
-      </household_transition_model>
-      <employment_transition_model type="model">
+      </model>
+      <model type="model" name="employment_transition_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.employment_transition_model</module>
-              <classname>EmploymentTransitionModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.employment_transition_model</class_module>
+              <class_name>EmploymentTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">EmploymentTransitionModel</name>
-            <location_id_name type="string">'grid_id'</location_id_name>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">EmploymentTransitionModel</name>
+            <argument type="string" name="location_id_name">'grid_id'</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output type="string">control_totals</output>
-            <name type="string">prepare_for_run</name>
-            <storage type="string">base_cache_storage</storage>
+            <output type="string" name="output">control_totals</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="storage">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <job_building_types type="string">job_building_type</job_building_types>
-            <job_set type="string">job</job_set>
-            <control_totals parser_action="blank_to_None" type="string">control_totals</control_totals>
-            <year type="string">year</year>
+            <argument type="string" name="job_building_types">job_building_type</argument>
+            <argument type="string" name="job_set">job</argument>
+            <argument parser_action="blank_to_None" type="string" name="control_totals">control_totals</argument>
+            <argument type="string" name="year">year</argument>
           </run>
         </structure>
-      </employment_transition_model>
-      <household_relocation_model type="model">
+      </model>
+      <model type="model" name="household_relocation_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.household_relocation_model_creator</module>
-              <classname>HouseholdRelocationModelCreator</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.household_relocation_model_creator</class_module>
+              <class_name>HouseholdRelocationModelCreator</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">HouseholdRelocationModelCreator().get_model</name>
-            <probabilities parser_action="blank_to_None" type="string">'urbansim.household_relocation_probabilities'</probabilities>
-            <location_id_name type="string">'grid_id'</location_id_name>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">HouseholdRelocationModelCreator().get_model</name>
+            <argument parser_action="blank_to_None" type="string" name="probabilities">'urbansim.household_relocation_probabilities'</argument>
+            <argument type="string" name="location_id_name">'grid_id'</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output type="string">hrm_resources</output>
-            <name type="string">prepare_for_run</name>
-            <rate_storage type="string">base_cache_storage</rate_storage>
-            <rate_table parser_action="blank_to_None" type="string">'annual_relocation_rates_for_households'</rate_table>
-            <what type="string">'households'</what>
+            <output type="string" name="output">hrm_resources</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="rate_storage">base_cache_storage</argument>
+            <argument parser_action="blank_to_None" type="string" name="rate_table">'annual_relocation_rates_for_households'</argument>
+            <argument type="string" name="what">'households'</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <output type="string">hrm_index</output>
-            <resources type="string">hrm_resources</resources>
-            <agent_set parser_action="blank_to_None" type="string">household</agent_set>
+            <output type="string" name="output">hrm_index</output>
+            <argument type="string" name="resources">hrm_resources</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
           </run>
         </structure>
-      </household_relocation_model>
-      <household_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="household_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['household_relocation_model']</config_override>
+          </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'nchunks':12}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">household</agent_set>
-            <specification type="string">specification</specification>
-            <maximum_runs type="integer">3</maximum_runs>
-            <agents_index parser_action="blank_to_None" type="string">hrm_index</agents_index>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'nchunks':12}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="integer" name="maximum_runs">3</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">hrm_index</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">HouseholdLocationChoiceModel</name>
-            <number_of_units_string parser_action="blank_to_None" type="quoted_string">residential_units</number_of_units_string>
-            <variable_package type="string">'urbansim'</variable_package>
-            <location_id_string parser_action="blank_to_None" type="string"/>
-            <submodel_string parser_action="blank_to_None" type="string"/>
-            <capacity_string parser_action="blank_to_None" type="quoted_string">vacant_residential_units</capacity_string>
-            <estimation_weight_string parser_action="blank_to_None" type="quoted_string">residential_units</estimation_weight_string>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-            <choices type="string">'urbansim.lottery_choices'</choices>
-            <filter parser_action="blank_to_None" type="string"/>
-            <number_of_agents_string parser_action="blank_to_None" type="quoted_string">number_of_households</number_of_agents_string>
-            <run_config parser_action="blank_to_None" type="string">Resources({'lottery_max_iterations': 3, })</run_config>
-            <location_set type="string">gridcell</location_set>
-            <estimation_size_agents parser_action="blank_to_None" type="string"/>
-            <sampler parser_action="blank_to_None" type="string">'opus_core.samplers.weighted_sampler'</sampler>
-            <simulation_weight_string parser_action="blank_to_None" type="string"/>
-            <estimation type="string">'opus_core.bhhh_mnl_estimation'</estimation>
-            <sample_size_locations type="integer">30</sample_size_locations>
-            <estimate_config parser_action="blank_to_None" type="string">Resources({})</estimate_config>
+            <name type="string" name="name">HouseholdLocationChoiceModel</name>
+            <argument parser_action="blank_to_None" type="quoted_string" name="number_of_units_string">residential_units</argument>
+            <argument type="string" name="variable_package">'urbansim'</argument>
+            <argument parser_action="blank_to_None" type="string" name="location_id_string"/>
+            <argument parser_action="blank_to_None" type="string" name="submodel_string"/>
+            <argument parser_action="blank_to_None" type="quoted_string" name="capacity_string">vacant_residential_units</argument>
+            <argument parser_action="blank_to_None" type="quoted_string" name="estimation_weight_string">residential_units</argument>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument parser_action="blank_to_None" type="quoted_string" name="number_of_agents_string">number_of_households</argument>
+            <argument parser_action="blank_to_None" type="string" name="run_config">Resources({'lottery_max_iterations': 3, })</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument parser_action="blank_to_None" type="string" name="estimation_size_agents"/>
+            <argument parser_action="blank_to_None" type="string" name="sampler">'opus_core.samplers.weighted_sampler'</argument>
+            <argument parser_action="blank_to_None" type="string" name="simulation_weight_string"/>
+            <argument type="string" name="estimation">'opus_core.bhhh_mnl_estimation'</argument>
+            <argument type="integer" name="sample_size_locations">30</argument>
+            <argument parser_action="blank_to_None" type="string" name="estimate_config">Resources({})</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.household_location_choice_model</module>
-              <classname>HouseholdLocationChoiceModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.household_location_choice_model</class_module>
+              <class_name>HouseholdLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <agent_set parser_action="blank_to_None" type="string">household</agent_set>
-            <data_objects type="string">datasets</data_objects>
-            <agents_index parser_action="blank_to_None" type="string">index</agents_index>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'household_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'household_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'household_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'household_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
-            <name type="string">prepare_for_estimate</name>
-            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
-            <specification_table type="string">'household_location_choice_model_specification'</specification_table>
-            <agent_set parser_action="blank_to_None" type="string">household</agent_set>
-            <index_to_unplace parser_action="blank_to_None" type="string">hrm_index</index_to_unplace>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <filter parser_action="blank_to_None" type="string"/>
-            <join_datasets type="string">True</join_datasets>
-            <agents_for_estimation_table parser_action="blank_to_None" type="string">'households_for_estimation'</agents_for_estimation_table>
-            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
-            <data_objects type="string">datasets</data_objects>
-            <models_to_run type="list" parser_action="skip">['household_relocation_model']</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="float" name="portion_to_unplace">0.08333333333</argument>
+            <argument type="string" name="specification_table">'household_location_choice_model_specification'</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument parser_action="blank_to_None" type="string" name="index_to_unplace">hrm_index</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="join_datasets">True</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'households_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <submodel type="submodel">
-                <submodel_id type="integer">-2</submodel_id>
+            <submodel type="submodel" hidden="Children" name="submodel" submodel_id="-2">
                 <description type="string">No description</description>
                 <variables type="variable_list">ctir,iayb,phihwwdili,plihwwdihi,yhihdr,yhimu,pmhwwdim,ruwhhc</variables>
             </submodel>
         </specification>
-      </household_location_choice_model>
-      <employment_relocation_model type="model">
+      </model>
+      <model type="model" name="employment_relocation_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.employment_relocation_model_creator</module>
-              <classname>EmploymentRelocationModelCreator</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.employment_relocation_model_creator</class_module>
+              <class_name>EmploymentRelocationModelCreator</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">EmploymentRelocationModelCreator().get_model</name>
-            <probabilities parser_action="blank_to_None" type="string">'urbansim.employment_relocation_probabilities'</probabilities>
-            <location_id_name type="string">'grid_id'</location_id_name>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">EmploymentRelocationModelCreator().get_model</name>
+            <argument parser_action="blank_to_None" type="string" name="probabilities">'urbansim.employment_relocation_probabilities'</argument>
+            <argument type="string" name="location_id_name">'grid_id'</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output type="string">erm_resources</output>
-            <name type="string">prepare_for_run</name>
-            <rate_storage type="string">base_cache_storage</rate_storage>
-            <rate_table parser_action="blank_to_None" type="string">'annual_relocation_rates_for_jobs'</rate_table>
-            <what type="string">'jobs'</what>
+            <output type="string" name="output">erm_resources</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="rate_storage">base_cache_storage</argument>
+            <argument parser_action="blank_to_None" type="string" name="rate_table">'annual_relocation_rates_for_jobs'</argument>
+            <argument type="string" name="what">'jobs'</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <output type="string">erm_index</output>
-            <resources type="string">erm_resources</resources>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <output type="string" name="output">erm_index</output>
+            <argument type="string" name="resources">erm_resources</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
           </run>
         </structure>
-      </employment_relocation_model>
-      <employment_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="employment_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+          </estimation_config><structure type="dictionary">
           <group_by_attribute type="tuple">
-            <grouping_table type="string">job_building_type</grouping_table>
-            <grouping_column type="string">name</grouping_column>
+            <argument type="string" name="grouping_table">job_building_type</argument>
+            <argument type="string" name="grouping_column">name</argument>
           </group_by_attribute>
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':50000}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <specification type="string">specification</specification>
-            <maximum_runs type="integer">3</maximum_runs>
-            <agents_index parser_action="blank_to_None" type="string">erm_index</agents_index>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':50000}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="integer" name="maximum_runs">3</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">EmploymentLocationChoiceModel</name>
-            <number_of_units_string parser_action="blank_to_None" type="string">'total_number_of_possible_SSS_jobs'</number_of_units_string>
-            <compute_capacity_flag type="boolean">True</compute_capacity_flag>
-            <capacity_string parser_action="blank_to_None" type="string">'vacant_SSS_job_space'</capacity_string>
-            <estimation_weight_string parser_action="blank_to_None" type="string">'total_number_of_possible_SSS_jobs'</estimation_weight_string>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-            <choices type="string">'urbansim.lottery_choices'</choices>
-            <filter parser_action="blank_to_None" type="string"/>
-            <variable_package type="string">'urbansim'</variable_package>
-            <run_config parser_action="blank_to_None" type="dictionary">
-              <lottery_max_iterations type="integer">3</lottery_max_iterations>
-              <agent_units_string parser_action="blank_to_None" type="string"/>
-            </run_config>
-            <location_set type="string">gridcell</location_set>
-            <estimation_size_agents type="float">1.0</estimation_size_agents>
-            <sampler parser_action="blank_to_None" type="string">'opus_core.samplers.weighted_sampler'</sampler>
-            <simulation_weight_string parser_action="blank_to_None" type="string"/>
-            <estimation type="string">'opus_core.bhhh_mnl_estimation'</estimation>
-            <sample_size_locations type="integer">30</sample_size_locations>
+            <name type="string" name="name">EmploymentLocationChoiceModel</name>
+            <argument parser_action="blank_to_None" type="string" name="number_of_units_string">'total_number_of_possible_SSS_jobs'</argument>
+            <argument type="boolean" name="compute_capacity_flag">True</argument>
+            <argument parser_action="blank_to_None" type="string" name="capacity_string">'vacant_SSS_job_space'</argument>
+            <argument parser_action="blank_to_None" type="string" name="estimation_weight_string">'total_number_of_possible_SSS_jobs'</argument>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="variable_package">'urbansim'</argument>
+            <argument parser_action="blank_to_None" type="dictionary" name="run_config">
+              <key type="integer" name="lottery_max_iterations">3</key>
+              <key parser_action="blank_to_None" type="string" name="agent_units_string"/>
+            </argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="float" name="estimation_size_agents">1.0</argument>
+            <argument parser_action="blank_to_None" type="string" name="sampler">'opus_core.samplers.weighted_sampler'</argument>
+            <argument parser_action="blank_to_None" type="string" name="simulation_weight_string"/>
+            <argument type="string" name="estimation">'opus_core.bhhh_mnl_estimation'</argument>
+            <argument type="integer" name="sample_size_locations">30</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.employment_location_choice_model</module>
-              <classname>EmploymentLocationChoiceModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.employment_location_choice_model</class_module>
+              <class_name>EmploymentLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <data_objects type="string">datasets</data_objects>
-            <agents_index parser_action="blank_to_None" type="string">index</agents_index>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'employment_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'employment_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
-            <name type="string">prepare_for_estimate</name>
-            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
-            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <filter parser_action="blank_to_None" type="string"/>
-            <data_objects type="string">datasets</data_objects>
-            <agents_for_estimation_table parser_action="blank_to_None" type="string">'jobs_for_estimation'</agents_for_estimation_table>
-            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
-            <join_datasets type="boolean">False</join_datasets>
-            <models_to_run type="list" parser_action="skip">[]</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="float" name="portion_to_unplace">0.08333333333</argument>
+            <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'jobs_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
+            <argument type="boolean" name="join_datasets">False</argument>
+            </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
-            <industrial type="dictionary">
-                <submodel type="submodel">
-                    <submodel_id type="integer">1</submodel_id>
+            <submodel_group type="submodel_group" name="industrial">
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-                <submodel type="submodel">
-                    <submodel_id type="integer">2</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="2">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-                <submodel type="submodel">
-                    <submodel_id type="integer">3</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="3">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,ble_rew</variables>
                 </submodel>
-                <submodel type="submodel">
-                    <submodel_id type="integer">4</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="4">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">5</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="5">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">6</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="6">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw,ble_sew</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">7</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="7">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
                 </submodel>
-            </industrial>
-            <commercial type="dictionary">
+            </submodel_group>
+            <submodel_group type="submodel_group" name="commercial">
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">1</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">2</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="2">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">3</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="3">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,ble_rew</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">4</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="4">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">5</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="5">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bhwy,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">6</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="6">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">7</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="7">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw,ble_saw</variables>
                 </submodel>
 
-                <submodel type="submodel">
-                    <submodel_id type="integer">8</submodel_id>
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="8">
                     <description type="string">No description</description>
                     <variables type="variable_list">blnrsfw</variables>
                 </submodel>
-            </commercial>
-            <home_based type="dictionary">
-                <submodel type="submodel">
-                    <submodel_id type="integer">-2</submodel_id>
+            </submodel_group>
+            <submodel_group type="submodel_group" name="home_based">
+                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="-2">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltlv,bpliw,bpmiw,blwap_1,ble_sew,btt_cbd</variables>
                 </submodel>
-            </home_based>
+            </submodel_group>
         </specification>
-      </employment_location_choice_model>
-      <distribute_unplaced_jobs_model type="model">
+      </model>
+      <model type="model" name="distribute_unplaced_jobs_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.distribute_unplaced_jobs_model</module>
-              <classname>DistributeUnplacedJobsModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.distribute_unplaced_jobs_model</class_module>
+              <class_name>DistributeUnplacedJobsModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">DistributeUnplacedJobsModel</name>
-            <filter parser_action="blank_to_None" type="string"/>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">DistributeUnplacedJobsModel</name>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <run type="dictionary">
-            <agents_filter parser_action="blank_to_None" type="string"/>
-            <location_set type="string">gridcell</location_set>
-            <data_objects type="string">datasets</data_objects>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <argument parser_action="blank_to_None" type="string" name="agents_filter"/>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
           </run>
         </structure>
-      </distribute_unplaced_jobs_model>
-      <governmental_employment_location_choice_model type="model">
+      </model>
+      <model type="model" name="governmental_employment_location_choice_model">
         <structure type="dictionary">
-          <import type="dictionary">
-              <module>urbansim.models.scaling_jobs_model</module>
-              <classname>ScalingJobsModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.scaling_jobs_model</class_module>
+              <class_name>ScalingJobsModel</class_name>
           </import>
           <init type="dictionary">
-            <name type="string">ScalingJobsModel</name>
-            <filter parser_action="blank_to_None" type="string"/>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <name type="string" name="name">ScalingJobsModel</name>
+            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <run type="dictionary">
-            <agents_index parser_action="blank_to_None" type="string">erm_index</agents_index>
-            <location_set type="string">gridcell</location_set>
-            <data_objects type="string">datasets</data_objects>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="location_set">gridcell</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
           </run>
         </structure>
-      </governmental_employment_location_choice_model>
-      <home_based_employment_location_choice_model type="model">
-        <structure type="dictionary">
+      </model>
+      <model type="model" name="home_based_employment_location_choice_model">
+        <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+          </estimation_config><structure type="dictionary">
           <group_by_attribute type="tuple">('job_building_type', 'name')</group_by_attribute>
           <run type="dictionary">
-            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':50000}</chunk_specification>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <specification type="string">specification</specification>
-            <maximum_runs type="integer">5</maximum_runs>
-            <agents_index parser_action="blank_to_None" type="string">erm_index</agents_index>
-            <data_objects type="string">datasets</data_objects>
-            <debuglevel type="string">debuglevel</debuglevel>
-            <coefficients type="string">coefficients</coefficients>
+            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':50000}</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="specification">specification</argument>
+            <argument type="integer" name="maximum_runs">5</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
+            <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
-            <name type="string">EmploymentLocationChoiceModel</name>
-            <number_of_units_string parser_action="blank_to_None" type="string">'residential_units'</number_of_units_string>
-            <estimation_weight_string parser_action="blank_to_None" type="string">'residential_units'</estimation_weight_string>
-            <dataset_pool type="string">dataset_pool</dataset_pool>
-            <choices type="string">'urbansim.lottery_choices'</choices>
-            <sample_size_locations type="integer">30</sample_size_locations>
-            <location_set type="string">gridcell</location_set>
+            <name type="string" name="name">EmploymentLocationChoiceModel</name>
+            <argument parser_action="blank_to_None" type="string" name="number_of_units_string">'residential_units'</argument>
+            <argument parser_action="blank_to_None" type="string" name="estimation_weight_string">'residential_units'</argument>
+            <argument type="string" name="dataset_pool">dataset_pool</argument>
+            <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
+            <argument type="integer" name="sample_size_locations">30</argument>
+            <argument type="string" name="location_set">gridcell</argument>
           </init>
-          <import type="dictionary">
-              <module>urbansim.models.employment_location_choice_model</module>
-              <classname>EmploymentLocationChoiceModel</classname>
+          <import type="dictionary" name="import">
+              <class_module>urbansim.models.employment_location_choice_model</class_module>
+              <class_name>EmploymentLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
-            <output type="string">(coefficients, _)</output>
-            <specification type="string">specification</specification>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <data_objects type="string">datasets</data_objects>
-            <agents_index parser_action="blank_to_None" type="string">index</agents_index>
-            <debuglevel type="string">debuglevel</debuglevel>
+            <output type="string" name="output">(coefficients, _)</output>
+            <argument type="string" name="specification">specification</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output type="string">(specification, coefficients)</output>
-            <name type="string">prepare_for_run</name>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'employment_location_choice_model_coefficients'</coefficients_table>
-            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
+            <output type="string" name="output">(specification, coefficients)</output>
+            <name type="string" name="name">prepare_for_run</name>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_storage">base_cache_storage</argument>
+            <argument type="string" name="coefficients_table">'employment_location_choice_model_coefficients'</argument>
+            <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
-            <output type="string">(specification, index)</output>
-            <name type="string">prepare_for_estimate</name>
-            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
-            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
-            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
-            <specification_storage type="string">base_cache_storage</specification_storage>
-            <data_objects type="string">datasets</data_objects>
-            <agents_for_estimation_table parser_action="blank_to_None" type="string">'jobs_for_estimation'</agents_for_estimation_table>
-            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
-            <models_to_run type="list" parser_action="skip">[]</models_to_run>
-          </prepare_for_estimate>
+            <output type="string" name="output">(specification, index)</output>
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument type="float" name="portion_to_unplace">0.08333333333</argument>
+            <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
+            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'jobs_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
+            </prepare_for_estimate>
         </structure>
-      </home_based_employment_location_choice_model>
-    </model_system>
-  </model_manager>
+      </model>
+    </models><templates hidden="True" parser_action="skip" name="Model Templates"/></model_manager>
   <scenario_manager>
-    <default_scenario type="scenario">
-      <data type="category" cloneable="True">
+    <scenario type="scenario" name="default_scenario">
+      <data cloneable="True" type="category">
         <baseyear_database config_name="scenario_database_configuration" type="class">
-          <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
-          <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
-          <protocol type="string"/>
-          <host_name type="string"/>
-          <user_name type="string"/>
-          <password type="password"/>
-          <database_name type="string"/>
+          <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+          <argument type="string" name="protocol"/>
+          <argument type="string" name="host_name"/>
+          <argument type="string" name="user_name"/>
+          <argument type="password" name="password"/>
+          <argument type="string" name="database_name"/>
         </baseyear_database>
         <cache_configuration type="category">
           <cache_directory type="string"/>
           <creating_baseyear_cache_configuration type="class">
-            <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
-            <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-            <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-            <tables_to_cache type="selectable_list">
-              <annual_employment_control_totals type="table" choices="Cache|Skip">Cache</annual_employment_control_totals>
-              <annual_household_control_totals type="table" choices="Cache|Skip">Cache</annual_household_control_totals>
-              <development_event_history type="table" choices="Cache|Skip">Cache</development_event_history>
-              <gridcells type="table" choices="Cache|Skip">Cache</gridcells>
-              <households type="table" choices="Cache|Skip">Cache</households>
-              <job_building_types type="table" choices="Cache|Skip">Cache</job_building_types>
-              <jobs type="table" choices="Cache|Skip">Cache</jobs>
-              <travel_data type="table" choices="Cache|Skip">Cache</travel_data>
-              <zones type="table" choices="Cache|Skip">Cache</zones>
-              <fazes type="table" choices="Cache|Skip">Cache</fazes>
-              <commercial_development_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</commercial_development_location_choice_model_coefficients>
-              <commercial_development_location_choice_model_specification type="table" choices="Cache|Skip">Cache</commercial_development_location_choice_model_specification>
-              <commercial_employment_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</commercial_employment_location_choice_model_coefficients>
-              <commercial_employment_location_choice_model_specification type="table" choices="Cache|Skip">Cache</commercial_employment_location_choice_model_specification>
-              <home_based_employment_location_choice_model_specification type="table" choices="Cache|Skip">Cache</home_based_employment_location_choice_model_specification>
-              <home_based_employment_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</home_based_employment_location_choice_model_coefficients>
-              <industrial_employment_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</industrial_employment_location_choice_model_coefficients>
-              <industrial_employment_location_choice_model_specification type="table" choices="Cache|Skip">Cache</industrial_employment_location_choice_model_specification>
-              <industrial_development_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</industrial_development_location_choice_model_coefficients>
-              <industrial_development_location_choice_model_specification type="table" choices="Cache|Skip">Cache</industrial_development_location_choice_model_specification>
-              <residential_development_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</residential_development_location_choice_model_coefficients>
-              <residential_development_location_choice_model_specification type="table" choices="Cache|Skip">Cache</residential_development_location_choice_model_specification>
-              <urbansim_constants type="table" choices="Cache|Skip">Cache</urbansim_constants>
-              <household_location_choice_model_coefficients type="table" choices="Cache|Skip">Cache</household_location_choice_model_coefficients>
-              <household_location_choice_model_specification type="table" choices="Cache|Skip">Cache</household_location_choice_model_specification>
-              <land_price_model_coefficients type="table" choices="Cache|Skip">Cache</land_price_model_coefficients>
-              <land_price_model_specification type="table" choices="Cache|Skip">Cache</land_price_model_specification>
-              <residential_land_share_model_coefficients type="table" choices="Cache|Skip">Cache</residential_land_share_model_coefficients>
-              <residential_land_share_model_specification type="table" choices="Cache|Skip">Cache</residential_land_share_model_specification>
-              <plan_type_group_definitions type="table" choices="Cache|Skip">Cache</plan_type_group_definitions>
-              <plan_type_groups type="table" choices="Cache|Skip">Cache</plan_type_groups>
-              <household_characteristics_for_ht type="table" choices="Cache|Skip">Cache</household_characteristics_for_ht>
-              <development_types type="table" choices="Cache|Skip">Cache</development_types>
-              <development_type_group_definitions type="table" choices="Cache|Skip">Cache</development_type_group_definitions>
-              <development_constraints type="table" choices="Cache|Skip">Cache</development_constraints>
-              <annual_relocation_rates_for_households type="table" choices="Cache|Skip">Cache</annual_relocation_rates_for_households>
-              <annual_relocation_rates_for_jobs type="table" choices="Cache|Skip">Cache</annual_relocation_rates_for_jobs>
-              <base_year type="table" choices="Cache|Skip">Cache</base_year>
-              <development_events type="table" choices="Cache|Skip">Cache</development_events>
-              <development_type_groups type="table" choices="Cache|Skip">Cache</development_type_groups>
-              <employment_adhoc_sector_group_definitions type="table" choices="Cache|Skip">Cache</employment_adhoc_sector_group_definitions>
-              <employment_adhoc_sector_groups type="table" choices="Cache|Skip">Cache</employment_adhoc_sector_groups>
-              <employment_events type="table" choices="Cache|Skip">Cache</employment_events>
-              <employment_sectors type="table" choices="Cache|Skip">Cache</employment_sectors>
-              <land_use_events type="table" choices="Cache|Skip">Cache</land_use_events>
-              <plan_types type="table" choices="Cache|Skip">Cache</plan_types>
-              <race_names type="table" choices="Cache|Skip">Cache</race_names>
-              <target_vacancies type="table" choices="Cache|Skip">Cache</target_vacancies>
-              <development_events_exogenous type="table" choices="Cache|Skip">Cache</development_events_exogenous>
-              <jobs_for_estimation type="table" choices="Cache|Skip">Skip</jobs_for_estimation>
-              <households_for_estimation type="table" choices="Cache|Skip">Skip</households_for_estimation>
-              <buildings type="table" choices="Cache|Skip">Skip</buildings>
-              <building_types type="table" choices="Cache|Skip">Skip</building_types>
-              <counties type="table" choices="Cache|Skip">Skip</counties>
-              <cities type="table" choices="Cache|Skip">Skip</cities>
-              <large_areas type="table" choices="Cache|Skip">Skip</large_areas>
-            </tables_to_cache>
-            <tables_to_cache_nchunks type="dictionary">
+            <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+            <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+            <argument type="string" name="cache_scenario_database">urbansim.model_coordinators.cache_scenario_database</argument>
+            <argument type="selectable_list" name="tables_to_cache">
+              <selectable type="selectable" name="annual_employment_control_totals">True</selectable>
+              <selectable type="selectable" name="annual_household_control_totals">True</selectable>
+              <selectable type="selectable" name="development_event_history">True</selectable>
+              <selectable type="selectable" name="gridcells">True</selectable>
+              <selectable type="selectable" name="households">True</selectable>
+              <selectable type="selectable" name="job_building_types">True</selectable>
+              <selectable type="selectable" name="jobs">True</selectable>
+              <selectable type="selectable" name="travel_data">True</selectable>
+              <selectable type="selectable" name="zones">True</selectable>
+              <selectable type="selectable" name="fazes">True</selectable>
+              <selectable type="selectable" name="commercial_development_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="commercial_development_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="commercial_employment_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="commercial_employment_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="home_based_employment_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="home_based_employment_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="industrial_employment_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="industrial_employment_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="industrial_development_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="industrial_development_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="residential_development_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="residential_development_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="urbansim_constants">True</selectable>
+              <selectable type="selectable" name="household_location_choice_model_coefficients">True</selectable>
+              <selectable type="selectable" name="household_location_choice_model_specification">True</selectable>
+              <selectable type="selectable" name="land_price_model_coefficients">True</selectable>
+              <selectable type="selectable" name="land_price_model_specification">True</selectable>
+              <selectable type="selectable" name="residential_land_share_model_coefficients">True</selectable>
+              <selectable type="selectable" name="residential_land_share_model_specification">True</selectable>
+              <selectable type="selectable" name="plan_type_group_definitions">True</selectable>
+              <selectable type="selectable" name="plan_type_groups">True</selectable>
+              <selectable type="selectable" name="household_characteristics_for_ht">True</selectable>
+              <selectable type="selectable" name="development_types">True</selectable>
+              <selectable type="selectable" name="development_type_group_definitions">True</selectable>
+              <selectable type="selectable" name="development_constraints">True</selectable>
+              <selectable type="selectable" name="annual_relocation_rates_for_households">True</selectable>
+              <selectable type="selectable" name="annual_relocation_rates_for_jobs">True</selectable>
+              <selectable type="selectable" name="base_year">True</selectable>
+              <selectable type="selectable" name="development_events">True</selectable>
+              <selectable type="selectable" name="development_type_groups">True</selectable>
+              <selectable type="selectable" name="employment_adhoc_sector_group_definitions">True</selectable>
+              <selectable type="selectable" name="employment_adhoc_sector_groups">True</selectable>
+              <selectable type="selectable" name="employment_events">True</selectable>
+              <selectable type="selectable" name="employment_sectors">True</selectable>
+              <selectable type="selectable" name="land_use_events">True</selectable>
+              <selectable type="selectable" name="plan_types">True</selectable>
+              <selectable type="selectable" name="race_names">True</selectable>
+              <selectable type="selectable" name="target_vacancies">True</selectable>
+              <selectable type="selectable" name="development_events_exogenous">True</selectable>
+              <selectable type="selectable" name="jobs_for_estimation">False</selectable>
+              <selectable type="selectable" name="households_for_estimation">False</selectable>
+              <selectable type="selectable" name="buildings">False</selectable>
+              <selectable type="selectable" name="building_types">False</selectable>
+              <selectable type="selectable" name="counties">False</selectable>
+              <selectable type="selectable" name="cities">False</selectable>
+              <selectable type="selectable" name="large_areas">False</selectable>
+            </argument>
+            <argument type="dictionary" name="tables_to_cache_nchunks">
               <gridcells type="integer">1</gridcells>
-            </tables_to_cache_nchunks>
-            <tables_to_copy_to_previous_years type="dictionary"/>
+            </argument>
+            <argument type="dictionary" name="tables_to_copy_to_previous_years"/>
           </creating_baseyear_cache_configuration>
         </cache_configuration>
       </data>
       <model_system type="category">
         <models_to_run config_name="models" type="selectable_list">
-          <prescheduled_events type="model_choice" choices="Run|Skip">Run</prescheduled_events>
-          <events_coordinator type="model_choice" choices="Run|Skip">Run</events_coordinator>
-          <residential_land_share_model type="model_choice" choices="Run|Skip">Run</residential_land_share_model>
-          <land_price_model type="model_choice" choices="Run|Skip">Run</land_price_model>
-          <development_project_transition_model type="model_choice" choices="Run|Skip">Run</development_project_transition_model>
-          <residential_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</residential_development_project_location_choice_model>
-          <commercial_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</commercial_development_project_location_choice_model>
-          <industrial_development_project_location_choice_model type="model_choice" choices="Run|Skip">Run</industrial_development_project_location_choice_model>
-          <development_event_transition_model type="model_choice" choices="Run|Skip">Run</development_event_transition_model>
-          <events_coordinator type="model_choice" choices="Run|Skip">Run</events_coordinator>
-          <residential_land_share_model type="model_choice" choices="Run|Skip">Run</residential_land_share_model>
-          <household_transition_model type="model_choice" choices="Run|Skip">Run</household_transition_model>
-          <employment_transition_model type="model_choice" choices="Run|Skip">Run</employment_transition_model>
-          <household_relocation_model type="model_choice" choices="Run|Skip">Run</household_relocation_model>
-          <household_location_choice_model type="model_choice" choices="Run|Skip">Run</household_location_choice_model>
-          <employment_relocation_model type="model_choice" choices="Run|Skip">Run</employment_relocation_model>
-          <employment_location_choice_model type="model_choice" choices="Run|Skip">Run<group_members type="string">_all_</group_members>          </employment_location_choice_model>
-          <distribute_unplaced_jobs_model type="model_choice" choices="Run|Skip">Run</distribute_unplaced_jobs_model>
+          <selectable type="selectable" name="prescheduled_events">True</selectable>
+          <selectable type="selectable" name="events_coordinator">True</selectable>
+          <selectable type="selectable" name="residential_land_share_model">True</selectable>
+          <selectable type="selectable" name="land_price_model">True</selectable>
+          <selectable type="selectable" name="development_project_transition_model">True</selectable>
+          <selectable type="selectable" name="residential_development_project_location_choice_model">True</selectable>
+          <selectable type="selectable" name="commercial_development_project_location_choice_model">True</selectable>
+          <selectable type="selectable" name="industrial_development_project_location_choice_model">True</selectable>
+          <selectable type="selectable" name="development_event_transition_model">True</selectable>
+          <selectable type="selectable" name="events_coordinator">True</selectable>
+          <selectable type="selectable" name="residential_land_share_model">True</selectable>
+          <selectable type="selectable" name="household_transition_model">True</selectable>
+          <selectable type="selectable" name="employment_transition_model">True</selectable>
+          <selectable type="selectable" name="household_relocation_model">True</selectable>
+          <selectable type="selectable" name="household_location_choice_model">True</selectable>
+          <selectable type="selectable" name="employment_relocation_model">True</selectable>
+          <selectable type="selectable" name="employment_location_choice_model">True<group_members type="string">_all_</group_members>          </selectable>
+          <selectable type="selectable" name="distribute_unplaced_jobs_model">True</selectable>
         </models_to_run>
         <others type="category">
           <base_year type="integer">1980</base_year>
@@ -1011,40 +987,40 @@
  
       <advanced type="category">
         <datasets_to_cache_after_each_model type="selectable_list">
-          <gridcell type="dataset" choices="Cache|Skip">Cache</gridcell>
-          <household type="dataset" choices="Cache|Skip">Cache</household>
-          <job type="dataset" choices="Cache|Skip">Cache</job>
-          <travel_data type="dataset" choices="Cache|Skip">Skip</travel_data>
-          <zone type="dataset" choices="Cache|Skip">Skip</zone>
+          <selectable type="selectable" name="gridcell">True</selectable>
+          <selectable type="selectable" name="household">True</selectable>
+          <selectable type="selectable" name="job">True</selectable>
+          <selectable type="selectable" name="travel_data">False</selectable>
+          <selectable type="selectable" name="zone">False</selectable>
         </datasets_to_cache_after_each_model>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <gridcell type="dataset" choices="Load|Skip">Load<nchunks type="integer">2</nchunks>          </gridcell>
-          <household type="dataset" choices="Load|Skip">Load</household>
-          <job type="dataset" choices="Load|Skip">Load</job>
-          <zone type="dataset" choices="Load|Skip">Load</zone>
-          <development_type type="dataset" choices="Load|Skip">Load</development_type>
-          <target_vacancy type="dataset" choices="Load|Skip">Load</target_vacancy>
-          <development_event_history type="dataset" choices="Load|Skip">Load</development_event_history>
-          <development_constraint type="dataset" choices="Load|Skip">Load</development_constraint>
-          <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
-          <building_type type="dataset" choices="Load|Skip">Skip</building_type>
-          <building type="dataset" choices="Load|Skip">Skip</building>
-          <vacant_land_and_building_type type="dataset" choices="Load|Skip">Load</vacant_land_and_building_type>
-          <urbansim_constant type="dataset" choices="Load|Skip">Load</urbansim_constant>
+          <selectable type="selectable" name="gridcell">True<nchunks type="integer">2</nchunks>          </selectable>
+          <selectable type="selectable" name="household">True</selectable>
+          <selectable type="selectable" name="job">True</selectable>
+          <selectable type="selectable" name="zone">True</selectable>
+          <selectable type="selectable" name="development_type">True</selectable>
+          <selectable type="selectable" name="target_vacancy">True</selectable>
+          <selectable type="selectable" name="development_event_history">True</selectable>
+          <selectable type="selectable" name="development_constraint">True</selectable>
+          <selectable type="selectable" name="job_building_type">True</selectable>
+          <selectable type="selectable" name="building_type">False</selectable>
+          <selectable type="selectable" name="building">False</selectable>
+          <selectable type="selectable" name="vacant_land_and_building_type">True</selectable>
+          <selectable type="selectable" name="urbansim_constant">True</selectable>
         </datasets_to_preload>
         <model_system type="string">urbansim.model_coordinators.model_system</model_system>
         <debuglevel type="integer">4</debuglevel>
-        <flush_variables type="boolean" choices="True|False">False</flush_variables>
+        <flush_variables type="boolean">False</flush_variables>
         <seed type="integer">0</seed>
         <chunk_specification type="dictionary">
           <nchunks type="integer">1</nchunks>
         </chunk_specification>
         <dataset_pool_configuration type="class">
-          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-          <package_order type="list">['urbansim', 'opus_core']</package_order>
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument type="list" name="package_order">['urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
       </advanced>
-    </default_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

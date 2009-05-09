@@ -1,23 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-        
-        
-<!-- this configuration has a bunch of comments 
-   and whitespace -->
-   
 <opus_project>
-
-
-  <general>
-    <project_name type="string">test_project</project_name>
-  </general>
-  
-<scenario_manager>
-<test_scenario type="scenario">
-   
-
-<description type="string">a test configuration</description>
-  <!-- another comment -->
-  
-</test_scenario>
-</scenario_manager>
+	<xml_version>2.0</xml_version>
+	<general>
+		<project_name type="string">test_project</project_name>
+	</general>
+	<scenario_manager>
+		<scenario type="scenario" name="test_scenario">
+			<description type="string">a test configuration</description>
+		</scenario>
+	</scenario_manager>
 </opus_project>

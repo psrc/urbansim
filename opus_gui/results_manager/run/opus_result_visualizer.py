@@ -10,7 +10,7 @@ from opus_gui.results_manager.run.indicator_framework_interface import Indicator
 from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.table import Table
 from opus_core.storage_factory import StorageFactory
 from opus_gui.util.exception_formatter import formatExceptionInfo
-from opus_gui.general_manager.general_manager import get_available_spatial_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
 
 class OpusResultVisualizer(object):
     def __init__(self,

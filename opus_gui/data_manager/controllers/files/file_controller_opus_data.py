@@ -2,51 +2,35 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from StringIO import StringIO
 
-
-# PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QModelIndex
 from PyQt4.QtGui import QTextBrowser, QGroupBox, QTableView, QWidget, QIcon, QAction, QVBoxLayout, QMenu, QCursor
 
-#from opus_gui.data_manager.run_tool import *
+from opus_gui.util.icon_library import IconLibrary
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.models.table_model import TableModel
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
-from StringIO import StringIO
-
 from opus_gui.abstract_manager.controllers.files.file_controller import FileController
+
 
 class FileController_OpusData(FileController):
     def __init__(self, manager, data_path, parent_widget):
 
-        FileController.__init__(self,
-                                manager,
-                                data_path,
-                                parent_widget)
+        FileController.__init__(self, manager, data_path, parent_widget)
 
-        self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
-        self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
+        self.actRefresh = QAction(IconLibrary.icon('reload'), "Refresh Tree", self.treeview)
+        QObject.connect(self.actRefresh, SIGNAL("triggered()"), self.refreshAction)
 
-        self.actRefresh = QAction(self.refreshIcon, "Refresh Tree",
-                                  self.treeview)
-        QObject.connect(self.actRefresh, SIGNAL("triggered()"),
-                        self.refreshAction)
+        self.actViewDataset = QAction(IconLibrary.icon('inspect'), "View Dataset", self.treeview)
+        QObject.connect(self.actViewDataset, SIGNAL("triggered()"), self.viewDatasetAction)
 
-        self.actViewDataset = QAction(self.applicationIcon, "View Dataset",
-                                      self.treeview)
-        QObject.connect(self.actViewDataset, SIGNAL("triggered()"),
-                        self.viewDatasetAction)
+        self.actOpenTextFile = QAction(IconLibrary.icon('text'), "Open Text File", self.treeview)
+        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"), self.openTextFile)
 
-        self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
-                                       self.treeview)
-        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
-                        self.openTextFile)
-
-        self.tool_library_node = \
-            self.manager.project.find('data_manager/Tool_Library')
+        self.tool_library_node = self.manager.project.find('data_manager/tool_library')
 
     def viewDatasetAction(self):
         #print "viewDatasetAction"
@@ -61,9 +45,6 @@ class FileController_OpusData(FileController):
         # temporarily use the table name for the dataset name
         # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
-
-        # CK: package_order doesn't seem to be used anymore -- commenting out
-        # this section
 
 #        general = self.mainwindow.toolboxBase.opus_core_xml_configuration.get_section('general')
 #        # problem: this gets the package order for the current project, but the viewer shows all the data
@@ -119,7 +100,7 @@ class FileController_OpusData(FileController):
 
         widgetLayout.addWidget(tableGroupBox)
 
-        container.tabIcon = QIcon(":/Images/Images/cog.png")
+        container.tabIcon = IconLibrary.icon('inspect')
         container.tabLabel = QString(table_name)
         self.manager._attach_tab(container)
 
@@ -341,7 +322,7 @@ class FileController_OpusData(FileController):
             params['opus_table_name'] = str(self.model.fileName(self.currentIndex))
         return params
 
-    def processCustomMenu(self, position):
+    def process_custom_menu(self, position):
         self.currentColumn = self.treeview.indexAt(position).column()
         self.currentIndex = self.treeview.indexAt(position)
 
@@ -355,11 +336,11 @@ class FileController_OpusData(FileController):
                 choices = self.fillInAvailableTools()
                 if self.classification == "dataset":
                     self.export_menu = QMenu(QString('Export Opus dataset to'), self.treeview)
-                    self.export_menu.setIcon(self.tableGoIcon)
+                    self.export_menu.setIcon(IconLibrary.icon('export'))
                     if len(choices) > 0:
                         self.dynactions = {}
                         for export_type,tool_node in choices.iteritems():
-                            dynaction = QAction(self.applicationIcon, export_type, self.treeview)
+                            dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),
@@ -370,11 +351,11 @@ class FileController_OpusData(FileController):
                     self.menu.addAction(self.actViewDataset)
                 if self.classification == "database":
                     self.export_menu = QMenu(QString('Export Opus database to'))
-                    self.export_menu.setIcon(self.tableGoIcon)
+                    self.export_menu.setIcon(IconLibrary.icon('export'))
                     if len(choices) > 0:
                         self.dynactions = {}
                         for export_type,tool_node in choices.iteritems():
-                            dynaction = QAction(self.applicationIcon, export_type, self.treeview)
+                            dynaction = QAction(IconLibrary.icon('spreadsheet'), export_type, self.treeview)
                             self.export_menu.addAction(dynaction)
                             self.dynactions[export_type] = tool_node
                         QObject.connect(self.export_menu, SIGNAL("triggered(QAction*)"),

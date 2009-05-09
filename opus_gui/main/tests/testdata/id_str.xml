@@ -1,0 +1,11 @@
+<opus_project>
+    <general>
+        <project_name type="string">test_project</project_name>
+    </general>
+    <node name='anode'>
+        <node name='grandchild' is_grandchild='yep' />
+    </node>
+    <node/>
+    <node/>
+</opus_project>
+

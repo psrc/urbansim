@@ -16,8 +16,9 @@ from opus_gui.results_manager.controllers.tabs.view_animation_form import ViewAn
 from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableForm
 from opus_core.logger import logger
 
-from opus_gui.general_manager.general_manager import get_available_indicator_nodes,get_available_indicator_names
-from opus_gui.results_manager.results_manager_functions import get_simulation_runs,get_years_for_simulation_run
+from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
+from opus_gui.results_manager.results_manager_functions import get_simulation_runs
+from opus_gui.results_manager.results_manager_functions import get_years_for_simulation_run
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class ResultBrowser(QWidget, Ui_ResultsBrowser):
@@ -99,7 +100,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             j = 0
 
             item = QTableWidgetItem()
-            item.setText(indicator.tag)
+            item.setText(indicator.get('name'))
             self.tableWidget.setItem(i,0,item)
 
             item = QTableWidgetItem()
@@ -126,7 +127,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.lstAvailableRuns.clear()
         idx = -1
         for i, run in enumerate(runs):
-            run_name = run.tag
+            run_name = run.get('name')
             if run_name == 'base_year_data':
                 idx = i
 
@@ -232,7 +233,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         dataset = None
         for i in indicators:
-            if i.tag == indicator_name:
+            if i.get('name') == indicator_name:
                 dataset = i.get('dataset')
                 break
 

@@ -32,7 +32,7 @@ class DependencyQuery:
         self.var_list = []
         #TODO: if we update to ElementTree 1.3, use
         # model_manager/model_system//specification/[@type='submodel']/variables
-        for x in config._find_node('model_manager/model_system//specification'):
+        for x in config._find_node('model_manager/models//specification'):
             l = []
             for y in x:
                 if y.get('type') == 'submodel':
@@ -50,7 +50,7 @@ class DependencyQuery:
         #creates a fake dataset, required for variable resolution
         def create_fake_dataset(dataset_name):
             storage = StorageFactory().get_storage('dict_storage')
-            
+
             storage.write_table(
                 table_name='fake_dataset',
                 table_data={
@@ -67,19 +67,19 @@ class DependencyQuery:
         except LookupError:
             print "LOOKUP ERROR: " + name
             return None
-    
+
     #given a name, returns the tree with the model at the root, and the vars it depends on as leaves
     def get_model_vars(self, name):
         def find(f, seq):
             for item in seq:
-                if f(item): 
+                if f(item):
                     return item
         model = find(lambda x: x[0] == name, self.var_tree)
         if model == None:
             raise "Model " + name + " not found."
         else:
             return model
-    
+
     # returns a list of VariableNames a model depends on
     def get_model_var_list(self, name):
         ret = []
@@ -89,7 +89,7 @@ class DependencyQuery:
                 rec(x[1])
         rec(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name)[1])))
         return elim_dups(ret)
-    
+
     #get a dependency tree for a variable given its name
     def get_dep_tree_from_name(self, name):
         varclass = self.get_var(name)
@@ -123,14 +123,14 @@ class DependencyQuery:
 class DependencyChart:
     def __init__(self, config):
         self.query = DependencyQuery(config)
-    
+
     def graph_variable(self, out, var, lr=True, dpi=60):
         self.graph_tree(var if out == None else out, self.query.vars_tree([var]), lr, dpi)
     def graph_model(self, out, model, lr=True, dpi=60):
         self.graph_tree(model if out == None else out, self.query.model_tree(model), lr, dpi)
     def graph_all(self, out, lr=True, dpi=60):
         self.graph_tree(out, self.query.all_models_tree(), lr, dpi)
-    
+
     #processes a tree into a list of lines, in dot format
     #final } is left off, so that more attributes may be added.
     def tree_to_dot(self, trees, lr=True, dpi=60):
@@ -141,7 +141,7 @@ class DependencyChart:
         ret.insert(0, "digraph G {")
         ret.append("    " + ("rankdir=LR\n" if lr else "") + "dpi=%d" % dpi)
         return ret
-    
+
     #generates an image file (using pydot) from a tree
     def graph_tree(self, fi, trees, lr, dpi):
         dot = Dot(rankdir=("LR" if lr else "TB"), dpi=str(dpi))
@@ -153,7 +153,7 @@ class DependencyChart:
                 dot.add_node(Node(tree[0], shape = {"primary":"diamond", "model":"box"}[tree[2]]))
         map(write_edges, trees)
         dot.write_png(fi + ".png")
-    
+
     #return latex-formatted table of a model's depndencies
     def model_table(self, model):
         vs = groupBy(self.query.get_model_var_list(model), lambda x: x.get_dataset_name())
@@ -274,7 +274,7 @@ if __name__ == '__main__':
                       help="latex output file")
 
     (options, args) = parser.parse_args()
-    
+
     if options.xml_configuration == None:
         raise "Requires an xml configuration argument."
 
@@ -282,12 +282,12 @@ if __name__ == '__main__':
     #print chart.model_table(options.model)
     #temp = chart.query.vars_tree(chart.query.var_list)
     #print pretty_tree(chart.query.all_models_tree())
-    
+
     auto = AutogenVariableFactory("(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)")
     auto._analyze_tree(auto._expr_parsetree)
     auto._analyze_dataset_names()
     print(auto._generate_compute_method())
-    
+
     if options.latex != None:
         if options.model == None: raise "latex output requires specification of model"
         write_file(options.latex, chart.model_table(options.model))

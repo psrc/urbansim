@@ -58,7 +58,8 @@ class RunModelThread(QThread):
                            run_name = run_name,
                            start_year = baseyear,
                            end_year = end_year,
-                           run_id = run_id)      
+                           run_id = run_id)
+        
         
         
     def finishedCallback(self, success, run_name):

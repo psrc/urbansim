@@ -1,0 +1,264 @@
+<ui version="4.0" >
+ <class>VariableEditor</class>
+ <widget class="QDialog" name="VariableEditor" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>688</width>
+    <height>483</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="minimumSize" >
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="toolTip" >
+      <string>A name for this variable. Use only alphanumeric characters</string>
+     </property>
+     <property name="text" >
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="leVarName" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>Definition:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="le_var_def" >
+     <property name="font" >
+      <font>
+       <family>Courier New</family>
+      </font>
+     </property>
+     <property name="tabChangesFocus" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+     <item>
+      <widget class="QLabel" name="lbl_info" >
+       <property name="text" >
+        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This variable is an &lt;span style=" font-weight:600;">expression&lt;/span> that will be used as a &lt;span style=" font-weight:600;">Model Variable&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="pb_change" >
+       <property name="text" >
+        <string>Hide Settings</string>
+       </property>
+       <property name="toolButtonStyle" >
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="group_settings" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="title" >
+      <string>Variable settings</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3" >
+        <item>
+         <widget class="QRadioButton" name="rbUseModel" >
+          <property name="toolTip" >
+           <string>The variable will be used as a Model Variable</string>
+          </property>
+          <property name="text" >
+           <string>Use as a Model Variable</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rbUseIndicator" >
+          <property name="toolTip" >
+           <string>The variable will be used as an Indicator</string>
+          </property>
+          <property name="text" >
+           <string>Use as an Indicator</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rbUseBoth" >
+          <property name="toolTip" >
+           <string>The variable will be used as both a Model Variable and an Indicator</string>
+          </property>
+          <property name="text" >
+           <string>Use as as both Model Variable and Indicator</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_3" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <item>
+         <widget class="QLabel" name="label_4" >
+          <property name="minimumSize" >
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip" >
+           <string>Where the variable definition derives from. 
+An "expression" uses the Tekoa domain-specific language, 
+"python class" is a path to a variable defined in a python module (e.g. urbansim.gridcell.population), 
+and "primary attribute" refers to a primary attribute of the given dataset. </string>
+          </property>
+          <property name="text" >
+           <string>Variable type:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboVarType" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text" >
+            <string>expression</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>primary attribute</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Python class</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <widget class="QPushButton" name="btnCheckSyntax" >
+       <property name="toolTip" >
+        <string>Verify that the syntax of variable definition parses correctly.</string>
+       </property>
+       <property name="text" >
+        <string>Check syntax</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCheckData" >
+       <property name="toolTip" >
+        <string>Verify that the variable can be computed against the baseyear data for this project.</string>
+       </property>
+       <property name="text" >
+        <string>Check against data</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>441</width>
+         <height>24</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox" >
+       <property name="standardButtons" >
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

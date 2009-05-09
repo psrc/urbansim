@@ -6,7 +6,7 @@ from PyQt4.QtCore import QString
 from PyQt4.QtGui import QLabel, QLineEdit, QComboBox
 
 from opus_gui.models_manager.controllers.dialogs.model_from_template_dialog_base import ModelFromTemplateDialogBase
-from opus_gui.general_manager.general_manager import get_available_dataset_names
+from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
 
 class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
 
@@ -34,7 +34,7 @@ class AllocationModelFromTemplateDialog(ModelFromTemplateDialogBase):
             ('Dataset', self.cboDataset),
             ('Outcome Variable', self.leOutcome),
             ('Weight Attribute', self.leWeight),
-            ('Control Totals Table Name', self.leControlTblName),
+            ('Control Totals Attribute', self.leControlTblName),
             ('Control Total Attribute', self.leControlTotal),
             ('Year Attribute', self.leYearAttribute),
             ('Capacity Attribute', self.leCapacityAtr)

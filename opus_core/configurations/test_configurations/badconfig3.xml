@@ -1,9 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <data_manager>
-    <s type="string">teststring</s>
+    <s>teststring</s>
   </data_manager>
 </opus_project>

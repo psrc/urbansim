@@ -14,11 +14,9 @@ def get_tool_nodes(project):
     @return a list of nodes representing the tools (list(Element))
     '''
     tool_nodes = []
-    tool_group_nodes = [node for node in get_tool_library_node(project) if
-                        node.get('type') == 'tool_group']
+    tool_group_nodes = get_tool_library_node(project).findall("tool_group")
     for tool_group in tool_group_nodes:
-        tool_nodes.extend([node for node in tool_group if 
-                           node.get('type') == 'tool_file'])
+        tool_nodes.extend(tool_group.findall("tool"))
     return tool_nodes
 
 def get_tool_node_by_name(project, tool_name):
@@ -29,7 +27,7 @@ def get_tool_node_by_name(project, tool_name):
     @return the node (Element) or None if the node was not found
     '''
     for node in get_tool_nodes(project):
-        if node.tag == tool_name:
+        if node.get('name') == tool_name:
             return node
     return None
 
@@ -40,4 +38,4 @@ def get_tool_library_node(project):
     @return the node representing the tool library (Element) or None if the
     project does not contain a tool library.
     '''
-    return project.find('data_manager/Tool_Library')
+    return project.find('data_manager/tool_library')

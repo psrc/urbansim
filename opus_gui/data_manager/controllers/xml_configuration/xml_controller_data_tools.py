@@ -4,7 +4,7 @@
 
 import os
 
-from xml.etree.cElementTree import Element, SubElement, ElementTree
+from lxml.etree import Element, SubElement, ElementTree
 from PyQt4.QtCore import QString
 from PyQt4.QtGui import QMenu, QCursor, QFileDialog
 
@@ -23,23 +23,23 @@ class XmlController_DataTools(XmlController):
         XmlController.__init__(self, manager)
 
         # Show dialog to execute/config tools
-        self.actExecToolFile = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolFile)
-        self.actExecToolConfig = self.createAction(self.model.executeIcon,"Execute Tool...", self.execToolConfig)
+        self.actExecToolFile = self.create_action('execute',"Execute Tool...", self.execToolFile)
+        self.actExecToolConfig = self.create_action('execute',"Execute Tool...", self.execToolConfig)
 
         # Adding tools, groups, sets and configurations
-        self.actAddToolFile = self.createAction(self.model.addIcon,"Add Tool", self.addToolFile)
-        self.actAddToolGroup = self.createAction(self.model.addIcon,"Create Tool Group", self.addNewToolGroup)
-        self.actAddNewToolSet = self.createAction(self.model.addIcon,"Create Tool Set",self.addNewToolSet)
-        self.actNewConfig = self.createAction(self.model.addIcon,"Add New Tool Configuration",self.newConfig)
+        self.actAddToolFile = self.create_action('add',"Add Tool", self.addToolFile)
+        self.actAddToolGroup = self.create_action('add',"Create Tool Group", self.addNewToolGroup)
+        self.actAddNewToolSet = self.create_action('add',"Create Tool Set",self.addNewToolSet)
+        self.actNewConfig = self.create_action('add',"Add New Tool Configuration",self.newConfig)
 
-        self.actOpenDocumentation = self.createAction(self.model.calendarIcon,"Open Documentation",self.openDocumentation)
+        self.actOpenDocumentation = self.create_action('calendar_view_day',"Open Documentation",self.openDocumentation)
 
         # moving tools up and down
-        self.actMoveNodeUp = self.createAction(self.model.arrowUpIcon,"Move Up",self.moveNodeUp)
-        self.actMoveNodeDown = self.createAction(self.model.arrowDownIcon,"Move Down",self.moveNodeDown)
-        self.actExecBatch = self.createAction(self.model.executeIcon,"Execute Tool Set",self.execBatch)
-        self.actExportXMLToFile = self.createAction(self.model.cloneIcon,"Export XML Node To File",self.exportXMLToFile)
-        self.actImportXMLFromFile = self.createAction(self.model.cloneIcon,"Import XML Node From File",self.importXMLFromFile)
+        self.actMoveNodeUp = self.create_action('arrow_up',"Move Up",self.moveNodeUp)
+        self.actMoveNodeDown = self.create_action('arrow_up',"Move Down",self.moveNodeDown)
+        self.actExecBatch = self.create_action('execute',"Execute Tool Set",self.execBatch)
+        self.actExportXMLToFile = self.create_action('export',"Export XML Node To File",self.exportXMLToFile)
+        self.actImportXMLFromFile = self.create_action('import',"Import XML Node From File",self.importXMLFromFile)
 
         # Batch create 'add ... parameter' actions
         self.add_parameter_actions = []
@@ -72,13 +72,13 @@ class XmlController_DataTools(XmlController):
         SubElement(node, 'type', {'type': "string"}).text = str(type_name)
         SubElement(node, 'default', {'type': str(type_name) }).text = ""
         def action():
-            self.model.insertRow(0, self.selectedIndex(), node)
-            self.view.expand(self.selectedIndex())
-        return self.createAction(self.model.addIcon, label, action)
+            self.model.insertRow(0, self.selected_index(), node)
+            self.view.expand(self.selected_index())
+        return self.create_action('add', label, action)
 
     def addToolFile(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         toolname = 'Unnamed_Tool_Name'
         filename = 'Unnamed_File_Name'
@@ -86,29 +86,29 @@ class XmlController_DataTools(XmlController):
         SubElement(tool_node, "name", {'type':'tool_name'}).text = filename
         SubElement(tool_node, "params", {'type':'param_template'})
 
-        self.model.insertRow(0, self.selectedIndex(), tool_node)
+        self.model.insertRow(0, self.selected_index(), tool_node)
 
     def addNewToolSet(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         # First add the dummy toolset shell
         toolset_node = Element('Unnamed_Tool_Set', {'type': "tool_set"})
-        self.model.insertRow(0, self.selectedIndex(), toolset_node)
+        self.model.insertRow(0, self.selected_index(), toolset_node)
 
     def addNewToolGroup(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         # First add the dummy toolset shell
         node = Element('Unnamed_Tool_Group', {'type': "tool_group",
                                      'setexpanded':'True'})
-        self.model.insertRow(0, self.selectedIndex(), node)
+        self.model.insertRow(0, self.selected_index(), node)
 
     def newConfig(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
-        index = self.selectedIndex()
+        assert self.has_selected_item()
+        index = self.selected_index()
         tool_library_node = get_tool_library_node(self.project)
         callback = \
             lambda node: self.model.insertRow(0, index, node)
@@ -116,27 +116,26 @@ class XmlController_DataTools(XmlController):
         window.setModal(True)
         window.show()
 
-    # CK: is it desirable to move tool nodes?
     def moveNodeUp(self):
         ''' NO DOCUMENTATION '''
         # TODO connect directly to lambda
-        assert self.hasSelectedItem()
-        new_index = self.model.moveUp(self.selectedIndex())
+        assert self.has_selected_item()
+        new_index = self.model.move_up(self.selected_index())
         self.view.setCurrentIndex(new_index)
 
     def moveNodeDown(self):
         ''' NO DOCUMENTATION '''
         # TODO connect directly to lambda
-        assert self.hasSelectedItem()
-        new_index = self.model.moveDown(self.selectedIndex())
+        assert self.has_selected_item()
+        new_index = self.model.move_down(self.selected_index())
         self.view.setCurrentIndex(new_index)
 
     def openDocumentation(self):
         ''' NO DOCUMENTATION '''
-        print 'Documentation for tools is disabled.'
-        return # disabled for now
-#        assert self.hasSelectedItem()
-#        filePath = self.selectedItem().node.text
+        print 'NOTE openDocumentation for tools is disabled for now.'
+        return
+#        assert self.has_selected_item()
+#        filePath = self.selected_item().node.text
 #        fileInfo = QFileInfo(filePath)
 #        baseInfo = QFileInfo(self.toolboxbase.xml_file)
 #        baseDir = baseInfo.absolutePath()
@@ -150,11 +149,11 @@ class XmlController_DataTools(XmlController):
         Show a dialog box that lets the user configure and execute a
         tool.
         '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         tool_lib_node = get_tool_library_node(self.project)
         window = ExecuteToolGui(parent_widget = self.manager.base_widget,
-                                tool_node = self.selectedItem().node,
+                                tool_node = self.selected_item().node,
                                 tool_library_node = tool_lib_node)
         window.setModal(True)
         window.show()
@@ -165,7 +164,7 @@ class XmlController_DataTools(XmlController):
         A tool config is has a pointer to an existing tool (a "tool hook") but
         can provide an alternative configuration.
         '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         # CK: Not sure that this does the right thing. From what I understand,
         # this will run the tool with the configuration as it is specified in
@@ -173,7 +172,7 @@ class XmlController_DataTools(XmlController):
         # 'tool config' is ignored.
 
         # First we need to get the hooked node that we want to run
-        node = self.selectedItem().node
+        node = self.selected_item().node
         hooked_tool_name = node.find('tool_hook').text
         hooked_tool_node = get_tool_node_by_name(hooked_tool_name)
         if hooked_tool_node is None:
@@ -201,9 +200,9 @@ class XmlController_DataTools(XmlController):
 
     def execBatch(self):
         ''' Present a dialog to execute a set of tool configurations '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
         # Node representing the set to execute
-        tool_set_node = self.selectedItem().node
+        tool_set_node = self.selected_item().node
 
         # map tool config nodes in set -> name of the hooked node
         tool_config_to_tool_name = {}
@@ -222,7 +221,7 @@ class XmlController_DataTools(XmlController):
 
     def exportXMLToFile(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
 
         # Ask the users where they want to save the file
         start_dir = ''
@@ -246,14 +245,14 @@ class XmlController_DataTools(XmlController):
 
         # proper root node for XmlConfiguration
         root_node = Element('opus_project')
-        root_node.append(self.selectedItem().node)
+        root_node.append(self.selected_item().node)
 
         # Write out the file
         ElementTree(root_node).write(saveName)
 
     def importXMLFromFile(self):
         ''' NO DOCUMENTATION '''
-        assert self.hasSelectedItem()
+        assert self.has_selected_item()
         # print "importXMLFromFile"
         # First, prompt the user for the filename to read in
         start_dir = ''
@@ -286,12 +285,12 @@ class XmlController_DataTools(XmlController):
         xml_node = xml_node[0]
 
         # Insert it into the parent node from where the user clicked
-        self.model.insertSibling(xml_node, self.selectedIndex())
+        self.model.insert_sibling(xml_node, self.selected_index())
 
 
-    def processCustomMenu(self, position):
+    def process_custom_menu(self, position):
         ''' See XmlConfig.processCustomMenu for documentation '''
-        item = self.selectItemAt(position)
+        item = self.select_item_at(position)
         if not item:
             return
 
@@ -351,7 +350,7 @@ class XmlController_DataTools(XmlController):
             menu.addAction(self.actMoveNodeDown)
 
         # Default menu items
-        self.addDefaultMenuItems(node, menu)
+        self.add_default_menu_items_for_node(node, menu)
 
         # Now add the export and import methods
         menu.addSeparator()

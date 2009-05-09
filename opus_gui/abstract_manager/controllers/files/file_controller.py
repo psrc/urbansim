@@ -21,7 +21,7 @@ class FileController(object):
         if listen_to_menu:
             QObject.connect(self.treeview,
                             SIGNAL("customContextMenuRequested(const QPoint &)"),
-                            self.processCustomMenu)
+                            self.process_custom_menu)
 
 
     def addTree(self, opusDataPath, parentWidget):
@@ -53,5 +53,5 @@ class FileController(object):
         return True
 
 
-    def processCustomMenu(self, position):
+    def process_custom_menu(self, position):
         raise Exception('Method processCustomMenu is not implemented')

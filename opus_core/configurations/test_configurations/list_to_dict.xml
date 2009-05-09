@@ -1,16 +1,15 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario type="scenario" name="test_scenario">
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <job type="dataset" choices="Load|Skip">Load</job>
-        <household type="dataset" choices="Load|Skip">Skip</household>
-        <gridcell type="dataset" choices="Load|Skip">Load<nchunks type="integer">4</nchunks>
-        </gridcell>
+        <selectable type="selectable" name="job">True</selectable>
+        <selectable type="selectable" name="household">False</selectable>
+        <selectable type="selectable" name="gridcell">True<nchunks type="integer">4</nchunks>
+        </selectable>
       </datasets_to_preload>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

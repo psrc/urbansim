@@ -1,19 +1,18 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario type="scenario" name="test_scenario">
       <scenario_database_configuration type="class">
-        <Class_name type="string">ScenarioDatabaseConfiguration</Class_name>
-        <Class_path type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
-        <protocol type="string">mysql</protocol>
-        <host_name type="string">bigserver</host_name>
-        <user_name type="string">fred</user_name>
-        <password type="password">secret</password>
-        <database_name type="string">river_city_baseyear</database_name>
+        <class_name type="string">ScenarioDatabaseConfiguration</class_name>
+        <class_module type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+        <argument type="string" name="protocol">mysql</argument>
+        <argument type="string" name="host_name">bigserver</argument>
+        <argument type="string" name="user_name">fred</argument>
+        <argument type="password" name="password">secret</argument>
+        <argument type="string" name="database_name">river_city_baseyear</argument>
       </scenario_database_configuration>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

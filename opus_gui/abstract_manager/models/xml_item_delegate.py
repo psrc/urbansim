@@ -7,6 +7,10 @@
 from PyQt4.QtCore import QString, Qt, QVariant
 from PyQt4.QtGui import QFileDialog, QItemDelegate, QComboBox, QLineEdit
 
+# We need to know the database connection names for Tools that use the 'db_connection' hook
+# CK: is this is some hack used for tools that have database connections or is it more general?
+from opus_gui.main.controllers.instance_handlers import get_db_connection_names
+
 class XmlItemDelegate(QItemDelegate):
     '''
     Handles creation of editors depending on attributes for the node to edit
@@ -19,47 +23,45 @@ class XmlItemDelegate(QItemDelegate):
         QItemDelegate.__init__(self, parent_view)
         self.parent_view = parent_view
 
-        # List of database connection names -- used for populating the editor
-        # for a db_connection_hook
+        # List of database connection names. Used for populating the editor for a db_connection_hook
         self.known_db_connection_names = []
 
     def createEditor(self, parent_view, option, index):
         ''' PyQt API Method -- See the PyQt documentation for a description '''
 
-        default_editor = QItemDelegate.createEditor(self, parent_view,
-                                                    option, index)
+        default_editor = QItemDelegate.createEditor(self, parent_view, option, index)
         if not index.isValid():
-            # Use default editor
             return default_editor
 
         item = index.internalPointer()
         node = item.node
 
+        # editing of left hand columns is handled by dialogs etc, don't allow direct editing
         if index.column() == 0:
-            # Use the default editor for tag name editing
-            # Note: Editing the first column is currently disabled in XmlModel
-            if type(default_editor) == QLineEdit:
-                # Fill in the tag
-                default_editor.setText(node.tag)
-            return default_editor
-
+            pass
         elif index.column() == 1:
             # Combobox for multiple choices
             editor = default_editor
-            if node.get('choices') is not None:
-                editor = QComboBox(parent_view)
-                choices = [s.strip() for s in node.get('choices').split('|')]
-                for item in choices:
-                    editor.addItem(item)
-                # Select the current choice
-                choice = node.text.strip() if node.text else ''
-                if choice in choices:
-                    editor.setCurrentIndex(choices.index(choice))
+
+# CK delete the following comment if the xml schema is complete and does'nt contain any 'choices'
+
+#            if node.get('choices') is not None:
+#                editor = QComboBox(parent_view)
+#                choices = [s.strip() for s in node.get('choices').split('|')]
+#                for item in choices:
+#                    editor.addItem(item)
+#                # Select the current choice
+#                choice = node.text.strip() if node.text else ''
+#                if choice in choices:
+#                    editor.setCurrentIndex(choices.index(choice))
+
+            # Create and prepare an editor for the node
+
             # Select database connection
-            elif node.get('type') == 'db_connection_hook':
+            if node.get('type') == 'db_connection_hook':
                 editor = QComboBox(parent_view)
                 # Get connection names from database_server_connections.xml
-                choices = self.known_db_connection_names
+                choices = get_db_connection_names()
                 # Populate the editor with the choices
                 for i in choices:
                     editor.addItem(i)
@@ -92,15 +94,12 @@ class XmlItemDelegate(QItemDelegate):
             elif node.get('type') == 'password':
                 editor.setText(str(node.text or ''))
                 editor.setStyleSheet('QLineEdit { background-color: red }')
-                # If we want to never show the characters, use
-                # QLineEdit.Password
                 editor.setEchoMode(QLineEdit.PasswordEchoOnEdit)
             # Use default editor
             else:
                 if type(editor) == QLineEdit:
                     txt = index.model().data(index, Qt.DisplayRole).toString()
                     editor.setText(txt)
-
             return editor
 
     def setEditorData(self, editor, index):

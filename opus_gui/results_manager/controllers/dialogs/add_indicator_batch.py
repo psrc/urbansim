@@ -4,7 +4,6 @@
 
 
 from opus_gui.results_manager.views.ui_add_indicator_batch import Ui_dlgAddIndicatorBatch
-from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 
 class AddIndicatorBatch(Ui_dlgAddIndicatorBatch, QDialog):
@@ -16,6 +15,6 @@ class AddIndicatorBatch(Ui_dlgAddIndicatorBatch, QDialog):
         self.callback = callback
 
     def on_buttonBox_accepted(self):
-        batch_name = str(self.leBatchName.text()).replace(' ', '_')
+        batch_name = str(self.leBatchName.text())
         self.callback(batch_name)
         self.close()

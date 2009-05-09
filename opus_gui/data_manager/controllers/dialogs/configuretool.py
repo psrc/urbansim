@@ -5,7 +5,7 @@ from opus_gui.main.controllers.instance_handlers import get_db_connection_names
 
 import copy
 
-from xml.etree.cElementTree import Element, SubElement
+from lxml.etree import Element, SubElement
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
@@ -38,8 +38,8 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         self.tool_nodes = {}
         for tool_group_node in tool_library_node:
             for tool_file_node in tool_group_node:
-                self.tool_nodes[tool_file_node.tag] = tool_file_node
-                self.comboBox.addItem(tool_file_node.tag)
+                self.tool_nodes[tool_file_node.get('name')] = tool_file_node
+                self.comboBox.addItem(tool_file_node.get('name'))
 
         # Now we hook up to the user selecting the type desired
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
@@ -96,13 +96,13 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
         self.tooltypearray.append(["Tool Config Name","tool_config",""])
 
         # Now look up the selected connection type and present to the user...
-        # First we start at the Tool_Library
+        # First we start at the tool_library
         tool_name = str(self.typeSelection)
         tool_node = self.tool_nodes[tool_name]
         for param_node in tool_node.find('params'):
-            type_val = param_node.find('type').text
-            default_val = param_node.find('default').text
-            self.tooltypearray.append([param_node.tag, type_val, default_val])
+            type_val = param_node.get('param_type')
+            default_val = param_node.text or ''
+            self.tooltypearray.append([param_node.get('name'), type_val, default_val])
 
         for i, param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])

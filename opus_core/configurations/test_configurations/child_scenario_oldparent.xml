@@ -1,10 +1,9 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario type="scenario" name="test_scenario">
       <parent_old_format type="dictionary">
         <Class_name type="string">OldStyleConfiguration</Class_name>
         <Class_path type="string">opus_core.configurations.test_configurations.old_style_configuration</Class_path>
@@ -14,6 +13,6 @@
         <lastyear type="integer">1981</lastyear>
       </years>
       <squidcount type="integer">12</squidcount>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

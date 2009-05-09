@@ -1,0 +1,16 @@
+<opus_project>
+    <general>
+        <project_name type="string">test</project_name>
+    </general>
+    <inherited type="string">inherited_value</inherited>
+    <shadowing type="string">parent_value</shadowing>
+    <a>
+        <pretty>
+            <deep>
+                <path name="first child" />
+                <path name="second child"/>
+            </deep>
+        </pretty>
+    </a>
+
+</opus_project>

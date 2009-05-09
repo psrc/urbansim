@@ -70,11 +70,6 @@ class VariableValidator(object):
                     errors.append("Unknown source type %s: (%s, %s): %s" % (source, var_name, dataset_name, expr))
             except (SyntaxError, ValueError), e:
                 errors.append("Parsing error: (%s, %s): %s" % (var_name, dataset_name, str(e)))
-
-            # check whether there are too many errors; if so stop to prevent the list from getting too long
-            if self._too_many_errors(errors):
-                errors.append("[*** rest of error report truncated ***]")
-                return False, errors
         return len(errors) == 0, errors
 
     def check_data_errors(self, variables):
@@ -84,34 +79,19 @@ class VariableValidator(object):
                 continue
             successful, error = self._test_generate_results(indicator_name = var_name, dataset_name = dataset_name, expression = expr, source = source)
             if not successful:
-                errors.append("Expression %s could not be run on <br>dataset %s on the baseyear data.<br>Details:<br>%s"%(
+                errors.append("Expression <b>%s</b> could not be run on <br>dataset <i>%s</i> on the baseyear data.<br>Details:<br>%s"%(
                                 var_name, dataset_name, str(error) ))
-            if self._too_many_errors(errors):
-                errors.append("[*** rest of error report truncated ***]")
-                return False, errors
         return len(errors) == 0, errors
-
-    def _too_many_errors(self, errors):
-        # count how many lines there will be in the error report, and if over the max, return true
-        lines = 0
-        for e in errors:
-            lines = lines + e.count('<br>') + 2
-        return lines>self.max_lines
 
     def _test_generate_results(self, indicator_name, dataset_name, expression, source):
 
-        # grab the first base_year_data in results_manager/Simulation_runs and
+        # grab the first base_year_data in results_manager/simulation_runs and
         # fetch the year for it
-        base_year = self.project.find('./results_manager/Simulation_runs/base_year_data/end_year')
+        base_year = self.project.find("results_manager/simulation_runs/run[@name='base_year_data']/end_year")
         if base_year is None:
             return False, "Project doesn't have any base year data to check against"
 
         start_year = int(base_year.text)
-#        node, vals = interface.xml_helper.get_element_attributes(node_name = 'base_year_data',
-#                                                                 child_attributes = ['start_year'],
-#                                                                 node_type = 'source_data')
-#        years = [int(str(vals['start_year']))]
-
         result_generator = OpusResultGenerator(self.project)
         result_generator.set_data(
                source_data_name = 'base_year_data',

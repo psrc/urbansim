@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'databasesettingsedit.ui'
+# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/variable_library_rewrite/opus_gui/main/views/databasesettingsedit.ui'
 #
-# Created: Sat Jan 31 13:08:45 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Mon Apr 20 22:26:22 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 

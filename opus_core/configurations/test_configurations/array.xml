@@ -1,11 +1,10 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <general>
+  <xml_version>2.0</xml_version><general>
     <project_name type="string">test_project</project_name>
   </general>
   <scenario_manager>
-    <test_scenario type="scenario">
+    <scenario name="test_scenario" type="scenario">
       <arraytest type="array">[100, 300]</arraytest>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>

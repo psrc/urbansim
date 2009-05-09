@@ -13,9 +13,7 @@ def get_model_nodes(project):
     @param project (OpusProject) the project to fetch values from
     @return the list of available model nodes (list(Element))
     '''
-    model_manager_node = project.find('model_manager/model_system')
-    return [node for node in (model_manager_node or []) if
-            node.get('type') == 'model']
+    return project.findall('model_manager/models/model')
 
 def get_model_names(project):
     '''
@@ -24,16 +22,13 @@ def get_model_names(project):
     @param project (OpusProject) the project to fetch values from
     @return the list of available model nodes (list(Element))
     '''
-    model_nodes = get_model_nodes(project)
-    return [node.tag for node in model_nodes]
-
+    return [node.get('name') for node in get_model_nodes(project)]
 
 class ModelsManager(AbstractManager):
     def __init__(self, base_widget, tab_widget, project):
-        AbstractManager.__init__(self, base_widget, tab_widget, project,
-                                 'model_manager')
+        AbstractManager.__init__(self, base_widget, tab_widget, project, 'model_manager')
         self.xml_controller = XmlController_Models(self)
 
-    def addEstimationElement(self, estimation):
+    def add_estimation_element(self, estimation):
         tab_widget = EstimationGuiElement(self.base_widget, self, estimation)
         self._attach_tab(tab_widget = tab_widget)

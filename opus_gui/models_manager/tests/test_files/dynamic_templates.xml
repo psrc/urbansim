@@ -1,0 +1,21 @@
+<opus_project>
+  <model_template name="test">
+    <A field_identifier="orange field">mandarin</A>
+    <B field_identifier="apple field" type="integer" field_description="Apples are red">42</B>
+    <C>
+      <buried>
+        <deep>
+          <inside>
+            <D field_identifier="orange field" />
+          </inside>
+        </deep>
+      </buried>
+    </C>
+    <E type="boolean" field_identifier="use checkbox?" />
+  </model_template>
+  <model_manager>
+    <models>
+      <model name="taken" />
+    </models>
+  </model_manager>
+</opus_project>

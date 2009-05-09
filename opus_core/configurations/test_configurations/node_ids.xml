@@ -1,0 +1,19 @@
+<opus_project>
+    <xml_version>2.0</xml_version>
+    <general>
+        <project_name type="string">test_project</project_name>
+    </general>
+    <node name="parent">
+        <node name="sib1">
+            <node name="child"/>
+            <node name="child"/>
+            <node name="child2"/>
+            <child name="child"/>
+        </node>
+    </node>
+    <opus_project>
+        <node name="parent">
+            <node name="sib1"/>
+        </node>
+    </opus_project>
+</opus_project>

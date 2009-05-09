@@ -1,22 +1,21 @@
 <opus_project>
+  <xml_version>2.0</xml_version>
   <general>
     <parent type="file">estimate.xml</parent>
     <expression_library type="dictionary">
-      <income type="variable_definition" dataset="test_agent" use="model variable" source="primary attribute">income</income>
-      <income_times_2 type="variable_definition" dataset="test_agent" use="model variable" source="Python class">opus_core.test_agent.income_times_2</income_times_2>
-      <i2 type="variable_definition" dataset="test_agent" use="model variable" source="Python class">opus_core.test_agent.income_times_2</i2>
-      <income_times_10 type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*opus_core.test_agent.income_times_2</income_times_10>
-      <income_times_10_ds_qualified type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*test_agent.income_times_2</income_times_10_ds_qualified>
-      <income_times_10_using_primary type="variable_definition" dataset="test_agent" use="model variable" source="expression">10*test_agent.income</income_times_10_using_primary>
-      <income_less_than type="variable_definition" dataset="test_agent" use="model variable" source="expression">def income_less_than(i): return test_agent.income&lt;i</income_less_than>
+      <variable dataset="test_agent" source="primary attribute" type="variable_definition" use="model variable" name="income">income</variable>
+      <variable dataset="test_agent" source="Python class" type="variable_definition" use="model variable" name="income_times_2"> opus_core.test_agent.income_times_2</variable>
+      <variable dataset="test_agent" source="Python class" type="variable_definition" use="model variable" name="i2"> opus_core.test_agent.income_times_2</variable>
+      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10"> 5*opus_core.test_agent.income_times_2</variable>
+      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10_ds_qualified"> 5*test_agent.income_times_2</variable>
+      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10_using_primary"> 10*test_agent.income</variable>
+      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_less_than">def income_less_than(i): return test_agent.income&lt;i</variable>
     </expression_library>
     <project_name type="string">test_project</project_name>
-  </general>  <scenario_manager>
-    <test_scenario type="scenario">
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
       <year type="integer">1980</year>
-    </test_scenario>
+    </scenario>
   </scenario_manager>
 </opus_project>
-
-<!-- NOTE: the 'income_less_than' parameterized variable is a future feature that has not been implemented yet
-     (so it can't be used yet for computing variables). -->

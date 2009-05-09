@@ -9,7 +9,7 @@ from opus_gui.results_manager.run.indicator_framework.representations.computed_i
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
-from opus_gui.general_manager.general_manager import get_available_indicator_nodes
+from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 
 class IndicatorFrameworkInterface:
     def __init__(self, project):
@@ -18,7 +18,7 @@ class IndicatorFrameworkInterface:
     def _get_dataset_pool_configuration(self):
 
         # Grab the dataset_pool_configuration from <general>
-        package_order_list = self.project.find('general/dataset_pool_configuration/package_order')
+        package_order_list = self.project.find("general/dataset_pool_configuration/argument[@name='package_order']")
         if package_order_list is None:
             package_order = []
         else:
@@ -30,12 +30,11 @@ class IndicatorFrameworkInterface:
         return dataset_pool_configuration
 
     def get_source_data(self, source_data_name, years):
-        simulation_run_path = 'results_manager/Simulation_runs/%s'%str(source_data_name)
-        print simulation_run_path
-        run_node = self.project.find(simulation_run_path)
-        run_id = run_node.find('run_id').text
+        run_node = self.project.find('results_manager/simulation_runs/run', name=source_data_name)
+        # run_id = run_node.find('run_id').text
+        run_id = run_node.get('run_id')
         cache_directory = run_node.find('cache_directory').text
-        
+
         dataset_pool_configuration = self._get_dataset_pool_configuration()
 
         source_data = SourceData(
@@ -54,7 +53,7 @@ class IndicatorFrameworkInterface:
         else:
             indicator_nodes = get_available_indicator_nodes(self.project)
             for indicator_node in indicator_nodes:
-                if indicator_node.tag == indicator_name and \
+                if indicator_node.get('name') == indicator_name and \
                     indicator_node.get('dataset') == dataset_name:
                     attribute = (indicator_node.text or '').strip()
                     source = indicator_node.get('source')

@@ -1,63 +1,80 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'model_from_template_dialog_base.ui'
+# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/variable_library_rewrite/opus_gui/models_manager/views/model_from_template_dialog_base.ui'
 #
-# Created: Tue Jan 06 13:30:44 2009
-#      by: PyQt4 UI code generator 4.4.2
+# Created: Sat Apr 25 17:48:22 2009
+#      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_ModelFromTemplateDialogBase(object):
-    def setupUi(self, ModelFromTemplateDialogBase):
-        ModelFromTemplateDialogBase.setObjectName("ModelFromTemplateDialogBase")
-        ModelFromTemplateDialogBase.resize(627,250)
-        self.verticalLayout = QtGui.QVBoxLayout(ModelFromTemplateDialogBase)
+class Ui_DynamicTemplateDialog(object):
+    def setupUi(self, DynamicTemplateDialog):
+        DynamicTemplateDialog.setObjectName("DynamicTemplateDialog")
+        DynamicTemplateDialog.setWindowModality(QtCore.Qt.WindowModal)
+        DynamicTemplateDialog.resize(637, 273)
+        self.verticalLayout = QtGui.QVBoxLayout(DynamicTemplateDialog)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.groupBox = QtGui.QGroupBox(ModelFromTemplateDialogBase)
-        self.groupBox.setObjectName("groupBox")
-        self.vlayout = QtGui.QVBoxLayout(self.groupBox)
-        self.vlayout.setObjectName("vlayout")
-        self.frame = QtGui.QFrame(self.groupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Minimum)
+        self.lbl_header = QtGui.QLabel(DynamicTemplateDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy)
-        self.frame.setMaximumSize(QtCore.QSize(16777215,50))
+        sizePolicy.setHeightForWidth(self.lbl_header.sizePolicy().hasHeightForWidth())
+        self.lbl_header.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.lbl_header.setFont(font)
+        self.lbl_header.setObjectName("lbl_header")
+        self.verticalLayout.addWidget(self.lbl_header)
+        self.frame = QtGui.QFrame(DynamicTemplateDialog)
+        self.frame.setFrameShape(QtGui.QFrame.Panel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.horizontalLayout = QtGui.QHBoxLayout(self.frame)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.frame)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label = QtGui.QLabel(self.frame)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Preferred)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumSize(QtCore.QSize(100,0))
-        self.label.setMaximumSize(QtCore.QSize(200,16777215))
+        self.label.setMinimumSize(QtCore.QSize(100, 0))
+        self.label.setMaximumSize(QtCore.QSize(200, 16777215))
         self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.leModelName = QtGui.QLineEdit(self.frame)
-        self.leModelName.setObjectName("leModelName")
-        self.horizontalLayout.addWidget(self.leModelName)
-        self.vlayout.addWidget(self.frame)
-        self.verticalLayout.addWidget(self.groupBox)
-        self.buttonBox = QtGui.QDialogButtonBox(ModelFromTemplateDialogBase)
+        self.horizontalLayout_2.addWidget(self.label)
+        self.le_model_name = QtGui.QLineEdit(self.frame)
+        self.le_model_name.setObjectName("le_model_name")
+        self.horizontalLayout_2.addWidget(self.le_model_name)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.lbl_name_warning = QtGui.QLabel(self.frame)
+        font = QtGui.QFont()
+        font.setWeight(50)
+        font.setItalic(False)
+        font.setBold(False)
+        self.lbl_name_warning.setFont(font)
+        self.lbl_name_warning.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.lbl_name_warning.setMargin(5)
+        self.lbl_name_warning.setObjectName("lbl_name_warning")
+        self.verticalLayout_2.addWidget(self.lbl_name_warning)
+        self.verticalLayout.addWidget(self.frame)
+        self.dynamic_widgets = QtGui.QGridLayout()
+        self.dynamic_widgets.setObjectName("dynamic_widgets")
+        self.verticalLayout.addLayout(self.dynamic_widgets)
+        self.buttonBox = QtGui.QDialogButtonBox(DynamicTemplateDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(ModelFromTemplateDialogBase)
-        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),ModelFromTemplateDialogBase.accept)
-        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("rejected()"),ModelFromTemplateDialogBase.reject)
-        QtCore.QMetaObject.connectSlotsByName(ModelFromTemplateDialogBase)
+        self.retranslateUi(DynamicTemplateDialog)
+        QtCore.QMetaObject.connectSlotsByName(DynamicTemplateDialog)
 
-    def retranslateUi(self, ModelFromTemplateDialogBase):
-        ModelFromTemplateDialogBase.setWindowTitle(QtGui.QApplication.translate("ModelFromTemplateDialogBase", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("ModelFromTemplateDialogBase", "Create new model from model template", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("ModelFromTemplateDialogBase", "Model name:", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, DynamicTemplateDialog):
+        DynamicTemplateDialog.setWindowTitle(QtGui.QApplication.translate("DynamicTemplateDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.lbl_header.setText(QtGui.QApplication.translate("DynamicTemplateDialog", "Creating model from template X", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("DynamicTemplateDialog", "Model name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.lbl_name_warning.setText(QtGui.QApplication.translate("DynamicTemplateDialog", "There is already a model \"X\", please enter another name.", None, QtGui.QApplication.UnicodeUTF8))
 

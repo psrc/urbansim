@@ -1,0 +1,263 @@
+<ui version="4.0" >
+ <class>SubModelEditor</class>
+ <widget class="QDialog" name="SubModelEditor" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>729</width>
+    <height>498</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Submodel Editor</string>
+  </property>
+  <property name="modal" >
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="minimumSize" >
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="le_name" />
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>ID</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spin_id" >
+       <property name="wrapping" >
+        <bool>false</bool>
+       </property>
+       <property name="frame" >
+        <bool>false</bool>
+       </property>
+       <property name="buttonSymbols" >
+        <enum>QAbstractSpinBox::PlusMinus</enum>
+       </property>
+       <property name="minimum" >
+        <number>-10000</number>
+       </property>
+       <property name="maximum" >
+        <number>10000</number>
+       </property>
+       <property name="value" >
+        <number>-2</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+     <item>
+      <widget class="QLabel" name="label_2" >
+       <property name="minimumSize" >
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Description</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="le_description" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5" >
+     <item>
+      <widget class="QGroupBox" name="groupBox_2" >
+       <property name="font" >
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="title" >
+        <string>Available Variables</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3" >
+        <item>
+         <layout class="QHBoxLayout" name="layout_dataset_filter" >
+          <item>
+           <widget class="QLabel" name="lbl_dataset_filter" >
+            <property name="text" >
+             <string>Dataset filter:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbo_dataset_filter" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lst_available" >
+          <property name="selectionMode" >
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_add" >
+          <property name="layoutDirection" >
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text" >
+           <string>Add</string>
+          </property>
+          <property name="icon" >
+           <iconset>
+            <normaloff>:/Images/Images/arrow_right.png</normaloff>:/Images/Images/arrow_right.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="font" >
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="title" >
+        <string>Submodel</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QTreeWidget" name="tree_submodel_structure" >
+          <property name="indentation" >
+           <number>5</number>
+          </property>
+          <property name="uniformRowHeights" >
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text" >
+            <string>id</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>type</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lbl_active_variablelist" >
+          <property name="text" >
+           <string>type "name": 0 selected variables. </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lst_selected" >
+          <property name="selectionMode" >
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_remove" >
+          <property name="text" >
+           <string>Remove</string>
+          </property>
+          <property name="icon" >
+           <iconset>
+            <normaloff>:/Images/Images/arrow_left_red.png</normaloff>:/Images/Images/arrow_left_red.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons" >
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SubModelEditor</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>375</x>
+     <y>507</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SubModelEditor</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>443</x>
+     <y>507</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

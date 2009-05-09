@@ -4,21 +4,20 @@
 
 import time, os
 
-from xml.etree.cElementTree import ElementTree
+from lxml.etree import ElementTree
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
 from PyQt4.QtCore import QSettings, QRegExp
 from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
-from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QWidget, QTabWidget
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
 
-
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.main.controllers.instance_handlers import set_opusgui_instance
 from opus_gui.main.views.ui_mainwindow import Ui_MainWindow
 from opus_gui.main.controllers.dialogs.opusabout import UrbansimAboutGui
 from opus_gui.main.controllers.dialogs.opuspreferences import UrbansimPreferencesGui
 from opus_gui.main.controllers.dialogs.databasesettings import DatabaseSettingsEditGui
-from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
-from opus_gui.main.controllers.opus_project import OpusProject
+from opus_gui.main.opus_project import OpusProject
 from opus_gui.scenarios_manager.scenario_manager import ScenariosManager
 from opus_gui.scenarios_manager.scenario_manager_functions import update_models_to_run_lists
 from opus_gui.results_manager.results_manager import ResultsManager
@@ -26,7 +25,9 @@ from opus_gui.models_manager.models_manager import ModelsManager
 from opus_gui.general_manager.general_manager import GeneralManager
 from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
-from opus_gui.general_manager.controllers.all_variables import AllVariablesEditGui
+from opus_gui.util import common_dialogs
+
+from opus_gui.general_manager.controllers.variable_library import VariableLibrary
 
 class OpusGui(QMainWindow, Ui_MainWindow):
     '''
@@ -44,22 +45,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             if line != "\n":
                 self.writefunc(line)
 
-    def __init__(self):
+    def __init__(self, gui_configuration = None):
         QMainWindow.__init__(self)
         self.setupUi(self)
 
         # Bind the application global instance for to this window
         set_opusgui_instance(self)
 
-        # this is to remove the three tabs that are in the UI file
-        for i in range(2, -1, -1):
-            self.tabWidget.removeTab(i)
-
         self.thread().setPriority(QThread.HighestPriority)
 
         # This is the output for stdout
         self.output = OpusGui.Output(self.writeOutput)
 
+        self.tabWidget = QTabWidget(self.splitter)
         self.splitter.setSizes([400, 500])
 
         # Initialize empty project
@@ -67,30 +65,23 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Read database connection names
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
-        db_con_file = os.path.join(settings_directory,
-                                   'database_server_configurations.xml')
+        db_con_file = os.path.join(settings_directory, 'database_server_configurations.xml')
         db_config_node = ElementTree(file=db_con_file).getroot()
-        self.db_connection_names = [node.tag for node in db_config_node if
-                                    node.get('hidden') != "True"
-                                    # hack?
-                                    and node.tag != 'xml_version']
+        self.db_connection_names = [node.get('name') for node in db_config_node if
+                                    node.get('hidden') != "True" and node.tag != 'xml_version']
 
         # Application default configuration
-        self.gui_config = OpusGuiConfiguration()
-        self.gui_config.load()
-
-        # Show splash screen
-        self.gui_config.splash_screen.show()
+        self.gui_config = gui_configuration
 
         # Bind actions
-        self._setupActions()
+        self._setup_actions()
 
         # Manager collection -- initialized by openProject()
         self.managers = {}
 
-        # Delay before hiding the splash screen
-        time.sleep(1)
-        self.gui_config.splash_screen.hide()
+#        # Delay before hiding the splash screen
+#        time.sleep(1)
+#        self.gui_config.splash_screen.hide()
 
         # Restoring application geometry from last shut down
         settings = QSettings()
@@ -99,7 +90,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.setFocus()
 
         # Variable library
-        self.all_variables = None
+        self.variable_library = None
 
         # Load the latest project file if that flag is set in GUI configuration
         if self.gui_config.load_latest_on_start:
@@ -110,9 +101,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #self.menuUtilities.removeAction(self.actionLog_View)
         self.menuUtilities.removeAction(self.actEditorView)
 
-        self.updateWindowTitle()
+        self.update_saved_state()
 
-    def _setupActions(self):
+    def _setup_actions(self):
         ''' Bind actions to callbacks and setup keyboard shortcuts '''
 
         # Keyboard shortcuts
@@ -165,11 +156,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def editAllVariables(self):
         ''' Open the variable library GUI '''
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        self.all_variables = AllVariablesEditGui(self, flags)
-
-        self.all_variables.setModal(True)
-        self.all_variables.show()
+        # flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        if self.project is None or not self.project.is_open():
+            return
+        if self.variable_library is not None:
+            self.variable_library.initialize()
+        else:
+            self.variable_library = VariableLibrary(self.project, self)
+        self.variable_library.exec_()
 
     def closeCurrentTab(self):
         ''' Close the currently showing tab '''
@@ -234,7 +228,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.show()
         self.updateFontSize()
 
-    def updateWindowTitle(self):
+    def update_saved_state(self):
         '''update the window title to reflect the state of the project'''
         # assemble a title consisting of application title (at),
         # project file name (pfn) and project name (pn)
@@ -247,8 +241,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 title = '%s - (*) %s - [file: %s]' % (at, pn, pfn)
             else:
                 title = '%s - %s - [file: %s]' % (at, pn, pfn)
+            self.actSaveProject.setEnabled(self.project.dirty)
         else:
             title = at or '' # Show just application title
+            self.actSaveProject.setEnabled(False)
 
         self.setWindowTitle(QString(title))
 
@@ -319,7 +315,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.actSaveProjectAs.setEnabled(True)
         self.updateFontSize()
 
-        self.updateWindowTitle()
+        self.update_saved_state()
         update_models_to_run_lists()
 
     def saveProject(self, filename = None):
@@ -372,19 +368,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         @return: True if the user wishes to proceed with the closing operation.
         '''
         if not self.project.dirty: return True
-
-        question = ('Current project contains changes.\n'
-                    'Do you want to save or discard those changes?')
-        buttons = (QMessageBox.Discard, QMessageBox.Save, QMessageBox.Cancel)
-        doSave = QMessageBox.question(self, "Warning", question, *buttons)
-        if doSave == QMessageBox.Save:
+        question = 'Do you want to save your changes before closing the project?'
+        user_answer = common_dialogs.save_before_close(question)
+        if user_answer == common_dialogs.YES:
             ok_flag, msg = self.project.save() # cancels on failed save
             if not ok_flag:
-                QMessageBox.critical(self, "Could not save project", str(msg))
+                MessageBox.error(self, "Could not save project", str(msg))
                 return False
             return True
-        elif doSave == QMessageBox.Discard:
-            self.project.dirt = False
+        elif user_answer == common_dialogs.NO:
+            self.project.dirty = False
             return True
         else:
             return False
@@ -429,8 +422,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         #main tabs...
         regexp = QRegExp(".*tabbar$")
-        toolbox = self.findChild(QWidget, "toolBox")
-        tabwidget = self.findChild(QWidget, "tabWidget")
+        toolbox = self.toolBox
+        tabwidget = self.tabWidget
 
         mainTabsFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[1],
                                   tabwidget.findChildren(QWidget, regexp)[0]]

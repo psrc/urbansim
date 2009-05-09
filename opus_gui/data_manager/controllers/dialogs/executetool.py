@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from xml.etree.cElementTree import Element, SubElement
+from lxml.etree import Element, SubElement
 
 from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
 from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFileDialog, QDialog, QHBoxLayout, QPushButton, QComboBox, QMessageBox
@@ -75,7 +75,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         # TODO test that this does what it's supposed to do
         self.tooltypearray = []
         if tool_node.get('type') == 'tool_file':
-            self.type_selection = self.tool_node.tag
+            self.type_selection = self.tool_node.get('name')
             self.tool_name = tool_node.find('name').text
             self.presentToolFileGUI()
         else:
@@ -148,7 +148,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         ''' NO DOCUMENTATION '''
         for child in self.tool_node.find('params'):
             if not child.get('type') == 'tool_library_ref':
-                print 'adding parameter %s (%s): %s' %(child.tag, child.get('type'), child.text)
+                # print 'adding parameter %s (%s): %s' %(child.tag, child.get('type'), child.text)
                 self.tooltypearray.append([child.tag,
                                            child.get('type'),
                                            child.text])
@@ -156,7 +156,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def createGUIElements(self):
         ''' Build the GUI based on the parameters for the tool '''
         for i, param in enumerate(self.tooltypearray):
-            print 'creatgui element %d, %s' %(i, param)
+            # print 'creatgui element %d, %s' %(i, param)
             #Swap in the passed params if they exist... loop through each passed
             #param and see if it matches... if so swap it in
             if self.optional_params.has_key(str(param[0])):
@@ -256,7 +256,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
     def presentToolConfigGUI(self):
         # First, fillInToolTypeArrayFromToolConfig
-        print 'Filling in type array from tool config'
+        # print 'Filling in type array from tool config'
         self.fillInToolTypeArrayFromToolConfig()
         self.createGUIElements()
 

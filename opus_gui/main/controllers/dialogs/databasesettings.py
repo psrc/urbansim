@@ -2,7 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from xml.etree.cElementTree import ElementTree
+import os
+from lxml.etree import ElementTree
 
 from PyQt4.QtGui import QDialog, QMessageBox
 
@@ -10,7 +11,7 @@ from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.abstract_manager.models.xml_model import XmlModel
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
 from opus_gui.abstract_manager.views.xml_view import XmlView
-import os
+from opus_gui.util import common_dialogs
 
 from opus_gui.main.views.ui_databasesettingsedit import Ui_DatabaseSettingsEditGui
 
@@ -20,17 +21,17 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
         self.setupUi(self)
 
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
-        self._config_filename = \
-            os.path.join(settings_directory,
-                         'database_server_configurations.xml')
+        self._config_filename = os.path.join(settings_directory, 'database_server_configurations.xml')
         try:
             root = ElementTree(file=self._config_filename).getroot()
             view = XmlView(self)
             model = XmlModel(root)
             delegate = XmlItemDelegate(view)
             view.setModel(model)
-            view._model = model # HACK this is necessary so that Qt don't GC the model object
-            view._delegate = delegate # Same as above
+            # Turns out that Qt Garbage collects the model (and delegate) if we don't explicitly
+            # bind it to a Python object in addition to using the PyQt .setModel() method.
+            view._model = model
+            view._delegate = delegate
             view.setItemDelegate(delegate)
             view.openDefaultItems()
 
@@ -67,13 +68,11 @@ class DatabaseSettingsEditGui(QDialog, Ui_DatabaseSettingsEditGui):
     def on_buttonBox_rejected(self):
         # If there are any changes to the data, ask the user to save them
         if self.tree_view.model().dirty:
-            question = ('Changes have been made to the settings.\n'
-                        'Do you want to save or discard those changes?')
-            buttons = (QMessageBox.Discard, QMessageBox.Save, QMessageBox.Cancel)
-            doSave = QMessageBox.question(self, "Warning", question, *buttons)
-            if doSave == QMessageBox.Save:
+            question = 'Do you want to save your changes before closing?'
+            user_answer = common_dialogs.save_before_close(question)
+            if user_answer == common_dialogs.YES:
                 self.on_buttonBox_accepted()
-            elif doSave == QMessageBox.Discard:
+            elif user_answer == common_dialogs.NO:
                 self.close()
             else:
                 return # Cancel
