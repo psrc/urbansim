@@ -4,8 +4,9 @@
   </general>
   <test_section>
     <description type="string">a test configuration</description>
-    <quotedthing type="quoted_string">test\test</quotedthing>
-    <quotedthing2 type="quoted_string">'test\test'</quotedthing2>
+    <quotedthing type="string" parser_action='quote_string'>test\test</quotedthing>
+    <quotedthing2 type="string" parser_action='quote_string'>'test\test'</quotedthing2>
+    <quotedthing3 type="string" parser_action='quote_string'>"test\test"</quotedthing3>
     <empty1 type="string"/>
     <empty2 parser_action="blank_to_None" type="string"/>
     <emptypassword parser_action="blank_to_None" type="password"/>
