@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import time, os
+import os
 
 from lxml.etree import ElementTree
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
