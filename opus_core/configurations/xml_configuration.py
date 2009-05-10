@@ -200,9 +200,8 @@ class XMLConfiguration(object):
             return config
 
         config['model_name'] = model_name
-        model_specific_overrides = {}
         config_node_path = "model_manager/models/model[@name='%s']/estimation_config" % model_name
-        model_specific_overrides = self.get_section(config_node_path)
+        model_specific_overrides = self.get_section(config_node_path) or {}
         # if the model system get's a list of models -- it will ONLY run those models and nothing
         # else. Since we also want to run this model, we append it to the end of the list.
         # We don't need to care about filling it in if there are no other models to run, since the
@@ -553,17 +552,10 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node, int)
         elif type_name=='float':
             return self._convert_string_to_data(node, float)
-        elif type_name=='string' or type_name=='password' or \
-             type_name=='variable_definition' or type_name=='path':
+        elif type_name in ['string', 'password', 'variable_definition', 'path', 'quoted_string']:
+            if type_name == 'quoted_string':
+                node.attrib['parser_action'] = 'quote_string'
             return self._convert_string_to_data(node, str)
-        elif type_name=='quoted_string':
-            # ensure that the string is wrapped in single-quotes
-            text = node.text or ''
-            if not text.startswith("'"):
-                text = "'%s" % text
-            if not text.endswith("'"):
-                text = "%s'" % text
-            return text
         elif type_name=='scenario_name':
             return node.text
         elif type_name=='unicode':
@@ -634,18 +626,26 @@ class XMLConfiguration(object):
         return inst
 
     def _convert_string_to_data(self, node, func):
-        blank_to_None = node.get('parser_action', '')=='blank_to_None'
+        blank_to_None = node.get('parser_action', '') == 'blank_to_None'
+        quote_string = node.get('parser_action') == 'quote_string'
         if node.text is None:
             if blank_to_None:
                 return None
-            elif func==str:
+            elif func==str or quote_string:
                 return ''
-            else:
-                raise ValueError, "found empty string in xml node but no parser action to convert it to None"
-        else:
-            if blank_to_None and node.text == 'None':
-                return None
-            return func(node.text)
+            raise ValueError, "found empty string in xml node but no parser action to convert it to None"
+
+        if blank_to_None and node.text == 'None':
+            return None
+
+        resulting_string = func(node.text)
+
+        if quote_string:
+            # ensure that the resulting string is wrapped in single quotes
+            resulting_string = resulting_string.replace('"', "'").replace("'", '')
+            resulting_string = "'%s'" % resulting_string
+
+        return resulting_string
 
     def _convert_list_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -855,6 +855,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                          {'description': 'a test configuration',
                           'quotedthing': r"'test\test'",
                           'quotedthing2': r"'test\test'",
+                          'quotedthing3': r"'test\test'",
                           'empty1': '',
                           'empty2': None,
                           'emptypassword': None,
