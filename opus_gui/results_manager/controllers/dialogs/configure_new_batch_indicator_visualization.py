@@ -26,7 +26,9 @@ class ConfigureNewBatchIndicatorVisualization(AbstractConfigureBatchIndicatorVis
             self.reject()
 
         viz_name = str(self.leVizName.text()).strip()
-        viz_node = Element('batch_visualization', {'name': viz_name, 'type':'batch_visualization'})
+        viz_node = Element('batch_visualization', {'name': viz_name,
+                                                   'type':'batch_visualization',
+                                                   'hidden': 'Children'})
         self._update_xml_from_dict(viz_node, viz_params)
         add_batch_indicator_visualization(self.batch_node, viz_node)
         self.accept()
