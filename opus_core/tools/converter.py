@@ -409,6 +409,12 @@ class Converter(object):
             if subid is not None:
                 self.add_action(self.action_change_submodel_id, submodel_node)
             self.action_change_node_attrib(submodel_node, {'hidden': 'Children'})
+            for equation_node in submodel_node.findall("*[@type='submodel_equation']"):
+                self.tag_name_fix(equation_node, 'equation')
+                eq_id_node = equation_node.find('equation_id')
+                if eq_id_node is not None:
+                    self.add_action(self.action_change_node_attrib, equation_node, {'equation_id': eq_id_node.text})
+                    self.add_action(self.action_delete_node, eq_id_node)
 
     def check_selectable_lists(self):
         selectable_lists = self.root.findall(".//*[@type='selectable_list']")
@@ -423,6 +429,12 @@ class Converter(object):
         for boolean_node in boolean_nodes:
             if 'choices' in boolean_node.attrib:
                 self.add_action(self.action_change_node_attrib, boolean_node, {'choices':None})
+
+    def check_qouted_type(self):
+        # make type='quoted_string' into a parser action
+        for node in self.root.findall(".//*[@type='quoted_string']"):
+            self.add_action(self.action_change_node_attrib, node, {'type':'string',
+                                                                   'parser_action': 'quote_string'})
 
     def check_copyable_type(self):
         nodes_with_copyable_attribute = self.root.findall(".//*[@copyable]")
