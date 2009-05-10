@@ -1,28 +1,27 @@
 <opus_project>
-    <general>
-        <project_name type="string">urbansim_zone</project_name>
-        <description type="string">UrbanSim zone baseline</description>
+    <xml_version>2.0</xml_version><general>
+        <project_name type="string">eugene_zone</project_name>
+        <description type="string">Eugene zone baseline</description>
         <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
         <dataset_pool_configuration type="class">
-            <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-            <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-            <package_order type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
+            <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+            <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+            <argument type="list" name="package_order">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
     </general>
     <model_manager>
-        <model_system type="model_system">
-            <estimation_config type="configuration" config_name="estimation_config">
+        <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"/><templates hidden="True" parser_action="skip" name="Model Templates"/><estimation_config config_name="estimation_config" type="configuration" name="Estimation Configuration">
                 <save_estimation_results type="boolean">False</save_estimation_results>
                 <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</cache_directory>
                 <estimation_database_configuration type="class">
-                    <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
-                    <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
-                    <database_name type="string">eugene_1980_baseyear_zone</database_name>
+                    <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
+                    <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+                    <argument type="string" name="database_name">eugene_1980_baseyear_zone</argument>
                 </estimation_database_configuration>
                 <scenario_database_configuration type="class">
-                    <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
-                    <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
-                    <database_name type="string">eugene_1980_baseyear_zone</database_name>
+                    <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+                    <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+                    <argument type="string" name="database_name">eugene_1980_baseyear_zone</argument>
                 </scenario_database_configuration>
                 <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
                 <low_memory_mode type="boolean">False</low_memory_mode>
@@ -33,39 +32,38 @@
                 </years>
                 <seed type="integer">1</seed>
                 <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-                    <pseudo_building type="dataset" choices="Load|Skip">Load</pseudo_building>
-                    <zone type="dataset" choices="Load|Skip">Load</zone>
-                    <household type="dataset" choices="Load|Skip">Load</household>
-                    <job type="dataset" choices="Load|Skip">Load</job>
-                    <development_event_history type="dataset" choices="Load|Skip">Load</development_event_history>
-                    <target_vacancy type="dataset" choices="Load|Skip">Load</target_vacancy>
-                    <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
-                    <building_type type="dataset" choices="Load|Skip">Load</building_type>
+                    <selectable type="selectable" name="pseudo_building">True</selectable>
+                    <selectable type="selectable" name="zone">True</selectable>
+                    <selectable type="selectable" name="household">True</selectable>
+                    <selectable type="selectable" name="job">True</selectable>
+                    <selectable type="selectable" name="development_event_history">True</selectable>
+                    <selectable type="selectable" name="target_vacancy">True</selectable>
+                    <selectable type="selectable" name="job_building_type">True</selectable>
+                    <selectable type="selectable" name="building_type">True</selectable>
                 </datasets_to_preload>
                 <dataset_pool_configuration type="class">
-                    <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
-                    <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-                    <package_order type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</package_order>
+                    <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+                    <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+                    <argument type="list" name="package_order">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
                 </dataset_pool_configuration>
             </estimation_config>
-        </model_system>
-    </model_manager>
+        </model_manager>
     <scenario_manager>
-        <Zone_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
+        <scenario copyable="True" executable="True" setexpanded="True" type="scenario" name="Zone_baseline">
             <models_to_run type="selectable_list">
-                <real_estate_price_model choices="Run|Skip" type="model_choice">Run</real_estate_price_model>
-                <development_project_transition_model choices="Run|Skip" type="model_choice">Run</development_project_transition_model>
-                <commercial_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</commercial_development_project_location_choice_model>
-                <industrial_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</industrial_development_project_location_choice_model>
-                <residential_development_project_location_choice_model choices="Run|Skip" type="model_choice">Run</residential_development_project_location_choice_model>
-                <add_projects_to_buildings choices="Run|Skip" type="model_choice">Run</add_projects_to_buildings>
-                <household_transition_model choices="Run|Skip" type="model_choice">Run</household_transition_model>
-                <employment_transition_model choices="Run|Skip" type="model_choice">Run</employment_transition_model>
-                <household_relocation_model choices="Run|Skip" type="model_choice">Run</household_relocation_model>
-                <household_location_choice_model choices="Run|Skip" type="model_choice">Run</household_location_choice_model>
-                <employment_relocation_model choices="Run|Skip" type="model_choice">Run</employment_relocation_model>
-                <employment_location_choice_model type="model_choice" choices="Run|Skip">Run<group_members type="string">_all_</group_members>          </employment_location_choice_model>
-                <distribute_unplaced_jobs_model choices="Run|Skip" type="model_choice">Run</distribute_unplaced_jobs_model>
+                <selectable type="selectable" name="real_estate_price_model">True</selectable>
+                <selectable type="selectable" name="development_project_transition_model">True</selectable>
+                <selectable type="selectable" name="commercial_development_project_location_choice_model">True</selectable>
+                <selectable type="selectable" name="industrial_development_project_location_choice_model">True</selectable>
+                <selectable type="selectable" name="residential_development_project_location_choice_model">True</selectable>
+                <selectable type="selectable" name="add_projects_to_buildings">True</selectable>
+                <selectable type="selectable" name="household_transition_model">True</selectable>
+                <selectable type="selectable" name="employment_transition_model">True</selectable>
+                <selectable type="selectable" name="household_relocation_model">True</selectable>
+                <selectable type="selectable" name="household_location_choice_model">True</selectable>
+                <selectable type="selectable" name="employment_relocation_model">True</selectable>
+                <selectable type="selectable" name="employment_location_choice_model">True<group_members type="string">_all_</group_members>          </selectable>
+                <selectable type="selectable" name="distribute_unplaced_jobs_model">True</selectable>
             </models_to_run>
             <scenario_database_configuration type="string"/>
             <others type="category">
@@ -77,62 +75,62 @@
             </others>
             <model_system type="string">urbansim.model_coordinators.model_system</model_system>
             <creating_baseyear_cache_configuration type="class">
-                <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
-                <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-                <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">runs</cache_directory_root>
-                <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
-                <baseyear_cache type="class">
-                    <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
-                    <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
-                    <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory"/>
-                </baseyear_cache>
-                <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-                <tables_to_cache type="selectable_list">
-                    <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
-                    <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
-                    <households choices="Cache|Skip" type="table">Cache</households>
-                    <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
-                    <building_types choices="Cache|Skip" type="table">Cache</building_types>
-                    <jobs choices="Cache|Skip" type="table">Cache</jobs>
-                    <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
-                    <zones choices="Cache|Skip" type="table">Cache</zones>
-                    <pseudo_buildings choices="Cache|Skip" type="table">Cache</pseudo_buildings>
-                    <counties choices="Cache|Skip" type="table">Cache</counties>
-                    <commercial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_coefficients>
-                    <commercial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_specification>
-                    <commercial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_coefficients>
-                    <commercial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_specification>
-                    <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
-                    <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
-                    <industrial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_coefficients>
-                    <industrial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_specification>
-                    <industrial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_coefficients>
-                    <industrial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_specification>
-                    <residential_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_coefficients>
-                    <residential_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_specification>
-                    <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
-                    <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
-                    <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
-                    <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
-                    <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
-                    <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
-                    <base_year choices="Cache|Skip" type="table">Cache</base_year>
-                    <cities choices="Cache|Skip" type="table">Cache</cities>
-                    <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
-                    <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
-                    <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
-                    <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
-                    <race_names choices="Cache|Skip" type="table">Cache</race_names>
-                    <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
-                    <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
-                    <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
-                </tables_to_cache>
-                <tables_to_cache_nchunks type="dictionary"/>
-                <tables_to_copy_to_previous_years type="dictionary"/>
+                <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+                <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+                <argument config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" name="cache_directory_root">runs</argument>
+                <argument type="boolean" name="cache_from_database">False</argument>
+                <argument type="class" name="baseyear_cache">
+                    <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+                    <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+                    <argument parser_action="prefix_with_opus_data_path" type="directory" name="existing_cache_to_copy"/>
+                </argument>
+                <argument type="string" name="cache_scenario_database">urbansim.model_coordinators.cache_scenario_database</argument>
+                <argument type="selectable_list" name="tables_to_cache">
+                    <selectable type="selectable" name="annual_employment_control_totals">True</selectable>
+                    <selectable type="selectable" name="annual_household_control_totals">True</selectable>
+                    <selectable type="selectable" name="households">True</selectable>
+                    <selectable type="selectable" name="job_building_types">True</selectable>
+                    <selectable type="selectable" name="building_types">True</selectable>
+                    <selectable type="selectable" name="jobs">True</selectable>
+                    <selectable type="selectable" name="travel_data">True</selectable>
+                    <selectable type="selectable" name="zones">True</selectable>
+                    <selectable type="selectable" name="pseudo_buildings">True</selectable>
+                    <selectable type="selectable" name="counties">True</selectable>
+                    <selectable type="selectable" name="commercial_development_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="commercial_development_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="commercial_employment_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="commercial_employment_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="home_based_employment_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="home_based_employment_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="industrial_employment_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="industrial_employment_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="industrial_development_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="industrial_development_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="residential_development_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="residential_development_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="urbansim_constants">True</selectable>
+                    <selectable type="selectable" name="household_location_choice_model_coefficients">True</selectable>
+                    <selectable type="selectable" name="household_location_choice_model_specification">True</selectable>
+                    <selectable type="selectable" name="household_characteristics_for_ht">True</selectable>
+                    <selectable type="selectable" name="annual_relocation_rates_for_households">True</selectable>
+                    <selectable type="selectable" name="annual_relocation_rates_for_jobs">True</selectable>
+                    <selectable type="selectable" name="base_year">True</selectable>
+                    <selectable type="selectable" name="cities">True</selectable>
+                    <selectable type="selectable" name="development_event_history">True</selectable>
+                    <selectable type="selectable" name="employment_adhoc_sector_group_definitions">True</selectable>
+                    <selectable type="selectable" name="employment_adhoc_sector_groups">True</selectable>
+                    <selectable type="selectable" name="employment_sectors">True</selectable>
+                    <selectable type="selectable" name="race_names">True</selectable>
+                    <selectable type="selectable" name="target_vacancies">True</selectable>
+                    <selectable type="selectable" name="jobs_for_estimation">True</selectable>
+                    <selectable type="selectable" name="households_for_estimation">True</selectable>
+                </argument>
+                <argument type="dictionary" name="tables_to_cache_nchunks"/>
+                <argument type="dictionary" name="tables_to_copy_to_previous_years"/>
             </creating_baseyear_cache_configuration>
-        </Zone_baseline>
+        </scenario>
     </scenario_manager>
-    <!-- <years type="">(1981, 1985)</years> -->
+    
     <debuglevel type="integer">4</debuglevel>
     <base_year type="integer"/>
     <cache_directory type="string"/>
