@@ -32,7 +32,7 @@ class XmlController_Models(XmlController):
         self.action_run_estimation = self.create_action(*p)
         p = ('', "Right click the individual groups (specification/<group>) to estimate", lambda: ())
         self.action_show_how_to_estimate_groups = self.create_action(*p)
-        p = ('estimation', "Run Estimation Group", self.run_estimation_group_for_selected)
+        p = ('estimation', "Run Estimation Group", self.run_estimation_for_selected_group)
         self.action_run_estimation_group = self.create_action(*p)
         p = ('submodel', "Edit Submodel", self._open_submodel_editor_for_selected)
         self.action_edit_submodel = self.create_action(*p)
@@ -78,7 +78,7 @@ class XmlController_Models(XmlController):
         estimation_element = OpusEstimation(xml_config, model_name)
         self.manager.add_estimation_element(estimation_element)
 
-    def run_estimation_group_for_selected(self):
+    def run_estimation_for_selected_group(self):
         '''
         Create an estimation run dialog for this model for running a
         all submodels within a submodel group.
@@ -90,10 +90,7 @@ class XmlController_Models(XmlController):
         model_node = group_node.getparent().getparent()
         xml_config = self.manager.project.xml_config
 
-        model_name = model_node.get('name')
-        group_name = model_node.get('name')
-
-        estimation_element = OpusEstimation(xml_config, model_name, group_name)
+        estimation_element = OpusEstimation(xml_config, model_node.get('name'), group_node.get('name'))
         self.manager.add_estimation_element(estimation_element)
 
     def _show_dialog_for_template_node(self, template_node):
