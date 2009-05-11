@@ -9,7 +9,7 @@
         <run_description type="dictionary">
 		  <year type="integer">2000</year>
 		  <bank type="list">['2000_06']</bank>
-		  <emme2_batch_file_name parser_action="blank_to_None" type="string"/>
+		  <emme2_batch_file_name convert_blank_to_none="True" type="string"/>
 		</run_description>
       </years_to_run>
     </travel_model_configuration>
@@ -24,7 +24,7 @@
     <scenario type="scenario" name="parent_scenario">
       <travel_model_configuration type="dictionary">
         <travel_model_base_directory type="string">base2</travel_model_base_directory>
-	    <emme2_batch_file_name parser_action="blank_to_None" type="string">QUICKRUN.bat</emme2_batch_file_name>
+	    <emme2_batch_file_name convert_blank_to_none="True" type="string">QUICKRUN.bat</emme2_batch_file_name>
       </travel_model_configuration>
     </scenario>
   </scenario_manager>

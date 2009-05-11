@@ -8,13 +8,13 @@
     <quotedthing2 type="string" parser_action='quote_string'>'test\test'</quotedthing2>
     <quotedthing3 type="string" parser_action='quote_string'>"test\test"</quotedthing3>
     <empty1 type="string"/>
-    <empty2 parser_action="blank_to_None" type="string"/>
-    <emptypassword parser_action="blank_to_None" type="password"/>
+    <empty2 convert_blank_to_none="True" type="string"/>
+    <emptypassword convert_blank_to_none="True" type="password"/>
     <year type="integer">1980</year>
     <mybool choices="True|False" type="boolean">True</mybool>
     <ten type="float">10.0</ten>
-    <emptyint parser_action="blank_to_None" type="integer"/>
-    <emptyfloat parser_action="blank_to_None" type="float"/>
+    <emptyint convert_blank_to_none="True" type="integer"/>
+    <emptyfloat convert_blank_to_none="True" type="float"/>
     <years type="tuple">
       <firstyear type="integer">1980</firstyear>
       <lastyear type="integer">1981</lastyear>
