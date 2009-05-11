@@ -2,8 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString, QObject, SIGNAL
-from PyQt4.QtGui import QTabWidget, QWidget, QTableWidgetItem, QSizePolicy, QIcon
+from PyQt4.QtCore import QObject, SIGNAL, Qt
+from PyQt4.QtGui import QTabWidget, QWidget, QTableWidgetItem, QSizePolicy
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 
@@ -19,46 +19,49 @@ from opus_core.logger import logger
 from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 from opus_gui.results_manager.results_manager_functions import get_simulation_runs
 from opus_gui.results_manager.results_manager_functions import get_years_for_simulation_run
-from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_manager_instance,\
+    get_mainwindow_instance
+from opus_gui.util.icon_library import IconLibrary
 
 class ResultBrowser(QWidget, Ui_ResultsBrowser):
-    def __init__(self, resultsManagerBase):
-        QWidget.__init__(self, resultsManagerBase.base_widget)
+    def __init__(self, project, parent_widget):
+        QWidget.__init__(self, parent_widget)
         self.setupUi(self)
-        #self.setFocusPolicy()
 
-        self.resultsManagerBase = resultsManagerBase
-        self.project = resultsManagerBase.project
+        self.project = project
 
-        # TODO: This should be done at a higher level
-        QObject.connect(get_mainwindow_instance().managers['general'].xml_controller.model,
-                        SIGNAL("layoutChanged()"),
-                        self.setupAvailableIndicators)
+        #TODO handle this as the variables are handled
+        try:
+            obj = get_manager_instance('results').xml_controller.model
+            self.connect(obj, SIGNAL("layoutChanged()"), self._setup_simulation_data)
+        except AttributeError:
+            pass
 
-        QObject.connect(resultsManagerBase.xml_controller.model, SIGNAL("layoutChanged()"),
-                        self._setup_simulation_data)
+        def test():
+            print 'Variables updated'
+        self.connect(get_mainwindow_instance(), SIGNAL('variables_updated'), test)
 
-        self.cbAutoGen.setToolTip(QString(
-            ('If checked, indicator results will automatically be\n'
-            'created for the currently selected simulation run,\n'
-            'indicator, and years. If unchecked, click\n'
-            'Generate results in order to make results available.')
-            ))
+        tool_tip = ('If checked, indicator results will automatically be\n'
+                    'created for the currently selected simulation run,\n'
+                    'indicator, and years. If unchecked, click\n'
+                    'Generate results in order to make results available.')
+        self.cb_auto_gen.setToolTip(tool_tip)
 
         self.inGui = False
         self.logFileKey = 0
         self.available_years_for_simulation_runs = {}
 
-        self.current_indicator = None
-        self.current_run = None
-        self.current_year = None
+        self.current_indicator = ''
+        self.current_run = ''
+        self.current_year = ''
+        self._update_current_label()
 
         self.running_key = None
         self.queued_results = None
 
         self.setup = True
 
-        self.setupAvailableIndicators()
+        self._setup_available_indicators()
         self._setup_simulation_data()
 
         self.setup = False
@@ -66,65 +69,71 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.already_browsed = {}
 
         self.generating_results = False
-        if self.cbAutoGen.isChecked():
-            self.on_pbnGenerateResults_released()
-        self.pbnExportResults.setEnabled(False)
-        self.twVisualizations.removeTab(0)
-        self.tabIcon =  QIcon(":/Images/Images/table.png")
+        if self.cb_auto_gen.isChecked():
+            self.on_pb_generate_results_released()
+        # self.pb_export_results.setEnabled(False)
+        self.tabwidget_visualizations.removeTab(0)
+        self.tabIcon = IconLibrary.icon('table')
         self.tabLabel = "Result Browser"
 
-    def setupAvailableIndicators(self):
-        indicators = get_available_indicator_nodes(self.project)
+    def _update_current_label(self):
+        msg = '%s > %s > %s' %(self.current_run, self.current_year, self.current_indicator)
+        self.lbl_current_selection.setText(msg)
 
-        current_row = self.tableWidget.currentRow()
+    def _setup_available_indicators(self):
+        indicator_nodes = get_available_indicator_nodes(self.project)
 
-        self.tableWidget.clear()
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setRowCount(len(indicators))
+        current_row = self.indicator_table.currentRow()
 
-        col = QTableWidgetItem()
-        col.setText(QString('Name'))
-        self.tableWidget.setHorizontalHeaderItem(0,col)
-
-        col = QTableWidgetItem()
-        col.setText(QString('Dataset'))
-        self.tableWidget.setHorizontalHeaderItem(1,col)
+        self.indicator_table.clear()
+        self.indicator_table.setColumnCount(3)
+        self.indicator_table.setRowCount(len(indicator_nodes))
 
         col = QTableWidgetItem()
-        col.setText(QString('Definition'))
-        self.tableWidget.setHorizontalHeaderItem(2,col)
+        col.setText('Name')
+        self.indicator_table.setHorizontalHeaderItem(0,col)
 
-        for i, indicator in enumerate(indicators):
+        col = QTableWidgetItem()
+        col.setText('Dataset')
+        self.indicator_table.setHorizontalHeaderItem(1,col)
+
+        col = QTableWidgetItem()
+        col.setText('Definition')
+        self.indicator_table.setHorizontalHeaderItem(2,col)
+
+        for i, indicator in enumerate(indicator_nodes):
             row = QTableWidgetItem()
-            self.tableWidget.setVerticalHeaderItem(i,row)
-            j = 0
+            self.indicator_table.setVerticalHeaderItem(i, row)
 
             item = QTableWidgetItem()
             item.setText(indicator.get('name'))
-            self.tableWidget.setItem(i,0,item)
+            self.indicator_table.setItem(i,0,item)
 
             item = QTableWidgetItem()
             item.setText(indicator.get('dataset'))
-            self.tableWidget.setItem(i,1,item)
+            self.indicator_table.setItem(i,1,item)
 
             item = QTableWidgetItem()
             item.setText(indicator.text or '')
-            self.tableWidget.setItem(i,2,item)
+            self.indicator_table.setItem(i,2,item)
 
         if current_row is None or current_row == -1:
             current_row = 0
-        self.tableWidget.resizeRowsToContents()
-        self.tableWidget.resizeColumnsToContents()
+        self.indicator_table.resizeRowsToContents()
+        self.indicator_table.resizeColumnsToContents()
 
-        self.tableWidget.setCurrentCell(current_row,0)
-        self.on_tableWidget_itemSelectionChanged()
+        self.indicator_table.setCurrentCell(current_row,0)
+        self.on_indicator_table_itemSelectionChanged()
+
+    def on_cb_auto_gen_released(self):
+        self.pb_generate_results.setEnabled(self.cb_auto_gen.checkState() != Qt.Checked)
 
     def _setup_simulation_data(self):
-        current_row = self.lstAvailableRuns.currentRow()
+        current_row = self.lst_available_runs.currentRow()
 
-        runs = get_simulation_runs(self.resultsManagerBase.project)
+        runs = get_simulation_runs(self.project)
 
-        self.lstAvailableRuns.clear()
+        self.lst_available_runs.clear()
         idx = -1
         for i, run in enumerate(runs):
             run_name = run.get('name')
@@ -135,84 +144,85 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                                                  simulation_run_node = run)
             self.available_years_for_simulation_runs[run_name] = years
 
-            self.lstAvailableRuns.addItem(QString(run_name))
+            self.lst_available_runs.addItem(run_name)
 
         if current_row is None or current_row == -1:
             current_row = idx
         if current_row != -1:
-            self.lstAvailableRuns.setCurrentRow(current_row)
-            self.on_lstAvailableRuns_currentRowChanged(current_row)
+            self.lst_available_runs.setCurrentRow(current_row)
+            self.on_lst_available_runs_currentRowChanged(current_row)
 
-    def on_lstAvailableRuns_currentRowChanged(self, ind):
-        currentItem = self.lstAvailableRuns.currentItem()
+    def on_lst_available_runs_currentRowChanged(self, _):
+        currentItem = self.lst_available_runs.currentItem()
         if currentItem is None: return
 
         current_run = str(currentItem.text())
-        if current_run == self.current_run and not self.setup: return
+        if current_run == self.current_run and not self.setup:
+            return
 
         self.current_run = current_run
+        self._update_current_label()
 
         setup = self.setup
         if current_run in self.available_years_for_simulation_runs:
             self.setup = True
-            self.lstYears.clear()
+            self.lst_years.clear()
 
             years = self.available_years_for_simulation_runs[current_run]
             for yr in sorted(years):
-                self.lstYears.addItem(QString(str(yr)))
+                self.lst_years.addItem(str(yr))
 
-            self.lstYears.setCurrentRow(0)
-            self.on_lstYears_currentRowChanged(0)
+            self.lst_years.setCurrentRow(0)
+            self.on_lst_years_currentRowChanged(0)
             self.setup = False
 
-        if not setup and self.cbAutoGen.isChecked():
-            self.on_pbnGenerateResults_released()
+        if not setup and self.cb_auto_gen.isChecked():
+            self.on_pb_generate_results_released()
         else:
-            self.pbnGenerateResults.setEnabled(True)
-            self.pbnGenerateResults.setText(QString('Generate Results'))
+            self.pb_generate_results.setEnabled(True)
+            self.pb_generate_results.setText('Generate Results')
 
+    def on_lst_years_currentRowChanged(self, _):
+        current_item = self.lst_years.currentItem()
+        if current_item is None: return
 
-    def on_lstYears_currentRowChanged(self, ind):
-        currentItem = self.lstYears.currentItem()
-        if currentItem is None: return
+        current_year = int(current_item.text())
 
-        current_year = int(currentItem.text())
-
-        if self.current_year == current_year and not self.setup: return
+        if self.current_year == current_year and not self.setup:
+            return
         self.current_year = current_year
+        self._update_current_label()
 
-        if not self.setup and self.cbAutoGen.isChecked():
-            self.on_pbnGenerateResults_released()
+        if not self.setup and self.cb_auto_gen.isChecked():
+            self.on_pb_generate_results_released()
         else:
-            self.pbnGenerateResults.setEnabled(True)
-            self.pbnGenerateResults.setText(QString('Generate Results'))
+            self.pb_generate_results.setEnabled(True)
+            self.pb_generate_results.setText('Generate Results')
 
-    def on_tableWidget_itemSelectionChanged(self):
-        currentRow = self.tableWidget.currentRow()
+    def on_indicator_table_itemSelectionChanged(self):
+        currentRow = self.indicator_table.currentRow()
         if currentRow is None: return
 
-        indicator_name = str(self.tableWidget.item(currentRow,0).text())
+        indicator_name = str(self.indicator_table.item(currentRow,0).text())
         if self.current_indicator == indicator_name and not self.setup: return
 
         self.current_indicator = indicator_name
+        self._update_current_label()
 
-        if not self.setup and self.cbAutoGen.isChecked():
-            self.on_pbnGenerateResults_released()
+        if not self.setup and self.cb_auto_gen.isChecked():
+            self.on_pb_generate_results_released()
         else:
-            self.pbnGenerateResults.setEnabled(True)
-            self.pbnGenerateResults.setText(QString('Generate Results'))
+            self.pb_generate_results.setEnabled(True)
+            self.pb_generate_results.setText('Generate Results')
 
-
-
-    def on_pbnGenerateResults_released(self):
-
+    def on_pb_generate_results_released(self):
         run_name = self.current_run
         indicator_name = self.current_indicator
-
         start_year = self.current_year
         end_year = start_year
 
-        if run_name is None or indicator_name is None or start_year is None: return
+        if run_name is None or indicator_name is None or start_year is None:
+            return
 
         key = (run_name, indicator_name, start_year)
 
@@ -220,31 +230,31 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             if not self.generating_results:
                 (tab_widget,map_widget) = self.already_browsed[key]
 #                self.swap_visualizations(map_widget, tab_widget)
-                self.pbnGenerateResults.setText(QString('Results Generated'))
+                self.pb_generate_results.setText('Results Generated')
             else:
                 self.queued_results = ('swap', (map_widget, tab_widget))
-
             return
 
-        self.pbnGenerateResults.setEnabled(False)
-        self.pbnGenerateResults.setText(QString('Generating Results...'))
+        self.pb_generate_results.setEnabled(False)
+        self.pb_generate_results.setText('Generating Results...')
 
-        indicators = get_available_indicator_nodes(self.resultsManagerBase.project)
+        indicator_nodes = get_available_indicator_nodes(self.project)
 
         dataset = None
-        for i in indicators:
-            if i.get('name') == indicator_name:
-                dataset = i.get('dataset')
+        for indicator_node in indicator_nodes:
+            if indicator_node.get('name') == indicator_name:
+                dataset = indicator_node.get('dataset')
                 break
 
         if dataset is None:
-            raise Exception('Could not find dataset for indicator %s'%indicator_name)
+            raise Exception('Could not find dataset for indicator %s' % indicator_name)
 
         table_params = {
             'name': None,
             'output_type' : 'tab',
             'indicators' : [indicator_name],
         }
+
         map_params = {'name':None,
                       'indicators':[indicator_name]}
 
@@ -253,7 +263,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             ('mapnik_map', dataset, map_params)
         ]
 
-        batch_processor = BatchProcessor(self.resultsManagerBase.project)
+        batch_processor = BatchProcessor(self.project)
         batch_processor.guiElement = self
 
         batch_processor.set_data(
@@ -263,37 +273,33 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         if not self.generating_results:
             self.generating_results = True
-            logger.log_note('Generating results for %s on run %s for year %i'%(run_name, indicator_name, start_year))
+            logger.log_note('Generating results for %s on run %s for year %indicator_node'%(run_name, indicator_name, start_year))
             self.running_key = key
             self.batch_processor = batch_processor
-            runThread = OpusGuiThread(
+            batch_processor_thread = OpusGuiThread(
                                   parentThread = get_mainwindow_instance(),
                                   parentGuiElement = self,
                                   thread_object = self.batch_processor)
 
             # Use this signal from the thread if it is capable of producing its own status signal
-            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"),
-                            self.runFinishedFromThread)
-            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"),
-                            self.runErrorFromThread)
+            self.connect(batch_processor_thread, SIGNAL("runFinished(PyQt_PyObject)"), self._run_finished)
+            self.connect(batch_processor_thread, SIGNAL("runError(PyQt_PyObject)"), self._run_error)
 
-            runThread.start()
+            batch_processor_thread.start()
         else:
             self.queued_results = (key, batch_processor)
 
-
-
     # Called when the model is finished...
-    def runFinishedFromThread(self,success):
+    def _run_finished(self, success):
         key = self.running_key
         self.running_key = None
 
         size = QSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-        self.twVisualizations.setSizePolicy(size)
+        self.tabwidget_visualizations.setSizePolicy(size)
 
         name = '%s/%s/%s'%key
-        new_tab = QTabWidget(self.twVisualizations)
-        self.twVisualizations.addTab(new_tab, QString(name))
+        new_tab = QTabWidget(self.tabwidget_visualizations)
+        self.tabwidget_visualizations.addTab(new_tab, name)
 
         map_widget = None
         tab_widget = None
@@ -317,16 +323,14 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
 #        if not map_widget or not tab_widget: return
 
-        self.tabMap = map_widget
-        self.tabTable = tab_widget
+#        self.tabMap = map_widget
+#        self.tabTable = tab_widget
 
-        if self.tabTable:
-            new_tab.addTab(self.tabTable, "Table")
+        if tab_widget:
+            new_tab.addTab(tab_widget, "Table")
 
-        if self.tabMap:
-
-            new_tab.addTab(self.tabMap, "Map")
-
+        if map_widget:
+            new_tab.addTab(map_widget, "Map")
 
         self.already_browsed[key] = (tab_widget, map_widget)
 
@@ -349,10 +353,8 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
                                   thread_object = self.batch_processor)
 
             # Use this signal from the thread if it is capable of producing its own status signal
-            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"),
-                            self.runFinishedFromThread)
-            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"),
-                            self.runErrorFromThread)
+            QObject.connect(runThread, SIGNAL("runFinished(PyQt_PyObject)"), self._run_finished)
+            QObject.connect(runThread, SIGNAL("runError(PyQt_PyObject)"), self._run_error)
             runThread.start()
         else:
 #            if swap:
@@ -366,37 +368,35 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             self.queued_results = None
 
             self.generating_results = False
-            self.pbnGenerateResults.setText(QString('Results Generated'))
+            self.pb_generate_results.setText('Results Generated')
 
 #    def swap_visualizations(self, map_widget, tab_widget):
-#        cur_index = self.twVisualizations.currentIndex()
+#        cur_index = self.tabwidget_visualizations.currentIndex()
 #
-#        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabTable))
-#        self.twVisualizations.removeTab(self.twVisualizations.indexOf(self.tabMap))
+#        self.tabwidget_visualizations.removeTab(self.tabwidget_visualizations.indexOf(self.tabTable))
+#        self.tabwidget_visualizations.removeTab(self.tabwidget_visualizations.indexOf(self.tabMap))
 #        self.tabMap = None
 #        self.tabTable = None
 #
 #        self.tabMap = map_widget
 #        self.tabTable = tab_widget
 #
-#        self.twVisualizations.addTab(self.tabTable, "")
-#        self.twVisualizations.addTab(self.tabMap, "")
+#        self.tabwidget_visualizations.addTab(self.tabTable, "")
+#        self.tabwidget_visualizations.addTab(self.tabMap, "")
 #
-#        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabTable), QString('Table'))
-#        self.twVisualizations.setTabText(self.twVisualizations.indexOf(self.tabMap), QString('Map'))
+#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabTable), QString('Table'))
+#        self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.tabMap), QString('Map'))
 #        #self.tabMap.show()
 #        #self.tabTable.show()
 #
-#        self.twVisualizations.setCurrentIndex(cur_index)
+#        self.tabwidget_visualizations.setCurrentIndex(cur_index)
 
     def removeElement(self):
         return True
 
-    def runErrorFromThread(self,errorMessage):
+    def _run_error(self,errorMessage):
         text = 'Error in computing or displaying indicator'
-        MessageBox.error(mainwindow = self,
-                        text = text,
-                        detailed_text = errorMessage)
+        MessageBox.error(mainwindow = self, text = text, detailed_text = errorMessage)
 
 #        box = QMessageBox(QMessageBox.Warning, '', 'Error in computing or displaying indicator', QMessageBox.Ok, self.mainwindow, Qt.Dialog|Qt.WindowMaximizeButtonHint)
 #        box.setDetailedText(errorMessage)
