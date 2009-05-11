@@ -1,8 +1,9 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
+from opus_gui.util.icon_library import IconLibrary
 
-import os
+import os, sys
 
 from lxml.etree import ElementTree
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
@@ -23,6 +24,7 @@ from opus_gui.scenarios_manager.scenario_manager_functions import update_models_
 from opus_gui.results_manager.results_manager import ResultsManager
 from opus_gui.models_manager.models_manager import ModelsManager
 from opus_gui.general_manager.general_manager import GeneralManager
+from opus_gui.main.controllers.log_widget import LogWidget
 from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.util import common_dialogs
@@ -34,17 +36,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     Main window used for housing the canvas, toolbars, and dialogs
     '''
 
-    class Output:
-        '''
-        Output override for the app to catch stdout and stderr and
-        placing it in the log tab
-        '''
-        def __init__( self, writefunc ):
-            self.writefunc = writefunc
-        def write( self, line ):
-            if line != "\n":
-                self.writefunc(line)
-
     def __init__(self, gui_configuration = None):
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -54,11 +45,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.thread().setPriority(QThread.HighestPriority)
 
-        # This is the output for stdout
-        self.output = OpusGui.Output(self.writeOutput)
-
         self.tabWidget = QTabWidget(self.splitter)
         self.splitter.setSizes([400, 500])
+
+        # Create a log window
+        self.log_tab = LogWidget(self.tabWidget)
+        self.log_tab.start_stdout_capture()
+
+        print 'plain line'
+        print 'this line should be joined ',
+        print 'with this line'
 
         # Initialize empty project
         self.project = OpusProject()
@@ -195,12 +191,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def openLogTab(self):
         ''' Open a log viewer '''
-        if self.tabWidget.indexOf(self.tab_logView) == -1:
-            self.tab_logView.show()
-            self.updateFontSize()
-            self.tabWidget.insertTab(0,self.tab_logView,
-                                     QIcon(":/Images/Images/table.png"),"Log View")
-            self.tabWidget.setCurrentWidget(self.tab_logView)
+        if self.tabWidget.indexOf(self.log_tab) == -1:
+            self.tabWidget.insertTab(0, self.log_tab, IconLibrary.icon('table'), 'Log Window')
+        self.log_tab.do_refresh()
+        self.tabWidget.setCurrentWidget(self.log_tab)
 
     def openAbout(self):
         ''' Show a dialog box with information about OpusGui '''
