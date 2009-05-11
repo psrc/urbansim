@@ -24,8 +24,14 @@ from opus_gui.util.icon_library import IconLibrary
 from opus_core.variables.dependency_query import DependencyChart
 from opus_gui.general_manager.controllers.dependency_viewer import DependencyViewer
 from opus_core.third_party.pydot import InvocationException
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 
 class VariableLibrary(QDialog, Ui_VariableLibrary):
+
+    '''
+    An editor for creating and modifying variables in the expression library.
+    Causes mainwindow to emit signal 'variables_updated' whenever changes have been applied.
+    '''
 
     def __init__(self, project, parent_widget=None):
         QDialog.__init__(self, parent_widget, Qt.Window)
@@ -196,6 +202,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             # print 'DELETE SET %s' % (node)
             self.project.delete_node(node)
         self.initialize()
+        get_mainwindow_instance().emit(SIGNAL('variables_updated'))
         return True
 
     def _edit_variable(self, variable):
