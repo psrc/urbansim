@@ -431,10 +431,17 @@ class Converter(object):
                 self.add_action(self.action_change_node_attrib, boolean_node, {'choices':None})
 
     def check_qouted_type(self):
-        # make type='quoted_string' into a parser action
+        # type='quoted_string' should be type='string' parser_action='quote_string'
+        # if the node already has a parser_action that is set to 'blank_to_None', add the attribute
+        # empty_value_to_none='True'
         for node in self.root.findall(".//*[@type='quoted_string']"):
-            self.add_action(self.action_change_node_attrib, node, {'type':'string',
-                                                                   'parser_action': 'quote_string'})
+            attribs = {'type': 'string', 'parser_action': 'quote_string'}
+            self.add_action(self.action_change_node_attrib, node,  attribs)
+
+    def check_parser_action_blank_to_none(self):
+        for node in self.root.findall(".//*[@parser_action='blank_to_None']"):
+            attribs = {'parser_action': None, 'convert_blank_to_none': 'True'}
+            self.add_action(self.action_change_node_attrib, node, attribs)
 
     def check_copyable_type(self):
         nodes_with_copyable_attribute = self.root.findall(".//*[@copyable]")
@@ -539,15 +546,18 @@ class Converter(object):
                    %(current_version, "2.0"))
             self.write(msg)
         else:
+            # manager checks
             self.check_general()
             self.check_model_manager()
             self.check_scenario_manager()
             self.check_data_manager()
             self.check_results_manager()
+            # global checks
             self.check_selectable_lists()
             self.check_class_type_nodes()
             self.check_boolean_choices()
-
+            self.check_parser_action_blank_to_none() # this MUST be before check_quoted_types
+            self.check_qouted_type()
 
 if __name__ == '__main__':
     import sys
