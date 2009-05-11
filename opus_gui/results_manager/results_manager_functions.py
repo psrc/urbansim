@@ -15,34 +15,32 @@ import os
 
 def get_batch_configuration(project, batch_name):
     '''
-    Get the configuration for a batch in the following specification:
-    (visualization_type, dataset_name, child_node_value_mappings)
+    Get the configuration for a batch as a tuple formated like:
+     (visualization_type, dataset_name, child_node_value_mappings)
+    child_node_value_mappings is a dictionary like: setting[name] = value
+
     @param project (OpusProject): an opus project
     @param batch_name (String): name of the batch to handle
     '''
 
-    # Select the batch node based on tags
-    all_batch_nodes = get_available_batch_nodes(project)
-    selected_batch_nodes = [node for node in all_batch_nodes if
-                            node.get('name') == batch_name]
-    if len(selected_batch_nodes) == 0:
-        print 'Could not find a batch with name "%s"' % batch_name
-        return ()
-    if len(selected_batch_nodes) > 1:
-        raise RuntimeError('Found multiple (%d) batch nodes with tag "%s"'
-                           %(len(selected_batch_nodes), batch_name))
-    batch_node = selected_batch_nodes[0]
+    # get the selected batch by name
+    batch_nodes = dict((n.get('name'), n) for n in get_available_batch_nodes(project))
+    if not batch_name in batch_nodes:
+        raise LookupError('Could not find a batch named "%s" as requested' % batch_name)
+    batch_node = batch_nodes[batch_name]
+
     visualizations = []
-    for viz_node in batch_node:
-        # Create a dict for all child nodes, paired with their values
-        child_values = dict((node.get('name'), node.text) for node in viz_node)
-        # Format visualization type
-        viz_type = child_values['visualization_type']
-        if viz_type in ['table_per_year', 'table_per_attribute']:
-            viz_type = 'tab'
-        dataset_name = child_values['dataset_name']
-        child_values['name'] = viz_node.get('name')
-        visualizations.append((viz_type, dataset_name, child_values))
+
+    for viz_node in batch_node.findall('batch_visualization'):
+        viz_type = viz_node.find('visualization_type').text
+        dataset_name = viz_node.find('dataset_name').text
+        # assemble a dict containing all <settings>, <visualization_type> and <output_type>
+        settings = {}
+        settings['indicators'] = viz_node.find('indicators').text
+        settings['output_type'] = viz_node.find('output_type').text
+        for setting_node in viz_node.findall('settings/setting'):
+            settings[setting_node.get('name')] = setting_node.text
+        visualizations.append((viz_type, dataset_name, settings))
     return visualizations
 
 def get_available_batch_nodes(project):
