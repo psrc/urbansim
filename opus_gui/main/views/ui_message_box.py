@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/variable_library_rewrite/opus_gui/main/views/message_box.ui'
+# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/opus_trunk/opus_gui/main/views/message_box.ui'
 #
-# Created: Mon Apr 20 22:26:22 2009
+# Created: Sun May 10 00:57:44 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,6 +97,7 @@ class Ui_MessageBox(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblDetailText.sizePolicy().hasHeightForWidth())
         self.lblDetailText.setSizePolicy(sizePolicy)
+        self.lblDetailText.setLineWrapMode(QtGui.QTextEdit.NoWrap)
         self.lblDetailText.setReadOnly(True)
         self.lblDetailText.setObjectName("lblDetailText")
         self.verticalLayout_2.addWidget(self.lblDetailText)
