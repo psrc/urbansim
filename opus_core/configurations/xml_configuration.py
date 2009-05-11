@@ -552,6 +552,7 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node, int)
         elif type_name=='float':
             return self._convert_string_to_data(node, float)
+        #TODO Remove the support for "quoted_string" before 4.3 release.
         elif type_name in ['string', 'password', 'variable_definition', 'path', 'quoted_string']:
             if type_name == 'quoted_string':
                 node.attrib['parser_action'] = 'quote_string'
@@ -626,25 +627,25 @@ class XMLConfiguration(object):
         return inst
 
     def _convert_string_to_data(self, node, func):
-        blank_to_None = node.get('parser_action', '') == 'blank_to_None'
+        convert_blank_to_none = node.get('convert_blank_to_none') == 'True'
         quote_string = node.get('parser_action') == 'quote_string'
-        if node.text is None:
-            if blank_to_None:
+        # not giving any strings means giving empty strings. To explicitly give None, set the
+        # attribute convert_empty_string_to_none to 'True'.
+        node_text = node.text
+
+        if node_text is None:
+            node_text = ''
+
+        if convert_blank_to_none:
+            if node_text in ['', 'None']:
                 return None
-            elif func==str or quote_string:
-                return ''
-            raise ValueError, "found empty string in xml node but no parser action to convert it to None"
 
-        if blank_to_None and node.text == 'None':
-            return None
+        resulting_string = func(node_text)
 
-        resulting_string = func(node.text)
-
+        # ensure the string is quoted (single quotes) if requested to do so
         if quote_string:
-            # ensure that the resulting string is wrapped in single quotes
             resulting_string = resulting_string.replace('"', "'").replace("'", '')
             resulting_string = "'%s'" % resulting_string
-
         return resulting_string
 
     def _convert_list_to_data(self, node):
