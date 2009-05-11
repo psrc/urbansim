@@ -2,8 +2,6 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from PyQt4.QtCore import QString
-
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.results_manager.controllers.tabs.view_image_form import ViewImageForm
 from opus_gui.results_manager.controllers.tabs.view_animation_form import ViewAnimationForm
@@ -83,7 +81,7 @@ class ResultsManager(AbstractManager):
     def add_result_browser(self):
         if self.resultBrowser is not None:
             self.close_tab(self.resultBrowser)
-        self.resultBrowser = ResultBrowser(resultsManagerBase = self)
+        self.resultBrowser = ResultBrowser(project=self.project, parent_widget=self.xml_controller.view)
         self._attach_tab(tab_widget = self.resultBrowser)
 
     def addViewImageIndicator(self, visualization, indicator_type = None):
