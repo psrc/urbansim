@@ -424,7 +424,9 @@ class XmlModel(QAbstractItemModel):
             if not reinserting:
                 inserted_node = self.project.insert_node(node, parent_node, row)
                 if inserted_node is None:
-                    raise RuntimeError('Could not insert node into model')
+                    # raise RuntimeError('Could not insert node into model')
+                    print 'WARNING: Could not insert %s:%s' % (node.tag, node.get('name'))
+                    return False
                 self.project.make_local(inserted_node)
             else:
                 inserted_node = node
