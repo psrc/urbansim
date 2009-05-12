@@ -538,26 +538,26 @@ class Converter(object):
         # section checks
         current_version = self.check_version()
         # exit if the version is too high
-        if current_version >= 2.0:
-            msg = ('The XML reports to be of version %s, this tool only upgrades to version %s, so '
-                   'no changes will occur.\n'
-                   'If you want to to force an upgrade, remove the xml_version tag from the xml '
-                   'file and run this tool again.'
-                   %(current_version, "2.0"))
-            self.write(msg)
-        else:
-            # manager checks
-            self.check_general()
-            self.check_model_manager()
-            self.check_scenario_manager()
-            self.check_data_manager()
-            self.check_results_manager()
-            # global checks
-            self.check_selectable_lists()
-            self.check_class_type_nodes()
-            self.check_boolean_choices()
-            self.check_parser_action_blank_to_none() # this MUST be before check_quoted_types
-            self.check_qouted_type()
+#        if current_version >= 2.0:
+#            msg = ('The XML reports to be of version %s, this tool only upgrades to version %s, so '
+#                   'no changes will occur.\n'
+#                   'If you want to to force an upgrade, remove the xml_version tag from the xml '
+#                   'file and run this tool again.'
+#                   %(current_version, "2.0"))
+#            self.write(msg)
+#        else:
+        # manager checks
+        self.check_general()
+        self.check_model_manager()
+        self.check_scenario_manager()
+        self.check_data_manager()
+        self.check_results_manager()
+        # global checks
+        self.check_selectable_lists()
+        self.check_class_type_nodes()
+        self.check_boolean_choices()
+        self.check_parser_action_blank_to_none() # this MUST be before check_quoted_types
+        self.check_qouted_type()
 
 if __name__ == '__main__':
     import sys
