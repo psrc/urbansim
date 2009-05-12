@@ -52,7 +52,7 @@ class LogWidget(QtGui.QDialog, Ui_LogWidget):
     def start_stdout_capture(self):
         if self.temp_file:
             self.temp_file.close()
-        self.temp_file = open('/Users/ckla/Desktop/templog.txt', 'w+') # tempfile.TemporaryFile(mode = 'w+')
+        self.temp_file = tempfile.TemporaryFile(mode = 'w+')
         standard_writer = _MultiWriter([sys.__stdout__, self.temp_file])
         error_writer = _MultiWriter([sys.__stderr__, self.temp_file])
         sys.stdout = standard_writer
