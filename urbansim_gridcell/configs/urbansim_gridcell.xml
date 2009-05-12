@@ -109,9 +109,9 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="index">changed_indices</argument>
+            <argument type="string" name="index" convert_blank_to_none="True">changed_indices</argument>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="coefficients">coefficients</argument>
@@ -125,9 +125,9 @@
           </import>
           <estimate type="dictionary">
             <output type="string" name="output">(coefficients, _)</output>
-            <argument parser_action="blank_to_None" type="string" name="index">index</argument>
+            <argument type="string" name="index" convert_blank_to_none="True">index</argument>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="procedure">'opus_core.estimate_linear_regression'</argument>
@@ -145,7 +145,7 @@
             <name type="string" name="name">prepare_for_estimate</name>
             <argument type="string" name="specification_storage">base_cache_storage</argument>
             <argument type="string" name="specification_table">'residential_land_share_model_specification'</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
@@ -159,20 +159,20 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'nchunks':1}</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'nchunks':1}</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="n_simulated_years">year-base_year</argument>
             <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
             <name type="string" name="name">CorrectedLandPriceModel</name>
-            <argument parser_action="blank_to_None" type="string" name="filter">'urbansim.gridcell.is_in_development_type_group_developable'</argument>
-            <argument parser_action="blank_to_None" type="string" name="estimate_config"/>
-            <argument parser_action="blank_to_None" type="string" name="run_config"/>
-            <argument parser_action="blank_to_None" type="string" name="submodel_string">'development_type_id'</argument>
+            <argument type="string" name="filter" convert_blank_to_none="True">'urbansim.gridcell.is_in_development_type_group_developable'</argument>
+            <argument type="string" name="estimate_config" convert_blank_to_none="True"/>
+            <argument type="string" name="run_config" convert_blank_to_none="True"/>
+            <argument type="string" name="submodel_string" convert_blank_to_none="True">'development_type_id'</argument>
           </init>
           <import type="dictionary" name="import">
               <class_module>urbansim.models.corrected_land_price_model</class_module>
@@ -180,9 +180,9 @@
           </import>
           <estimate type="dictionary">
             <output type="string" name="output">(coefficients, _)</output>
-            <argument parser_action="blank_to_None" type="string" name="index">index</argument>
+            <argument type="string" name="index" convert_blank_to_none="True">index</argument>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="procedure">'opus_core.estimate_linear_regression'</argument>
@@ -202,7 +202,7 @@
             <argument type="string" name="specification_storage">base_cache_storage</argument>
             <argument type="string" name="specification_table">'land_price_model_specification'</argument>
             <argument type="string" name="filter_variable">'urbansim.gridcell.total_land_value'</argument>
-            <argument parser_action="blank_to_None" type="string" name="dataset">gridcell</argument>
+            <argument type="string" name="dataset" convert_blank_to_none="True">gridcell</argument>
             </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
@@ -231,7 +231,7 @@
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="year">year</argument>
             <argument type="string" name="history_table">development_event_history</argument>
-            <argument parser_action="blank_to_None" type="string" name="resources"/>
+            <argument type="string" name="resources" convert_blank_to_none="True"/>
           </run>
         </structure>
       </model>
@@ -240,8 +240,8 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['residential']</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'records_per_chunk':300}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">dptm_results['residential']</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
@@ -249,12 +249,12 @@
           </run>
           <init type="dictionary">
             <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="submodel_string" convert_blank_to_none="True">'size_category'</argument>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="project_type">'residential'</argument>
             
-            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_residential_units</argument>
-            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_residential_units</argument>
+            <argument type="string" name="developable_maximum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_maximum_residential_units</argument>
+            <argument type="string" name="developable_minimum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_minimum_residential_units</argument>
             <argument type="boolean" name="residential">True</argument>
             <argument type="string" name="units">'residential_units'</argument>
           </init>
@@ -267,7 +267,7 @@
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
             <output type="string" name="output">(specification, coefficients)</output>
@@ -300,8 +300,8 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['commercial']</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'records_per_chunk':300}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">dptm_results['commercial']</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
@@ -309,12 +309,12 @@
           </run>
           <init type="dictionary">
             <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="submodel_string" convert_blank_to_none="True">'size_category'</argument>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="project_type">'commercial'</argument>
             
-            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_commercial_sqft</argument>
-            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_commercial_sqft</argument>
+            <argument type="string" name="developable_maximum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_maximum_commercial_sqft</argument>
+            <argument type="string" name="developable_minimum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_minimum_commercial_sqft</argument>
             <argument type="boolean" name="residential">False</argument>
             <argument type="string" name="units">'commercial_sqft'</argument>
           </init>
@@ -327,7 +327,7 @@
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
             <output type="string" name="output">(specification, coefficients)</output>
@@ -360,8 +360,8 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['land_price_model']</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':300}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">dptm_results['industrial']</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'records_per_chunk':300}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">dptm_results['industrial']</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
@@ -369,12 +369,12 @@
           </run>
           <init type="dictionary">
             <name type="string" name="name">DevelopmentProjectLocationChoiceModelCreator().get_model</name>
-            <argument parser_action="blank_to_None" type="string" name="submodel_string">'size_category'</argument>
+            <argument type="string" name="submodel_string" convert_blank_to_none="True">'size_category'</argument>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="project_type">'industrial'</argument>
             
-            <argument type="quoted_string" name="developable_maximum_unit_variable_full_name">urbansim.gridcell.developable_maximum_industrial_sqft</argument>
-            <argument type="quoted_string" name="developable_minimum_unit_variable_full_name">urbansim.gridcell.developable_minimum_industrial_sqft</argument>
+            <argument type="string" name="developable_maximum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_maximum_industrial_sqft</argument>
+            <argument type="string" name="developable_minimum_unit_variable_full_name" parser_action="quote_string">urbansim.gridcell.developable_minimum_industrial_sqft</argument>
             <argument type="boolean" name="residential">False</argument>
             <argument type="string" name="units">'industrial_sqft'</argument>
           </init>
@@ -387,7 +387,7 @@
             <argument type="string" name="specification">specification</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">projects</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
             <output type="string" name="output">(specification, coefficients)</output>
@@ -462,7 +462,7 @@
           <run type="dictionary">
             <argument type="string" name="characteristics">characteristics</argument>
             <argument type="string" name="household_set">household</argument>
-            <argument parser_action="blank_to_None" type="string" name="control_totals">control_totals</argument>
+            <argument type="string" name="control_totals" convert_blank_to_none="True">control_totals</argument>
             <argument type="string" name="year">year</argument>
           </run>
         </structure>
@@ -486,7 +486,7 @@
           <run type="dictionary">
             <argument type="string" name="job_building_types">job_building_type</argument>
             <argument type="string" name="job_set">job</argument>
-            <argument parser_action="blank_to_None" type="string" name="control_totals">control_totals</argument>
+            <argument type="string" name="control_totals" convert_blank_to_none="True">control_totals</argument>
             <argument type="string" name="year">year</argument>
           </run>
         </structure>
@@ -499,7 +499,7 @@
           </import>
           <init type="dictionary">
             <name type="string" name="name">HouseholdRelocationModelCreator().get_model</name>
-            <argument parser_action="blank_to_None" type="string" name="probabilities">'urbansim.household_relocation_probabilities'</argument>
+            <argument type="string" name="probabilities" convert_blank_to_none="True">'urbansim.household_relocation_probabilities'</argument>
             <argument type="string" name="location_id_name">'grid_id'</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
@@ -507,13 +507,13 @@
             <output type="string" name="output">hrm_resources</output>
             <name type="string" name="name">prepare_for_run</name>
             <argument type="string" name="rate_storage">base_cache_storage</argument>
-            <argument parser_action="blank_to_None" type="string" name="rate_table">'annual_relocation_rates_for_households'</argument>
+            <argument type="string" name="rate_table" convert_blank_to_none="True">'annual_relocation_rates_for_households'</argument>
             <argument type="string" name="what">'households'</argument>
           </prepare_for_run>
           <run type="dictionary">
             <output type="string" name="output">hrm_index</output>
             <argument type="string" name="resources">hrm_resources</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">household</argument>
           </run>
         </structure>
       </model>
@@ -521,35 +521,35 @@
         <estimation_config parser_action="skip" name="Estimation Configuration"><config_override type="list" config_name="models" name="Models to run before estimation">['household_relocation_model']</config_override>
           </estimation_config><structure type="dictionary">
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'nchunks':12}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'nchunks':12}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">household</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="integer" name="maximum_runs">3</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">hrm_index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">hrm_index</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
             <name type="string" name="name">HouseholdLocationChoiceModel</name>
-            <argument parser_action="blank_to_None" type="quoted_string" name="number_of_units_string">residential_units</argument>
+            <argument type="string" name="number_of_units_string" convert_blank_to_none="True" parser_action="quote_string">residential_units</argument>
             <argument type="string" name="variable_package">'urbansim'</argument>
-            <argument parser_action="blank_to_None" type="string" name="location_id_string"/>
-            <argument parser_action="blank_to_None" type="string" name="submodel_string"/>
-            <argument parser_action="blank_to_None" type="quoted_string" name="capacity_string">vacant_residential_units</argument>
-            <argument parser_action="blank_to_None" type="quoted_string" name="estimation_weight_string">residential_units</argument>
+            <argument type="string" name="location_id_string" convert_blank_to_none="True"/>
+            <argument type="string" name="submodel_string" convert_blank_to_none="True"/>
+            <argument type="string" name="capacity_string" convert_blank_to_none="True" parser_action="quote_string">vacant_residential_units</argument>
+            <argument type="string" name="estimation_weight_string" convert_blank_to_none="True" parser_action="quote_string">residential_units</argument>
             <argument type="string" name="dataset_pool">dataset_pool</argument>
             <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
-            <argument parser_action="blank_to_None" type="quoted_string" name="number_of_agents_string">number_of_households</argument>
-            <argument parser_action="blank_to_None" type="string" name="run_config">Resources({'lottery_max_iterations': 3, })</argument>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
+            <argument type="string" name="number_of_agents_string" convert_blank_to_none="True" parser_action="quote_string">number_of_households</argument>
+            <argument type="string" name="run_config" convert_blank_to_none="True">Resources({'lottery_max_iterations': 3, })</argument>
             <argument type="string" name="location_set">gridcell</argument>
-            <argument parser_action="blank_to_None" type="string" name="estimation_size_agents"/>
-            <argument parser_action="blank_to_None" type="string" name="sampler">'opus_core.samplers.weighted_sampler'</argument>
-            <argument parser_action="blank_to_None" type="string" name="simulation_weight_string"/>
+            <argument type="string" name="estimation_size_agents" convert_blank_to_none="True"/>
+            <argument type="string" name="sampler" convert_blank_to_none="True">'opus_core.samplers.weighted_sampler'</argument>
+            <argument type="string" name="simulation_weight_string" convert_blank_to_none="True"/>
             <argument type="string" name="estimation">'opus_core.bhhh_mnl_estimation'</argument>
             <argument type="integer" name="sample_size_locations">30</argument>
-            <argument parser_action="blank_to_None" type="string" name="estimate_config">Resources({})</argument>
+            <argument type="string" name="estimate_config" convert_blank_to_none="True">Resources({})</argument>
           </init>
           <import type="dictionary" name="import">
               <class_module>urbansim.models.household_location_choice_model</class_module>
@@ -558,9 +558,9 @@
           <estimate type="dictionary">
             <output type="string" name="output">(coefficients, _)</output>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">household</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">index</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
@@ -576,12 +576,12 @@
             <name type="string" name="name">prepare_for_estimate</name>
             <argument type="float" name="portion_to_unplace">0.08333333333</argument>
             <argument type="string" name="specification_table">'household_location_choice_model_specification'</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">household</argument>
-            <argument parser_action="blank_to_None" type="string" name="index_to_unplace">hrm_index</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">household</argument>
+            <argument type="string" name="index_to_unplace" convert_blank_to_none="True">hrm_index</argument>
             <argument type="string" name="specification_storage">base_cache_storage</argument>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
             <argument type="string" name="join_datasets">True</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'households_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_table" convert_blank_to_none="True">'households_for_estimation'</argument>
             <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
             <argument type="string" name="data_objects">datasets</argument>
             </prepare_for_estimate>
@@ -601,7 +601,7 @@
           </import>
           <init type="dictionary">
             <name type="string" name="name">EmploymentRelocationModelCreator().get_model</name>
-            <argument parser_action="blank_to_None" type="string" name="probabilities">'urbansim.employment_relocation_probabilities'</argument>
+            <argument type="string" name="probabilities" convert_blank_to_none="True">'urbansim.employment_relocation_probabilities'</argument>
             <argument type="string" name="location_id_name">'grid_id'</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
@@ -609,13 +609,13 @@
             <output type="string" name="output">erm_resources</output>
             <name type="string" name="name">prepare_for_run</name>
             <argument type="string" name="rate_storage">base_cache_storage</argument>
-            <argument parser_action="blank_to_None" type="string" name="rate_table">'annual_relocation_rates_for_jobs'</argument>
+            <argument type="string" name="rate_table" convert_blank_to_none="True">'annual_relocation_rates_for_jobs'</argument>
             <argument type="string" name="what">'jobs'</argument>
           </prepare_for_run>
           <run type="dictionary">
             <output type="string" name="output">erm_index</output>
             <argument type="string" name="resources">erm_resources</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
           </run>
         </structure>
       </model>
@@ -627,33 +627,33 @@
             <argument type="string" name="grouping_column">name</argument>
           </group_by_attribute>
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':50000}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'records_per_chunk':50000}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="integer" name="maximum_runs">3</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">erm_index</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
             <name type="string" name="name">EmploymentLocationChoiceModel</name>
-            <argument parser_action="blank_to_None" type="string" name="number_of_units_string">'total_number_of_possible_SSS_jobs'</argument>
+            <argument type="string" name="number_of_units_string" convert_blank_to_none="True">'total_number_of_possible_SSS_jobs'</argument>
             <argument type="boolean" name="compute_capacity_flag">True</argument>
-            <argument parser_action="blank_to_None" type="string" name="capacity_string">'vacant_SSS_job_space'</argument>
-            <argument parser_action="blank_to_None" type="string" name="estimation_weight_string">'total_number_of_possible_SSS_jobs'</argument>
+            <argument type="string" name="capacity_string" convert_blank_to_none="True">'vacant_SSS_job_space'</argument>
+            <argument type="string" name="estimation_weight_string" convert_blank_to_none="True">'total_number_of_possible_SSS_jobs'</argument>
             <argument type="string" name="dataset_pool">dataset_pool</argument>
             <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
             <argument type="string" name="variable_package">'urbansim'</argument>
-            <argument parser_action="blank_to_None" type="dictionary" name="run_config">
+            <argument type="dictionary" name="run_config" convert_blank_to_none="True">
               <key type="integer" name="lottery_max_iterations">3</key>
-              <key parser_action="blank_to_None" type="string" name="agent_units_string"/>
+              <key type="string" name="agent_units_string" convert_blank_to_none="True"/>
             </argument>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="float" name="estimation_size_agents">1.0</argument>
-            <argument parser_action="blank_to_None" type="string" name="sampler">'opus_core.samplers.weighted_sampler'</argument>
-            <argument parser_action="blank_to_None" type="string" name="simulation_weight_string"/>
+            <argument type="string" name="sampler" convert_blank_to_none="True">'opus_core.samplers.weighted_sampler'</argument>
+            <argument type="string" name="simulation_weight_string" convert_blank_to_none="True"/>
             <argument type="string" name="estimation">'opus_core.bhhh_mnl_estimation'</argument>
             <argument type="integer" name="sample_size_locations">30</argument>
           </init>
@@ -664,9 +664,9 @@
           <estimate type="dictionary">
             <output type="string" name="output">(coefficients, _)</output>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">index</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
@@ -682,11 +682,11 @@
             <name type="string" name="name">prepare_for_estimate</name>
             <argument type="float" name="portion_to_unplace">0.08333333333</argument>
             <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="specification_storage">base_cache_storage</argument>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'jobs_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_table" convert_blank_to_none="True">'jobs_for_estimation'</argument>
             <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
             <argument type="boolean" name="join_datasets">False</argument>
             </prepare_for_estimate>
@@ -783,15 +783,15 @@
           </import>
           <init type="dictionary">
             <name type="string" name="name">DistributeUnplacedJobsModel</name>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
             <argument type="string" name="dataset_pool">dataset_pool</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="agents_filter"/>
+            <argument type="string" name="agents_filter" convert_blank_to_none="True"/>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
           </run>
         </structure>
       </model>
@@ -803,15 +803,15 @@
           </import>
           <init type="dictionary">
             <name type="string" name="name">ScalingJobsModel</name>
-            <argument parser_action="blank_to_None" type="string" name="filter"/>
+            <argument type="string" name="filter" convert_blank_to_none="True"/>
             <argument type="string" name="dataset_pool">dataset_pool</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </init>
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">erm_index</argument>
             <argument type="string" name="location_set">gridcell</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
           </run>
         </structure>
       </model>
@@ -820,19 +820,19 @@
           </estimation_config><structure type="dictionary">
           <group_by_attribute type="tuple">('job_building_type', 'name')</group_by_attribute>
           <run type="dictionary">
-            <argument parser_action="blank_to_None" type="string" name="chunk_specification">{'records_per_chunk':50000}</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="chunk_specification" convert_blank_to_none="True">{'records_per_chunk':50000}</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="specification">specification</argument>
             <argument type="integer" name="maximum_runs">5</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">erm_index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">erm_index</argument>
             <argument type="string" name="data_objects">datasets</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
             <argument type="string" name="coefficients">coefficients</argument>
           </run>
           <init type="dictionary">
             <name type="string" name="name">EmploymentLocationChoiceModel</name>
-            <argument parser_action="blank_to_None" type="string" name="number_of_units_string">'residential_units'</argument>
-            <argument parser_action="blank_to_None" type="string" name="estimation_weight_string">'residential_units'</argument>
+            <argument type="string" name="number_of_units_string" convert_blank_to_none="True">'residential_units'</argument>
+            <argument type="string" name="estimation_weight_string" convert_blank_to_none="True">'residential_units'</argument>
             <argument type="string" name="dataset_pool">dataset_pool</argument>
             <argument type="string" name="choices">'urbansim.lottery_choices'</argument>
             <argument type="integer" name="sample_size_locations">30</argument>
@@ -845,9 +845,9 @@
           <estimate type="dictionary">
             <output type="string" name="output">(coefficients, _)</output>
             <argument type="string" name="specification">specification</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_index">index</argument>
+            <argument type="string" name="agents_index" convert_blank_to_none="True">index</argument>
             <argument type="string" name="debuglevel">debuglevel</argument>
           </estimate>
           <prepare_for_run type="dictionary">
@@ -863,10 +863,10 @@
             <name type="string" name="name">prepare_for_estimate</name>
             <argument type="float" name="portion_to_unplace">0.08333333333</argument>
             <argument type="string" name="specification_table">'employment_location_choice_model_specification'</argument>
-            <argument parser_action="blank_to_None" type="string" name="agent_set">job</argument>
+            <argument type="string" name="agent_set" convert_blank_to_none="True">job</argument>
             <argument type="string" name="specification_storage">base_cache_storage</argument>
             <argument type="string" name="data_objects">datasets</argument>
-            <argument parser_action="blank_to_None" type="string" name="agents_for_estimation_table">'jobs_for_estimation'</argument>
+            <argument type="string" name="agents_for_estimation_table" convert_blank_to_none="True">'jobs_for_estimation'</argument>
             <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
             </prepare_for_estimate>
         </structure>
