@@ -52,10 +52,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.log_tab = LogWidget(self.tabWidget)
         self.log_tab.start_stdout_capture()
 
-        print 'plain line'
-        print 'this line should be joined ',
-        print 'with this line'
-
         # Initialize empty project
         self.project = OpusProject()
 
