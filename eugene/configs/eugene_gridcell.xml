@@ -7,39 +7,39 @@
     <dataset_pool_configuration type="class">
       <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-      <argument name="package_order" type="list">['eugene', 'urbansim', 'opus_core']</argument>
+      <argument type="list" name="package_order">['eugene', 'urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
   </general>
   <model_manager>
-    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary"/><templates hidden="True" name="Model Templates" parser_action="skip"/><estimation_config config_name="estimation_config" hidden="False" name="Estimation Configuration" type="configuration">
+    <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"/><templates hidden="True" parser_action="skip" name="Model Templates"/><estimation_config hidden="False" type="configuration" config_name="estimation_config" name="Estimation Configuration">
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
         <estimation_database_configuration type="class">
           <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
-          <argument name="database_name" type="string"/>
+          <argument type="string" name="database_name"/>
         </estimation_database_configuration>
 
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <selectable name="gridcell" type="selectable">True<nchunks type="integer">2</nchunks>          </selectable>
-          <selectable name="household" type="selectable">True</selectable>
-          <selectable name="job" type="selectable">True</selectable>
-          <selectable name="zone" type="selectable">True</selectable>
-          <selectable name="development_type" type="selectable">True</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
-          <selectable name="development_constraint" type="selectable">True</selectable>
-          <selectable name="job_building_type" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">False</selectable>
-          <selectable name="building" type="selectable">False</selectable>
-          <selectable name="vacant_land_and_building_type" type="selectable">True</selectable>
-          <selectable name="urbansim_constant" type="selectable">True</selectable>
+          <selectable type="selectable" name="gridcell">True<nchunks type="integer">2</nchunks>          </selectable>
+          <selectable type="selectable" name="household">True</selectable>
+          <selectable type="selectable" name="job">True</selectable>
+          <selectable type="selectable" name="zone">True</selectable>
+          <selectable type="selectable" name="development_type">True</selectable>
+          <selectable type="selectable" name="target_vacancy">True</selectable>
+          <selectable type="selectable" name="development_event_history">True</selectable>
+          <selectable type="selectable" name="development_constraint">True</selectable>
+          <selectable type="selectable" name="job_building_type">True</selectable>
+          <selectable type="selectable" name="building_type">False</selectable>
+          <selectable type="selectable" name="building">False</selectable>
+          <selectable type="selectable" name="vacant_land_and_building_type">True</selectable>
+          <selectable type="selectable" name="urbansim_constant">True</selectable>
         </datasets_to_preload>
 
         <dataset_pool_configuration type="class">
           <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['eugene', 'urbansim', 'opus_core']</argument>
-          <argument name="package_order_exceptions" type="dictionary"/>
+          <argument type="list" name="package_order">['eugene', 'urbansim', 'opus_core']</argument>
+          <argument type="dictionary" name="package_order_exceptions"/>
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
         <low_memory_mode type="boolean">False</low_memory_mode>
@@ -52,7 +52,7 @@
       </estimation_config>
     </model_manager>
   <scenario_manager>
-    <scenario copyable="True" executable="True" name="Eugene_baseline" setexpanded="True" type="scenario">
+    <scenario copyable="True" executable="True" setexpanded="True" type="scenario" name="Eugene_baseline">
       <parent type="scenario_name">default_scenario</parent>
       <base_year type="integer">1980</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -60,106 +60,106 @@
         <lastyear type="integer">1982</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="prescheduled_events" type="selectable">True</selectable>
-        <selectable name="events_coordinator" type="selectable">True</selectable>
-        <selectable name="residential_land_share_model" type="selectable">True</selectable>
-        <selectable name="land_price_model" type="selectable">True</selectable>
-        <selectable name="development_project_transition_model" type="selectable">True</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="commercial_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="industrial_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="development_event_transition_model" type="selectable">True</selectable>
-        <selectable name="events_coordinator" type="selectable">True</selectable>
-        <selectable name="residential_land_share_model" type="selectable">True</selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">_all_</group_members>
+        <selectable type="selectable" name="prescheduled_events">True</selectable>
+        <selectable type="selectable" name="events_coordinator">True</selectable>
+        <selectable type="selectable" name="residential_land_share_model">True</selectable>
+        <selectable type="selectable" name="land_price_model">True</selectable>
+        <selectable type="selectable" name="development_project_transition_model">True</selectable>
+        <selectable type="selectable" name="residential_development_project_location_choice_model">True</selectable>
+        <selectable type="selectable" name="commercial_development_project_location_choice_model">True</selectable>
+        <selectable type="selectable" name="industrial_development_project_location_choice_model">True</selectable>
+        <selectable type="selectable" name="development_event_transition_model">True</selectable>
+        <selectable type="selectable" name="events_coordinator">True</selectable>
+        <selectable type="selectable" name="residential_land_share_model">True</selectable>
+        <selectable type="selectable" name="household_transition_model">True</selectable>
+        <selectable type="selectable" name="employment_transition_model">True</selectable>
+        <selectable type="selectable" name="household_relocation_model">True</selectable>
+        <selectable type="selectable" name="household_location_choice_model">True</selectable>
+        <selectable type="selectable" name="employment_relocation_model">True</selectable>
+        <selectable type="selectable" name="employment_location_choice_model">True<group_members type="string">_all_</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+        <selectable type="selectable" name="distribute_unplaced_jobs_model">True</selectable>
       </models_to_run>
       <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
         <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
-        <argument name="database_name" type="string">eugene_1980_baseyear</argument>
+        <argument type="string" name="database_name">eugene_1980_baseyear</argument>
       </baseyear_database_configuration>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</argument>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/runs</argument>
-        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</argument>
-        <argument name="cache_from_database" type="boolean">False</argument>
-        <argument name="baseyear_cache" type="class">
+        <argument config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" name="scenario_runs_directory">eugene_gridcell/runs</argument>
+        <argument config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" name="scenario_runs_directory">seattle_parcel/runs</argument>
+        <argument config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" name="cache_directory_root">eugene_gridcell/runs</argument>
+        <argument type="boolean" name="cache_from_database">False</argument>
+        <argument type="class" name="baseyear_cache">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</argument>
+          <argument parser_action="prefix_with_opus_data_path" type="directory" name="existing_cache_to_copy">eugene_gridcell/base_year_data</argument>
         </argument>
-        <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
-        <argument name="tables_to_cache" type="selectable_list">
-          <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
-          <selectable name="annual_household_control_totals" type="selectable">True</selectable>
-          <selectable name="buildings" type="selectable">True</selectable>
-          <selectable name="building_types" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
-          <selectable name="gridcells" type="selectable">True</selectable>
-          <selectable name="households" type="selectable">True</selectable>
-          <selectable name="job_building_types" type="selectable">True</selectable>
-          <selectable name="jobs" type="selectable">True</selectable>
-          <selectable name="travel_data" type="selectable">True</selectable>
-          <selectable name="zones" type="selectable">True</selectable>
-          <selectable name="counties" type="selectable">True</selectable>
-          <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="fazes" type="selectable">False</selectable>
-          <selectable name="urbansim_constants" type="selectable">True</selectable>
-          <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
-          <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
-          <selectable name="land_price_model_coefficients" type="selectable">True</selectable>
-          <selectable name="land_price_model_specification" type="selectable">True</selectable>
-          <selectable name="residential_land_share_model_coefficients" type="selectable">True</selectable>
-          <selectable name="residential_land_share_model_specification" type="selectable">True</selectable>
-          <selectable name="plan_type_group_definitions" type="selectable">False</selectable>
-          <selectable name="plan_type_groups" type="selectable">False</selectable>
-          <selectable name="large_areas" type="selectable">False</selectable>
-          <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-          <selectable name="development_types" type="selectable">True</selectable>
-          <selectable name="development_type_group_definitions" type="selectable">True</selectable>
-          <selectable name="development_constraints" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
-          <selectable name="base_year" type="selectable">True</selectable>
-          <selectable name="cities" type="selectable">True</selectable>
-          <selectable name="development_events" type="selectable">False</selectable>
-          <selectable name="development_type_groups" type="selectable">True</selectable>
-          <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
-          <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
-          <selectable name="employment_sectors" type="selectable">True</selectable>
-          <selectable name="land_use_events" type="selectable">False</selectable>
-          <selectable name="plan_types" type="selectable">True</selectable>
-          <selectable name="race_names" type="selectable">True</selectable>
-          <selectable name="target_vacancies" type="selectable">True</selectable>
-          <selectable name="jobs_for_estimation" type="selectable">True</selectable>
-          <selectable name="households_for_estimation" type="selectable">True</selectable>
-          <selectable name="development_events_exogenous" type="selectable">False</selectable>
+        <argument type="string" name="cache_scenario_database">urbansim.model_coordinators.cache_scenario_database</argument>
+        <argument type="selectable_list" name="tables_to_cache">
+          <selectable type="selectable" name="annual_employment_control_totals">True</selectable>
+          <selectable type="selectable" name="annual_household_control_totals">True</selectable>
+          <selectable type="selectable" name="buildings">True</selectable>
+          <selectable type="selectable" name="building_types">True</selectable>
+          <selectable type="selectable" name="development_event_history">True</selectable>
+          <selectable type="selectable" name="gridcells">True</selectable>
+          <selectable type="selectable" name="households">True</selectable>
+          <selectable type="selectable" name="job_building_types">True</selectable>
+          <selectable type="selectable" name="jobs">True</selectable>
+          <selectable type="selectable" name="travel_data">True</selectable>
+          <selectable type="selectable" name="zones">True</selectable>
+          <selectable type="selectable" name="counties">True</selectable>
+          <selectable type="selectable" name="commercial_development_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="commercial_development_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="commercial_employment_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="commercial_employment_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="home_based_employment_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="home_based_employment_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="industrial_employment_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="industrial_employment_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="industrial_development_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="industrial_development_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="residential_development_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="residential_development_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="fazes">False</selectable>
+          <selectable type="selectable" name="urbansim_constants">True</selectable>
+          <selectable type="selectable" name="household_location_choice_model_coefficients">True</selectable>
+          <selectable type="selectable" name="household_location_choice_model_specification">True</selectable>
+          <selectable type="selectable" name="land_price_model_coefficients">True</selectable>
+          <selectable type="selectable" name="land_price_model_specification">True</selectable>
+          <selectable type="selectable" name="residential_land_share_model_coefficients">True</selectable>
+          <selectable type="selectable" name="residential_land_share_model_specification">True</selectable>
+          <selectable type="selectable" name="plan_type_group_definitions">False</selectable>
+          <selectable type="selectable" name="plan_type_groups">False</selectable>
+          <selectable type="selectable" name="large_areas">False</selectable>
+          <selectable type="selectable" name="household_characteristics_for_ht">True</selectable>
+          <selectable type="selectable" name="development_types">True</selectable>
+          <selectable type="selectable" name="development_type_group_definitions">True</selectable>
+          <selectable type="selectable" name="development_constraints">True</selectable>
+          <selectable type="selectable" name="annual_relocation_rates_for_households">True</selectable>
+          <selectable type="selectable" name="annual_relocation_rates_for_jobs">True</selectable>
+          <selectable type="selectable" name="base_year">True</selectable>
+          <selectable type="selectable" name="cities">True</selectable>
+          <selectable type="selectable" name="development_events">False</selectable>
+          <selectable type="selectable" name="development_type_groups">True</selectable>
+          <selectable type="selectable" name="employment_adhoc_sector_group_definitions">True</selectable>
+          <selectable type="selectable" name="employment_adhoc_sector_groups">True</selectable>
+          <selectable type="selectable" name="employment_sectors">True</selectable>
+          <selectable type="selectable" name="land_use_events">False</selectable>
+          <selectable type="selectable" name="plan_types">True</selectable>
+          <selectable type="selectable" name="race_names">True</selectable>
+          <selectable type="selectable" name="target_vacancies">True</selectable>
+          <selectable type="selectable" name="jobs_for_estimation">True</selectable>
+          <selectable type="selectable" name="households_for_estimation">True</selectable>
+          <selectable type="selectable" name="development_events_exogenous">False</selectable>
         </argument>
-        <argument name="tables_to_cache_nchunks" type="dictionary">
+        <argument type="dictionary" name="tables_to_cache_nchunks">
           <gridcells type="integer">1</gridcells>
         </argument>
-        <argument name="tables_to_copy_to_previous_years" type="dictionary">
+        <argument type="dictionary" name="tables_to_copy_to_previous_years">
           <development_type_group_definitions type="integer">1975</development_type_group_definitions>
           <development_type_groups type="integer">1975</development_type_groups>
           <development_types type="integer">1975</development_types>
@@ -170,13 +170,13 @@
       <dataset_pool_configuration type="class">
         <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['eugene', 'urbansim', 'opus_core']</argument>
+        <argument type="list" name="package_order">['eugene', 'urbansim', 'opus_core']</argument>
       </dataset_pool_configuration>
     </scenario>
   </scenario_manager>
   <results_manager>
-    <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
-    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data">
+    <indicator_batches setexpanded="True" type="group" name="Indicator Batches"/>
+    <simulation_runs followers="Results" setexpanded="True" type="all_source_data" name="Simulation Runs">
     </simulation_runs>
   </results_manager>
 </opus_project>
