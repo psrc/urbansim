@@ -114,9 +114,16 @@ class XmlController_Models(XmlController):
         editor = self.editor
         editor.init_for_submodel_node(submodel_node)
         if editor.exec_() == editor.Accepted:
+            for key, value in editor.submodel_node.attrib.items():
+                submodel_node.attrib[key] = value
+            for child in submodel_node:
+                submodel_node.remove(child)
+            for child in editor.submodel_node:
+                submodel_node.append(child)
+
             # Delete the old and insert the new, edited, submodel node
-            self.model.remove_node(submodel_node)
-            self.model.insert_node(editor.submodel_node, submodel_parent)
+            # self.model.remove_node(submodel_node)
+            # self.model.insert_node(editor.submodel_node, submodel_parent)
             self.project.dirty = True
 
     def process_custom_menu(self, point):
