@@ -30,7 +30,7 @@ class SSS_zone_SSS(Variable):
     def compute(self, dataset_pool):
         zones = dataset_pool.get_dataset('zone')
         # in case SSS is a computed variable
-        zones.compute_one_variable_with_unknown_package(self.var_name)
+        zones.compute_one_variable_with_unknown_package(self.var_name, dataset_pool=dataset_pool)
         
         person_trips = self.get_dataset()
         
