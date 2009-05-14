@@ -21,9 +21,15 @@ class MapnikMap(Visualization):
                  name = None,
                  scale = None,
                  storage_location = None,
-                 bucket_colors = None,
-                 bucket_ranges = None,
-                 bucket_labels = None):
+                 mapnik_bucket_colors = None,
+                 mapnik_bucket_ranges = None,
+                 mapnik_bucket_labels = None,
+                 mapnik_resolution = None,
+                 mapnik_page_dims = None,
+                 mapnik_map_lower_left = None,
+                 mapnik_map_upper_right = None,
+                 mapnik_legend_lower_left = None,
+                 mapnik_legend_upper_right = None):
         self.name = name
         if storage_location is None:
             storage_location = indicator_directory
@@ -31,9 +37,15 @@ class MapnikMap(Visualization):
         self.indicator_directory = indicator_directory
         self.scale = scale     #TODO: scale doesn't make sense if mixing multiple datasets
         
-        self.color_list = bucket_colors
-        self.range_list = bucket_ranges
-        self.label_list = bucket_labels        
+        self.color_list = mapnik_bucket_colors
+        self.range_list = mapnik_bucket_ranges
+        self.label_list = mapnik_bucket_labels
+        self.resolution = mapnik_resolution
+        self.page_dims = mapnik_page_dims
+        self.map_lower_left = mapnik_map_lower_left
+        self.map_upper_right = mapnik_map_upper_right
+        self.legend_lower_left = mapnik_legend_lower_left
+        self.legend_upper_right = mapnik_legend_upper_right
         
     def get_file_extension(self):
         return 'png'
@@ -121,7 +133,13 @@ class MapnikMap(Visualization):
                              my_title = str(indicator_name), 
                              color_list = self.color_list,
                              range_list = self.range_list,
-                             label_list = self.label_list
+                             label_list = self.label_list,
+                             resolution = self.resolution,
+                             page_dims = self.page_dims,
+                             map_lower_left = self.map_lower_left,
+                             map_upper_right = self.map_upper_right,
+                             legend_lower_left = self.legend_lower_left,
+                             legend_upper_right = self.legend_upper_right
                              #filter = where(table_data[computed_name] != -1)
                              #filter = 'urbansim.gridcell.is_fully_in_water'                                 
                         )

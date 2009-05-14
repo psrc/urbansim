@@ -96,7 +96,13 @@ class MapnikAnimation(MapnikMap):
                              range_list = self.range_list,
                              label_list = self.label_list,
                              is_animation = True,
-                             year = year
+                             year = year,
+                             resolution = self.resolution,
+                             page_dims = self.page_dims,
+                             map_lower_left = self.map_lower_left,
+                             map_upper_right = self.map_upper_right,
+                             legend_lower_left = self.legend_lower_left,
+                             legend_upper_right = self.legend_upper_right
                              #filter = where(table_data[computed_name] != -1)
                              #filter = 'urbansim.gridcell.is_fully_in_water'                                 
                         )

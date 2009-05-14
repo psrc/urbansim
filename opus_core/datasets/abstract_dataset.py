@@ -1234,7 +1234,8 @@ class AbstractDataset(object):
     def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
                  max_value=None, file=None, my_title="", filter=None, background=None,
                  color_list=None, range_list=None, label_list=None, is_animation=False,
-                 year=None):
+                 year=None, resolution=None, page_dims=None, map_lower_left=None, 
+                 map_upper_right=None, legend_lower_left=None, legend_upper_right=None):
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
@@ -1252,8 +1253,14 @@ class AbstractDataset(object):
         'label_list' is a list of labels that will be applied to the buckets of values
         'is_animation' will be set to true if plot_map is called to make a frame of an animation sequence
         'year' will be printed at the top of each frame in an animation
+        'resolution'
+        'page_dims'
+        'map_lower_left'
+        'map_upper_right'
+        legend_lower_left'
+        legend_upper_right'
         """
-        
+
         useDefaultValues = color_list == None or range_list == None or label_list == None
         
         if (useDefaultValues):
@@ -1336,9 +1343,16 @@ class AbstractDataset(object):
         dataset_dict = {unique_id:unique_id_arr, col_header:attrib_arr}
         storage_for_dbf.write_table(table_name=self.dataset_name, table_data=dataset_dict)
         
+        # determine map size        
+        map_lower_left_coords = map_lower_left.split(',')
+        map_upper_right_coords = map_upper_right.split(',')
+        
+        map_width_px = int(int(resolution) * (float(map_upper_right_coords[0]) - float(map_lower_left_coords[0])))
+        map_height_px = int(int(resolution) * (float(map_upper_right_coords[1]) - float(map_lower_left_coords[1])))
+        
         # Use Mapnik to draw the map
         from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, render_to_file
-        m = Map(600,300,"+proj=latlong +datum=WGS84")
+        m = Map(map_width_px,map_height_px,"+proj=latlong +datum=WGS84")
         m.background = Color('#ffffff')
         s = Style()
         
@@ -1382,7 +1396,7 @@ class AbstractDataset(object):
             if (unique_id == 'grid_id' or unique_id == 'parcel_id'): # color over the lines between gridcells and parcels
                 r.symbols.append(LineSymbolizer(Color(color_list[i]),0.3))
             else:
-                r.symbols.append(LineSymbolizer(Color('#000000'),0.3))
+                r.symbols.append(LineSymbolizer(Color('#000000'),0.1))
             r.filter = Filter('[' + col_header + '] >= ' + str(range_list[i]) + ' and [' + col_header + '] <= ' + str(range_list[i+1]))
             s.rules.append(r)
         
@@ -1400,34 +1414,49 @@ class AbstractDataset(object):
         m.zoom_to_box(lyr.envelope())
         render_to_file(m, file, 'png')
         
+        # determine map file dimensions
+        page_dims_list = page_dims.split(',')
+        
+        result_file_width = int(int(resolution) * float(page_dims_list[0]))
+        result_file_height = int(int(resolution) * float(page_dims_list[1]))
+        
         # Add labels and color bar to image file
         from Image import open, new
         from ImageDraw import Draw
         
         map_file = open(file)
-        result_file_width = 850
-        result_file_height = 400
         result_file = new('RGB', (result_file_width,result_file_height),color='#ffffff')
         
         # copy map image to a larger canvas
         (map_width, map_height) = map_file.size
-        box = (0,0,map_width, map_height)
-        map_horiz_spacing = 10
-        map_vert_spacing = 50
-        result_file.paste(map_file.crop(box), (map_horiz_spacing,map_vert_spacing,map_horiz_spacing+map_width, map_vert_spacing+map_height))
+        box = (0,0,map_width,map_height)
+        map_lower_left_x_coord_px = int(int(resolution) * float(map_lower_left_coords[0]))
+        map_lower_left_y_coord_px = int(int(resolution) * float(map_lower_left_coords[1]))
+        
+        result_file.paste(map_file.crop(box), (map_lower_left_x_coord_px,map_lower_left_y_coord_px,map_lower_left_x_coord_px+map_width,map_lower_left_y_coord_px+map_height))
         
         draw = Draw(result_file)
         # draw the year at the top if this image will be used in an animation
         if is_animation:
-            title_horiz_spacing = map_horiz_spacing
-            title_vert_spacing = map_vert_spacing / 3
+            title_horiz_spacing = map_lower_left_x_coord_px
+            title_vert_spacing = map_lower_left_y_coord_px / 3
             draw.text( (title_horiz_spacing,title_vert_spacing), str(year), fill='#000000' )
+
+        # determine color bar coords 
+        legend_lower_left_coords = legend_lower_left.split(',')
+        legend_upper_right_coords = legend_upper_right.split(',')
         
         # draw the color bar
-        cb_horiz_spacing = map_horiz_spacing + map_width + 10
-        cb_vert_spacing = map_vert_spacing
-        box_height = 25
-        box_width = 25
+        #cb_horiz_spacing = map_lower_left_x_coord_px + map_width + 10
+        #cb_vert_spacing = map_lower_left_y_coord_px
+        legend_lower_left_x_coord_px = int(int(resolution) * float(legend_lower_left_coords[0]))
+        legend_lower_left_y_coord_px = int(int(resolution) * float(legend_lower_left_coords[1]))
+        
+        legend_upper_right_x_coord_px = int(int(resolution) * float(legend_upper_right_coords[0]))
+        legend_upper_right_y_coord_px = int(int(resolution) * float(legend_upper_right_coords[1]))
+        
+        box_height = int((legend_upper_right_y_coord_px - legend_lower_left_y_coord_px) / num_buckets)
+        box_width = max(25, int((legend_upper_right_x_coord_px - legend_lower_left_x_coord_px) / num_buckets))
         label_spacing = 10
 
         # This only works if there is a value range for every bucket. Map will not be produced if range values are missing
@@ -1436,8 +1465,8 @@ class AbstractDataset(object):
             while label_list.__len__() < num_buckets:
                 label_list.append('')
             # Draw a box on the color bar
-            draw.rectangle((cb_horiz_spacing, cb_vert_spacing+i*box_height, cb_horiz_spacing+box_width, cb_vert_spacing+(i+1)*box_height), outline='#000000', fill=color_list[num_buckets-1-i])
-            draw.text((cb_horiz_spacing+box_width+label_spacing, cb_vert_spacing+i*box_height+(box_height/2)), label_list[num_buckets-1-i], fill='#000000')
+            draw.rectangle((legend_lower_left_x_coord_px, legend_lower_left_y_coord_px+i*box_height, legend_lower_left_x_coord_px+box_width, legend_lower_left_y_coord_px+(i+1)*box_height), outline='#000000', fill=color_list[num_buckets-1-i])
+            draw.text((legend_lower_left_x_coord_px+box_width+label_spacing, legend_lower_left_y_coord_px+i*box_height+(box_height/2)), label_list[num_buckets-1-i], fill='#000000')
         
         del draw
         result_file.save(file, 'PNG')

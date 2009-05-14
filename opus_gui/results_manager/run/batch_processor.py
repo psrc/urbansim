@@ -73,16 +73,28 @@ class BatchProcessor(object):
 
         elif visualization_type == 'mapnik_map' or visualization_type == 'mapnik_animated_map' :
             try:
-                args['bucket_labels'] = params['bucket_labels']
-                args['bucket_ranges'] = params['bucket_ranges']
-                args['bucket_colors'] = params['bucket_colors']
+                args['mapnik_bucket_labels'] = params['mapnik_bucket_labels']
+                args['mapnik_bucket_ranges'] = params['mapnik_bucket_ranges']
+                args['mapnik_bucket_colors'] = params['mapnik_bucket_colors']
+                args['mapnik_resolution'] = params['mapnik_resolution']
+                args['mapnik_page_dims'] = params['mapnik_page_dims']
+                args['mapnik_map_lower_left'] = params['mapnik_map_lower_left']
+                args['mapnik_map_upper_right'] = params['mapnik_map_upper_right']
+                args['mapnik_legend_lower_left'] = params['mapnik_legend_lower_left']
+                args['mapnik_legend_upper_right'] = params['mapnik_legend_upper_right']
             except KeyError: 
                 # these are the default bucket label, range, and color values
-                # these default values are also hard-coded in opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_visualization.py
-                args['bucket_labels'] = 'range_labels'
-                args['bucket_ranges'] = 'linear_scale'
-                args['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
-        
+                # these default values are also hard-coded in opus_gui.results_manager.controllers.dialogs.abstract_configure_batch_indicator_visualization.py
+                args['mapnik_bucket_labels'] = 'range_labels'
+                args['mapnik_bucket_ranges'] = 'linear_scale'
+                args['mapnik_bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
+                args['mapnik_resolution'] = '96'
+                args['mapnik_page_dims'] = '8.5,5.5'
+                args['mapnik_map_lower_left'] = '0.5,0.5'
+                args['mapnik_map_upper_right'] = '6.0,5.0'
+                args['mapnik_legend_lower_left'] = '6.5,0.5'
+                args['mapnik_legend_upper_right'] = '8.0,5.0'
+                
         return args
 
     def run(self, args = {}):

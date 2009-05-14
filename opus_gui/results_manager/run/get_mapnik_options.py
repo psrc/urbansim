@@ -21,19 +21,19 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.initWindow(options_dict)
         self.connect(self.tbl_Colors, SIGNAL('itemChanged(QTableWidgetItem *)'), self.readTableCellInput)
 
-    def initWindow(self, options_dict):
+    def initWindow(self, options_dict):        
         # Perform actions that need to be executed once when the options window first opens
-        if (options_dict['bucket_ranges'] == 'linear_scale'):
+        if options_dict['mapnik_bucket_ranges'] == 'linear_scale':
             self.cb_colorScalingType.setCurrentIndex(0)
         else:
             self.cb_colorScalingType.setCurrentIndex(1)
-            self.le_customScale.setText(QString(options_dict['bucket_ranges']))
+            self.le_customScale.setText(QString(options_dict['mapnik_bucket_ranges']))
 
-        if (options_dict['bucket_labels'] == 'range_labels'):
+        if options_dict['mapnik_bucket_labels'] == 'range_labels':
             self.cb_labelType.setCurrentIndex(0)
         else:
             self.cb_labelType.setCurrentIndex(1)
-            self.le_customLabels.setText(QString(options_dict['bucket_labels']))
+            self.le_customLabels.setText(QString(options_dict['mapnik_bucket_labels']))
 
         self.greyOutLineEdits()
         self.greyOutComboBoxes()
@@ -47,19 +47,22 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.setRangeColumn()
         self.setLabelColumn()
         self.setColorColumn()
+        self.setSizeOptionValues(options_dict)
 
     def applyChanges(self, options_dict):
         def applyChangesHelper():
             self.num_buckets = int(self.cb_NumColRanges.currentText())
-            self.verifyInputCorrectness()
+            self.verifyInputCorrectness() 
+            self.verifySizeInputCorrectness()
             self.setColorTableRows(options_dict)
+            self.setSizeOptions(options_dict)
             self.writeXML(options_dict)
         return applyChangesHelper
 
     def verifyInputCorrectness(self):
         """
         Verify correctness of the custom scale and custom labels, if necessary
-        """
+        """        
         # Verify custom scale
         error_message = None
         if self.cb_colorScalingType.currentText() == 'Custom Scaling':
@@ -92,14 +95,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
             except ValueError:
                 error_message = 'Both values must be numbers'
 
-        if error_message == None:
-            self.le_customScale.palette().setColor(QPalette.Base, Qt.white)
-            self.le_customScale.setToolTip('')
-        else:
-            self.le_customScale.palette().setColor(QPalette.Base, Qt.red)
-            self.le_customScale.setToolTip('Error: '+error_message)
-
-        self.le_customScale.repaint()
+        self.handleErrorMessage(self.le_customScale, 'Error', error_message)
 
         # Verify custom labels
         error_message = None
@@ -108,15 +104,77 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
             if label_input.__len__() != self.num_buckets:
                 error_message = 'The number of labels does not equal the number of color buckets'
 
-        if error_message == None:
-            self.le_customLabels.palette().setColor(QPalette.Base, Qt.white)
-            self.le_customLabels.setToolTip('')
+        self.handleErrorMessage(self.le_customLabels, 'Warning', error_message)
+
+    """ verify that all input in the size tab is correct, otherwise paint the line edit box """
+    def verifySizeInputCorrectness(self):
+        # verify resolution value
+        error_message = None
+        resolution_input = self.stringToList(self.le_resolution.text())
+        if resolution_input.__len__() != 1:
+                error_message = 'Must have exactly 1 resolution value'
         else:
-            self.le_customLabels.palette().setColor(QPalette.Base, Qt.yellow)
-            self.le_customLabels.setToolTip('Warning: '+error_message)
+            if resolution_input[0] == '':
+                error_message = 'A resolution value is required'
+            else:
+                try:
+                    if int(resolution_input[0]) <= 0:
+                        error_message = 'Resolution value must be greater than 0'
+                except ValueError:
+                    error_message = 'Resolution value must be an integer'
+        
+        self.handleErrorMessage(self.le_resolution, 'Error', error_message)
+        
+        # verify map_lower_left coords
+        error_message = self.verifyCoordInput(self.le_map_lower_left.text())
+        self.handleErrorMessage(self.le_map_lower_left, 'Error', error_message)
+        
+        # verify map_upper_right coords
+        error_message = self.verifyCoordInput(self.le_map_upper_right.text())
+        self.handleErrorMessage(self.le_map_upper_right, 'Error', error_message)      
+        
+        # verify legend_lower_left coords
+        error_message = self.verifyCoordInput(self.le_legend_lower_left.text())
+        self.handleErrorMessage(self.le_legend_lower_left, 'Error', error_message)
+        
+        # verify legend_upper_right coords
+        error_message = self.verifyCoordInput(self.le_legend_upper_right.text())
+        self.handleErrorMessage(self.le_legend_upper_right, 'Error', error_message)
+        
+    def verifyCoordInput(self, coordInput):
+        error_message = None
+        coordInput_list = self.stringToList(coordInput)
+        if (coordInput_list.__len__() != 2) or (coordInput_list.__len__() == 2 and (coordInput_list[0] == '' or coordInput_list[1] == '')):
+            error_message = 'The coordinate must have two values separated by a comma (x,y)'
+        else:
+            try:
+                if float(coordInput_list[0]) < 0 or float(coordInput_list[1]) < 0:
+                    error_message = 'Coordinate values must be positive'
+            except ValueError:
+                error_message = 'Coordinate values must be an numbers'
+        
+        return error_message
+        
+        
+    def handleErrorMessage(self, lineEditBox, error_type, error_message):
+        if error_type == 'Error':
+            error_color = Qt.red
+        elif error_type == 'Warning':
+            error_color = Qt.yellow
+        else:
+            raise 'handleErrorMessage: Unrecognized error_type'
+        
+        if error_message == None:
+            lineEditBox.palette().setColor(QPalette.Base, Qt.white)
+            lineEditBox.setToolTip('')
+        else:
+            lineEditBox.palette().setColor(QPalette.Base, error_color)
+            lineEditBox.setToolTip(error_type + ': ' + error_message)
 
-        self.le_customLabels.repaint()
-
+        lineEditBox.repaint()
+        return error_message != None # return True if there is an error
+    
+    
     def greyOutLineEdits(self):
         if self.cb_colorScalingType.currentText() == 'Linear Scaling':
             self.le_customScale.setEnabled(False)
@@ -207,10 +265,10 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
             for i in range(self.num_buckets-1):
                 self.range_list.append('')
             self.range_list.append('MAX')
-            options_dict['bucket_ranges'] = 'linear_scale'
+            options_dict['mapnik_bucket_ranges'] = 'linear_scale'
         elif (self.cb_colorScalingType.currentText() == 'Custom Scaling'): # use the custom scale
             self.range_list = self.stringToList(self.le_customScale.text())
-            options_dict['bucket_ranges'] = self.listToString(self.range_list)
+            options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
         elif (self.cb_colorScalingType.currentText() == 'Custom Linear Scaling'):
             new_input = str(self.le_customScale.text()).split(',')
             if (new_input.__len__() == 2):
@@ -223,17 +281,17 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
                     for i in range(1,self.num_buckets):
                         self.range_list.append(str("%.2f" % (lower_bound+(i*bucket_range))))
                     self.range_list.append(str("%.2f" % upper_bound))
-                    options_dict['bucket_ranges'] = self.listToString(self.range_list)
+                    options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
                 except ValueError:
                     pass # do nothing if either new_input[0] or new_input[1] is not a number
 
     def setLabelList(self, options_dict):
         if (self.cb_labelType.currentText() == 'Range Values'):
-            options_dict['bucket_labels'] = 'range_labels'
+            options_dict['mapnik_bucket_labels'] = 'range_labels'
             self.setLabelListForRangeValues(options_dict)
         elif (self.cb_labelType.currentText() == 'Custom Labels'): # use the custom scale
             self.label_list = self.stringToList(self.le_customLabels.text())
-            options_dict['bucket_labels'] = self.listToString(self.label_list)
+            options_dict['mapnik_bucket_labels'] = self.listToString(self.label_list)
 
     def setColorList(self):
         color_scheme_sel = self.cb_colorScheme.currentText()
@@ -367,7 +425,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
 
     def setLabelListForRangeValues(self, options_dict):
         self.label_list = []
-        if (options_dict['bucket_ranges'] == 'linear_scale'):
+        if (options_dict['mapnik_bucket_ranges'] == 'linear_scale'):
             self.label_list.append('MIN')
             while (self.label_list.__len__() < self.num_buckets-1):
                 self.label_list.append('')
@@ -409,20 +467,69 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         return list
 
     def writeXML(self, options_dict):
-        options_dict['bucket_colors'] = self.listToString(self.color_list)
-        if options_dict['bucket_ranges'] != 'linear_scale':
-            options_dict['bucket_ranges'] = self.listToString(self.range_list)
-        if options_dict['bucket_labels'] != 'range_labels':
-            options_dict['bucket_labels'] = self.listToString(self.label_list)
+        options_dict['mapnik_bucket_colors'] = self.listToString(self.color_list)
+        if options_dict['mapnik_bucket_ranges'] != 'linear_scale':
+            options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
+        if options_dict['mapnik_bucket_labels'] != 'range_labels':
+            options_dict['mapnik_bucket_labels'] = self.listToString(self.label_list)
 
     def loadXML(self, options_dict):
-        self.color_list = self.stringToList(options_dict['bucket_colors'])
+        self.color_list = self.stringToList(options_dict['mapnik_bucket_colors'])
         self.num_buckets = self.color_list.__len__()
-        self.range_list = self.stringToList(options_dict['bucket_ranges']) # if not a list, will just be single string
-        if options_dict['bucket_labels'] == 'range_labels':
+        self.range_list = self.stringToList(options_dict['mapnik_bucket_ranges']) # if not a list, will just be single string
+        if options_dict['mapnik_bucket_labels'] == 'range_labels':
             self.setLabelListForRangeValues(options_dict)
         else:
-            self.label_list = self.stringToList(options_dict['bucket_labels'])
+            self.label_list = self.stringToList(options_dict['mapnik_bucket_labels'])
+
+    """ display the values in options_dict in the GUI window """
+    def setSizeOptionValues(self, options_dict):
+        self.le_resolution.setText(QString(options_dict['mapnik_resolution']))
+        self.cb_pageDims.setCurrentIndex(self.convertPageDimToIndex(options_dict['mapnik_page_dims']))
+        self.le_map_lower_left.setText(QString(options_dict['mapnik_map_lower_left']))
+        self.le_map_upper_right.setText(QString(options_dict['mapnik_map_upper_right']))
+        self.le_legend_lower_left.setText(QString(options_dict['mapnik_legend_lower_left']))
+        self.le_legend_upper_right.setText(QString(options_dict['mapnik_legend_upper_right']))
+
+    """ save the settings entered into the GUI """
+    def setSizeOptions(self, options_dict):
+        options_dict['mapnik_resolution'] = self.le_resolution.text()
+        options_dict['mapnik_page_dims'] = self.getPageDims()
+        options_dict['mapnik_map_lower_left'] = self.getCoordInput(self.le_map_lower_left.text())
+        options_dict['mapnik_map_upper_right'] = self.getCoordInput(self.le_map_upper_right.text())
+        options_dict['mapnik_legend_lower_left'] = self.getCoordInput(self.le_legend_lower_left.text())
+        options_dict['mapnik_legend_upper_right'] = self.getCoordInput(self.le_legend_upper_right.text())
+        
+    """ convert a page dimension string to the corresponding index number in self.cb_pageDims """
+    def convertPageDimToIndex(self, page_dim):
+        if page_dim == '8.5,5.5':
+            return 0
+        elif page_dim == '8.5,11':
+            return 1
+        elif page_dim == '11,8.5':
+            return 2
+        elif page_dim == '11,17':
+            return 3
+        elif page_dim == '17,11':
+            return 4
+        else:
+            return 0 # return 0 as the default value
+        
+    """ get the selected page dimension in self.cb_pageDims as a correctly formatted QString """
+    def getPageDims(self):
+        page_dim = self.cb_pageDims.currentText()
+        page_dim_list = str(page_dim).split(' x ')
+        return QString(str(page_dim_list[0])+','+str(page_dim_list[1]))
+        
+    """ get the entered value in the given line edit box as a correctly formatted QString """
+    def getCoordInput(self, coordInput):
+        coordList = self.stringToList(coordInput)
+        if coordList.__len__() >= 2:
+            return QString(str(coordList[0])+','+str(coordList[1]))
+        elif coordList.__len__() == 1:
+            return QString(str(coordList[0])+',')
+        else:
+            return QString('')
 
 
 from opus_core.tests import opus_unittest
@@ -442,16 +549,25 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.label_lst = ['0 to 100', '100 to 200', '200 to 300', '300 to 400', '400 to 500']
 
         self.options_dict = {}
-        self.options_dict['bucket_ranges'] = self.range_str
-        self.options_dict['bucket_colors'] = self.color_str
-        self.options_dict['bucket_labels'] = self.label_str
+        self.options_dict['mapnik_bucket_ranges'] = self.range_str
+        self.options_dict['mapnik_bucket_colors'] = self.color_str
+        self.options_dict['mapnik_bucket_labels'] = self.label_str
+        self.options_dict['mapnik_resolution'] = '96'
+        self.options_dict['mapnik_page_dims'] = '8.5,5.5'
+        self.options_dict['mapnik_map_lower_left'] = '0.5,0.5'
+        self.options_dict['mapnik_map_upper_right'] = '6.0,5.0'
+        self.options_dict['mapnik_legend_lower_left'] = '6.5,0.5'
+        self.options_dict['mapnik_legend_upper_right'] = '8.0,5.0'
         self.mapOptionsInst = MapOptions(parent=self.window, options_dict=self.options_dict)
 
     def tearDown(self):
         self.mapOptionsInst.close()
 
-    # this function is simply a collection of function calls that have their own unit tests
-    # and therefore setColorTableRows() does not need its own unit test.
+    """ 
+     the test_setColorTableRows function is simply a collection of 
+     function calls that have their own unit tests
+     and therefore setColorTableRows() does not need its own unit test.
+    """
     #def test_setColorTableRows(self):
     #    pass
 
@@ -498,24 +614,24 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         custom_scaling = 1
         self.mapOptionsInst.cb_colorScalingType.setCurrentIndex(linear_scaling)
         self.mapOptionsInst.setRangeList(self.options_dict)
-        self.assertEqual(self.options_dict['bucket_ranges'], 'linear_scale')
+        self.assertEqual(self.options_dict['mapnik_bucket_ranges'], 'linear_scale')
 
         self.mapOptionsInst.cb_colorScalingType.setCurrentIndex(custom_scaling)
         self.mapOptionsInst.le_customScale.setText(QString(self.range_str))
         self.mapOptionsInst.setRangeList(self.options_dict)
-        self.assertEqual(self.options_dict['bucket_ranges'], self.range_str)
+        self.assertEqual(self.options_dict['mapnik_bucket_ranges'], self.range_str)
 
     def test_setLabelList(self):
         range_values = 0
         custom_labels = 1
         self.mapOptionsInst.cb_labelType.setCurrentIndex(range_values)
         self.mapOptionsInst.setLabelList(self.options_dict)
-        self.assertEqual(self.options_dict['bucket_labels'], 'range_labels')
+        self.assertEqual(self.options_dict['mapnik_bucket_labels'], 'range_labels')
 
         self.mapOptionsInst.cb_labelType.setCurrentIndex(custom_labels)
         self.mapOptionsInst.le_customScale.setText(QString(self.label_str))
         self.mapOptionsInst.setLabelList(self.options_dict)
-        self.assertEqual(self.options_dict['bucket_labels'], self.label_str)
+        self.assertEqual(self.options_dict['mapnik_bucket_labels'], self.label_str)
 
     def test_setColorList(self):
         from numpy import array
@@ -574,7 +690,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.mapOptionsInst.setLabelListForRangeValues(self.options_dict)
         self.assertEqual(self.mapOptionsInst.label_list, self.label_lst)
 
-        self.options_dict['bucket_ranges'] = 'linear_scale'
+        self.options_dict['mapnik_bucket_ranges'] = 'linear_scale'
         self.mapOptionsInst.setLabelListForRangeValues(self.options_dict)
         self.assertEqual(self.mapOptionsInst.label_list, ['MIN', '', '', '', 'MAX'])
 
@@ -611,15 +727,19 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
 
     def test_writeXML(self):
         self.mapOptionsInst.writeXML(self.options_dict)
-        self.assertEqual(self.options_dict['bucket_colors'], self.color_str)
-        self.assertEqual(self.options_dict['bucket_ranges'], self.range_str)
-        self.assertEqual(self.options_dict['bucket_labels'], self.label_str)
+        self.assertEqual(self.options_dict['mapnik_bucket_colors'], self.color_str)
+        self.assertEqual(self.options_dict['mapnik_bucket_ranges'], self.range_str)
+        self.assertEqual(self.options_dict['mapnik_bucket_labels'], self.label_str)
 
     def test_loadXML(self):
         self.mapOptionsInst.loadXML(self.options_dict)
         self.assertEqual(self.mapOptionsInst.range_list, self.range_lst)
         self.assertEqual(self.mapOptionsInst.color_list, self.color_lst)
         self.assertEqual(self.mapOptionsInst.label_list, self.label_lst)
+
+    def test_getPageDims(self):
+        self.mapOptionsInst.cb_pageDims.setCurrentIndex(0)
+        self.assertEqual('8.5,5.5', self.mapOptionsInst.getPageDims())
 
 if __name__ == '__main__':
     opus_unittest.main()

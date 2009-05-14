@@ -67,10 +67,15 @@ class ConfigureExistingBatchIndicatorVisualization(AbstractConfigureBatchIndicat
                 else:
                     self.rbTablePerYear.setChecked(True)
         elif prev_output_type == 'mapnik_map' or prev_output_type == 'mapnik_animated_map':
-            self.mapnik_options['bucket_ranges'] = viz_spec['bucket_ranges']
-            self.mapnik_options['bucket_colors'] = viz_spec['bucket_colors']
-            self.mapnik_options['bucket_labels'] = viz_spec['bucket_labels']
-
+            self.mapnik_options['mapnik_bucket_ranges'] = viz_spec['mapnik_bucket_ranges']
+            self.mapnik_options['mapnik_bucket_colors'] = viz_spec['mapnik_bucket_colors']
+            self.mapnik_options['mapnik_bucket_labels'] = viz_spec['mapnik_bucket_labels']
+            self.mapnik_options['mapnik_resolution'] = viz_spec['mapnik_resolution']
+            self.mapnik_options['mapnik_page_dims'] = viz_spec['mapnik_page_dims']
+            self.mapnik_options['mapnik_map_lower_left'] = viz_spec['mapnik_map_lower_left']
+            self.mapnik_options['mapnik_map_upper_right'] = viz_spec['mapnik_map_upper_right']
+            self.mapnik_options['mapnik_legend_lower_left'] = viz_spec['mapnik_legend_lower_left']
+            self.mapnik_options['mapnik_legend_upper_right'] = viz_spec['mapnik_legend_upper_right']
     def _process_xml_stored_list_of_strings(self, value):
         '''
         Strip the Python semantics from the stored list and return the list

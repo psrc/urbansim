@@ -228,9 +228,15 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
     def set_default_mapnik_options(self):
         # these default values are also hard-coded in opus_gui.results_manager.run.batch_processor.py
-        self.mapnik_options['bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
-        self.mapnik_options['bucket_ranges'] = 'linear_scale'
-        self.mapnik_options['bucket_labels'] = 'range_labels'
+        self.mapnik_options['mapnik_bucket_colors'] = '#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b' # green
+        self.mapnik_options['mapnik_bucket_ranges'] = 'linear_scale'
+        self.mapnik_options['mapnik_bucket_labels'] = 'range_labels'
+        self.mapnik_options['mapnik_resolution'] = '96'
+        self.mapnik_options['mapnik_page_dims'] = '8.5,5.5'
+        self.mapnik_options['mapnik_map_lower_left'] = '0.5,0.5'
+        self.mapnik_options['mapnik_map_upper_right'] = '6.0,5.0'
+        self.mapnik_options['mapnik_legend_lower_left'] = '6.5,0.5'
+        self.mapnik_options['mapnik_legend_upper_right'] = '8.0,5.0'
 
     def on_cboVizType_currentIndexChanged(self, param):
         if isinstance(param, int):
@@ -294,9 +300,16 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         }
 
         if output_type == 'mapnik_map' or output_type == 'mapnik_animated_map':
-            vals['bucket_labels'] = self.mapnik_options['bucket_labels']
-            vals['bucket_colors'] = self.mapnik_options['bucket_colors']
-            vals['bucket_ranges'] = self.mapnik_options['bucket_ranges']
+            vals['mapnik_bucket_labels'] = self.mapnik_options['mapnik_bucket_labels']
+            vals['mapnik_bucket_colors'] = self.mapnik_options['mapnik_bucket_colors']
+            vals['mapnik_bucket_ranges'] = self.mapnik_options['mapnik_bucket_ranges']
+            vals['mapnik_resolution'] = self.mapnik_options['mapnik_resolution']
+            vals['mapnik_page_dims'] = self.mapnik_options['mapnik_page_dims']
+            vals['mapnik_map_lower_left'] = self.mapnik_options['mapnik_map_lower_left']
+            vals['mapnik_map_upper_right'] = self.mapnik_options['mapnik_map_upper_right']
+            vals['mapnik_legend_lower_left'] = self.mapnik_options['mapnik_legend_lower_left']
+            vals['mapnik_legend_upper_right'] = self.mapnik_options['mapnik_legend_upper_right']
+
 
         elif output_type == 'fixed_field':
             try:
