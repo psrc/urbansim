@@ -7,408 +7,384 @@
         <expression_library type="dictionary"/>
     </general>
     <model_manager>
-        <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"/>
-        <templates hidden="True" parser_action="skip" name="Model Templates">
-            <model_template copyable="True" hidden="True" type="model_template" name="simple_model_template">
-                <estimation_config parser_action="skip" name="Estimation Configuration">
-                    <config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
-                </estimation_config>
-                <specification type="dictionary">
-                    <submodel copyable="True" type="submodel" hidden="Children" name="submodel" submodel_id="-2">
-                        <description type="string">No submodel</description>
-                        <variables type="variable_list"/>
-                    </submodel>
-                </specification>
+        <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary"/>
+        <templates hidden="True" name="Model Templates" parser_action="skip">
+            <model_template name="simple_model">
                 <structure type="dictionary">
-                    <import type="dictionary" name="import">
+                    <import name="import" type="dictionary">
                         <class_module type="string">opus_core.simple_model</class_module>
                         <class_name type="string">SimpleModel</class_name>
                     </import>
                     <init type="dictionary">
-                        <name type="string" name="name">SimpleModel</name>
+                        <name name="name" type="string">SimpleModel</name>
                     </init>
                     <run type="dictionary">
-                        <argument type="string" name="dataset">fill in</argument>
-                        <argument type="string" name="expression" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="outcome_attribute" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="dataset_pool">dataset_pool</argument>
+                        <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
+                        <argument field_identifier="Expression" name="expression" parser_action="quote_string" type="string"/>
+                        <argument convert_blank_to_none="True" field_identifier="Outcome Attribute" name="outcome_attribute" parser_action="quote_string" type="string"/>
+                        <argument name="dataset_pool" type="string">dataset_pool</argument>
                     </run>
-                    <prepare_for_run type="dictionary"/>
-                    <estimate type="dictionary"/>
-                    <prepare_for_estimate type="dictionary">
-            </prepare_for_estimate>
                 </structure>
+                <specification type="dictionary"/>
             </model_template>
-            <model_template copyable="True" hidden="True" type="model_template" name="choice_model_template">
-                <estimation_config parser_action="skip" name="Estimation Configuration">
-                    <config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
-                </estimation_config>
+            <model_template name="choice_model">
                 <structure type="dictionary">
-                    <import type="dictionary" name="import">
+                    <import name="import" type="dictionary">
                         <class_module type="string">opus_core.choice_model</class_module>
                         <class_name type="string">ChoiceModel</class_name>
                     </import>
                     <init type="dictionary">
-                        <name type="string" name="name">ChoiceModel</name>
-                        <argument type="string" name="choice_set">fill in</argument>
-                        <argument type="string" name="utilities" parser_action="quote_string">opus_core.linear_utilities</argument>
-                        <argument type="string" name="probabilities" parser_action="quote_string">opus_core.mnl_probabilities</argument>
-                        <argument type="string" name="choices" parser_action="quote_string">opus_core.random_choices</argument>
-                        <argument type="string" name="submodel_string" convert_blank_to_none="True"/>
-                        <argument type="string" name="choice_attribute_name" parser_action="quote_string">choice_id</argument>
-                        <argument type="string" name="interaction_pkg" parser_action="quote_string">opus_core</argument>
-                        <argument type="string" name="run_config" convert_blank_to_none="True"/>
-                        <argument type="dictionary" name="estimate_config">
-                            <key type="float" name="estimation_size_agents">1.0</key>
+                        <name name="name" type="string">ChoiceModel</name>
+                        <argument field_identifier="Choice Set" name="choice_set" type="string"/>
+                        <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+                        <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+                        <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices</argument>
+                        <argument convert_blank_to_none="True" field_description="test description" field_identifier="Submodel String" name="submodel_string" type="string"/>
+                        <argument field_identifier="Choice Attribute Name" name="choice_attribute_name" parser_action="quote_string" type="string">choice_id</argument>
+                        <argument name="interaction_pkg" parser_action="quote_string" type="string">opus_core</argument>
+                        <argument convert_blank_to_none="True" name="run_config" type="string"/>
+                        <argument name="estimate_config" type="dictionary">
+                            <key field_identifier="Estimation Size Agents" name="estimation_size_agents" type="float">1.0</key>
                         </argument>
-                        <argument type="integer" name="debuglevel">0</argument>
-                        <argument type="string" name="dataset_pool">dataset_pool</argument>
+                        <argument name="debuglevel" type="integer">0</argument>
+                        <argument name="dataset_pool" type="string">dataset_pool</argument>
                     </init>
                     <run type="dictionary">
-                        <argument type="string" name="specification">specification</argument>
-                        <argument type="string" name="coefficients">coefficients</argument>
-                        <argument type="string" name="agent_set">fill in</argument>
-                        <argument type="string" name="agents_index">cm_index</argument>
-                        <argument type="string" name="chunk_specification" convert_blank_to_none="True"/>
-                        <argument type="string" name="data_objects">datasets</argument>
+                        <argument name="specification" type="string">specification</argument>
+                        <argument name="coefficients" type="string">coefficients</argument>
+                        <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+                        <argument name="agents_index" type="string">cm_index</argument>
+                        <argument convert_blank_to_none="True" name="chunk_specification" type="string"/>
+                        <argument name="data_objects" type="string">datasets</argument>
                     </run>
                     <prepare_for_run type="dictionary">
-                        <name type="string" name="name">prepare_for_run</name>
-                        <argument type="string" name="agent_set" convert_blank_to_none="True"/>
-                        <argument type="string" name="agent_filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">choice_model_template_specification</argument>
-                        <argument type="string" name="coefficients_storage">base_cache_storage</argument>
-                        <argument type="string" name="coefficients_table" parser_action="quote_string">choice_model_template_coefficients</argument>
-                        <argument type="string" name="cache_storage">base_cache_storage</argument>
-                        <argument type="boolean" name="sample_coefficients">False</argument>
-                        <argument type="string" name="distribution" parser_action="quote_string">normal</argument>
-                        <argument type="integer" name="multiplicator">1</argument>
-                        <output type="string" name="output">(specification, coefficients, cm_index)</output>
+                        <name name="name" type="string">prepare_for_run</name>
+                        <output name="output" type="string">(specification, coefficients, cm_index)</output>
+                        <argument convert_blank_to_none="True" field_identifier="Agent Set" name="agent_set" type="string"/>
+                        <argument convert_blank_to_none="True" name="agent_filter" parser_action="quote_string" type="string"/>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="specification_table" field_identifier="spectable" name="specification_table" parser_action="quote_string" type="string"/>
+                        <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="coefficients_table" field_identifier="coefftable" name="coefficients_table" parser_action="quote_string" type="string"/>
+                        <argument name="cache_storage" type="string">base_cache_storage</argument>
+                        <argument name="sample_coefficients" type="boolean">False</argument>
+                        <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+                        <argument name="multiplicator" type="integer">1</argument>
                     </prepare_for_run>
                     <estimate type="dictionary">
-                        <argument type="string" name="specification">specification</argument>
-                        <argument type="string" name="agent_set">fill in</argument>
-                        <argument type="string" name="agents_index">cm_index</argument>
-                        <argument type="string" name="procedure" parser_action="quote_string">opus_core.bhhh_mnl_estimation</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
-                        <output type="string" name="output">(coefficients, dummy)</output>
+                        <output name="output" type="string">(coefficients, dummy)</output>
+                        <argument name="specification" type="string">specification</argument>
+                        <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+                        <argument name="agents_index" type="string">cm_index</argument>
+                        <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+                        <argument name="data_objects" type="string">datasets</argument>
                     </estimate>
                     <prepare_for_estimate type="dictionary">
-                        <name type="string" name="name">prepare_for_estimate</name>
-                        <argument type="string" name="agent_set" convert_blank_to_none="True"/>
-                        <argument type="string" name="agent_filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">choice_model_template_specification</argument>
-                        <output type="string" name="output">(specification, cm_index)</output>
+                        <name name="name" type="string">prepare_for_estimate</name>
+                        <output name="output" type="string">(specification, cm_index)</output>
+                        <argument convert_blank_to_none="True" name="agent_set" type="string"/>
+                        <argument convert_blank_to_none="True" field_identifier="Agent Filter" name="agent_filter" parser_action="quote_string" type="string"/>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument name="specification_table" parser_action="quote_string" type="string">choice_model_template_specification</argument>
                     </prepare_for_estimate>
                 </structure>
                 <specification type="dictionary">
-                    <submodel copyable="True" type="submodel" hidden="Children" name="submodel" submodel_id="-2">
-                        <description type="string">No submodel</description>
-                        <equation copyable="True" type="submodel_equation" name="choice_1" equation_id="1">
+                    <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+                        <equation name="Choice 1" type="submodel_equation" equation_id="1">
                             <variables type="variable_list">constant</variables>
                         </equation>
-                        <equation copyable="True" type="submodel_equation" name="choice_2" equation_id="2">
+                        <equation name="Choice 2" type="submodel_equation" equation_id="2">
                             <variables type="variable_list"/>
                         </equation>
                     </submodel>
                 </specification>
-            </model_template>
-            <model_template copyable="True" hidden="True" type="model_template" name="regression_model_template">
-                <estimation_config parser_action="skip" name="Estimation Configuration">
-                    <config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+                <estimation_config name="Estimation Configuration" parser_action="skip">
+                    <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
                 </estimation_config>
-                <specification type="dictionary">
-                    <submodel copyable="True" type="submodel" hidden="Children" name="submodel" submodel_id="-2">
-                        <description type="string">No submodel</description>
-                        <variables type="variable_list"/>
-                    </submodel>
-                </specification>
+            </model_template>
+            <model_template name="regression_model">
                 <structure type="dictionary">
-                    <import type="dictionary" name="import">
+                    <import name="import" type="dictionary">
                         <class_module type="string">opus_core.regression_model</class_module>
                         <class_name type="string">RegressionModel</class_name>
                     </import>
                     <init type="dictionary">
-                        <name type="string" name="name">RegressionModel</name>
-                        <argument type="string" name="regression_procedure" parser_action="quote_string">opus_core.linear_regression</argument>
-                        <argument type="string" name="submodel_string" convert_blank_to_none="True"/>
-                        <argument type="string" name="run_config" convert_blank_to_none="True"/>
-                        <argument type="string" name="estimate_config" convert_blank_to_none="True"/>
-                        <argument type="integer" name="debuglevel">0</argument>
-                        <argument type="string" name="dataset_pool">dataset_pool</argument>
+                        <name name="name" type="string">RegressionModel</name>
+                        <argument name="regression_procedure" parser_action="quote_string" type="string">opus_core.linear_regression</argument>
+                        <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
+                        <argument convert_blank_to_none="True" name="run_config" type="string"/>
+                        <argument convert_blank_to_none="True" name="estimate_config" type="string"/>
+                        <argument name="debuglevel" type="integer">0</argument>
+                        <argument name="dataset_pool" type="string">dataset_pool</argument>
                     </init>
                     <run type="dictionary">
-                        <argument type="string" name="specification">specification</argument>
-                        <argument type="string" name="coefficients">coefficients</argument>
-                        <argument type="string" name="dataset">fill in</argument>
-                        <argument hidden="True" type="string" name="index" convert_blank_to_none="True">rm_index</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
+                        <argument name="specification" type="string">specification</argument>
+                        <argument name="coefficients" type="string">coefficients</argument>
+                        <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
+                        <argument convert_blank_to_none="True" hidden="True" name="index" type="string">rm_index</argument>
+                        <argument name="data_objects" type="string">datasets</argument>
                     </run>
                     <prepare_for_run type="dictionary">
-                        <name type="string" name="name">prepare_for_run</name>
-                        <argument type="string" name="dataset" convert_blank_to_none="True"/>
-                        <argument type="string" name="dataset_filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">regression_model_template_specification</argument>
-                        <argument type="string" name="coefficients_storage">base_cache_storage</argument>
-                        <argument type="string" name="coefficients_table" parser_action="quote_string">regression_model_template_coefficients</argument>
-                        <argument type="string" name="cache_storage">base_cache_storage</argument>
-                        <argument type="boolean" name="sample_coefficients">False</argument>
-                        <argument type="string" name="distribution" parser_action="quote_string">normal</argument>
-                        <argument type="integer" name="multiplicator">1</argument>
-                        <output type="string" name="output">(specification, coefficients, rm_index)</output>
+                        <name name="name" type="string">prepare_for_run</name>
+                        <argument convert_blank_to_none="True" name="dataset" type="string"/>
+                        <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string"/>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="specification_table" field_identifier="Specification Table" name="specification_table" parser_action="quote_string" type="string"/>
+                        <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="coefficients_table" field_identifier="Coefficients Table" name="coefficients_table" parser_action="quote_string" type="string"/>
+                        <argument name="cache_storage" type="string">base_cache_storage</argument>
+                        <argument name="sample_coefficients" type="boolean">False</argument>
+                        <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+                        <argument name="multiplicator" type="integer">1</argument>
+                        <output name="output" type="string">(specification, coefficients, rm_index)</output>
                     </prepare_for_run>
                     <estimate type="dictionary">
-                        <argument type="string" name="specification">specification</argument>
-                        <argument type="string" name="dataset">fill in</argument>
-                        <argument config_name="outcome_attribute" type="string" name="dependent_variable" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="index" convert_blank_to_none="True">rm_index</argument>
-                        <argument type="string" name="procedure" parser_action="quote_string">opus_core.estimate_linear_regression</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
-                        <output type="string" name="output">(coefficients, dummy)</output>
+                        <argument name="specification" type="string">specification</argument>
+                        <argument field_identifier="Dataset" name="dataset" type="string"/>
+                        <argument config_name="outcome_attribute" field_data_type="model_variable" field_identifier="Dependent Variable" name="dependent_variable" parser_action="quote_string" type="string"/>
+                        <argument convert_blank_to_none="True" name="index" type="string">rm_index</argument>
+                        <argument name="procedure" parser_action="quote_string" type="string">opus_core.estimate_linear_regression</argument>
+                        <argument name="data_objects" type="string">datasets</argument>
+                        <output name="output" type="string">(coefficients, dummy)</output>
                     </estimate>
                     <prepare_for_estimate type="dictionary">
-                        <name type="string" name="name">prepare_for_estimate</name>
-                        <argument type="string" name="dataset" convert_blank_to_none="True"/>
-                        <argument type="string" name="dataset_filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">regression_model_template_specification</argument>
-                        <output type="string" name="output">(specification, rm_index)</output>
+                        <name name="name" type="string">prepare_for_estimate</name>
+                        <argument convert_blank_to_none="True" name="dataset" type="string"/>
+                        <argument convert_blank_to_none="True" name="dataset_filter" parser_action="quote_string" type="string"/>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument name="specification_table" parser_action="quote_string" type="string">regression_model_template_specification</argument>
+                        <output name="output" type="string">(specification, rm_index)</output>
                     </prepare_for_estimate>
                 </structure>
-            </model_template>
-            <model_template copyable="True" hidden="True" type="model_template" name="allocation_model_template">
-                <estimation_config parser_action="skip" name="Estimation Configuration">
-                    <config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
-                </estimation_config>
                 <specification type="dictionary">
-                    <submodel copyable="True" type="submodel" hidden="Children" name="submodel" submodel_id="-2">
-                        <description type="string">No submodel</description>
+                    <submodel hidden="Children" name="Submodel" submodel_id="-2" type="submodel">
+                        <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
                         <variables type="variable_list"/>
                     </submodel>
                 </specification>
-                <structure type="dictionary">
-                    <import type="dictionary" name="import">
-                        <class_module type="string">opus_core.allocation_model</class_module>
-                        <class_name type="string">AllocationModel</class_name>
-                    </import>
-                    <init type="dictionary">
-                        <name type="string" name="name">AllocationModel</name>
-                    </init>
-                    <run type="dictionary">
-                        <argument type="string" name="dataset">fill in</argument>
-                        <argument type="string" name="outcome_attribute" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="weight_attribute" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="control_totals">cts</argument>
-                        <argument type="string" name="current_year">year</argument>
-                        <argument type="string" name="control_total_attribute" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="year_attribute" parser_action="quote_string">year</argument>
-                        <argument type="string" name="capacity_attribute" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="dataset_pool">dataset_pool</argument>
-                    </run>
-                    <prepare_for_run type="dictionary">
-                        <name type="string" name="name">prepare_for_run</name>
-                        <argument type="string" name="storage">base_cache_storage</argument>
-                        <argument type="string" name="control_totals_table_name" parser_action="quote_string">fill in</argument>
-                        <argument type="list" name="control_totals_id_name">['year']</argument>
-                        <argument type="string" name="control_totals_dataset_name" parser_action="quote_string">control_totals</argument>
-                        <output type="string" name="output">cts</output>
-                    </prepare_for_run>
-                    <estimate type="dictionary"/>
-                    <prepare_for_estimate type="dictionary">
-            </prepare_for_estimate>
-                </structure>
-            </model_template>
-            <model_template copyable="True" hidden="True" type="model_template" name="agent_location_choice_model_template">
-                <estimation_config parser_action="skip" name="Estimation Configuration">
-                    <config_override type="list" config_name="models" name="Models to run before estimation">[]</config_override>
+                <estimation_config name="Estimation Configuration" parser_action="skip">
+                    <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
                 </estimation_config>
-                <specification type="dictionary">
-                    <submodel copyable="True" type="submodel" hidden="Children" name="submodel" submodel_id="-2">
-                        <description type="string">No submodel</description>
-                        <variables type="variable_list"/>
-                    </submodel>
-                </specification>
+            </model_template>
+            <model_template name="agent_location_choice_model">
                 <structure type="dictionary">
-                    <import type="dictionary" name="import">
+                    <import name="import" type="dictionary">
                         <class_module type="string">urbansim.models.agent_location_choice_model</class_module>
                         <class_name type="string">AgentLocationChoiceModel</class_name>
                     </import>
                     <init type="dictionary">
-                        <name type="string" name="name">AgentLocationChoiceModel</name>
-                        <argument type="string" name="location_set">fill in</argument>
-                        <argument type="string" name="sampler" parser_action="quote_string">opus_core.samplers.weighted_sampler</argument>
-                        <argument type="string" name="utilities" parser_action="quote_string">opus_core.linear_utilities</argument>
-                        <argument type="string" name="probabilities" parser_action="quote_string">opus_core.mnl_probabilities</argument>
-                        <argument type="string" name="choices" parser_action="quote_string">urbansim.lottery_choices</argument>
-                        <argument type="string" name="filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="submodel_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="location_id_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="dataset_pool">dataset_pool</argument>
-                        <argument type="string" name="model_name" parser_action="quote_string">AgentLocationChoiceModel</argument>
-                        <argument type="string" name="short_name" parser_action="quote_string">ALCM</argument>
-                        <argument type="string" name="variable_package" parser_action="quote_string">urbansim</argument>
-                        <argument type="string" name="debuglevel">debuglevel</argument>
-                        <argument type="dictionary" name="run_config">
-                            <key type="integer" name="sample_size_locations">30</key>
-                            <key type="integer" name="sample_proportion_locations" convert_blank_to_none="True"/>
-                            <key type="boolean" name="compute_capacity_flag">True</key>
-                            <key type="string" name="capacity_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                            <key type="string" name="number_of_units_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                            <key type="string" name="number_of_agents_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                            <key type="integer" name="lottery_max_iterations">3</key>
+                        <name name="name" type="string">AgentLocationChoiceModel</name>
+                        <argument field_identifier="Location Set" name="location_set" type="string"/>
+                        <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+                        <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
+                        <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
+                        <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+                        <argument convert_blank_to_none="True" field_identifier="Filter" name="filter" parser_action="quote_string" type="string"/>
+                        <argument convert_blank_to_none="True" field_identifier="Submodel String" name="submodel_string" parser_action="quote_string" type="string"/>
+                        <argument convert_blank_to_none="True" field_identifier="Location ID String" name="location_id_string" parser_action="quote_string" type="string"/>
+                        <argument name="dataset_pool" type="string">dataset_pool</argument>
+                        <argument name="model_name" parser_action="quote_string" type="string">AgentLocationChoiceModel</argument>
+                        <argument field_identifier="Short Name" name="short_name" parser_action="quote_string" type="string">ALCM</argument>
+                        <argument name="variable_package" parser_action="quote_string" type="string">urbansim</argument>
+                        <argument name="debuglevel" type="string">debuglevel</argument>
+                        <argument name="run_config" type="dictionary">
+                            <key name="sample_size_locations" type="integer">30</key>
+                            <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+                            <key name="compute_capacity_flag" type="boolean">True</key>
+                            <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string"/>
+                            <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string"/>
+                            <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string"/>
+                            <key name="lottery_max_iterations" type="integer">3</key>
                         </argument>
-                        <argument type="dictionary" name="estimate_config">
-                            <key type="string" name="weights_for_estimation_string" convert_blank_to_none="True" parser_action="quote_string"/>
-                            <key type="integer" name="sample_size_locations">30</key>
-                            <key type="integer" name="sample_proportion_locations" convert_blank_to_none="True"/>
-                            <key type="float" name="estimation_size_agents">1.0</key>
+                        <argument name="estimate_config" type="dictionary">
+                            <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string"/>
+                            <key name="sample_size_locations" type="integer">30</key>
+                            <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+                            <key name="estimation_size_agents" type="float">1.0</key>
                         </argument>
                     </init>
                     <prepare_for_estimate type="dictionary">
-                        <name type="string" name="name">prepare_for_estimate</name>
-                        <output type="string" name="output">(alcm_specification, alcm_index)</output>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">agent_location_choice_model_specification</argument>
-                        <argument type="string" name="agent_set">fill in</argument>
-                        <argument type="string" name="agents_for_estimation_storage">base_cache_storage</argument>
-                        <argument type="string" name="agents_for_estimation_table" parser_action="quote_string">fill in</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
-                        <argument type="string" name="index_to_unplace" convert_blank_to_none="True"/>
-                        <argument type="boolean" name="join_datasets">True</argument>
-                        <argument type="string" name="portion_to_unplace">1.0</argument>
-                        <argument type="string" name="filter" convert_blank_to_none="True" parser_action="quote_string"/>
-                        <argument type="string" name="location_id_variable" convert_blank_to_none="True" parser_action="quote_string"/>
+                        <name name="name" type="string">prepare_for_estimate</name>
+                        <output name="output" type="string">(alcm_specification, alcm_index)</output>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="specification_table" field_identifier="Specification Table" name="specification_table" parser_action="quote_string" type="string"/>
+                        <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+                        <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+                        <argument field_identifier="Agents for Estimation Table" name="agents_for_estimation_table" parser_action="quote_string" type="string"/>
+                        <argument name="data_objects" type="string">datasets</argument>
+                        <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+                        <argument name="join_datasets" type="boolean">True</argument>
+                        <argument name="portion_to_unplace" type="string">1.0</argument>
+                        <argument convert_blank_to_none="True" field_identifier="Filter" name="filter" parser_action="quote_string" type="string"/>
+                        <argument convert_blank_to_none="True" field_identifier="Location ID String" name="location_id_variable" parser_action="quote_string" type="string"/>
                     </prepare_for_estimate>
                     <estimate type="dictionary">
-                        <output type="string" name="output">(alcm_coefficients, dummy)</output>
-                        <argument type="string" name="agent_set">fill in</argument>
-                        <argument type="string" name="agents_index">alcm_index</argument>
-                        <argument type="string" name="procedure" parser_action="quote_string">opus_core.bhhh_mnl_estimation</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
-                        <argument type="string" name="debuglevel">debuglevel</argument>
-                        <argument type="string" name="specification">alcm_specification</argument>
+                        <output name="output" type="string">(alcm_coefficients, dummy)</output>
+                        <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+                        <argument name="agents_index" type="string">alcm_index</argument>
+                        <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+                        <argument name="data_objects" type="string">datasets</argument>
+                        <argument name="debuglevel" type="string">debuglevel</argument>
+                        <argument name="specification" type="string">alcm_specification</argument>
                     </estimate>
                     <prepare_for_run type="dictionary">
-                        <name type="string" name="name">prepare_for_run</name>
-                        <output type="string" name="output">(alcm_specification, alcm_coefficients)</output>
-                        <argument type="string" name="coefficients_storage">base_cache_storage</argument>
-                        <argument type="string" name="coefficients_table" parser_action="quote_string">agent_location_choice_model_coefficients</argument>
-                        <argument type="string" name="specification_storage">base_cache_storage</argument>
-                        <argument type="string" name="specification_table" parser_action="quote_string">agent_location_choice_model_specification</argument>
+                        <name name="name" type="string">prepare_for_run</name>
+                        <output name="output" type="string">(alcm_specification, alcm_coefficients)</output>
+                        <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="coefficients_table" field_identifier="Coefficients Table" name="coefficients_table" parser_action="quote_string" type="string"/>
+                        <argument name="specification_storage" type="string">base_cache_storage</argument>
+                        <argument field_data_type="specification_table" field_identifier="Specification Table" name="specification_table" parser_action="quote_string" type="string"/>
                     </prepare_for_run>
                     <run type="dictionary">
-                        <argument type="string" name="agent_set">fill in</argument>
-                        <argument type="string" name="agents_index" convert_blank_to_none="True"/>
-                        <argument type="string" name="chunk_specification">{'records_per_chunk':50000}</argument>
-                        <argument type="string" name="coefficients">alcm_coefficients</argument>
-                        <argument type="string" name="data_objects">datasets</argument>
-                        <argument type="string" name="debuglevel">debuglevel</argument>
-                        <argument type="string" name="specification">alcm_specification</argument>
-                        <argument type="integer" name="maximum_runs">10</argument>
+                        <argument field_identifier="Agent Set" name="agent_set" type="string">fill in</argument>
+                        <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+                        <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+                        <argument name="coefficients" type="string">alcm_coefficients</argument>
+                        <argument name="data_objects" type="string">datasets</argument>
+                        <argument name="debuglevel" type="string">debuglevel</argument>
+                        <argument name="specification" type="string">alcm_specification</argument>
+                        <argument name="maximum_runs" type="integer">10</argument>
                     </run>
                 </structure>
+                <specification type="dictionary">
+                    <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+                        <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
+                        <variables type="variable_list"/>
+                    </submodel>
+                </specification>
+                <estimation_config name="Estimation Configuration" parser_action="skip">
+                    <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+                </estimation_config>
+            </model_template>
+            <model_template name="allocation_model_template">
+                <structure type="dictionary">
+                    <import name="import" type="dictionary">
+                        <class_module type="string">opus_core.allocation_model</class_module>
+                        <class_name type="string">AllocationModel</class_name>
+                    </import>
+                    <init type="dictionary">
+                        <name name="name" type="string">AllocationModel</name>
+                    </init>
+                    <run type="dictionary">
+                        <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
+                        <argument field_identifier="Outcome Variable" name="outcome_attribute" parser_action="quote_string" type="string"/>
+                        <argument field_identifier="Weight Attribute" name="weight_attribute" parser_action="quote_string" type="string"/>
+                        <argument name="control_totals" type="string">cts</argument>
+                        <argument name="current_year" type="string">year</argument>
+                        <argument field_identifier="Control Total Attribute" name="control_total_attribute" parser_action="quote_string" type="string"/>
+                        <argument field_identifier="Year Attribute" name="year_attribute" parser_action="quote_string" type="string">year</argument>
+                        <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+                        <argument name="dataset_pool" type="string">dataset_pool</argument>
+                    </run>
+                    <prepare_for_run type="dictionary">
+                        <name name="name" type="string">prepare_for_run</name>
+                        <output name="output" type="string">cts</output>
+                        <argument name="storage" type="string">base_cache_storage</argument>
+                        <argument field_identifier="Control Totals Table Name" name="control_totals_table_name" parser_action="quote_string" type="string"/>
+                        <argument name="control_totals_id_name" type="list">['year']</argument>
+                        <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+                    </prepare_for_run>
+                </structure>
+                <specification type="dictionary"/>
             </model_template>
         </templates>
     </model_manager>
     <data_manager>
         <tool_library setexpanded="True">
-            <tool_group setexpanded="True" name="synthesizer_tools">
+            <tool_group name="synthesizer_tools" setexpanded="True">
                 <tool name="import_raw_pums_data_to_db">
                     <class_module>synthesizer_import_raw_pums_data_to_db</class_module>
                     <params>
-                        <param name="raw_pums_file_path" required="True" param_type="file_path"/>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="raw_pums_file_path" param_type="file_path" required="True"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="delete_empty_households_from_raw_pums_data">
                     <class_module>synthesizer_delete_empty_households_from_raw_pums_data</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="create_households_input_table">
                     <class_module>synthesizer_create_households_input_table</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="create_persons_input_table">
                     <class_module>synthesizer_create_persons_input_table</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="import_sf3_raw_data_to_db">
                     <class_module>synthesizer_import_sf3_raw_data_to_db</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="raw_sf3_file_path" required="True" param_type="file_path"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="raw_sf3_file_path" param_type="file_path" required="True"/>
                     </params>
                 </tool>
                 <tool name="import_pums_id_to_bg_id_to_db">
                     <class_module>synthesizer_import_pums_id_to_bg_id_to_db</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="pums_id_to_bg_id_file_path" required="True" param_type="file_path"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="pums_id_to_bg_id_file_path" param_type="file_path" required="True"/>
                     </params>
                 </tool>
                 <tool name="create_households_marginals_table">
                     <class_module>synthesizer_create_households_marginals_table</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="create_persons_marginals_table">
                     <class_module>synthesizer_create_persons_marginals_table</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="create_tables">
                     <class_module>synthesizer_create_tables</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="pums_path" required="True" param_type="dir_path"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="pums_path" param_type="dir_path" required="True"/>
                     </params>
                 </tool>
                 <tool name="prepare_data">
                     <class_module>synthesizer_prepare_data</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
                     </params>
                 </tool>
             </tool_group>
-            <tool_group setexpanded="True" name="opus_data_import_export_tools">
+            <tool_group name="opus_data_import_export_tools" setexpanded="True">
                 <tool name="sql_data_to_opus_tool">
                     <class_module>sql_data_to_opus</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="table_name" required="True" param_type="string">ALL</param>
-                        <param name="opus_data_directory" required="True" param_type="dir_path"/>
-                        <param name="opus_data_year" required="True" param_type="string"/>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="table_name" param_type="string" required="True">ALL</param>
+                        <param name="opus_data_directory" param_type="dir_path" required="True"/>
+                        <param name="opus_data_year" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="esri_data_to_opus_tool">
                     <class_module>esri_data_to_opus</class_module>
                     <params>
-                        <param name="esri_data_path" required="True" param_type="dir_path"/>
-                        <param name="esri_table_name" required="True" param_type="dir_path"/>
-                        <param name="opus_data_directory" required="True" param_type="dir_path"/>
-                        <param name="opus_data_year" required="True" param_type="string"/>
+                        <param name="esri_data_path" param_type="dir_path" required="True"/>
+                        <param name="esri_table_name" param_type="dir_path" required="True"/>
+                        <param name="opus_data_directory" param_type="dir_path" required="True"/>
+                        <param name="opus_data_year" param_type="string" required="True"/>
                     </params>
                 </tool>
                 <tool name="opus_data_to_sql_tool">
@@ -416,11 +392,11 @@
                     <exports_to hidden="True">SQL</exports_to>
                     <class_module>opus_data_to_sql</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="opus_data_directory" required="True" param_type="dir_path"/>
-                        <param name="opus_data_year" required="True" param_type="string"/>
-                        <param name="opus_table_name" required="True" param_type="string">ALL</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="opus_data_directory" param_type="dir_path" required="True"/>
+                        <param name="opus_data_year" param_type="string" required="True"/>
+                        <param name="opus_table_name" param_type="string" required="True">ALL</param>
                     </params>
                 </tool>
                 <tool name="opus_data_to_esri_tool">
@@ -428,10 +404,11 @@
                     <exports_to hidden="True">ESRI</exports_to>
                     <class_module>opus_data_to_esri</class_module>
                     <params>
-                        <param name="esri_data_path" required="True" param_type="dir_path"/>
-                        <param name="opus_data_directory" required="True" param_type="dir_path"/>
-                        <param name="opus_data_year" required="True" param_type="string"/>
-                        <param name="opus_table_name" required="True" param_type="string">ALL</param>
+                        <param name="esri_data_path" param_type="dir_path" required="True"/>
+                        <param name="opus_data_directory" param_type="dir_path" required="True"/>
+                        <param name="opus_data_year" param_type="string" required="True"/>
+                        <param name="opus_table_name" param_type="string" required="True">ALL</param>
+                        <param name="something" param_type="fish net" required="yes"/>
                     </params>
                 </tool>
                 <tool name="opus_data_to_csv_tool">
@@ -439,95 +416,95 @@
                     <exports_to hidden="True">CSV</exports_to>
                     <class_module>opus_data_to_csv</class_module>
                     <params>
-                        <param name="csv_data_path" required="True" param_type="dir_path"/>
-                        <param name="opus_data_directory" required="True" param_type="dir_path"/>
-                        <param name="opus_data_year" required="True" param_type="string"/>
-                        <param name="opus_table_name" required="True" param_type="string">ALL</param>
+                        <param name="csv_data_path" param_type="dir_path" required="True"/>
+                        <param name="opus_data_directory" param_type="dir_path" required="True"/>
+                        <param name="opus_data_year" param_type="string" required="True"/>
+                        <param name="opus_table_name" param_type="string" required="True">ALL</param>
                     </params>
                 </tool>
             </tool_group>
-            <tool_group setexpanded="True" name="data_conversion_tools">
+            <tool_group name="data_conversion_tools" setexpanded="True">
                 <tool name="raw_sql_query_tool">
                     <class_module>raw_sql_query</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="query" required="True" param_type="string">your query here;</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="query" param_type="string" required="True">your query here;</param>
                     </params>
                 </tool>
                 <tool name="csv_to_sql_tool">
                     <class_module>csv_to_sql</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="csv_file_path" required="True" param_type="file_path"/>
-                        <param name="output_table_name" required="True" param_type="string"/>
-                        <param name="overwrite" required="True" param_type="string">False</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="csv_file_path" param_type="file_path" required="True"/>
+                        <param name="output_table_name" param_type="string" required="True"/>
+                        <param name="overwrite" param_type="string" required="True">False</param>
                     </params>
                 </tool>
                 <tool name="shapefile_to_postgis">
                     <class_module>shapefile_to_postgis</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="dbname" required="True" param_type="string"/>
-                        <param name="schema_name" required="True" param_type="string"/>
-                        <param name="shapefile_path" required="True" param_type="file_path"/>
-                        <param name="output_table_name" required="True" param_type="string"/>
-                        <param name="geometry_type" required="False" param_type="string">NONE</param>
-                        <param name="overwrite" required="False" param_type="string">NO</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="dbname" param_type="string" required="True"/>
+                        <param name="schema_name" param_type="string" required="True"/>
+                        <param name="shapefile_path" param_type="file_path" required="True"/>
+                        <param name="output_table_name" param_type="string" required="True"/>
+                        <param name="geometry_type" param_type="string" required="False">NONE</param>
+                        <param name="overwrite" param_type="string" required="False">NO</param>
                     </params>
                 </tool>
             </tool_group>
-            <tool_group setexpanded="True" name="spatial_database_tools">
+            <tool_group name="spatial_database_tools" setexpanded="True">
                 <tool name="postgis_polygon_to_centroids">
                     <class_module>postgis_polygon_to_centroids</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="schema" required="True" param_type="string"/>
-                        <param name="drop_existing" required="True" param_type="string">True</param>
-                        <param name="new_table_name" required="True" param_type="string"/>
-                        <param name="geometry_field_name" required="True" param_type="string"/>
-                        <param name="existing_table_name" required="True" param_type="string"/>
-                        <param name="centroid_inside_polygon" required="True" param_type="string">False</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="schema" param_type="string" required="True"/>
+                        <param name="drop_existing" param_type="string" required="True">True</param>
+                        <param name="new_table_name" param_type="string" required="True"/>
+                        <param name="geometry_field_name" param_type="string" required="True"/>
+                        <param name="existing_table_name" param_type="string" required="True"/>
+                        <param name="centroid_inside_polygon" param_type="string" required="True">False</param>
                     </params>
                 </tool>
                 <tool name="postgis_create_spatial_index">
                     <class_module>postgis_create_spatial_index</class_module>
                     <params>
-                        <param name="database_server_connection" required="True" param_type="db_connection_hook"/>
-                        <param name="database_name" required="True" param_type="string"/>
-                        <param name="schema" required="True" param_type="string"/>
-                        <param name="table_name" required="True" param_type="string"/>
-                        <param name="geometry_column_name" required="True" param_type="string"/>
-                        <param name="run_vacuum_analyze" required="True" param_type="string">True</param>
+                        <param name="database_server_connection" param_type="db_connection_hook" required="True"/>
+                        <param name="database_name" param_type="string" required="True"/>
+                        <param name="schema" param_type="string" required="True"/>
+                        <param name="table_name" param_type="string" required="True"/>
+                        <param name="geometry_column_name" param_type="string" required="True"/>
+                        <param name="run_vacuum_analyze" param_type="string" required="True">True</param>
                     </params>
                 </tool>
             </tool_group>
-            <tool_group setexpanded="True" name="esri_data_tools">
+            <tool_group name="esri_data_tools" setexpanded="True">
                 <tool name="esri_buffer_tool">
                     <class_module>esri_buffer</class_module>
                     <params>
-                        <param name="input_shapefile" required="True" param_type="file_path"/>
-                        <param name="output_shapefile" required="True" param_type="file_path"/>
-                        <param name="buffer_size" required="True" param_type="string">10</param>
+                        <param name="input_shapefile" param_type="file_path" required="True"/>
+                        <param name="output_shapefile" param_type="file_path" required="True"/>
+                        <param name="buffer_size" param_type="string" required="True">10</param>
                     </params>
                 </tool>
                 <tool name="esri_feature_to_point_tool">
                     <class_module>esri_feature_to_point</class_module>
                     <params>
-                        <param name="in_features" required="True" param_type="file_path"/>
-                        <param name="out_features" required="True" param_type="file_path"/>
+                        <param name="in_features" param_type="file_path" required="True"/>
+                        <param name="out_features" param_type="file_path" required="True"/>
                     </params>
                 </tool>
             </tool_group>
-            <tool_group setexpanded="True" name="template_tools">
+            <tool_group name="template_tools" setexpanded="True">
                 <tool name="template_tool">
                     <class_module>template_tool</class_module>
                     <params>
-                        <param name="param_1" required="True" param_type="string">default value 1</param>
-                        <param name="param_2" required="True" param_type="string">default value 2</param>
-                        <param name="param_3" required="True" param_type="string">default value 3</param>
+                        <param name="param_1" param_type="string" required="True">default value 1</param>
+                        <param name="param_2" param_type="string" required="True">default value 2</param>
+                        <param name="param_3" param_type="string" required="True">default value 3</param>
                     </params>
                 </tool>
             </tool_group>
@@ -545,7 +522,7 @@
         <path_to_tool_modules>data_manager.run.tools</path_to_tool_modules>
     </data_manager>
     <results_manager>
-        <indicator_batches setexpanded="True" type="group" name="Indicator Batches"/>
-        <simulation_runs followers="Results" setexpanded="True" type="all_source_data" name="Simulation Runs"/>
+        <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
+        <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
     </results_manager>
 </opus_project>
