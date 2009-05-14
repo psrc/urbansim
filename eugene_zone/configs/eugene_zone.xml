@@ -130,7 +130,7 @@
             </creating_baseyear_cache_configuration>
         </scenario>
     </scenario_manager>
-    
+
     <debuglevel type="integer">4</debuglevel>
     <base_year type="integer"/>
     <cache_directory type="string"/>
