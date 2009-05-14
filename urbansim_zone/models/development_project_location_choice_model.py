@@ -6,7 +6,7 @@ import re
 from numpy import logical_and, where, ones, take, argsort, arange, bool8, int8, int32
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from opus_core.logger import logger
-from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
+from urbansim_zone.datasets.development_event_dataset import DevelopmentEventDataset
 from urbansim.datasets.development_project_dataset import DevelopmentProjectCreator
 from urbansim.models.location_choice_model import LocationChoiceModel
 
@@ -138,7 +138,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         projects = None
         # create agents for estimation
         if events_for_estimation_storage is not None:
-            event_set = DevelopmentEventDataset(urbansim_constant,
+            event_set = DevelopmentEventDataset(
                                             in_storage = events_for_estimation_storage,
                                             in_table_name= events_for_estimation_table)
             event_set.remove_non_recent_data(base_year, urbansim_constant['recent_years'])
