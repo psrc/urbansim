@@ -7,6 +7,7 @@ from lxml import etree
 from PyQt4.QtGui import QMenu, QCursor, QFont
 from PyQt4.QtCore import SIGNAL
 
+from opus_core.logger import logger
 from opus_gui.models_manager.run.run_estimation import OpusEstimation
 
 from opus_gui.models_manager.controllers.submodel_editor import SubModelEditor
@@ -65,7 +66,7 @@ class XmlController_Models(XmlController):
         node = index.internalPointer().node
         if node is None:
             return
-        if node.get('type') == 'submodel' and not node.get('inherited'):
+        if index.column() == 0 and node.get('type') == 'submodel' and not node.get('inherited'):
             self._open_submodel_editor_for_selected()
 
     def run_estimation_for_selected(self):
@@ -114,16 +115,24 @@ class XmlController_Models(XmlController):
         editor = self.editor
         editor.init_for_submodel_node(submodel_node)
         if editor.exec_() == editor.Accepted:
-            for key, value in editor.submodel_node.attrib.items():
-                submodel_node.attrib[key] = value
-            for child in submodel_node:
-                submodel_node.remove(child)
-            for child in editor.submodel_node:
-                submodel_node.append(child)
+            # if the name of a shadowing node is changed, the node should no longer shadow the
+            # inherited one so we need to insert a new, local node instead.
+            name_change = submodel_node.get('name') != editor.submodel_node.get('name')
+            if self.project.is_shadowing(submodel_node) and name_change:
+                new_submodel_node = self.project.insert_node(editor.submodel_node, submodel_parent)
+                if new_submodel_node is None:
+                    msg = ('Tried to insert a new submodel (%s) but failed. '
+                           'The recent submodel changes have been lost.' %submodel_node.get('name'))
+                    logger.log_warning(msg)
+            else:
+                # otherwise update the edited submodel with the changes made in the editor
+                for key, value in editor.submodel_node.attrib.items():
+                    submodel_node.attrib[key] = value
+                for child in submodel_node:
+                    submodel_node.remove(child)
+                for child in editor.submodel_node:
+                    submodel_node.append(child)
 
-            # Delete the old and insert the new, edited, submodel node
-            # self.model.remove_node(submodel_node)
-            # self.model.insert_node(editor.submodel_node, submodel_parent)
             self.project.dirty = True
 
     def process_custom_menu(self, point):
