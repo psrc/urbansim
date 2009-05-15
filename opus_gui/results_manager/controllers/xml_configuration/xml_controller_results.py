@@ -129,7 +129,10 @@ class XmlController_Results(XmlController):
         assert self.has_selected_item()
         node = self.selected_item().node
         window = GetRunInfo(node, self.view)
-        window.show()
+        if window.exec_() == window.Accepted:
+            if window.changed_cache_dir:
+                node.find('cache_directory').text = window.changed_cache_dir()
+
 
     def _viewDocumentation(self):
         pass
