@@ -86,7 +86,6 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
                                'run_id': str(run_id)})
     # SubElement(run_node, 'run_id', int_atr).text = str(run_id)
     SubElement(run_node, 'scenario_name', str_atr).text = scenario_name
-    SubElement(run_node, 'run_name', str_atr).text = run_name
     SubElement(run_node, 'cache_directory', str_atr).text = cache_directory
     SubElement(run_node, 'start_year', int_atr).text = str(start_year)
     SubElement(run_node, 'end_year', int_atr).text = str(end_year)
