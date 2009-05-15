@@ -24,7 +24,8 @@ from sqlalchemy.sql import select, func
 ###       Once this has been done, move everything from this file and
 ###       delete_run_tests back into opus_core.
 
-config_template = """<opus_project>
+config_template = """
+<opus_project>
   <xml_version>2.0</xml_version>
   <general>
     <parent type="file">eugene/configs/eugene_gridcell.xml</parent>
