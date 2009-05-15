@@ -328,7 +328,8 @@ class ChoiceModel(ChunkModel):
         self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])        
         #run estimation
         result = self.estimate_step()
-        del self.estimate_config["selected_choice"]
+        if "selected_choice" in self.estimate_config.keys():
+            del self.estimate_config["selected_choice"]
         del self.estimate_config["index"]
         return (self.coefficients, result)
 
