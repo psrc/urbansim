@@ -124,6 +124,7 @@ class XmlController_Models(XmlController):
                     msg = ('Tried to insert a new submodel (%s) but failed. '
                            'The recent submodel changes have been lost.' %submodel_node.get('name'))
                     logger.log_warning(msg)
+                self.project.remove_node(submodel_node)
             else:
                 # otherwise update the edited submodel with the changes made in the editor
                 for key, value in editor.submodel_node.attrib.items():
