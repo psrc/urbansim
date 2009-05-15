@@ -1,0 +1,6 @@
+<run hidden="Children" type="source_data" name="sample run node" run_id="1">
+  <scenario_name type="string">sample scenario</scenario_name>
+  <cache_directory type="string">/sample/path</cache_directory>
+  <start_year type="integer">2000</start_year>
+  <end_year type="integer">2009</end_year>
+</run>
