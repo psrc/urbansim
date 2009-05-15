@@ -126,6 +126,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pb_close" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
         <property name="text" >
          <string>Close</string>
         </property>
@@ -139,6 +142,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pb_apply" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
         <property name="text" >
          <string>Apply</string>
         </property>
@@ -147,7 +153,7 @@
       <item>
        <widget class="QPushButton" name="pb_apply_and_close" >
         <property name="enabled" >
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text" >
          <string>Apply and Close</string>
