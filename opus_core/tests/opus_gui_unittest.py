@@ -13,7 +13,13 @@ class OpusGUITestCase(opus_unittest.OpusTestCase):
         self.app = QtGui.QApplication([], True)
 
     def get_data_from_test_files(self, filename, base_file):
-        ''' Get data from <filename> in test_files (a dir relative to the test file'''
+        ''' Get data from <filename> in ./test_files (a subdir of the base_file's path)
+        Example usage:
+        to get the file "sample.xml" from the relative subdir 'testfiles' from within a test module:
+
+          sample_xml_content = get_data_from_test_files('sample.xml', __file__)
+
+         '''
         path = os.path.split(base_file)[0]
         full_path = os.path.join(path, 'test_files', filename)
         return open(full_path, 'r').read()
