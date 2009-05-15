@@ -331,6 +331,8 @@ class Converter(object):
             self.check_model_spec(template_node)
             self.check_model_struct(template_node)
             self.tag_name_fix(template_node, 'model_template')
+            attribs = {'hidden': None, 'type': None}
+            self.add_action(self.action_change_node_attrib, template_node, attribs)
             self.add_action(self.action_move_node, template_node, 'model_manager/templates')
         for model_node in model_nodes:
             self.check_model_spec(model_node)
@@ -553,6 +555,7 @@ class Converter(object):
         self.check_data_manager()
         self.check_results_manager()
         # global checks
+        self.check_copyable_type()
         self.check_selectable_lists()
         self.check_class_type_nodes()
         self.check_boolean_choices()
