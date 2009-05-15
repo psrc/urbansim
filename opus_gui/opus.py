@@ -2,8 +2,8 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
-
 # PyQt4 includes for python bindings to QT
+
 from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QApplication, QIcon, QMessageBox
 
@@ -11,7 +11,6 @@ from PyQt4.QtGui import QApplication, QIcon, QMessageBox
 import sys, os
 
 # Urbansim Tools
-
 from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
 
 # importing OpusGui could take a long time, so we want to load the configuration and display the
@@ -30,6 +29,7 @@ def load_gui():
     gui_config.splash_screen.raise_()
     gui_config.splash_screen.activateWindow()
     gui_config.splash_screen.showMessage('Loading and compiling Python Modules...')
+    gui_config.splash_screen.show()
 
 if __name__ == '__main__':
     load_gui() # start loading the gui before doing the heavy imports
