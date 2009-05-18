@@ -21,6 +21,7 @@
     </years>
     <list_test type="list">[10, 20, 30]</list_test>
     <vars type="variable_list">population, employment, density</vars>
+    <vars2 type="variable_list">coeff_one:variable_one,     coeff_two:variable_two      ,variable_three</vars2>
     <dicttest type="dictionary">
       <str1 type="string">squid</str1>
       <str2 type="string">clam</str2>
