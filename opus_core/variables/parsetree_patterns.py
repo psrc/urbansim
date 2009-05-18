@@ -14,7 +14,7 @@ def _or_test_subtree(tree):
     (major, minor, micro, releaselevel, serial) = sys.version_info
     if major==2 and (minor==3 or minor==4):
         return tree
-    elif major==2 and minor==5:
+    elif major==2 and (minor==5 or minor==6):
         return (symbol.or_test, tree)
     else:
         raise StandardError, 'this version of Python not supported -- the only supported versions are Python 2.3, 2.4, and 2.5'
