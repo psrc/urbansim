@@ -664,11 +664,27 @@ class XMLConfiguration(object):
             return result_list
 
     def _convert_variable_list_to_data(self, node):
-        ''' Convert a list of comma-separated values to a Python list of strings '''
+        ''' Variable lists are specified as a sequence of variable entries. A variable entry can be
+        either a tuple of coefficient and alias (separated by a colon) or just an alias (in which
+        case the coefficient name is the same as the alias).
+        For example; this string:
+          orange:one,apple:one,strawberry:two,three
+        would generate:
+          ("orange", "one"), ("apple", "one"), ("strawberry", "two"), "tree"
+        '''
+        def str_or_tuple(text):
+            split = text.split(":")
+            if len(split) == 1:
+                return text
+            elif len(split) == 2:
+                return tuple(split)
+            else:
+                raise ValueError("Invalid variable_list entry. To many colons found in '%s'." % text)
         if node.text is None:
-            return [] # this is the case with xml stumps (like: <var_list />)
-        else:
-            return map(lambda s: s.strip(), node.text.split(','))
+            return []
+        entries = map(lambda s: s.strip(), node.text.split(','))
+        converted_entries = map(lambda x: str_or_tuple(x), entries)
+        return converted_entries
 
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -868,6 +884,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'years': (1980, 1981),
                           'list_test': [10, 20, 30],
                           'vars': ['population', 'employment', 'density'],
+                          'vars2': [('coeff_one', 'variable_one'), ('coeff_two', 'variable_two'), 'variable_three'],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
                           'models_to_run': ['real_estate_price_model'],
                           'mytables': ['gridcells', 'jobs'],
