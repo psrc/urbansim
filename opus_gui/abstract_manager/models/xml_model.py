@@ -37,7 +37,7 @@ class XmlModel(QAbstractItemModel):
         self._root_item = XmlItem(self._root_node, None)
 
         # Rebuild the (whole) tree of visible items
-        self._root_item.rebuild()
+        self.rebuild_tree()
 
         # Optional reference to loaded project for inheritance handling.
         self.project = project
@@ -145,6 +145,8 @@ class XmlModel(QAbstractItemModel):
         # Display
         elif role == Qt.DisplayRole:
             if index.column() == 0:
+                if node.get('type') == 'selectable':
+                    return QVariant(node.get('return_value') or node.get('name') or node.tag)
                 return QVariant(node.get('name') or node.tag)
             elif index.column() == 1:
                 if node.get('type') == "password":
@@ -156,7 +158,7 @@ class XmlModel(QAbstractItemModel):
                     return QVariant(node.text.strip())
                 return QVariant()
         elif role == Qt.ToolTipRole:
-            if index.column() == 0:
+            if index.column() == 0 and self.project: # don't need to worry about inheritance when there is no project
                 if node.get('inherited'):
                     return QVariant('Inherited value from file: %s' % node.get('inherited'))
                 elif self.project.is_shadowing(node):
