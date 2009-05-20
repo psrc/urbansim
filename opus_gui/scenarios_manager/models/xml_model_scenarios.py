@@ -55,3 +55,19 @@ class XmlModel_Scenarios(XmlModel):
                 for model_name in mtr_list:
                     if not model_name in model_names:
                         self.missing_models.add(model_name)
+
+#    def rebuild_tree(self):
+#        ''' Do a little magic to place inherited scenarios under their parents '''
+#        XmlModel.rebuild_tree(self)
+#        child_item_nodes = dict((i,i.node) for i in self._root_item.child_items if
+#                                i.node.tag == 'scenario')
+#        for item, node in child_item_nodes.items():
+#                scenario_parent_node = node.find('parent')
+#                if scenario_parent_node is None:
+#                    continue
+#                scenario_parent_node = self._root_node.find(scenario_parent_node.text.strip())
+#                self.insert_node(node, scenario_parent_node)
+
+
+
+
