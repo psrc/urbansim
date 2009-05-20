@@ -6,14 +6,16 @@
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtGui import QDialog
+from PyQt4.Qt import SIGNAL
 
 from opus_gui.abstract_manager.views.ui_renamedialog import Ui_RenameDialog
+from opus_gui.util.convenience import hide_widget_on_value_change
 
 class RenameDialog(QDialog, Ui_RenameDialog):
     '''
     Dialog box for renaming objects
     '''
-    def __init__(self, old_name, parent_widget):
+    def __init__(self, old_name, taken_names, parent_widget):
         '''
         If accepted, the changed name is stored in self.accepted_name.
         @param old_name (String) the name to change from
@@ -23,6 +25,10 @@ class RenameDialog(QDialog, Ui_RenameDialog):
         self.setupUi(self)
 
         self.accepted_name = ''
+        self.taken_names = taken_names
+
+        self.lbl_name_warning.setVisible(False)
+        hide_widget_on_value_change(self.lbl_name_warning, self.leName)
 
         self.leName.setText(old_name)
         self.leName.setFocus()
@@ -32,9 +38,15 @@ class RenameDialog(QDialog, Ui_RenameDialog):
 
     def on_buttonBox_accepted(self):
         ''' User clicked OK button '''
-        # Call the callback with the users choice of name
-        self.accepted_name = str(self.leName.text())
-        self.accept()
+        # make sure that there is no naming conflict
+        entered_name = str(self.leName.text())
+        if entered_name in self.taken_names:
+            self.lbl_name_warning.setText('There is alread another node with the name "%s".\n'
+                                          'Please enter another name.' % entered_name)
+            self.lbl_name_warning.setVisible(True)
+        else:
+            self.accepted_name = entered_name
+            self.accept()
 
     def on_buttonBox_rejected(self):
         ''' User clicked cancel '''
