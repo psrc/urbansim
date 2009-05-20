@@ -14,6 +14,7 @@ from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scena
 from opus_gui.models_manager.models_manager import get_model_names
 from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 from opus_gui.util.icon_library import IconLibrary
+from opus_gui.util.convenience import get_unique_name
 
 
 class XmlController_Scenarios(XmlController):
@@ -77,13 +78,13 @@ class XmlController_Scenarios(XmlController):
         elif node.get('type') == 'model_choice':
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
-        elif node.get('config_name') == 'models':
+        elif node.tag == 'models_to_run': # special case of a selectable list
             models_menu = QMenu(menu)
             models_menu.setTitle('Add model to run')
             models_menu.setIcon(IconLibrary.icon('add'))
             available_model_names = get_model_names(self.project)
             for model_name in available_model_names:
-                cb = lambda x=model_name: self.addModel(self.selected_index(), x)
+                cb = lambda x = model_name, y = self.selected_index(): self.addModel(y, x)
                 action = self.create_action('model', model_name, cb)
                 models_menu.addAction(action)
             menu.addMenu(models_menu)
@@ -99,73 +100,11 @@ class XmlController_Scenarios(XmlController):
         @param scenario_index (QModelIndex): index of the list to insert under
         @param models_name (String): name of model to add
         '''
-        model_node = Element(model_name, {'choices': 'Run|Skip', 'type': 'model_choice'})
-        model_node.text = 'Run'
+        unique_name = get_unique_name(model_name, get_model_names(self.project))
+        attribs = {'type': 'selectable', 'return_value': model_name, 'name': unique_name}
+        model_node = Element('selectable', attribs)
+        model_node.text = 'True'
         last_row_num = self.model.rowCount(models_to_run_list_index)
         self.model.insertRow(last_row_num, models_to_run_list_index, model_node)
         # Validate models to run
         update_models_to_run_lists()
-
-
-# Could not find anything that uses this -- commenting out for now.
-
-#    def openXMLFile(self):
-#        ''' NO DOCUMENTATION '''
-#        assert self.has_selected_item()
-#        node = self.selected_item().node
-#        filePath = node.tag
-#
-#        fileInfo = QFileInfo(filePath)
-#        baseInfo = QFileInfo(self.toolboxbase.xml_file)
-#        baseDir = baseInfo.absolutePath()
-#        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
-#        self.toolboxbase.openXMLTree(newFile.absoluteFilePath())
-
-#    def editXMLFileLocal(self):
-#        ''' NO DOCUMENTATION '''
-#        filePath = ""
-#        if self.currentIndex.internalPointer().node().hasChildNodes():
-#            children = self.currentIndex.internalPointer().node().childNodes()
-#            for x in xrange(0,children.count(),1):
-#                if children.item(x).isText():
-#                    filePath = children.item(x).nodeValue()
-#        fileInfo = QFileInfo(filePath)
-#        baseInfo = QFileInfo(self.toolboxbase.xml_file)
-#        baseDir = baseInfo.absolutePath()
-#        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
-#
-#        # To test QScintilla
-#        if self.mainwindow.editorStuff:
-#            #print "Loading into qscintilla..."
-#            # Now an individual tab
-#            from opus_gui.util.editorbase import EditorTab
-#            fileName = newFile.absoluteFilePath()
-#            x = EditorTab(self.mainwindow, QString(fileName))
-#
-#    def editXMLFileGlobal(self):
-#        ''' NO DOCUMENTATION '''
-#        filePath = ""
-#        if self.currentIndex.internalPointer().node().hasChildNodes():
-#            children = self.currentIndex.internalPointer().node().childNodes()
-#            for x in xrange(0,children.count(),1):
-#                if children.item(x).isText():
-#                    filePath = children.item(x).nodeValue()
-#        fileInfo = QFileInfo(filePath)
-#        baseInfo = QFileInfo(self.toolboxbase.xml_file)
-#        baseDir = baseInfo.absolutePath()
-#        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
-#
-#        # To test QScintilla
-#        if self.mainwindow.editorStuff:
-#            #print "Loading into qscintilla..."
-#            # Start with the base tab
-#            fileName = newFile.absoluteFilePath()
-#            self.mainwindow.editorStuff.clear()
-#            try:
-#                f = open(fileName,'r')
-#            except:
-#                return
-#            for l in f.readlines():
-#                self.mainwindow.editorStuff.append(l)
-#            f.close()
-#            self.mainwindow.editorStatusLabel.setText(QString(fileName))
