@@ -2,6 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 from opus_gui.util.icon_library import IconLibrary
+from opus_gui.util.convenience import hide_widget_on_value_change
 
 import sys
 import copy
@@ -52,8 +53,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         del QSP
 
         self._hide_name_warning()
-        self.connect(self.le_model_name, SIGNAL('textChanged(const QString &)'),
-                     self._hide_name_warning)
+        hide_widget_on_value_change(self.lbl_name_warning, self.le_model_name)
 
         self.le_model_name.setText('new_%s' % model_node.get('name'))
         self.le_model_name.selectAll()
@@ -76,8 +76,8 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
     def _get_valid_model_name(self):
         '''
         Check that the model name is valid (i.e not taken and is over three characters in length).
-        If it is the name is returned and the warning box is hidden.
-        If the name is not valid, a message is displayed and ValueError is raised.
+        The name is returned and the warning box is hidden if the name is valid. Otherwise a message
+        is displayed and a ValueError is raised.
         '''
         taken_names = [n.get('name') for n in self.project.findall('model_manager/models/model')]
         trying_name = str(self.le_model_name.text()).strip()
