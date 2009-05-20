@@ -43,6 +43,34 @@ def strip_comments(tree_root):
         if isinstance(node, _Comment):
             node.getparent().remove(node)
 
+def convert_variable_list_to_data(variable_list_string):
+    '''
+    Convert a list of variable names to Python data.
+    This function is external because it's functionality is widely used in both the GUI and in the
+    XMLConfiguration class.
+
+    Variable lists are specified as a sequence of variable entries. A variable entry can be
+    either a tuple of coefficient and alias (separated by a colon) or just an alias (in which
+    case the coefficient name is the same as the alias).
+    For example; this string:
+      orange:one,apple:one,strawberry:two,three
+    would generate:
+      ("orange", "one"), ("apple", "one"), ("strawberry", "two"), "tree"
+    '''
+    if not variable_list_string:
+        return []
+    def str_or_tuple(text): # helper to decide if an entry is a single variable or a tuple
+        split = text.split(":")
+        if len(split) == 1:
+            return text
+        elif len(split) == 2:
+            return tuple(split)
+        else:
+            raise ValueError("Invalid variable_list entry. To many colons found in '%s'." % text)
+    entries = map(lambda s: s.strip(), variable_list_string.split(','))
+    converted_entries = map(lambda x: str_or_tuple(x), entries)
+    return converted_entries
+
 
 class XMLConfiguration(object):
     """
@@ -218,6 +246,12 @@ class XMLConfiguration(object):
             config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
 
         return config
+
+    def get_nested_structure_from_specification(self, model_name):
+        ''' Construct the keyword 'nested_structure' automatically from the current specification.
+        The keyword is used by Nested Logit Models on creation (in the init method).
+        '''
+        pass
 
     def get_estimation_specification(self, model_name, model_group=None):
         """Get the estimation specification for the given model and return it as a dictionary."""
@@ -664,27 +698,7 @@ class XMLConfiguration(object):
             return result_list
 
     def _convert_variable_list_to_data(self, node):
-        ''' Variable lists are specified as a sequence of variable entries. A variable entry can be
-        either a tuple of coefficient and alias (separated by a colon) or just an alias (in which
-        case the coefficient name is the same as the alias).
-        For example; this string:
-          orange:one,apple:one,strawberry:two,three
-        would generate:
-          ("orange", "one"), ("apple", "one"), ("strawberry", "two"), "tree"
-        '''
-        def str_or_tuple(text):
-            split = text.split(":")
-            if len(split) == 1:
-                return text
-            elif len(split) == 2:
-                return tuple(split)
-            else:
-                raise ValueError("Invalid variable_list entry. To many colons found in '%s'." % text)
-        if node.text is None:
-            return []
-        entries = map(lambda s: s.strip(), node.text.split(','))
-        converted_entries = map(lambda x: str_or_tuple(x), entries)
-        return converted_entries
+        return convert_variable_list_to_data(node.text)
 
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -787,18 +801,27 @@ class XMLConfiguration(object):
     def _convert_selectable_to_data(self, node):
         ''' Convert a selectable item to data.
         A node is considered selected if its text-value is set to 'True', otherwise return None.
-        A selected node returns it's it's name (str) if the node is a leaf. A dictionary is returned
-        if the node has children.
+        If the node has child nodes, it's returned as a dictionary. If it's a leaf one either the
+        nodes 'name' attribute or the attribute 'return_value' is returned ('return_value' has
+        precedence).
+
+        Examples:
+        <selectable name='guppy'>True</selectable> = "guppy"
+        <selectable name='squid' return_value="guppy">True</selectable> = "guppy"
+        <selectable name="squid">                     |
+         <integer name='guppy'>4</integer>            |= {"squid": {"guppy": 4}}
+        </selectable>                                 |
         '''
-        if node.text.strip().lower() != 'true':
+        if node.text.strip() != 'True':
             return None
-        result = node.get('name')
+        result_name = node.get('return_value') or node.get('name')
         if node.getchildren():
             subdict = {}
             for child_node in node:
                 self._add_to_dict(child_node, subdict)
-            result = {node.get('name'): subdict}
-        return result
+            result_dict = {result_name: subdict}
+            return result_dict
+        return result_name
 
     def _convert_custom_type_to_data(self, node, skip):
         # skip is a string that is the value when this node should be skipped
@@ -875,6 +898,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'quotedthing3': r"'test\test'",
                           'empty1': '',
                           'empty2': None,
+                          'the selectables': ['res1', 'res2', {'dict': {'five': 5, 'string': 'string'}}],
                           'emptypassword': None,
                           'year': 1980,
                           'mybool': True,

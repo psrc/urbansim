@@ -26,6 +26,15 @@
       <str1 type="string">squid</str1>
       <str2 type="string">clam</str2>
     </dicttest>
+    <selectable_list name="the selectables" type="selectable_list">
+     <a name='res1' type="selectable">True</a>
+     <a name='use return_value' return_value='res2' type="selectable">True</a>
+     <a name='dict' type="selectable">True
+      <five type="integer">5</five>
+      <string type="string">string</string>
+     </a>
+     <a name="don't choose me" type="selectable">False</a>
+    </selectable_list>
     <models_to_run type="selectable_list">
       <selectable type="selectable" name="real_estate_price_model">True</selectable>
       <selectable type="selectable" name="airplane_model">False</selectable>
