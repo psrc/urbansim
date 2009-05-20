@@ -693,76 +693,65 @@
         </structure>
         <specification type="dictionary">
             <submodel_group type="submodel_group" name="industrial">
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
+                <submodel type="submodel" hidden="Children" name="Lumber and Wood" submodel_id="1">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="2">
+                <submodel type="submodel" hidden="Children" name="Other Durable" submodel_id="2">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="3">
+                <submodel type="submodel" hidden="Children" name="Food Products" submodel_id="3">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,ble_rew</variables>
                 </submodel>
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="4">
+                <submodel type="submodel" hidden="Children" name="Other Nondurable" submodel_id="4">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="5">
+                <submodel type="submodel" hidden="Children" name="Construction" submodel_id="5">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="6">
+                <submodel type="submodel" hidden="Children" name="Mining" submodel_id="6">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw,ble_sew</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="7">
+                <submodel type="submodel" hidden="Children" name="Transportation" submodel_id="7">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
                 </submodel>
             </submodel_group>
             <submodel_group type="submodel_group" name="commercial">
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="1">
+                <submodel type="submodel" hidden="Children" name="Lumber and Wood" submodel_id="1">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="2">
+                <submodel type="submodel" hidden="Children" name="Other Durable" submodel_id="2">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="3">
+                <submodel type="submodel" hidden="Children" name="Food Products" submodel_id="3">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,ble_rew</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="4">
+                <submodel type="submodel" hidden="Children" name="Other Nondurable" submodel_id="4">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="5">
+                <submodel type="submodel" hidden="Children" name="Construction" submodel_id="5">
                     <description type="string">No description</description>
                     <variables type="variable_list">bart,bhwy,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="6">
+                <submodel type="submodel" hidden="Children" name="Mining" submodel_id="6">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="7">
+                <submodel type="submodel" hidden="Children" name="Transportation" submodel_id="7">
                     <description type="string">No description</description>
                     <variables type="variable_list">bltv,blnrsfw,ble_saw</variables>
                 </submodel>
-
-                <submodel type="submodel" hidden="Children" name="submodel" submodel_id="8">
+                <submodel type="submodel" hidden="Children" name="Wholesale Trade" submodel_id="8">
                     <description type="string">No description</description>
                     <variables type="variable_list">blnrsfw</variables>
                 </submodel>
@@ -966,7 +955,7 @@
           <selectable type="selectable" name="commercial_development_project_location_choice_model">True</selectable>
           <selectable type="selectable" name="industrial_development_project_location_choice_model">True</selectable>
           <selectable type="selectable" name="development_event_transition_model">True</selectable>
-          <selectable type="selectable" name="events_coordinator">True</selectable>
+          <selectable type="selectable" name="events_coordinator_1" return_value="events_coordinator">True</selectable>
           <selectable type="selectable" name="residential_land_share_model">True</selectable>
           <selectable type="selectable" name="household_transition_model">True</selectable>
           <selectable type="selectable" name="employment_transition_model">True</selectable>
