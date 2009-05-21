@@ -322,6 +322,7 @@ class XMLConfiguration(object):
         @param filename (str) filename to save under
         @param file_object (file) file object to save to (filename is ignored when this is not None)
         """
+        self._indent(self.tree.getroot())
         if file_object is not None:
             self.tree.write(file_object, pretty_print = True)
         else:
@@ -394,6 +395,27 @@ class XMLConfiguration(object):
                     n.set('inherited', self.name)
         # Parent map... can be used for working back up the XML tree
         self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)
+
+    def _indent(self, element, level=0):
+        '''
+        Indents the (internal) text representation for an Element.
+        This is used before saving to disk to generate nicer looking XML files.
+        (this code is based on code from http://effbot.org/zone/element-lib.htm)
+        '''
+        i = "\n" + level * "  "
+        if len(element):
+            if not element.text or not element.text.strip():
+                element.text = i + "  "
+            if not element.tail or not element.tail.strip():
+                element.tail = i
+            child_element = None
+            for child_element in element:
+                self._indent(child_element, level+1)
+            if not child_element.tail or not child_element.tail.strip():
+                child_element.tail = i
+        else:
+            if level and (not element.tail or not element.tail.strip()):
+                element.tail = i
 
     def _find_node(self, path, name = None, get_all = False):
         '''
