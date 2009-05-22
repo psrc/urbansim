@@ -487,12 +487,12 @@ class XMLConfiguration(object):
                 local_child_node = local_child_nodes[id_]
                 self._merge_nodes(parent_child_node, local_child_node)
             else:
-                # this node (and its subtree) doesn't exist under the local node
+                # this node (and its subtree) doesn't exist under the local node. We want to insert
+                # it in a sensible place.
+
                 # respect any sibling that have the followers attribute set when inserting the node
                 nodes_with_followers = [n for n in local_node.getchildren() if n.get('followers')]
 
-                # node index is where the node is going to be inserted, default to last in list
-                node_index = len(local_node.getchildren()) - 1
                 # go through the list of nodes with followers attribute until we can find one
                 # that mentions this node. We only care about the first time it's mentioned.
                 for node_with_followers in nodes_with_followers:
@@ -500,8 +500,11 @@ class XMLConfiguration(object):
                     if parent_child_node.tag in followers_list:
                         # place after the node with the followers list
                         node_index = 1 + local_node.getchildren().index(node_with_followers)
+                        local_node.insert(node_index, parent_child_node)
                         break
-                local_node.insert(node_index, parent_child_node)
+                else:
+                    # no other followers, insert last
+                    local_node.append(parent_child_node)
 
 
     def _clean_tree(self, etree):
@@ -1369,7 +1372,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         mydict = config.full_tree.find('general/mydict')
         child_names = map(lambda n: n.tag, mydict.getchildren())
         # since D is inserted after C, and it should obey 'following' x, it'll be inserted before C
-        self.assertEqual(child_names, ['a', 'b', 'x', 'd', 'c'])
+        # also, a and b are inherited so they will be inserted at the bottom
+        self.assertEqual(child_names, ['x', 'd', 'c', 'a', 'b'])
         # Now update the configuration with a new xml tree, in which x is after c and
         # there is also a new node e
         update_str = """
