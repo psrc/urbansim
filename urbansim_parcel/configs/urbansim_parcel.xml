@@ -38,8 +38,7 @@
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="inugb">parcel.is_inside_urban_growth_boundary==True</variable>
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="hbwavgtmda">parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</variable>
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="is_pre_1940">parcel.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) &lt; 1940</variable>
-            <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable>
-            <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="ln_bldage">ln(urbansim_parcel.building.age_masked)</variable>
+            <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="avg_unit_price">building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price,function=mean,intermediates=[parcel]))</variable>
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="distance_to_art">building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell)</variable>
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="distance_to_highway">building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell)</variable>
