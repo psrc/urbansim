@@ -1,0 +1,363 @@
+<opus_project>
+  <xml_version>1.0</xml_version>
+  <general>
+    <description type="string">Sample Eugene project</description>
+    <project_name hidden="True" type="string">eugene_gridcell</project_name>
+    <parent type="file">urbansim_gridcell/configs/urbansim_gridcell.xml</parent>
+    <dataset_pool_configuration type="class">
+      <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+    </dataset_pool_configuration>
+    <expression_library type="dictionary">
+      <number_of_jobs type="variable_definition" dataset="zone" use="both" source="Python class">urbansim.zone.number_of_jobs</number_of_jobs>
+      <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
+      <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
+      <ln_du dataset="gridcell" source="expression" type="variable_definition" use="model variable">ln(gridcell.residential_units)</ln_du>
+    </expression_library>
+  </general>
+  <model_manager>
+    <model_system setexpanded="True" type="model_system">
+      <estimation_config hidden="False" type="configuration">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string" />
+        </estimation_database_configuration>
+
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <gridcell type="dataset" choices="Load|Skip">
+            Load
+            <nchunks type="integer">2</nchunks>
+          </gridcell>
+          <household type="dataset" choices="Load|Skip">Load</household>
+          <job type="dataset" choices="Load|Skip">Load</job>
+        </datasets_to_preload>
+
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+          <package_order_exceptions type="dictionary" />
+        </dataset_pool_configuration>
+
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">1980</base_year>
+        <years type="tuple">
+          <firstyear type="integer">1980</firstyear>
+          <lastyear type="integer">1980</lastyear>
+        </years>
+        <save_estimation_results choices="True|False" type="boolean">False</save_estimation_results>
+      </estimation_config>
+
+      <residential_land_share_model type="model">
+        <structure type="dictionary">
+          <run type="dictionary">
+            <index parser_action="blank_to_None" type="string">changed_indices</index>
+            <specification type="string">specification</specification>
+            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <coefficients type="string">coefficients</coefficients>
+          </run>
+          <init type="dictionary">
+            <name type="string">ResidentialLandShareModel</name>
+          </init>
+          <import type="dictionary">
+            <module>urbansim.models.residential_land_share_model</module>
+            <classname>ResidentialLandShareModel</classname>
+          </import>
+          <estimate type="dictionary">
+            <output type="string">(coefficients, _)</output>
+            <index parser_action="blank_to_None" type="string">index</index>
+            <specification type="string">specification</specification>
+            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output type="string">(specification, coefficients)</output>
+            <name type="string">prepare_for_run</name>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="string">'residential_land_share_model_coefficients'</coefficients_table>
+            <specification_table type="string">'residential_land_share_model_specification'</specification_table>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output type="string">(specification, index)</output>
+            <name type="string">prepare_for_estimate</name>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'residential_land_share_model_specification'</specification_table>
+            <dataset parser_action="blank_to_None" type="string">gridcell</dataset>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <regression_submodel type="submodel">
+            <submodel_id type="integer">-2</submodel_id>
+            <description type="string">No description</description>
+            <variables type="variable_list">constant,lru,nrs</variables>
+          </regression_submodel>
+        </specification>
+      </residential_land_share_model>
+      <employment_location_choice_model type="model">
+        <structure type="dictionary">
+          <group_by_attribute type="tuple">
+            <grouping_table type="string">job_building_type</grouping_table>
+            <grouping_column type="string">name</grouping_column>
+          </group_by_attribute>
+          <run type="dictionary">
+            <chunk_specification parser_action="blank_to_None" type="string">{'records_per_chunk':50000}</chunk_specification>
+            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <specification type="string">specification</specification>
+            <maximum_runs type="integer">3</maximum_runs>
+            <agents_index parser_action="blank_to_None" type="string">erm_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <coefficients type="string">coefficients</coefficients>
+          </run>
+          <init type="dictionary">
+            <name type="string">EmploymentLocationChoiceModel</name>
+            <number_of_units_string parser_action="blank_to_None" type="string">'total_number_of_possible_SSS_jobs'</number_of_units_string>
+            <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+            <capacity_string parser_action="blank_to_None" type="string">'vacant_SSS_job_space'</capacity_string>
+            <estimation_weight_string parser_action="blank_to_None" type="string">'total_number_of_possible_SSS_jobs'</estimation_weight_string>
+            <dataset_pool type="string">dataset_pool</dataset_pool>
+            <choices type="string">'urbansim.lottery_choices'</choices>
+            <filter parser_action="blank_to_None" type="string" />
+            <variable_package type="string">'urbansim'</variable_package>
+            <run_config parser_action="blank_to_None" type="dictionary">
+              <lottery_max_iterations type="integer">3</lottery_max_iterations>
+              <agent_units_string parser_action="blank_to_None" type="string" />
+            </run_config>
+            <location_set type="string">gridcell</location_set>
+            <estimation_size_agents type="float">1.0</estimation_size_agents>
+            <sampler parser_action="blank_to_None" type="string">'opus_core.samplers.weighted_sampler'</sampler>
+            <simulation_weight_string parser_action="blank_to_None" type="string" />
+            <estimation type="string">'opus_core.bhhh_mnl_estimation'</estimation>
+            <sample_size_locations type="integer">30</sample_size_locations>
+          </init>
+          <import type="dictionary">
+            <module>urbansim.models.employment_location_choice_model</module>
+            <classname>EmploymentLocationChoiceModel</classname>
+          </import>
+          <estimate type="dictionary">
+            <output type="string">(coefficients, _)</output>
+            <specification type="string">specification</specification>
+            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <data_objects type="string">datasets</data_objects>
+            <agents_index parser_action="blank_to_None" type="string">index</agents_index>
+            <debuglevel type="string">debuglevel</debuglevel>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output type="string">(specification, coefficients)</output>
+            <name type="string">prepare_for_run</name>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="string">'employment_location_choice_model_coefficients'</coefficients_table>
+            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output type="string">(specification, index)</output>
+            <name type="string">prepare_for_estimate</name>
+            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
+            <agent_set parser_action="blank_to_None" type="string">job</agent_set>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <filter parser_action="blank_to_None" type="string" />
+            <data_objects type="string">datasets</data_objects>
+            <agents_for_estimation_table parser_action="blank_to_None" type="string">'jobs_for_estimation'</agents_for_estimation_table>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <join_datasets type="boolean">False</join_datasets>
+            <models_to_run type="list" parser_action="skip">[]</models_to_run>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <industrial type="dictionary">
+            <submodel type="submodel">
+              <submodel_id type="integer">1</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+            </submodel>
+            <submodel type="submodel">
+              <submodel_id type="integer">2</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+            </submodel>
+            <submodel type="submodel">
+              <submodel_id type="integer">3</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltv,ble_rew</variables>
+            </submodel>
+            <submodel type="submodel">
+              <submodel_id type="integer">4</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">5</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">6</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltv,blnrsfw,ble_sew</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">7</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_sew,ble_saw</variables>
+            </submodel>
+          </industrial>
+          <commercial type="dictionary">
+
+            <submodel type="submodel">
+              <submodel_id type="integer">1</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blnrsfw,ble_rew,ble_sew,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">2</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">3</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltv,ble_rew</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">4</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,blsfcw,blnrsfw,blwap_1,ble_bw,ble_rew,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">5</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bart,bhwy,bltv,blsfcw,blnrsfw,blwap_1,ble_bw,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">6</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltv,blnrsfw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">7</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltv,blnrsfw,ble_saw</variables>
+            </submodel>
+
+            <submodel type="submodel">
+              <submodel_id type="integer">8</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">blnrsfw</variables>
+            </submodel>
+          </commercial>
+          <home_based type="dictionary">
+            <submodel type="submodel">
+              <submodel_id type="integer">-2</submodel_id>
+              <description type="string">No description</description>
+              <variables type="variable_list">bltlv,bpliw,bpmiw,blwap_1,ble_sew,btt_cbd</variables>
+            </submodel>
+          </home_based>
+        </specification>
+      </employment_location_choice_model>
+    </model_system>
+  </model_manager>
+
+  <scenario_manager>
+    <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
+      <parent type="scenario_name">default_scenario</parent>
+      <base_year type="integer">1980</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">1981</firstyear>
+        <lastyear type="integer">1982</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <prescheduled_events choices="Run|Skip" type="model_choice">Run</prescheduled_events>
+        <events_coordinator choices="Run|Skip" type="model_choice">Skip</events_coordinator>
+        <residential_land_share_model choices="Run|Skip" type="model_choice">Nonsense</residential_land_share_model>
+      </models_to_run>
+      <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+        <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+        <database_name type="string">eugene_1980_baseyear</database_name>
+      </baseyear_database_configuration>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</cache_directory_root>
+        <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
+        <baseyear_cache type="class">
+          <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/base_year_data</existing_cache_to_copy>
+        </baseyear_cache>
+        <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+        <tables_to_cache type="selectable_list">
+          <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+          <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+          <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+          <development_events_exogenous choices="Cache|Skip" type="table">Skip</development_events_exogenous>
+        </tables_to_cache>
+        <tables_to_cache_nchunks type="dictionary">
+          <gridcells type="integer">1</gridcells>
+        </tables_to_cache_nchunks>
+        <tables_to_copy_to_previous_years type="dictionary">
+          <development_type_group_definitions type="integer">1975</development_type_group_definitions>
+          <development_type_groups type="integer">1975</development_type_groups>
+        </tables_to_copy_to_previous_years>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+      </dataset_pool_configuration>
+    </Eugene_baseline>
+  </scenario_manager>
+  <results_manager>
+    <Indicator_batches setexpanded="True" type="group">
+      <untitled_indicator_batch type="indicator_batch">
+        <image_viz type="batch_visualization">
+          <visualization_type hidden="True" type="string">mapnik_map</visualization_type>
+          <bucket_labels hidden="True" type="string">range_labels</bucket_labels>
+          <bucket_ranges hidden="True" type="string">linear_scale</bucket_ranges>
+          <indicators hidden="True" type="string">[]</indicators>
+          <output_type hidden="True" type="string">mapnik_map</output_type>
+          <bucket_colors hidden="True" type="string">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</bucket_colors>
+          <dataset_name hidden="True" type="string">parcel</dataset_name>
+        </image_viz>
+        <table_viz type="batch_visualization">
+          <indicators hidden="True" type="string">[]</indicators>
+          <output_type hidden="True" type="string">tab</output_type>
+          <output_style hidden="True" type="string">1</output_style>
+          <dataset_name hidden="True" type="string">parcel</dataset_name>
+          <visualization_type hidden="True" type="string">tab</visualization_type>
+        </table_viz>
+      </untitled_indicator_batch>
+    </Indicator_batches>
+    <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
+      <run type="source_data">
+        <run_id>5</run_id>
+        <scenario_name type="string" />
+        <cache_directory type="string">C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_home\data\seattle_parcel\base_year_data</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2000</end_year>
+      </run>
+    </Simulation_runs>
+  </results_manager>
+</opus_project>
