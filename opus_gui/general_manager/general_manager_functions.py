@@ -32,6 +32,19 @@ def _convert_list_from_node(project, xpath):
         list_text = list_text.replace(char, '')
     return [element.strip() for element in list_text.split(',')]
 
+def get_variable_dataset_and_name(variable_node):
+    ''' extract the dataset and the variable name from a node.
+    if the node has an attribute 'dataset', the dataset is taken from there ande the whole name
+    attribute is used for the name. Otherwise the word before the first period in the name attribute
+    is assumed the be the dataset '''
+    if variable_node.get('dataset') is not None:
+        return (variable_node.get('dataset'), variable_node.get('name'))
+    splitted_name = variable_node.get('name').split('.')
+    if len(splitted_name) < 2:
+        raise SyntaxError('Variable does not have dataset attribute nor give the dataset in the '
+                          'name attribute "%s"' % variable_node.get('name'))
+    return (splitted_name[0], ''.join(splitted_name[1:]))
+
 def get_variable_nodes_per_dataset(project):
     '''
     Get all XML nodes for variables arranged as a dict based on their dataset.
