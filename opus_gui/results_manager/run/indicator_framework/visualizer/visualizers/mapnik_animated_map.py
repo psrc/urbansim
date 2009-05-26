@@ -12,7 +12,6 @@ from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.map
 
 class MapnikAnimation(MapnikMap):
 
-        
     def get_file_extension(self):
         return 'gif'
 
@@ -143,12 +142,16 @@ class MapnikAnimation(MapnikMap):
         animation_file_name = str(os.path.join(self.storage_location,table_name+'.'+self.get_file_extension()))
         os.system('convert -delay 100 %s -loop 0 %s' % (' '.join(map_file_list), animation_file_name))
 
+        # delete intermediate png files
+        for i in range(map_file_list.__len__()):
+            os.remove(map_file_list[i])
+
         metadata = ([indicator_name], table_name, [min(year_list)])
         viz_metadata.append(metadata)
 
                               
 if __name__ == '__main__':
-    try: 
+    try:
         import mapnik
     except:
         logger.log_warning('could not import mapnik')

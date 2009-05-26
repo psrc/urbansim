@@ -1253,12 +1253,12 @@ class AbstractDataset(object):
         'label_list' is a list of labels that will be applied to the buckets of values
         'is_animation' will be set to true if plot_map is called to make a frame of an animation sequence
         'year' will be printed at the top of each frame in an animation
-        'resolution'
-        'page_dims'
-        'map_lower_left'
-        'map_upper_right'
-        legend_lower_left'
-        legend_upper_right'
+        'resolution' is the user's computer's DPI (for converting inches to pixels)
+        'page_dims' the the measurements (in inches) of the resulting map image
+        'map_lower_left' is the lower left coordinates of the map
+        'map_upper_right' is the upper right coordinates of the map
+        legend_lower_left' is the lower left coordinates of the legend
+        legend_upper_right' is the upper right coordinates of the legend
         """
 
         useDefaultValues = color_list == None or range_list == None or label_list == None
@@ -1351,7 +1351,7 @@ class AbstractDataset(object):
         map_height_px = int(int(resolution) * (float(map_upper_right_coords[1]) - float(map_lower_left_coords[1])))
         
         # Use Mapnik to draw the map
-        from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, render_to_file
+        from mapnik import Map, Rule, PolygonSymbolizer, LineSymbolizer, Filter, Color, Style, Layer, Shapefile, Image, render_to_file, save_map, render
         m = Map(map_width_px,map_height_px,"+proj=latlong +datum=WGS84")
         m.background = Color('#ffffff')
         s = Style()
@@ -1377,6 +1377,16 @@ class AbstractDataset(object):
             for i in range(1,num_buckets):
                 range_list.append(str("%.2f" % (i * bucket_range)))
             range_list.append(str("%.2f" % max_val))
+        elif (range_list == ['equal_percentage_scale']):
+            from numpy import sort
+            sortedAttribs = sort(attrib_arr,kind='quicksort')
+            bucket_size = sortedAttribs.__len__() / num_buckets
+            # create buckets with 100/num_buckets percent of data elements in each
+            range_list = []
+            range_list.append(str(min_val))
+            for i in range(1,num_buckets):
+                range_list.append(str(sortedAttribs[i * bucket_size]))
+            range_list.append(str(max_val)) 
         else:
             if range_list[0].upper() == 'MIN':
                 range_list[0] = (str("%.2f" % min_val))
@@ -1412,7 +1422,11 @@ class AbstractDataset(object):
         lyr.styles.append('Map Style')
         m.layers.append(lyr)
         m.zoom_to_box(lyr.envelope())
-        render_to_file(m, file, 'png')
+        
+        # save the map as an XML file to the indicators folder
+        if not is_animation:
+            xml_filename = file.strip(".png") + ".xml"
+            save_map(m, xml_filename)
         
         # determine map file dimensions
         page_dims_list = page_dims.split(',')
@@ -1421,19 +1435,22 @@ class AbstractDataset(object):
         result_file_height = int(int(resolution) * float(page_dims_list[1]))
         
         # Add labels and color bar to image file
-        from Image import open, new
+        from Image import fromstring, new
         from ImageDraw import Draw
         
-        map_file = open(file)
-        result_file = new('RGB', (result_file_width,result_file_height),color='#ffffff')
+        # render the mapnik map to a PIL image
+        map_pil_img = Image(map_width_px, map_height_px)
+        render(m, map_pil_img)
+        map_pil_img = fromstring('RGBA', (map_width_px, map_height_px), map_pil_img.tostring())
         
         # copy map image to a larger canvas
-        (map_width, map_height) = map_file.size
-        box = (0,0,map_width,map_height)
+        result_file = new('RGBA', (result_file_width,result_file_height),color='#ffffff')
+        
+        box = (0,0,map_width_px,map_height_px)
         map_lower_left_x_coord_px = int(int(resolution) * float(map_lower_left_coords[0]))
         map_lower_left_y_coord_px = int(int(resolution) * float(map_lower_left_coords[1]))
         
-        result_file.paste(map_file.crop(box), (map_lower_left_x_coord_px,map_lower_left_y_coord_px,map_lower_left_x_coord_px+map_width,map_lower_left_y_coord_px+map_height))
+        result_file.paste(map_pil_img, (map_lower_left_x_coord_px,map_lower_left_y_coord_px,map_lower_left_x_coord_px+map_width_px,map_lower_left_y_coord_px+map_height_px))
         
         draw = Draw(result_file)
         # draw the year at the top if this image will be used in an animation
@@ -1447,8 +1464,6 @@ class AbstractDataset(object):
         legend_upper_right_coords = legend_upper_right.split(',')
         
         # draw the color bar
-        #cb_horiz_spacing = map_lower_left_x_coord_px + map_width + 10
-        #cb_vert_spacing = map_lower_left_y_coord_px
         legend_lower_left_x_coord_px = int(int(resolution) * float(legend_lower_left_coords[0]))
         legend_lower_left_y_coord_px = int(int(resolution) * float(legend_lower_left_coords[1]))
         
@@ -1456,7 +1471,7 @@ class AbstractDataset(object):
         legend_upper_right_y_coord_px = int(int(resolution) * float(legend_upper_right_coords[1]))
         
         box_height = int((legend_upper_right_y_coord_px - legend_lower_left_y_coord_px) / num_buckets)
-        box_width = max(25, int((legend_upper_right_x_coord_px - legend_lower_left_x_coord_px) / num_buckets))
+        box_width = max(25, int(legend_upper_right_x_coord_px - legend_lower_left_x_coord_px))
         label_spacing = 10
 
         # This only works if there is a value range for every bucket. Map will not be produced if range values are missing

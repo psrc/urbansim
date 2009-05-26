@@ -93,7 +93,7 @@ class BatchProcessor(object):
                 args['mapnik_map_lower_left'] = '0.5,0.5'
                 args['mapnik_map_upper_right'] = '6.0,5.0'
                 args['mapnik_legend_lower_left'] = '6.5,0.5'
-                args['mapnik_legend_upper_right'] = '8.0,5.0'
+                args['mapnik_legend_upper_right'] = '6.9,5.0'
                 
         return args
 

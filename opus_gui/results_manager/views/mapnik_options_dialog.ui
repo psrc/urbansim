@@ -151,6 +151,11 @@
              <string>Custom Linear Scaling</string>
             </property>
            </item>
+           <item>
+            <property name="text" >
+             <string>Equal Percentage Scaling</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item row="3" column="0" >
@@ -455,6 +460,68 @@
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout" >
+         <item row="3" column="1" >
+          <layout class="QGridLayout" name="gridLayout_3" >
+           <property name="topMargin" >
+            <number>20</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>20</number>
+           </property>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_7" >
+             <property name="text" >
+              <string>Lower Left    (inches):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_8" >
+             <property name="text" >
+              <string>Upper Right  (inches):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLineEdit" name="le_legend_lower_left" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>35</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>6.5,0.5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLineEdit" name="le_legend_upper_right" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>35</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>6.9,5.0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
          <item row="0" column="0" >
           <widget class="QLabel" name="label" >
            <property name="text" >
@@ -536,6 +603,18 @@
            </item>
            <item row="0" column="1" >
             <widget class="QLineEdit" name="le_map_lower_left" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>35</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text" >
               <string>0.5,0.5</string>
              </property>
@@ -550,6 +629,18 @@
            </item>
            <item row="1" column="1" >
             <widget class="QLineEdit" name="le_map_upper_right" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>35</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text" >
               <string>6.0,5.0</string>
              </property>
@@ -557,45 +648,14 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="1" >
-          <layout class="QGridLayout" name="gridLayout_3" >
-           <property name="topMargin" >
-            <number>20</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>20</number>
-           </property>
-           <item row="0" column="0" >
-            <widget class="QLabel" name="label_7" >
-             <property name="text" >
-              <string>Lower Left    (inches):</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="label_8" >
-             <property name="text" >
-              <string>Upper Right  (inches):</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1" >
-            <widget class="QLineEdit" name="le_legend_lower_left" >
-             <property name="text" >
-              <string>6.5,0.5</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" >
-            <widget class="QLineEdit" name="le_legend_upper_right" >
-             <property name="text" >
-              <string>8.0,5.0</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
+        <zorder>label</zorder>
+        <zorder>le_resolution</zorder>
+        <zorder>label_2</zorder>
+        <zorder>cb_pageDims</zorder>
+        <zorder>label_3</zorder>
+        <zorder>label_4</zorder>
+        <zorder></zorder>
        </widget>
       </widget>
      </widget>

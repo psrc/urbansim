@@ -25,6 +25,8 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         # Perform actions that need to be executed once when the options window first opens
         if options_dict['mapnik_bucket_ranges'] == 'linear_scale':
             self.cb_colorScalingType.setCurrentIndex(0)
+        elif options_dict['mapnik_bucket_ranges'] == 'equal_percentage_scale':
+            self.cb_colorScalingType.setCurrentIndex(3)
         else:
             self.cb_colorScalingType.setCurrentIndex(1)
             self.le_customScale.setText(QString(options_dict['mapnik_bucket_ranges']))
@@ -176,7 +178,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
     
     
     def greyOutLineEdits(self):
-        if self.cb_colorScalingType.currentText() == 'Linear Scaling':
+        if self.cb_colorScalingType.currentText() == 'Linear Scaling' or self.cb_colorScalingType.currentText() == 'Equal Percentage Scaling':
             self.le_customScale.setEnabled(False)
         else:
             self.le_customScale.setEnabled(True)
@@ -214,7 +216,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
         self.setColorColumn()
 
     def setRangeColumn(self):
-        if self.cb_colorScalingType.currentText() == 'Linear Scaling':
+        if self.cb_colorScalingType.currentText() == 'Linear Scaling' or self.cb_colorScalingType.currentText() == 'Equal Percentage Scaling':
             for i in range(self.num_buckets):
                 if i == 0:
                     input_str = 'MIN'
@@ -237,7 +239,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
                     self.tbl_Colors.item(i, 1).setText(input_str)
                 else:
                     self.tbl_Colors.setItem(i, 1, QTableWidgetItem(input_str))
-
+    
     def setLabelColumn(self):
         self.label_list = self.label_list[0:self.num_buckets]
         for i in range(self.num_buckets):
@@ -260,12 +262,11 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
 
     def setRangeList(self, options_dict):
         if (self.cb_colorScalingType.currentText() == 'Linear Scaling'):
-            self.range_list = []
-            self.range_list.append('MIN')
-            for i in range(self.num_buckets-1):
-                self.range_list.append('')
-            self.range_list.append('MAX')
+            self.fillRangeListWithSpaces()
             options_dict['mapnik_bucket_ranges'] = 'linear_scale'
+        elif (self.cb_colorScalingType.currentText() == 'Equal Percentage Scaling'):
+            self.fillRangeListWithSpaces()
+            options_dict['mapnik_bucket_ranges'] = 'equal_percentage_scale'
         elif (self.cb_colorScalingType.currentText() == 'Custom Scaling'): # use the custom scale
             self.range_list = self.stringToList(self.le_customScale.text())
             options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
@@ -284,6 +285,14 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
                     options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
                 except ValueError:
                     pass # do nothing if either new_input[0] or new_input[1] is not a number
+
+    """ helper function for setRangeList """
+    def fillRangeListWithSpaces(self):
+        self.range_list = []
+        self.range_list.append('MIN')
+        for i in range(self.num_buckets-1):
+            self.range_list.append('')
+        self.range_list.append('MAX')
 
     def setLabelList(self, options_dict):
         if (self.cb_labelType.currentText() == 'Range Values'):
@@ -425,7 +434,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
 
     def setLabelListForRangeValues(self, options_dict):
         self.label_list = []
-        if (options_dict['mapnik_bucket_ranges'] == 'linear_scale'):
+        if (options_dict['mapnik_bucket_ranges'] == 'linear_scale' or options_dict['mapnik_bucket_ranges'] == 'equal_percentage_scale'):
             self.label_list.append('MIN')
             while (self.label_list.__len__() < self.num_buckets-1):
                 self.label_list.append('')
@@ -468,7 +477,7 @@ class MapOptions(QDialog, Ui_Mapnik_Options):
 
     def writeXML(self, options_dict):
         options_dict['mapnik_bucket_colors'] = self.listToString(self.color_list)
-        if options_dict['mapnik_bucket_ranges'] != 'linear_scale':
+        if options_dict['mapnik_bucket_ranges'] != 'linear_scale' and options_dict['mapnik_bucket_ranges'] != 'equal_percentage_scale':
             options_dict['mapnik_bucket_ranges'] = self.listToString(self.range_list)
         if options_dict['mapnik_bucket_labels'] != 'range_labels':
             options_dict['mapnik_bucket_labels'] = self.listToString(self.label_list)
@@ -557,7 +566,7 @@ class MapOptionsTests(opus_unittest.OpusTestCase):
         self.options_dict['mapnik_map_lower_left'] = '0.5,0.5'
         self.options_dict['mapnik_map_upper_right'] = '6.0,5.0'
         self.options_dict['mapnik_legend_lower_left'] = '6.5,0.5'
-        self.options_dict['mapnik_legend_upper_right'] = '8.0,5.0'
+        self.options_dict['mapnik_legend_upper_right'] = '6.9,5.0'
         self.mapOptionsInst = MapOptions(parent=self.window, options_dict=self.options_dict)
 
     def tearDown(self):

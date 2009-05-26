@@ -236,7 +236,7 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
         self.mapnik_options['mapnik_map_lower_left'] = '0.5,0.5'
         self.mapnik_options['mapnik_map_upper_right'] = '6.0,5.0'
         self.mapnik_options['mapnik_legend_lower_left'] = '6.5,0.5'
-        self.mapnik_options['mapnik_legend_upper_right'] = '8.0,5.0'
+        self.mapnik_options['mapnik_legend_upper_right'] = '6.9,5.0'
 
     def on_cboVizType_currentIndexChanged(self, param):
         if isinstance(param, int):
