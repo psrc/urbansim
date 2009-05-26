@@ -38,7 +38,7 @@
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="inugb">parcel.is_inside_urban_growth_boundary==True</variable>
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="hbwavgtmda">parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</variable>
             <variable dataset="parcel" source="expression" type="variable_definition" use="model variable" name="is_pre_1940">parcel.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) &lt; 1940</variable>
-            <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable
+            <variable dataset="parcel" source="Python class" type="variable_definition" use="model variable" name="existing_units">urbansim_parcel.parcel.existing_units</variable>
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="avg_unit_price">building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price,function=mean,intermediates=[parcel]))</variable>
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="distance_to_art">building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell)</variable>
             <variable dataset="building" source="expression" type="variable_definition" use="model variable" name="distance_to_highway">building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell)</variable>
@@ -128,7 +128,7 @@
                         <argument hidden="True" type="string" name="dataset_pool">dataset_pool            </argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="real_estate_price_model">
                 <structure type="dictionary">
@@ -179,7 +179,7 @@
                         <output hidden="True" type="string" name="output">(coefficients, dummy)</output>
                     </estimate>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="employment_transition_model">
                 <structure type="dictionary">
@@ -204,7 +204,7 @@
                         <argument type="string" name="year">year</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="employment_relocation_model">
                 <structure type="dictionary">
@@ -231,7 +231,7 @@
                         <argument type="string" name="agent_set">job</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="employment_location_choice_model">
                 <structure type="dictionary">
@@ -302,7 +302,7 @@
                         <argument type="integer" name="maximum_runs">3</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="distribute_unplaced_jobs_model">
                 <structure type="dictionary">
@@ -323,7 +323,7 @@
                         <argument type="string" name="agents_filter" parser_action="quote_string">urbansim.job.is_in_employment_sector_group_scalable_sectors</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="governmental_employment_location_choice_model">
                 <structure type="dictionary">
@@ -344,7 +344,7 @@
                         <argument type="string" name="location_set">building</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="household_relocation_model">
                 <structure type="dictionary">
@@ -369,7 +369,7 @@
                         <argument hidden="True" type="string" name="resources">hrm_resources</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="process_pipeline_events">
                 <structure type="dictionary">
@@ -387,7 +387,7 @@
                         <output hidden="True" type="string" name="output">scheduled_development_events</output>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="expected_sale_price_model">
                 <structure type="dictionary">
@@ -440,7 +440,7 @@
                         <output hidden="True" type="string" name="output">(development_project_proposal, demolished_buildings)</output>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="building_construction_model">
                 <structure type="dictionary">
@@ -458,7 +458,7 @@
                         <argument hidden="True" type="string" name="dataset_pool">dataset_pool</argument>
                     </run>
                 </structure>
-                
+
             </model>
             <model copyable="True" type="model" name="household_location_choice_model">
                 <structure type="dictionary">
