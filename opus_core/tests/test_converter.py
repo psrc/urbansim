@@ -100,8 +100,24 @@ class Test_(OpusTestCase):
             for child_node in node:
                 if child_node.tag != 'settings':
                     self.assert_(child_node.tag in allowed_outside)
-            for setting_node in child_node.find('settings'):
+            for setting_node in child_node.findall('settings'):
                 self.assert_(setting_node.tag == 'setting')
+
+    def test_check_variables_nodes(self):
+        test_node_before = self.root.find('model_manager/model_system/residential_land_share_model/specification/regression_submodel/variables')
+        self.assertEqual(test_node_before.text.strip(), 'constant,lru,nrs')
+        self.instance.check_variables_nodes()
+        self.instance.execute()
+        test_node_after = self.root.find("model_manager/model_system/residential_land_share_model/specification/regression_submodel/variable_list")
+        self.assert_(test_node_after is not None)
+        self.assert_(test_node_after.find("variable_spec[@name='constant']") is not None)
+        self.assert_(test_node_after.find("variable_spec[@name='.lru']") is not None)
+        nrs_node = test_node_after.find("variable_spec[@name='.nrs']")
+        self.assert_(nrs_node is not None)
+
+        self.assertEqual(len(test_node_after), 3)
+        self.assert_(test_node_after.text is None)
+        print etree.tostring(test_node_after)
 
 
 
