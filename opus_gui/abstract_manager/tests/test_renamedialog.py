@@ -32,8 +32,8 @@ class RenameTest(OpusGUITestCase):
         not_unique = taken_names[0]
         d = RenameDialog(not_unique, taken_names, None)
         d.on_buttonBox_accepted()
-        self.assert_(d.lbl_name_warning.isVisible())
+        self.assertEqual(d.accepted_name, '')
         unique = 'french fries'
         d.leName.setText(unique)
         d.on_buttonBox_accepted()
-        self.assert_(d.accepted_name == unique)
+        self.assertEqual(d.accepted_name, unique)
