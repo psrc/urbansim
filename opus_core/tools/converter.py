@@ -6,6 +6,27 @@ from lxml import etree
 from xml.etree import cElementTree # read with cElementTree to strip comments
 import copy
 
+def indent(element, level=0):
+    '''
+    Indents the (internal) text representation for an Element.
+    This is used before saving to disk to generate nicer looking XML files.
+    (this code is based on code from http://effbot.org/zone/element-lib.htm)
+    '''
+    i = "\n" + level * "  "
+    if len(element):
+        if not element.text or not element.text.strip():
+            element.text = i + "  "
+        if not element.tail or not element.tail.strip():
+            element.tail = i
+        child_element = None
+        for child_element in element:
+            indent(child_element, level+1)
+        if not child_element.tail or not child_element.tail.strip():
+            child_element.tail = i
+    else:
+        if level and (not element.tail or not element.tail.strip()):
+            element.tail = i
+
 class Converter(object):
 
     '''
@@ -133,14 +154,11 @@ class Converter(object):
 
     def action_update_version(self, node):
         '''Update the XML version string to 2.0'''
-        print 'update version'
         if node is None:
             # create new version Element
-            print 'adding xml_version'
             node = etree.Element('xml_version')
             node.text = '2.0'
             self.root.insert(0, node)
-            print self.root.find('xml_version')
         else:
             'setting xml_version'
             node.text = '2.0'
@@ -205,10 +223,10 @@ class Converter(object):
         selectable_list_node.set('name', selectable_list_node.tag)
         selectable_list_node.tag = 'selectable'
         selectable_list_node.set('type', 'selectable')
-        # the only skip option currently known is 'Skip'
-        text = 'True' if selectable_list_node.text != 'Skip' else 'False'
         if 'choices' in selectable_list_node.attrib:
+            selected_choice_name = selectable_list_node.get('choices').split('|')[0].strip()
             del selectable_list_node.attrib['choices']
+        text = 'True' if selectable_list_node.text.strip() == selected_choice_name else 'False'
         selectable_list_node.text = text
 
     def check_version(self):
@@ -231,12 +249,21 @@ class Converter(object):
 
     def check_general(self):
         general = self.root.find('general')
-        if general is None: return
-        expr_lib = general.find('expression_library')
-        if expr_lib is not None:
-            variables = [n for n in expr_lib if n.get('type') == 'variable_definition']
-            for variable_node in variables:
-                self.tag_name_fix(variable_node, 'variable')
+        if general is None:
+            return
+        # change the variable nodes for all defined variables in the expression lib
+        for variable_node in general.findall("expression_library/*[type='variable_definition']"):
+            self.tag_name_fix(variable_node, 'variable')
+            if 'dataset' in variable_node.attrib:
+                name = variable_node.get('name')
+                dataset = variable_node.get('dataset') or ''
+#                if name == 'constant':
+#                    # delete "constant" variables -- they are now built-in
+#                    self.add_action(self.action_delete_node, variable_node)
+#                else:
+                # merge dataset into name and delete the dataset attribute
+                attrib = {'name': '%s.%s' % (dataset, name), 'dataset': None}
+                self.add_action(self.action_change_node_attrib, variable_node, attrib)
 
     def check_results_manager_indicator_batches(self, res_mgr):
         ib_node = res_mgr.find('Indicator_batches')
@@ -262,6 +289,7 @@ class Converter(object):
                         self.add_action(self.action_change_node_attrib, viz_child_node, {'hidden': None, 'type': None})
                 self.tag_name_fix(viz_node, 'batch_visualization')
             self.tag_name_fix(batch_node, 'indicator_batch')
+            self.add_action(self.action_change_node_attrib, batch_node, {'type': None})
 
     def check_results_manager(self):
         res_mgr = self.root.find('results_manager')
@@ -396,15 +424,19 @@ class Converter(object):
         spec_node = model_node.find('specification')
         if spec_node is None:
             return
-        # check for nodes that are not submodels and assume they are submodel groups
+        # assume that anything under specification/ that's not a submodel is a submodel group
         group_nodes = [n for n in spec_node if n.get('type') != 'submodel']
         submodels = [n for n in spec_node if n.get('type') == 'submodel']
+        # convert all variable lists to new structure
+        variable_list_nodes = model_node.findall("./[@type='variable_list']")
+
+
         for group_node in group_nodes:
             if group_node.get('type') != 'submodel_group':
                 self.add_action(self.action_change_node_attrib, group_node, {'type': 'submodel_group'})
             self.tag_name_fix(group_node, 'submodel_group')
             # also convert submodels under the groups
-            submodels.extend(node for node in group_node)
+            submodels.extend(group_node.findall('submodel'))
         for submodel_node in submodels:
             self.tag_name_fix(submodel_node, 'submodel')
             subid = submodel_node.find('submodel_id')
@@ -528,6 +560,17 @@ class Converter(object):
                 if child_node.tag not in ['Class_name', 'class_name', 'class_module', 'Class_path']:
                     self.tag_name_fix(child_node, 'argument')
 
+    def check_variables_nodes(self):
+        variables_nodes = self.root.findall(".//*[@type='variable_list']")
+        for variables_node in variables_nodes:
+            self.add_action(self.action_change_node_tag, variables_node, 'variable_list')
+            selected_variables = filter(lambda x:x, [x.strip() for x in (variables_node.text or '').split(',')])
+            for variable in selected_variables:
+                name = 'constant' if variable == 'constant' else ('.%s' % variable)
+                attrib = {'name': name}
+                self.add_action(self.action_create_node, None, 'variable_spec', attrib, variables_node)
+            self.add_action(self.action_change_node_text, variables_node, None)
+
     def open_xml_file(self, filename):
         tree = cElementTree.parse(filename)
         self.root = etree.fromstring(cElementTree.tostring(tree.getroot()))
@@ -548,19 +591,20 @@ class Converter(object):
 #                   %(current_version, "2.0"))
 #            self.write(msg)
 #        else:
-        # manager checks
-        self.check_general()
-        self.check_model_manager()
-        self.check_scenario_manager()
-        self.check_data_manager()
-        self.check_results_manager()
-        # global checks
+        # general checks
         self.check_copyable_type()
         self.check_selectable_lists()
         self.check_class_type_nodes()
         self.check_boolean_choices()
         self.check_parser_action_blank_to_none() # this MUST be before check_quoted_types
         self.check_qouted_type()
+        self.check_variables_nodes()
+        # manager specific checks
+        self.check_general()
+        self.check_model_manager()
+        self.check_scenario_manager()
+        self.check_data_manager()
+        self.check_results_manager()
 
 if __name__ == '__main__':
     import sys
@@ -613,6 +657,7 @@ if __name__ == '__main__':
         if options.dry_run:
             sys.exit(1)
         tree = etree.ElementTree(c.root)
+        indent(tree.getroot())
         outfile = filename if options.outfile is None else options.outfile
         if os.path.exists(outfile) and not options.force:
             overwrite = ''
