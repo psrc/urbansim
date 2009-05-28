@@ -1,6 +1,6 @@
 <opus_project>
     <xml_version>2.0</xml_version><general>
-        <project_name type="string">urbansim_zone</project_name>
+        <project_name type="string">eugene_zone</project_name>
         <description type="string">UrbanSim zone baseline</description>
         <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
         <dataset_pool_configuration type="class">
