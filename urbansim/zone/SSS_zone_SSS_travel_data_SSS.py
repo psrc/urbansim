@@ -25,13 +25,13 @@ class SSS_zone_SSS_travel_data_SSS(Variable):
         
     def dependencies(self):
         return ["zone.zone_id",
-                "travel_data." + self.var_name,
+                "urbansim.travel_data." + self.var_name,
                 "zone_id=travel_data." + self.join_attribute
                 ]
 
     def compute(self, dataset_pool):
         travel_data = dataset_pool.get_dataset('travel_data')
-        
+
         zones = self.get_dataset()
         results = zones.aggregate_dataset_over_ids(travel_data, function=self.function, attribute_name=self.var_name)
         
