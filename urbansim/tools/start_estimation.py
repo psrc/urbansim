@@ -52,3 +52,4 @@ if __name__ == '__main__':
                                  configuration=config,
                                  save_estimation_results=options.save_results)
     estimator.estimate()
+    er = estimator
