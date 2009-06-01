@@ -301,11 +301,16 @@ class DevelopmentProjectProposalSamplingModel(Model):
     def _get_vacancy_rates(self, type_id):
         units_stock = self._get_units_stock(type_id)
         vacant_units =  units_stock - self.occupied_units[type_id]
+        # This condition prevents a possible divide by zero error in the
+        # calculation of vacancy rates
+        if units_stock == 0:
+            logger.log_warning('Existing Units - Demolished units + Proposed Units = 0')
+            return 0
         if vacant_units < 0:  
         #vacant units should be no less than 0, so that the minimum vacancy rate is 0
             vacant_units = 0
         vr = vacant_units/float(units_stock)
-        return vr  
+        return vr 
 
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
