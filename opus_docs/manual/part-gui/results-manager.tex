@@ -140,14 +140,14 @@ definitions. Each indicator visualization\index{indicator visualizations} is a c
 the indicator variable to be used, a visualization style (e.g. map or
 table), and some format options. To add a new indicator visualization
 to the batch, right-click on the respective batch and select
-``Add new indicator visualization...''\index{indicator visualizations!adding an indicator visualization}. A dialog box will
+``Add new indicator visualization\ldots''\index{indicator visualizations!adding an indicator visualization}. A dialog box will
 appear where you can define the visualization. The visualization
 options for an indicator visualzation are discussed in depth later.
 
 You can add as many indicator visualizations to a batch as you want. In
 order to execute an indicator batch on a simulation run, right-click on
 the indicator batch and hover over
- ``Run indicator batch on...''\index{indicator visualizations!running an indicator batch}. A list of all the available simulations
+ ``Run indicator batch on\ldots''\index{indicator visualizations!running an indicator batch}. A list of all the available simulations
  runs will
 appear as a submenu. You can then select the appropriate simulation.
 The indicator visualizations in the batch will be executed over all the
@@ -289,20 +289,25 @@ To set the Mapnik map options\index{Mapnik!setting options},
 first open the batch visualization 
 creation dialog window (shown above) by clicking on the
 Results tab, right-clicking ``Indicator_batches'', selecting the 
-``Add new indicator batch...'' option, right-clicking the new 
+``Add new indicator batch\ldots'' option, right-clicking the new 
 indicator batch, and selecting the ``Add new
-indicator visualization...'' option. Select ``Map'' from the 
+indicator visualization\ldots'' option. Select ``Map'' from the 
 ``Type:'' drop-down menu, then click the ``Mapnik Map
 Options'' button that will appear directly below the ``Format:'' 
-drop-down menu. In the Mapnik Map Options dialog
-window, all of the mapping options can be set.
+drop-down menu. In the Mapnik Map Options dialog window, 
+there are two tabs where all of the mapping options can be set: 
+Legend Options and Size Options.
+
+\clearpage
+
+\emph{Legend Options tab}:
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-dialog.png}
+\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-dialog-legend.png}
 \end{center}
-\caption{The map options dialog window showing default settings.}
-\label{fig:result-manager-mapnik-options-dialog}
+\caption{The map options dialog window showing default settings (Legend Options).}
+\label{fig:result-manager-mapnik-options-dialog-legend}
 \end{figure}
 
 \emph{Number of Color Ranges}. 
@@ -312,13 +317,15 @@ number between 1 and 10.
 
 \emph{Color Scaling Type}. 
 This drop-down menu allows you to choose between ``Linear Scaling'',
- ``Custom Scaling'', and ``Custom Linear Scaling. Linear 
-scaling will evenly divide of the 
+ ``Custom Scaling'', ``Custom Linear Scaling'', and ``Equal Percentage
+ Scaling''. Linear scaling will evenly divide of the 
 range of values to be mapped into buckets of the same size.  
 Custom scaling will let you specify how to divide the range of values 
 into the buckets. Custom linear scaling will let you specify a minimum 
 and maximum value and then will evenly divide the range of values into
-buckets of the same size.
+buckets of the same size. Equal Percentage Scaling will divide the range of 
+values up so that (100/number of buckets) percent of the values fall into each category. 
+
 
 \emph{Custom Scale}. 
 If ``Custom Scaling'' is selected as the Color Scaling Type, then 
@@ -341,7 +348,7 @@ are being colored with the color contained in the corresponding box.
 Using custom labels allows you to manually enter the labels 
 for each box.
 
-\emph{Custom Labels:}. 
+\emph{Custom Labels}. 
 If ``Custom Labels'' is 
 selected as the Label Type, then the values 
 in this text field will be used to label the colored boxes in the 
@@ -399,6 +406,41 @@ in the Label Type drop-down menu. Note: values entered in the legend table will
 only be saved correctly if they appear correctly in the Custom Scale and Custom 
 Labels text fields.
 
+\clearpage
+
+\emph{Size Options tab}:
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=3in]{part-gui/images/result-manager-mapnik-options-dialog-size.png}
+\end{center}
+\caption{The map options dialog window showing default settings (Size Options).}
+\label{fig:result-manager-mapnik-options-dialog-size}
+\end{figure}
+
+\emph{Enter Your Computer's Resolution (DPI)}. 
+This value is used to convert from inch measurements to pixel measurements 
+(pixels = inches x DPI). The resolution for the computer that the map is 
+being created on should be entered here.
+
+\emph{Page Dimensions (inches)}. 
+Available dimensions for the map image file (map and legend) are listed 
+here in the drop-down menu.
+
+\emph{Map Page Placement}. 
+Lower left and upper right coordinates for a bounding box on the map image can 
+be entered here. The map image will be placed in the center of the given 
+bounding box and will only be drawn as large as possible without being stretched or 
+skewed. Coordinates should be entered in the form ``x,y'' and the coordinate (0,0) 
+is at the lower left corner.
+
+\emph{Legend Page Placement}. 
+Lower left and upper right coordinates for the color bar of the legend can be 
+entered here. The color bar will fill the area defined by the given 
+coordinates and then the labels will be drawn to the right of the color bar.
+
+\emph{Mapnik Options Window Buttons}:
+
 \emph{Apply Changes}. 
 This will save the current settings to 
 the project XML file as well as update the Legend showing in this window.
@@ -437,7 +479,7 @@ map shown below.
 \emph{Create a custom map}\index{Mapnik!custom map example}. 
 To create a customized map, 
 open the batch indicator visualization window (see section 
-\ref{sec:batch-indicator-configuration} for information on 
+\ref{sec:batch-indicator-configuration} on batch indicator configuration for information on 
 how to do this), for the map created in the \emph{Create a default map}
 section and click on the Mapnik Map Options button that is directly 
 below the Format drop-down menu.
@@ -497,10 +539,10 @@ for information on how to run an indicator batch)
 \emph{Create a custom graduated color scheme}\index{Mapnik!custom graduated color map example}. 
 To create a map with a custom graduated color scale, 
 re-open the Mapnik Options dialog window for the map 
-created in the \emph{Create a custom map} section and select 
-``Custom Graduated Colors'' from the Color Scheme menu.  Click 
+created in the \emph{Create a custom map} section.  Click 
 on the box in row 1 and select a light shade yellow, click on 
-the box in row 9 and select a bright shade of blue, and click 
+the box in row 9 and select a bright shade of blue, select 
+``Custom Graduated Colors'' from the Color Scheme menu, and click 
 Apply Changes. The colors in boxes 2 through 8 will then be automatically set 
 to create a graduated color scheme that spans from light 
 yellow to bright blue. The mapnik options window and resulting 
@@ -543,7 +585,7 @@ from ``None'' to ``5''.
 
 \emph{Create a map with attributes that are True/False values}\index{Mapnik!True/False attribute map example}.
 To create a map with attributes that are True/False values rather than numerical 
-values (using the Seattle parcel project), create an indicator batch in in the batch 
+values (using the Seattle parcel project), create an indicator batch in the batch 
 indicator visualization dialog window, set Type to ``Map'', set Dataset name to ``parcel'', 
 and select ``hwy2000'' to be included in the current visualization. (see 
 chapter \ref{chap:variable-library} ``The Variable Library'' for information on how to use 
@@ -605,7 +647,6 @@ window, all of the animation options can be set.
 All of the animated map options are the same as the 
 non-animated map options. See the above section on format
 options for maps for more info.
-
 
 \heading{Format options for tables}
 
