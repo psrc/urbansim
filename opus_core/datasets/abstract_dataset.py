@@ -1343,6 +1343,12 @@ class AbstractDataset(object):
         dataset_dict = {unique_id:unique_id_arr, col_header:attrib_arr}
         storage_for_dbf.write_table(table_name=self.dataset_name, table_data=dataset_dict)
         
+        # determine map file dimensions
+        page_dims_list = page_dims.split(',')
+        
+        result_file_width = int(int(resolution) * float(page_dims_list[0]))
+        result_file_height = int(int(resolution) * float(page_dims_list[1]))
+        
         # determine map size        
         map_lower_left_coords = map_lower_left.split(',')
         map_upper_right_coords = map_upper_right.split(',')
@@ -1428,17 +1434,11 @@ class AbstractDataset(object):
             xml_filename = file.strip(".png") + ".xml"
             save_map(m, xml_filename)
         
-        # determine map file dimensions
-        page_dims_list = page_dims.split(',')
-        
-        result_file_width = int(int(resolution) * float(page_dims_list[0]))
-        result_file_height = int(int(resolution) * float(page_dims_list[1]))
-        
         # Add labels and color bar to image file
         from Image import fromstring, new
         from ImageDraw import Draw
         
-        # render the mapnik map to a PIL image
+        # render the mapnik map to a PIL image        
         map_pil_img = Image(map_width_px, map_height_px)
         render(m, map_pil_img)
         map_pil_img = fromstring('RGBA', (map_width_px, map_height_px), map_pil_img.tostring())
@@ -1447,21 +1447,28 @@ class AbstractDataset(object):
         result_file = new('RGBA', (result_file_width,result_file_height),color='#ffffff')
         
         box = (0,0,map_width_px,map_height_px)
-        map_lower_left_x_coord_px = int(int(resolution) * float(map_lower_left_coords[0]))
-        map_lower_left_y_coord_px = int(int(resolution) * float(map_lower_left_coords[1]))
         
-        result_file.paste(map_pil_img, (map_lower_left_x_coord_px,map_lower_left_y_coord_px,map_lower_left_x_coord_px+map_width_px,map_lower_left_y_coord_px+map_height_px))
+        # PIL plots (0,0) as the upper left corner, for the GUI we want (0,0) to be in the lower left corner, so convert the y coordinate
+        map_lower_left_x_coord_px = int(int(resolution) * float(map_lower_left_coords[0]))
+        map_lower_left_y_coord_px = int(int(resolution) * (float(page_dims_list[1]) - float(map_lower_left_coords[1])))
+        
+        # y value range is 'map_lower_left_y_coord_px-map_height_px' to 'map_lower_left_y_coord_px' because PIL plots (0,0) as the upper left corner and we want (0,0) to be the lower left corner
+        result_file.paste(map_pil_img, (map_lower_left_x_coord_px,map_lower_left_y_coord_px-map_height_px,map_lower_left_x_coord_px+map_width_px,map_lower_left_y_coord_px))
         
         draw = Draw(result_file)
         # draw the year at the top if this image will be used in an animation
         if is_animation:
             title_horiz_spacing = map_lower_left_x_coord_px
-            title_vert_spacing = map_lower_left_y_coord_px / 3
+            title_vert_spacing = (float(page_dims_list[1]) - float(map_upper_right_coords[1])) / 2
             draw.text( (title_horiz_spacing,title_vert_spacing), str(year), fill='#000000' )
 
         # determine color bar coords 
         legend_lower_left_coords = legend_lower_left.split(',')
         legend_upper_right_coords = legend_upper_right.split(',')
+        
+        # PIL plots (0,0) as the upper left corner, for the GUI we want (0,0) to be in the lower left corner, so convert the y coordinates
+        legend_lower_left_coords[1] = str(float(page_dims_list[1]) - float(legend_lower_left_coords[1]))
+        legend_upper_right_coords[1] = str(float(page_dims_list[1]) - float(legend_upper_right_coords[1]))
         
         # draw the color bar
         legend_lower_left_x_coord_px = int(int(resolution) * float(legend_lower_left_coords[0]))
@@ -1479,9 +1486,17 @@ class AbstractDataset(object):
             # If label values are missing, fill them in with empty strings
             while label_list.__len__() < num_buckets:
                 label_list.append('')
-            # Draw a box on the color bar
-            draw.rectangle((legend_lower_left_x_coord_px, legend_lower_left_y_coord_px+i*box_height, legend_lower_left_x_coord_px+box_width, legend_lower_left_y_coord_px+(i+1)*box_height), outline='#000000', fill=color_list[num_buckets-1-i])
-            draw.text((legend_lower_left_x_coord_px+box_width+label_spacing, legend_lower_left_y_coord_px+i*box_height+(box_height/2)), label_list[num_buckets-1-i], fill='#000000')
+            # Draw a box on the color bar           
+            draw.rectangle((legend_lower_left_x_coord_px, 
+                            legend_lower_left_y_coord_px+i*box_height, 
+                            legend_lower_left_x_coord_px+box_width, 
+                            legend_lower_left_y_coord_px+(i+1)*box_height), 
+                            outline='#000000', 
+                            fill=color_list[i])
+            draw.text((legend_lower_left_x_coord_px+box_width+label_spacing, 
+                       legend_lower_left_y_coord_px+i*box_height+(box_height/2)), 
+                       label_list[i], 
+                       fill='#000000')
         
         del draw
         result_file.save(file, 'PNG')
