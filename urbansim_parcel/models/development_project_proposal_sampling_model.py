@@ -94,7 +94,21 @@ class DevelopmentProjectProposalSamplingModel(Model):
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
         target_vacancy.compute_variables(['is_residential = target_vacancy.disaggregate(building_type.is_residential)'],
                                          dataset_pool=self.dataset_pool)
-        current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
+        # This try-except block checks to see if the object has a subarea_id_name,
+        # if it does, it calculates the vacancy rates by subarea_id_name
+        try:
+            # Check for subarea_id_name in target_vacancies dataset
+            # if it is present, vacancy rates are specified by subarea_id_name
+            # if it is not, vacancy rates are specified region wide
+            target_vacancy.load_dataset()
+            if self.subarea_id_name in target_vacancy.get_attribute_names():
+                current_target_vacancy_this_year = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
+                current_target_vacancy = DatasetSubset(current_target_vacancy_this_year, index=where(current_target_vacancy_this_year.get_attribute(self.subarea_id_name)==self.area_id)[0])
+            else:
+                current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
+        except AttributeError:
+            # vacancy rates are specified region wide:
+            current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
         self.existing_units = {}   #total existing units by land_use type
         self.occupied_units = {}   #total occupied units by land_use type
@@ -304,6 +318,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         # This condition prevents a possible divide by zero error in the
         # calculation of vacancy rates
         if units_stock == 0:
+            logger.log_warning('For building_type_id %s:' % type_id)
             logger.log_warning('Existing Units - Demolished units + Proposed Units = 0')
             return 0
         if vacant_units < 0:  
