@@ -342,20 +342,20 @@ class Estimator(object):
         return self.model_system.run_year_namespace["model"]
         
     def get_choice_set(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_datasets[0].get_dataset(2)
+        return self.get_model().model_interaction.interaction_dataset.get_dataset(2)
     
     def get_choice_set_index(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_datasets[0].get_index(2)
+        return self.get_model().model_interaction.interaction_dataset.get_index(2)
         
     def get_choice_set_index_for_submodel(self, submodel): # works only for choice models
         index = self.get_choice_set_index()
         return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
     
     def get_agent_set(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_datasets[0].get_dataset(1)
+        return self.get_model().model_interaction.interaction_dataset.get_dataset(1)
     
     def get_agent_set_index(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_datasets[0].get_index(1)
+        return self.get_model().model_interaction.interaction_dataset.get_index(1)
         
     def get_agent_set_index_for_submodel(self, submodel):
         model = self.get_model()
