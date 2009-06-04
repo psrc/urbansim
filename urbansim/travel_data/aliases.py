@@ -7,5 +7,5 @@
 
 aliases = [
     "aggregate_am_bike_to_work_travel_time = travel_data.am_bike_to_work_travel_time * travel_data.am_biking_person_trips",
-    
+    "aggregate_single_vehicle_to_work_travel_distance = travel_data.single_vehicle_to_work_travel_distance * travel_data.am_pk_period_drive_alone_vehicle_trips",
     ]
