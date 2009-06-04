@@ -9,6 +9,8 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
+    <available_datasets type="list">['pseudo_building','household_x_pseudo_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
