@@ -26,7 +26,7 @@ if __name__ == '__main__':
             'written (required).')
     parser.add_option('-t', '--table_name', dest='table_name',
         type='string', help='The name of the table into which output will be '
-            'written (required).')
+            'written (if only one table used).')
     parser.add_option('-y', '--cache_year', dest='cache_year', type='string',
         help="The attribute cache year into which to write the output (required).")
     
