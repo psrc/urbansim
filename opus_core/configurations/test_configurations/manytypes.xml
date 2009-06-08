@@ -20,8 +20,13 @@
       <lastyear type="integer">1981</lastyear>
     </years>
     <list_test type="list">[10, 20, 30]</list_test>
-    <vars type="variable_list">population, employment, density</vars>
-    <vars2 type="variable_list">coeff_one:variable_one,     coeff_two:variable_two      ,variable_three</vars2>
+    <vars type="variable_list">
+     <variable_spec name="gridcell.grid_variable" />
+     <variable_spec name="constant" />
+     <variable_spec name="constant" coefficient_name="constant_coeff"/>
+     <variable_spec name="ignore_me" ignore="True" />
+     <variable_spec name="gridcell.var_with_coeff" coefficient_name="the_coeff" />
+    </vars>
     <dicttest type="dictionary">
       <str1 type="string">squid</str1>
       <str2 type="string">clam</str2>

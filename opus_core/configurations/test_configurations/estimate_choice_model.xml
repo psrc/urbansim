@@ -14,10 +14,14 @@
           <submodel type="submodel" name="No submodel" submodel_id="-2">
             <description type="string">No submodel</description>
             <equation name="choice_1" equation_id="1">
-              <variables type="variable_list">constant</variables>
+              <variable_list type="variable_list">
+                <variable_spec name="constant" />
+              </variable_list>
             </equation>
             <equation name="choice_2" equation_id="2">
-              <variables type="variable_list">var1</variables>
+              <variable_list type="variable_list">
+                <variable_spec name=".var1" />
+              </variable_list>
             </equation>
           </submodel>
         </specification>

@@ -3,13 +3,13 @@
   <general>
     <parent type="file">estimate.xml</parent>
     <expression_library type="dictionary">
-      <variable dataset="test_agent" source="primary attribute" type="variable_definition" use="model variable" name="income">income</variable>
-      <variable dataset="test_agent" source="Python class" type="variable_definition" use="model variable" name="income_times_2"> opus_core.test_agent.income_times_2</variable>
-      <variable dataset="test_agent" source="Python class" type="variable_definition" use="model variable" name="i2"> opus_core.test_agent.income_times_2</variable>
-      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10"> 5*opus_core.test_agent.income_times_2</variable>
-      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10_ds_qualified"> 5*test_agent.income_times_2</variable>
-      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_times_10_using_primary"> 10*test_agent.income</variable>
-      <variable dataset="test_agent" source="expression" type="variable_definition" use="model variable" name="income_less_than">def income_less_than(i): return test_agent.income&lt;i</variable>
+      <variable source="primary attribute" type="variable_definition" use="model variable" name="test_agent.income">income</variable>
+      <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.income_times_2"> opus_core.test_agent.income_times_2</variable>
+      <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.i2"> opus_core.test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10"> 5*opus_core.test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_ds_qualified"> 5*test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_using_primary"> 10*test_agent.income</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_less_than">def income_less_than(i): return test_agent.income&lt;i</variable>
     </expression_library>
     <project_name type="string">test_project</project_name>
   </general>
