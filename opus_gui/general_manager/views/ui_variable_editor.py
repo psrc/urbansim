@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/variable_library_rewrite/opus_gui/general_manager/views/variable_editor.ui'
+# Form implementation generated from reading ui file 'C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_trunk\opus_gui\general_manager\views\variable_editor.ui'
 #
-# Created: Fri May  8 13:26:44 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Thu May 28 12:41:29 2009
+#      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -23,6 +23,20 @@ class Ui_VariableEditor(object):
         self.leVarName = QtGui.QLineEdit(VariableEditor)
         self.leVarName.setObjectName("leVarName")
         self.verticalLayout.addWidget(self.leVarName)
+        self.frame_name_warning = QtGui.QFrame(VariableEditor)
+        self.frame_name_warning.setFrameShape(QtGui.QFrame.Panel)
+        self.frame_name_warning.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_name_warning.setObjectName("frame_name_warning")
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_name_warning)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.lbl_name_warning = QtGui.QLabel(self.frame_name_warning)
+        font = QtGui.QFont()
+        font.setWeight(50)
+        font.setBold(False)
+        self.lbl_name_warning.setFont(font)
+        self.lbl_name_warning.setObjectName("lbl_name_warning")
+        self.horizontalLayout_5.addWidget(self.lbl_name_warning)
+        self.verticalLayout.addWidget(self.frame_name_warning)
         self.label_3 = QtGui.QLabel(VariableEditor)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.label_3)
@@ -31,6 +45,7 @@ class Ui_VariableEditor(object):
         font.setFamily("Courier New")
         self.le_var_def.setFont(font)
         self.le_var_def.setTabChangesFocus(True)
+        self.le_var_def.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.le_var_def.setObjectName("le_var_def")
         self.verticalLayout.addWidget(self.le_var_def)
         self.line_2 = QtGui.QFrame(VariableEditor)
@@ -115,11 +130,12 @@ class Ui_VariableEditor(object):
         VariableEditor.setWindowTitle(QtGui.QApplication.translate("VariableEditor", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setToolTip(QtGui.QApplication.translate("VariableEditor", "A name for this variable. Use only alphanumeric characters", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("VariableEditor", "Name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.lbl_name_warning.setText(QtGui.QApplication.translate("VariableEditor", "_name warning_", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("VariableEditor", "Definition:", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_info.setText(QtGui.QApplication.translate("VariableEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"</style></head><body>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This variable is an <span style=\" font-weight:600;\">expression</span> that will be used as a <span style=\" font-weight:600;\">Model Variable</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_change.setText(QtGui.QApplication.translate("VariableEditor", "Hide Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.group_settings.setTitle(QtGui.QApplication.translate("VariableEditor", "Variable settings", None, QtGui.QApplication.UnicodeUTF8))
