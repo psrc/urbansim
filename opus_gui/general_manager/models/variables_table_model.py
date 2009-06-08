@@ -6,7 +6,8 @@ from lxml.etree import Element
 
 from PyQt4.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
 from PyQt4.QtCore import SIGNAL, QEventLoop
-from PyQt4.QtGui import QColor, qApp
+from PyQt4.QtGui import QColor, qApp, QFont
+from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
 
 def variable_to_validator_format(variable):
     '''
@@ -50,8 +51,11 @@ def variable_from_node(variable_node):
     @return the converted variable (dict)
     '''
     variable = create_empty_variable()
-    for key in ['dataset', 'use', 'source', 'inherited', 'name']:
+    for key in ['use', 'source', 'inherited']:
         variable[key] = variable_node.get(key)
+    dataset, name = get_variable_dataset_and_name(variable_node)
+    variable['dataset'] = dataset
+    variable['name'] = name
     variable['definition'] = str(variable_node.text).strip()
     return variable
 
@@ -63,8 +67,9 @@ def node_from_variable(variable):
     '''
     node = Element('variable')
     node.text = variable['definition']
-    for key in ['dataset', 'use', 'source', 'inherited', 'name']:
+    for key in ['use', 'source', 'inherited']:
         node.attrib[key] = str(variable[key])
+    node.set('name', '%s.%s' % (variable['dataset'], variable['name']))
     node.set('type', 'variable_definition')
     return node
 
@@ -271,6 +276,12 @@ class VariablesTableModel(QAbstractTableModel):
                 return QVariant(Qt.AlignCenter)
             return QVariant()
 
+        elif role == Qt.FontRole:
+            if self.variables[row]['dirty']:
+                font = QFont()
+                font.setBold(True)
+                return QVariant(font)
+
         return QVariant()
 
     def setData(self, index, value, role):
@@ -373,19 +384,24 @@ class VariablesTableModel(QAbstractTableModel):
         # deletion is done when the user click apply.
         # This is trivial except for the case where the original node is shadowing an inherited
         # node. In this case we need to get the prototype node (the inherited node that's being
-        # shadowed) and copy the values into the variable we "delete".
+        # shadowed) and copy its values into the variable we are "deleting".
         row = self.variables.index(variable)
         if row < 0 or row > self.rowCount() or variable['inherited']:
             return False
 
+        # original node is the node we are editing with the variable library. If the variable is
+        # created in this session, then the original node will be None.
+        # prototype node is the node that the original node is shadowing. This can be of the
+        # following values: None for local nodes, The inherited node for shadowing nodes or
+        # the node itself for (purely) inherited nodes.
         original_node = variable['originalnode']
-        prototype_node = self.project.get_prototype_node(original_node) if original_node is not None else None
-        if original_node is None or prototype_node is None: # node (or original node) is local only
+        prototype_node = self.project.get_prototype_node(original_node)
+        # we only need to handle the messy inheritance stuff if the node has a prototype node
+        if prototype_node is None:
             self.removeRow(row)
         else:
-            # the prototype of an inherited node is itself
-            node = original_node if (prototype_node is original_node) else prototype_node
-            template_variable = variable_from_node(node)
+            # template variable is the one we copy attributes from
+            template_variable = variable_from_node(prototype_node)
             for key in template_variable:
                 variable[key] = template_variable[key]
             variable['originalnode'] = original_node
@@ -394,3 +410,6 @@ class VariablesTableModel(QAbstractTableModel):
         self.dirty = True
         self.emit(SIGNAL('model_changed'))
         return True
+
+    def get_taken_names(self):
+        return [var['name'] for var in self.variables]
