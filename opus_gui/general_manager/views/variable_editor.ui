@@ -43,6 +43,31 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="frame_name_warning" >
+     <property name="frameShape" >
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_5" >
+      <item>
+       <widget class="QLabel" name="lbl_name_warning" >
+        <property name="font" >
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text" >
+         <string>_name warning_</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_3" >
      <property name="text" >
       <string>Definition:</string>
@@ -58,6 +83,9 @@
      </property>
      <property name="tabChangesFocus" >
       <bool>true</bool>
+     </property>
+     <property name="lineWrapMode" >
+      <enum>QPlainTextEdit::NoWrap</enum>
      </property>
     </widget>
    </item>
@@ -76,7 +104,7 @@
         <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;/style>&lt;/head>&lt;body>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This variable is an &lt;span style=" font-weight:600;">expression&lt;/span> that will be used as a &lt;span style=" font-weight:600;">Model Variable&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
        </property>
       </widget>
