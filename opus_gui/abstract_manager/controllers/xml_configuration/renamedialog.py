@@ -18,19 +18,19 @@ class RenameDialog(QDialog, Ui_RenameDialog):
     def __init__(self, old_name, taken_names, parent_widget):
         '''
         If accepted, the changed name is stored in self.accepted_name.
-        @param old_name (String) the name to change from
+        @param old_name (str) the name to change from
         @param parent_widget (QWidget) parent widget for dialog
         '''
         QDialog.__init__(self, parent_widget)
         self.setupUi(self)
 
         self.accepted_name = ''
-        self.taken_names = taken_names
+        self.taken_names = map(lambda x: x.strip(), taken_names)
 
         self.lbl_name_warning.setVisible(False)
         hide_widget_on_value_change(self.lbl_name_warning, self.leName)
 
-        self.leName.setText(old_name)
+        self.leName.setText(old_name.strip())
         self.leName.setFocus()
         self.leName.selectAll()
 
@@ -39,9 +39,9 @@ class RenameDialog(QDialog, Ui_RenameDialog):
     def on_buttonBox_accepted(self):
         ''' User clicked OK button '''
         # make sure that there is no naming conflict
-        entered_name = str(self.leName.text())
+        entered_name = str(self.leName.text()).strip()
         if entered_name in self.taken_names:
-            self.lbl_name_warning.setText('There is alread another node with the name "%s".\n'
+            self.lbl_name_warning.setText('There is already another node with the name "%s".\n'
                                           'Please enter another name.' % entered_name)
             self.lbl_name_warning.setVisible(True)
         else:
