@@ -18,13 +18,14 @@ from opus_gui.general_manager.controllers.variable_editor import VariableEditor
 
 from opus_gui.util import common_dialogs
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.util.convenience import create_qt_action
+from opus_gui.util.convenience import create_qt_action, get_unique_name
 from opus_gui.util.icon_library import IconLibrary
 
 from opus_core.variables.dependency_query import DependencyChart
 from opus_gui.general_manager.controllers.dependency_viewer import DependencyViewer
 from opus_core.third_party.pydot import InvocationException
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import update_mainwindow_savestate
 
 class VariableLibrary(QDialog, Ui_VariableLibrary):
 
@@ -67,17 +68,17 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             self._edit_variable(variable)
         self.connect(self.view, dbl_click, edit_wrapper)
 
-        # Explicit event handlers
-        click = SIGNAL('released()')
         def apply_and_close():
             self._apply_variable_changes()
             self.accept()
+        click = SIGNAL('released()')
         self.connect(self.pb_apply_and_close, click, apply_and_close)
         self.connect(self.pb_apply, click, self._apply_variable_changes)
         self.connect(self.pb_create_new, click, self._add_variable)
         self.connect(self.pb_problems, click, self._show_problem_variables)
 
-        def cancel_validation(): self.cancel_validation_flag['value'] = True
+        def cancel_validation(): 
+             self.cancel_validation_flag['value'] = True
         self.connect(self.pb_cancel_validation, click, cancel_validation)
         signal = SIGNAL('customContextMenuRequested(const QPoint &)')
         self.connect(self.view, signal, self.on_table_right_clicked)
@@ -89,7 +90,6 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         self.pb_apply.setEnabled(self.model.dirty)
 
     def initialize(self):
-        ''' override the default show to setup the library to current project variables '''
         # reset the variable library to reflect the current state of expression library in xml
         nodes_per_dataset = get_variable_nodes_per_dataset(self.project)
         variables = []
@@ -158,7 +158,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         #  C    local            <none>           deleted    delete
 
         # TODO: also check into the possibility that an inherited variable can have it's name
-        # changed (in this case don't overwrite the orginala variable's name. Instead create a new
+        # changed (in this case don't overwrite the orginal variable's name. Instead create a new
         # variable with the new name.
 
         dirty_variables = [var for var in self.model.variables if var['dirty']]
@@ -195,13 +195,16 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             for key in node.attrib:
                 if not key == 'inherited':
                     original_node.set(key, node.get(key))
-                    # print '   copy key %s (=%s)' %(key, node.get(key))
+            if 'dataset' in original_node.attrib:
+                del original_node.attrib['dataset']
             original_node.text = node.text
 
         for node in delete_set:
             # print 'DELETE SET %s' % (node)
             self.project.delete_node(node)
         self.initialize()
+        anything_changed = bool(update_set or create_set or delete_set)
+        update_mainwindow_savestate(anything_changed)
         get_mainwindow_instance().emit(SIGNAL('variables_updated'))
         return True
 
@@ -220,7 +223,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         if base_on_variable is not None:
             for key in VariablesTableModel.VARIABLE_NON_METADATA_KEYS:
                 var[key] = base_on_variable[key]
-            var['name'] += '_copy' #  TODO this name is not guaranteed to be unique!
+            var['name'] = get_unique_name(var['name'], self.model.get_taken_names())
 
         self.editor.init_for_variable(var, self.validator)
         if self.editor.exec_() == self.editor.Accepted:
