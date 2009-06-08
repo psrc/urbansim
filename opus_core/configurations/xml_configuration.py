@@ -38,39 +38,55 @@ def node_identity_string(node):
     return node_identity_string(node.getparent()) + element_id(node)
 
 def strip_comments(tree_root):
-    ''' Strip an entire tree of all comment nodes '''
+    ''' Strip a tree of all comment nodes '''
     for node in tree_root.getiterator():
         if isinstance(node, _Comment):
             node.getparent().remove(node)
 
-def convert_variable_list_to_data(variable_list_string):
+def get_variable_dataset_and_name(variable_node):
+    ''' extract the dataset and the variable name from a node.
+    if the node has an attribute 'dataset', the dataset is taken from there ande the whole name
+    attribute is used for the name. Otherwise the word before the first period in the name attribute
+    is assumed the be the dataset '''
+    # this is to maintain support for variables specified in pre-2.0 XML
+    name = variable_node.get('name')
+    if variable_node.get('dataset') is not None:
+        return (variable_node.get('dataset'), name)
+    # TODO not sure on how to deal with constants -- any suggestions?
+    if name == 'constant':
+        return (None, name)
+    splitted_name = name.split('.')
+    if len(splitted_name) < 2:
+        raise SyntaxError('Variable does not have dataset attribute nor give the dataset in the '
+                          'name attribute "%s"' % name)
+    dataset, name = splitted_name[0], ''.join(splitted_name[1:])
+    return (dataset.strip(), name.strip())
+
+def get_variable_name(variable_node):
+    ''' short convenience method for getting just the variable name '''
+    return get_variable_dataset_and_name(variable_node)[1]
+
+def get_variable_dataset(variable_node):
+    ''' short convenience method for getting just the variable dataset '''
+    return get_variable_dataset_and_name(variable_node)[0]
+
+def convert_variable_list_to_data(variable_list_node):
     '''
     Convert a list of variable names to Python data.
-    This function is external because it's functionality is widely used in both the GUI and in the
+    This function is external because it's functionality is used in both the GUI and in the
     XMLConfiguration class.
 
-    Variable lists are specified as a sequence of variable entries. A variable entry can be
-    either a tuple of coefficient and alias (separated by a colon) or just an alias (in which
-    case the coefficient name is the same as the alias).
-    For example; this string:
-      orange:one,apple:one,strawberry:two,three
-    would generate:
-      ("orange", "one"), ("apple", "one"), ("strawberry", "two"), "tree"
+    Each variable in the variable list is given as a <variable_spec> node.
     '''
-    if not variable_list_string:
-        return []
-    def str_or_tuple(text): # helper to decide if an entry is a single variable or a tuple
-        split = text.split(":")
-        if len(split) == 1:
-            return text
-        elif len(split) == 2:
-            return tuple(split)
-        else:
-            raise ValueError("Invalid variable_list entry. To many colons found in '%s'." % text)
-    entries = map(lambda s: s.strip(), variable_list_string.split(','))
-    converted_entries = map(lambda x: str_or_tuple(x), entries)
-    return converted_entries
-
+    # tiny helper for returning coefficient name, variable name tuples or just variable name
+    def name_or_tuple(var_node):
+        name = get_variable_name(var_node)
+        coeff_name = var_node.get('coefficient_name')
+        if coeff_name:
+            return (name, coeff_name)
+        return name
+    f = lambda x: x.get('ignore') != 'True'
+    return map(name_or_tuple, filter(f, variable_list_node))
 
 class XMLConfiguration(object):
     """
@@ -132,6 +148,7 @@ class XMLConfiguration(object):
         # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
+        strip_comments(etree.getroot())
         # remove any old followers nodes
         for n in self.full_tree.getiterator():
             if n.get('followers') is not None:
@@ -162,13 +179,11 @@ class XMLConfiguration(object):
         """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
         dictionary are pairs (dataset_name, variable_name) and the values are the corresponding expressions."""
         result = {}
-        node = self._find_node('general/expression_library')
-        if node is not None:
-            for v in node:
-                # Add the variable to the dictionary, indexed by the pair (dataset,name)
-                name = v.get('name')
-                dataset = v.get('dataset')
-                result[(dataset,name)] = v.text.strip()
+
+        for var_node in self._find_node('general/expression_library/variable', get_all=True):
+            # Add the variable to the dictionary, indexed by the pair (dataset,name)
+            dataset, name = get_variable_dataset_and_name(var_node)
+            result[(dataset,name)] = var_node.text.strip()
         return result
 
     def get_run_configuration(self, name, merge_controllers=True):
@@ -230,10 +245,8 @@ class XMLConfiguration(object):
         config['model_name'] = model_name
         config_node_path = "model_manager/models/model[@name='%s']/estimation_config" % model_name
         model_specific_overrides = self.get_section(config_node_path) or {}
-        # if the model system get's a list of models -- it will ONLY run those models and nothing
-        # else. Since we also want to run this model, we append it to the end of the list.
-        # We don't need to care about filling it in if there are no other models to run, since the
-        # model system then selects the correct model automatically.
+        # If the user have specified a custom list of models to run before the estimation, then we
+        # need to append the model to estimate as well or the modeling system will forget it...
         if 'models' in model_specific_overrides:
             if model_group is None:
                 model_specific_overrides['models'].append({model_name: ["estimate"]})
@@ -241,7 +254,25 @@ class XMLConfiguration(object):
                 group_members = {'group_members': [{model_group:['estimate']}]}
                 model_specific_overrides['models'].append({model_name: group_members})
 
-        # The model system doesn't like it when it gets an empty config_changes_for_estimation
+        # look if any of the submodels have 'starting_values' set for any of the coefficient.
+        path_to_specification = "model_manager/models/model[@name='%s']/specification" % model_name
+        specification_node = self._find_node(path_to_specification)
+        if specification_node is not None:
+            variable_specs = [node for node in specification_node.findall('.//variable_spec') if
+                              node.get('starting_value')]
+            # here we want something that looks like: {'starting_values': {'coeff-name': 34.2} }
+            starting_values = {}
+            for variable_spec in variable_specs:
+                coeff_name = variable_spec.get('coefficient_name')
+                if coeff_name is None:
+                    coeff_name = get_variable_name(variable_spec)
+                starting_value = float(variable_spec.get('starting_value'))
+                starting_values[coeff_name] = starting_value
+            if starting_values:
+                model_specific_overrides['starting_values'] = starting_values
+
+        # don't pass an empty dict into the 'config_changes_for_estimation' or the modeling system
+        # will break
         if model_specific_overrides:
             config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
 
@@ -259,7 +290,7 @@ class XMLConfiguration(object):
         all_vars = []
         lib_node = self._find_node('general/expression_library')
         for v in lib_node:
-            var_name = v.get('name')
+            var_name = get_variable_name(v)
             var_def = v.text
             # If the variable is defined as an expression, make an alias.
             # Otherwise it's a Python class.  If the name in the expression library
@@ -301,11 +332,11 @@ class XMLConfiguration(object):
                 submodel_equations = {}
                 for equation_node in equation_nodes:
                     equation_id = int(equation_node.get('equation_id'))
-                    variable_list = self._convert_node_to_data(equation_node.find('variables'))
+                    variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
                     submodel_equations[equation_id] = variable_list
                 result[submodel_id] = submodel_equations
             else:
-                result[submodel_id] = self._convert_node_to_data(submodel_node.find('variables'))
+                result[submodel_id] = self._convert_node_to_data(submodel_node.find('variable_list'))
 
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:
@@ -595,6 +626,8 @@ class XMLConfiguration(object):
                 key = node.get('name')
             else:
                 key = node.tag
+            if action == 'convert_key_to_integer':
+                key = int(key)
             data = self._convert_node_to_data(node)
             type_name = node.get('type')
             if type_name=='category' or type_name=='category_with_special_keys':
@@ -623,7 +656,7 @@ class XMLConfiguration(object):
         elif type_name=='selectable_list':
             return self._convert_list_to_data(node)
         elif type_name=='variable_list':
-            return self._convert_variable_list_to_data(node)
+            return convert_variable_list_to_data(node)
         elif type_name=='tuple':
             return self._convert_tuple_to_data(node)
         elif type_name=='list':
@@ -721,9 +754,6 @@ class XMLConfiguration(object):
             return result_dict
         else:
             return result_list
-
-    def _convert_variable_list_to_data(self, node):
-        return convert_variable_list_to_data(node.text)
 
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -932,8 +962,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'emptyfloat': None,
                           'years': (1980, 1981),
                           'list_test': [10, 20, 30],
-                          'vars': ['population', 'employment', 'density'],
-                          'vars2': [('coeff_one', 'variable_one'), ('coeff_two', 'variable_two'), 'variable_three'],
+                          'vars': ['grid_variable', 'constant', ('constant', 'constant_coeff'),
+                                   ('var_with_coeff', 'the_coeff')],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
                           'models_to_run': ['real_estate_price_model'],
                           'mytables': ['gridcells', 'jobs'],
@@ -1244,6 +1274,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                      ('parcel', 'bsqft'): 'urbansim_parcel.parcel.building_sqft',
                      ('parcel', 'existing_units'): 'urbansim_parcel.parcel.existing_units'}
         self.assertEqual(lib, lib_should_be)
+
         # Test that computing the value of this variable gives the correct answer.  This involves
         # setting the expression library in VariableFactory -- when actually estimating a model or running
         # a simulation, that gets done by a call in ModelSystem.run.
@@ -1272,6 +1303,20 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(est['expression_library'], lib_should_be)
         run = config.get_run_configuration('test_scenario')
         self.assertEqual(run['expression_library'], lib_should_be)
+
+        f = os.path.join(self.test_configs, 'expression_library_raises_test.xml')
+        config = XMLConfiguration(f)
+        self.assertRaises(SyntaxError, config.get_expression_library)
+
+    def test_estimation_configuration(self):
+        f = os.path.join(self.test_configs, 'nlm_config.xml')
+        config = XMLConfiguration(f)
+        estimation_config = config.get_estimation_configuration('nlm_model')
+        # the nlm has some starting values given, we need to make sure that they end up in the
+        # estimation_config overrides for the model
+        changes_config = estimation_config['config_changes_for_estimation']['nlm_model']
+        should_be = {'starting_values': {'default_name': float(42.0), 'explicit_name': float(0.42)}}
+        self.assertEqual(changes_config, should_be)
 
     def test_save_as(self):
         # test saving as a new file name - this should also test save()
