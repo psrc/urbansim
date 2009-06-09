@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
+    <width>728</width>
     <height>498</height>
    </rect>
   </property>
@@ -17,205 +17,457 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" >
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
-     <item>
-      <widget class="QLabel" name="label" >
-       <property name="minimumSize" >
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="le_name" />
-     </item>
-     <item>
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
-        <string>ID</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spin_id" >
-       <property name="wrapping" >
-        <bool>false</bool>
-       </property>
-       <property name="frame" >
-        <bool>false</bool>
-       </property>
-       <property name="buttonSymbols" >
-        <enum>QAbstractSpinBox::PlusMinus</enum>
-       </property>
-       <property name="minimum" >
-        <number>-10000</number>
-       </property>
-       <property name="maximum" >
-        <number>10000</number>
-       </property>
-       <property name="value" >
-        <number>-2</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="minimumSize" >
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text" >
-        <string>Description</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="le_description" />
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5" >
-     <item>
-      <widget class="QGroupBox" name="groupBox_2" >
-       <property name="font" >
-        <font>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="title" >
-        <string>Available Variables</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3" >
+    <widget class="QGroupBox" name="group_submodel_info" >
+     <property name="title" >
+      <string>Submodel Information</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3" >
         <item>
-         <layout class="QHBoxLayout" name="layout_dataset_filter" >
+         <widget class="QLabel" name="label" >
+          <property name="minimumSize" >
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string>Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="le_name" >
+          <property name="toolTip" >
+           <string>The name of the submodel</string>
+          </property>
+          <property name="whatsThis" >
+           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">The name of the submodel.&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This is primarliy used to make it easier for users to distinguish between submodels when working with them in the GUI.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that inheritance between Opus Projects always works on the name of the submodel, not the ID.&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>ID</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spin_id" >
+          <property name="toolTip" >
+           <string>The submodel ID</string>
+          </property>
+          <property name="whatsThis" >
+           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">The submodel ID.&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The value -2 is special and can used when the ID does not matter.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please refer to the Opus Manual for a full explanation of how the modeling systems handles submodels.&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+          <property name="wrapping" >
+           <bool>false</bool>
+          </property>
+          <property name="frame" >
+           <bool>false</bool>
+          </property>
+          <property name="buttonSymbols" >
+           <enum>QAbstractSpinBox::PlusMinus</enum>
+          </property>
+          <property name="minimum" >
+           <number>-10000</number>
+          </property>
+          <property name="maximum" >
+           <number>10000</number>
+          </property>
+          <property name="value" >
+           <number>-2</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_name_warning" >
+        <property name="frameShape" >
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout" >
+         <item>
+          <widget class="QLabel" name="lbl_name_warning" >
+           <property name="text" >
+            <string>&lt;name warning here></string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" >
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="minimumSize" >
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string>Description</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="le_description" >
+          <property name="toolTip" >
+           <string>A brief description of the submodel (optional)</string>
+          </property>
+          <property name="whatsThis" >
+           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Can be used to give a brief description of the submodel.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tab_widget" >
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="tabShape" >
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_variable_selector" >
+      <property name="autoFillBackground" >
+       <bool>true</bool>
+      </property>
+      <attribute name="title" >
+       <string>Variables</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QSplitter" name="split_struct_variables" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QTreeWidget" name="tree_structure_selector" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Maximum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip" >
+           <string/>
+          </property>
+          <property name="whatsThis" >
+           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Select which equation (showed in &lt;span style=" font-weight:600;">bold&lt;/span>) to assign variables to.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The hiearchical structure, as well as the names of these nodes can be edited &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">under the tab "Edit Nests and Equations"&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+          <column>
+           <property name="text" >
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>ID</string>
+           </property>
+          </column>
+         </widget>
+         <widget class="QTableView" name="table_selected_variables" >
+          <property name="whatsThis" >
+           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The list of currently selected variables.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The variable can be exluded from the set of variables passed into the modeling system by checking the checbox in column "ignore" (think of it as "commenting out" the variable).&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The variable name is showing in &lt;span style=" font-weight:600;">bold&lt;/span> (unless the "ignore" checkbox is selected).&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">If a coefficient name as not been given, it defaults to the same name as the variable, and is then shown in &lt;span style=" color:#4f4f4f;">gray&lt;/span>&lt;span style=" color:#000000;">. On the other hand, if a coefficient name has been given, then it shows up in black &lt;/span>&lt;span style=" font-weight:600; color:#000000;">bold.&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please refer to the Opus Manual for a description of "starting values" and "fixed" (described under Choice Models)&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The last column shows the variable definition. Note that variables are defined by both the dataset and the name. The displayed definition &lt;span style=" font-style:italic;">might&lt;/span> be for another variable than what is selected by the modeling system at run time. &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.&lt;/p>&lt;/body>&lt;/html></string>
+          </property>
+          <property name="selectionMode" >
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="selectionBehavior" >
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="showGrid" >
+           <bool>true</bool>
+          </property>
+          <property name="wordWrap" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_selection_buttons" >
+         <layout class="QHBoxLayout" name="horizontalLayout_5" >
           <item>
-           <widget class="QLabel" name="lbl_dataset_filter" >
+           <widget class="QPushButton" name="pb_add_variable" >
+            <property name="toolTip" >
+             <string>Add a variable from the expression librarry to the current list</string>
+            </property>
             <property name="text" >
-             <string>Dataset filter:</string>
+             <string>Add variable from library...</string>
+            </property>
+            <property name="icon" >
+             <iconset>
+              <normaloff>:/Images/Images/arrow_right.png</normaloff>:/Images/Images/arrow_right.png</iconset>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="cbo_dataset_filter" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <spacer name="horizontalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_remove_variable" >
+            <property name="toolTip" >
+             <string>Remove the selected variable</string>
+            </property>
+            <property name="whatsThis" >
+             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Remove the variable.&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable it you can click the "ignore" checkbox.&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="text" >
+             <string>Remove selected variable</string>
+            </property>
+            <property name="icon" >
+             <iconset>
+              <normaloff>:/Images/Images/arrow_left_red.png</normaloff>:/Images/Images/arrow_left_red.png</iconset>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QListWidget" name="lst_available" >
-          <property name="selectionMode" >
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_add" >
-          <property name="layoutDirection" >
-           <enum>Qt::RightToLeft</enum>
-          </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_structure_editor" >
+      <property name="autoFillBackground" >
+       <bool>false</bool>
+      </property>
+      <attribute name="title" >
+       <string>Nests and Equations</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_6" >
+       <item>
+        <widget class="QFrame" name="frame_structure_buttons" >
+         <property name="autoFillBackground" >
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5" >
+          <item>
+           <widget class="QPushButton" name="pb_create_nest" >
+            <property name="whatsThis" >
+             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Creates a new &amp;lt;nest&amp;gt; node in the table to the right.&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="text" >
+             <string>Create Nest</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_create_equation" >
+            <property name="whatsThis" >
+             <string>Create a new &lt;equation></string>
+            </property>
+            <property name="text" >
+             <string>Create Equation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>20</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_delete_struct" >
+            <property name="whatsThis" >
+             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Delete the selected nest or equation.&lt;/span>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that variable lists associated with a deleted equation will be cleared.&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="text" >
+             <string>Delete Selected</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2" >
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_update_model_structure" >
+            <property name="whatsThis" >
+             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">This functionality &lt;/span>&lt;span style=" font-size:8pt; font-weight:600;">only&lt;/span>&lt;span style=" font-size:8pt;"> applies to Nested Logit Models.&lt;/span>&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Update the model's structure with the information from this dialog.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This must be done before the model is evaluated or run as part of a simulation. &lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="text" >
+             <string>Update model structure</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="SubmodelStructureEditorTree" name="tree_structure_editor" >
+         <property name="whatsThis" >
+          <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Double click on the ID, name or number of samples to edit it's value.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that number of samples only applies to &amp;lt;nest&amp;gt;.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">To construct the hierarchical structure: drag the &lt;span style=" font-weight:600;">equation &lt;/span>and drop it on a &amp;lt;nest&amp;gt;. You can drag and drop &amp;lt;nest&amp;gt;:s onto each other to construct nested structures with multiple levels.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The new structure is automatically updated under the tab "Assign Variables".&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <column>
           <property name="text" >
-           <string>Add</string>
+           <string>Name</string>
           </property>
-          <property name="icon" >
-           <iconset>
-            <normaloff>:/Images/Images/arrow_right.png</normaloff>:/Images/Images/arrow_right.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox" >
-       <property name="font" >
-        <font>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="title" >
-        <string>Submodel</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout" >
-        <item>
-         <widget class="QTreeWidget" name="tree_submodel_structure" >
-          <property name="indentation" >
-           <number>5</number>
-          </property>
-          <property name="uniformRowHeights" >
-           <bool>true</bool>
-          </property>
-          <column>
-           <property name="text" >
-            <string>id</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>name</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>type</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="lbl_active_variablelist" >
+         </column>
+         <column>
           <property name="text" >
-           <string>type "name": 0 selected variables. </string>
+           <string>ID</string>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="lst_selected" >
-          <property name="selectionMode" >
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_remove" >
+         </column>
+         <column>
           <property name="text" >
-           <string>Remove</string>
+           <string># of samples</string>
           </property>
-          <property name="icon" >
-           <iconset>
-            <normaloff>:/Images/Images/arrow_left_red.png</normaloff>:/Images/Images/arrow_left_red.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
+      <widget class="QPushButton" name="pb_help_on" >
+       <property name="toolTip" >
+        <string>Click on this button and then click on any item you want a description for.</string>
+       </property>
+       <property name="text" >
+        <string>Help on...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox" >
        <property name="standardButtons" >
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
@@ -225,39 +477,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SubmodelStructureEditorTree</class>
+   <extends>QTreeWidget</extends>
+   <header>opus_gui.models_manager.controllers.submodel_structure_editor_tree</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>SubModelEditor</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>375</x>
-     <y>507</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>SubModelEditor</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>443</x>
-     <y>507</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
