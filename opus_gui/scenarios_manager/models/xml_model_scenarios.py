@@ -6,7 +6,7 @@ from PyQt4.QtCore import QVariant, Qt
 from PyQt4.QtGui import QColor
 
 from opus_gui.abstract_manager.models.xml_model import XmlModel
-from opus_gui.models_manager.models_manager import get_model_names
+from opus_gui.models_manager.models_manager_functions import get_model_names
 from opus_gui.util.icon_library import IconLibrary
 
 class XmlModel_Scenarios(XmlModel):
