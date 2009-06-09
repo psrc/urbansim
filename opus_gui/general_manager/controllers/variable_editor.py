@@ -12,9 +12,14 @@ from opus_gui.general_manager.models.variables_table_model import batch_check_da
 # Change to ui_variable_editor_alternative for alternative editor
 from opus_gui.general_manager.views.ui_variable_editor import Ui_VariableEditor
 from opus_core.variables.variable_name import VariableName
-from opus_gui.util.icon_library import IconLibrary
+from opus_gui.util.convenience import hide_widget_on_value_change
 
 class VariableEditor(QDialog, Ui_VariableEditor):
+
+    '''
+    Editor dialog for variables. Variables that are passed to the editor are expected to be in the
+    dictionary format specified in VariableTableModel.
+    '''
 
     def __init__(self, parent_widget = None):
         QDialog.__init__(self, parent_widget)
@@ -29,7 +34,9 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.connect(self.btnCheckSyntax, SIGNAL('released()'), check_syntax)
         self.connect(self.buttonBox, SIGNAL('rejected()'), self.reject)
 
-        # self.pb_change.setIcon(IconLibrary.icon('arrow_right'))
+        self.frame_name_warning.setVisible(False)
+        hide_widget_on_value_change(self.frame_name_warning, self.leVarName)
+
         self.group_settings.setVisible(False)
         self._toggle_settings()
         self.layout().update()
@@ -62,6 +69,12 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         msg = ('This variable is %s <b>%s</b> that will be used as <b>%s</b>' %
                (plural, self.variable['source'], use_map[self.variable['use']]))
         self.lbl_info.setText(msg)
+
+    def _name_warning(self, text):
+        self.lbl_name_warning.setText(text)
+        self.frame_name_warning.setVisible(True)
+        self.leVarName.selectAll()
+        self.leVarName.setFocus()
 
     def init_for_variable(self, variable, validator):
         ''' Setup the variable editor for use with given variable '''
@@ -129,8 +142,11 @@ class VariableEditor(QDialog, Ui_VariableEditor):
             MessageBox.warning(mainwindow = self, text = text, detailed_text = '\n '.join(msgs))
 
     def on_buttonBox_accepted(self):
-        # make sure to update the variable before accepting dialog
+        # update the variable before accepting dialog
         self._update_variable_from_fields()
+        if self.variable['name'].strip() == 'constant':
+            self._name_warning('The name "constant" is a reserved keyword. Please choose another name')
+            return
         for key in self.original_variable:
             if self.variable[key] != self.original_variable[key]:
                 self.variable['dirty'] = True
