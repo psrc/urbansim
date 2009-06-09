@@ -11,7 +11,7 @@ from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller impo
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlView
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlItemDelegate
 from opus_gui.scenarios_manager.models.xml_model_scenarios import XmlModel_Scenarios
-from opus_gui.models_manager.models_manager import get_model_names
+from opus_gui.models_manager.models_manager_functions import get_model_names
 from opus_gui.scenarios_manager.scenario_manager import update_models_to_run_lists
 from opus_gui.util.icon_library import IconLibrary
 from opus_gui.util.convenience import get_unique_name
