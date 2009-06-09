@@ -56,7 +56,7 @@ def dictionary_to_menu(source_dict, callback, display_func = None, parent_widget
     if not display_func:
         display_func = str
     for key, items in source_dict.items():
-        sub_menu = QtGui.QMenu(key, parent_widget)
+        sub_menu = QtGui.QMenu(str(key), parent_widget)
         if isinstance(items, dict):
             dict_menu = dictionary_to_menu(items, callback, parent_widget)
             sub_menu.addMenu(dict_menu)
@@ -80,9 +80,7 @@ def hide_widget_on_value_change(widget_to_hide, value_holding_widget,
     @param hide_method the method to call when the signal is recieved (if this argument is omitted,
     a method that consumes all arguments and calls widget_to_hide.setVisible(False)'''
     if hide_method is None:
-        def constructed_hide_method(widget = widget_to_hide, *args, **kwargs):
+        def default_hide_method(_, widget = widget_to_hide):
             widget.setVisible(False)
-        hide_method = constructed_hide_method
+        hide_method = default_hide_method
     QtGui.QWidget.connect(value_holding_widget, SIGNAL(signal), hide_method)
-
-
