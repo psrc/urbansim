@@ -3,13 +3,15 @@
   <general>
     <description type="string">Seattle parcel project with travel model</description>
     <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
-    </general>
+  </general>
   <model_manager>
-    <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"/><templates hidden="True" parser_action="skip" name="Model Templates"/><travel_model_configuration type="dictionary">
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary"/>
+    <templates hidden="True" name="Model Templates" parser_action="skip"/>
+    <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable type="selectable" name="opus_matsim.models.get_cache_data_into_matsim">True</selectable>
-        <selectable type="selectable" name="opus_matsim.models.run_travel_model">True</selectable>
-        <selectable type="selectable" name="opus_matsim.models.get_matsim_data_into_cache">True</selectable>
+        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">True</selectable>
+        <selectable name="opus_matsim.models.run_travel_model" type="selectable">True</selectable>
+        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">True</selectable>
       </models>
       <sampling_rate type="float">0.01</sampling_rate>
       <matsim_config_filename type="file">matsim_config/seattle_matsim_0.xml</matsim_config_filename>
@@ -24,26 +26,26 @@
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
-    <scenario copyable="True" executable="True" type="scenario" name="Seattle_baseline">
+    <scenario executable="True" name="Seattle_baseline" type="scenario">
       <years_to_run config_name="years" type="tuple">
         <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable type="selectable" name="prescheduled_events">True</selectable>
-        <selectable type="selectable" name="real_estate_price_model">False</selectable>
-        <selectable type="selectable" name="expected_sale_price_model">False</selectable>
-        <selectable type="selectable" name="development_proposal_choice_model">False</selectable>
-        <selectable type="selectable" name="building_construction_model">False</selectable>
-        <selectable type="selectable" name="employment_transition_model">False</selectable>
-        <selectable type="selectable" name="household_transition_model">False</selectable>
-        <selectable type="selectable" name="household_relocation_model">False</selectable>
-        <selectable type="selectable" name="household_location_choice_model">False</selectable>
-        <selectable type="selectable" name="employment_relocation_model">False</selectable>
-        <selectable type="selectable" name="employment_location_choice_model">False<group_members type="string">non_home_based</group_members>
+        <selectable name="prescheduled_events" type="selectable">True</selectable>
+        <selectable name="real_estate_price_model" type="selectable">False</selectable>
+        <selectable name="expected_sale_price_model" type="selectable">False</selectable>
+        <selectable name="development_proposal_choice_model" type="selectable">False</selectable>
+        <selectable name="building_construction_model" type="selectable">False</selectable>
+        <selectable name="employment_transition_model" type="selectable">False</selectable>
+        <selectable name="household_transition_model" type="selectable">False</selectable>
+        <selectable name="household_relocation_model" type="selectable">False</selectable>
+        <selectable name="household_location_choice_model" type="selectable">False</selectable>
+        <selectable name="employment_relocation_model" type="selectable">False</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable type="selectable" name="distribute_unplaced_jobs_model">False</selectable>
-        </models_to_run>
-      </scenario>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
+      </models_to_run>
+    </scenario>
   </scenario_manager>
   <results_manager>
   </results_manager>
