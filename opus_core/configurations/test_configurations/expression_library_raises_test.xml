@@ -1,0 +1,15 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <parent type="file">estimate.xml</parent>
+    <expression_library type="dictionary">
+      <variable source="primary attribute" type="variable_definition" use="model variable" name="no dataset and no dots = syntax error">zombie</variable>
+    </expression_library>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
+      <year type="integer">1980</year>
+    </scenario>
+  </scenario_manager>
+</opus_project>

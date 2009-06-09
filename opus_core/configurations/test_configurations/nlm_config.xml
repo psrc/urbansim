@@ -1,0 +1,52 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <model_manager>
+    <models hidden="False" name="Models">
+    <model copyable="True" hidden="True" type="model" name="nlm_model">
+        <specification type="dictionary">
+        <submodel submodel_id="42">
+          <equation equation_id="1">
+            <variable_list>
+                <variable_spec name=".guppy" coefficient_name="guppy_coef" />
+            </variable_list>
+          </equation>
+          <equation equation_id="2">
+            <variable_list>
+                <variable_spec name=".default_name" starting_value="42.0"/>
+            </variable_list>
+          </equation>
+          <equation equation_id="3">
+            <variable_list>
+                <variable_spec name=".orca" coefficient_name="explicit_name" starting_value="0.42"/>
+            </variable_list>
+          </equation>
+        </submodel>
+        </specification>
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <argument type="string" name="specification">specification</argument>
+            <argument type="string" name="dataset">fill in</argument>
+            <argument config_name="outcome_attribute" type="quoted_string" name="dependent_variable">fill in</argument>
+            <argument parser_action="blank_to_None" type="string" name="index">rm_index</argument>
+            <argument type="quoted_string" name="procedure">opus_core.estimate_linear_regression</argument>
+            <argument type="string" name="data_objects">datasets</argument>
+            <output type="string" name="output">(coefficients, dummy)</output>
+          </estimate>
+          <prepare_for_estimate type="dictionary">
+            <name type="string" name="name">prepare_for_estimate</name>
+            <argument parser_action="blank_to_None" type="string" name="dataset"/>
+            <argument parser_action="blank_to_None" type="quoted_string" name="dataset_filter"/>
+            <argument type="string" name="specification_storage">base_cache_storage</argument>
+            <argument type="quoted_string" name="specification_table">regression_model_template_specification</argument>
+            <output type="string" name="output">(specification, rm_index)</output>
+          </prepare_for_estimate>
+        </structure>
+      </model>
+    </models>
+    <estimation_config />
+   </model_manager>
+
+</opus_project>
