@@ -20,6 +20,8 @@ class OpusGUITestCase(opus_unittest.OpusTestCase):
           sample_xml_content = get_data_from_test_files('sample.xml', __file__)
 
          '''
-        path = os.path.split(base_file)[0]
-        full_path = os.path.join(path, 'test_files', filename)
+        full_path = os.path.join(self.get_test_data_dir(base_file), filename)
         return open(full_path, 'r').read()
+
+    def get_test_data_dir(self, base_file):
+        return os.path.join(os.path.split(base_file)[0], 'test_files')
