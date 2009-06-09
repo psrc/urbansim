@@ -464,6 +464,16 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
     def get_equations_index(self):
         return self.used_equations_idx
 
+    def get_non_zero_equations(self):
+        """Return an equation index for equations with at least one non-zero coefficient."""
+        equations_index = self.get_equations_index()
+        coef_values = self.get_coefficient_values()
+        non_zero_eq = []
+        for i in equations_index:
+            if (sometrue(coef_values[i,:]<>0.0)):
+                non_zero_eq.append(i)
+        return array(non_zero_eq)
+        
     def get_variable_names(self):
         return array(self.parent.get_variable_names())[self.used_variables_idx].tolist()
 
