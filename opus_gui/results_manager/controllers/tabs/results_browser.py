@@ -17,10 +17,11 @@ from opus_gui.results_manager.controllers.tabs.view_table_form import ViewTableF
 from opus_core.logger import logger
 
 from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
+from opus_core.configurations.xml_configuration import get_variable_dataset_and_name, get_variable_dataset
 from opus_gui.results_manager.results_manager_functions import get_simulation_runs
 from opus_gui.results_manager.results_manager_functions import get_years_for_simulation_run
-from opus_gui.main.controllers.instance_handlers import get_manager_instance,\
-    get_mainwindow_instance
+from opus_gui.main.controllers.instance_handlers import get_manager_instance
+from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.util.icon_library import IconLibrary
 
 class ResultBrowser(QWidget, Ui_ResultsBrowser):
@@ -105,12 +106,14 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
             row = QTableWidgetItem()
             self.indicator_table.setVerticalHeaderItem(i, row)
 
+            dataset, name = get_variable_dataset_and_name(indicator)
+
             item = QTableWidgetItem()
-            item.setText(indicator.get('name'))
+            item.setText(name)
             self.indicator_table.setItem(i,0,item)
 
             item = QTableWidgetItem()
-            item.setText(indicator.get('dataset'))
+            item.setText(dataset)
             self.indicator_table.setItem(i,1,item)
 
             item = QTableWidgetItem()
@@ -243,7 +246,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         dataset = None
         for indicator_node in indicator_nodes:
             if indicator_node.get('name') == indicator_name:
-                dataset = indicator_node.get('dataset')
+                dataset = get_variable_dataset(indicator_node)
                 break
 
         if dataset is None:
