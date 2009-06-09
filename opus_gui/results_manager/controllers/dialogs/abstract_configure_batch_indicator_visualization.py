@@ -10,6 +10,7 @@ from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
 
 from opus_core.logger import logger
 from opus_gui.general_manager.general_manager_functions import get_available_spatial_dataset_names
+from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
 from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
 from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
@@ -84,12 +85,12 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
 
         for indicator in indicator_nodes:
 
-            name = indicator.get('name')
+            dataset, name = get_variable_dataset_and_name(indicator)
 
             self.indicator_nodes[name] = indicator
 
             if name not in existing_indicators:
-                if self.dataset_name == indicator.get('dataset'):
+                if self.dataset_name == dataset:
                     item = QTableWidgetItem()
                     item.setText(name)
                     row = self.twAvailableIndicators.rowCount()
@@ -99,14 +100,14 @@ class AbstractConfigureBatchIndicatorVisualization(QDialog, Ui_dlgConfigureBatch
                     self.twAvailableIndicators.setItem(row,0,item)
 
                     #item = QTableWidgetItem()
-                    #item.setText(indicator['dataset'])
+                    #item.setText(dataset)
                     #self.twAvailableIndicators.setItem(i,1,item)
 
                     item = QTableWidgetItem()
                     item.setText(indicator.text or '')
                     self.twAvailableIndicators.setItem(row,1,item)
             else:
-                if self.dataset_name != indicator.get('dataset'):
+                if self.dataset_name != dataset:
                     logger.log_warning('Visualization configured incorrectly. Cannot have indicators for different datasets. Skipping indicator %s'%str(name))
                     continue
                 item = QTableWidgetItem()
