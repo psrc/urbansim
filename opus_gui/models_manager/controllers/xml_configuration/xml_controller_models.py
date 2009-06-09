@@ -107,34 +107,48 @@ class XmlController_Models(XmlController):
         update_models_to_run_lists()
 
     def _open_submodel_editor_for_selected(self):
+#        assert self.has_selected_item()
+#        submodel_node = self.selected_item().node
+#        submodel_parent = submodel_node.getparent()
+#        if self.editor is None:
+#            self.editor = SubModelEditorOld(self.project)
+#        editor = self.editor
+#        editor.init_for_submodel_node(submodel_node)
+#        if editor.exec_() == editor.Accepted:
+#            self._update_submodel(submodel_node, editor.submodel_node)
+
         assert self.has_selected_item()
         submodel_node = self.selected_item().node
-        submodel_parent = submodel_node.getparent()
         if self.editor is None:
             self.editor = SubModelEditor(self.project)
         editor = self.editor
         editor.init_for_submodel_node(submodel_node)
         if editor.exec_() == editor.Accepted:
-            # if the name of a shadowing node is changed, the node should no longer shadow the
-            # inherited one so we need to insert a new, local node instead.
-            name_change = submodel_node.get('name') != editor.submodel_node.get('name')
-#            if self.project.is_shadowing(submodel_node) and name_change:
-#                new_submodel_node = self.project.insert_node(editor.submodel_node, submodel_parent)
-#                if new_submodel_node is None:
-#                    msg = ('Tried to insert a new submodel (%s) but failed. '
-#                           'The recent submodel changes have been lost.' %submodel_node.get('name'))
-#                    logger.log_warning(msg)
-#                self.project.remove_node(submodel_node)
-#            else:
-            # otherwise update the edited submodel with the changes made in the editor
-            for key, value in editor.submodel_node.attrib.items():
-                submodel_node.attrib[key] = value
-            for child in submodel_node:
-                submodel_node.remove(child)
-            for child in editor.submodel_node:
-                submodel_node.append(child)
+            self._update_submodel(submodel_node, editor.submodel_node)
 
-            self.project.dirty = True
+    def _update_submodel(self, current_node, edited_node):
+        ''' Updating a submodel node (current_node) based on an edited version of it (edited_node)'''
+        # the effect of renaming a shadowing node is that a new (local) copy is created and
+        # the inherited node is reinserted. If the user did not rename the node we overwrite
+        # the old submodel with the new values.
+        name_change = current_node.get('name') != edited_node.get('name')
+        if self.project.is_shadowing(current_node) and name_change:
+            parent_node = current_node.getparent()
+            row = parent_node.index(current_node)
+            new_submodel_node = self.project.insert_node(edited_node, parent_node, row)
+            if new_submodel_node is None:
+                msg = ('Tried to insert a new submodel (%s) but failed. '
+                       'The recent submodel changes have been lost.' %current_node.get('name'))
+                logger.log_warning(msg)
+            self.project.delete_node(current_node)
+        else:
+            for key in edited_node.attrib:
+                current_node.attrib[key] = edited_node.attrib[key]
+            for child in current_node:
+                current_node.remove(child)
+            for child in edited_node:
+                current_node.append(child)
+        self.project.dirty = True
 
     def process_custom_menu(self, point):
         ''' See XmlConfig.processCustomMenu for documentation '''
