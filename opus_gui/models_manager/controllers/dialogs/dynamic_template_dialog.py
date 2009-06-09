@@ -202,7 +202,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         For example, a node of type "string" should get a QLineEdit, while one with type="integer"
         should get a QSpinBox widget.
         Special widgets can be created if the node has an attribute 'field_data_type'.
-        One special case is 'dataset', where a combobox with the available datasets is returned.
+        For example; one special case is 'dataset', where a combobox with the available datasets is returned.
         'field_data_type' is used if it exists, otherwise 'type' is used. If neither attributes are
         present a QLineEdit is used.
         '''
