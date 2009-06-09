@@ -36,7 +36,7 @@ class DependencyQuery:
             l = []
             for y in x:
                 if y.get('type') == 'submodel':
-                    t = y.find('variables')
+                    t = y.find('variable_list')
                     if len(t) > 0:
                         for z in config._convert_variable_list_to_data(t[0]):
                             for k in lib.keys():
