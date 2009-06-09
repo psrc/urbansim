@@ -70,11 +70,12 @@ def get_db_connection_names():
     else:
         return instance.db_connection_names or []
 
-def update_mainwindow_savestate():
+def update_mainwindow_savestate(force_dirty = False):
     '''
     Updates the application title for the main window to reflect any changes
     to the dirty flag.
+    @param force_dirty forces the project to become dirty before setting the savestate
     '''
     instance = __get_instance()
     if instance is not None:
-        instance.update_saved_state()
+        instance.update_saved_state(force_dirty)
