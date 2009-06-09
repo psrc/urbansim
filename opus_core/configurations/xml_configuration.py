@@ -259,15 +259,17 @@ class XMLConfiguration(object):
         specification_node = self._find_node(path_to_specification)
         if specification_node is not None:
             variable_specs = [node for node in specification_node.findall('.//variable_spec') if
-                              node.get('starting_value')]
+                              node.get('starting_value') and node.get('ignore') != 'True']
             # here we want something that looks like: {'starting_values': {'coeff-name': 34.2} }
+            # or, if the value should be fixed, something like {'coeff-name': (34.2, True) }
             starting_values = {}
-            for variable_spec in variable_specs:
-                coeff_name = variable_spec.get('coefficient_name')
-                if coeff_name is None:
-                    coeff_name = get_variable_name(variable_spec)
-                starting_value = float(variable_spec.get('starting_value'))
-                starting_values[coeff_name] = starting_value
+            for variable_node in variable_specs:
+                coeff_name = variable_node.get('coefficient_name') or get_variable_name(variable_node)
+                starting_value = float(variable_node.get('starting_value'))
+                if variable_node.get('fixed') == 'True':
+                    starting_values[coeff_name] = (starting_value, True)
+                else:
+                    starting_values[coeff_name] = starting_value
             if starting_values:
                 model_specific_overrides['starting_values'] = starting_values
 
@@ -277,12 +279,6 @@ class XMLConfiguration(object):
             config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
 
         return config
-
-    def get_nested_structure_from_specification(self, model_name):
-        ''' Construct the keyword 'nested_structure' automatically from the current specification.
-        The keyword is used by Nested Logit Models on creation (in the init method).
-        '''
-        pass
 
     def get_estimation_specification(self, model_name, model_group=None):
         """Get the estimation specification for the given model and return it as a dictionary."""
@@ -774,9 +770,8 @@ class XMLConfiguration(object):
     def _convert_model_to_dict(self, node):
         '''translate from xml structure to dictionary configuration.'''
         structure_node = node.find('structure')
-        if structure_node == None: # invalid format of model node
-            raise StandardError('XML Error: Invalid Model structure: '
-                  'Model %s is missing a "structure" tag' %node.tag)
+        if structure_node is None:
+            structure_node = []
         model_dict = {}
         for subnode in structure_node:
             # append 'arguments' to some nodes
@@ -1253,6 +1248,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
         should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],
           -2: {1: ['constant'], 2: ['var1']}}
+        self.assertEqual(config, should_be)
+
+    def test_get_estimation_configuration_with_starting_values(self):
+        f = os.path.join(self.test_configs, 'estimate_choice_model_w_starting_values.xml')
+        model_name = 'model with starting_values'
+        config = XMLConfiguration(f).get_estimation_configuration(model_name)
+        config = config['config_changes_for_estimation'][model_name]
+        should_be = {'starting_values': {'fixed_with_starting_value': (float(42.0), True),
+                                         'non_fixed_with_starting_value': float(42.0),
+                                         'guppy': float(12.5)}}
         self.assertEqual(config, should_be)
 
     def test_expression_library(self):
