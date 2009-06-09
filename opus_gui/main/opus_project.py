@@ -77,8 +77,8 @@ class OpusProject(object):
         self.close()
         filename = str(filename)
         if not os.path.exists(filename):
-            return (False, "Tried to load project from file '%s', but that file "
-                    "does'nt exist" %filename)
+            return (False, "Tried to load project from file '%s', but that file does not exist"
+                    %filename)
         default_path = os.path.dirname(filename)
         filename = os.path.basename(filename)
         try:
@@ -325,6 +325,8 @@ class OpusProject(object):
         @param node (Element) the node to get inherited values for
         @return a copy of the inherited node (Element)
         '''
+        if node is None:
+            return None
         if node.get('inherited') is not None:
             return node
         if self.is_shadowing(node):
