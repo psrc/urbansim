@@ -93,6 +93,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #self.menuUtilities.removeAction(self.actionLog_View)
         self.menuUtilities.removeAction(self.actEditorView)
 
+        self.connect(self, SIGNAL('variables_updated'), self.update_saved_state)
         self.update_saved_state()
 
     def _setup_actions(self):
@@ -218,8 +219,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         wnd.show()
         self.updateFontSize()
 
-    def update_saved_state(self):
-        '''update the window title to reflect the state of the project'''
+    def update_saved_state(self, force_dirty = False):
+        '''update the window title to reflect the state of the project
+        @param force_dirty makes the project dirty before setting the save state'''
         # assemble a title consisting of application title (at),
         # project file name (pfn) and project name (pn)
         at = self.gui_config.application_title
@@ -227,13 +229,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         pfn = (self.project.filename or '').split(os.sep)[-1]
 
         if self.project.is_open():
+            if force_dirty:
+                self.project.dirty = True
             if self.project.dirty:
                 title = '%s - (*) %s - [file: %s]' % (at, pn, pfn)
             else:
                 title = '%s - %s - [file: %s]' % (at, pn, pfn)
             self.actSaveProject.setEnabled(self.project.dirty)
         else:
-            title = at or '' # Show just application title
+            title = 'OPUS' if not at else at # Show just application title
             self.actSaveProject.setEnabled(False)
 
         self.setWindowTitle(QString(title))
