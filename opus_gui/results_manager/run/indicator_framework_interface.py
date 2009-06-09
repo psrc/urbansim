@@ -10,6 +10,7 @@ from opus_gui.results_manager.run.indicator_framework.representations.computed_i
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
+from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
 
 class IndicatorFrameworkInterface:
     def __init__(self, project):
@@ -53,8 +54,8 @@ class IndicatorFrameworkInterface:
         else:
             indicator_nodes = get_available_indicator_nodes(self.project)
             for indicator_node in indicator_nodes:
-                if indicator_node.get('name') == indicator_name and \
-                    indicator_node.get('dataset') == dataset_name:
+                dataset, name = get_variable_dataset_and_name(indicator_node)
+                if name == indicator_name and dataset == dataset_name:
                     attribute = (indicator_node.text or '').strip()
                     source = indicator_node.get('source')
                     break
