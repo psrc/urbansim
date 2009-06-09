@@ -15,7 +15,7 @@ def _action_before_continue(question, buttons, parent_widget):
     ''' base for dialogs that ask users to close with dirty data '''
     if parent_widget is None:
         parent_widget = get_mainwindow_instance()
-    ok_answers = [QMessageBox.Apply, QMessageBox.Save]
+    ok_answers = [QMessageBox.Apply, QMessageBox.Save, QMessageBox.Yes]
     answer = QMessageBox.question(parent_widget, "Warning", question, *buttons)
     if answer in ok_answers:
         return YES
@@ -42,3 +42,7 @@ def apply_before_close(question, parent_widget = None):
     '''
     buttons = (QMessageBox.Discard, QMessageBox.Apply, QMessageBox.Cancel)
     return _action_before_continue(question, buttons, parent_widget)
+
+def user_is_sure(question, parent_widget = None):
+    buttons = (QMessageBox.Yes, QMessageBox.No)
+    return _action_before_continue(question, buttons, parent_widget) == YES
