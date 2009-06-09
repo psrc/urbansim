@@ -19,8 +19,8 @@
    <string/>
   </property>
   <property name="windowIcon" >
-   <iconset>
-    <normaloff>:/Images/Images/cog.png</normaloff>:/Images/Images/cog.png</iconset>
+   <iconset resource="opusmain.qrc" >
+    <normaloff>:/Images/Images/new-logo-medium-no-mirror.png</normaloff>:/Images/Images/new-logo-medium-no-mirror.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" name="verticalLayout" >
@@ -137,7 +137,7 @@
      <x>0</x>
      <y>0</y>
      <width>1093</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
