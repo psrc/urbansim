@@ -17,12 +17,13 @@ class MockupManager(AbstractManager):
 
     def __init__(self,
                  xml = '<opus_project> <manager /> </opus_project>',
-                 manager_node_path = 'manager'):
+                 manager_node_path = 'manager',
+                 opus_project = None):
         self.app = QtGui.QApplication([], True)
         base_widget = QtGui.QWidget()
         base_widget.setLayout(QtGui.QVBoxLayout())
         base_tab_widget = QtGui.QTabWidget(base_widget)
-        project = MockupOpusProject(xml)
+        project = MockupOpusProject(xml) if not opus_project else opus_project
         AbstractManager.__init__(self, base_widget, base_tab_widget, project, manager_node_path)
 
 if __name__ == '__main__':
