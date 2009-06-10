@@ -1,0 +1,86 @@
+<opus_project>
+  <model name="the model with alot of submodels">
+    <structure>
+      <init>
+        <nested_structure />
+      </init>
+    </structure>
+    <specification>
+      <submodel type="submodel" name="no nests" submodel_id="1">
+        <description type="string">no nests = no structure</description>
+        <equation equation_id="5">
+          <variable_list>
+              <variable name="fishtank.guppy" />
+          </variable_list>
+        </equation>
+      </submodel>
+
+      <submodel type="submodel" name="one level nest" submodel_id="1">
+        <description type="string">one level of nests</description>
+        <nest nest_id="42">
+          <equation equation_id="5">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+          </equation>
+          <equation equation_id="10">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+          </equation>
+        </nest>
+      </submodel>
+
+      <submodel type="submodel" name="multi level nest" submodel_id="1">
+        <description type="string">one level of nests</description>
+        <!-- {1: {11: [5, 10],
+                  12: [99, 100]}
+             }
+        -->
+        <nest nest_id="1">
+          <nest nest_id="11">
+            <equation equation_id="5">
+              <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+            </equation>
+            <equation equation_id="10">
+              <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+            </equation>
+          </nest>
+
+          <nest nest_id="12">
+            <equation equation_id="99">
+              <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+            </equation>
+            <equation equation_id="100">
+              <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+            </equation>
+          </nest>
+        </nest>
+      </submodel>
+
+      <submodel type="submodel" name="nest with # of samples" submodel_id="1">
+        <description type="string">a nest with number of samples attribute given</description>
+        <!-- {77: [1, 2, 3, 4], 33: [5, 6] } -->
+        <nest nest_id="77" number_of_samples="4">
+          <equation equation_id="-2">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+          </equation>
+        </nest>
+        <nest nest_id="33" number_of_samples="2">
+          <!-- note that these the equations below are ignored due to the number_of_samples -->
+          <equation equation_id="1">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+          </equation>
+          <equation equation_id="2">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+          </equation>
+        </nest>
+      </submodel>
+    </specification>
+  </model>
+
+  <malplaced_submodel type="submodel" name="runtime error" submodel_id="1">
+    <description type="string">This submodel is not contained in a model</description>
+    <nest nest_id="42">
+        <equation equation_id="1">
+            <variable_list> <variable name="fishtank.guppy" /> </variable_list>
+        </equation>
+    </nest>
+  </malplaced_submodel>
+</opus_project>
