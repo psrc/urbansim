@@ -30,13 +30,13 @@ class TestXmlControllerModels(OpusGUITestCase):
 
         # created an edited version of local node
         edited_node = etree.Element('submodel', {'name': 'edited local node'})
-        edited_node_variables = etree.SubElement(edited_node, 'variables', {'type': 'variable_list'})
-        edited_node_variables.text = 'edited_var'
+        vlist_node = etree.SubElement(edited_node, 'variable_list', {'type': 'variable_list'})
+        variable_spec_node = etree.SubElement(vlist_node, 'variable_spec', {'name': '.edited_var'})
 
         controller._update_submodel(local_node, edited_node)
         # the decription should be gone and the variables and named should have changed
         self.assert_(local_node.find('description') is None)
-        self.assertEqual(local_node.find('variable_list').text, 'edited_var')
+        self.assertEqual(local_node.find('variable_list/variable_spec').get('name'), '.edited_var')
         self.assertEqual(local_node.get('name'), 'edited local node')
         # make sure no new nodes was added
         self.assertEqual(len(p.findall('model_manager/model/submodel')), 3)
