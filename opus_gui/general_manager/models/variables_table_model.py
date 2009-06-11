@@ -147,7 +147,7 @@ class VariablesTableModel(QAbstractTableModel):
         'source': ('expression', 'Python Class' or 'primary attribute')
         'inherited': string (name of parent)
 
-        'selected': bool (check box)
+        'selected': bool (check box) (note: variable selection is no longer done in the exp lib. this key is kept for compability)
         'dirty': bool
         'syntaxerror': None or error description
         'dataerror': None or error description
@@ -166,24 +166,32 @@ class VariablesTableModel(QAbstractTableModel):
         '''
         QAbstractTableModel.__init__(self, parent_widget)
         self.project = project
-        self.variables = variables or []
-        self.headers = ["", "Name", "Dataset", "Use", "Type", "Definition"]
-        # mapping of columns -> keys
-        self.keys = ('selected', 'name', 'dataset', 'use', 'source', 'definition')
+        self.all_variables = variables
+        self.variables = self.all_variables or []
+        self.headers = ["Name", "Dataset", "Use", "Type", "Definition"]
+        # mapping of columns -> keys (index of the key is the index of the column)
+        self.keys = ('name', 'dataset', 'use', 'source', 'definition')
         self.parent_widget = parent_widget
-        self.to_be_deleted = [] # variables the user wants to delete
         self.sorted_by_column = 1
         self.sorting_order = Qt.AscendingOrder
         self.dirty = False
         self.palette = qApp.palette() # for system-coherent selection colors
+        self.filtered_variable_set = None
+        self.emit(SIGNAL('layoutChanged()'))
+
+    def set_dataset_filter(self, dataset_name):
+        if dataset_name is None:
+            self.variables = self.all_variables
+        else:
+            self.variables = [variable for variable in self.all_variables if
+                              variable['dataset'] == dataset_name]
+        self.emit(SIGNAL('layoutChanged()'))
 
     def flags(self, index):
         ''' PyQt4 API Method '''
         flags = Qt.ItemIsEnabled # all variables are enabled
         if index.isValid(): # valid items are selectable
             flags = flags | Qt.ItemIsSelectable
-        if index.column() == 0: # first row has a checkbox
-            flags = flags | Qt.ItemIsUserCheckable
         return flags
 
     def rowCount(self, parent = QModelIndex()):
@@ -208,13 +216,10 @@ class VariablesTableModel(QAbstractTableModel):
         col = index.column()
         var = self.variables[row]
         col_key = None
-        if 0 < col < len(self.keys):
+        if -1 < col < len(self.keys):
             col_key = self.keys[col]
 
-        if role == Qt.DisplayRole:
-            # Displayed text
-            if index.column() == 0:
-                return QVariant() # no text for checkbox
+        if role == Qt.DisplayRole: # Displayed text
             # Show a single letter for variable use
             if col_key == 'use':
                 abbr = var['use']
@@ -225,7 +230,7 @@ class VariablesTableModel(QAbstractTableModel):
                 elif var['use'] == 'both':
                     abbr = 'I+M'
                 return QVariant(abbr)
-            if col_key == 'source':
+            elif col_key == 'source':
                 abbr = '?'
                 if var['source'] == 'expression':
                     abbr = 'Exp'
@@ -234,12 +239,7 @@ class VariablesTableModel(QAbstractTableModel):
                 elif var['source'] == 'primary attribute':
                     abbr = 'Pri'
                 return QVariant(abbr)
-            if col_key:
-                if col_key == 'name':
-                    name = var['name']
-                    if var['syntaxerror']: pass
-                    if var['dataerror']: pass
-                    return QVariant(name)
+            elif col_key:
                 return QVariant(var[col_key])
 
         elif role == Qt.ToolTipRole:
@@ -252,52 +252,23 @@ class VariablesTableModel(QAbstractTableModel):
                 tooltip = 'name: <b>%s</b>' % var['name']
             return QVariant(tooltip)
 
-        elif role == Qt.CheckStateRole and col == 0:
-            if self.variables[row]['selected']:
-                return QVariant(Qt.Checked)
-            return QVariant(Qt.Unchecked)
-
         elif role == Qt.ForegroundRole:
             # Color of text
-            variable = self.variables[row]
-            if variable['inherited']:
-                if variable['selected']:
-                    return QVariant(self.palette.highlightedText().color())
+            if var['inherited']:
                 return QVariant(QColor(Qt.darkBlue))
 
-        elif role == Qt.BackgroundRole:
-            # Color of background
-            variable = self.variables[row]
-            if variable['selected']:
-                return QVariant(self.palette.highlight().color())
-
         elif role == Qt.TextAlignmentRole:
-            if col in (3, 4):
+            if col in (2, 3):
                 return QVariant(Qt.AlignCenter)
             return QVariant()
 
         elif role == Qt.FontRole:
-            if self.variables[row]['dirty']:
+            if var['dirty']:
                 font = QFont()
                 font.setBold(True)
                 return QVariant(font)
 
         return QVariant()
-
-    def setData(self, index, value, role):
-
-        if role == Qt.CheckStateRole and index.column() == 0:
-            state = value.toInt()[0]
-            checked = state == Qt.Checked
-            self.variables[index.row()]['selected'] = checked
-            # Make the model redraw the whole row
-            row = index.row()
-            first_index = self.createIndex(row, 0)
-            last_index = self.createIndex(row, len(self.headers))
-            self.emit(SIGNAL('dataChanged (const QModelIndex &, '
-                             'const QModelIndex &)'), first_index, last_index)
-            self.emit(SIGNAL('model_changed'))
-        return True
 
     def insertRow(self, row, variable, parent = QModelIndex()):
         '''
@@ -333,20 +304,17 @@ class VariablesTableModel(QAbstractTableModel):
 
     def sort(self, column_num = 1, order = Qt.AscendingOrder):
         ''' Sort table by given column number. '''
-        if column_num == 0: # don't allow sorting by check boxes (column 0)
-            return
-
         self.sorted_by_column = column_num
-
 
         # sort the list of variables by the given column
         # (use self.keys for mapping keys -> columns)
-        sort_key = self.keys[column_num ] # offset for check boxes
-        def cmp_(x, y, k = sort_key): return cmp(x[k], y[k])
+        sort_key = self.keys[column_num]
+        def cmp_(x, y, k = sort_key): return cmp(x[k], y[k]) # sort by key
         self.variables.sort(cmp_, reverse = order == Qt.DescendingOrder)
         self.emit(SIGNAL("layoutChanged()"))
 
-    def re_sort(self): self.sort(self.sorted_by_column, self.sorting_order)
+    def re_sort(self):
+        self.sort(self.sorted_by_column, self.sorting_order)
 
     def add_variable(self, variable):
         '''
@@ -411,5 +379,10 @@ class VariablesTableModel(QAbstractTableModel):
         self.emit(SIGNAL('model_changed'))
         return True
 
-    def get_taken_names(self):
-        return [var['name'] for var in self.variables]
+    def get_variables(self):
+        '''return a list of tuples like (dataset, variable_name) for all variables in the model'''
+        return [(var['dataset'], var['name']) for var in self.variables]
+
+    def get_variable_names_in_dataset(self, dataset_name):
+        '''return a list ([str,]) of the variable names in a given dataset'''
+        return [var['name'] for var in self.variables if var['dataset'] == dataset_name]
