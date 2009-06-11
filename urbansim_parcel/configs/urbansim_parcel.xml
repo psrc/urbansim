@@ -6,9 +6,6 @@
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
       <variable name="zone.population_per_acre" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.population_per_acre</variable>
-      <variable name="parcel.constant" source="expression" type="variable_definition" use="model variable">constant</variable>
-      <variable name="building.constant" source="expression" type="variable_definition" use="model variable">constant</variable>
-      <variable name="zone.constant" source="expression" type="variable_definition" use="model variable">constant</variable>
       <variable name="parcel.hwy200" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;200</variable>
       <variable name="parcel.hwy600" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;600</variable>
       <variable name="parcel.hwy1000" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;1000</variable>
