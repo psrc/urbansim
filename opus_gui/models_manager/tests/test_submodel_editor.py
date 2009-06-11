@@ -17,9 +17,9 @@ class TestSubmodelEditor(OpusGUITestCase):
         sub1 = p.find('submodel', name='submodel1')
         instance.init_for_submodel_node(sub1)
         instance.le_name.setText('taken name')
-        self.assertEqual(instance.on_pb_save_and_close_released(), 'name collision')
+        self.assertEqual(instance.validate_submodel_and_accept(), 'name collision')
         instance.le_name.setText('unique name')
-        self.assert_(instance.on_pb_save_and_close_released() is None)
+        self.assert_(instance.validate_submodel_and_accept() is None)
 
     def test_get_nested_structure(self):
         xml = self.get_data_from_test_files('nested_structures.xml', __file__)
