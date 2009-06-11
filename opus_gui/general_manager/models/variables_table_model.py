@@ -8,6 +8,7 @@ from PyQt4.QtCore import QAbstractTableModel, QModelIndex, QVariant, Qt
 from PyQt4.QtCore import SIGNAL, QEventLoop
 from PyQt4.QtGui import QColor, qApp, QFont
 from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
+from opus_gui.util.icon_library import IconLibrary
 
 def variable_to_validator_format(variable):
     '''
@@ -267,6 +268,10 @@ class VariablesTableModel(QAbstractTableModel):
                 font = QFont()
                 font.setBold(True)
                 return QVariant(font)
+
+        elif role == Qt.DecorationRole:
+            if col_key == 'name':
+                return QVariant(IconLibrary.icon('variable'))
 
         return QVariant()
 
