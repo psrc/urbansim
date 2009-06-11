@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_trunk\opus_gui\general_manager\views\variable_editor.ui'
 #
-# Created: Thu May 28 12:41:29 2009
+# Created: Thu Jun 11 12:23:55 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,8 +31,8 @@ class Ui_VariableEditor(object):
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.lbl_name_warning = QtGui.QLabel(self.frame_name_warning)
         font = QtGui.QFont()
-        font.setWeight(50)
-        font.setBold(False)
+        font.setWeight(75)
+        font.setBold(True)
         self.lbl_name_warning.setFont(font)
         self.lbl_name_warning.setObjectName("lbl_name_warning")
         self.horizontalLayout_5.addWidget(self.lbl_name_warning)

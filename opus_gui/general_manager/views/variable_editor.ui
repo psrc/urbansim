@@ -55,8 +55,8 @@
        <widget class="QLabel" name="lbl_name_warning" >
         <property name="font" >
          <font>
-          <weight>50</weight>
-          <bold>false</bold>
+          <weight>75</weight>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text" >

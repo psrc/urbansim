@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/ckla/Documents/workspace/variable_library_rewrite/opus_gui/general_manager/views/variable_library.ui'
+# Form implementation generated from reading ui file 'C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_trunk\opus_gui\general_manager\views\variable_library.ui'
 #
-# Created: Mon Mar  2 12:39:48 2009
-#      by: PyQt4 UI code generator 4.4.4
+# Created: Thu Jun 11 12:39:44 2009
+#      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -16,6 +16,18 @@ class Ui_VariableLibrary(object):
         VariableLibrary.setSizeGripEnabled(True)
         self.verticalLayout = QtGui.QVBoxLayout(VariableLibrary)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtGui.QLabel(VariableLibrary)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.cbo_dataset_filter = QtGui.QComboBox(VariableLibrary)
+        self.cbo_dataset_filter.setMinimumSize(QtCore.QSize(200, 0))
+        self.cbo_dataset_filter.setObjectName("cbo_dataset_filter")
+        self.horizontalLayout_2.addWidget(self.cbo_dataset_filter)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.table_container = QtGui.QVBoxLayout()
         self.table_container.setObjectName("table_container")
         self.verticalLayout.addLayout(self.table_container)
@@ -57,15 +69,14 @@ class Ui_VariableLibrary(object):
         self.line_2.setObjectName("line_2")
         self.hboxlayout.addWidget(self.line_2)
         self.pb_validate_selected = QtGui.QPushButton(self.widget)
-        self.pb_validate_selected.setEnabled(False)
         self.pb_validate_selected.setObjectName("pb_validate_selected")
         self.hboxlayout.addWidget(self.pb_validate_selected)
         self.pb_problems = QtGui.QPushButton(self.widget)
         self.pb_problems.setEnabled(False)
         self.pb_problems.setObjectName("pb_problems")
         self.hboxlayout.addWidget(self.pb_problems)
-        spacerItem = QtGui.QSpacerItem(441, 24, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.hboxlayout.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(441, 24, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.hboxlayout.addItem(spacerItem1)
         self.line = QtGui.QFrame(self.widget)
         self.line.setFrameShape(QtGui.QFrame.VLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
@@ -77,10 +88,10 @@ class Ui_VariableLibrary(object):
         self.pb_close.setObjectName("pb_close")
         self.hboxlayout.addWidget(self.pb_close)
         self.pb_apply = QtGui.QPushButton(self.widget)
+        self.pb_apply.setEnabled(True)
         self.pb_apply.setObjectName("pb_apply")
         self.hboxlayout.addWidget(self.pb_apply)
         self.pb_apply_and_close = QtGui.QPushButton(self.widget)
-        self.pb_apply_and_close.setEnabled(True)
         self.pb_apply_and_close.setAutoDefault(True)
         self.pb_apply_and_close.setDefault(True)
         self.pb_apply_and_close.setObjectName("pb_apply_and_close")
@@ -92,6 +103,7 @@ class Ui_VariableLibrary(object):
 
     def retranslateUi(self, VariableLibrary):
         VariableLibrary.setWindowTitle(QtGui.QApplication.translate("VariableLibrary", "Variable Library", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("VariableLibrary", "Show variables from dataset:", None, QtGui.QApplication.UnicodeUTF8))
         self.group_progress.setTitle(QtGui.QApplication.translate("VariableLibrary", "Validating variables", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_cancel_validation.setText(QtGui.QApplication.translate("VariableLibrary", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_create_new.setText(QtGui.QApplication.translate("VariableLibrary", "Create Variable", None, QtGui.QApplication.UnicodeUTF8))

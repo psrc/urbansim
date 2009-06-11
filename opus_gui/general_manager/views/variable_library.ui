@@ -18,6 +18,40 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Show variables from dataset:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbo_dataset_filter" >
+       <property name="minimumSize" >
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QVBoxLayout" name="table_container" />
    </item>
    <item>
@@ -123,9 +157,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="pb_close" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
         <property name="text" >
          <string>Close</string>
         </property>
@@ -149,9 +180,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="pb_apply_and_close" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
         <property name="text" >
          <string>Apply and Close</string>
         </property>
