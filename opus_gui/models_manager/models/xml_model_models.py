@@ -21,21 +21,26 @@ class XmlModel_Models(XmlModel):
 
         node = index.internalPointer().node
 
+        if node is None:
+            return QVariant()
+
         # only override displaying of left column
         if index.column() != 0:
             return XmlModel.data(self, index, role)
 
         # give some nodes special icons
         if role == Qt.DecorationRole:
-            if node.tag in ['structure', 'specification'] and node.getparent().tag == 'model':
-                return QVariant(IconLibrary.icon('folder_development'))
+            if node.tag in ['structure', 'specification']:
 
-            elif node.getparent().tag == 'structure':
-                return QVariant(IconLibrary.icon('method'))
+                if node.getparent().tag == 'model':
+                    return QVariant(IconLibrary.icon('folder_development'))
 
-            elif node.getparent().tag == 'specification' and node.tag != 'submodel':
-                # assume it's a submodel group
-                return QVariant(IconLibrary.icon('folder_development'))
+                elif node.getparent().tag == 'structure':
+                    return QVariant(IconLibrary.icon('method'))
+
+                elif node.getparent().tag == 'specification' and node.tag != 'submodel':
+                    # assume it's a submodel group
+                    return QVariant(IconLibrary.icon('folder_development'))
 
         # fall back on default
         return XmlModel.data(self, index, role)
