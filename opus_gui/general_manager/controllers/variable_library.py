@@ -39,55 +39,53 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         self.setupUi(self)
         self.project = project
         # Change PICK MODE to true for old school selector
-        self.view = VariablesTableView(pick_mode = False, parent_widget = self)
+        self.variables_table = VariablesTableView(parent_widget = self)
         self.original_nodes = set()
         self.cancel_validation_flag = {'value': False}
         self.model = None
         self.problem_variables = []
 
+        self.pb_create_new.setIcon(IconLibrary.icon('add'))
+
         self.initialize()
-        self.table_container.addWidget(self.view)
+        self.table_container.addWidget(self.variables_table)
 
         # Automatically update the save button state on model data change
-        custom_update_signal = SIGNAL('model_changed')
-        self.connect(self.model, custom_update_signal, self._update_apply_button)
+        self.connect(self.model, SIGNAL('model_changed'), self._update_apply_button)
+
         # Automatically enable or disable the validate selected vars button
         def on_sel_change(dummy_a, dummy_b):
-            if self.view.pick_mode:
-                enabled = len([var for var in self.model if var['selected']]) > 0
-            else:
-                enabled = len(self.view.selectedIndexes()) > 0
+            enabled = len(self.variables_table.selectedIndexes()) > 0
             self.pb_validate_selected.setEnabled(enabled)
         sel_changed = SIGNAL('selectionChanged(const QItemSelection&,const QItemSelection&)')
-        self.connect(self.view.selectionModel(), sel_changed, on_sel_change)
+        self.connect(self.variables_table.selectionModel(), sel_changed, on_sel_change)
 
         # Double clicking an item in the table brings up the editor
-        dbl_click = SIGNAL('doubleClicked(QModelIndex)')
         def edit_wrapper(index):
             variable = self.model.variables[index.row()]
-            self._edit_variable(variable)
-        self.connect(self.view, dbl_click, edit_wrapper)
+            if not variable['inherited']:
+                self._edit_variable(variable)
+        self.connect(self.variables_table, SIGNAL('doubleClicked(QModelIndex)'), edit_wrapper)
 
         def apply_and_close():
             self._apply_variable_changes()
             self.accept()
-        click = SIGNAL('released()')
-        self.connect(self.pb_apply_and_close, click, apply_and_close)
-        self.connect(self.pb_apply, click, self._apply_variable_changes)
-        self.connect(self.pb_create_new, click, self._add_variable)
-        self.connect(self.pb_problems, click, self._show_problem_variables)
+        def cancel_validation():
+            self.cancel_validation_flag['value'] = True
+        self.connect(self.pb_apply_and_close, SIGNAL('released()'), apply_and_close)
+        self.connect(self.pb_apply, SIGNAL('released()'), self._apply_variable_changes)
+        self.connect(self.pb_create_new, SIGNAL('released()'), self._add_variable)
+        self.connect(self.pb_problems, SIGNAL('released()'), self._show_problem_variables)
+        self.connect(self.pb_cancel_validation, SIGNAL('released()'), cancel_validation)
 
-        def cancel_validation(): 
-             self.cancel_validation_flag['value'] = True
-        self.connect(self.pb_cancel_validation, click, cancel_validation)
         signal = SIGNAL('customContextMenuRequested(const QPoint &)')
-        self.connect(self.view, signal, self.on_table_right_clicked)
+        self.connect(self.variables_table, signal, self._show_right_click_menu)
+
+        signal = SIGNAL('currentIndexChanged(int)')
+        self.connect(self.cbo_dataset_filter, signal, lambda x: self._set_dataset_filter())
 
         self.validator = VariableValidator(self.project)
         self.editor = VariableEditor(self)
-
-    def _update_apply_button(self):
-        self.pb_apply.setEnabled(self.model.dirty)
 
     def initialize(self):
         # reset the variable library to reflect the current state of expression library in xml
@@ -102,16 +100,66 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
                 all_original_nodes.add(variable_node) # save original values for comparison
         self.original_nodes = all_original_nodes
         self.cancel_validation_flag = {'value': False}
+
+        # to avoid quirky behavior when applying changes, store the column widths and restore them
+        # after the model update
+        col_widths = [self.variables_table.columnWidth(col) for col in range(5)]
+
+        # bind to self to prevent PyQt from "losing" the object ref
         self.model = VariablesTableModel(project = self.project, variables = variables,
-                                         parent_widget = self.view)
-        self.view.setModel(self.model)
+                                         parent_widget = self.variables_table)
+        self.variables_table.setModel(self.model)
         self.model.re_sort()
+        self.connect(self.model, SIGNAL('layoutChanged()'), self.variables_table.resizeRowsToContents)
         self._update_apply_button()
 
         self.group_progress.setVisible(False)
         self.pb_problems.setIcon(IconLibrary.icon('warning_small'))
         self.pb_problems.setAttribute(Qt.WA_AlwaysShowToolTips)
         self._set_problem_variables([])
+        self._update_dataset_filter()
+
+        # use the inital size if the column widths is all zeroes
+        if sum(abs(w) for w in col_widths) == 0:
+            col_widths = [195, 80, 45, 50, -1]
+        for col in range(5):
+            if col_widths[col] > 0:
+                self.variables_table.setColumnWidth(col, col_widths[col])
+        self.variables_table.resizeRowsToContents()
+
+    def update_validation_progress(self, ratio):
+        ''' callback to show validation progress '''
+        ratio = 1.0 if ratio > 1.0 else ratio
+        self.progress_validation.setValue(ratio * 100)
+        self.progress_validation.repaint()
+
+    def _update_apply_button(self):
+        self.pb_apply.setEnabled(self.model.dirty)
+        self.pb_apply_and_close.setEnabled(self.model.dirty)
+
+    def _update_dataset_filter(self):
+        '''repopulate the dataset filter combobox with existing datasets'''
+        all_datasets = set()
+        for dataset, _ in self.model.get_variables():
+            all_datasets.add(dataset)
+        prev_selected_name = self.cbo_dataset_filter.currentText()
+        self.cbo_dataset_filter.clear()
+        self.cbo_dataset_filter.addItem('[All datasets]')
+        for dataset_name in all_datasets:
+            self.cbo_dataset_filter.addItem(dataset_name)
+
+        refound_index = self.cbo_dataset_filter.findText(prev_selected_name)
+        if refound_index > -1:
+            self.cbo_dataset_filter.setCurrentIndex(refound_index)
+        else:
+            self.cbo_dataset_filter.setCurrentIndex(0)
+
+    def _set_dataset_filter(self):
+        index = self.cbo_dataset_filter.currentIndex()
+        if index == 0:
+            self.model.set_dataset_filter(None)
+        else:
+            self.model.set_dataset_filter(str(self.cbo_dataset_filter.currentText()))
 
     def _set_problem_variables(self, list_of_problem_variables):
         '''
@@ -203,13 +251,13 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             # print 'DELETE SET %s' % (node)
             self.project.delete_node(node)
         self.initialize()
-        anything_changed = bool(update_set or create_set or delete_set)
-        update_mainwindow_savestate(anything_changed)
+        something_changed = bool(update_set or create_set or delete_set)
+        update_mainwindow_savestate(something_changed)
         get_mainwindow_instance().emit(SIGNAL('variables_updated'))
         return True
 
     def _edit_variable(self, variable):
-        self.editor.init_for_variable(variable, self.validator)
+        self.editor.init_for_variable(variable, self.validator, self.model.get_variables())
         if self.editor.exec_() == self.editor.Accepted:
             edited_var = self.editor.variable
             for key in edited_var:
@@ -223,9 +271,10 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         if base_on_variable is not None:
             for key in VariablesTableModel.VARIABLE_NON_METADATA_KEYS:
                 var[key] = base_on_variable[key]
-            var['name'] = get_unique_name(var['name'], self.model.get_taken_names())
+            name, dataset = var['name'], var['dataset']
+            var['name'] = get_unique_name(name, self.model.get_variable_names_in_dataset(dataset))
 
-        self.editor.init_for_variable(var, self.validator)
+        self.editor.init_for_variable(var, self.validator, self.model.get_variables())
         if self.editor.exec_() == self.editor.Accepted:
             new_variable = self.editor.variable
             self.model.add_variable(new_variable)
@@ -241,20 +290,14 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         except InvocationException:
             dialog.show_error_message()
 
-    def update_validation_progress(self, ratio):
-        ''' callback to show validation progress '''
-        ratio = 1.0 if ratio > 1.0 else ratio
-        self.progress_validation.setValue(ratio * 100)
-        self.progress_validation.repaint()
-
-    def on_table_right_clicked(self, point):
-        ''' handler for the when users right click on table view '''
-        index = self.view.indexAt(point)
+    def _show_right_click_menu(self, point):
+        ''' handler for the when users right click on table variables_table '''
+        index = self.variables_table.indexAt(point)
         if not index.isValid:
             return
-        self.view.setCurrentIndex(index)
+        self.variables_table.setCurrentIndex(index)
         var = self.model.variables[index.row()]
-        menu = QMenu(self.view)
+        menu = QMenu(self.variables_table)
 
         # Edit variable action
         p = ('edit', 'Edit %s' % var['name'], lambda x=var: self._edit_variable(x), self)
@@ -286,8 +329,8 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         view_dependencies_action = create_qt_action(*p)
 
         if var['inherited']:
-            menu.addAction(edit_action)
-#             menu.addAction(make_local_action)
+#            menu.addAction(edit_action)
+            menu.addAction(make_local_action)
             menu.addAction(clone_action)
             menu.addSeparator()
             menu.addAction(view_dependencies_action)
@@ -306,8 +349,10 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
                     (prototype_node is not None and prototype_node.get('inherited')):
                     # This action will revert the node to the parent state. Show the values
                     # that it will revert to
-                    revert_action.setToolTip('Revert %s to Name: %s, Definition: %s' %
-                                             (var['name'], prototype_node.get('name'), prototype_node.text))
+                    tt = ('Revert %s to Name: %s, Definition: %s' % (var['name'],
+                                                                     prototype_node.get('name'),
+                                                                     prototype_node.text))
+                    revert_action.setToolTip(tt)
                     menu.addAction(revert_action)
                 else:
                     menu.addAction(delete_action)
@@ -316,15 +361,6 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         # Menu constructed, present to user
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
-
-    def check_syntax(self, variable):
-        ''' validates the selected variable '''
-        print 'TODO: validate', variable['name']
-
-    def check_data(self, variable):
-        ''' check the selected variable against data '''
-        print 'TODO: check against data', variable['name']
-
 
 # AUTO WIDGET EVENT HANDLERS
 
@@ -343,23 +379,18 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         else:
             self.close()
 
-    def on_pb_apply_release(self):
-        ''' event handler for when the user clicks the save button '''
-        self._apply_variable_changes()
-        self.close()
-
     def on_pb_validate_selected_released(self):
         ''' User clicked the validate selected button '''
         # Get all the selected variables
         selected_rows = set()
-        map(selected_rows.add, [i.row() for i in self.view.selectedIndexes()])
+        map(selected_rows.add, [i.row() for i in self.variables_table.selectedIndexes()])
 
         # Setup GUI for batch run
         self.pb_cancel_validation.setEnabled(True)
         self._set_problem_variables([])
         self.progress_validation.setValue(0)
         self.group_progress.setVisible(True)
-        self.view.setEnabled(False) # disable selecting variables during run
+        self.variables_table.setEnabled(False) # disable selecting variables during run
         self.group_progress.setTitle('Validating %d variables...' % len(selected_rows))
 
         # Batch process the selected variables
@@ -377,7 +408,7 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         # Setup GUI for investigating results
         self.pb_cancel_validation.setEnabled(False)
         self.progress_validation.setValue(100)
-        self.view.setEnabled(True)
+        self.variables_table.setEnabled(True)
         failed_variables = [(var, msg) for (var, flag, msg) in results if flag is False]
         self._set_problem_variables(failed_variables)
         self._show_problem_variables()
