@@ -8,6 +8,7 @@ from lxml import etree
 from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
 from opus_core.configurations.xml_configuration import get_variable_dataset_and_name, get_variable_name
 from opus_gui.tests.mockup_project import MockupOpusProject
+from opus_gui.util.icon_library import IconLibrary
 
 class VariableSelectorTableModel(QtCore.QAbstractTableModel):
 
@@ -33,6 +34,8 @@ class VariableSelectorTableModel(QtCore.QAbstractTableModel):
 
         self._headers = [self.HEADER_IGNORE, self.HEADER_VARIABLE, self.HEADER_COEFF_NAME,
                          self.HEADER_STARTING_VAL, self.HEADER_FIXED, self.HEADER_DEFINITION]
+
+        self
 
     def init_for_variable_node_list(self, variable_list_node):
         '''
@@ -179,6 +182,10 @@ class VariableSelectorTableModel(QtCore.QAbstractTableModel):
                     definition = definition_node.text or '<empty definition>'
             else:
                 definition = '<unknown definition>'
+
+        if role == Qt.DecorationRole:
+            if header == self.HEADER_VARIABLE:
+                return QVariant(IconLibrary.icon('variable'))
 
         if role == Qt.DisplayRole:
             var_name = get_variable_name(self._variable_nodes[row])
