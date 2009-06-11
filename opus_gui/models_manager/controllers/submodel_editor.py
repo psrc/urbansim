@@ -9,15 +9,16 @@ from lxml.etree import SubElement
 
 from PyQt4 import QtGui, QtCore
 
-from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
+from opus_gui.util.convenience import create_qt_action
 from opus_core.configurations.xml_configuration import get_variable_name
-from opus_gui.util.convenience import dictionary_to_menu, hide_widget_on_value_change,\
-    create_qt_action
+from opus_gui.util.convenience import dictionary_to_menu, hide_widget_on_value_change
+from opus_gui.general_manager.general_manager_functions import get_built_in_variable_nodes
+from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
 
+from opus_gui.main.controllers.dialogs.message_box import MessageBox
+from opus_gui.models_manager.views.ui_submodel_editor import Ui_SubModelEditor
 from opus_gui.models_manager.models.submodel_structure_item import SubmodelStructureItem
 from opus_gui.models_manager.models.variable_selector_table_model import VariableSelectorTableModel
-from opus_gui.models_manager.views.ui_submodel_editor import Ui_SubModelEditor
 
 class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
@@ -287,6 +288,11 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 if node in selected_nodes:
                     variable_node_list.remove(node)
                     variable_node_list.insert(len(variable_node_list), node)
+
+        dataset_variable_nodes['Built-in'] = get_built_in_variable_nodes()
+        for built_in_variable in get_built_in_variable_nodes():
+            if built_in_variable.get('name').strip() in selected_names: # built ins do not have <dataset>.name
+                selected_nodes.append(built_in_variable)
 
         display_func = lambda x, y = selected_nodes: display_node(x, y)
         callback = lambda x, y = selected_nodes: add_if_unselected(x, y)
