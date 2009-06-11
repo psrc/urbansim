@@ -4,10 +4,10 @@
         <file>Images/accept_old.png</file>
         <file>Images/add.png</file>
         <file>Images/add_old.png</file>
+        <file>Images/applications_education_mathematics.png</file>
         <file>Images/application_double.png</file>
         <file>Images/application_edit.png</file>
         <file>Images/application_side_tree.png</file>
-        <file>Images/applications_education_mathematics.png</file>
         <file>Images/arrow_down.png</file>
         <file>Images/arrow_left.png</file>
         <file>Images/arrow_left_red.png</file>
@@ -118,7 +118,7 @@
         <file>Images/tmp_method.png</file>
         <file>Images/tool.png</file>
         <file>Images/tuple.png</file>
-        <file>Images/tuple_light.png</file>
+        <file>Images/variable.png</file>
         <file>Images/variable_library.png</file>
         <file>Images/warning_small.png</file>
         <file>Images/wrench.png</file>
