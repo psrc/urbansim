@@ -151,8 +151,8 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No description</description>
             <variable_list type="variable_list">
-              <variable_spec name=".nrs"/>
-              <variable_spec name=".lru"/>
+              <variable_spec name="gridcell.nrs"/>
+              <variable_spec name="gridcell.lru"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
@@ -214,16 +214,16 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No description</description>
             <variable_list type="variable_list">
-              <variable_spec name=".pcthiwa"/>
-              <variable_spec name=".ln_duw"/>
-              <variable_spec name=".lru"/>
-              <variable_spec name=".bwet"/>
-              <variable_spec name=".cbdtrvl"/>
-              <variable_spec name=".ln_impval"/>
-              <variable_spec name=".bflood"/>
-              <variable_spec name=".bldhw"/>
-              <variable_spec name=".hwy"/>
-              <variable_spec name=".pctdevwal"/>
+              <variable_spec name="gridcell.pcthiwa"/>
+              <variable_spec name="gridcell.ln_duw"/>
+              <variable_spec name="gridcell.lru"/>
+              <variable_spec name="gridcell.bwet"/>
+              <variable_spec name="gridcell.cbdtrvl"/>
+              <variable_spec name="gridcell.ln_impval"/>
+              <variable_spec name="gridcell.bflood"/>
+              <variable_spec name="gridcell.bldhw"/>
+              <variable_spec name="gridcell.hwy"/>
+              <variable_spec name="gridcell.pctdevwal"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
@@ -309,12 +309,12 @@
           <submodel hidden="Children" name="submodel" submodel_id="1" type="submodel">
             <description type="string">Residential</description>
             <variable_list type="variable_list">
-              <variable_spec name=".btt_cbd"/>
-              <variable_spec name=".o_ugb"/>
-              <variable_spec name=".sfc_0"/>
-              <variable_spec name=".le_w"/>
-              <variable_spec name=".prw"/>
-              <variable_spec name=".blimp"/>
+              <variable_spec name="gridcell.btt_cbd"/>
+              <variable_spec name="gridcell.o_ugb"/>
+              <variable_spec name="gridcell.sfc_0"/>
+              <variable_spec name="gridcell.le_w"/>
+              <variable_spec name="gridcell.prw"/>
+              <variable_spec name="gridcell.blimp"/>
             </variable_list>
           </submodel>
         </specification>
@@ -377,14 +377,14 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">Commercial</description>
             <variable_list type="variable_list">
-              <variable_spec name=".blwap_1"/>
-              <variable_spec name=".btt_cbd"/>
-              <variable_spec name=".bart"/>
-              <variable_spec name=".o_ugb"/>
-              <variable_spec name=".ldevsfc"/>
-              <variable_spec name=".le_w"/>
-              <variable_spec name=".prw"/>
-              <variable_spec name=".bltlv"/>
+              <variable_spec name="gridcell.blwap_1"/>
+              <variable_spec name="gridcell.btt_cbd"/>
+              <variable_spec name="gridcell.bart"/>
+              <variable_spec name="gridcell.o_ugb"/>
+              <variable_spec name="gridcell.ldevsfc"/>
+              <variable_spec name="gridcell.le_w"/>
+              <variable_spec name="gridcell.prw"/>
+              <variable_spec name="gridcell.bltlv"/>
             </variable_list>
           </submodel>
         </specification>
@@ -447,11 +447,11 @@
           <submodel hidden="Children" name="submodel" submodel_id="1" type="submodel">
             <description type="string">Industrial</description>
             <variable_list type="variable_list">
-              <variable_spec name=".ldevsfi"/>
-              <variable_spec name=".piw"/>
-              <variable_spec name=".lsfiw"/>
-              <variable_spec name=".ln_duw"/>
-              <variable_spec name=".bltv"/>
+              <variable_spec name="gridcell.ldevsfi"/>
+              <variable_spec name="gridcell.piw"/>
+              <variable_spec name="gridcell.lsfiw"/>
+              <variable_spec name="gridcell.ln_duw"/>
+              <variable_spec name="gridcell.bltv"/>
             </variable_list>
           </submodel>
         </specification>
@@ -631,14 +631,14 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No description</description>
             <variable_list type="variable_list">
-              <variable_spec name=".ruwhhc"/>
-              <variable_spec name=".pmhwwdim"/>
-              <variable_spec name=".yhimu"/>
-              <variable_spec name=".yhihdr"/>
-              <variable_spec name=".plihwwdihi"/>
-              <variable_spec name=".phihwwdili"/>
-              <variable_spec name=".iayb"/>
-              <variable_spec name=".ctir"/>
+              <variable_spec name="household_x_gridcell.ruwhhc"/>
+              <variable_spec name="household_x_gridcell.pmhwwdim"/>
+              <variable_spec name="household_x_gridcell.yhimu"/>
+              <variable_spec name="household_x_gridcell.yhihdr"/>
+              <variable_spec name="household_x_gridcell.plihwwdihi"/>
+              <variable_spec name="household_x_gridcell.phihwwdili"/>
+              <variable_spec name="household_x_gridcell.iayb"/>
+              <variable_spec name="household_x_gridcell.ctir"/>
             </variable_list>
           </submodel>
         </specification>
@@ -748,69 +748,69 @@
             <submodel hidden="Children" name="Lumber and Wood" submodel_id="1" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Other Durable" submodel_id="2" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Food Products" submodel_id="3" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".bltv"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.bltv"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Other Nondurable" submodel_id="4" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Construction" submodel_id="5" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Mining" submodel_id="6" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Transportation" submodel_id="7" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -818,78 +818,78 @@
             <submodel hidden="Children" name="Lumber and Wood" submodel_id="1" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Other Durable" submodel_id="2" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".ble_bw"/>
-                <variable_spec name=".blwap_1"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".blsfcw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.ble_bw"/>
+                <variable_spec name="gridcell.blwap_1"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.blsfcw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Food Products" submodel_id="3" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".bltv"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.bltv"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Other Nondurable" submodel_id="4" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_rew"/>
-                <variable_spec name=".ble_bw"/>
-                <variable_spec name=".blwap_1"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".blsfcw"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_rew"/>
+                <variable_spec name="gridcell.ble_bw"/>
+                <variable_spec name="gridcell.blwap_1"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.blsfcw"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Construction" submodel_id="5" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".ble_bw"/>
-                <variable_spec name=".blwap_1"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".blsfcw"/>
-                <variable_spec name=".bltv"/>
-                <variable_spec name=".bhwy"/>
-                <variable_spec name=".bart"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.ble_bw"/>
+                <variable_spec name="gridcell.blwap_1"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.blsfcw"/>
+                <variable_spec name="gridcell.bltv"/>
+                <variable_spec name="gridcell.bhwy"/>
+                <variable_spec name="gridcell.bart"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Mining" submodel_id="6" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Transportation" submodel_id="7" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".ble_saw"/>
-                <variable_spec name=".blnrsfw"/>
-                <variable_spec name=".bltv"/>
+                <variable_spec name="job_x_gridcell.ble_saw"/>
+                <variable_spec name="gridcell.blnrsfw"/>
+                <variable_spec name="gridcell.bltv"/>
               </variable_list>
             </submodel>
             <submodel hidden="Children" name="Wholesale Trade" submodel_id="8" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".blnrsfw"/>
+                <variable_spec name="gridcell.blnrsfw"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -897,12 +897,12 @@
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No description</description>
               <variable_list type="variable_list">
-                <variable_spec name=".btt_cbd"/>
-                <variable_spec name=".ble_sew"/>
-                <variable_spec name=".blwap_1"/>
-                <variable_spec name=".bpmiw"/>
-                <variable_spec name=".bpliw"/>
-                <variable_spec name=".bltlv"/>
+                <variable_spec name="gridcell.btt_cbd"/>
+                <variable_spec name="gridcell.ble_sew"/>
+                <variable_spec name="gridcell.blwap_1"/>
+                <variable_spec name="gridcell.bpmiw"/>
+                <variable_spec name="gridcell.bpliw"/>
+                <variable_spec name="gridcell.bltlv"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -1162,3 +1162,4 @@
     </scenario>
   </scenario_manager>
 </opus_project>
+
