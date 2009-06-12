@@ -17,172 +17,172 @@
           <submodel hidden="Children" name="civil" submodel_id="2" type="submodel">
             <description type="string">Civil and Quasi-Public</description>
             <variable_list type="variable_list">
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".lnemp10wa"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".is_pre_1940"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.lnemp10wa"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.is_pre_1940"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="commercial" submodel_id="3" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".ln_bldgage"/>
-              <variable_spec name=".art600"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.ln_bldgage"/>
+              <variable_spec name="parcel.art600"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="government" submodel_id="7" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".lnlotsqft"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnemp20tw"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.lnlotsqft"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnemp20tw"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="hospital" submodel_id="9" type="submodel">
             <description type="string">Hospital, Convalescent Center</description>
             <variable_list type="variable_list">
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".lnlotsqft"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".ln_bldgage"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.lnlotsqft"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.ln_bldgage"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="industrial" submodel_id="10" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".ln_bldgage"/>
-              <variable_spec name=".hbwavgtmda"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.ln_bldgage"/>
+              <variable_spec name="parcel.hbwavgtmda"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="apartment" submodel_id="14" type="submodel">
             <description type="string">Multi-Family Residential (Apartment)</description>
             <variable_list type="variable_list">
-              <variable_spec name=".is_pre_1940"/>
-              <variable_spec name=".hbwavgtmda"/>
-              <variable_spec name=".lnpopden"/>
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".lnavginc"/>
-              <variable_spec name=".lnemp20wa"/>
-              <variable_spec name=".lnemp10wa"/>
-              <variable_spec name=".lnemp20tw"/>
-              <variable_spec name=".lnemp30tw"/>
-              <variable_spec name=".lnemp10da"/>
-              <variable_spec name=".lnemp20da"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".ln_bldgage"/>
-              <variable_spec name=".art300"/>
+              <variable_spec name="parcel.is_pre_1940"/>
+              <variable_spec name="parcel.hbwavgtmda"/>
+              <variable_spec name="parcel.lnpopden"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.lnavginc"/>
+              <variable_spec name="parcel.lnemp20wa"/>
+              <variable_spec name="parcel.lnemp10wa"/>
+              <variable_spec name="parcel.lnemp20tw"/>
+              <variable_spec name="parcel.lnemp30tw"/>
+              <variable_spec name="parcel.lnemp10da"/>
+              <variable_spec name="parcel.lnemp20da"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.ln_bldgage"/>
+              <variable_spec name="parcel.art300"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="condominium" submodel_id="15" type="submodel">
             <description type="string">Condominium Residential</description>
             <variable_list type="variable_list">
-              <variable_spec name=".lnavginc"/>
-              <variable_spec name=".lnemp10da"/>
-              <variable_spec name=".lnemp20da"/>
-              <variable_spec name=".lnemp30da"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".art600"/>
-              <variable_spec name=".hwy2000"/>
+              <variable_spec name="parcel.lnavginc"/>
+              <variable_spec name="parcel.lnemp10da"/>
+              <variable_spec name="parcel.lnemp20da"/>
+              <variable_spec name="parcel.lnemp30da"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.art600"/>
+              <variable_spec name="parcel.hwy2000"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="office" submodel_id="18" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".hbwavgtmda"/>
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".lnemp10da"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".lnlotsqft"/>
-              <variable_spec name=".ln_bldgage"/>
+              <variable_spec name="parcel.hbwavgtmda"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.lnemp10da"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.lnlotsqft"/>
+              <variable_spec name="parcel.ln_bldgage"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="park_and_open_space" submodel_id="19" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".art300"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.art300"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="parking" submodel_id="20" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lnempden"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".hwy200"/>
+              <variable_spec name="parcel.lnempden"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.hwy200"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="single_family_residential" submodel_id="24" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".is_pre_1940"/>
-              <variable_spec name=".hbwavgtmda"/>
-              <variable_spec name=".lnpopden"/>
-              <variable_spec name=".lnavginc"/>
-              <variable_spec name=".lnemp10da"/>
-              <variable_spec name=".lnemp20da"/>
-              <variable_spec name=".lnemp30da"/>
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".ln_invfar"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".lnsqft"/>
-              <variable_spec name=".ln_bldgage"/>
-              <variable_spec name=".art600"/>
-              <variable_spec name=".art300"/>
-              <variable_spec name=".hwy2000"/>
+              <variable_spec name="parcel.is_pre_1940"/>
+              <variable_spec name="parcel.hbwavgtmda"/>
+              <variable_spec name="parcel.lnpopden"/>
+              <variable_spec name="parcel.lnavginc"/>
+              <variable_spec name="parcel.lnemp10da"/>
+              <variable_spec name="parcel.lnemp20da"/>
+              <variable_spec name="parcel.lnemp30da"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.ln_invfar"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.lnsqft"/>
+              <variable_spec name="parcel.ln_bldgage"/>
+              <variable_spec name="parcel.art600"/>
+              <variable_spec name="parcel.art300"/>
+              <variable_spec name="parcel.hwy2000"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="transportation" submodel_id="25" type="submodel">
             <description type="string">Transportation, Communication, Public Utilities</description>
             <variable_list type="variable_list">
-              <variable_spec name=".lnemp30tw"/>
-              <variable_spec name=".ln_invfar"/>
+              <variable_spec name="parcel.lnemp30tw"/>
+              <variable_spec name="parcel.ln_invfar"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="vacant_developable" submodel_id="26" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnemp10wa"/>
-              <variable_spec name=".lnemp10da"/>
-              <variable_spec name=".lnavginc"/>
-              <variable_spec name=".art300"/>
-              <variable_spec name=".hwy2000"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnemp10wa"/>
+              <variable_spec name="parcel.lnemp10da"/>
+              <variable_spec name="parcel.lnavginc"/>
+              <variable_spec name="parcel.art300"/>
+              <variable_spec name="parcel.hwy2000"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="warehousing" submodel_id="28" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".lngcdacbd"/>
-              <variable_spec name=".lnempden"/>
+              <variable_spec name="parcel.lngcdacbd"/>
+              <variable_spec name="parcel.lnempden"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
           <submodel hidden="Children" name="mixed_use" submodel_id="30" type="submodel">
             <variable_list type="variable_list">
-              <variable_spec name=".hbwavgtmda"/>
-              <variable_spec name=".lnemp20tw"/>
-              <variable_spec name=".lnunits"/>
-              <variable_spec name=".ln_bldgage"/>
+              <variable_spec name="parcel.hbwavgtmda"/>
+              <variable_spec name="parcel.lnemp20tw"/>
+              <variable_spec name="parcel.lnunits"/>
+              <variable_spec name="parcel.ln_bldgage"/>
               <variable_spec name="constant"/>
             </variable_list>
           </submodel>
@@ -194,7 +194,7 @@
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
-                <variable_spec name=".blngcdacbd"/>
+                <variable_spec name="building.blngcdacbd"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -202,7 +202,7 @@
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
-                <variable_spec name=".blngcdacbd"/>
+                <variable_spec name="building.blngcdacbd"/>
               </variable_list>
             </submodel>
           </submodel_group>
@@ -213,7 +213,7 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
-              <variable_spec name=".ln_residential_units"/>
+              <variable_spec name="building.ln_residential_units"/>
             </variable_list>
           </submodel>
         </specification>
@@ -370,3 +370,4 @@
     </simulation_runs>
   </results_manager>
 </opus_project>
+
