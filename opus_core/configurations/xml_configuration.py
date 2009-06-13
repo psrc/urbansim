@@ -39,6 +39,9 @@ def node_identity_string(node):
 
 def strip_comments(tree_root):
     ''' Strip a tree of all comment nodes '''
+    # lxml includes comments when iterating over child nodes, so in order to avoid having
+    # to constantly check if an item is a comment or an element we strip all comments.
+    # the obvious drawback is that any comments are stripped from the XML.
     for node in tree_root.getiterator():
         if isinstance(node, _Comment):
             node.getparent().remove(node)
@@ -69,24 +72,6 @@ def get_variable_name(variable_node):
 def get_variable_dataset(variable_node):
     ''' short convenience method for getting just the variable dataset '''
     return get_variable_dataset_and_name(variable_node)[0]
-
-def convert_variable_list_to_data(variable_list_node):
-    '''
-    Convert a list of variable names to Python data.
-    This function is external because it's functionality is used in both the GUI and in the
-    XMLConfiguration class.
-
-    Each variable in the variable list is given as a <variable_spec> node.
-    '''
-    # tiny helper for returning coefficient name, variable name tuples or just variable name
-    def name_or_tuple(var_node):
-        name = get_variable_name(var_node)
-        coeff_name = var_node.get('coefficient_name')
-        if coeff_name:
-            return (name, coeff_name)
-        return name
-    f = lambda x: x.get('ignore') != 'True'
-    return map(name_or_tuple, filter(f, variable_list_node))
 
 class XMLConfiguration(object):
     """
@@ -304,25 +289,26 @@ class XMLConfiguration(object):
                 all_vars.append(var_def)
         # sort the list of variables to make it easier to test the results
         all_vars.sort()
-        # fetch list of submodels
         model_node = self._find_node('model_manager/models/model', model_name)
+        # group_nodes is a dict where the keys are the groups and the values are a list of
+        # submodel nodes in that group
         group_nodes = dict((node.get('name'), node.findall('submodel'))
                            for node in model_node.findall('specification/submodel_group'))
+        # submodel nodes that are directly under the model are assumed to be ungrouped
         ungrouped_nodes = model_node.findall('specification/submodel')
 
-        # result wants to have a dict of submodels, indexed by their 'submodel id'
         result = {}
         result['_definition_'] = all_vars
 
-        # select which list of submodels to iterate over. If a group is given, use submodels for
-        # that group. Otherwise use the ungrouped submodels
+        # iterate over just the submodels in the given group (or over the ungrouped if no group is
+        # provided
         submodel_nodes = ungrouped_nodes
         if model_group is not None:
             submodel_nodes = group_nodes[model_group]
 
         for submodel_node in submodel_nodes:
             submodel_id = int(submodel_node.get('submodel_id'))
-            # some submodels can have a dictionary of equations instead of a list of variables
+            # group by equations if there are any, otherwise just give a list
             equation_nodes = submodel_node.findall('equation')
             if equation_nodes:
                 submodel_equations = {}
@@ -652,7 +638,7 @@ class XMLConfiguration(object):
         elif type_name=='selectable_list':
             return self._convert_list_to_data(node)
         elif type_name=='variable_list':
-            return convert_variable_list_to_data(node)
+            return self._convert_variable_list_to_data(node)
         elif type_name=='tuple':
             return self._convert_tuple_to_data(node)
         elif type_name=='list':
@@ -750,6 +736,24 @@ class XMLConfiguration(object):
             return result_dict
         else:
             return result_list
+
+    def _convert_variable_list_to_data(self, variable_list_node):
+        '''
+        Convert a list of variable names to Python data.
+        This function is external because it's functionality is used in both the GUI and in the
+        XMLConfiguration class.
+
+        Each variable in the variable list is given as a <variable_spec> node.
+        '''
+        # tiny helper for returning coefficient name, variable name tuples or just variable name
+        def name_or_tuple(var_node):
+            name = get_variable_name(var_node)
+            coeff_name = var_node.get('coefficient_name')
+            if coeff_name:
+                return (name, coeff_name)
+            return name
+        f = lambda x: x.get('ignore') != 'True'
+        return map(name_or_tuple, filter(f, variable_list_node))
 
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
