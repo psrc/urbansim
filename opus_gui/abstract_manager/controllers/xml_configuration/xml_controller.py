@@ -191,7 +191,7 @@ class XmlController(object):
             return
         item = self.selected_item()
         node = item.node
-        taken_names = [n.get('name') for n in n.getparent().getchildren() if not n is node]
+        taken_names = [n.get('name') for n in node.getparent().getchildren() if not n is node]
         dialog = RenameDialog(node.get('name'), taken_names, self.view)
         if dialog.exec_() == dialog.Accepted:
             node.set('name', dialog.accepted_name)
