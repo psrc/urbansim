@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>498</height>
+    <width>716</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -165,35 +165,112 @@ p, li { white-space: pre-wrap; }
      </property>
      <widget class="QWidget" name="tab_variable_selector" >
       <property name="autoFillBackground" >
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <attribute name="title" >
        <string>Variables</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout_6" >
        <item>
         <widget class="QSplitter" name="split_struct_variables" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QTreeWidget" name="tree_structure_selector" >
+         <widget class="QStackedWidget" name="stack_struct_picker" >
           <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Maximum" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
-           <string/>
+          <property name="currentIndex" >
+           <number>0</number>
           </property>
-          <property name="whatsThis" >
-           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+          <widget class="QWidget" name="picker" >
+           <layout class="QVBoxLayout" name="verticalLayout_4" >
+            <property name="sizeConstraint" >
+             <enum>QLayout::SetMinimumSize</enum>
+            </property>
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8" >
+              <item>
+               <widget class="QLabel" name="label_3" >
+                <property name="text" >
+                 <string>Show variables from:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cbo_dataset_filter" >
+                <property name="whatsThis" >
+                 <string>Filter what variables to display for adding by dataset.
+The list of variables is not filtered if [All datasets] is selected.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="lst_available_variables" >
+              <property name="whatsThis" >
+               <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The list of available model variables that can be added to the the right side list.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This list only shows variables that are not already selected and that belong the selected dataset.&lt;/p>&lt;/body>&lt;/html></string>
+              </property>
+              <property name="selectionMode" >
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_add_variable" >
+              <property name="whatsThis" >
+               <string>Add the selected variable(s) to the right side list.</string>
+              </property>
+              <property name="text" >
+               <string>Add >></string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="structure" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="MinimumExpanding" hsizetype="Maximum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="sizeConstraint" >
+             <enum>QLayout::SetMinimumSize</enum>
+            </property>
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QTreeWidget" name="tree_structure_selector" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Expanding" hsizetype="MinimumExpanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string/>
+              </property>
+              <property name="whatsThis" >
+               <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
@@ -201,21 +278,43 @@ p, li { white-space: pre-wrap; }
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The hiearchical structure, as well as the names of these nodes can be edited &lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">under the tab "Edit Nests and Equations"&lt;/p>&lt;/body>&lt;/html></string>
-          </property>
-          <column>
-           <property name="text" >
-            <string>Name</string>
-           </property>
-          </column>
-          <column>
-           <property name="text" >
-            <string>ID</string>
-           </property>
-          </column>
+              </property>
+              <column>
+               <property name="text" >
+                <string>Name</string>
+               </property>
+              </column>
+              <column>
+               <property name="text" >
+                <string>ID</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
-         <widget class="QTableView" name="table_selected_variables" >
-          <property name="whatsThis" >
-           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+         <widget class="QFrame" name="frame" >
+          <property name="frameShape" >
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow" >
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QTableView" name="table_selected_variables" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="whatsThis" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Tahoma'; font-size:8.25pt; font-weight:400; font-style:normal;">
@@ -230,37 +329,69 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Please refer to the Opus Manual for a description of "starting values" and "fixed" (described under Choice Models)&lt;/p>
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">The last column shows the variable definition. Note that variables are defined by both the dataset and the name. The displayed definition &lt;span style=" font-style:italic;">might&lt;/span> be for another variable than what is selected by the modeling system at run time. &lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.&lt;/p>&lt;/body>&lt;/html></string>
-          </property>
-          <property name="selectionMode" >
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
-          <property name="selectionBehavior" >
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="showGrid" >
-           <bool>true</bool>
-          </property>
-          <property name="wordWrap" >
-           <bool>false</bool>
-          </property>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">You can remove a variable from the list by &lt;span style=" font-weight:600;">right clicking &lt;/span>and selecting&lt;span style=" font-weight:600;"> "Remove &amp;lt;name&amp;gt;" &lt;/span>(the name of the variable under the cursor will be shown instead of &amp;lt;name&amp;gt;). To remove more than one variable: click the Add/Remove variables button, select which variables you want to delete and click &lt;span style=" font-weight:600;">"&amp;lt;&amp;lt; Remove selected"&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="selectionMode" >
+              <enum>QAbstractItemView::ExtendedSelection</enum>
+             </property>
+             <property name="selectionBehavior" >
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="showGrid" >
+              <bool>true</bool>
+             </property>
+             <property name="wordWrap" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_remove_variable" >
+             <property name="toolTip" >
+              <string>Remove the selected variable</string>
+             </property>
+             <property name="whatsThis" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Remove the selected variables from the equation / submodel.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable a variable you can click the "&lt;span style=" font-weight:600;">ignore&lt;/span>" checkbox on the far left side of the list.&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="text" >
+              <string>&lt;&lt; Remove selected</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
        <item>
         <widget class="QFrame" name="frame_selection_buttons" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5" >
           <item>
-           <widget class="QPushButton" name="pb_add_variable" >
+           <widget class="QPushButton" name="pb_show_picker" >
             <property name="toolTip" >
              <string>Add a variable from the expression librarry to the current list</string>
             </property>
-            <property name="text" >
-             <string>Add variable from library...</string>
+            <property name="whatsThis" >
+             <string>Toggles the list of available variable models that can be added to the submodel.</string>
             </property>
-            <property name="icon" >
-             <iconset>
-              <normaloff>:/Images/Images/arrow_right.png</normaloff>:/Images/Images/arrow_right.png</iconset>
+            <property name="text" >
+             <string>Add/Remove variables...</string>
+            </property>
+            <property name="checkable" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -278,24 +409,9 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pb_remove_variable" >
-            <property name="toolTip" >
-             <string>Remove the selected variable</string>
-            </property>
-            <property name="whatsThis" >
-             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Remove the variable.&lt;/span>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable it you can click the "ignore" checkbox.&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
+           <widget class="QCheckBox" name="cb_show_advanced_parameters" >
             <property name="text" >
-             <string>Remove selected variable</string>
-            </property>
-            <property name="icon" >
-             <iconset>
-              <normaloff>:/Images/Images/arrow_left_red.png</normaloff>:/Images/Images/arrow_left_red.png</iconset>
+             <string>Show advanced variable parameters</string>
             </property>
            </widget>
           </item>

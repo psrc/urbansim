@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_trunk\opus_gui\models_manager\views\submodel_editor.ui'
 #
-# Created: Mon Jun 08 14:59:52 2009
+# Created: Fri Jun 12 10:52:52 2009
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_SubModelEditor(object):
     def setupUi(self, SubModelEditor):
         SubModelEditor.setObjectName("SubModelEditor")
-        SubModelEditor.resize(728, 498)
+        SubModelEditor.resize(716, 520)
         SubModelEditor.setModal(True)
         self.verticalLayout_2 = QtGui.QVBoxLayout(SubModelEditor)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -68,51 +68,106 @@ class Ui_SubModelEditor(object):
         self.tab_widget.setTabShape(QtGui.QTabWidget.Rounded)
         self.tab_widget.setObjectName("tab_widget")
         self.tab_variable_selector = QtGui.QWidget()
-        self.tab_variable_selector.setAutoFillBackground(True)
+        self.tab_variable_selector.setAutoFillBackground(False)
         self.tab_variable_selector.setObjectName("tab_variable_selector")
-        self.verticalLayout = QtGui.QVBoxLayout(self.tab_variable_selector)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout_6 = QtGui.QVBoxLayout(self.tab_variable_selector)
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.split_struct_variables = QtGui.QSplitter(self.tab_variable_selector)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.split_struct_variables.sizePolicy().hasHeightForWidth())
-        self.split_struct_variables.setSizePolicy(sizePolicy)
         self.split_struct_variables.setOrientation(QtCore.Qt.Horizontal)
         self.split_struct_variables.setObjectName("split_struct_variables")
-        self.tree_structure_selector = QtGui.QTreeWidget(self.split_struct_variables)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Expanding)
+        self.stack_struct_picker = QtGui.QStackedWidget(self.split_struct_variables)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.stack_struct_picker.sizePolicy().hasHeightForWidth())
+        self.stack_struct_picker.setSizePolicy(sizePolicy)
+        self.stack_struct_picker.setObjectName("stack_struct_picker")
+        self.picker = QtGui.QWidget()
+        self.picker.setObjectName("picker")
+        self.verticalLayout_4 = QtGui.QVBoxLayout(self.picker)
+        self.verticalLayout_4.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
+        self.verticalLayout_4.setMargin(0)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.label_3 = QtGui.QLabel(self.picker)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_8.addWidget(self.label_3)
+        self.cbo_dataset_filter = QtGui.QComboBox(self.picker)
+        self.cbo_dataset_filter.setObjectName("cbo_dataset_filter")
+        self.horizontalLayout_8.addWidget(self.cbo_dataset_filter)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_8)
+        self.lst_available_variables = QtGui.QListWidget(self.picker)
+        self.lst_available_variables.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.lst_available_variables.setObjectName("lst_available_variables")
+        self.verticalLayout_4.addWidget(self.lst_available_variables)
+        self.pb_add_variable = QtGui.QPushButton(self.picker)
+        self.pb_add_variable.setObjectName("pb_add_variable")
+        self.verticalLayout_4.addWidget(self.pb_add_variable)
+        self.stack_struct_picker.addWidget(self.picker)
+        self.structure = QtGui.QWidget()
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.structure.sizePolicy().hasHeightForWidth())
+        self.structure.setSizePolicy(sizePolicy)
+        self.structure.setObjectName("structure")
+        self.verticalLayout_7 = QtGui.QVBoxLayout(self.structure)
+        self.verticalLayout_7.setSpacing(6)
+        self.verticalLayout_7.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
+        self.verticalLayout_7.setMargin(0)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.tree_structure_selector = QtGui.QTreeWidget(self.structure)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tree_structure_selector.sizePolicy().hasHeightForWidth())
         self.tree_structure_selector.setSizePolicy(sizePolicy)
         self.tree_structure_selector.setObjectName("tree_structure_selector")
-        self.table_selected_variables = QtGui.QTableView(self.split_struct_variables)
+        self.verticalLayout_7.addWidget(self.tree_structure_selector)
+        self.stack_struct_picker.addWidget(self.structure)
+        self.frame = QtGui.QFrame(self.split_struct_variables)
+        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.verticalLayout = QtGui.QVBoxLayout(self.frame)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.table_selected_variables = QtGui.QTableView(self.frame)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.table_selected_variables.sizePolicy().hasHeightForWidth())
+        self.table_selected_variables.setSizePolicy(sizePolicy)
         self.table_selected_variables.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.table_selected_variables.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.table_selected_variables.setShowGrid(True)
         self.table_selected_variables.setWordWrap(False)
         self.table_selected_variables.setObjectName("table_selected_variables")
-        self.verticalLayout.addWidget(self.split_struct_variables)
+        self.verticalLayout.addWidget(self.table_selected_variables)
+        self.pb_remove_variable = QtGui.QPushButton(self.frame)
+        self.pb_remove_variable.setObjectName("pb_remove_variable")
+        self.verticalLayout.addWidget(self.pb_remove_variable)
+        self.verticalLayout_6.addWidget(self.split_struct_variables)
         self.frame_selection_buttons = QtGui.QFrame(self.tab_variable_selector)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_selection_buttons.sizePolicy().hasHeightForWidth())
+        self.frame_selection_buttons.setSizePolicy(sizePolicy)
         self.frame_selection_buttons.setObjectName("frame_selection_buttons")
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_selection_buttons)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.pb_add_variable = QtGui.QPushButton(self.frame_selection_buttons)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/Images/Images/arrow_right.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pb_add_variable.setIcon(icon)
-        self.pb_add_variable.setObjectName("pb_add_variable")
-        self.horizontalLayout_5.addWidget(self.pb_add_variable)
+        self.pb_show_picker = QtGui.QPushButton(self.frame_selection_buttons)
+        self.pb_show_picker.setCheckable(True)
+        self.pb_show_picker.setObjectName("pb_show_picker")
+        self.horizontalLayout_5.addWidget(self.pb_show_picker)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem)
-        self.pb_remove_variable = QtGui.QPushButton(self.frame_selection_buttons)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/Images/Images/arrow_left_red.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pb_remove_variable.setIcon(icon1)
-        self.pb_remove_variable.setObjectName("pb_remove_variable")
-        self.horizontalLayout_5.addWidget(self.pb_remove_variable)
-        self.verticalLayout.addWidget(self.frame_selection_buttons)
+        self.cb_show_advanced_parameters = QtGui.QCheckBox(self.frame_selection_buttons)
+        self.cb_show_advanced_parameters.setObjectName("cb_show_advanced_parameters")
+        self.horizontalLayout_5.addWidget(self.cb_show_advanced_parameters)
+        self.verticalLayout_6.addWidget(self.frame_selection_buttons)
         self.tab_widget.addTab(self.tab_variable_selector, "")
         self.tab_structure_editor = QtGui.QWidget()
         self.tab_structure_editor.setAutoFillBackground(False)
@@ -161,6 +216,7 @@ class Ui_SubModelEditor(object):
 
         self.retranslateUi(SubModelEditor)
         self.tab_widget.setCurrentIndex(0)
+        self.stack_struct_picker.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(SubModelEditor)
 
     def retranslateUi(self, SubModelEditor):
@@ -195,6 +251,18 @@ class Ui_SubModelEditor(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Can be used to give a brief description of the submodel.</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("SubModelEditor", "Show variables from:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbo_dataset_filter.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "Filter what variables to display for adding by dataset.\n"
+"The list of variables is not filtered if [All datasets] is selected.", None, QtGui.QApplication.UnicodeUTF8))
+        self.lst_available_variables.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Tahoma\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The list of available model variables that can be added to the the right side list.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This list only shows variables that are not already selected and that belong the selected dataset.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_add_variable.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "Add the selected variable(s) to the right side list.", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_add_variable.setText(QtGui.QApplication.translate("SubModelEditor", "Add >>", None, QtGui.QApplication.UnicodeUTF8))
         self.tree_structure_selector.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -220,17 +288,22 @@ class Ui_SubModelEditor(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Please refer to the Opus Manual for a description of \"starting values\" and \"fixed\" (described under Choice Models)</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">The last column shows the variable definition. Note that variables are defined by both the dataset and the name. The displayed definition <span style=\" font-style:italic;\">might</span> be for another variable than what is selected by the modeling system at run time. </p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.pb_add_variable.setToolTip(QtGui.QApplication.translate("SubModelEditor", "Add a variable from the expression librarry to the current list", None, QtGui.QApplication.UnicodeUTF8))
-        self.pb_add_variable.setText(QtGui.QApplication.translate("SubModelEditor", "Add variable from library...", None, QtGui.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">This can only happen if you have multiple variables with the same name (but different datasets) in your expression library.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">You can remove a variable from the list by <span style=\" font-weight:600;\">right clicking </span>and selecting<span style=\" font-weight:600;\"> \"Remove &lt;name&gt;\" </span>(the name of the variable under the cursor will be shown instead of &lt;name&gt;). To remove more than one variable: click the Add/Remove variables button, select which variables you want to delete and click <span style=\" font-weight:600;\">\"&lt;&lt; Remove selected\"</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_remove_variable.setToolTip(QtGui.QApplication.translate("SubModelEditor", "Remove the selected variable", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_remove_variable.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Remove the variable.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable it you can click the \"ignore\" checkbox.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.pb_remove_variable.setText(QtGui.QApplication.translate("SubModelEditor", "Remove selected variable", None, QtGui.QApplication.UnicodeUTF8))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Remove the selected variables from the equation / submodel.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\">Note that any extra information such as starting values or coefficient names are lost when removing the variable. To temporarly disable a variable you can click the \"<span style=\" font-weight:600;\">ignore</span>\" checkbox on the far left side of the list.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_remove_variable.setText(QtGui.QApplication.translate("SubModelEditor", "<< Remove selected", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_show_picker.setToolTip(QtGui.QApplication.translate("SubModelEditor", "Add a variable from the expression librarry to the current list", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_show_picker.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "Toggles the list of available variable models that can be added to the submodel.", None, QtGui.QApplication.UnicodeUTF8))
+        self.pb_show_picker.setText(QtGui.QApplication.translate("SubModelEditor", "Add/Remove variables...", None, QtGui.QApplication.UnicodeUTF8))
+        self.cb_show_advanced_parameters.setText(QtGui.QApplication.translate("SubModelEditor", "Show advanced variable parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_variable_selector), QtGui.QApplication.translate("SubModelEditor", "Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.pb_create_nest.setWhatsThis(QtGui.QApplication.translate("SubModelEditor", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
