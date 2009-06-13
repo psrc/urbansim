@@ -50,7 +50,7 @@ def get_variable_nodes_per_dataset(project, skip_builtin = False):
     var_nodes_per_dataset = {}
     for variable_node in expression_library_node.findall('variable'):
         dataset_name = get_variable_dataset(variable_node)
-        if dataset_name == '':
+        if not dataset_name:
             if skip_builtin:
                 continue
             else:
