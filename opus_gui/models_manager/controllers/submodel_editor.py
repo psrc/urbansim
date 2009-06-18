@@ -26,13 +26,13 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
     '''
     Submodel Editing dialog.
     The editor support three different structures of submodels:
-     I call these structures Plain Structures, Equation Structures and Nested Structures
-     The Plain Structures are submodels that only have a variable list.
-     The Equation Structures are submodels that have one or more <equation>, with each equation
-      having it's own variable list.
-     The Nested Structures have one or more levels of <nest>:s. Each nest can either have an
-      <equation> (that in turn have a variable list) or another nest.
-      Nests can not have variable lists themselves.
+    I call these structures Plain Structures, Equation Structures and Nested Structures
+    The Plain Structures are submodels that only have a variable list.
+    The Equation Structures are submodels that have one or more <equation>, with each equation
+    having it's own variable list.
+    The Nested Structures have one or more levels of <nest>:s. Each nest can either have an
+    <equation> (that in turn have a variable list) or another nest.
+    Nests can not have variable lists themselves.
 
     The assignment of variables happen on either the different <equation>:s (in the case of
     Equation Structures and Nested Structures) or on the submodel itself if it has a Plain Structure
@@ -45,10 +45,11 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         QtGui.QDialog.__init__(self, parent_widget)
         self.setupUi(self)
 
+
         self.project = project
         self.submodel_node = None # the submodel that we are editing (a copy of actual submodel node)
         self.active_variables_node = None
-        self.selector_model = VariableSelectorTableModel(project)
+        self.selector_table_model = VariableSelectorTableModel(project)
 
         self.tree_structure_editor.header().setStretchLastSection(True)
         self.tree_structure_editor.header().setMinimumWidth(50)
@@ -60,14 +61,14 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
         S = QtCore.SIGNAL # temporarily use a shorter name for all the connections below
 
-        self.connect(self.selector_model, S('layoutChanged()'), self._selector_model_column_resize)
+        self.connect(self.selector_table_model, S('layoutChanged()'), self._selector_model_column_resize)
         signal = S("currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)")
         self.connect(self.tree_structure_selector, signal, self._change_structure_node)
         signal = S('currentIndexChanged(int)')
         self.connect(self.cbo_dataset_filter, signal, self._update_available_variables)
 
         # Setup Variable Selector Table
-        self.table_selected_variables.setModel(self.selector_model)
+        self.table_selected_variables.setModel(self.selector_table_model)
         self.table_selected_variables.horizontalHeader().setStretchLastSection(True)
         self.table_selected_variables.verticalHeader().hide()
         self.table_selected_variables.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -81,7 +82,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
         self.connect(self.buttonBox, S('rejected()'), self.reject)
         self.connect(self.buttonBox, S('accepted()'), self.validate_submodel_and_accept)
-        # it has been found that the label "OK" can be confusing when switching between the structure
+        # the label "OK" can be confusing when switching between the structure
         # editor and the variable selector. Some users clicked "OK" to confirm the structure changes
         # Therefore we set a more explicit label.
         self.buttonBox.button(self.buttonBox.Ok).setText('Save and Close')
@@ -115,11 +116,11 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         self._apply_selected_variables(self.active_variables_node)
         self.active_variables_node = variable_list_node
 
-        self.selector_model.clear()
+        self.selector_table_model.clear()
 
         if variable_list_node is not None:
             for variable_spec_node in variable_list_node:
-                self.selector_model.add_variable_spec_node(variable_spec_node)
+                self.selector_table_model.add_variable_spec_node(variable_spec_node)
             self.table_selected_variables.setEnabled(True)
             self._selector_model_column_resize()
             self.pb_show_picker.setEnabled(True)
@@ -130,7 +131,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
     def _apply_selected_variables(self, variables_node):
         if variables_node is None:
             return
-        self.selector_model.apply_selected_variables(variables_node)
+        self.selector_table_model.apply_selected_variables(variables_node)
 
     def _update_submodel_structure_trees(self):
         ''' updates both of the tree widgets to show the structure of self.submodel_node '''
@@ -175,7 +176,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
     def _selector_model_column_resize(self):
         ''' updates the column widths whenever there has been a layout change to the model '''
-        self.selector_model.sort_variables_by_name()
+        self.selector_table_model.sort_variables_by_name()
         self.table_selected_variables.resizeRowsToContents()
         for col in [0, 3, 4]:
             self.table_selected_variables.resizeColumnToContents(col)
@@ -279,7 +280,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 self.add_variable(node)
 
         dataset_variable_nodes = get_variable_nodes_per_dataset(self.project)
-        selected_names = map(get_variable_name, self.selector_model._variable_nodes)
+        selected_names = map(get_variable_name, self.selector_table_model._variable_nodes)
         selected_nodes = []
 
         for variable_node_list in dataset_variable_nodes.values():
@@ -312,7 +313,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         index_under_cursor = self.table_selected_variables.indexAt(point)
         if index_under_cursor.isValid():
             row = index_under_cursor.row()
-            variable_node = self.selector_model.get_variable(row)
+            variable_node = self.selector_table_model.get_variable(row)
             self.table_selected_variables.selectRow(row)
             action = create_qt_action(None, 'Remove %s' % get_variable_name(variable_node),
                                       self._remove_selected_variables,
@@ -335,7 +336,7 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
             dataset_filter = str(self.cbo_dataset_filter.currentText())
         else:
             dataset_filter = None
-        selected_variable_names = [node.get('name') for node in self.selector_model._variable_nodes]
+        selected_variable_names = [node.get('name') for node in self.selector_table_model._variable_nodes]
 
         available_variable_nodes = []
         variable_nodes_per_dataset = get_variable_nodes_per_dataset(self.project)
@@ -381,10 +382,12 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
             self.table_selected_variables.model().removeRow(row)
         self._update_available_variables()
 
-    def _set_selector_mode(self, advanced_mode):
-        # updates the selector table to show only the basic data if advanced_mode is True
+    def _show_advanced_parameters(self, set_advanced_visible = None):
+        # updates the selector table to show only the basic data if set_advanced_visible is True
         # otherwise all available data is shown
-        if advanced_mode:
+        if set_advanced_visible is None:
+            set_advanced_visible = self.cb_show_advanced_parameters.isChecked()
+        if set_advanced_visible:
             for column in range(5):
                 self.table_selected_variables.showColumn(column)
         else:
@@ -395,14 +398,25 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 else:
                     self.table_selected_variables.showColumn(column)
 
-    def _unhide_columns(self):
-        # show or hide certain columns depending on the "Show advanced parameters" checkbox
-        if self.cb_show_advanced_parameters.isChecked():
-            for col in range(5): # show all columns
-                self.table_selected_variables.showColumn(col)
+    def _set_picker_visible(self, visible):
+        # shows / hides the variable picker
+        # visible =
+        if visible:
+            self.stack_struct_picker.setCurrentIndex(0)
+            if self._in_simple_mode():
+                self.split_struct_variables.setSizes([1, 1])
+            # hide unnecessary information while picking variables
+            self._show_advanced_parameters(False)
         else:
-            # advanced columns are 0, 2, 3, 4
-            advanced_columns = [0, 2, 3]
+            self.stack_struct_picker.setCurrentIndex(1)
+            if self._in_simple_mode():
+                self.split_struct_variables.setSizes([0, 10])
+            self._show_advanced_parameters()
+            # sometimes the table gets messed up when shown again so force refresh
+            self.selector_table_model.emit(QtCore.SIGNAL("layoutChanged()"))
+        self.cb_show_advanced_parameters.setEnabled(not visible)
+        self.pb_remove_variable.setVisible(visible)
+        self.pb_show_picker.setChecked(visible)
 
     def update_model_nested_structure(self, node = None):
         '''
@@ -467,12 +481,13 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         else:
             self.pb_update_model_structure.setEnabled(False)
         self._update_dataset_filter_list()
-        self._set_selector_mode(self.cb_show_advanced_parameters.isChecked())
+        self._show_advanced_parameters()
+        self._set_picker_visible(False)
 
 
     def add_variable(self, variable_definition_node):
         ''' create a new variable_spec node based on a given variable_def node and add it '''
-        self.selector_model.add_variable_from_definition_node(variable_definition_node)
+        self.selector_table_model.add_variable_from_definition_node(variable_definition_node)
 
     def on_tree_submodel_structure_currentItemChanged(self, current, previous):
         # change the variables of the selector table when the user clicks on a structure element
@@ -496,25 +511,8 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
 
     def on_pb_show_picker_released(self):
         self._update_available_variables()
-        if self.pb_show_picker.isChecked():
-            # showing picker
-            self.stack_struct_picker.setCurrentIndex(0)
-            if self._in_simple_mode():
-                self.split_struct_variables.setSizes([1, 1])
-            self.pb_remove_variable.setVisible(True)
-            # hide unnecessary information while picking variables
-            self._set_selector_mode(advanced_mode=False)
-            self.cb_show_advanced_parameters.setEnabled(False)
-        else:
-            # hiding picker
-            self.stack_struct_picker.setCurrentIndex(1)
-            if self._in_simple_mode():
-                self.split_struct_variables.setSizes([0, 10])
-            self.pb_remove_variable.setVisible(False)
-            self._set_selector_mode(advanced_mode=self.cb_show_advanced_parameters.isChecked())
-            self.cb_show_advanced_parameters.setEnabled(True)
-            # sometimes the table gets messed up when reshown
-            self.selector_model.emit(QtCore.SIGNAL("layoutChanged()"))
+        self._set_picker_visible(self.pb_show_picker.isChecked())
+
 
     def on_pb_add_variable_released(self):
         selected_items = self.lst_available_variables.selectedItems()
@@ -526,8 +524,8 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         self._remove_selected_variables()
 
     def on_cb_show_advanced_parameters_released(self):
-        self._set_selector_mode(advanced_mode = self.cb_show_advanced_parameters.isChecked())
-        self.selector_model.emit(QtCore.SIGNAL('layoutChanged()'))
+        self._show_advanced_parameters()
+        self.selector_table_model.emit(QtCore.SIGNAL('layoutChanged()'))
 
     def on_pb_delete_struct_released(self):
         # delete the selected structure element
