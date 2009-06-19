@@ -22,30 +22,36 @@ class MultipleRuns:
 
     caches_file_name = "cache_directories"
     
-    def __init__(self, cache_file_location, prefix='run_', package_order=['core'], additional_datasets={}):
+    def __init__(self, cache_file_location, prefix='run_', package_order=['core'], additional_datasets={},
+                 overwrite_cache_directories_file=False):
         """'cache_file_location' is either a file that contains a list of all caches that
         belong to this set of runs (one line per directory). Alternatively, it can be a directory. In such a case
         the code looks for a file called "cache_directories" (value of self.caches_file_name) in this location.
-        If it exists, it should contain a list of all caches as described above. If such file does not exist,
+        If it exists and 'overwrite_cache_directories_file' is False, it should contain a list of all caches as described above.
+        If it exists and 'overwrite_cache_directories_file' is True, it is deleted. In such a case or if such file does not exist,
         it is created from all entries in 'cache_file_location' that have the given 'prefix'. 
         
         The list of all caches is stored in self.cache_set.
         """
-        self.set_cache_attributes(cache_file_location, prefix=prefix)
+        self.set_cache_attributes(cache_file_location, prefix=prefix, 
+                                  overwrite_cache_directories_file=overwrite_cache_directories_file)
         self.number_of_runs = self.cache_set.size
         self.package_order = package_order
         self.values_from_mr = {}
         self.additional_datasets = additional_datasets
         
-    def set_cache_attributes(self, cache_file_location, prefix=''):
+    def set_cache_attributes(self, cache_file_location, prefix='', overwrite_cache_directories_file=False):
         if os.path.isfile(cache_file_location):
             self._set_cache_set(cache_file_location)
             return
         if os.path.isdir(cache_file_location):
             filename = os.path.join(cache_file_location, self.caches_file_name)
             if os.path.exists(filename):
-                self._set_cache_set(filename)
-                return
+                if overwrite_cache_directories_file:
+                    os.remove(filename)
+                else:
+                    self._set_cache_set(filename)
+                    return
             create_file_cache_directories(directory=cache_file_location, prefix=prefix, file_name=self.caches_file_name)
             self._set_cache_set(filename)
             return 
@@ -172,9 +178,13 @@ class MultipleRuns:
             return None
 
         values = try_transformation(self.values_from_mr[variable], transformation_pair[0])
+        print self.values_from_mr[variable]
+        print values
         result = normal(values+bias, sd, size=self.values_from_mr[variable].shape)
         for i in range(1,n):
             result = concatenate((result, normal(values+bias, sd, size=self.values_from_mr[variable].shape)), axis=1)
+        print result
+        print try_transformation(result, transformation_pair[1])
         return try_transformation(result, transformation_pair[1])
     
     def simulate_from_normal_and_export(self, directory, prefix='', variable_prefix='', n=1, bias=0, sd=1, transformation_pair=(None, None)):

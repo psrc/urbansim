@@ -195,14 +195,16 @@ class BayesianMelding(MultipleRuns):
     bias_file_name = "bias"
     
     def __init__(self, cache_file_location, observed_data,
-                 base_year=0,  prefix='run_', package_order=['core'], additional_datasets={}):
+                 base_year=0,  prefix='run_', package_order=['core'], additional_datasets={},
+                 overwrite_cache_directories_file=False):
         """ Class used in the Bayesian melding analysis.
         'cache_file_location' is location (either file or directory) with information about all caches
         (see doc string for MultipleRuns).
         'observed_data' is an object of ObservedData that contains all the information about observed data.
         """
         MultipleRuns.__init__(self, cache_file_location, prefix=prefix, package_order=package_order, 
-                              additional_datasets=additional_datasets)
+                              additional_datasets=additional_datasets,
+                              overwrite_cache_directories_file=overwrite_cache_directories_file)
         self.output_directory = os.path.join(os.path.split(self.full_cache_file_name)[0], 'bm_output')
         logger.log_status('Output directory set to %s.' % self.output_directory)
         if not os.path.exists(self.output_directory):
@@ -216,6 +218,7 @@ class BayesianMelding(MultipleRuns):
         self.v = {}
         self.weight_components = {}
         self.simulated_values = None
+        self.weights = None
     
     def compute_y(self):
         iout = -1
@@ -389,12 +392,11 @@ class BayesianMelding(MultipleRuns):
         variance = array(load_from_text_file(
                                  os.path.join(self.output_directory, self.variance_file_name),
                                                  convert_to_float=True))
+        if variance.ndim == 1:
+            variance.reshape(variance.size, 1)
         ahat={}
         v = {}
         for l in range(bias.size):
-        # for zone-specific bias
-        #for l in range(bias.shape[0]):
-            #ahat[l] = bias[l,:]
             ahat[l] = bias[l]            
             v[l] = variance[l,:]
         return (ahat, v)
@@ -407,7 +409,8 @@ class BayesianMelding(MultipleRuns):
         return array(load_from_text_file(file, convert_to_float=True))
 
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
-                                        use_bias_and_variance_from=None, transformed_back=True, **kwargs):
+                                        use_bias_and_variance_from=None, transformed_back=True, aggregate_to=None,
+                                        intermediates=[], **kwargs):
         """
         'quantity_of_interest' is a variable name about which we want to get the posterior distribution.
         If there is multiple known_output, it must be made clear from which one the bias and variance
@@ -419,12 +422,36 @@ class BayesianMelding(MultipleRuns):
         if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
             self.simulated_values = try_transformation(self.simulated_values,
                                                        self.transformation_pair_for_prediction[1])
+        if aggregate_to is not None:
+            self.simulated_values = self.aggregate(self.simulated_values, 
+                                                   aggregate_from=VariableName(quantity_of_interest).get_dataset_name(),
+                                                   aggregate_to=aggregate_to, intermediates=intermediates)
+                
         return self.simulated_values
 
+    def aggregate(self, values, aggregate_from, aggregate_to, intermediates=[]):
+        dataset_pool = self._setup_environment(self.cache_set[0], self.get_base_year())
+        ds_from = dataset_pool.get_dataset(aggregate_from)
+        dataset_names = intermediates + [aggregate_to]
+        new_values = values.copy()
+        for dataset_name in dataset_names:
+            aggr_values = new_values.copy()
+            ds_to = dataset_pool.get_dataset(dataset_name)
+            ids = ds_from.get_attribute(ds_to.get_id_name()[0])
+            new_values = zeros((ds_to.size(), aggr_values.shape[1]), dtype=values.dtype)
+            for i in range(aggr_values.shape[1]):
+                new_values[:,i] = ndimage.sum(aggr_values[:,i], labels=ids, index=ds_to.get_id_attribute())
+            ds_from = ds_to
+        return new_values
+            
+            
+            
     def set_posterior(self, year, quantity_of_interest, use_bias_and_variance_from=None):
         self.set_propagation_factor(year)
-        self.weights = self.get_weights_from_file()
-        self.ahat, self.v = self.get_bias_and_variance_from_files()
+        if self.weights is None:
+            self.weights = self.get_weights_from_file()
+        if not self.ahat or not self.v:
+            self.ahat, self.v = self.get_bias_and_variance_from_files()
 
         if use_bias_and_variance_from is None:
             use_bias_and_variance_from = quantity_of_interest
