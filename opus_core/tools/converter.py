@@ -252,7 +252,7 @@ class Converter(object):
         if general is None:
             return
         # change the variable nodes for all defined variables in the expression lib
-        for variable_node in general.findall("expression_library/*[type='variable_definition']"):
+        for variable_node in general.findall("expression_library/*[@type='variable_definition']"):
             self.tag_name_fix(variable_node, 'variable')
             if 'dataset' in variable_node.attrib:
                 name = variable_node.get('name')
