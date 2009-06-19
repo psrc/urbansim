@@ -7,7 +7,7 @@
 # Edit the following constant to change the major, minor, and bugfix numbers,
 # or to change from development to stable releases
 # if this is a stable release, change version to include a bugfix number (e.g. '4.2.3'), and stable to True
-opus_version = '4.2'
+opus_version = '4.3'
 stable = False
 
 # Minumimum and maximum version numbers for XML that this code is guaranteed to work for.
