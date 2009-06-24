@@ -32,6 +32,7 @@ if __name__ == "__main__":
         run_id, year = (int(args[0]), int(args[1]))
         run_manager.restart_run(run_id, 
                                 year,
+                                '',
                                 skip_urbansim=options.skip_urbansim,
                                 create_baseyear_cache_if_not_exists=options.create_baseyear_cache_if_not_exists,
                                 skip_cache_cleanup=options.skip_cache_cleanup)

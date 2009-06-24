@@ -129,7 +129,8 @@ class RunManager(AbstractService):
                     skip_cache_cleanup=False):
         """Restart the specified run."""
 
-        self.update_environment_variables(run_resources = {'project_name':project_name})
+        if project_name:
+            self.update_environment_variables(run_resources = {'project_name':project_name}) 
 
         run_resources = self.create_run_resources_from_history(
            run_id=run_id,
