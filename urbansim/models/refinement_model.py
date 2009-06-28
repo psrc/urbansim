@@ -9,7 +9,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import numpy
 from numpy import unique, logical_and, ones, zeros, concatenate
-from numpy import where, histogram, round_, sort
+from numpy import where, histogram, round_, sort, array
 from opus_core.misc import safe_array_divide
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
@@ -46,6 +46,7 @@ class RefinementModel(Model):
         
         if refinement_dataset is None:
             refinement_dataset = dataset_pool.get_dataset('refinement')
+        self.id_names = (refinement_dataset.get_id_name()[0], 'transaction_id')
         
         if current_year is None:
             current_year = SimulationState().get_current_time()
@@ -53,7 +54,9 @@ class RefinementModel(Model):
         #refinements_this_year = copy.deepcopy(refinement_dataset)
         refinements_this_year = refinement_dataset
         this_year_index = where(refinement_dataset.get_attribute('year')==current_year)[0]
-        refinements_this_year.subset_by_index(this_year_index, flush_attributes_if_not_loaded=False)
+        all_years_index = where(refinement_dataset.get_attribute('year')==-1)[0]
+        refinements_this_year.subset_by_index(concatenate( (this_year_index, all_years_index) ), 
+                                              flush_attributes_if_not_loaded=False)
         
         transactions = refinements_this_year.get_attribute('transaction_id')
         actions = refinements_this_year.get_attribute('action')
@@ -211,7 +214,7 @@ class RefinementModel(Model):
                                        -1 * ones( movers_index.size, dtype='int32' ),
                                        index = movers_index
                                        )
-        self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_index)
+        self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=movers_index)
         
     def _delete(self, agents_pool, amount, 
                   agent_dataset, location_dataset, 
@@ -262,7 +265,7 @@ class RefinementModel(Model):
             location_dataset.modify_attribute( this_refinement.location_capacity_attribute, 
                                                new_values
                                                )
-            self._add_refinement_info_to_dataset(location_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_location_index)
+            self._add_refinement_info_to_dataset(location_dataset, self.id_names, this_refinement, index=movers_location_index)
             
         agent_dataset.remove_elements( array(movers_index) )
                 
@@ -330,17 +333,17 @@ class RefinementModel(Model):
             location_dataset.modify_attribute( this_refinement.location_capacity_attribute, 
                                                new_values
                                            )
-            self._add_refinement_info_to_dataset(location_dataset, ("refinement_id", "transaction_id"), this_refinement, index=movers_location_index)
+            self._add_refinement_info_to_dataset(location_dataset, self.id_names, this_refinement, index=movers_location_index)
         if amount_from_agents_pool > 0:
             agent_dataset.modify_attribute( location_dataset.get_id_name()[0],
                                             location_id_for_agents_pool,
                                             agents_index_from_agents_pool
                                             )
-            self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=agents_index_from_agents_pool)
+            self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=agents_index_from_agents_pool)
         if amount > amount_from_agents_pool:
             new_agents_index = agent_dataset.duplicate_rows(agents_index_to_clone)
-            self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=agents_index_to_clone)
-            self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=new_agents_index)
+            self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=agents_index_to_clone)
+            self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=new_agents_index)
         
     def _set_value(self, agents_pool, amount, 
                    agent_dataset, location_dataset, 
@@ -355,7 +358,7 @@ class RefinementModel(Model):
                                         amount,
                                         fit_index
                                         )
-        self._add_refinement_info_to_dataset(agent_dataset, ("refinement_id", "transaction_id"), this_refinement, index=fit_index)
+        self._add_refinement_info_to_dataset(agent_dataset, self.id_names, this_refinement, index=fit_index)
             
     def _target(self, agents_pool, amount, 
                 agent_dataset, location_dataset, 

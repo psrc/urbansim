@@ -127,6 +127,29 @@
           </run>
         </structure>
       </model>
+      <model name="building_renovation_and_conversion_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.building_renovation_and_conversion_model</class_module>
+            <class_name>BuildingRenovationAndConversionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">BuildingRenovationAndConversionModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <argument name="refinement_dataset_name" parser_action="quote_string" type="string">building_renovation_and_conversion</argument>
+            <argument name="refinement_storage" type="string">base_cache_storage</argument>
+            <argument name="refinement_table_name" parser_action="quote_string" type="string">building_renovation_and_conversion</argument>
+            <output hidden="True" name="output" type="string">building_renovation_and_conversion</output>
+          </prepare_for_run>
+          <run type="dictionary">
+            <name hidden="True" name="name" type="string">run</name>
+            <argument name="refinement_dataset" type="string">building_renovation_and_conversion</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+      </model>
       <model name="real_estate_price_model" type="model">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
