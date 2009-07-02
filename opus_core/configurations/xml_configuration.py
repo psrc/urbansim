@@ -1178,6 +1178,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         n4 = XMLConfiguration(f4).full_tree.find(path)
         self.assertEqual(n4.get('test_attribute'), 'child1_value')
         self.assertEqual(n4.get('oceanic_attribute'), 'squid')
+        
+    def test_inherited_node_order(self):
+        # there was a bug with the order of nodes getting flipped when overriding one of two nodes -- 
+        # test this by getting the years_to_run node and turning it into a tuple
+        f1 = os.path.join(self.test_configs, 'parent1.xml')
+        config = XMLConfiguration(f1).get_section('general')
+        self.assertEqual(config['years_to_run'], (1981, 1984))
+        f2 = os.path.join(self.test_configs, 'child1.xml')
+        config = XMLConfiguration(f2).get_section('general')
+#        self.assertEqual(config['years_to_run'], (1981, 2000))
 
     def test_find(self):
         # CK: disabling this for a while -- it's unreliable to test string representations
