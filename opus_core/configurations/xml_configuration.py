@@ -489,36 +489,34 @@ class XMLConfiguration(object):
         for name, value in parent_node.items():
             if name != 'inherited' and not name in local_node.attrib:
                 local_node.set(name, value)
-
         # pair up nodes with their id's
         parent_child_nodes = dict((node_identity_string(n), n) for n in parent_node.getchildren())
         local_child_nodes = dict((node_identity_string(n), n) for n in local_node.getchildren())
         # decide what to do with each child node of the parent tree
-        for id_, parent_child_node in parent_child_nodes.items():
+        node_index = 0
+        for n in parent_node:
+            id_ = node_identity_string(n)
+            parent_child_node = parent_child_nodes[id_]
             if id_ in local_child_nodes:
                 # the local node already has this node, merge the two
                 local_child_node = local_child_nodes[id_]
                 self._merge_nodes(parent_child_node, local_child_node)
+                # default next position to insert is after this node
+                node_index = local_node.getchildren().index(local_child_node)+1
             else:
                 # this node (and its subtree) doesn't exist under the local node. We want to insert
                 # it in a sensible place.
-
                 # respect any sibling that have the followers attribute set when inserting the node
                 nodes_with_followers = [n for n in local_node.getchildren() if n.get('followers')]
-
-                # go through the list of nodes with followers attribute until we can find one
-                # that mentions this node. We only care about the first time it's mentioned.
                 for node_with_followers in nodes_with_followers:
                     followers_list = node_with_followers.get('followers').split(',')
                     if parent_child_node.tag in followers_list:
-                        # place after the node with the followers list
-                        node_index = 1 + local_node.getchildren().index(node_with_followers)
-                        local_node.insert(node_index, parent_child_node)
-                        break
-                else:
-                    # no other followers, insert last
-                    local_node.append(parent_child_node)
-
+                        # place after the node with the followers list (unless it will already be placed after)
+                        after = 1 + local_node.getchildren().index(node_with_followers)
+                        if node_index < after:
+                            node_index = after
+                local_node.insert(node_index, parent_child_node)
+                node_index = node_index+1
 
     def _clean_tree(self, etree):
         # Remove from etree any nodes with the 'temporary' or 'inherited' attribute.
@@ -1187,7 +1185,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config['years_to_run'], (1981, 1984))
         f2 = os.path.join(self.test_configs, 'child1.xml')
         config = XMLConfiguration(f2).get_section('general')
-#        self.assertEqual(config['years_to_run'], (1981, 2000))
+        self.assertEqual(config['years_to_run'], (1981, 2000))
 
     def test_find(self):
         # CK: disabling this for a while -- it's unreliable to test string representations
@@ -1435,9 +1433,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f)
         mydict = config.full_tree.find('general/mydict')
         child_names = map(lambda n: n.tag, mydict.getchildren())
-        # since D is inserted after C, and it should obey 'following' x, it'll be inserted before C
-        # also, a and b are inherited so they will be inserted at the bottom
-        self.assertEqual(child_names, ['x', 'd', 'c', 'a', 'b'])
+        self.assertEqual(child_names, ['a', 'b', 'x', 'c', 'd'])
         # Now update the configuration with a new xml tree, in which x is after c and
         # there is also a new node e
         update_str = """
@@ -1448,7 +1444,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                 <a type="string" inherited="followers_test_parent">atest</a>
                 <b type="string" inherited="followers_test_parent">btest</b>
                 <c type="string" inherited="followers_test_parent">ctest</c>
-                <x type="string" followers="c,d">xtest</x>
+                <x type="string" followers="d">xtest</x>
                 <d type="string" inherited="followers_test_parent">dtest</d>
                 <e type="string">etest</e>
                </mydict>
