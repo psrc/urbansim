@@ -60,6 +60,8 @@ class BuildingTransitionModel( Model ):
             new_buildings[attribute] = array([], dtype='int32')
 
         max_id = building_set.get_id_attribute().max()
+        new_building_id_start = max_id + 1
+        new_building_id_end = max_id + 1
         building_set_size_orig = building_set.size()
 
         for itype in range(building_use_classification_table.size()): # iterate over building types
@@ -140,15 +142,16 @@ class BuildingTransitionModel( Model ):
 
                 new_buildings[attribute] = concatenate((new_buildings[attribute], new_unit_values))
 
-            new_max_id = max_id + nbuildings
-            new_buildings[building_id_name]=concatenate((new_buildings[building_id_name], arange(max_id+1, new_max_id+1)))
+            new_building_id_end = new_building_id_start + nbuildings
+            new_buildings[building_id_name]=concatenate((new_buildings[building_id_name], arange(new_building_id_start, new_building_id_end)))
             new_buildings["building_use_id"] = concatenate((new_buildings["building_use_id"], history_type_without_zeros[idx]))
             new_buildings["year_built"] = concatenate((new_buildings["year_built"], year*ones(nbuildings)))
             new_buildings["unit_price"] = concatenate((new_buildings["unit_price"], history_price_without_zeros[idx]))
             new_buildings[location_id_name] = concatenate((new_buildings[location_id_name], zeros(nbuildings)))
             logger.log_status("Creating %s %s of %s %s buildings." % (history_values_without_zeros[idx].sum(),
                                                                       units_attribute, nbuildings, building_class))
-
+            new_building_id_start = new_building_id_end + 1
+            
         building_set.add_elements(new_buildings, require_all_attributes=False)
 
         difference = building_set.size() - building_set_size_orig
