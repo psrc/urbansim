@@ -34,7 +34,10 @@ Date:    7 Mar 2004
 
 from __future__ import generators
 
-import sys, warnings, os, fnmatch, glob, shutil, codecs, md5
+import sys, warnings, os, fnmatch, glob, shutil, codecs
+
+# import md5
+# md5 is now deprecated and since nobody is using that part of the functionality, just commented out (AB 7/2009)
 
 __version__ = '2.1'
 __all__ = ['path']
@@ -761,22 +764,23 @@ class path(_base):
         finally:
             f.close()
 
-    def read_md5(self):
-        """ Calculate the md5 hash for this file.
-
-        This reads through the entire file.
-        """
-        f = self.open('rb')
-        try:
-            m = md5.new()
-            while True:
-                d = f.read(8192)
-                if not d:
-                    break
-                m.update(d)
-        finally:
-            f.close()
-        return m.digest()
+# md5 functionality removed 7/2009 (AB)
+#    def read_md5(self):
+#        """ Calculate the md5 hash for this file.
+#
+#        This reads through the entire file.
+#        """
+#        f = self.open('rb')
+#        try:
+#            m = md5.new()
+#            while True:
+#                d = f.read(8192)
+#                if not d:
+#                    break
+#                m.update(d)
+#        finally:
+#            f.close()
+#        return m.digest()
 
     # --- Methods for querying the filesystem.
 
