@@ -64,7 +64,6 @@ except:
     pass
 else:
     import os, sys
-    from sets import Set
     from shutil import rmtree
     from tempfile import mkdtemp
     from numpy import array, int32
@@ -97,8 +96,8 @@ else:
             table_dir = os.path.join(self._temp_dir, '2000', table_name)
             self.assert_(os.path.exists(table_dir))
             
-            actual = Set(os.listdir(table_dir))
-            expected = Set(['attribute1.%(endian)si4' % replacements, 'attribute2.%(endian)si4' % replacements])
+            actual = set(os.listdir(table_dir))
+            expected = set(['attribute1.%(endian)si4' % replacements, 'attribute2.%(endian)si4' % replacements])
             self.assertEqual(expected, actual)
             
             exporter = ExportCacheToDbfTableCommand(

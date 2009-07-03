@@ -4,7 +4,6 @@
 
 # Note: even if PyDev complains that some of these imports are unused, generally they ARE
 # in fact used when executing the generated code.
-from sets import Set
 import parser
 from types import TupleType
 from opus_core.variables.variable import Variable
@@ -72,11 +71,11 @@ class AutogenVariableFactory(object):
         #     attributes of one of the component datasets of an interaction set, package will
         #     be None, and dataset will be the name of either the first or second component dataset.
         #     The other case of dataset_qualified attributes is for a variable to be aggregated.
-        self._dependents = Set()
+        self._dependents = set()
         # literals is a set of strings that should be compiled as literals, so that the expression
         # will evaluate correctly.  
-        self._literals = Set()
-        self._special_dataset_receivers = Set()
+        self._literals = set()
+        self._special_dataset_receivers = set()
         # aggregation_calls is a set of calls to aggregation/disaggregation methods.
         #     Each element of aggregation_calls is a tuple 
         #     (receiver, method, package, dataset_to_aggregate, variable_to_aggregate, [intermediate_datasets], operation)
@@ -86,7 +85,7 @@ class AutogenVariableFactory(object):
         #     If the list of intermediate datasets or operation are omitted these values are None.
         # For aggregate_all intermediate_datasets is always [].
         # Disaggregation is the same, except that operation is always None.
-        self._aggregation_calls = Set()
+        self._aggregation_calls = set()
         # parsetree_replacements is a dictionary mapping parse tree fragments in the original
         # parsetree for self._expr to other tree fragments with which they should be replaced
         self._parsetree_replacements = {}
@@ -468,7 +467,7 @@ class AutogenVariableFactory(object):
         # urbansim itself.  Then if we find urbansim.gridcell.population_density we should just add
         # the population_density attribute to urbansim.gridcell (and not reinitialize either urbansim
         # or urbansim.gridcell).
-        already_generated = Set()
+        already_generated = set()
         for pkg, ds, short in self._dependents:
             # if the dataset name ends in self._constant_suffix, get the dataset out of the dataset pool; otherwise it is self.get_dataset()
             if ds is not None and ds.endswith(self._constant_suffix):

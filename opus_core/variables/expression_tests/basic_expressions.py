@@ -9,8 +9,6 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.variables.variable_factory import VariableFactory
 from opus_core.storage_factory import StorageFactory
 from numpy import array, ma
-from sets import Set
-
 
 class Tests(opus_unittest.OpusTestCase):
 
@@ -154,7 +152,7 @@ class Tests(opus_unittest.OpusTestCase):
         v = VariableName(expr)
         var = VariableFactory().get_variable(v, dataset)
         # use sets for the equality test, since we don't know in what order the dependencies will be returned
-        self.assertEqual(Set(var.dependencies()), Set(['mydataset.var1', 'mydataset.var2']), 
+        self.assertEqual(set(var.dependencies()), set(['mydataset.var1', 'mydataset.var2']), 
                          msg="dependencies are incorrect")
 
     def test_expression_1var_2times(self):

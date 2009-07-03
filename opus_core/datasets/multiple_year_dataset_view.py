@@ -2,10 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from sets import Set
-
 from numpy import array, int32, concatenate
-
 
 from opus_core.datasets.abstract_dataset import AbstractDataset
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -63,7 +60,7 @@ class MultipleYearDatasetView(AbstractDataset):
                 if primary_attributes_from_other_years is None:
                     primary_attributes_from_other_years = primary_attributes_for_this_year
                 else:
-                    if Set(primary_attributes_for_this_year) != Set(primary_attributes_from_other_years):
+                    if set(primary_attributes_for_this_year) != set(primary_attributes_from_other_years):
                         raise AttributeError("The set of primary attributes of dataset '%s' must be "
                                              "the same for each year to merge %s." 
                                                  % (name_of_dataset_to_merge, str(years_to_merge)))

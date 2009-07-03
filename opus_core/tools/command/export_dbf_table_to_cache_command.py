@@ -59,8 +59,6 @@ except:
     pass
 else:
     import os
-    
-    from sets import Set
     from shutil import rmtree
     from tempfile import mkdtemp
     
@@ -101,7 +99,7 @@ else:
             
             values = attribute_cache.load_table(table_name)
             
-            self.assertEqual(Set(['keyid', 'works']), Set(values.keys()))
+            self.assertEqual(set(['keyid', 'works']), set(values.keys()))
             self.assert_(ma.allequal(array([1,2,3,4,5]), values['keyid']))
             self.assert_(ma.allequal(array([1,1,-1,0,0]), values['works']))
             

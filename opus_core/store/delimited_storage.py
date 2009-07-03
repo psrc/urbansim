@@ -309,7 +309,6 @@ class delimited_storage(Storage):
 from opus_core.tests import opus_unittest
 from opus_core.store.storage import TestStorageInterface
 from opus_core.tests.utils.cache_extension_replacements import replacements
-from sets import Set
 from shutil import rmtree
 from tempfile import mkdtemp
 
@@ -522,7 +521,7 @@ class TestDelimitedStorage(TestStorageInterface):
             lowercase = False,
             )
         expected = ['bar', 'BAZ']
-        self.assertEqual(Set(actual), Set(expected))
+        self.assertEqual(set(actual), set(expected))
         self.assertEqual(len(actual), len(expected))
         
         actual = self.storage.get_column_names(
@@ -530,7 +529,7 @@ class TestDelimitedStorage(TestStorageInterface):
             lowercase = True,
             )
         expected = ['bar', 'baz']
-        self.assertEqual(Set(actual), Set(expected))
+        self.assertEqual(set(actual), set(expected))
         self.assertEqual(len(actual), len(expected))
         
         actual_data = self.storage.load_table(

@@ -4,8 +4,6 @@
 
 import os
 import copy
-
-from sets import Set
 from shutil import rmtree, copytree
 
 from opus_core.model import Model

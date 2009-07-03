@@ -3,7 +3,6 @@
 # See opus_core/LICENSE
 
 import os, re
-from sets import Set
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
@@ -41,11 +40,11 @@ class CacheScenarioDatabase(Model):
         simulation_state.set_cache_directory(config['cache_directory'])
         simulation_state.set_current_time(config['base_year'])
                   
-        self.tables_cached = Set()      
+        self.tables_cached = set()      
         for database_name, tables in database_to_table_mapping.items():
             self.cache_database_tables(config, database_name, tables)
 
-        un_cached_tables = Set(self.tables_to_cache) - self.tables_cached
+        un_cached_tables = set(self.tables_to_cache) - self.tables_cached
         if un_cached_tables:
             logger.log_warning('The following requested tables were NOT cached:')
             for table_name in un_cached_tables:

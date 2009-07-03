@@ -31,9 +31,6 @@ class ValidationInformation(object):
     
 from opus_core.tests import opus_unittest
 
-from sets import Set
-
-
 class ValidationInformationTest(opus_unittest.TestCase):
     def setUp(self):
         pass
@@ -117,7 +114,7 @@ class ValidationInformationTest(opus_unittest.TestCase):
                 'C':None,
                 }
             )
-        self.assertEqual(Set(info.get_failed_parameter_names()), Set(expected_failed_parameters))
+        self.assertEqual(set(info.get_failed_parameter_names()), set(expected_failed_parameters))
         
         # Triangulate
         expected_failed_parameters = ['Mr', 'E']
@@ -128,7 +125,7 @@ class ValidationInformationTest(opus_unittest.TestCase):
                 'E':None,
                 }
             )
-        self.assertEqual(Set(info.get_failed_parameter_names()), Set(expected_failed_parameters))
+        self.assertEqual(set(info.get_failed_parameter_names()), set(expected_failed_parameters))
         
     def test_returns_list_of_failed_parameter_names_on_get_failed_parameter_names_when_there_is_no_error_data(self):
         expected_failed_parameters = None

@@ -245,11 +245,7 @@ if sqlalchemy is None:
     
 else:
     from opus_core.tests import opus_unittest
-    
     import os
-    
-    from sets import Set
-
     from opus_core.store.storage import TestStorageInterface
     from opus_core.database_management.database_server import DatabaseServer
     from opus_core.database_management.configurations.test_database_configuration import TestDatabaseConfiguration, get_testable_engines
@@ -491,7 +487,7 @@ else:
                     
                     actual_table_names = storage.get_table_names()
                         
-                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(set(expected_table_names), set(actual_table_names))
                     self.assertEqual(len(expected_table_names), len(actual_table_names))
                 except:
                     db.drop_table('table1')
@@ -527,13 +523,13 @@ else:
                     expected_table_names = ['bee', 'baz', 'foobeebaz']
                     actual_table_names = storage.get_column_names('foo')
                         
-                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(set(expected_table_names), set(actual_table_names))
                     self.assertEqual(len(expected_table_names), len(actual_table_names))
                     
                     expected_table_names = ['foo', 'boo', 'fooboobar']
                     actual_table_names = storage.get_column_names('bar')
                         
-                    self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+                    self.assertEqual(set(expected_table_names), set(actual_table_names))
                     self.assertEqual(len(expected_table_names), len(actual_table_names))
                 except:
                     db.drop_table('foo')

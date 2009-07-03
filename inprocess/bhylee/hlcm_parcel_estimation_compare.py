@@ -86,11 +86,10 @@ class HlcmParcelEstimationPsrcParcel(BaselineEstimation): # comment this line ou
         ]
 
 
-from sets import Set
 from numpy import ndarray, allclose
 
 def print_difference(dict1, dict2, key_sequence=[]):
-    unique_keys = Set(dict1.keys() + dict2.keys())
+    unique_keys = set(dict1.keys() + dict2.keys())
     for key in unique_keys:
         if not dict1.has_key(key):
             print "+the 1st dict: %s is missing" % "->".join(key_sequence + [key])

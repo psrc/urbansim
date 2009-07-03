@@ -3,7 +3,6 @@
 # See opus_core/LICENSE
 
 import os
-from sets import Set
 from shutil import rmtree
 
 from opus_core.model import Model
@@ -61,7 +60,7 @@ class UnrollGridcells(Model):
 
     def _years_in_development_event_history(self, dataset):
         """Returns the set of years with data in this dataset, in descending order."""
-        years = Set()
+        years = set()
         for v in dataset.get_attribute('scheduled_year'):
             years.add(v)
         

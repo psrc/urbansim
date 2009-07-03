@@ -2,8 +2,6 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from sets import Set
-
 from numpy import array, int32
 from numpy import arange
 from numpy import ma
@@ -509,8 +507,8 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
 
         # Should only have attributes that exist in the in_storage.
-        self.assertEqual(Set(ds.get_primary_attribute_names()),
-                         Set(['id','attr','attr2']))
+        self.assertEqual(set(ds.get_primary_attribute_names()),
+                         set(['id','attr','attr2']))
 
         # Should only have attributes that exist in the in_storage.
         dataset_pool = DatasetPool(package_order=['opus_core'],
@@ -518,8 +516,8 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = dataset_pool.get_dataset('test')
         ds.compute_variables(['opus_core.test.attr2_times_2'],
                              dataset_pool = dataset_pool)
-        self.assertEqual(Set(ds.get_known_attribute_names()),
-                         Set(['id','attr','attr2','attr2_times_2']))
+        self.assertEqual(set(ds.get_known_attribute_names()),
+                         set(['id','attr','attr2','attr2_times_2']))
 
     def test_get_attribute_names(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -539,26 +537,26 @@ class DatasetTests(opus_unittest.OpusTestCase):
 
         # Should have the attributes requested after load_dataset.
         ds.load_dataset(attributes=['id'])
-        self.assertEqual(Set(ds.get_attribute_names()),
-                         Set(['id']))
+        self.assertEqual(set(ds.get_attribute_names()),
+                         set(['id']))
 
         # Always loads the id attributes.
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name='id')
         ds.load_dataset(attributes=['attr'])
-        self.assertEqual(Set(ds.get_attribute_names()),
-                         Set(['id','attr']))
+        self.assertEqual(set(ds.get_attribute_names()),
+                         set(['id','attr']))
 
         # '*' should load all attributes.
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name='id')
         ds.load_dataset(attributes='*')
-        self.assertEqual(Set(ds.get_attribute_names()),
-                         Set(['id','attr','attr2']))
+        self.assertEqual(set(ds.get_attribute_names()),
+                         set(['id','attr','attr2']))
 
         # Default is to load all attributes.
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name='id')
         ds.load_dataset()
-        self.assertEqual(Set(ds.get_attribute_names()),
-                         Set(['id','attr','attr2']))
+        self.assertEqual(set(ds.get_attribute_names()),
+                         set(['id','attr','attr2']))
 
     def test_subset(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -739,10 +737,10 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
         ds.load_dataset()
         # Should only have attributes that exist in the in_storage.
-        self.assertEqual(Set(ds.get_primary_attribute_names()),
-                         Set(['id','attr','attr2']))
-        self.assertEqual(Set(ds.get_computed_attribute_names()),
-                         Set(['attr3','attr4']))
+        self.assertEqual(set(ds.get_primary_attribute_names()),
+                         set(['id','attr','attr2']))
+        self.assertEqual(set(ds.get_computed_attribute_names()),
+                         set(['attr3','attr4']))
         
     def test_use_out_table_to_store_attributes(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -759,7 +757,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
         ds.load_dataset()
         ds.write_dataset(out_storage=storage, out_table_name="table2")
-        self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
+        self.assertEqual(set(["tests", "table2"]), set(storage.get_table_names()))
          
     def test_write_dataset(self):
         # check that variables for expressions with an alias are written out, and that
@@ -833,7 +831,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds = Dataset(in_storage=in_storage, in_table_name='tests', out_table_name="tests_out", id_name='id')
         ds.load_dataset()
         ds.write_dataset(out_storage=out_storage)
-        self.assertEqual(Set(['tests_out','tests_out.computed']),Set(out_storage.get_table_names()))
+        self.assertEqual(set(['tests_out','tests_out.computed']),set(out_storage.get_table_names()))
         
     def test_determine_stored_attribute_names(self):
         in_storage = StorageFactory().get_storage('dict_storage')

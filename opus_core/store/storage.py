@@ -2,7 +2,6 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from sets import Set
 from numpy import array
 #from opus_core.store.old.storage import Storage as Storage_old
 
@@ -123,7 +122,7 @@ class Storage:
                 requested_columns = [requested_columns]
                 
             if case_insensitive:
-                available_columns_lower = list(Set([
+                available_columns_lower = list(set([
                     each_column.lower() 
                     for each_column in available_columns
                     ]))
