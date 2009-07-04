@@ -38,9 +38,7 @@ class population_per_acre(Variable):
                              (self.__class__.__module__, isnan(values).sum()))
 
 
-from numpy import array
-from numpy import inf
-from numpy import ma
+from numpy import array, inf, ma, int32
 
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -62,7 +60,7 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='gridcells',
             table_data={
                 "population": array([100,200,300,400,500,0]),
-                "percent_water": array([0,50,0,0,100,100]),
+                "percent_water": array([0,30,0,0,100,100]),
                 "faz_id": array([1,2,1,3,4,5]),
                 "grid_id": array([1,2,3,4,5,6]),
             }
@@ -82,7 +80,8 @@ class Tests(opus_unittest.OpusTestCase):
                                dataset_pool=dataset_pool)
         values = faz.get_attribute(self.variable_name)
 
-        should_be = array([400/(2*105.0), 200/(105.0/2), 400/105.0, inf, 0]).round()
+        inf_as_int32 = array([inf]).astype(int32)[0]
+        should_be = array([400/(2*105.0), 200/(105.0*0.7), 400/105.0, inf_as_int32, 0.0]).round()
 
         self.assert_(ma.allclose(values, should_be, rtol=1e-7),
                      msg="Error in " + self.variable_name)
