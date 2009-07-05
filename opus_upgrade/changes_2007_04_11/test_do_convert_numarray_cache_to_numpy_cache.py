@@ -11,7 +11,7 @@ import numpy
 from shutil import rmtree
 
 from opus_core.tests import opus_unittest
-from opus_core.store.file_flt_storage import storage_file
+from opus_core.store.file_flt_storage import file_flt_storage
 from opus_core.opus_package import OpusPackage
 
 from opus_upgrade.changes_2007_04_11.do_convert_numarray_cache_to_numpy_cache import ConvertNumarrayCacheToNumpyCache
@@ -40,7 +40,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'do_not_change_me.sometext', output_directory)
         self.assert_(os.path.exists(os.path.join(output_directory, 'do_not_change_me.sometext')))
         
-        endian = storage_file(None)._get_native_endian_file_extension_character()
+        endian = file_flt_storage.storage_file(None)._get_native_endian_file_extension_character()
 
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'f.Int32', output_directory)
         self.assert_(os.path.exists(os.path.join(output_directory, 'f.%si4' % endian)))

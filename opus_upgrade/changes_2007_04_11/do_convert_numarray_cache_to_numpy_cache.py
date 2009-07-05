@@ -9,7 +9,7 @@ import numpy
 from distutils.dir_util import mkpath
 from shutil import copyfile
 
-from opus_core.store.file_flt_storage import storage_file
+from opus_core.store.file_flt_storage import file_flt_storage
 from opus_core.misc import load_from_text_file
   
 class ConvertNumarrayCacheToNumpyCache(object):
@@ -22,7 +22,7 @@ class ConvertNumarrayCacheToNumpyCache(object):
     
     #this has errors with new storage classes!
     def old_to_new_extension_mapping_for_binary_files(self):
-        endian = storage_file(None)._get_native_endian_file_extension_character()
+        endian = file_flt_storage.storage_file(None)._get_native_endian_file_extension_character()
             
         return {
         '.Bool': '.ib1',
@@ -75,7 +75,7 @@ class ConvertNumarrayCacheToNumpyCache(object):
         elif extension == '.txt':
             data = load_from_text_file(file_path)
             numpy_array = numpy.array(data)
-            storage = storage_file(None)
+            storage = file_flt_storage.storage_file(None)
             storage._write_to_file(output_directory, file_stem, numpy_array)
             
         else:
