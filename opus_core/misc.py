@@ -715,6 +715,15 @@ import shutil
 import opus_core
 
 class MiscellaneousTests(opus_unittest.OpusTestCase):
+    
+    def setUp(self):
+        # make a temp directory for use by multiple tests
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+        
+    def tearDown(self):
+        # remove the temp directory (note that tearDown gets called even if a unit tests fails)
+        shutil.rmtree(self.temp_dir)
+        
     def test_opus_path_for_variable_from_module_path(self):
         file_path = os.path.join('C:', 'foo', 'workspace', 'package_name', 'dataset_name', 'variable_name.py')
         self.assertEqual(opus_path_for_variable_from_module_path(file_path),
@@ -727,32 +736,29 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
                          'from a_package.a_dir.a_class import AClass')
 
     def test_remove_directories_with_this_name(self):
-        temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        try:
-            files = [
-                ['CVS', 'f1'],
-                ['d1', 'f2'],
-                ['d1', 'CVS', 'f3'],
-                ['f4'],
-                ]
-            for t in files:
-                path = temp_dir
-                for n in t:
-                    path = os.path.join(path, n)
-                os.makedirs(path)
+        files = [
+            ['CVS', 'f1'],
+            ['d1', 'f2'],
+            ['d1', 'CVS', 'f3'],
+            ['f4'],
+            ]
+        for t in files:
+            path = self.temp_dir
+            for n in t:
+                path = os.path.join(path, n)
+            os.makedirs(path)
+            self.assert_(os.path.exists(path))
+        remove_directories_with_this_name(self.temp_dir, 'CVS')
+        for t in files:
+            path = self.temp_dir
+            for n in t:
+                path = os.path.join(path, n)
+            if 'CVS' in t:
+                self.assert_(not os.path.exists(path))
+            else:
                 self.assert_(os.path.exists(path))
-            remove_directories_with_this_name(temp_dir, 'CVS')
-            for t in files:
-                path = temp_dir
-                for n in t:
-                    path = os.path.join(path, n)
-                if 'CVS' in t:
-                    self.assert_(not os.path.exists(path))
-                else:
-                    self.assert_(os.path.exists(path))
-        finally:
-            self.assert_(os.path.exists(temp_dir))
-            shutil.rmtree(temp_dir)
+        # make sure we didn't accidentally delete the temp directory itself
+        self.assert_(os.path.exists(self.temp_dir))
 
     def test_concatenate_on_strings(self):
         from numpy import array, concatenate, alltrue
@@ -900,8 +906,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assert_(not is_masked_array(a2))
         
     def test_copytree(self):
-        temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        dest = os.path.join(temp_dir, 'dest')
+        dest = os.path.join(self.temp_dir, 'dest')
         os.mkdir(dest)
         dirs = [
             ['d1', 'd2', 'd3', 'CVS', 'sub'],
@@ -910,25 +915,22 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             ['d5'],
             ['d6', '.svn', 'd1', 'd2'],
             ]
-        try:
-            for t in dirs:
-                path = temp_dir
-                for n in t:
-                    path = os.path.join(path, n)
-                os.makedirs(path)
-                source = os.path.join(temp_dir, t[0])
-                sub = os.path.join(dest, t[0])
-                copytree(source, sub, skip_subdirectories=['CVS', '.svn'])
-            for t in dirs:
-                path = dest
-                for n in t:
-                    path = os.path.join(path, n)
-                if 'CVS' in t or '.svn' in t:
-                    self.assert_(not os.path.exists(path))
-                else:
-                    self.assert_(os.path.exists(path))
-        finally:
-            shutil.rmtree(temp_dir)
+        for t in dirs:
+            path = self.temp_dir
+            for n in t:
+                path = os.path.join(path, n)
+            os.makedirs(path)
+            source = os.path.join(self.temp_dir, t[0])
+            sub = os.path.join(dest, t[0])
+            copytree(source, sub, skip_subdirectories=['CVS', '.svn'])
+        for t in dirs:
+            path = dest
+            for n in t:
+                path = os.path.join(path, n)
+            if 'CVS' in t or '.svn' in t:
+                self.assert_(not os.path.exists(path))
+            else:
+                self.assert_(os.path.exists(path))
 
     def test_unique_values(self):
         from numpy import array, ma
@@ -983,7 +985,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
     # also tests the load_from_text_file function
     def test_write_to_text_file(self):
         from numpy import array
-        file_name = 'misc_test_file'
+        file_name = os.path.join(self.temp_dir,'misc_test_file')
         arr = array(['a', 'b', 'c'])
         delim = '|'
         write_to_text_file(file_name, arr, 'wb', delim)
