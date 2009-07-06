@@ -16,27 +16,23 @@ OriginalTestCase = TestCase
 class OpusAbstractTestCase(OriginalTestCase):
     """Extends TestCase to remove all singletons before and after each test."""
     
-    def __new__(cls, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Set up to automatically clear out singletons before and after running
         each test.
         """
-        an_instance = OriginalTestCase.__new__(cls, *args, **kwargs)
-
-        setup_method = an_instance.setUp
+        OriginalTestCase.__init__(self, *args, **kwargs)
+        setup_method = self.setUp
         def wrapped_setup_method(*req_args, **opt_args):
             Singleton().remove_all_singletons()
             return setup_method(*req_args, **opt_args)
-        an_instance.setUp = wrapped_setup_method
-        
-        teardown_method = an_instance.tearDown
+        self.setUp = wrapped_setup_method
+        teardown_method = self.tearDown
         def wrapped_teardown_method(*req_args, **opt_args):
             result = teardown_method(*req_args, **opt_args)
             Singleton().remove_all_singletons()
             return result
-        an_instance.tearDown = wrapped_teardown_method
-        
-        return an_instance
+        self.tearDown = wrapped_teardown_method
         
     def assertDictsEqual(self, first, second, *args, **kwargs):
         """
