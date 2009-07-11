@@ -1,0 +1,140 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string">psrc_zone</project_name>
+    <description type="string">PSRC zone baseline</description>
+    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+    <dataset_pool_configuration type="class">
+      <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+      <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+    </dataset_pool_configuration>
+  </general>
+  <model_manager>
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary"/>
+    <templates hidden="True" name="Model Templates" parser_action="skip"/>
+    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
+      <save_estimation_results type="boolean">False</save_estimation_results>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</cache_directory>
+      <estimation_database_configuration type="class">
+        <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+        <argument name="database_name" type="string">eugene_1980_baseyear_zone</argument>
+      </estimation_database_configuration>
+      <scenario_database_configuration type="class">
+        <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+        <argument name="database_name" type="string">eugene_1980_baseyear_zone</argument>
+      </scenario_database_configuration>
+      <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+      <low_memory_mode type="boolean">False</low_memory_mode>
+      <base_year type="integer">1980</base_year>
+      <years type="tuple">
+        <firstyear type="integer">1980</firstyear>
+        <lastyear type="integer">1980</lastyear>
+      </years>
+      <seed type="integer">1</seed>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="pseudo_building" type="selectable">True</selectable>
+        <selectable name="zone" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">True</selectable>
+        <selectable name="development_event_history" type="selectable">True</selectable>
+        <selectable name="target_vacancy" type="selectable">True</selectable>
+        <selectable name="job_building_type" type="selectable">True</selectable>
+        <selectable name="building_type" type="selectable">True</selectable>
+      </datasets_to_preload>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+    </estimation_config>
+  </model_manager>
+  <scenario_manager>
+    <scenario executable="True" name="Zone_baseline" setexpanded="True" type="scenario">
+      <models_to_run type="selectable_list">
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="development_project_transition_model" type="selectable">True</selectable>
+        <selectable name="commercial_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="industrial_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">True</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">_all_</group_members>
+        </selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+      </models_to_run>
+      <scenario_database_configuration type="string"/>
+      <others type="category">
+        <base_year type="integer"/>
+        <years_to_run config_name="years" type="tuple">
+          <firstyear type="integer"/>
+          <lastyear type="integer"/>
+        </years_to_run>
+      </others>
+      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">runs</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
+        </argument>
+        <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
+        <argument name="tables_to_cache" type="selectable_list">
+          <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
+          <selectable name="annual_household_control_totals" type="selectable">True</selectable>
+          <selectable name="households" type="selectable">True</selectable>
+          <selectable name="job_building_types" type="selectable">True</selectable>
+          <selectable name="building_types" type="selectable">True</selectable>
+          <selectable name="jobs" type="selectable">True</selectable>
+          <selectable name="travel_data" type="selectable">True</selectable>
+          <selectable name="zones" type="selectable">True</selectable>
+          <selectable name="pseudo_buildings" type="selectable">True</selectable>
+          <selectable name="counties" type="selectable">True</selectable>
+          <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="urbansim_constants" type="selectable">True</selectable>
+          <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
+          <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
+          <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
+          <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
+          <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
+          <selectable name="base_year" type="selectable">True</selectable>
+          <selectable name="cities" type="selectable">True</selectable>
+          <selectable name="development_event_history" type="selectable">True</selectable>
+          <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
+          <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
+          <selectable name="employment_sectors" type="selectable">True</selectable>
+          <selectable name="race_names" type="selectable">True</selectable>
+          <selectable name="target_vacancies" type="selectable">True</selectable>
+          <selectable name="jobs_for_estimation" type="selectable">True</selectable>
+          <selectable name="households_for_estimation" type="selectable">True</selectable>
+        </argument>
+        <argument name="tables_to_cache_nchunks" type="dictionary"/>
+        <argument name="tables_to_copy_to_previous_years" type="dictionary"/>
+      </creating_baseyear_cache_configuration>
+    </scenario>
+  </scenario_manager>
+  <debuglevel type="integer">4</debuglevel>
+  <base_year type="integer">2000</base_year>
+  <cache_directory type="string"/>
+</opus_project>
