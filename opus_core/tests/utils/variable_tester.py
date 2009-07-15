@@ -79,10 +79,14 @@ class VariableTester(object):
             if dataset is None:
                 try: # try to create general dataset
                     dataset = Dataset(dataset_name=dataset_name,
+                                      id_name=dataset_name+"_id",
+                                      in_table_name=dataset_name,
+                                      in_storage=storage)
+                    if dataset_name+'_id' not in dataset.get_known_attribute_names():
+                        dataset = Dataset(dataset_name=dataset_name,
                                       id_name="id",
                                       in_table_name=dataset_name,
                                       in_storage=storage)
-
                 except:
                     raise StandardError, "Error in creating dataset %s." % dataset_name
             self.dataset_pool._add_dataset(dataset_name, dataset)
