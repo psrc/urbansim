@@ -53,6 +53,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         self.available_years_for_simulation_runs = {}
 
         self.current_indicator = ''
+        self.current_indicator_dataset = ''
         self.current_run = ''
         self.current_year = ''
         self._update_current_label()
@@ -207,9 +208,14 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         if currentRow is None: return
 
         indicator_name = str(self.indicator_table.item(currentRow,0).text())
-        if self.current_indicator == indicator_name and not self.setup: return
+        indicator_dataset = str(self.indicator_table.item(currentRow,1).text())
+        if self.current_indicator == indicator_name and \
+                self.current_indicator_dataset == indicator_dataset and \
+                not self.setup: return
 
         self.current_indicator = indicator_name
+        self.current_indicator_dataset = indicator_dataset
+        
         self._update_current_label()
 
         if not self.setup and self.cb_auto_gen.isChecked():
@@ -221,6 +227,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
     def on_pb_generate_results_released(self):
         run_name = self.current_run
         indicator_name = self.current_indicator
+        indicator_dataset = self.current_indicator_dataset
         start_year = self.current_year
         end_year = start_year
 
@@ -245,8 +252,9 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
 
         dataset = None
         for indicator_node in indicator_nodes:
-            if indicator_node.get('name') == indicator_name:
-                dataset = get_variable_dataset(indicator_node)
+            ind_dataset, name = get_variable_dataset_and_name(indicator_node)
+            if name == indicator_name and ind_dataset == indicator_dataset:
+                dataset = ind_dataset
                 break
 
         if dataset is None:
