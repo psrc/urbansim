@@ -1435,13 +1435,17 @@ class AbstractDataset(object):
             save_map(m, xml_filename)
         
         # Add labels and color bar to image file
+        # TODO: PIL should be added as a required package.  Once this is done, change these imports to 
+        #     from PIL.Image import fromstring, new
+        #     from PIL.ImageDraw import Draw
+        # since the fromstring and new functions are actually from PIL.Image
         from Image import fromstring, new
         from ImageDraw import Draw
         
         # render the mapnik map to a PIL image        
-        map_pil_img = Image(map_width_px, map_height_px)
-        render(m, map_pil_img)
-        map_pil_img = fromstring('RGBA', (map_width_px, map_height_px), map_pil_img.tostring())
+        map_img = Image(map_width_px, map_height_px)
+        render(m, map_img)
+        map_pil_img = fromstring('RGBA', (map_width_px, map_height_px), map_img.tostring())
         
         # copy map image to a larger canvas
         result_file = new('RGBA', (result_file_width,result_file_height),color='#ffffff')
