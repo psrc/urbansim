@@ -9,7 +9,7 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['urbansim_zone', 'urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['aggregate_building','household_x_aggregate_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <available_datasets type="list">['building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
   </general>
   <model_manager>
@@ -22,7 +22,7 @@
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">urbansim.employment_relocation_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">aggregate_building_id</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">EmploymentRelocationModelCreator().get_model</name>
           </init>
@@ -48,7 +48,7 @@
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">urbansim.household_relocation_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string">aggregate_building_id</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">HouseholdRelocationModelCreator().get_model</name>
           </init>
@@ -80,7 +80,7 @@
           </init>
           <run type="dictionary">
             <argument convert_blank_to_none="True" name="agents_filter" type="string">None</argument>
-            <argument name="location_set" type="string">aggregate_building</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="agent_set" type="string">job</argument>
           </run>
@@ -93,7 +93,7 @@
             <class_name>HouseholdTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <argument name="location_id_name" parser_action="quote_string" type="string">zone_id</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">HouseholdTransitionModel</name>
           </init>
@@ -188,7 +188,7 @@
           <init type="dictionary">
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.zone.number_of_vacant_SSS_jobs</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_parcel.building.vacant_SSS_job_space</argument>
             <argument convert_blank_to_none="True" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
@@ -198,7 +198,7 @@
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string"/>
             </argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument name="estimation_size_agents" type="float">1.0</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
@@ -341,7 +341,7 @@
           </init>
           <run type="dictionary">
             <argument name="agents_index" type="string">erm_index</argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="agent_set" type="string">job</argument>
           </run>
@@ -354,7 +354,7 @@
             <class_name>EmploymentTransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <argument name="location_id_name" parser_action="quote_string" type="string">zone_id</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">building_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">EmploymentTransitionModel</name>
           </init>
@@ -390,8 +390,8 @@
           <init type="dictionary">
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim.zone.number_of_households</argument>
-            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim.zone.number_of_households</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_parcel.building.number_of_households</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_parcel.building.number_of_households</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument convert_blank_to_none="True" name="filter" type="string"/>
@@ -400,7 +400,7 @@
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string"/>
             </argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument name="estimation_size_agents" type="float">0.5</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
@@ -469,14 +469,14 @@
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim</argument>
             <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
             <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_residential_units</argument>
-            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_residential_units</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_parcel.building.vacant_residential_units</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_parcel.building.vacant_residential_units</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument convert_blank_to_none="True" name="filter" type="string"/>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
@@ -534,13 +534,13 @@
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(pseudo_building.avg_value)</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(building.avg_value)</argument>
             <argument convert_blank_to_none="True" name="filter_attribute" type="string"/>
             <argument name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -554,9 +554,9 @@
           <estimate type="dictionary">
             <output name="output" type="string">(coefficients, _)</output>
             <argument name="index" type="string">repm_index</argument>
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(pseudo_building.avg_value)</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(building.avg_value)</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
           </estimate>
@@ -573,7 +573,7 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
             <argument convert_blank_to_none="True" name="filter_variable" type="string"/>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
@@ -620,7 +620,7 @@
           <run type="dictionary">
             <argument name="building_type_set" type="string">building_type</argument>
             <argument name="units_names" type="string">{}</argument>
-            <argument name="building_set" type="string">pseudo_building</argument>
+            <argument name="building_set" type="string">building</argument>
             <argument name="projects" type="string">dptm_results</argument>
             <argument name="location_id_name" parser_action="quote_string" type="string">zone_id</argument>
           </run>
@@ -737,7 +737,7 @@
           <selectable name="jobs" type="selectable">True</selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="zones" type="selectable">True</selectable>
-          <selectable name="pseudo_buildings" type="selectable">True</selectable>
+          <selectable name="buildings" type="selectable">True</selectable>
           <selectable name="counties" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
