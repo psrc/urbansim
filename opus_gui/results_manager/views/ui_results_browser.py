@@ -190,3 +190,6 @@ class Ui_ResultsBrowser(object):
         self.pb_generate_results.setText(QtGui.QApplication.translate("ResultsBrowser", "Generate results", None, QtGui.QApplication.UnicodeUTF8))
         self.tabwidget_visualizations.setTabText(self.tabwidget_visualizations.indexOf(self.starttab), QtGui.QApplication.translate("ResultsBrowser", "starttab", None, QtGui.QApplication.UnicodeUTF8))
 
+        ################################3
+        self.cb_auto_gen.setText(QtGui.QApplication.translate("ResultsBrowser", "Uncertainty options generate", None, QtGui.QApplication.UnicodeUTF8))
+  
