@@ -3,7 +3,7 @@
   <general>
     <project_name type="string">psrc_zone</project_name>
     <description type="string">PSRC zone baseline</description>
-    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+    <parent type="file">psrc_zone/configs/urbansim_zone.xml</parent>
     <dataset_pool_configuration type="class">
       <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
