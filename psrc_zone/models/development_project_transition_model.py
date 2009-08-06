@@ -137,7 +137,7 @@ class DevelopmentProjectTransitionModel( Model ):
                 "non_residential_sqft": zeros( ( idx.size, ), dtype=int32),
                 'building_type_id': array(idx.size* [project_type_id]),
                 "project_id": arange( idx.size ) + 1,
-                 location_set.get_id_name()[0]: zeros( ( idx.size, ), dtype=int32)}
+                "building_id": zeros( ( idx.size, ), dtype=int32)}
         data[self.project_units[project_type]]= history_values_without_zeros[idx]
         storage = StorageFactory().get_storage('dict_storage')
 
