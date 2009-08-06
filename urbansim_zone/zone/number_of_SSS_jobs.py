@@ -16,8 +16,8 @@ class number_of_SSS_jobs(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["urbansim.job.is_building_type_%s" % self.status,
-                "job.zone_id"
+        return ["urbansim_zone.job.is_building_type_%s" % self.status,
+                "urbansim_zone.job.zone_id"
                 ]
 
     def compute(self,  dataset_pool):
@@ -40,24 +40,32 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'job':
             {"job_id":array([1,2,3,4,5]),
-             "building_type":array([1,2,1,1,2]),
-             "zone_id":array([1,1,3,2,2]),
+             "building_id":array([1,1,3,2,2]),
+             },
+            'building':
+            {
+             'building_id':array([3,2,1]),
+             'building_type_id': array([2,1,1]),
+             'zone_id': array([3,2,1])
              },
             'zone':
             {
              "zone_id":array([1,2,3]),
              },
-            'job_building_type':
+            'building_type':
             {
-             "id":array([1,2]),
+             "building_type_id":array([1,2]),
              "name":array(["commercial", "industrial"])
              },
              
            }
         )
         
-        should_be = array([1, 1, 0])
+        should_be = array([0, 0, 1])
         instance_name = 'urbansim_zone.zone.number_of_industrial_jobs'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
+        should_be = array([2, 2, 0])
+        instance_name = 'urbansim_zone.zone.number_of_commercial_jobs'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':

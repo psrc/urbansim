@@ -14,12 +14,12 @@ class is_building_type_SSS(Variable):
         Variable.__init__(self)
 
     def dependencies(self):
-        return ["urbansim_zone.job.building_type_id", "building_type.name",
+        return ["urbansim_zone.job.building_type_id", "building_type.building_type_name",
                 "building_type.building_type_id"]
 
     def compute(self, dataset_pool):
         building_types = dataset_pool.get_dataset('building_type')
-        code = building_types.get_id_attribute()[building_types.get_attribute("name") == self.building_type_name]
+        code = building_types.get_id_attribute()[building_types.get_attribute("building_type_name") == self.building_type_name]
         return self.get_dataset().get_attribute("building_type_id") == code
 
     def post_check(self, values, dataset_pool):
@@ -40,7 +40,7 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'building_type': {
                 'building_type_id':array([1,2]),
-                'name': array(['foo', 'commercial'])
+                'building_type_name': array(['foo', 'commercial'])
                 },
             'job': {
                     'job_id': array([1,2,3]),
