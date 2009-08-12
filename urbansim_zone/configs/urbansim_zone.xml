@@ -371,6 +371,7 @@
           </run>
         </structure>
       </model>
+      <!-- ##LW: temporarily comment out HBELCM because it interference with HBELCM defined as ELCM group member
       <model name="home_based_employment_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
@@ -449,6 +450,7 @@
           </submodel>
         </specification>
       </model>
+      -->
       <model name="household_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">['household_relocation_model']</config_override>
