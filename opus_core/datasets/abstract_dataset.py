@@ -183,7 +183,7 @@ class AbstractDataset(object):
 
         # Now append to these rows.
         for attrname in self.get_computed_attribute_names():
-            if attrname not in data.keys():
+            if attrname not in data.keys() and attrname not in self.get_id_name():
                 self.delete_one_attribute(attrname)
         data_size = data[data.keys()[0]].size
         for attr in self.get_known_attribute_names():
@@ -209,14 +209,20 @@ class AbstractDataset(object):
             if change_ids_if_not_unique:
 
                 if ids.ndim == 1:
-                    maxid = ids[0:self.size()].max()
+                    if self.size() == 0:
+                        maxid = 0
+                    else:
+                        maxid = ids[0:self.size()].max()
                     self.modify_attribute(self.get_id_name()[0], arange(maxid+1, maxid+data_size+1),
                                            arange(self.size(), self.size()+data_size))
                 else:
                     maxids = []
                     i=0
                     for id_name in self.get_id_name():
-                        maxids.append(ids[0:self.size(),i].max())
+                        if self.size() == 0:
+                            maxids.append(0)
+                        else:
+                            maxids.append(ids[0:self.size(),i].max())
                         i+=1
                     i=0
                     for id_name in self.get_id_name():
