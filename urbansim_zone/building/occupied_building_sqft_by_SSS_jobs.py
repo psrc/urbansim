@@ -51,7 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
         'building_type':
             {
              "building_type_id":array([1,2,3]),
-             "name":array(["commercial", "industrial", "residential"])
+             "building_type_name":array(["commercial", "industrial", "residential"])
              },
                    }
                                 )
