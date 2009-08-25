@@ -66,7 +66,10 @@ class AssignBuildingsToJobs:
         parcel_ids = job_dataset.get_attribute("parcel_id")
         building_ids = job_dataset.get_attribute("building_id")
         building_types = job_dataset.get_attribute("building_type")
-        impute_sqft_flags = job_dataset.get_attribute("impute_building_sqft_flag")
+        try:
+            impute_sqft_flags = job_dataset.get_attribute("impute_building_sqft_flag")
+        except:
+            impute_sqft_flags = zeros(job_dataset.size())
         is_considered = logical_and(parcel_ids > 0, building_ids <= 0) # jobs that have assigned parcel but not building
         job_index_home_based = where(logical_and(is_considered, building_types == 1))[0]
         job_index_governmental = where(logical_and(is_considered, building_types == 3))[0]
@@ -114,6 +117,7 @@ class AssignBuildingsToJobs:
         sector_bt_distribution = zeros((unique_sectors.size, building_type_dataset.size()), dtype="float32")
         
         jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
+        job_dataset._compute_if_needed_compute_if_needed("urbansim_parcel.job.zone_id", dataset_pool=dataset_pool) 
         jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
         new_jobs_sqft = job_dataset.get_attribute("sqft").copy()
         
@@ -121,6 +125,7 @@ class AssignBuildingsToJobs:
         sector_index_mapping = {}
         for isector in range(unique_sectors.size):
             idx = where(sectors[where_valid_jbt]==unique_sectors[isector])[0]
+            if idx.size == 0: continue
             o = ones(idx.size, dtype="int32")
             sector_bt_distribution[isector,:] = ndimage_sum(o, labels=job_building_types[where_valid_jbt[idx]], 
                                                             index=available_building_types)
@@ -317,17 +322,16 @@ if __name__ == '__main__':
     output_database_name = "psrc_2005_data_workspace_hana"
     input_cache =  "/Users/hana/urbansim_cache/psrc/data_preparation/cache/2000"
     output_cache = "/Users/hana/urbansim_cache/psrc/data_preparation/stepIV"
-    #input_cache =  "/urbansim_cache/psrc_parcel/cache_source/2000"
-    #output_cache = "/urbansim_cache/psrc_parcel/tmp/2000"
+    input_cache =  "/workspace/work/psrc/unroll_jobs/unroll_jobs_from_establishments_cache"
+    output_cache = "/workspace/work/psrc/unroll_jobs/output"
     #instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     pool_storage = instorage
-    job_dataset = JobDataset(in_storage=in_storage, in_table_name = jobs_table)
+    job_dataset = JobDataset(in_storage=instorage, in_table_name = "jobs")
     dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
                                    storage=pool_storage)
     seed(1)
     AssignBuildingsToJobs().run(job_dataset, dataset_pool, out_storage=outstorage)
     CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
-            

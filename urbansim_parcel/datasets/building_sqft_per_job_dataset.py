@@ -40,6 +40,7 @@ def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximu
     is_valid = logical_and(job_building_index >= 0, has_sqft)
     job_building_index = job_building_index[is_valid]
     sqft_of_jobs = buildings.sum_over_ids(jobs.get_attribute("building_id")[is_valid], job_sqft[is_valid])
+    buildings._compute_if_needed_compute_if_needed("urbansim_parcel.building.zone_id", dataset_pool=dataset_pool)
     building_zones = buildings.get_attribute("zone_id")
     building_types = buildings.get_attribute("building_type_id")
     unique_zones = unique_values(building_zones)
