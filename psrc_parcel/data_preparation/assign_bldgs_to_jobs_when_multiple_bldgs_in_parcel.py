@@ -117,7 +117,7 @@ class AssignBuildingsToJobs:
         sector_bt_distribution = zeros((unique_sectors.size, building_type_dataset.size()), dtype="float32")
         
         jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
-        job_dataset._compute_if_needed_compute_if_needed("urbansim_parcel.job.zone_id", dataset_pool=dataset_pool) 
+        job_dataset._compute_if_needed("urbansim_parcel.job.zone_id", dataset_pool=dataset_pool) 
         jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
         new_jobs_sqft = job_dataset.get_attribute("sqft").copy()
         
