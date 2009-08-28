@@ -33,6 +33,7 @@ class DatasetFactory(object):
         ('employment_adhoc_sector_group', 'employment_adhoc_sector_groups', 'employment_sector_group_dataset', 'EmploymentSectorGroupDataset'),
         ('faz', 'fazes', 'faz_dataset', 'FazDataset'),
         ('home_based_employment_location_choice_model_specification', 'home_based_employment_location_choice_model_specification', None, None),
+        ('home_based_status', 'home_based_status', 'home_based_status_dataset', 'HomeBasedStatusDataset'),
         ('household_characteristic', 'household_characteristics_for_ht', 'household_characteristic_dataset', 'HouseholdCharacteristicDataset'), 
         ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
         ('household_location_choice_model_specification', 'household_location_choice_model_specification', None, None),
