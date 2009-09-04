@@ -216,7 +216,14 @@ class OpusModel(object):
             self.errorCallback(errorInfo)
         if self.statusfile is not None:
             gc.collect()
-            os.remove(self.statusfile)
+            # adding try/except, windows sometimes has a lock on this file
+            # when it does, os.remove will cause the simulation to appear
+            # as if it has crashed, when in fact it simply could not delete
+            # status.txt
+            try:
+                os.remove(self.statusfile)
+            except:
+                pass
         self.finishedCallback(succeeded, run_name = run_name)
 
     def _compute_progress(self):
