@@ -105,7 +105,14 @@ class BuildingConstructionModel(Model):
         new_buildings["template_id"] = array([], dtype="int32")
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
-        land_area_taken = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.land_area_taken'],
+        # Compute land_area_taken properly if velocity function is present
+        if velocity_function_set is not None:
+            larea_taken = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.land_area_taken'],
+                                                                   dataset_pool=dataset_pool)
+            pct_dev_this_yr_conv = (percent_of_development_this_year / 100.0)
+            land_area_taken = larea_taken * pct_dev_this_yr_conv
+        else:
+            land_area_taken = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.land_area_taken'],
                                                                    dataset_pool=dataset_pool).astype(new_buildings["land_area"].dtype)
         construction_cost = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.construction_cost'],
                                                                    dataset_pool=dataset_pool).astype(new_buildings["improvement_value"].dtype)

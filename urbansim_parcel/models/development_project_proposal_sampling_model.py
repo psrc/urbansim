@@ -33,6 +33,15 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
+        # Code added by Jesse Ayers, MAG, 7/27/2009
+        # Checking the size of the proposal set
+        # if there are no proposals, skip running the model and 
+        # print a message
+        self.positive_proposals = True
+        if self.proposal_set.n <= 0:
+            logger.log_status("Proposal Set size <= 0, no proposals to consider, skipping DPPSM.")
+            self.positive_proposals = None
+            return
         if not self.dataset_pool.has_dataset("development_project_proposal_component"):
             self.proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
                                                        self.dataset_pool.get_dataset('development_template_component'))
@@ -60,9 +69,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         """
         n - sample n proposals at a time, evaluate them one by one
         """
+        self.demolished_buildings = array([], dtype='int32')  #id of buildings to be demolished
         if current_year is None:
             current_year = SimulationState().get_current_time()
-
+        if not self.positive_proposals:
+            logger.log_status("Proposal Set size <= 0, no proposals to consider, skipping DPPSM.")
+            return (self.proposal_set, self.demolished_buildings) 
         self.proposal_component_set.compute_variables([
             'urbansim_parcel.development_project_proposal_component.units_proposed',
             'urbansim_parcel.development_project_proposal_component.is_residential'],
@@ -82,9 +94,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                 "urbansim_parcel.building.is_residential"
                                     ],
                                     dataset_pool=self.dataset_pool)
-        parcels = self.dataset_pool.get_dataset('parcel')
-        parcels.compute_variables(['urbansim_parcel.parcel.building_sqft', 'urbansim_parcel.parcel.residential_units'],
-                                  dataset_pool=self.dataset_pool)
 
         ## define unit_name by whether a building is residential or not (with is_residential attribute)
         ## if it is non-residential (0), count units by number of job spaces (units_for_jobs)
@@ -114,7 +123,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.occupied_units = {}   #total occupied units by land_use type
         self.proposed_units = {}   #total proposed units by land_use type
         self.demolished_units = {} #total (to be) demolished units by land_use type
-        self.demolished_buildings = array([], dtype='int32')  #id of buildings to be demolished
 
         components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id").astype("int32")
         proposal_ids = self.proposal_set.get_id_attribute()
@@ -200,7 +208,18 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                             'units_stock': int(units_stock)
                                           }
                             )
-        
+        # Code added by Jesse Ayers, MAG, 7/20/2009
+        # Get the active projects:
+        stat_id = self.proposal_set.get_attribute('status_id')
+        actv = where(stat_id==1)[0]
+        # Where there are active projects, compute the total_land_area_taken
+        # and store it on the development_project_proposals dataset
+        # so it can be used by the building_construction_model for the proper
+        # computation of units_proposed for those projects with velocity curves
+        if actv.size > 0:          
+            total_land_area_taken_computed = self.proposal_set.get_attribute('urbansim_parcel.development_project_proposal.land_area_taken')
+            self.proposal_set.modify_attribute('total_land_area_taken', total_land_area_taken_computed[actv], actv)
+
         return (self.proposal_set, self.demolished_buildings) 
 
     def check_vacancy_rates(self, target_vacancy):
@@ -244,7 +263,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         building_ids = buildings.get_id_attribute()
         
         for i in range(proposal_indexes.size):
-            if not (True in self.accepting_proposals):
+            if not (True in self.accepting_proposals) and not (force_accepting):
                 # if none of the types is accepting_proposals, exit
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types

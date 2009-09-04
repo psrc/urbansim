@@ -8,7 +8,7 @@ from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
-from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, concatenate, inf
+from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, int32, concatenate, inf
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
 import re
@@ -104,6 +104,12 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
 
+        # Code added by Jesse Ayers, MAG, 7/27/2009
+        # Getting an index of parcels that have actively developing projects
+        if existing_proposal_set:
+            parcels_with_proposals = existing_proposal_set.get_attribute('parcel_id')
+            parcels_with_proposals_idx = parcels.get_id_index(parcels_with_proposals)            
+
         if template_filter is not None:
             try:
                 index2 = where(templates.compute_variables(template_filter))[0]
@@ -115,7 +121,15 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             index2 = None
             
         if parcel_filter_for_new_development is not None:
-            index1 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
+            index11 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
+            # Code added by Jesse Ayers, MAG, 7/27/2009
+            # The following loop removes from consideration parcels that have actively developing projects
+            somelst = []
+            for i in index11:
+                if i in parcels_with_proposals_idx:
+                    continue
+                somelst.append(i)
+            index1 = array(somelst)
         else:
             index1 = None
             
@@ -128,6 +142,9 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None) )
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
+            # Line added by Jesse Ayers, MAG, 7/20/2009
+            # adding a primary attribute to catch a later computation
+            proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int32), "total_land_area_taken", AttributeType.PRIMARY )
             logger.end_block()
             if parcel_filter_for_redevelopment is not None:
                 logger.start_block("Creating proposals for re-development")

@@ -8,7 +8,9 @@ from numpy import where
 
 class land_area_taken(Variable):
     """land area taken up by the proposal
-    
+    returns parcel_sqft if the proposal is a redevelopment project
+    returns total land area taken by the project when completed if it is a project
+    on a velocity curve    
     """
     _return_type = "int32"
     mol = 0.1  #more or less, in this range use all vacant_land_area
@@ -31,6 +33,14 @@ class land_area_taken(Variable):
                                         dataset_pool=dataset_pool)
             is_redev = proposals.get_attribute('is_redevelopment') == True
             vacant_land_area[is_redev] = proposals.get_attribute('parcel_sqft')[is_redev]
+        # Code added by Jesse Ayers, MAG, 7/20/2009
+        # This branch returns the total land area taken by the entire
+        # project if the project will be built out over several years
+        # according to a velocity function
+        if 'total_land_area_taken' in proposals.get_known_attribute_names():
+            total_land_area_taken = proposals.get_attribute('total_land_area_taken')
+            positive_total_land_area_taken = proposals.get_attribute('total_land_area_taken') > 0
+            vacant_land_area[positive_total_land_area_taken] = proposals.get_attribute('total_land_area_taken')[positive_total_land_area_taken]
         
         results = vacant_land_area.astype(self._return_type)
         w_min = where(results<land_sqft_min)

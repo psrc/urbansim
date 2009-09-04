@@ -124,7 +124,6 @@ by UrbanSim, but it is created by the developer model and cached every simulatio
 \hline
 development\_project\_component\_id & integer & unique identifier\\ \hline
 development\_project\_id & integer & identifies which development the project belongs to\\ \hline
-velocity\_function\_id & integer & identifies the rate or function by which the project develops over time\\ \hline
 percent\_of\_building\_sqft & integer & identifies the percentage of the building that this component takes up.
 100\% would indicate a free-standing building with a single use, and several records with percent\_of\_building\_sqft 
 adding up to 100\% would indicate a multiple use single building. \\ \hline
@@ -178,7 +177,6 @@ since they will be compared to regulatory constraints and the size constraints o
 \hline
 development\_template\_component\_id & integer & unique identifier\\ \hline
 development\_template\_id & integer & indicates which development template this component belongs to\\ \hline
-velocity\_funtion\_id & integer & indicates the velocity function used by this template\\ \hline
 building\_type\_id & integer & indicates the building type of this particular component\\ \hline
 percent\_of\_building\_sqft & integer & identifies the percentage of the building that this component takes up\\
 construction\_cost\_per\_unit & integer & the per unit construction cost\\ \hline
@@ -188,7 +186,8 @@ building\_sqft\_per\_unit & integer & the square footage per residential unit \\
 \subsection{The {\tt velocity\_functions} table}
 \label{sec:db-tables-velocity-functions}
 
-This table is designed to hold the velocity functions that specify the rate at which development is built out.
+This table is designed to hold the velocity functions that specify the rate at which development is built out.  A Development Project Proposal has a calculated variable called units_proposed that is the total number of units that will be built.  The calculated variable annual_construction_schedule on the Development Project Proposal Components dataset uses units_proposed to select which of the velocity functions in this table should apply
+based on the building_type_id and units_proposed of the Development Project Proposal Component.
 
 \begin{tabular}{p{2.3in}lp{3.2in}}
 %\hline
@@ -196,7 +195,10 @@ This table is designed to hold the velocity functions that specify the rate at w
 \hline
 velocity\_function\_id & integer & unique identifier\\ \hline
 annual\_construction\_schedule & string &  this field will contain a numbered list in brackets of this form: `[25, 50, 75, 100]' 
-indicating with each entry the percentage complete that the project would be in each year from its initiation.  A particular development\_template\_component or development\_project\_component will have one velocity\_function\_id attached to it.  This could take the form [0, 0, 0, 33, 66, 100] for example, would have no construction in its first 3 years, then in year 4 it would be 33\% complete, and 66\% and 100\% complete in years 5 and 6 respectively.\\ \hline 
+indicating with each entry the percentage complete that the project would be in each year from its initiation.  A particular development\_template\_component or development\_project\_component will have one velocity\_function\_id attached to it.  This could take the form [0, 0, 0, 33, 66, 100] for example, would have no construction in its first 3 years, then in year 4 it would be 33\% complete, and 66\% and 100\% complete in years 5 and 6 respectively.\\ \hline
+building\_type\_id & integer & indicates the building type that this particular velocity function applies to\\ \hline
+minimum\_units & integer & lower bound on a range of units that this velocity function applies to\\ \hline
+maximum\_units & integer & upper bound on a range of units that this velocity function applies to\\ \hline
 \end{tabular}
 
 
