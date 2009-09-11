@@ -124,10 +124,9 @@ class Tests(opus_unittest.OpusTestCase):
             }
         })
 
-        should_be = array(['[100]', '[100]', '[100]', '[50, 100]', '[50, 100]', '[50, 100]', '[50, 75, 100]', '[50, 75, 100]', '[25, 50, 100]', '[25, 50, 75, 100]', '[20, 40, 60, 80, 100]', '[20, 40, 60, 80, 100]'])
+        should_be = array(['[100]', '[100]', '[100]', '[50, 100]', '[25, 50, 100]', '[25, 50, 75, 100]', '[20, 40, 60, 80, 100]', '[20, 40, 60, 80, 100]'])
         tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':
     opus_unittest.main()
 
-        
