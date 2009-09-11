@@ -160,13 +160,13 @@ class VariableTester(object):
         else:
             return alltrue(value1==value2)
     
-    def _allclose(self, value1, value2):
+    def _allclose(self, value1, value2, rtol=1e-7):
         ## only use ma function when necessary because ma functions have limited support, e.g. for string array
         ## ma.allclose(string arrays) returns ValueError
         if hasattr(value1, '_mask') or hasattr(value2, '_mask'):
-            return ma.allclose(value1, value2)
+            return ma.allclose(value1, value2, rtol)
         else:
-            return allclose(value1==value2)
+            return allclose(value1, value2, rtol)
         
         
 import os
