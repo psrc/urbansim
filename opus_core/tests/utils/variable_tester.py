@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 
-from numpy import ma
+from numpy import ma, alltrue, allclose
 import os.path
 
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -109,7 +109,7 @@ class VariableTester(object):
         this tolerance of these should_be values."""
         values = self._get_attribute()
 
-        test_class.assert_(ma.allequal(values, should_be),
+        test_class.assert_(self._allequal(values, should_be),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -118,7 +118,7 @@ class VariableTester(object):
         this tolerance of these should_be values."""
         values = self._get_attribute()
 
-        test_class.assert_(ma.allclose(values, should_be, rtol),
+        test_class.assert_(self._allclose(values, should_be, rtol),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -134,7 +134,7 @@ class VariableTester(object):
 
         values = self._get_attribute(variable_name)
 
-        test_class.assert_(ma.allequal(values, should_be),
+        test_class.assert_(self._allequal(values, should_be),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
@@ -148,12 +148,28 @@ class VariableTester(object):
 
         values = self._get_attribute(variable_name)
 
-        test_class.assert_(ma.allclose(values, should_be, rtol),
+        test_class.assert_(self._allclose(values, should_be, rtol),
                            "Error in %s: \n Expected %s \n Actual   %s" % (
                                self.file_path, should_be, values))
 
+    def _allequal(self, value1, value2):
+        ## only use ma function when necessary because ma functions have limited support, e.g. for string array
+        ## ma.allequal(string arrays) always returns True in numpy version pre-1.2.1; returns NotImplemented error in version 1.2.1
+        if hasattr(value1, '_mask') or hasattr(value2, '_mask'):
+            return ma.allequal(value1, value2)
+        else:
+            return alltrue(value1==value2)
+    
+    def _allclose(self, value1, value2):
+        ## only use ma function when necessary because ma functions have limited support, e.g. for string array
+        ## ma.allclose(string arrays) returns ValueError
+        if hasattr(value1, '_mask') or hasattr(value2, '_mask'):
+            return ma.allclose(value1, value2)
+        else:
+            return allclose(value1==value2)
+        
+        
 import os
-
 from numpy import array
 
 from opus_core.tests import opus_unittest
