@@ -100,16 +100,35 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             existing_proposal_set = DatasetSubset(existing_proposal_set_parent, available_idx)
         except:
             existing_proposal_set = None
-            
+        
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
 
-        # Code added by Jesse Ayers, MAG, 7/27/2009
-        # Getting an index of parcels that have actively developing projects
+        # Code added by Jesse Ayers, MAG, 9/14/2009
+        # Getting an index of parcels that have actively developing projects (those on a velocity function)
+        # and making sure that new proposals are not generated for them
         if existing_proposal_set:
             parcels_with_proposals = existing_proposal_set.get_attribute('parcel_id')
-            parcels_with_proposals_idx = parcels.get_id_index(parcels_with_proposals)            
-
+            parcels_with_proposals_idx = parcels.get_id_index(parcels_with_proposals)
+            if parcel_filter_for_new_development is not None:
+                if parcel_filter_for_new_development[parcel_filter_for_new_development.find('=')+1] == '=':
+                    filter = 'flter = numpy.logical_and(parcel.number_of_agents(development_project_proposal) == 0, %s)' % parcel_filter_for_new_development
+                else:
+                    parcel_filter_for_new_development = parcel_filter_for_new_development[parcel_filter_for_new_development.find('=')+1:].lstrip()
+                    filter = 'flter = numpy.logical_and(parcel.number_of_agents(development_project_proposal) == 0, %s)' % parcel_filter_for_new_development
+                index11 = where(parcels.compute_variables(filter))[0]
+                somelst = []
+                for i in index11:
+                    if i in parcels_with_proposals_idx:
+                        continue
+                    somelst.append(i)
+                index1 = array(somelst)
+        else:
+            if parcel_filter_for_new_development is not None:
+                index1 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
+            else:
+                index1 = None
+            
         if template_filter is not None:
             try:
                 index2 = where(templates.compute_variables(template_filter))[0]
@@ -119,19 +138,6 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 index2 = None
         else:
             index2 = None
-            
-        if parcel_filter_for_new_development is not None:
-            index11 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
-            # Code added by Jesse Ayers, MAG, 7/27/2009
-            # The following loop removes from consideration parcels that have actively developing projects
-            somelst = []
-            for i in index11:
-                if i in parcels_with_proposals_idx:
-                    continue
-                somelst.append(i)
-            index1 = array(somelst)
-        else:
-            index1 = None
             
         if create_proposal_set:
             logger.start_block("Creating proposals for new development")
