@@ -43,8 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
         )
         
         should_be = array([1, 1, 1, 2, -1])
-        instance_name = 'sanfrancisco.business.parcel_id'
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, instance_name)
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':
     opus_unittest.main()

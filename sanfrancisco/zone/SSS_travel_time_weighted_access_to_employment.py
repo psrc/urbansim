@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
         )
         should_be = array([1.17361, 10.25])
         instance_name = "sanfrancisco.zone.%s_travel_time_weighted_access_to_employment" % mode
-        tester.test_is_close_for_family_variable(self, should_be, instance_name)
+        tester.test_is_close_for_family_variable(self, should_be, instance_name, rtol=1e-5)
 
 if __name__=='__main__':
     opus_unittest.main()
