@@ -477,17 +477,17 @@
           </run>
           <init type="dictionary">
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
-            <argument name="variable_package" parser_action="quote_string" type="string">urbansim</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
             <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_residential_units</argument>
-            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_residential_units</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument convert_blank_to_none="True" name="filter" type="string"/>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
@@ -543,13 +543,13 @@
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(pseudo_building.avg_value)</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(building.average_value_per_unit)</argument>
             <argument convert_blank_to_none="True" name="filter_attribute" type="string"/>
             <argument name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
@@ -563,9 +563,9 @@
           <estimate type="dictionary">
             <output name="output" type="string">(coefficients, _)</output>
             <argument name="index" type="string">repm_index</argument>
-            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(pseudo_building.avg_value)</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_unit_price=ln(building.average_value_per_unit)</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
           </estimate>
@@ -582,7 +582,7 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
             <argument convert_blank_to_none="True" name="filter_variable" type="string"/>
-            <argument name="dataset" type="string">pseudo_building</argument>
+            <argument name="dataset" type="string">building</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
