@@ -17,11 +17,11 @@ from opus_gui.util.convenience import create_qt_action
 
 # List node types that are removable (which also makes them rename-able)
 _REMOVABLE_NODE_TYPES = (
-    "dictionary", "selectable_list", "list", "tool_file", "tool_config",
+    "dictionary", "selectable_list", "list", "tool", "tool_config",
     "tool_set", "param_template", "model", "submodel", "source_data",
     "batch_visualization", "indicator_batch", "indicator",
     "indicator_result", "scenario", 'tool_file', 'tool_library', 'tool_group',
-    'class', None
+    'class', 'param', None
 )
 
 class XmlController(object):
@@ -240,7 +240,7 @@ class XmlController(object):
             added_actions.append(self.act_rename_node)
         if self.project.is_shadowing(node):
             added_actions.append(self.act_revert)
-        elif node.get('type') in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
+        elif node.tag in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
             added_actions.append(self.act_remove_selected)
 
         # Separate from other items

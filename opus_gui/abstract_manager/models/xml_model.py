@@ -184,7 +184,7 @@ class XmlModel(QAbstractItemModel):
         # Icons
         elif role == Qt.DecorationRole:
             if index.column() == 0:
-                return QVariant(IconLibrary.icon_for_type(node.get('type')))
+                return QVariant(IconLibrary.icon_for_type(node.tag))
 
         # Checkboxes
         elif role == Qt.CheckStateRole and index.column() == 1:
@@ -317,6 +317,7 @@ class XmlModel(QAbstractItemModel):
         # Set flags on a per column basis
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
         elif index.column() == 1:
             if is_checkbox_node:
                 return (Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable)
@@ -397,7 +398,7 @@ class XmlModel(QAbstractItemModel):
     def insertRow(self, row, parent_index, node, reinserting = False):
         '''
         Insert a row into the data model
-        @param row (int): row to insert into. If row is -1 the last row is used
+        @param row (int): row to insert into.
         @param parent_index (QModelIndex): index of parent item
         @param node (Element): node to insert
         @param reinserting (bool): if True; assume that the project has already reinserted the node
@@ -459,13 +460,16 @@ class XmlModel(QAbstractItemModel):
         if not index.isValid():
             return QModelIndex()
         parent_item = index.internalPointer().parent_item
+        parent_node = index.internalPointer().parent_item.node
         if parent_item is self._root_item:
             return QModelIndex()
-        return self.createIndex(parent_item.row(), 0, parent_item)
+        parent_ind = self.createIndex(parent_item.row(), 0, parent_item)
+        parent_ind.node = parent_node
+        return parent_ind
 
     # TODO consider doing this with lxml's insert(current index - 1) instead, the current
     # implementation gives me a headache (and I think its broken)
-    def move_up(self, index):
+    def move_up(self, index, view=None):
         '''
         Moves the specified item up one step
         @param index (QModelIndex): index for the item to move
@@ -475,6 +479,9 @@ class XmlModel(QAbstractItemModel):
             return index
         parent_item = self.parent(index).internalPointer()
         row = index.row()
+        if view:
+            this_item_expanded = view.isExpanded(self.index(row, 0, self.parent(index)))
+            above_item_expanded = view.isExpanded(self.index(row-1, 0, self.parent(index)))
         this_item = parent_item.child_items.pop(row)
         above_item = parent_item.child_items.pop(row - 1)
         parent_item.child_items.insert(row - 1, this_item)
@@ -483,9 +490,12 @@ class XmlModel(QAbstractItemModel):
         self.make_item_local(above_item)
         self.emit(SIGNAL('layoutChanged()'))
         self.dirty = True
+        if view:
+            view.setExpanded(self.index(row, 0, self.parent(index)), above_item_expanded)
+            view.setExpanded(self.index(row-1, 0, self.parent(index)), this_item_expanded)
         return self.index(row - 1, 0, self.parent(index))
 
-    def move_down(self, index):
+    def move_down(self, index, view=None):
         '''
         Moves the specified item down one step
         @param index (QModelIndex): index for the item to move
@@ -496,6 +506,9 @@ class XmlModel(QAbstractItemModel):
 
         parent_item = self.parent(index).internalPointer()
         row = index.row()
+        if view:
+            this_item_expanded = view.isExpanded(self.index(row, 0, self.parent(index)))
+            below_item_expanded = view.isExpanded(self.index(row+1, 0, self.parent(index)))
         this_item = parent_item.child_items.pop(row)
         below_item = parent_item.child_items.pop(row)
         parent_item.child_items.insert(row, below_item)
@@ -504,6 +517,9 @@ class XmlModel(QAbstractItemModel):
         self.make_item_local(below_item)
         self.emit(SIGNAL('layoutChanged()'))
         self.dirty = True
+        if view:
+            view.setExpanded(self.index(row+1, 0, self.parent(index)), this_item_expanded)
+            view.setExpanded(self.index(row, 0, self.parent(index)), below_item_expanded)
         return self.index(row + 1, 0, self.parent(index))
 
     def root_node(self):

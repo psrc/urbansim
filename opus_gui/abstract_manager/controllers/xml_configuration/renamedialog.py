@@ -41,7 +41,7 @@ class RenameDialog(QDialog, Ui_RenameDialog):
         # make sure that there is no naming conflict
         entered_name = str(self.leName.text()).strip()
         if entered_name in self.taken_names:
-            self.lbl_name_warning.setText('There is already another node with the name "%s".\n'
+            self.lbl_name_warning.setText('There is already another node with the name "%s."\n'
                                           'Please enter another name.' % entered_name)
             self.lbl_name_warning.setVisible(True)
         else:

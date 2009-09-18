@@ -1,17 +1,17 @@
 <gui_configuration>
-	<startup_options>
-		<splash_logo>opus-logo.bmp</splash_logo>
-	</startup_options>
-	<application_options>
-	    <application_title>OPUS</application_title>
-	</application_options>
-  	<font_settings>
-    	<menu_font_size>10</menu_font_size>
-    	<main_tabs_font_size>12</main_tabs_font_size>
-    	<general_text_font_size>11</general_text_font_size>
-  	</font_settings>
-  	<project_history>
-  		<open_latest_project_on_start>False</open_latest_project_on_start>
-  		<previous_project> </previous_project>
-  	</project_history>
+        <startup_options>
+                <splash_logo>opus-logo.bmp</splash_logo>
+        </startup_options>
+        <application_options>
+            <application_title>OPUS</application_title>
+        </application_options>
+          <font_settings>
+            <menu_font_size>10</menu_font_size>
+            <main_tabs_font_size>12</main_tabs_font_size>
+            <general_text_font_size>11</general_text_font_size>
+          </font_settings>
+          <project_history>
+                  <open_latest_project_on_start>False</open_latest_project_on_start>
+                  <previous_project> </previous_project>
+          </project_history>
 </gui_configuration>

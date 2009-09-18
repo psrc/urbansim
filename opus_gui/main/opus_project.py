@@ -139,6 +139,7 @@ class OpusProject(object):
         try:
             existing_node = self.find_by_id_string(future_id, parent_node.getroottree().getroot())
         except LookupError: # nodes with this id already exists
+            print "LookupError"
             return None
         if existing_node is not None:
             return None # don't allow overwriting existing nodes

@@ -10,6 +10,7 @@ from PyQt4.QtGui import QPalette, QLabel, QWidget, QLineEdit, QVBoxLayout, QFile
 from opus_gui.data_manager.views.ui_executetool import Ui_ExecuteToolGui
 from opus_gui.data_manager.run.run_tool import RunToolThread, OpusTool
 from opus_gui.main.controllers.instance_handlers import get_db_connection_names
+from opus_gui.data_manager.data_manager_functions import get_tool_node_by_name, get_tool_library_node
 
 class FileDialogSignal(QWidget):
     ''' NO DOCUMENTATION '''
@@ -36,8 +37,9 @@ class FileDialogSignal(QWidget):
 
 class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
-    def __init__(self, parent_widget, tool_node, tool_library_node, params = {}):
-        ''' NO DOCUMENTATION '''
+    def __init__(self, parent_widget, tool_node, tool_config, tool_library_node, params = {}):
+        ''' optional params:
+                tool_path - path to tools, element of data_manager'''
         window_flags = (Qt.WindowTitleHint |
                         Qt.WindowSystemMenuHint |
                         Qt.WindowMaximizeButtonHint)
@@ -46,6 +48,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
 
         # Grab the tool we are interested in...
         self.tool_node = tool_node
+        self.tool_config = tool_config
         self.tool_library_node = tool_library_node
 
         self.vars = {}
@@ -66,46 +69,22 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.test_line_buttons = []
 
         # Decide if we have a tool_file or tool_config
-        # If we have a too_file, then we need to traverse the XML and create a temporary
+        # If we have a tool, then we need to traverse the XML and create a temporary
         # config to be used.
         # If we have a config we just extract the params and create the GUI elements
 
-        # Note about conversion from QtXml to ElementTree
-        # The code below is an interpretation of the original codes intent --
-        # TODO test that this does what it's supposed to do
         self.tooltypearray = []
-        if tool_node.get('type') == 'tool_file':
-            self.type_selection = self.tool_node.get('name')
-            self.tool_name = tool_node.find('name').text
-            self.presentToolFileGUI()
-        else:
-            tool_hook_node = tool_node.find('tool_hook')
-            # tag name of the 'hooked' tool
-            self.type_selection = tool_hook_node.text
-            # Find the 'hooked' tool and get it's <name>
-            for tool in self.tool_library_node[:]:
-                if tool.tag == self.type_selection:
-                    self.tool_name = tool.find('name').text
-                    break
-            print('ExecuteToolGui: Could not find tool for tool_hook "%s"'
-                  % self.type_selection)
-            self.tool_name = ''
-            self.presentToolConfigGUI()
+        assert tool_node.tag == 'tool'
 
-        self.setWindowTitle(self.type_selection.replace('_', ' '))
+        self.module_name = tool_node.find('class_module').text
+        self.tool_name = tool_node.get('name')
+
+        if tool_config is None: self.presentToolFileGUI()
+        else: self.presentToolConfigGUI()
+
+        self.setWindowTitle(self.tool_name.replace('_', ' '))
 
     def on_execTool_released(self):
-        #print "create pressed"
-
-        # Need to create something that looks like this:
-        #<opus_database_to_sql_config type="tool_config">
-        #  <tool_hook type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
-        #  <sql_db_name type="string">mytestdb</sql_db_name>
-        #  <opus_data_directory type="string" />
-        #  <opus_data_year type="string">ALL</opus_data_year>
-        #  <opus_table_name type="string">ALL</opus_table_name>
-        #</opus_database_to_sql_config>
-        #print "Main Window Prio - %s" % (str(self.mainwindow.thread().priority()))
         self.execTool.setEnabled(False)
         self.textEdit.clear()
         self.progressBar.setValue(0)
@@ -113,13 +92,9 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         # self.test_text contains the parameter name  (stored as a QLabel instance)
         # self.test_line contains the editor (QLineEdit or QComboBox) for the parameter value
         # self.test_text_type contains the value for the type attribute (QLineEdit)
-        # for each parameter; construct a XML node in the following format
-        #  <parameter-name type="type-value"> parameter-value </parameter-name>
-
-        tmp_config_node = Element('temp_config', {'type': 'tool_config'})
-        SubElement(tmp_config_node, 'tool_hook',
-                   {'type': 'tool_library_ref'}).text = self.type_selection
+        params = {}
         for i in range(0, len(self.test_text)):
+
             param_name = str(self.test_text[i].text())
             if type(self.test_line[i]) == QComboBox:
                 param_value = str(self.test_line[i].currentText())
@@ -127,31 +102,54 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                 param_value = str(self.test_line[i].text())
             type_value = self.test_text_type[i].text().remove(QRegExp("[\(\)]"))
             type_value = str(type_value)
-            SubElement(tmp_config_node, param_name,
-                       {'type': type_value}).text = param_value
 
-        self.execToolConfigGen(tmp_config_node)
+            params[param_name] = param_value
+
+        tool_hook = self.tool_name
+        # look in all groups for the tool_name -- NOTE this requires the tool
+        # to be uniquely named regardless of which group it's in or this code
+        # will execute the wrong tool.
+        tool_node = get_tool_node_by_name(self.tool_library_node, tool_hook)
+        if tool_node is None:
+            QMessageBox.warning(None, 'Invalid tool hook',
+                                'Could not find a tool named %s' %tool_hook)
+            return
+
+        tool_path = self.optional_params['tool_path']
+        import_path = tool_path + '.' + self.module_name
+
+        opus_tool = OpusTool(import_path, params)
+        run_tool_thread = RunToolThread(opus_tool)
+        QObject.connect(run_tool_thread, SIGNAL("toolFinished(PyQt_PyObject)"),
+                        self.toolFinishedFromThread)
+        QObject.connect(run_tool_thread, SIGNAL("toolProgressPing(PyQt_PyObject)"),
+                        self.toolProgressPingFromThread)
+        QObject.connect(run_tool_thread, SIGNAL("toolLogPing(PyQt_PyObject)"),
+                        self.toolLogPingFromThread)
+        run_tool_thread.start()
 
     def on_cancelExec_released(self):
-        #print "cancel pressed"
         self.close()
 
     def fillInToolTypeArrayFromToolFile(self):
         # Find params subnode
-        param_nodes = self.tool_node.find('params') or []
+        param_nodes = self.tool_node.find('params')
         for param_node in param_nodes:
-            type_ = param_node.find('type').text or ''
-            default_value = param_node.find('default').text or ''
-            self.tooltypearray.append([param_node.tag, type_, default_value])
+            name = param_node.get('name')
+            type_ = param_node.get('param_type') or ''
+            default_value = param_node.text or ''
+            self.tooltypearray.append([name, type_, default_value])
 
     def fillInToolTypeArrayFromToolConfig(self):
         ''' NO DOCUMENTATION '''
         for child in self.tool_node.find('params'):
-            if not child.get('type') == 'tool_library_ref':
-                # print 'adding parameter %s (%s): %s' %(child.tag, child.get('type'), child.text)
-                self.tooltypearray.append([child.tag,
-                                           child.get('type'),
-                                           child.text])
+            name = child.get('name')
+            type_ = child.get('param_type') or ''
+            default_value = child.text or ''
+            if self.tool_config.find(name) is not None: 
+                default_value = self.tool_config.find(name).text
+
+            self.tooltypearray.append([name, type_, default_value])
 
     def createGUIElements(self):
         ''' Build the GUI based on the parameters for the tool '''
@@ -220,14 +218,13 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             self.vboxlayout.addWidget(widgetTemp)
             self.adjustSize()
         # Jesse adding help text from opusHelp
-        tool_path_node = self.tool_library_node.find('tool_path')
-        tool_path = tool_path_node.text if tool_path_node is not None else ''
+        tool_path = self.optional_params.get('tool_path','')
         try:
-            exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.tool_name)
+            exec_stmt = 'from %s.%s import opusHelp' % (tool_path, self.module_name)
             exec exec_stmt
             help = QString(opusHelp())
             self.toolhelpEdit.insertPlainText(help)
-        except:
+        except Exception, e:
             help = 'could not find opusHelp function in tool module'
             self.toolhelpEdit.insertPlainText(help)
 
@@ -238,7 +235,7 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         editor_file.setFilter(filter_str)
         editor_file.setAcceptMode(QFileDialog.AcceptOpen)
         if typeName == QString("file_path"):
-            fd = editor_file.getOpenFileName(self, self.QString("Please select a file..."),
+            fd = editor_file.getOpenFileName(self,QString("Please select a file..."),
                                              line.text())
         else:
             fd = editor_file.getExistingDirectory(self,QString("Please select a directory..."),
@@ -274,35 +271,3 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def toolProgressPingFromThread(self,progress):
         #print "toolProgressPingFromThread - %s" % (progress)
         self.progressBar.setValue(progress)
-
-    def execToolConfigGen(self,config_node,statusElement=None,progressElement=None):
-        # CK: This is only called from on_execTool_released() where the
-        # config_node is generated from values in the GUI dialog.
-        # Is it possible to remove that intermediate step and just run the
-        # OpusTool directly?
-        tool_hook = config_node.find('tool_hook').text
-        # look in all groups for the tool_name -- NOTE this requires the tool
-        # to be uniquely named regardless of which group it's in or this code
-        # will execute the wrong tool.
-        for tool_group_node in self.tool_library_node:
-            tool_node = tool_group_node.find(tool_hook)
-            if tool_node is not None:
-                break
-        if tool_node is None:
-            QMessageBox.warning(None, 'Invalid tool hook',
-                                'Could not find a tool named %s' %tool_hook)
-            return
-        tool_file = tool_node.find('name').text
-        tool_path = self.tool_library_node.find('tool_path').text
-        import_path = tool_path + '.' + tool_file
-        params = dict((node.tag, node.text) for node in config_node)
-
-        opus_tool = OpusTool(import_path, params)
-        run_tool_thread = RunToolThread(opus_tool)
-        QObject.connect(run_tool_thread, SIGNAL("toolFinished(PyQt_PyObject)"),
-                        self.toolFinishedFromThread)
-        QObject.connect(run_tool_thread, SIGNAL("toolProgressPing(PyQt_PyObject)"),
-                        self.toolProgressPingFromThread)
-        QObject.connect(run_tool_thread, SIGNAL("toolLogPing(PyQt_PyObject)"),
-                        self.toolLogPingFromThread)
-        run_tool_thread.start()

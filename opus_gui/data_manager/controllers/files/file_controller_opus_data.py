@@ -228,11 +228,11 @@ class FileController_OpusData(FileController):
         # Build up a list of available operations based on the classification
 
         tool_set_nodes = [tool_set_node for tool_set_node in self.tool_library_node
-                          if tool_set_node.get('type') == 'tool_group']
+                          if tool_set_node.tag == 'tool_group']
         tool_file_nodes = []
         for tool_set_node in tool_set_nodes:
             tool_file_nodes.extend([node for node in tool_set_node
-                           if node.get('type') == 'tool_file'])
+                           if node.tag == 'tool'])
 
         # Find all tool_nodes that acts on the resolved classification
         # (by looking at the XML node 'acts_on')

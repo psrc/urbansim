@@ -5,17 +5,19 @@
 import os
 
 from lxml.etree import Element, SubElement, ElementTree
-from PyQt4.QtCore import QString
+from PyQt4.QtCore import QString, QFileInfo
 from PyQt4.QtGui import QMenu, QCursor, QFileDialog
 
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
-from opus_gui.data_manager.data_manager_functions import get_tool_node_by_name, get_tool_library_node
+from opus_gui.data_manager.data_manager_functions import *
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.main.controllers.instance_handlers import get_mainwindow_instance
 from opus_gui.data_manager.controllers.dialogs.configuretool import ConfigureToolGui
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.abstract_manager.controllers.xml_configuration.xml_controller import XmlController
 from opus_gui.data_manager.controllers.dialogs.executetoolset import ExecuteToolSetGui
+from opus_gui.data_manager.controllers.dialogs.addparam import addParamGui
+from opus_gui.abstract_manager.controllers.xml_configuration.renamedialog import RenameDialog
 
 
 class XmlController_DataTools(XmlController):
@@ -31,69 +33,109 @@ class XmlController_DataTools(XmlController):
         self.actAddToolGroup = self.create_action('add',"Create Tool Group", self.addNewToolGroup)
         self.actAddNewToolSet = self.create_action('add',"Create Tool Set",self.addNewToolSet)
         self.actNewConfig = self.create_action('add',"Add New Tool Configuration",self.newConfig)
+        self.actAddParam = self.create_action('add',"Add New Param",self.addParam)
+        self.actEditParam = self.create_action('rename',"Edit Param",self.editParam)
 
         self.actOpenDocumentation = self.create_action('calendar_view_day',"Open Documentation",self.openDocumentation)
 
+        self.actChangeClassModule = self.create_action('rename',"Change Module Class Name",self.changeClassModule)
+        self.actChangePathToTools = self.create_action('rename',"Change Path to Tools",self.changePathToTools)
+
         # moving tools up and down
         self.actMoveNodeUp = self.create_action('arrow_up',"Move Up",self.moveNodeUp)
-        self.actMoveNodeDown = self.create_action('arrow_up',"Move Down",self.moveNodeDown)
+        self.actMoveNodeDown = self.create_action('arrow_down',"Move Down",self.moveNodeDown)
         self.actExecBatch = self.create_action('execute',"Execute Tool Set",self.execBatch)
         self.actExportXMLToFile = self.create_action('export',"Export XML Node To File",self.exportXMLToFile)
         self.actImportXMLFromFile = self.create_action('import',"Import XML Node From File",self.importXMLFromFile)
 
-        # Batch create 'add ... parameter' actions
-        self.add_parameter_actions = []
-        parameter_types = {'String': 'string', # Description, attribute value
-                           'Directory': 'dir_path',
-                           'File': 'file_path'}
-        for required in (True, False):
-            for type_name, type_value in parameter_types.items():
-                req_text = "Required" if required else "Optional"
-                label = "Create %s %s parameter" % (req_text, type_name)
-                act = self._create_add_param_action(label, type_value, required)
-                self.add_parameter_actions.append(act)
+    def addParam(self):
+        assert self.has_selected_item()
 
-    def _create_add_param_action(self, label, type_name, required = False):
-        '''
-        Creates and returns a new action for creating a parameter node.
-        The parameter node will have the attribute 'type' set to type_name
-        and, if required is True, the attribute "required" will be "Required"
-        (if required is False, attribute "required" will be "Optional")
-        @param label (str) text to show on the menu
-        @param type_name (str) the parameters type
-        @param required (boolean) whether the param is required or not
-        @return the created action or None
-        '''
-        # Make a node and a callback and use them to assemble the action
-        node = Element("Unnamed_Parameter")
-        attributes = {'type': "string", 'choices': "Required|Optional"}
-        choice = "Required" if required else "Optional"
-        SubElement(node, 'required', attributes).text = choice
-        SubElement(node, 'type', {'type': "string"}).text = str(type_name)
-        SubElement(node, 'default', {'type': str(type_name) }).text = ""
-        def action():
-            self.model.insertRow(0, self.selected_index(), node)
+        item = self.selected_item()
+        node = item.node
+        window = addParamGui(self.manager.base_widget, None)
+        window.setModal(True)
+        window.show()
+
+        if window.exec_() == window.Accepted:
+            name = str(window.nameEdit.text())
+            typ = str(window.typeComboBox.currentText())
+            default = str(window.defaultEdit.text())
+            required = str(window.requiredComboBox.currentText())
+
+            attributes = {'name': name, 'param_type': typ, 'required': required}
+            node = Element('param', attributes)
+            node.text = default
+            if self.model.insertRow(0, self.selected_index(), node) == False:
+                MessageBox.error(mainwindow = self.view,
+                    text = 'Parameter Name Exists',
+                    detailed_text = ('The parameter name to add is "%s" '
+                    'but there is already a parameter with that name.' %
+                    name))
+                return
+
             self.view.expand(self.selected_index())
-        return self.create_action('add', label, action)
+
+    def editParam(self):
+        assert self.has_selected_item()
+
+        item = self.selected_item()
+        node = item.node
+        window = addParamGui(self.manager.base_widget, node)
+        window.setModal(True)
+        window.show()
+
+        if window.exec_() == window.Accepted:
+            name = str(window.nameEdit.text())
+            typ = str(window.typeComboBox.currentText())
+            default = str(window.defaultEdit.text())
+            required = str(window.requiredComboBox.currentText())
+
+            self.model.make_item_local(item)
+            node.set('name', name)
+            node.set('param_type', typ)
+            node.set('required', required)
+            node.text = default
+
+    def changeClassModule(self):
+        ''' Opens a dialog box for changing the class module. '''
+        assert self.has_selected_item()
+
+        item = self.selected_item()
+        node = item.node
+        dialog = RenameDialog(node.text, [], self.view)
+        if dialog.exec_() == dialog.Accepted:
+            node.text = dialog.accepted_name
+            self.model.make_item_local(item)
+
+    def changePathToTools(self):
+        ''' Opens a dialog box for changing the path to tools. '''
+        assert self.has_selected_item()
+
+        item = self.selected_item()
+        node = item.node
+        dialog = RenameDialog(node.text, [], self.view)
+        if dialog.exec_() == dialog.Accepted:
+            node.text = dialog.accepted_name
+            self.model.make_item_local(item)
 
     def addToolFile(self):
         ''' NO DOCUMENTATION '''
         assert self.has_selected_item()
 
-        toolname = 'Unnamed_Tool_Name'
-        filename = 'Unnamed_File_Name'
-        tool_node = Element(toolname, {'type':'tool_file'})
-        SubElement(tool_node, "name", {'type':'tool_name'}).text = filename
-        SubElement(tool_node, "params", {'type':'param_template'})
+        tool_node = Element('tool', {'name': 'unnamed_tool'})
+        SubElement(tool_node, "class_module").text = 'unnamed_module'
+        SubElement(tool_node, "params")
 
         self.model.insertRow(0, self.selected_index(), tool_node)
+        self.view.expand(self.selected_index())
 
     def addNewToolSet(self):
         ''' NO DOCUMENTATION '''
         assert self.has_selected_item()
 
         # First add the dummy toolset shell
-        toolset_node = Element('Unnamed_Tool_Set', {'type': "tool_set"})
+        toolset_node = Element('tool_set', {'name': 'unnamed_tool_set'})
         self.model.insertRow(0, self.selected_index(), toolset_node)
 
     def addNewToolGroup(self):
@@ -101,7 +143,7 @@ class XmlController_DataTools(XmlController):
         assert self.has_selected_item()
 
         # First add the dummy toolset shell
-        node = Element('Unnamed_Tool_Group', {'type': "tool_group",
+        node = Element('tool_group', {'name': 'unnamed_tool_group',
                                      'setexpanded':'True'})
         self.model.insertRow(0, self.selected_index(), node)
 
@@ -120,14 +162,14 @@ class XmlController_DataTools(XmlController):
         ''' NO DOCUMENTATION '''
         # TODO connect directly to lambda
         assert self.has_selected_item()
-        new_index = self.model.move_up(self.selected_index())
+        new_index = self.model.move_up(self.selected_index(),view=self.view)
         self.view.setCurrentIndex(new_index)
 
     def moveNodeDown(self):
         ''' NO DOCUMENTATION '''
         # TODO connect directly to lambda
         assert self.has_selected_item()
-        new_index = self.model.move_down(self.selected_index())
+        new_index = self.model.move_down(self.selected_index(),view=self.view)
         self.view.setCurrentIndex(new_index)
 
     def openDocumentation(self):
@@ -152,9 +194,29 @@ class XmlController_DataTools(XmlController):
         assert self.has_selected_item()
 
         tool_lib_node = get_tool_library_node(self.project)
+        params = {'tool_path': get_path_to_tool_modules(self.project)}
+
+        tool_node = self.selected_item().node
+
+        try:
+            module_name = tool_node.find('class_module').text
+            import_path = params['tool_path'] + '.' + module_name
+            importString = "from %s import opusRun" % (import_path)
+            exec(importString)
+        except Exception, e:
+            print e
+            MessageBox.error(mainwindow = self.view,
+                text = 'Invalid module name',
+                detailed_text = ('This tool points to a module named "%s" '
+                    'but there is no module with that name, or module returned import error.' %
+                    import_path))
+            return
+
         window = ExecuteToolGui(parent_widget = self.manager.base_widget,
-                                tool_node = self.selected_item().node,
-                                tool_library_node = tool_lib_node)
+                                tool_node = tool_node,
+                                tool_config = None,
+                                tool_library_node = tool_lib_node, 
+                                params=params)
         window.setModal(True)
         window.show()
 
@@ -166,15 +228,10 @@ class XmlController_DataTools(XmlController):
         '''
         assert self.has_selected_item()
 
-        # CK: Not sure that this does the right thing. From what I understand,
-        # this will run the tool with the configuration as it is specified in
-        # the tool library. The configuration that is specified in the selected
-        # 'tool config' is ignored.
-
         # First we need to get the hooked node that we want to run
         node = self.selected_item().node
         hooked_tool_name = node.find('tool_hook').text
-        hooked_tool_node = get_tool_node_by_name(hooked_tool_name)
+        hooked_tool_node = get_tool_node_by_name(self.project, hooked_tool_name)
         if hooked_tool_node is None:
             MessageBox.error(mainwindow = self.view,
                 text = 'Invalid tool hook',
@@ -183,20 +240,16 @@ class XmlController_DataTools(XmlController):
                     hooked_tool_name))
             return
 
-        hooked_tool_node = get_tool_node_by_name(hooked_tool_name)
-
         # Open up a GUI element and populate with variable's
         tool_lib_node = get_tool_library_node(self.project)
+        params = {'tool_path': get_path_to_tool_modules(self.project)}
         window = ExecuteToolGui(parent_widget = self.manager.base_widget,
                                 tool_node = hooked_tool_node,
-                                tool_library_node = tool_lib_node)
+                                tool_config = node,
+                                tool_library_node = tool_lib_node,
+                                params=params)
         window.setModal(True)
         window.show()
-
-    # ?
-    def toolFinished(self, success):
-        ''' NO DOCUMENTATION '''
-        print "Tool Finished Signal Recieved - %s" % (success)
 
     def execBatch(self):
         ''' Present a dialog to execute a set of tool configurations '''
@@ -209,15 +262,28 @@ class XmlController_DataTools(XmlController):
         tool_config_nodes = tool_set_node[:]
         for tool_config_node in tool_config_nodes:
             hook_node = tool_config_node.find('tool_hook')
-            hooked_tool_name = str(tool_hook_node.text or '').strip()
-            hooked_tool_node = get_tool_node_by_name(hooked_tool_name)
-            # just map the name of the tool (name is the filename)
-            tool_file_name = str(hooked_tool_node.find('name').text).strip()
-            tool_config_to_tool_name[tool_config_node] = tool_file_name
+            hooked_tool_name = str(hook_node.text or '').strip()
+            hooked_tool_node = get_tool_node_by_name(self.project, hooked_tool_name)
+            module_name = hooked_tool_node.find('class_module').text
+
+            try:
+                module_name = hooked_tool_node.find('class_module').text
+                tool_path = get_path_to_tool_modules(self.project)
+                import_path = tool_path + '.' + module_name
+                importString = "from %s import opusRun" % (import_path)
+                exec(importString)
+                tool_config_to_tool_name[tool_config_node] = import_path
+            except Exception, e:
+                MessageBox.error(mainwindow = self.view,
+                    text = 'Invalid module name',
+                    detailed_text = ('This tool points to a module named "%s" '
+                    'but there is no module with that name, or module returned import error.' %
+                    import_path))
+                return
 
         ExecuteToolSetGui(get_mainwindow_instance(),
-            config_nodes,
-            config_to_filenames).show()
+            tool_config_nodes,
+            tool_config_to_tool_name).show()
 
     def exportXMLToFile(self):
         ''' NO DOCUMENTATION '''
@@ -245,7 +311,8 @@ class XmlController_DataTools(XmlController):
 
         # proper root node for XmlConfiguration
         root_node = Element('opus_project')
-        root_node.append(self.selected_item().node)
+        import copy
+        root_node.append(copy.deepcopy(self.selected_item().node))
 
         # Write out the file
         ElementTree(root_node).write(saveName)
@@ -280,17 +347,52 @@ class XmlController_DataTools(XmlController):
 
         xml_node = xml_config.full_tree.getroot()
         if len(xml_node) == 0:
-            raise ValueError('Loading tool from XML file failed. '
-                             'No tool definition found')
+            raise ValueError('Loading node from XML file failed. '
+                             'No node definition found')
         xml_node = xml_node[0]
 
+        parent_node = self.selected_item().node
+
+        allowed_parent_tags = {"tool": ["tool_group"], \
+                               "class_module": ["tool"], \
+                                    "path_to_tool_modules": ["tool_library"], \
+                               "tool_library": ["data_manager"], \
+                               "tool_group": ["tool_library"], \
+                               "params": ["tool"], \
+                               "param": ["params"], \
+                               "tool_config": ["tool_set"], \
+                               "tool_set": ["tool_sets"], \
+                               "tool_sets": ["data_manager"]}
+        if parent_node.tag not in allowed_parent_tags[xml_node.tag]:
+            MessageBox.error(mainwindow = self.view,
+                text = 'Invalid Xml insert',
+                detailed_text = ('Xml insert of node of type "%s" failed.  '
+                'Invalid type of parent node is "%s" - needs to be one of %s' %
+                (xml_node.tag, parent_node.tag, str(allowed_parent_tags[xml_node.tag]))))
+            return
+
         # Insert it into the parent node from where the user clicked
-        self.model.insert_sibling(xml_node, self.selected_index())
+        name = xml_node.get('name') if xml_node.get('name') is not None else ''
+        if self.model.insertRow(0, self.selected_index(), xml_node) is False:
+            MessageBox.error(mainwindow = self.view,
+                text = 'Xml Insert Failed',
+                detailed_text = ('Xml insert of node with name "%s" failed - '
+                'most likely because there is already a node with that name.' %
+                name))
+            return
 
 
     def process_custom_menu(self, position):
         ''' See XmlConfig.processCustomMenu for documentation '''
         item = self.select_item_at(position)
+
+        index = self.view.indexAt(position)
+        cnt = self.model.rowCount(index.parent())
+
+        istop = index.row() == 0
+        isbottom = index.row() == cnt-1
+        isonly = cnt == 1
+
         if not item:
             return
 
@@ -298,56 +400,64 @@ class XmlController_DataTools(XmlController):
         menu = QMenu(self.view)
 
         # Tool files are the "actual" tools
-        if node.get('type') == "tool_file":
+        if node.tag == "tool":
             menu.addAction(self.actExecToolFile)
-            menu.addSeparator()
-            menu.addAction(self.actMoveNodeUp)
-            menu.addAction(self.actMoveNodeDown)
+            if not isonly: menu.addSeparator()
+            if not istop: menu.addAction(self.actMoveNodeUp)
+            if not isbottom: menu.addAction(self.actMoveNodeDown)
+
+        elif node.tag == "class_module":
+            menu.addAction(self.actChangeClassModule)
+
+        elif node.tag == "path_to_tool_modules":
+            menu.addAction(self.actChangePathToTools)
 
         # "Tool library is a collection of tool groups
-        elif node.get('type') == "tool_library":
+        elif node.tag == "tool_library":
             menu.addAction(self.actAddToolGroup)
 
         # Tool groups are groups of "tool files"
-        elif node.get('type') == "tool_group":
+        elif node.tag == "tool_group":
             menu.addAction(self.actAddToolFile)
+            if not isonly: menu.addSeparator()
+            if not istop: menu.addAction(self.actMoveNodeUp)
+            if not isbottom: menu.addAction(self.actMoveNodeDown)
 
         # Param Template is the parameter node for the tools -- where
         # users can build up a list of parameters that gets passed to the
         # tool function
-        elif node.get('type') == "param_template":
-            map(menu.addAction, self.add_parameter_actions)
+        elif node.tag == "params":
+            menu.addAction(self.actAddParam)
+
+        elif node.tag == "param":
+            menu.addAction(self.actEditParam)
 
         # A "tool config" is an alternative configuration for a tool that can be
         # put in a Tool Set
-        elif node.get('type') == "tool_config":
+        elif node.tag == "tool_config":
             menu.addAction(self.actExecToolConfig)
-            menu.addSeparator()
-            menu.addAction(self.actMoveNodeUp)
-            menu.addAction(self.actMoveNodeDown)
+            if not isonly: menu.addSeparator()
+            if not istop: menu.addAction(self.actMoveNodeUp)
+            if not isbottom: menu.addAction(self.actMoveNodeDown)
 
         # "Tool sets" is a collection of multiple tool sets
-        elif node.get('type') == "tool_sets":
+        elif node.tag == "tool_sets":
             menu.addAction(self.actAddNewToolSet)
 
         # A Tool set is a collection of (alternative) configurations for
         # existing tools.
-        elif node.get('type') == "tool_set":
+        elif node.tag == "tool_set":
             menu.addAction(self.actExecBatch)
             menu.addSeparator()
             menu.addAction(self.actNewConfig)
-            menu.addSeparator()
-            menu.addAction(self.actMoveNodeUp)
-            menu.addAction(self.actMoveNodeDown)
+            if not isonly: menu.addSeparator()
+            if not istop: menu.addAction(self.actMoveNodeUp)
+            if not isbottom: menu.addAction(self.actMoveNodeDown)
 
-        # ?
-        elif node.get('type') == "documentation_path":
+        elif node.tag == "documentation_path":
             menu.addAction(self.actOpenDocumentation)
             menu.addSeparator()
             menu.addAction(self.actCloneNode)
-            menu.addSeparator()
-            menu.addAction(self.actMoveNodeUp)
-            menu.addAction(self.actMoveNodeDown)
 
         # Default menu items
         self.add_default_menu_items_for_node(node, menu)

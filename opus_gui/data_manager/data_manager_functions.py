@@ -2,6 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import lxml
+
 '''
 A set of functions related to Data Manager and the <data_manager> node
 in Opus Project Configuration files.
@@ -38,4 +40,15 @@ def get_tool_library_node(project):
     @return the node representing the tool library (Element) or None if the
     project does not contain a tool library.
     '''
+    if type(project) == lxml.etree._Element and project.tag == "tool_library": return project
     return project.find('data_manager/tool_library')
+
+def get_path_to_tool_modules(project):
+    '''
+    Get the path to the tool modules
+    @param project (OpusProject) project to operate on
+    @return the text representing the path or None if not found
+    '''
+    node = project.find('data_manager/path_to_tool_modules')
+    if node is not None: return node.text
+    return None

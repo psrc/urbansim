@@ -99,7 +99,7 @@ class IconLibrary(object):
         'submodel': 'submodel',
         'table': 'table',
         'tool_config': 'wrench',
-        'tool_file': 'wrench_orange',
+        'tool': 'wrench_orange',
         'tool_group': 'folder_wrench',
         'tool_library': 'bullet_black',
         'tool_set': 'folder_wrench',

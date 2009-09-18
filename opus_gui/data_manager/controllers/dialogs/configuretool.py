@@ -57,8 +57,8 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
             self.test_line[0].setFocus()
             return
 
-        newNode = Element(toolname, {'type': 'tool_config'})
-        newChild = SubElement(newNode, 'tool_hook', {'type': 'tool_library_ref'})
+        newNode = Element('tool_config', {'name': toolname})
+        newChild = SubElement(newNode, 'tool_hook', {'hidden': 'True', })
         newChild.text = str(self.typeSelection)
 
         # for key,val in self.vars.iteritems():
@@ -71,7 +71,7 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                 key = self.test_text[x].text()
                 val = self.test_line[x].text()
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
-            SubElement(newNode, str(key), {'type': str(typeVal)}).text = str(val)
+            SubElement(newNode, str(key)).text = str(val)
         self.callback(newNode)
         self.close()
 

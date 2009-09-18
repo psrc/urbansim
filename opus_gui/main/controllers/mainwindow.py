@@ -5,7 +5,7 @@ from opus_gui.util.icon_library import IconLibrary
 
 import os, sys
 
-from lxml.etree import ElementTree
+from lxml.etree import ElementTree, Comment
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
 from PyQt4.QtCore import QSettings, QRegExp
 from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
@@ -59,9 +59,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings_directory = os.path.join(os.environ['OPUS_HOME'], 'settings')
         db_con_file = os.path.join(settings_directory, 'database_server_configurations.xml')
         db_config_node = ElementTree(file=db_con_file).getroot()
-        self.db_connection_names = [node.get('name') for node in db_config_node if
-                                    node.get('hidden') != "True" and node.tag != 'xml_version']
-
+        self.db_connection_names = [node.tag for node in db_config_node if
+                                     node.tag != Comment and node.get('hidden') != "True" and node.tag != 'xml_version']
+  
         # Application default configuration
         self.gui_config = gui_configuration
 

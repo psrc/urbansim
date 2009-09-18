@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import QString
+from PyQt4.QtCore import QString, Qt, QRegExp, QObject, SIGNAL, QSize
 from opus_gui.data_manager.views.ui_executetoolset import Ui_ExecuteToolSetGui
 from opus_gui.data_manager.run.run_tool import OpusTool, RunToolThread
 
@@ -21,6 +21,10 @@ class ExecuteToolSetGui(QDialog, Ui_ExecuteToolSetGui):
         self.close()
 
     def on_execToolSet_released(self):
+        self.execToolSet.setEnabled(False)
+        self.textEdit_2.clear()
+        self.progressBar_2.setValue(0)
+
         # Execute each tool in the set in a separate thread
         for config_node in self.tool_config_nodes:
             # Create a dict that maps of child node tags to their text values
@@ -29,7 +33,30 @@ class ExecuteToolSetGui(QDialog, Ui_ExecuteToolSetGui):
                 key = str(child.tag).strip()
                 value = str(child.text).strip()
                 params[key] = value
-            tool_filename = self.config_to_filename[config_node]
-            import_path = 'opus_gui.data_manager.run.tools.%s' % tool_filename
-            thread = RunToolThread(OpusTool(import_path, tool_filename))
-            thread.run()
+            import_path = self.config_to_filename[config_node]
+            #thread = RunToolThread(OpusTool(import_path, params))
+            #thread.run()
+            opus_tool = OpusTool(import_path, params)
+            run_tool_thread = RunToolThread(opus_tool)
+            QObject.connect(run_tool_thread, SIGNAL("toolFinished(PyQt_PyObject)"),
+                        self.toolFinishedFromThread)
+            QObject.connect(run_tool_thread, SIGNAL("toolProgressPing(PyQt_PyObject)"),
+                        self.toolProgressPingFromThread)
+            QObject.connect(run_tool_thread, SIGNAL("toolLogPing(PyQt_PyObject)"),
+                        self.toolLogPingFromThread)
+            run_tool_thread.run()
+
+    def toolFinishedFromThread(self,success):
+        #print "toolFinishedFromThread - %s" % (success)
+        if success:
+            self.progressBar_2.setValue(100)
+        self.execToolSet.setEnabled(True)
+        self.cancelExec.setText(QString('Close'))
+
+    def toolLogPingFromThread(self,log):
+        #print "toolLogPingFromThread - %s" % (log)
+        self.textEdit_2.insertPlainText(log)
+
+    def toolProgressPingFromThread(self,progress):
+        #print "toolProgressPingFromThread - %s" % (progress)
+        self.progressBar_2.setValue(progress)
