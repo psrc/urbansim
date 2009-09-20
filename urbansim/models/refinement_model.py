@@ -307,7 +307,7 @@ class RefinementModel(Model):
         elif fit_index.size == 0:
             ## no agents in agents_pool and no agents to clone either, --> fail
             logger.log_error( "Action 'add' failed: there is no agent subtracted from previous action, and no suitable agents satisfying %s to clone from." % \
-                              'and'.join( [this_refinement.agent_expression, this_refinement.location_expression] ).strip('and') )
+                              ' and '.join( [this_refinement.agent_expression, this_refinement.location_expression] ).strip('and') )
             return
             
         if amount > amount_from_agents_pool:
