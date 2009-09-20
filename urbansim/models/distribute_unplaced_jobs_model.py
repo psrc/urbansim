@@ -17,7 +17,7 @@ class DistributeUnplacedJobsModel(ScalingJobsModel):
             and passes them to ScalingJobsModel.
         """
         agents_index = agent_set.get_attribute(location_set.get_id_name()[0]) <= 0
-        if agents_filter is not None:
+        if agents_filter:
             dataset_pool = kwargs.get('dataset_pool', None)
             filter_values = agent_set.compute_variables([agents_filter], dataset_pool=dataset_pool)
             agents_index = logical_and(agents_index, filter_values>0)
