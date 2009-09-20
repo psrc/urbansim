@@ -2,34 +2,22 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.logger import logger
-from opus_core.variables.variable import Variable
-from numpy import zeros, float32
+from urbansim.abstract_variables.abstract_travel_time_variable_for_non_interaction_dataset import abstract_travel_time_variable_for_non_interaction_dataset
 
-class travel_time_hbw_am_drive_alone_to_DDD(Variable):
+class travel_time_hbw_am_drive_alone_to_DDD(abstract_travel_time_variable_for_non_interaction_dataset):
     """Travel time to the zone whose ID is the DDD.
     The travel time used is for the home-based-work am trips by auto with 
     drive-alone.
     """
+    ##TODO: merge this variable with the same one in psrc/zone.
+    _return_type = "float32"
+    default_value = 999
+    origin_zone_id = 'zone.zone_id'
+    travel_data_attribute = 'travel_data.am_single_vehicle_to_work_travel_time'
+           
     def __init__(self, number):
-        self.tnumber = number
-        self.variable_name = "travel_time_hbw_am_drive_alone_to_" + str(int(number))
-        Variable.__init__(self)
-
-    def dependencies(self):
-        return ['travel_data.am_single_vehicle_to_work_travel_time']
-    
-    def compute(self, dataset_pool):
-        zone_id = self.get_dataset().get_id_attribute()
-        keys = map(lambda x: (x, self.tnumber), zone_id)
-        travel_data = dataset_pool.get_dataset('travel_data')
-        try:
-            time = travel_data.get_attribute_by_id("am_single_vehicle_to_work_travel_time", keys)
-        except:
-            logger.log_warning("Variable %s returns zeros, since zone number %d is not in zoneset." % (self.variable_name, self.tnumber))
-            time = zeros(self.get_dataset().size(), dtype=float32)
-        return time
-
+        self.destination_zone_id = 'destination_id=%s+0*zone.zone_id' % number
+        abstract_travel_time_variable_for_non_interaction_dataset.__init__(self)
 
 from numpy import array
 from numpy import ma

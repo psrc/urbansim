@@ -2,7 +2,6 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc.abstract_variables.abstract_logsum_variable import abstract_logsum_variable
 from opus_core.variables.variable import Variable
 from numpy import newaxis, concatenate
 

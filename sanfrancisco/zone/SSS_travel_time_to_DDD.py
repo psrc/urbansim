@@ -2,37 +2,18 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.logger import logger
-from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from numpy import where, zeros, float32
+from urbansim.abstract_variables.abstract_travel_time_variable_for_non_interaction_dataset import abstract_travel_time_variable_for_non_interaction_dataset
 
-class SSS_travel_time_to_DDD(Variable):
+class SSS_travel_time_to_DDD(abstract_travel_time_variable_for_non_interaction_dataset):
     """Travel time by mode SSS to the zone whose ID is the DDD.
     """
+    default_value = 999
+    origin_zone_id = 'zone.zone_id'
+
     def __init__(self, mode, number):
-        self.mode = mode
-        self.dzone_id = number
-        self.my_name = "%s_travel_time_to_%s" % (self.mode, self.dzone_id)
-        Variable.__init__(self)
-
-    def dependencies(self):
-        return [attribute_label("travel_data", self.mode),
-                attribute_label("travel_data", "from_zone_id"),
-                attribute_label("travel_data", "to_zone_id")
-                ]
-    
-    def compute(self,  dataset_pool):
-        zone_id = self.get_dataset().get_id_attribute()
-        keys = map(lambda x: (x, self.dzone_id), zone_id)
-        travel_data = dataset_pool.get_dataset("travel_data")
-        try:
-            time = travel_data.get_attribute_by_id(self.mode, keys)
-        except:
-            logger.log_warning("Variable %s returns zeros, since zone number %d is not in zoneset." % (self.my_name, self.dzone_id))
-            time = zeros(self.get_dataset().size(), dtype=float32)
-        return time
-
+        self.travel_data_attribute = "travel_data.%s" % mode
+        self.destination_zone_id = "destination_zone_id=%s+0*zone.zone_id" % number 
+        abstract_travel_time_variable_for_non_interaction_dataset.__init__(self)
 
 from opus_core.tests import opus_unittest
 from numpy import array, arange

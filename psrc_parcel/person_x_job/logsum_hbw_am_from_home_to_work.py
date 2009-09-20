@@ -2,11 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc.abstract_variables.abstract_logsum_variable import abstract_logsum_variable
-from opus_core.misc import unique_values
-from numpy import where, repeat, ones, float32, resize, array
-from numpy import ma
-from opus_core.logger import logger
+from urbansim.abstract_variables.abstract_logsum_variable import abstract_logsum_variable
 
 class logsum_hbw_am_from_home_to_work(abstract_logsum_variable):
     """logsum_hbw_am_from_home_to_work

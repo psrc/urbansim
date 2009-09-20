@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
+from urbansim.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class workerDDD_drive_alone_hbw_am_travel_time_from_home_to_work_if_worker_not_use_transit(abstract_travel_time_variable):
     """drive_alone_hbw_am_travel_time_from_home_to_work_if_worker_not_use_transit"""

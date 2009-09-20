@@ -2,11 +2,15 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
+from opus_core.logger import logger
+from numpy import logical_and, ndarray, isscalar, where
 
 class TravelDataDataset(UrbansimDataset):
-    """Set of travel data logsums."""
+    """Dataset containing O-D matrices"""
 
-    id_name_default = ["from_zone_id", "to_zone_id"]
+    id_name_default = []      # use _hidden_id
+    origin_id_name = "from_zone_id"
+    destination_id_name = "to_zone_id"
     in_table_name_default = "travel_data"
     out_table_name_default = "travel_data"
     dataset_name = "travel_data"
@@ -21,14 +25,13 @@ class TravelDataDataset(UrbansimDataset):
         return n
 
     def get_attribute_as_matrix(self, name, fill=0):
-        """return travel_data_set as a 2d array, index by (from_zone_id, to_zone_id)
+        """return attribute "name" of travel_data as a 2d array, index by (from_zone_id, to_zone_id)
         """
         from numpy import ones
         
-        name_attribute = self.get_attribute(name)        
-        id_attributes = self.get_id_attribute()
-        rows = id_attributes[:,0]
-        cols = id_attributes[:,1]
+        name_attribute = self.get_attribute(name)
+        rows = self.get_attribute(self.origin_id_name)
+        cols = self.get_attribute(self.destination_id_name)
         
         results = fill * ones((rows.max()+1, cols.max()+1), dtype=name_attribute.dtype)
         results.put(indices=rows * results.shape[1] + cols, values = name_attribute)
@@ -43,24 +46,52 @@ class TravelDataDataset(UrbansimDataset):
         
         assert O.shape == D.shape
         
-        id_attributes = self.get_id_attribute()
-        max_id = max(O.max(), D.max(), id_attributes.max())
+        origin_ids = self.get_attribute(self.origin_id_name)
+        destination_ids = self.get_attribute(self.destination_id_name)
+        
+        max_id = max(O.max(), D.max(), origin_ids.max(), destination_ids.max())
         digits = len(str(max_id)) + 1
         multiplier = 10 ** digits
 
         ODpair = O * multiplier + D
-        idpair = id_attributes[:, 0] * multiplier + id_attributes[:, 1]
+        idpair = origin_ids * multiplier + destination_ids
         missing_pairs = setdiff1d( unique1d(ODpair), unique1d(idpair) )
 
         results = zeros_like(D)
         for pair in missing_pairs:
             results += logical_and( O == pair // multiplier, D == pair % multiplier)
         
-        results += logical_or(O < id_attributes[:, 0].min(), O > id_attributes[:, 0].max())
-        results += logical_or(D < id_attributes[:, 1].min(), D > id_attributes[:, 1].max())
+        results += logical_or(O < origin_ids.min(), O > origin_ids.max())
+        results += logical_or(D < destination_ids.min(), D > destination_ids.max())
         
         return where(results)
-        
+    
+    def get_index_by_origin_and_destination_ids(self, origin_id, destination_id, return_value_if_not_found=-1, verbose=False):
+        """return dataset index for given origin and destination pair(s)
+        origin_id and destination_id can be either integers, lists, or arrays; of the same type and size
+        """
+        origin_ids = self.get_attribute(self.origin_id_name)
+        destination_ids = self.get_attribute(self.destination_id_name)
+        def match((o, d), rv=return_value_if_not_found, verbose=verbose):
+            w = where(logical_and(origin_ids==o, destination_ids==d))[0]
+            if w.size == 0:
+                if verbose: logger.log_warning("O-D pair (%s, %s) has no entry in travel_data; returns %s." % (o, d, rv))
+                w = rv
+            elif w.size == 1:
+                w = w[0]
+            else:
+                logger.log_error("O-D pair (%s, %s) has more than 1 entries in travel_data." % (o, d))
+                raise ValueError, "O-D pair (%s, %s) has more than 1 entries in travel_data." % (o, d)
+            return w
+
+        if isscalar(origin_id) and isscalar(destination_id):
+            return array([match((origin_id, destination_id))])
+        else:
+            if len(origin_id) != len(destination_id):
+                logger.log_error("origin_id and destination_id can be either scalar integer, list, or array; of the same type and size.")
+                raise TypeError, "origin_id and destination_id can be either scalar integer, list, or array; of the same type and size."
+
+            return array(map(match, zip(origin_id, destination_id)))
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, allclose
@@ -93,7 +124,7 @@ class Test(opus_unittest.OpusTestCase):
         self.assertNotEqual(self.travel_data.size(), 0, msg = "No data loaded - expected data to be loaded at this point.")
         
         k = len(self.travel_data.get_attribute_names())
-        self.assertEqual(k, 5, msg = "Number of attributes should be 5 but is " + str(k) + ".")
+        self.assertEqual(k, 6, msg = "Number of attributes should be 5 but is " + str(k) + ".")
         
         k = len(self.travel_data.get_primary_attribute_names())
         self.assertEqual(k, 5, msg = "Number of stored attributes should be 5 but is " + str(k) + ".")
@@ -135,6 +166,26 @@ class Test(opus_unittest.OpusTestCase):
         result = self.travel_data.get_od_pair_index_not_in_dataset(O, D)
         should_be = (array([0, 0, 1, 1, 2, 2]), array([0, 2, 0, 2, 1, 2]))
         self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+
+    def test_get_index_by_origin_and_destination_ids(self):
+        result = self.travel_data.get_index_by_origin_and_destination_ids(2, 5)
+        should_be = array([5])
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+        
+        O = array([-1, 1, 1, 7, 5, 5, 5, 3,  2])
+        D = array([ 5, 2, 3, 2, 5, 2, 1, 1, -1])
+        #index    [ 0, 1, 2, 3, 4, 5, 6, 7,  8]
+        #          -1, 1,-1,-1, 7,-1, 6,-1, -1 
+        result = self.travel_data.get_index_by_origin_and_destination_ids(O, D)
+        should_be = array([-1, 1,-1,-1, 7,-1, 6, -1, -1])
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+
+        O = [-1, 1, 1, 7, 5, 5, 5, 3,  2]
+        D = [ 5, 2, 3, 2, 5, 2, 1, 1, -1]
+        #index    [ 0, 1, 2, 3, 4, 5, 6, 7,  8]
+        #          -1, 1,-1,-1, 7,-1, 6,-1, -1 
+        result = self.travel_data.get_index_by_origin_and_destination_ids(O, D)
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
 
 if __name__=="__main__":
     opus_unittest.main()

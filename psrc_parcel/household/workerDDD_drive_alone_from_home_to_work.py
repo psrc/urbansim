@@ -2,19 +2,18 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc_parcel.abstract_variables.abstract_travel_time_variable_1d import abstract_travel_time_variable_1d
+from urbansim.abstract_variables.abstract_travel_time_variable_for_non_interaction_dataset import abstract_travel_time_variable_for_non_interaction_dataset
 
-class workerDDD_drive_alone_from_home_to_work(abstract_travel_time_variable_1d):
+class workerDDD_drive_alone_from_home_to_work(abstract_travel_time_variable_for_non_interaction_dataset):
     """drive_alone_from_home_to_work"""
 
     default_value = 0
+    origin_zone_id = "urbansim_parcel.household.zone_id"
+    travel_data_attribute = "urbansim.travel_data.am_single_vehicle_to_work_travel_time"
     
     def __init__(self, number):
-        self.agent_zone_id = "urbansim_parcel.household.zone_id"
-        self.location_zone_id = "work%s_workplace_zone_id = household.aggregate((person.worker%s == 1).astype(int32) * urbansim_parcel.person.workplace_zone_id)" % (number, number)
-        self.travel_data_attribute = "urbansim.travel_data.am_single_vehicle_to_work_travel_time"
-        self.direction_from_home = True
-        abstract_travel_time_variable_1d.__init__(self)
+        self.destination_zone_id = "work%s_workplace_zone_id = (household.aggregate((person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id)).astype(int32)" % (number, number)
+        abstract_travel_time_variable_for_non_interaction_dataset.__init__(self)
 
 from numpy import ma, array
 from opus_core.tests import opus_unittest
@@ -45,7 +44,7 @@ class Tests(opus_unittest.OpusTestCase):
                 },
              'household': {
                 'household_id':array([1,2,3,4,5]),
-                'zone_id':array([3, 1, 1, 1, 2]),
+                'zone_id':     array([3,1,1,1,2]),
                 },
             'travel_data': {
                 'from_zone_id':array([3,3,1,1,1,2,2,3,2]),

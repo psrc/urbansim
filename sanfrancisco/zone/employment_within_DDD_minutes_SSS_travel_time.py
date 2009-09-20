@@ -2,40 +2,20 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.logger import logger
-from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
-from numpy import where, zeros, float32, array
-from scipy.ndimage import sum as ndimage_sum
+from urbansim.abstract_variables.abstract_access_within_threshold_variable import abstract_access_within_threshold_variable
 
-class employment_within_DDD_minutes_SSS_travel_time(Variable):
+class employment_within_DDD_minutes_SSS_travel_time(abstract_access_within_threshold_variable):
     """total number of jobs for zones within DDD minutes SSS (mode) travel time,
     """
-    def __init__(self, number, mode):
-        self.minutes = number
-        self.mode = mode
-        Variable.__init__(self)
-
-    def dependencies(self):
-        return [attribute_label("travel_data", self.mode),
-                my_attribute_label("employment")]
     
-    def compute(self,  dataset_pool):
-        zone_ids = self.get_dataset().get_id_attribute()
-        travel_data = dataset_pool.get_dataset("travel_data")
-        within_indicator = (travel_data.get_attribute(self.mode) <= self.minutes)
-        
-        to_zone_id = travel_data.get_attribute("to_zone_id")
-        zone_index = self.get_dataset().get_id_index(to_zone_id)
-        num_jobs = self.get_dataset().get_attribute('employment')[zone_index]
+    _return_type = "int32"
+    zone_attribute_to_access = "sanfrancisco.zone.employment"
+    function = "sum"
 
-        from_zone_id = travel_data.get_attribute("from_zone_id")        
-        results = array(ndimage_sum(within_indicator * num_jobs.astype(float32), labels = from_zone_id, index=zone_ids))
-        
-        return results
-
-
+    def __init__(self, number, mode):
+        self.threshold = number
+        self.travel_data_attribute  = "travel_data.%s" % mode
+        abstract_access_within_threshold_variable.__init__(self)
 
 from opus_core.tests import opus_unittest
 from numpy import array, arange

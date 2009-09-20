@@ -2,44 +2,23 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from numpy import array, zeros
-from opus_core.logger import logger
+from urbansim.abstract_variables.abstract_travel_time_variable_for_non_interaction_dataset import abstract_travel_time_variable_for_non_interaction_dataset
 
-
-class am_vehicle_miles_traveled_to_DDD(Variable):
+class am_vehicle_miles_traveled_to_DDD(abstract_travel_time_variable_for_non_interaction_dataset):
     """
     Calculate the vehicle miles traveled to the zone given by DDD.
     """
     
     _return_type = "float32"
-   
-    _am_VMT_attr = 'am_vehicle_miles_traveled'
-        
+    default_value = 999
+    origin_zone_id = 'zone.zone_id'
+    travel_data_attribute = 'travel_data.am_vehicle_miles_traveled'
+           
     def __init__(self, number):
-        self.tnumber = number
-        self.variable_name = "am_vehicle_miles_traveled_to_" + str(int(number))
-        Variable.__init__(self)
+        self.destination_zone_id = 'destination_id=%s+0*zone.zone_id' % number
+        abstract_travel_time_variable_for_non_interaction_dataset.__init__(self)
         
-    def dependencies(self):
-        return [attribute_label("travel_data", self._am_VMT_attr)]
-
-    def compute(self, dataset_pool):
-        
-        zone_ids = self.get_dataset().get_id_attribute()
-        travel_data = dataset_pool.get_dataset('travel_data')
-        keys = map(lambda x: (x, self.tnumber), zone_ids)
-        try:
-            miles = travel_data.get_attribute_by_id(self._am_VMT_attr, keys)
-        except:
-            logger.log_warning("Variable %s returns zeros, since zone number %d is not in zoneset." % (self.variable_name, self.tnumber))
-            miles = zeros(self.get_dataset().size(), dtype=self._return_type)
-        return miles
-        
-
-from numpy import ma
-
+from numpy import ma, array
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
@@ -78,7 +57,5 @@ class Tests(opus_unittest.OpusTestCase):
         self.assert_(ma.allequal(values, should_be), 
                      msg="Error in " + self.variable_name)
 
-
 if __name__=='__main__':
     opus_unittest.main()
-  

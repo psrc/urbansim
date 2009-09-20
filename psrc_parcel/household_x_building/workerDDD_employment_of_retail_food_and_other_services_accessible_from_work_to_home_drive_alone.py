@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc.abstract_variables.abstract_time_space_prism_variable import abstract_time_space_prism_variable
+from urbansim.abstract_variables.abstract_time_space_prism_variable import abstract_time_space_prism_variable
 
 class workerDDD_employment_of_retail_food_and_other_services_accessible_from_work_to_home_drive_alone(abstract_time_space_prism_variable):
     """"""

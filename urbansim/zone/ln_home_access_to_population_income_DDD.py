@@ -2,7 +2,6 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from urbansim.zone.abstract_zone_access_variable import Abstract_Zone_Access_Variable
 from urbansim.functions import attribute_label
 from opus_core.variables.variable import Variable
 from numpy import array, exp, where

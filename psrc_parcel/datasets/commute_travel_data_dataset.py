@@ -4,6 +4,7 @@
 
 from urbansim.datasets.node_travel_data_dataset import NodeTravelDataDataset as UrbansimNodeTravelDataDataset
 from opus_core.logger import logger
+from numpy import all
 
 class CommuteTravelDataDataset(UrbansimNodeTravelDataDataset):
     in_table_name_default = "commute_travel_data"
@@ -55,9 +56,10 @@ class CommuteTravelDataDataset(UrbansimNodeTravelDataDataset):
             to_zone, path_to_to_zone = to_node, ()
         else:
             to_zone, path_to_to_zone = (self.connection_mapping[to_node]['zone'], self.connection_mapping[to_node]['path'])
-        try:                            
-            td_value = travel_data.get_attribute_by_id(name, [[from_zone, to_zone]])
-        except:
+        travel_data_index = travel_data.get_index_by_origin_and_destination_ids(from_zone, to_zone)
+        if all(travel_data_index!=-1):            
+            td_value = travel_data.get_attribute_by_index(name, travel_data_index)
+        else:
             logger.log_warning('Connection from %s to %s not found.' % (from_node, to_node))
             return return_value_if_not_found
         #print "zones: (%s) %s (%s)" % (from_zone, td_value, to_zone)

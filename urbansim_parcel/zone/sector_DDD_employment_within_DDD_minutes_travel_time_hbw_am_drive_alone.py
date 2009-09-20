@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from psrc.abstract_variables.abstract_access_within_threshold_variable import abstract_access_within_threshold_variable
+from urbansim.abstract_variables.abstract_access_within_threshold_variable import abstract_access_within_threshold_variable
 
 class sector_DDD_employment_within_DDD_minutes_travel_time_hbw_am_drive_alone(abstract_access_within_threshold_variable):
     """total number of jobs for zones within DDD minutes travel time,

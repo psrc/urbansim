@@ -21,56 +21,56 @@ class GetVisumDataIntoCache(GetTravelModelDataIntoCache):
         """
         """
 
-	tm_config = config['travel_model_configuration']
+        tm_config = config['travel_model_configuration']
 
-	data_dict = {}
-	table_name = "travel_data"
+        data_dict = {}
+        table_name = "travel_data"
         storage = StorageFactory().get_storage('dict_storage')
-	travel_data_set = None
-	
-	#Get config params
-	visum_dir, fileName = tm_config[year]['version']
-	visum_version_number = tm_config['visum_version_number']
-	
-	#Startup Visum
-	Visum = load_version_file(visum_dir, fileName, visum_version_number)
-	
-	matrices = tm_config["tm_to_urbansim_variables"]
-	#Get matrices
-	#Note that matrix objects must be defined in version file before getting or setting
-	try:
-	    #Get demand matrices
-	    if matrices.has_key('od'):
-		for od_mat_num, od_mat_name in matrices["od"].iteritems():
-		    mat = h.GetODMatrix(Visum, od_mat_num) #returns a 2d numarray object
-		    data_dict[od_mat_name] = ravel(mat)    #flatten to 1d and convert to numpy
-		    #mat.tofile(visum_dir + "/od" + str(od_mat_num) + ".mtx") #temp hack to save it
-		
-	    #Get skim matrices    
-	    if matrices.has_key('skim'):
-		for skim_mat_num,skim_mat_name in matrices["skim"].iteritems():
-		    mat = h.GetSkimMatrix(Visum, skim_mat_num) #returns a 2d numarray object
-		    data_dict[skim_mat_name] = ravel(mat)      #flatten to 1d and convert to numpy
-		#mat.tofile(visum_dir + "/skim" + str(skim_mat_num) + ".mtx") #temp hack to save it
-	except Exception, e:
-	    error_msg = "Getting matrices failed: %s " % e
-	    raise StandardError(error_msg)
+        travel_data_set = None
 
-	## hack to add keys to the matrix values
-	zoneNumbers = h.GetMulti(Visum.Net.Zones, "NO")
-	zoneNumbers = array(zoneNumbers)[newaxis, :]
-	from_zone_id = ravel(zoneNumbers.repeat(zoneNumbers.size, axis=1))
-	to_zone_id = ravel(zoneNumbers.repeat(zoneNumbers.size, axis=0))
-	
-	data_dict['from_zone_id'] = from_zone_id
-	data_dict['to_zone_id'] = to_zone_id
-	
-	storage.write_table( table_name=table_name, table_data=data_dict )
-	travel_data_set = TravelDataDataset( in_storage=storage, in_table_name=table_name )
+        #Get config params
+        visum_dir, fileName = tm_config[year]['version']
+        visum_version_number = tm_config['visum_version_number']
+
+        #Startup Visum
+        Visum = load_version_file(visum_dir, fileName, visum_version_number)
+
+        matrices = tm_config["tm_to_urbansim_variables"]
+        #Get matrices
+        #Note that matrix objects must be defined in version file before getting or setting
+        try:
+            #Get demand matrices
+            if matrices.has_key('od'):
+                for od_mat_num, od_mat_name in matrices["od"].iteritems():
+                    mat = h.GetODMatrix(Visum, od_mat_num) #returns a 2d numarray object
+                    data_dict[od_mat_name] = ravel(mat)    #flatten to 1d and convert to numpy
+                    #mat.tofile(visum_dir + "/od" + str(od_mat_num) + ".mtx") #temp hack to save it
+
+            #Get skim matrices    
+            if matrices.has_key('skim'):
+                for skim_mat_num,skim_mat_name in matrices["skim"].iteritems():
+                    mat = h.GetSkimMatrix(Visum, skim_mat_num) #returns a 2d numarray object
+                    data_dict[skim_mat_name] = ravel(mat)      #flatten to 1d and convert to numpy
+                #mat.tofile(visum_dir + "/skim" + str(skim_mat_num) + ".mtx") #temp hack to save it
+        except Exception, e:
+            error_msg = "Getting matrices failed: %s " % e
+            raise StandardError(error_msg)
+
+        ## hack to add keys to the matrix values
+        zoneNumbers = h.GetMulti(Visum.Net.Zones, "NO")
+        zoneNumbers = array(zoneNumbers)[newaxis, :]
+        from_zone_id = ravel(zoneNumbers.repeat(zoneNumbers.size, axis=1))
+        to_zone_id = ravel(zoneNumbers.repeat(zoneNumbers.size, axis=0))
+
+        data_dict['from_zone_id'] = from_zone_id
+        data_dict['to_zone_id'] = to_zone_id
+
+        storage.write_table( table_name=table_name, table_data=data_dict )
+        travel_data_set = TravelDataDataset( in_storage=storage, in_table_name=table_name )
 
         travel_data_set.size()
         return travel_data_set
-	
+
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass

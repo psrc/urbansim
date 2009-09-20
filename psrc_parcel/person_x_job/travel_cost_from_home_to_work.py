@@ -1,7 +1,8 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
-from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
+
+from urbansim.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class travel_cost_from_home_to_work(abstract_travel_time_variable):
     """single vehicle travel cost from the centroid of home zone to that of work zone"""

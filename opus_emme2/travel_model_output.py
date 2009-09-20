@@ -41,7 +41,7 @@ class TravelModelOutput(object):
                                        
         travel_data_set = TravelDataDataset(in_storage=in_storage, 
             in_table_name=table_name, out_storage=out_storage)
-        travel_data_set.get_id_attribute().max()
+        travel_data_set.load_dataset_if_not_loaded()
         max_zone_id = zone_set.get_id_attribute().max()
         for matrix_name in matrix_attribute_name_map.keys():
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
@@ -139,8 +139,8 @@ class TravelModelOutput(object):
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), name=attribute_name)
             for line in file_contents:
                 from_zone_id, to_zone_id, value = str.split(line)
-                travel_data_set.set_value_of_attribute_by_id(attribute=attribute_name, value=float(value), 
-                                                             id=(int(from_zone_id), int(to_zone_id)))
+                zone_index = travel_data_set.get_index_by_origin_and_destination_ids(from_zone_id, to_zone_id)
+                travel_data_set.set_values_of_one_attribute(attribute=attribute_name, values=float(value), index=zone_index)
         finally:
             logger.end_block()
             
