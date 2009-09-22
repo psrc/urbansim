@@ -37,8 +37,8 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['urbansim_zone', 'urbansim'],
             test_data={
-             'pseudo_building':
-                 {"pseudo_building_id":  array([1,2,3,4,5]),
+             'building':
+                 {"building_id":  array([1,2,3,4,5]),
                   "building_type_id":    array([1,  2, 1, 1,  2]),
                   "zone_id":             array([1,  1, 3, 2,  2]),
                   "job_spaces_capacity": array([20, 3, 10, 35, 200])

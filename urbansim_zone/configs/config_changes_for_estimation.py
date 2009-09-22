@@ -19,71 +19,51 @@ class ConfigChangesForEstimation(Configuration):
                                    {"household_location_choice_model": ["estimate"]}
                                    ],
                         'datasets_to_preload': {
-                                    'pseudo_building':{},
+                                    'building':{},
                                     'household':{}
                                     }                     
                     },
             'employment_location_choice_model': {
-                        'industrial': {'models': [
+                        'home_based': {'models': [
                                             "employment_relocation_model",
                                             {'employment_location_choice_model': {
-                                                   "group_members": [{'industrial': ["estimate"]}]
+                                                   "group_members": [{'home_based': ["estimate"]}]
                                                    }}
                                                 ],
                                        "datasets_to_preload": {
-                                                'pseudo_building':{},
+                                                'building':{},
                                                 'job':{},
-                                                'job_building_type':{}                                   
+                                                'home_based_status':{}                                   
                                                 },
                                      },
-                        'commercial': {'models': [
+                        'non_home_based': {'models': [
                                         "employment_relocation_model",
                                         {'employment_location_choice_model': {
-                                                   "group_members": [{'commercial': ["estimate"]}]}}
+                                                   "group_members": [{'non_home_based': ["estimate"]}]}}
                                                 ],
                                        "datasets_to_preload": {
-                                                'pseudo_building':{},
+                                                'building':{},
                                                 'job':{},
-                                                'job_building_type':{}                                   
-                                                },
-                                     },
-                        'home_based': {'models': [
-                                        "employment_relocation_model",
-                                        {'employment_location_choice_model': {
-                                                   "group_members": [{'home_based': ["estimate"]}]}}
-                                                ],
-                                       "datasets_to_preload": {
-                                                'pseudo_building':{},
-                                                'job':{},
-                                                'job_building_type':{}                                   
+                                                'home_based_status':{}                                   
                                                 },
                                      },
                         },
-            "industrial_development_project_location_choice_model": {
+            "non_residential_development_project_location_choice_model": {
                             'models': [
-                                {"industrial_development_project_location_choice_model": ["estimate"]}
+                                {"non_residential_development_project_location_choice_model": ["estimate"]}
                                     ],
                             "datasets_to_preload": {
-                                'pseudo_building':{},
+                                'building':{},
                                 'zone':{},
                                 'urbansim_constant': {}
                                 },   
                                    },
-            'commercial_development_project_location_choice_model': {
-                            'models': [
-                                {"commercial_development_project_location_choice_model": ["estimate"]}
-                                    ],
-                            "datasets_to_preload": {
-                                'pseudo_building':{},
-                                'zone':{},
-                                'urbansim_constant': {}
-                                },   },
             'residential_development_project_location_choice_model': {
                             'models': [
                                 {"residential_development_project_location_choice_model": ["estimate"]}
                                     ],
                             "datasets_to_preload": {
-                                'pseudo_building':{},
+                                'building':{},
                                 'zone':{},
                                 'urbansim_constant': {}
                                 },   

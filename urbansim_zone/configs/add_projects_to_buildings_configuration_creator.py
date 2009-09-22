@@ -12,7 +12,7 @@ class AddProjectsToBuildingsConfigurationCreator(object):
     
     def __init__(self,
         input_projects = 'dptm_results',
-        building_set = 'pseudo_building',
+        building_set = 'building',
         building_type_set = 'building_type', 
         location_id_name = 'zone_id', 
         units_names = {} # use single quotes for any string inside of the dictionary
@@ -63,7 +63,7 @@ class TestAddProjectsToBuildingsConfigurationCreator(opus_unittest.OpusTestCase)
             'run': {
                 'arguments': {
                     'projects': 'dptm_results',
-                    'building_set': 'pseudo_building',
+                    'building_set': 'building',
                     'building_type_set': 'building_type',
                     'location_id_name': "'zone_id'",
                     'units_names': "{}"
@@ -88,7 +88,7 @@ class TestAddProjectsToBuildingsConfigurationCreator(opus_unittest.OpusTestCase)
             'run': {
                 'arguments': {
                     'projects': 'input_projects',
-                    'building_set': 'pseudo_building',
+                    'building_set': 'building',
                     'building_type_set': 'building_type',
                     'location_id_name': "'zone_id'",
                     'units_names': "{'residential': 'my_units', 'commercial': 'job_spaces'}"

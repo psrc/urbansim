@@ -38,9 +38,9 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.storage = StorageFactory().get_storage('dict_storage')
         self.storage.write_table(
-            table_name='pseudo_buildings',
+            table_name='buildings',
             table_data={
-                "pseudo_building_id": arange(1,31), # 1 building per building_type and zone
+                "building_id": arange(1,31), # 1 building per building_type and zone
                 "zone_id": array( [1,1,1, 2,2,2, 3,3,3, 4,4,4, 5,5,5, 6,6,6, 7,7,7, 8,8,8, 9,9,9, 10,10,10] ),
                 "building_type_id": array(10*[1,2,3]),
                 "residential_units": array(10*[200, 0, 0]),
@@ -57,7 +57,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
             )
         self.dataset_pool = DatasetPool(package_order=['urbansim_zone', "urbansim"],
                                         storage=self.storage)
-        self.buildings = self.dataset_pool.get_dataset('pseudo_building')
+        self.buildings = self.dataset_pool.get_dataset('building')
         self.building_types = self.dataset_pool.get_dataset('building_type')
 
     def test_add_nothing(self):

@@ -39,8 +39,8 @@ class UrbansimZoneConfiguration(Configuration):
         self['model_system'] = 'urbansim.model_coordinators.model_system'
         my_controller_configuration = {
         'real_estate_price_model': RealEstatePriceModelConfigurationCreator(
-            dataset='pseudo_building', 
-            outcome_attribute = 'ln_unit_price=ln(pseudo_building.avg_value)',
+            dataset='building', 
+            outcome_attribute = 'ln_unit_price=ln(building.avg_value)',
             submodel_string = 'building_type_id',
             filter_variable = None,
             ).execute(),
@@ -139,7 +139,7 @@ class UrbansimZoneConfiguration(Configuration):
 
                 
         self["datasets_to_preload"] = {
-                'pseudo_building':{},
+                'building':{},
                 'zone':{},
                 'household':{},
                 'job': {},

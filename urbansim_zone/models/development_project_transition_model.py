@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-### # These model doesn't work because it refers to pseudo_buildings, and we are converting to buildings.
+### # These model doesn't work because it refers to pseudo buildings, and we are converting to buildings.
 
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter
@@ -376,7 +376,7 @@ class DPTMTests(StochasticTestCase):
             dataset_pool.add_datasets_if_not_included({'job_building_type': self.dataset_pool.get_dataset('job_building_type'),
                                                        'zone': self.dataset_pool.get_dataset('zone'),
                                                        'household': self.dataset_pool.get_dataset('household'),
-                                                       'pseudo_building':self.dataset_pool.get_dataset('pseudo_building')
+                                                       'building':self.dataset_pool.get_dataset('building')
                                                       })
             dptm = DevelopmentProjectTransitionModel()
             results = dptm.run(dataset_pool.get_dataset('target_vacancy'),
@@ -444,7 +444,7 @@ class DPTMTests(StochasticTestCase):
         dataset_pool.add_datasets_if_not_included({'job_building_type': self.dataset_pool.get_dataset('job_building_type'),
                                                        'zone': self.dataset_pool.get_dataset('zone'),
                                                        'household': self.dataset_pool.get_dataset('household'),
-                                                       'pseudo_building':self.dataset_pool.get_dataset('pseudo_building')
+                                                       'building':self.dataset_pool.get_dataset('building')
                                                       })
 
         dptm = DevelopmentProjectTransitionModel()

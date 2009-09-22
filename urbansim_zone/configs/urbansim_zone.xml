@@ -9,7 +9,7 @@
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['pseudo_building','household_x_pseudo_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <available_datasets type="list">['building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <spatial_datasets type="list">['zone','faz','large_area','gridcell','city','county']</spatial_datasets>
   </general>
   <model_manager>
@@ -716,7 +716,7 @@
           <run type="dictionary">
             <argument name="building_type_set" type="string">building_type</argument>
             <argument name="units_names" type="string">{}</argument>
-            <argument name="building_set" type="string">pseudo_building</argument>
+            <argument name="building_set" type="string">building</argument>
             <argument name="projects" type="string">dptm_results</argument>
             <argument name="location_id_name" parser_action="quote_string" type="string">zone_id</argument>
           </run>
@@ -833,7 +833,7 @@
           <selectable name="jobs" type="selectable">True</selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="zones" type="selectable">True</selectable>
-          <selectable name="pseudo_buildings" type="selectable">True</selectable>
+          <selectable name="buildings" type="selectable">True</selectable>
           <selectable name="counties" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
