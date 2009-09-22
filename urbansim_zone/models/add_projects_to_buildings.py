@@ -60,7 +60,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
         self.buildings = self.dataset_pool.get_dataset('building')
         self.building_types = self.dataset_pool.get_dataset('building_type')
 
-    def test_add_nothing(self):
+    def DISABLED_test_add_nothing(self):
         projects = {'residential': None, 'commercial': None, 'industrial': None}
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, self.building_types)
@@ -68,7 +68,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(10*[0, 100, 0])), True)
         self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
 
-    def test_add_one_project(self):
+    def DISABLED_test_add_one_project(self):
         projects = {'residential': None, 
                     'commercial': self.get_projects('commercial', {'project_id': arange(1,5),
                                                                    'commercial_job_spaces': array(3*[20]+[5]), 
@@ -81,7 +81,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])), True)
         self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
 
-    def test_add_three_projects(self):
+    def DISABLED_test_add_three_projects(self):
         projects = {'residential': self.get_projects('residential', {'project_id': arange(1,6),
                                                                      'residential_units': array([100, 300, 1, 50, 6]),
                                                                      'zone_id': array([3, 5, 7, 8, 10])},

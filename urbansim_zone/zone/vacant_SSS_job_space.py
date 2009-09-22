@@ -48,10 +48,10 @@ class Tests(opus_unittest.OpusTestCase):
              "zone_id":array([1,2,3]),
              "number_of_commercial_jobs": array([12, 50, 0])
              },
-            'job_building_type':
+            'building_type':
             {
-             "id":array([1,2]),
-             "name":array(["commercial", "industrial"])
+             "building_type_id":array([1,2]),
+             "building_type_name":array(["commercial", "industrial"])
              },
             }
         )
