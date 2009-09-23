@@ -22,7 +22,7 @@ class RefinementOptionGroup:
         self.parser.add_option("-s", "--start-year", dest="start_year", default = None, type="int",
                                action="store", help="Start year for refinement(inclusive), if unspecified starting with the smallest year in refinement dataset")
         self.parser.add_option("-e", "--end-year", dest="end_year", default = None, type="int",
-                               action="store", help="End year for refinement(inclusive), , if unspecified stoping with the largest year in refinement dataset")
+                               action="store", help="End year for refinement(inclusive), , if unspecified stopping with the largest year in refinement dataset")
         self.parser.add_option("--refinements-directory", dest="refinements_directory", default = None,
                                action="store", help="Immediate directory containing refinements cache, if not in the cache directory specified by -c or --cache-directory")
         self.parser.add_option("--backup-before-refinement", dest="backup", default=False, action="store_true", 
