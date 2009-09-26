@@ -44,7 +44,7 @@ class RateDataset(UrbansimDataset):
                 elif alias in known_attributes:
                     dataset_attribute = dataset.get_attribute(alias)
                 else:
-                    raise ValueError, "attribute %s used in rate dataset can not be found in dataset" % (attribute, dataset.get_dataset_name())
+                    raise ValueError, "attribute %s used in rate dataset can not be found in dataset %s" % (attribute, dataset.get_dataset_name())
                 if attribute + '_min' in column_names and self.get_attribute(attribute+'_min')[index] != -1:
                     indicator *= dataset_attribute >= self.get_attribute(attribute+'_min')[index]
                 if attribute + '_max' in column_names and self.get_attribute(attribute+'_max')[index] != -1:

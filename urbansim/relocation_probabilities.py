@@ -10,7 +10,7 @@ from numpy import array, ones
 
 class relocation_probabilities(Probabilities):
     agent_set = 'household'
-    rate_set = 'household_relocation_rate'
+    rate_set = 'annual_relocation_rate'
     
     def run(self, utilities=None, resources=None):
         """ Return a probability array obtained from a RateDataset. 'resources' must contain

@@ -19,6 +19,8 @@ class DatasetFactory(object):
     #      (dataset_name, table_name, module_name, dataset_class_name)
     # module_name and dataset_class_name may be None; if so the generic Dataset class should be used.
     exceptions = [
+        ('annual_household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
+        ('annual_job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
         ('base_year', 'base_year', None, None),
         ('city', 'cities', 'city_dataset', 'CityDataset'), 
         ('building_sqft_per_job', 'building_sqft_per_job', 'building_sqft_per_job_dataset', 'BuildingSqftPerJobDataset'), 
@@ -37,10 +39,8 @@ class DatasetFactory(object):
         ('household_characteristic', 'household_characteristics_for_ht', 'household_characteristic_dataset', 'HouseholdCharacteristicDataset'), 
         ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
         ('household_location_choice_model_specification', 'household_location_choice_model_specification', None, None),
-        ('household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
         ('industrial_development_location_choice_model_specification', 'industrial_development_location_choice_model_specification', None, None),
         ('industrial_employment_location_choice_model_specification', 'industrial_employment_location_choice_model_specification', None, None),
-        ('job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
         ('land_price_model_specification', 'land_price_model_specification', None, None),
         ('non_home_based_employment_location_choice_model_specification', 'non_home_based_employment_location_choice_model_specification', None, None),
         ('plan_type_group', 'plan_type_groups', 'plan_type_group_dataset', 'PlanTypeGroupDataset'),

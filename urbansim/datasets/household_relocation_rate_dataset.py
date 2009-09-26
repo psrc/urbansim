@@ -7,7 +7,7 @@ from numpy import where, int32, zeros, float32
 
 class HouseholdRelocationRateDataset(RateDataset):
     id_name_default = []
-    dataset_name = "household_relocation_rate"
+    dataset_name = "annual_household_relocation_rate"
     probability_attribute = "probability_of_relocating"
     in_table_name_default = "annual_relocation_rates_for_households"
     out_table_name_default = "annual_relocation_rates_for_households"
