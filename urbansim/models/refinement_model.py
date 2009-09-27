@@ -188,15 +188,14 @@ class RefinementModel(Model):
 
             movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
             movers_location_index = location_dataset.get_id_index( movers_location_id )
+            # backward compatability code for older versions of numpy -- no longer required since we need numpy 1.2.1 or greater
             # new=False argument to histogram tells it to use deprecated behavior for now (to be removed in numpy 1.3)
             # See numpy release notes -- search for histogram
-            # TODO: remove this test and the new=False argument after numpy 1.2.0 or greater is required
-            if numpy.__version__ >= '1.2.0':
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()), new=False)[0]
-            else:
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()))[0]
-            # correct version for numpy 1.2.0 and later:
-            # num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size() +1) )[0]
+            # if numpy.__version__ >= '1.2.0':
+            #    num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()), new=False)[0]
+            # else:
+            #    num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()))[0]
+            num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size() +1) )[0]
             num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
                                                                             (location_dataset.dataset_name,
                                                                             agent_dataset.dataset_name),
@@ -250,10 +249,7 @@ class RefinementModel(Model):
             movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
             movers_location_index = location_dataset.get_id_index( movers_location_id )
             # see previous comment about histogram function
-            if numpy.__version__ >= '1.2.0':
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()), new=False)[0]
-            else:
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()) )[0]
+            num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size() +1) )[0]
             num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
                                                                             (location_dataset.dataset_name,
                                                                             agent_dataset.dataset_name),
@@ -318,10 +314,7 @@ class RefinementModel(Model):
             movers_location_id = agent_dataset.get_attribute( location_dataset.get_id_name()[0] )[movers_index]
             movers_location_index = location_dataset.get_id_index( movers_location_id )
             # see previous comment about histogram function
-            if numpy.__version__ >= '1.2.0':
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()), new=False)[0]
-            else:
-                num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size()))[0]
+            num_of_movers_by_location = histogram( movers_location_index, bins=arange(location_dataset.size() +1) )[0]
             num_of_agents_by_location = location_dataset.compute_variables( "number_of_agents=%s.number_of_agents(%s)" % \
                                                                             ( location_dataset.dataset_name,
                                                                             agent_dataset.dataset_name ),
