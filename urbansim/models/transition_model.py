@@ -9,7 +9,7 @@ from numpy import array, where, ones, zeros, setdiff1d
 from numpy import arange, concatenate, resize, int32, float64
 from opus_core.model import Model
 from opus_core.logger import logger
-from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import re
@@ -35,18 +35,20 @@ class TransitionModel(Model):
         """
         #if dataset_pool is None:
         #    dataset_pool = SessionConfiguration().get_dataset_pool()
+
         if year is None:
             year = SimulationState().get_current_time()
         this_year_index = where(self.control_totals.get_attribute('year')==year)[0]
         control_totals_for_this_year = DatasetSubset(self.control_totals, this_year_index)
+        column_names = list(set( self.control_totals.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] ))
+        column_names.sort()
+        column_values = dict([ (name, control_totals_for_this_year.get_attribute(name)) for name in column_names + [target_attribute_name]])
         
-        column_names = set( self.control_totals.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] )
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
         dataset_known_attributes = self.dataset.get_known_attribute_names()
         for variable in independent_variables:
             if variable not in dataset_known_attributes:
                 self.dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
-
         dataset_known_attributes = self.dataset.get_known_attribute_names() #update after compute
         if sample_filter:
             short_name = VariableName(sample_filter).get_alias()
@@ -56,44 +58,66 @@ class TransitionModel(Model):
                 filter_indicator = self.dataset.get_attribute(short_name)
         else:
             filter_indicator = 1
-                
+
         to_be_cloned = array([], dtype=int32)
         to_be_removed = array([], dtype=int32)
+        #log header
+        logger.log_status("\t".join(column_names + ["actual", "target", "action"]))
         for index in range(control_totals_for_this_year.size()):
-            indicator = ones( self.dataset.size(), dtype='bool' )                
+            lucky_index = None
+            indicator = ones( self.dataset.size(), dtype='bool' )
+            criterion = {}
             for attribute in independent_variables:
                 if attribute in dataset_known_attributes:
                     dataset_attribute = self.dataset.get_attribute(attribute)
                 else:
                     raise ValueError, "attribute %s used in control total dataset can not be found in dataset %s" % (attribute, self.dataset.get_dataset_name())
-                
-                if attribute + '_min' in column_names and control_totals_for_this_year.get_attribute(attribute+'_min')[index] != -1:
-                    indicator *= dataset_attribute >= control_totals_for_this_year.get_attribute(attribute+'_min')[index]
-                if attribute + '_max' in column_names and control_totals_for_this_year.get_attribute(attribute+'_max')[index] != -1:
-                    indicator *= dataset_attribute <= control_totals_for_this_year.get_attribute(attribute+'_max')[index]
-                if attribute in column_names and control_totals_for_this_year.get_attribute(attribute)[index] != -1:
-                    control_total_attribute = control_totals_for_this_year.get_attribute(attribute)
-                    if control_total_attribute[index] != -2:
-                        indicator *= dataset_attribute == control_total_attribute[index]
-                    else: ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
-                        complement_values = setdiff1d( dataset_attribute, control_total_attribute )
+                if attribute + '_min' in column_names:
+                    amin = column_values[attribute + '_min'][index]
+                    criterion.update({attribute + '_min':amin})
+                    if amin != -1:
+                        indicator *= dataset_attribute >= amin
+                if attribute + '_max' in column_names: 
+                    amax = column_values[attribute+'_max'][index]
+                    criterion.update({attribute + '_max':amax}) 
+                    if amax != -1:
+                        indicator *= dataset_attribute <= amax
+                if attribute in column_names: 
+                    aval = column_values[attribute][index] 
+                    criterion.update({attribute:aval}) 
+                    if aval == -1:
+                        continue
+                    elif aval == -2:   ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
+                        complement_values = setdiff1d( dataset_attribute, column_values[attribute] )
                         has_one_of_the_complement_value = zeros(dataset_attribute.size, dtype='bool')
                         for value in complement_values:
                             has_one_of_the_complement_value += dataset_attribute == value
                         indicator *= has_one_of_the_complement_value
+                    else:
+                        indicator *= dataset_attribute == aval
                         
-            actual_num = sum(indicator)
-            target_num = control_totals_for_this_year.get_attribute(target_attribute_name)[index]
+            actual_num = indicator.sum()
+            target_num = column_values[target_attribute_name][index]
             if actual_num != target_num:
                 legit_index = where(logical_and(indicator, filter_indicator))[0]
-                lucky_index = sample_noreplace(legit_index,
-                                               abs(actual_num - target_num))
                 if actual_num < target_num:
+                    lucky_index = sample_replace(legit_index, target_num - actual_num)
                     to_be_cloned = concatenate((to_be_cloned, lucky_index))
                 elif actual_num > target_num:
+                    lucky_index = sample_noreplace(legit_index, actual_num-target_num)
                     to_be_removed = concatenate((to_be_removed, lucky_index))
+            
+            ##log status
+            action = "0"
+            if lucky_index is not None:
+                action_num = lucky_index.size
+                if actual_num < target_num: action = "+" + str(action_num)
+                if actual_num > target_num: action = "-" + str(action_num)
+            cat = [ str(criterion[col]) for col in column_names]
+            cat += [str(actual_num), str(target_num), action]
+            logger.log_status("\t".join(cat))
 
-        clone_data = {}   
+        clone_data = {}
         if to_be_cloned.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
@@ -110,7 +134,7 @@ class TransitionModel(Model):
         if to_be_removed.size > 0:
             logger.log_status()
             self.dataset.remove_elements(to_be_removed)
-        
+            
         if clone_data:
             self.dataset.add_elements(data=clone_data, change_ids_if_not_unique=True)
             
