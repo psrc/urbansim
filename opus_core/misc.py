@@ -686,6 +686,78 @@ def get_string_or_None(arg):
         return "'%s'" % arg
     return None
 
+def digits(int_scalar_or_int_sequence):
+    """ return number of digits """
+    if hasattr(int_scalar_or_int_sequence, '__iter__'):
+        return [digits(scalar) for scalar in int_scalar_or_int_sequence]
+
+    n = int_scalar_or_int_sequence
+    if n < 0:
+        n = -n
+    d = 0
+    step = 1
+    while (step <= n):
+        d += 1
+        step *= 10
+    return max(d, 1)
+
+def djbhash(sequence):
+    """Hash function from D J Bernstein
+    References: 
+    http://www.gossamer-threads.com/lists/python/python/679002#679002
+    http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
+    """
+    h = 5381L
+    for i in sequence:
+        t = (h * 33) & 0xffffffffL
+        h = t ^ i
+    return h 
+
+def fnvhash(sequence):
+    """Fowler, Noll, Vo Hash function
+    References: 
+    http://www.gossamer-threads.com/lists/python/python/679002#679002
+    http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
+    http://www.isthe.com/chongo/tech/comp/fnv/
+    """
+    h = 2166136261
+    for i in sequence:
+        t = (h * 16777619) & 0xffffffffL
+        h = t ^ i
+    return h
+
+def ndsum(input, labels, index=None):
+    """ extend scipy.ndimage.sum to handle labels with multi-array
+    index argument is not used
+
+    e.g.
+    input =  array([3, 7, 4, 6, 2, 5 ])
+    attr_a = array([0, 0, 1, 0, 1, 1])
+    attr_b = array([3, 1, 2, 1, 2, 0])
+    result = ndsum(input, labels=column_stack([attr_a, attr_b]))
+    print result
+    >>> (array([13, 3, 5, 6]), (array([0, 0, 1, 1]), array([1, 3, 0, 2])) )
+    """
+    from numpy import array, ndarray
+    from scipy.ndimage import sum
+    if labels is None or not isinstance(labels, ndarray):
+        return sum(input, labels=labels, index=index)
+    
+    assert input.size == labels.shape[0]
+    #labels = column_stack(labels)
+    hash_table = {}
+    def hashlabel(label):
+        hash_value = djbhash(label)
+        hash_table.update({hash_value:label})
+        return hash_value
+    labels_hash = array(map(hashlabel, labels)).astype("int32")
+
+    index = array(hash_table.keys()).astype("int32")
+    value = array(hash_table.values())
+    result = sum(input, labels=labels_hash, index=index)
+
+    return array(result), [value[:, col] for col in range(value.shape[-1])]
+
 def get_dataset_from_storage(dataset_name, directory, storage_type, package_order=['opus_core'], dataset_args=None):
     """ Returns an object of class Dataset (or its child) with data stored in a storage of type 'storage_type' in 'directory'. If the child class is defined in a specific package, 
     this package must be included in 'package_order'. If there is no child class definition for this 'dataset_name', set 'dataset_args' to a dictionary 
@@ -723,7 +795,36 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
     def tearDown(self):
         # remove the temp directory (note that tearDown gets called even if a unit tests fails)
         shutil.rmtree(self.temp_dir)
+
+    def test_digits(self):
+        import copy
+        a = 382795
+        d1 = digits(a)
+        self.assertEqual(d1, 6)
+        self.assertEqual(a, 382795)
+
+        b = [0, -777, 777, 328795, 23]
+        c = copy.copy(b)
+        d2 = digits(b)
+        self.assertEqual(d2, [1, 3, 3, 6, 2])
+        self.assertEqual(b, c)
+
+    def test_ndsum(self):
+        from numpy import array, column_stack, argsort, allclose, zeros
+        input =  array([3, 7, 4, 6, 2, 5 ])
+        attr_a = array([0, 0, 1, 0, 1, 1])
+        attr_b = array([3, 1, 2, 1, 2, 0])
+        result = ndsum(input, labels=column_stack([attr_a, attr_b]))
+        result_mat = zeros( (1+result[1][0].max(), 1+result[1][1].max()) )
+        result_mat[result[1]] = result[0]
         
+        expected = ( array([13, 3, 5, 6]), (array([0, 0, 1, 1]), array([1, 3, 0, 2])) )
+        expected_mat = zeros( (2, 4)) 
+        expected_mat[expected[1]] = expected[0]
+        
+        self.assert_(allclose(result_mat, expected_mat))
+
+       
     def test_opus_path_for_variable_from_module_path(self):
         file_path = os.path.join('C:', 'foo', 'workspace', 'package_name', 'dataset_name', 'variable_name.py')
         self.assertEqual(opus_path_for_variable_from_module_path(file_path),

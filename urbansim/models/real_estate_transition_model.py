@@ -4,135 +4,161 @@
 
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
-from opus_core.datasets.dataset import DatasetSubset
+from opus_core.datasets.dataset import Dataset, DatasetSubset
 from numpy import array, where, ones, zeros, setdiff1d
 from numpy import arange, concatenate, resize, int32, float64
 from opus_core.model import Model
 from opus_core.logger import logger
-from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.sampling_toolbox import sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import re
 
-class TransitionModel(Model):
+class RealEstateTransitionModel(Model):
     """ The model behind household transition model and employment transition
     model
     """
     
-    model_name = "Transition Model"
-    model_short_name = "TM"
+    model_name = "Real Estate Transition Model"
+    model_short_name = "RETM"
     
-    def __init__(self, dataset, control_total_dataset=None, model_name=None, model_short_name=None):
-        self.dataset = dataset
-        self.control_totals = control_total_dataset
+    def __init__(self, target_vancy_dataset=None, model_name=None, model_short_name=None):
+        self.target_vancy_dataset = target_vancy_dataset
         if model_name:
             self.model_name = model_name
         if model_short_name:
             self.model_short_name = model_short_name
         
-    def run(self, year=None, target_attribute_name='number_of_households', sample_filter="", reset_dataset_attribute_value={}, dataset_pool=None,  **kwargs):
+    def run(self, realestate_dataset,
+            year=None, 
+            occupied_spaces_variable="occupied_units",
+            total_spaces_variable="total_units",
+            target_attribute_name='target_vacancy_rate',
+            sample_from_dataset = None,            
+            sample_filter="",
+            reset_attribute_value={}, 
+            dataset_pool=None,  **kwargs):
         """ sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
+        ## TODO: enable arguments to discard attributes in sample_from_dataset
         """
+        
+        if sample_from_dataset:
+            self.sample_from_dataset = sample_from_dataset
+        else:
+            sample_from_dataset = realestate_dataset
         #if dataset_pool is None:
         #    dataset_pool = SessionConfiguration().get_dataset_pool()
         if year is None:
             year = SimulationState().get_current_time()
-        this_year_index = where(self.control_totals.get_attribute('year')==year)[0]
-        control_totals_for_this_year = DatasetSubset(self.control_totals, this_year_index)
+        this_year_index = where(self.target_vancy_dataset.get_attribute('year')==year)[0]
+        target_vacancy_for_this_year = DatasetSubset(self.target_vancy_dataset, this_year_index)
         
-        column_names = set( self.control_totals.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] )
+        column_names = set( self.target_vancy_dataset.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] )
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
-        dataset_known_attributes = self.dataset.get_known_attribute_names()
-        for variable in independent_variables:
+        dataset_known_attributes = realestate_dataset.get_known_attribute_names()
+        for variable in independent_variables + [occupied_spaces_variable, total_spaces_variable]:
             if variable not in dataset_known_attributes:
-                self.dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
-
-        dataset_known_attributes = self.dataset.get_known_attribute_names() #update after compute
+                realestate_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
+                sample_from_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
+                
+        dataset_known_attributes = realestate_dataset.get_known_attribute_names() #update after compute
         if sample_filter:
             short_name = VariableName(sample_filter).get_alias()
             if short_name not in dataset_known_attributes:
-                filter_indicator = self.dataset.compute_variables(sample_filter, dataset_pool=dataset_pool)
+                filter_indicator = sample_from_dataset.compute_variables(sample_filter, dataset_pool=dataset_pool)
             else:
-                filter_indicator = self.dataset.get_attribute(short_name)
+                filter_indicator = sample_from_dataset.get_attribute(short_name)
         else:
             filter_indicator = 1
                 
-        to_be_cloned = array([], dtype=int32)
-        to_be_removed = array([], dtype=int32)
-        for index in range(control_totals_for_this_year.size()):
-            indicator = ones( self.dataset.size(), dtype='bool' )                
+        sampled_index = array([], dtype=int32)
+        for index in range(target_vacancy_for_this_year.size()):
+            this_sampled_index = array([], dtype=int32)
+            indicator = ones( realestate_dataset.size(), dtype='bool' )
+            sample_indicator = ones( sample_from_dataset.size(), dtype='bool' ) 
             for attribute in independent_variables:
                 if attribute in dataset_known_attributes:
-                    dataset_attribute = self.dataset.get_attribute(attribute)
+                    dataset_attribute = realestate_dataset.get_attribute(attribute)
+                    sample_attribute = sample_from_dataset.get_attribute(attribute)
                 else:
-                    raise ValueError, "attribute %s used in control total dataset can not be found in dataset %s" % (attribute, self.dataset.get_dataset_name())
+                    raise ValueError, "attribute %s used in control total dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
                 
-                if attribute + '_min' in column_names and control_totals_for_this_year.get_attribute(attribute+'_min')[index] != -1:
-                    indicator *= dataset_attribute >= control_totals_for_this_year.get_attribute(attribute+'_min')[index]
-                if attribute + '_max' in column_names and control_totals_for_this_year.get_attribute(attribute+'_max')[index] != -1:
-                    indicator *= dataset_attribute <= control_totals_for_this_year.get_attribute(attribute+'_max')[index]
-                if attribute in column_names and control_totals_for_this_year.get_attribute(attribute)[index] != -1:
-                    control_total_attribute = control_totals_for_this_year.get_attribute(attribute)
+                if attribute + '_min' in column_names and target_vacancy_for_this_year.get_attribute(attribute+'_min')[index] != -1:
+                    indicator *= dataset_attribute >= target_vacancy_for_this_year.get_attribute(attribute+'_min')[index]
+                    sample_indicator *= sample_attribute >= target_vacancy_for_this_year.get_attribute(attribute+'_min')[index]
+                if attribute + '_max' in column_names and target_vacancy_for_this_year.get_attribute(attribute+'_max')[index] != -1:
+                    indicator *= dataset_attribute <= target_vacancy_for_this_year.get_attribute(attribute+'_max')[index]
+                    sample_indicator *= sample_attribute <= target_vacancy_for_this_year.get_attribute(attribute+'_max')[index]
+                if attribute in column_names and target_vacancy_for_this_year.get_attribute(attribute)[index] != -1:
+                    control_total_attribute = target_vacancy_for_this_year.get_attribute(attribute)
                     if control_total_attribute[index] != -2:
                         indicator *= dataset_attribute == control_total_attribute[index]
+                        sample_indicator *= sample_attribute == control_total_attribute[index]
                     else: ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
                         complement_values = setdiff1d( dataset_attribute, control_total_attribute )
                         has_one_of_the_complement_value = zeros(dataset_attribute.size, dtype='bool')
                         for value in complement_values:
                             has_one_of_the_complement_value += dataset_attribute == value
                         indicator *= has_one_of_the_complement_value
+                        ##TODO sample_indicator:
                         
-            actual_num = sum(indicator)
-            target_num = control_totals_for_this_year.get_attribute(target_attribute_name)[index]
-            if actual_num != target_num:
-                legit_index = where(logical_and(indicator, filter_indicator))[0]
-                lucky_index = sample_noreplace(legit_index,
-                                               abs(actual_num - target_num))
-                if actual_num < target_num:
-                    to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                elif actual_num > target_num:
-                    to_be_removed = concatenate((to_be_removed, lucky_index))
+            actual_num = sum(indicator * realestate_dataset.get_attribute(total_spaces_variable))
+            target_num = sum(indicator * realestate_dataset.get_attribute(occupied_spaces_variable)) /\
+                         (1 - target_vacancy_for_this_year.get_attribute(target_attribute_name)[index])
+            diff = target_num - actual_num
+            if diff > 0:
+                total_spaces_in_sample_dataset = sample_from_dataset.get_attribute(total_spaces_variable)
+                legit_index = where(logical_and(sample_indicator, filter_indicator))[0]
+                mean_size = total_spaces_in_sample_dataset[legit_index].mean()
+                # Ensure that there are some development projects to choose from
+                num_of_projects_to_sample = max( 10, int( diff / mean_size ))
+                while total_spaces_in_sample_dataset[this_sampled_index].sum() < diff:
+                    lucky_index = sample_replace(legit_index, num_of_projects_to_sample)
+                    this_sampled_index = concatenate((this_sampled_index, lucky_index))
+            sampled_index = concatenate((sampled_index, this_sampled_index))
+            logger.log_status()
 
-        clone_data = {}   
-        if to_be_cloned.size > 0:
+        project_data = {}
+        project_dataset = None
+        if sampled_index.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
-            ##self.dataset.duplicate_rows(to_be_cloned)
+            ##realestate_dataset.duplicate_rows(sampled_index)
             logger.log_status()
-            for attribute in dataset_known_attributes:
-                if reset_dataset_attribute_value.has_key(attribute):
-                    clone_data[attribute] = resize(array(reset_dataset_attribute_value[attribute]), to_be_cloned.size)
+            for attribute in sample_from_dataset.get_primary_attribute_names():
+                if reset_attribute_value.has_key(attribute):
+                    project_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
                 else:
-                    clone_data[attribute] = self.dataset.get_attribute_by_index(attribute, to_be_cloned)
-                    
-        self.post_run(self.dataset, to_be_cloned, to_be_removed, **kwargs)
+                    project_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
         
-        if to_be_removed.size > 0:
-            logger.log_status()
-            self.dataset.remove_elements(to_be_removed)
-        
-        if clone_data:
-            self.dataset.add_elements(data=clone_data, change_ids_if_not_unique=True)
-            
-        return self.dataset
+            storage = StorageFactory().get_storage('dict_storage')
+            storage.write_table(table_name='development_projects', table_data=project_data)
     
-    def prepare_for_run(self, control_total_dataset_name=None, control_total_table=None, control_total_storage=None):
-        if (control_total_storage is None) or ((control_total_table is None) and (control_total_dataset_name is None)):
+            project_dataset = Dataset(id_name = [],
+                                      in_storage = storage,
+                                      in_table_name = "development_projects",
+                                      dataset_name = "development_project"
+                                      )
+        
+        return project_dataset
+    
+    def prepare_for_run(self, dataset_name=None, table_name=None, storage=None):
+        if (storage is None) or ((table_name is None) and (dataset_name is None)):
             dataset_pool = SessionConfiguration().get_dataset_pool()
-            self.control_totals = dataset_pool.get_dataset( 'annual_%s_control_total' % self.dataset.get_dataset_name() )
-            return self.control_totals
+            dataset = dataset_pool.get_dataset( 'target_vacancy' )
+            return dataset
         
-        if not control_total_dataset_name:
-            control_total_dataset_name = DatasetFactory().dataset_name_for_table(control_total_table)
+        if not dataset_name:
+            dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         
-        self.control_totals = DatasetFactory().search_for_dataset(control_total_dataset_name,
+        dataset = DatasetFactory().search_for_dataset(dataset_name,
                                                                   package_order=SessionConfiguration().package_order,
-                                                                  arguments={'in_storage':control_total_storage, 
-                                                                             'in_table_name':control_total_table,
+                                                                  arguments={'in_storage':storage, 
+                                                                             'in_table_name':table_name,
                                                                              'id_name':[]
                                                                              }
                                                                   )
-        return self.control_totals
+        return dataset
     
     def post_run(self, *args, **kwargs):
         """ To be implemented in child class for additional function, like synchronizing persons with households table
