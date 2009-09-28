@@ -15,15 +15,15 @@ from numpy import array, arange
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim_zone.household_x_zone.ln_sampling_probability_for_bias_correction_mnl_residential_units"
+    variable_name = "urbansim_zone.household_x_building.ln_sampling_probability_for_bias_correction_mnl_residential_units"
         
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
         storage.write_table(
-            table_name='zones',
+            table_name='buildings',
             table_data={
-                'zone_id': arange(50),
+                'building_id': arange(50),
                 'residential_units': array(5*[0]+10*[20]+5*[15]+10*[50]+15*[3]+5*[45]),
             }
         )
@@ -34,14 +34,14 @@ class Tests(opus_unittest.OpusTestCase):
             }
         )
         
-        dataset_pool = DatasetPool(package_order=['urbansim'],
+        dataset_pool = DatasetPool(package_order=['urbansim_zone'],
                                    storage=storage)        
-        household_x_gridcell = dataset_pool.get_dataset('household_x_zone', 
+        household_x_building = dataset_pool.get_dataset('household_x_building', 
                  dataset_arguments={"index2": array([[13, 15, 23, 49],
                                                      [5, 9, 17, 43],
                                                      [17, 18, 40, 47]], dtype="int32")})
-        household_x_gridcell.compute_variables(self.variable_name)
-        values = household_x_gridcell.get_attribute(self.variable_name)
+        household_x_building.compute_variables(self.variable_name)
+        values = household_x_building.get_attribute(self.variable_name)
 
         # The values are computed using formula from Ben-Akiva book (Chapter of correcting for sampling bias)
         should_be = array([[-11.3207881 , -11.03310603, -12.23707884, -12.13171832],

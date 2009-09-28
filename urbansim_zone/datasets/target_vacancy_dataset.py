@@ -7,7 +7,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 class TargetVacancyDataset(UrbansimDataset):
     """Set of target vacancies."""
 
-    id_name_default = ["year", "building_type_id"]
+    id_name_default = []
     in_table_name_default = "target_vacancies"
     out_table_name_default = "target_vacancies"
     dataset_name = "target_vacancy"
