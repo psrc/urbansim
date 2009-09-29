@@ -6,12 +6,23 @@ from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 from opus_core.model import get_specification_for_estimation
 from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
+from opus_core.logger import logger
 from numpy import where
 
 class DevelopmentProjectLocationChoiceModel(AgentLocationChoiceModel):
 
     model_name = "Development Project Location Choice Model"
     model_short_name = "DPLCM"
+    
+    def run(self, *args, **kwargs):
+        if 'agent_set' in args and args['agent_set'] is None:
+            logger.log_status("Development project dataset is empty. Skip DPLCM")
+            return
+        elif kwargs.has_key('agent_set') and kwargs['agent_set'] is None:
+            logger.log_status("Development project dataset is empty. Skip DPLCM")
+            return
+        else:
+            return AgentLocationChoiceModel.run(self, *args, **kwargs)
 
     def prepare_for_estimate(self, specification_dict = None, 
                              specification_storage=None,

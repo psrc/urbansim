@@ -134,16 +134,16 @@ class RealEstateTransitionModel(Model):
                 sampled_index = concatenate((sampled_index, this_sampled_index))
             #if diff < 0: #demolition; not yet supported
             
-                ##log status
-                action = "0"
-                if this_sampled_index.size > 0:
-                    action_num = total_spaces_in_sample_dataset[this_sampled_index].sum()
-                    if diff > 0: action = "+" + str(action_num)
-                    if diff < 0: action = "-" + str(action_num)
-                cat = [ str(criterion[col]) for col in column_names]
-                cat += [str(actual_num), str(target_num), str(diff), action]
-                logger.log_status("\t".join(cat))
-            
+            ##log status
+            action = "0"
+            if this_sampled_index.size > 0:
+                action_num = total_spaces_in_sample_dataset[this_sampled_index].sum()
+                if diff > 0: action = "+" + str(action_num)
+                if diff < 0: action = "-" + str(action_num)
+            cat = [ str(criterion[col]) for col in column_names]
+            cat += [str(actual_num), str(target_num), str(diff), action]
+            logger.log_status("\t".join(cat))
+        
         project_data = {}
         project_dataset = None
         if sampled_index.size > 0:

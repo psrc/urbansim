@@ -22,7 +22,7 @@ class AddProjectsToBuildings(Model):
         building_labels = None
         
         if not developmentproject_dataset or developmentproject_dataset.size() == 0:
-            logger.log_warning("Empty development project dataset; Will do nothing.")
+            logger.log_warning("Empty development project dataset. Skip add_projects_to_buildings.")
             return building_dataset
 
         for label_attribute in label_attribute_names:
@@ -133,21 +133,7 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
                         }
         
         projects = self.get_projects(project_data)
-        
-#        projects = {'residential': self.get_projects('residential', {'project_id': arange(1,6),
-#                                                                     'residential_units': array([100, 300, 1, 50, 6]),
-#                                                                     'zone_id': array([3, 5, 7, 8, 10])},
-#                                                    'residential_units'),
-#
-#                    'commercial': self.get_projects('commercial', {'project_id': arange(1,5),
-#                                                                   'commercial_job_spaces': array(3*[20]+[5]),
-#                                                                   'zone_id': arange(1,5)},
-#                                                    'commercial_job_spaces'),
-#                    'industrial': self.get_projects('industrial', {'project_id': arange(1,3),
-#                                                                   'industrial_job_spaces': array([50, 30]),
-#                                                                   'zone_id': array([2,10])},
-#                                                    'industrial_job_spaces'),
-#}
+
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, quantity_attribute_names = ["residential_units", "commercial_job_spaces", "industrial_job_spaces"])
         self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), 

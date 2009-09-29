@@ -87,85 +87,26 @@
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>urbansim.models.household_transition_model</class_module>
-            <class_name>HouseholdTransitionModel</class_name>
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
           </import>
           <init type="dictionary">
-            <argument name="location_id_name" parser_action="quote_string" type="string">zone_id</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-            <name name="name" type="string">HouseholdTransitionModel</name>
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
           </init>
           <prepare_for_run type="dictionary">
-            <output name="output" type="string">(control_totals, characteristics)</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
             <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="characteristics" type="string">characteristics</argument>
-            <argument name="household_set" type="string">household</argument>
-            <argument name="control_totals" type="string">control_totals</argument>
             <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
-      </model>
-      <model name="commercial_development_project_location_choice_model" type="model">
-        <estimation_config name="Estimation Configuration" parser_action="skip">
-          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
-        </estimation_config>
-        <structure type="dictionary">
-          <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument>
-            <argument name="agent_set" type="string">dptm_results['commercial']</argument>
-            <argument name="specification" type="string">specification</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-            <argument name="coefficients" type="string">coefficients</argument>
-          </run>
-          <init type="dictionary">
-            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_SSS_job_space</argument>
-            <argument name="location_set" type="string">zone</argument>
-            <argument name="project_type" parser_action="quote_string" type="string">commercial</argument>
-            <argument convert_blank_to_none="True" name="sampler" type="string"/>
-            <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
-          </init>
-          <import name="import" type="dictionary">
-            <class_module>urbansim_zone.models.development_project_location_choice_model</class_module>
-            <class_name>DevelopmentProjectLocationChoiceModel</class_name>
-          </import>
-          <estimate type="dictionary">
-            <output name="output" type="string">(coefficients, _)</output>
-            <argument name="specification" type="string">specification</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument name="agent_set" type="string">projects</argument>
-          </estimate>
-          <prepare_for_run type="dictionary">
-            <output name="output" type="string">(specification, coefficients)</output>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_coefficients</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_specification</argument>
-            <name name="name" type="string">prepare_for_run</name>
-          </prepare_for_run>
-          <prepare_for_estimate type="dictionary">
-            <output name="output" type="string">(specification, projects)</output>
-            <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-            <argument name="units" parser_action="quote_string" type="string">commercial_job_spaces</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_specification</argument>
-            <argument name="urbansim_constant" type="string">urbansim_constant</argument>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="base_year" type="string">base_year</argument>
-            <name name="name" type="string">prepare_for_estimate</name>
-          </prepare_for_estimate>
-        </structure>
-        <specification type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
-            <description type="string">No submodel</description>
-            <variable_list type="variable_list"/>
-          </submodel>
-        </specification>
       </model>
       <model name="employment_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
@@ -274,11 +215,13 @@
             <argument name="location_set" type="string">zone</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
 	      <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
 	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
-              <key name="capacity_string" type="string">urbansim_zone.zone.residential_units_capacity</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string">urbansim_zone.zone.developable_residential_units</key>
 	      <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
@@ -287,6 +230,7 @@
 	      <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
 	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.residential_units_capacity</key>
+              <key name="compute_capacity_flag" type="string">True</key>
 	      <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
@@ -349,12 +293,14 @@
             <argument name="location_set" type="string">zone</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
 	      <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
 	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.non_residential_sqft_capacity</key>
 	      <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
+              <key name="compute_capacity_flag" type="string">True</key>
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
@@ -363,6 +309,7 @@
 	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.non_residential_sqft_capacity</key>
 	      <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
+              <key name="compute_capacity_flag" type="string">True</key>
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
