@@ -6,6 +6,7 @@ from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset import Dataset
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
+from opus_core.variables.variable_name import VariableName
 from numpy import array, arange
 
 class Tests(opus_unittest.OpusTestCase):
@@ -204,6 +205,11 @@ class Tests(opus_unittest.OpusTestCase):
             )
         dataset = Dataset(in_storage=storage, in_table_name='dataset', id_name="id", dataset_name="mydataset")
         self.assertRaises(SyntaxError, dataset.compute_variables, [expr])
+
+    # this should give an error since there are 3 dataset names in the expression (so not a valid interaction expression)
+    def test_3_dataset_names(self):
+        expr = 'test_agent.income*test_location.cost*test_otheragents.income'
+        self.assertRaises(ValueError, VariableName, expr)
 
 if __name__=='__main__':
     opus_unittest.main()

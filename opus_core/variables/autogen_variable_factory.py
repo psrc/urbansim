@@ -405,6 +405,9 @@ class AutogenVariableFactory(object):
             pass
         elif name not in self._dataset_names:
             self._dataset_names = self._dataset_names + (name,)
+            if len(self._dataset_names)>2:
+                raise ValueError, "more than two dataset names in expression -- dataset names found: %s" % str(self._dataset_names)
+            
 
     # Analyze the arguments for a function or method call.  This is a separate method from _analyze_tree
     # because we need to treat the keywords in keyword arguments properly and not think they are variable names.
