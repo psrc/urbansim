@@ -46,13 +46,12 @@ class VariableName(object):
         n = len(dataset_names)
         if n==0:
             self._dataset_name = None
-            self._interaction_set_names = None
         elif n==1:
             self._dataset_name = dataset_names[0]
-            self._interaction_set_names = None
         elif n==2:
-            self._dataset_name = None
-            self._interaction_set_names = dataset_names
+            # assume that the order that the dataset names occur in the expression should be used to form the name
+            # (maybe a questionable assumption ....)
+            self._dataset_name = dataset_names[0] + '_x_' + dataset_names[1]
         else:
             raise ValueError, "couldn't determine dataset to which this expression applies -- too many dataset names.  Dataset names = %s" % str(datasetnames)
         self._short_name = short_name
@@ -68,9 +67,6 @@ class VariableName(object):
 
     def get_dataset_name(self):
         return self._dataset_name
-
-    def get_interaction_set_names(self):
-        return self._interaction_set_names
 
     def get_short_name(self):
         return self._short_name
