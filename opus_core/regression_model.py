@@ -16,6 +16,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.model import prepare_specification_and_coefficients, get_specification_for_estimation
 from opus_core.logger import logger
 from numpy import arange, zeros, float32, ndarray, array, where, inf, concatenate
+from numpy import isinf, isnan, unique
 from time import time
 
 class RegressionModel(ChunkModel):
@@ -117,6 +118,15 @@ class RegressionModel(ChunkModel):
             self.increment_current_status_piece()
             data[submodel] = dataset.create_regression_data(coef[submodel],
                                                                 index = index[self.observations_mapping[submodel]])
+            nan_index = where(isnan(data[submodel]))[1]
+            inf_index = where(isinf(data[submodel]))[1]
+            if nan_index.size > 0:
+                nan_var_index = unique(nan_index)
+                raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
+            if inf_index.size > 0:
+                inf_var_index = unique(inf_index)
+                raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[inf_var_index]
+            
             if (data[submodel].shape[0] > 0) and (data[submodel].size > 0): # observations for this submodel available
                 outcome[self.observations_mapping[submodel]] = \
                     self.regression.run(data[submodel], coef[submodel].get_coefficient_values()[0,:],

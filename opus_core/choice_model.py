@@ -22,7 +22,7 @@ from opus_core.model import get_specification_for_estimation, prepare_specificat
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64
+from numpy import int32, compress, float64, isnan, isinf, unique
 from numpy.random import permutation
 
 class ChoiceModel(ChunkModel):
@@ -204,7 +204,24 @@ class ChoiceModel(ChunkModel):
                     self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
                 self.run_config.merge({"specified_coefficients": coef[submodel]})
                 coefficients = coef[submodel].get_coefficient_values()
-                res = self.simulate_submodel(self.get_all_data(submodel), coefficients, submodel)
+                data = self.get_all_data(submodel)
+                if where(isnan(data))[2].size > 0:
+                    index_var = unique(where(isnan(data))[2])
+                    raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[index_var]
+                if where(isinf(data))[2].size > 0:
+                    index_var = unique(where(isinf(data))[2])
+                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[index_var]
+
+                nan_index = where(isnan(data))[2]
+                inf_index = where(isinf(data))[2]
+                if nan_index.size > 0:
+                    nan_var_index = unique(nan_index)
+                    raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
+                if inf_index.size > 0:
+                    inf_var_index = unique(inf_index)
+                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[inf_var_index]
+
+                res = self.simulate_submodel(data, coefficients, submodel)
                 restmp = res.astype(int32)
                 res_positive_idx = where(res>=0)[0]
                 if index is not None:
