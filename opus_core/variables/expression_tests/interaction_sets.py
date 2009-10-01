@@ -36,22 +36,22 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(name.get_dataset_name(), 'test_agent_x_test_location')
 
     def test_divide(self):
-        expr = 'test_location.cost/test_agent.income'
+        expr = 'test_agent.income/test_location.cost'
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
             table_name='test_agents', 
-            table_data={'id': array([1, 2, 3]), 'income': array([1, 20, 500])}
+            table_data={'id': array([1, 2, 3]), 'income': array([10, 20, 50])}
             )
         storage.write_table(
             table_name='test_locations', 
-            table_data={'id': array([1,2]), 'cost': array([1000, 2000])}
+            table_data={'id': array([1,2]), 'cost': array([1, 2])} 
             )
         dataset_pool = DatasetPool(package_order=['opus_core'], storage=storage)
         test_agent_x_test_location = dataset_pool.get_dataset('test_agent_x_test_location')
         result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
-        should_be = array([[1000, 2000], 
-                           [50, 100], 
-                           [2, 4]])
+        should_be = array([[10, 5], 
+                           [20, 10], 
+                           [50, 25]])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), msg = "Error in " + expr)
         
     def test_interaction_set_component(self):
