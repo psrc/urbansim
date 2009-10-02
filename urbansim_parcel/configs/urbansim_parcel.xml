@@ -418,6 +418,7 @@
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <argument name="parcel_filter_for_new_development" parser_action="quote_string" type="string">has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0</argument>
             <argument name="parcel_filter_for_redevelopment" parser_action="quote_string" type="string">low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) &lt; 0.1</argument>
+            <argument name="template_filter" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
             <argument hidden="True" name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
             <argument hidden="True" name="coefficients_storage" type="string">base_cache_storage</argument>
