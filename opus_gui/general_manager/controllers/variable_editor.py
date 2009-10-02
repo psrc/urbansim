@@ -8,6 +8,7 @@ from PyQt4.QtCore import SIGNAL, QEventLoop
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.general_manager.models.variables_table_model import batch_check_syntax
 from opus_gui.general_manager.models.variables_table_model import batch_check_data
+from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
 
 # Change to ui_variable_editor_alternative for alternative editor
 from opus_gui.general_manager.views.ui_variable_editor import Ui_VariableEditor
@@ -115,9 +116,30 @@ class VariableEditor(QDialog, Ui_VariableEditor):
         self.variable['source'] = str(self.cboVarType.currentText())
         self.variable['definition'] = str(self.le_var_def.document().toPlainText())
         try:
-            dataset_name = VariableName(self.variable['definition']).get_dataset_name()
+            v = VariableName(self.variable['definition'])
+            dataset_name = v.get_dataset_name()
+            interaction_set_names = v.get_interaction_set_names()
         except (SyntaxError, ValueError):
+            MessageBox.error(mainwindow = self,
+                text = 'parse error for variable',
+                detailed_text = 'setting dataset name for this variable to <unknown>')
             dataset_name = '<unknown>'
+            interaction_set_names = None
+        if dataset_name is None and interaction_set_names is not None:
+            # It's an interaction set.  Look up possible names in available_datasets
+            names = get_available_dataset_names(self.validator.project)
+            n1 = interaction_set_names[0] + '_x_' + interaction_set_names[1]
+            if n1 in names:
+                dataset_name = n1
+            else:
+                n2 = interaction_set_names[1] + '_x_' + interaction_set_names[0]
+                if n2 in names:
+                    dataset_name = n2
+                else:
+                    MessageBox.error(mainwindow = self,
+                        text = 'unable to find an interaction set in available_datasets for this variable',
+                        detailed_text = "tried %s and %s \nbut couldn't find either name in available_datasets \nsetting dataset_name to <unknown>" % (n1,n2) )
+                    dataset_name = '<unknown>'
         self.variable['dataset'] = dataset_name
         if self.rbUseModel.isChecked():
             self.variable['use'] = 'model variable'
