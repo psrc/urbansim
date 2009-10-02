@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE 
+# See opus_core/LICENSE
 
 # Note: even if PyDev complains that some of these imports are unused, generally they ARE
 # in fact used when executing the generated code.
@@ -63,7 +63,7 @@ class AutogenVariableFactory(object):
         # that the dataset name is n1_x_n2 or n2_x_n1.  (Actually it's almost certainly n1_x_n2, if 
         # n1 is used first in the expression, but we don't try to guess.)
         self._dataset_names = ()
-        # dependents is a list of dependents for expr.  Each element in 'dependents' 
+        # dependents is a set of dependents for expr.  Each element in 'dependents' 
         #     is a tuple (package,dataset,shortname).  For attributes named with just the
         #     un-qualified name, package and dataset will be None.  (This would be the case for
         #     primary attributes, and also other already-existing attributes in the dataset.)
@@ -71,7 +71,7 @@ class AutogenVariableFactory(object):
         #     attributes of one of the component datasets of an interaction set, package will
         #     be None, and dataset will be the name of either the first or second component dataset.
         #     The other case of dataset_qualified attributes is for a variable to be aggregated.
-        self._dependents = []
+        self._dependents = set()
         # literals is a set of strings that should be compiled as literals, so that the expression
         # will evaluate correctly.  
         self._literals = set()
@@ -212,30 +212,30 @@ class AutogenVariableFactory(object):
         same, vars = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE, tree)
         if same:
             # it's a fully-qualified variable (maybe raised to a power)
-            self._add_dependent( (vars['package'], vars['dataset'], vars['shortname']) )
+            self._dependents.add( (vars['package'], vars['dataset'], vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_FULLY_QUALIFIED_VARIABLE_WITH_CAST, tree)
         if same:
             # it's a fully-qualified variable with a cast (maybe raised to a power)
-            self._add_dependent( (vars['package'], vars['dataset'], vars['shortname']) )
+            self._dependents.add( (vars['package'], vars['dataset'], vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE, tree)
         if same:
-            self._add_dependent( (None, vars['dataset'], vars['shortname']) )
+            self._dependents.add( (None, vars['dataset'], vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_DATASET_QUALIFIED_ATTRIBUTE_WITH_CAST, tree)
         if same:
-            self._add_dependent( (None, vars['dataset'], vars['shortname']) )
+            self._dependents.add( (None, vars['dataset'], vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_ATTRIBUTE, tree)
         if same:
             if vars['shortname'] not in self._named_constants:
                 # it's an attribute (maybe raised to a power)
-                self._add_dependent( (None, None, vars['shortname']) )
+                self._dependents.add( (None, None, vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_ATTRIBUTE_WITH_CAST, tree)
         if same:
-            self._add_dependent( (None, None, vars['shortname']) )
+            self._dependents.add( (None, None, vars['shortname']) )
             return
         same, vars = match(SUBPATTERN_METHOD_CALL_WITH_ARGS, tree)
         if same:
@@ -334,10 +334,6 @@ class AutogenVariableFactory(object):
         else:
             op = None
         self._aggregation_calls.add( (receiver, method, pkg, dataset, attr, intermediates, op) )
-    
-    def _add_dependent(self, tupl):
-        if tupl not in self._dependents:
-            self._dependents.append(tupl)
 
     # extract all the names from tree and return them in a tuple
     def _extract_names(self, tree):
