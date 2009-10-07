@@ -73,7 +73,7 @@ class EstimationRunner(Estimator):
                 else:
                     config = update_controller_by_specification_from_dict(config, model, specification_dict[model_group])
 
-            config['model'] = '%s_%s' % (model_group, model)
+            config['model_name_for_coefficients'] = '%s_%s' % (model_group, model)
 
         Estimator.__init__(self, config, save_estimation_results=save_estimation_results)
 

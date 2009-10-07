@@ -108,7 +108,7 @@ class Estimator(object):
         if self.agents_index_for_prediction is None:
             self.agents_index_for_prediction = self.get_agent_set_index().copy()
             
-        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "index"
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "_index"
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
 
         ### save specification and coefficients to cache (no matter the save_estimation_results flag)
@@ -254,6 +254,9 @@ class Estimator(object):
             return
 
         if model_name is None:
+            model_name = self.config.get('model_name_for_coefficients', None)
+            
+        if model_name is None:
             if self.model_name is not None:
                 model_name = self.model_name
             else:
@@ -364,6 +367,7 @@ class Estimator(object):
     def plot_correlation(self, submodel=-2):
         ds = self.get_data_as_dataset(submodel)
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
+        ds.correlation_matrix(attrs)
         ds.correlation_image(attrs)
         #for information on matplot styles: http://matplotlib.sourceforge.net/tutorial.html
         #particularly useful information on this webpage on "Interactive navigation" using "toolbar2"
