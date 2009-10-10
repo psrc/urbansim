@@ -110,29 +110,30 @@
           </run>
         </structure>
       </model>
-      <model name="commercial_development_project_location_choice_model" type="model">
+      <model name="non_residential_development_project_location_choice_model" type="model">
         <estimation_config name="Estimation Configuration" parser_action="skip">
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument>
-            <argument name="agent_set" type="string">dptm_results['commercial']</argument>
+            <argument name="agent_set" type="string">projects</argument>
+            <argument name="agents_index" type="string">dplcm_idx</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.zone.vacant_SSS_job_space</argument>
-            <argument name="location_set" type="string">zone</argument>
-            <argument name="project_type" parser_action="quote_string" type="string">commercial</argument>
+            <argument name="project_type" type="string">non_residential</argument>
+            <argument convert_blank_to_none="True" name="submodel_string" type="string">building_type_id</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">numpy.logical_not(urbansim_parcel.building.is_residential) * urbansim_zone.building.non_residential_sqft_capacity</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="sampler" type="string"/>
             <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
           </init>
           <import name="import" type="dictionary">
-            <class_module>urbansim_zone.models.development_project_location_choice_model</class_module>
+            <class_module>psrc_zone.models.development_project_location_choice_model</class_module>
             <class_name>DevelopmentProjectLocationChoiceModel</class_name>
           </import>
           <estimate type="dictionary">
@@ -143,18 +144,18 @@
             <argument name="agent_set" type="string">projects</argument>
           </estimate>
           <prepare_for_run type="dictionary">
-            <output name="output" type="string">(specification, coefficients)</output>
+            <output name="output" type="string">(specification, coefficients, dplcm_idx)</output>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_coefficients</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_specification</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_specification</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <prepare_for_estimate type="dictionary">
             <output name="output" type="string">(specification, projects)</output>
             <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-            <argument name="units" parser_action="quote_string" type="string">commercial_job_spaces</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">commercial_development_location_choice_model_specification</argument>
+            <argument name="units" parser_action="quote_string" type="string">non_residential_sqft</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_specification</argument>
             <argument name="urbansim_constant" type="string">urbansim_constant</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
@@ -309,7 +310,7 @@
       <model name="development_project_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>urbansim_zone.models.development_project_transition_model</class_module>
+            <class_module>psrc_zone.models.development_project_transition_model</class_module>
             <class_name>DevelopmentProjectTransitionModel</class_name>
           </import>
           <init type="dictionary">
@@ -317,13 +318,12 @@
             <name name="name" type="string">DevelopmentProjectTransitionModel</name>
           </init>
           <run type="dictionary">
-            <output name="output" type="string">dptm_results</output>
+            <output name="output" type="string">projects</output>
             <argument name="vacancy_table" type="string">target_vacancy</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="location_set" type="string">zone</argument>
+            <argument name="location_set" type="string">building</argument>
             <argument name="year" type="string">year</argument>
             <argument name="history_table" type="string">development_event_history</argument>
-            <argument name="resources" type="string">{'industrial_vacant_variable': 'urbansim_zone.zone.number_of_vacant_industrial_jobs','commercial_vacant_variable': 'urbansim_zone.zone.number_of_vacant_commercial_jobs',}</argument>
           </run>
         </structure>
       </model>

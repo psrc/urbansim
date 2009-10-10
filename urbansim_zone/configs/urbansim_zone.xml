@@ -104,7 +104,7 @@
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
-	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+      <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -123,10 +123,10 @@
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
             <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.total_job_spaces</argument>
-            <argument convert_blank_to_none="True" name="estimation_weight_string" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string"/>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
@@ -135,7 +135,7 @@
             <argument name="location_set" type="string">building</argument>
             <argument name="estimation_size_agents" type="float">1.0</argument>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
-            <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
             <argument name="sample_size_locations" type="integer">30</argument>
             <name name="name" type="string">EmploymentLocationChoiceModel</name>
@@ -166,8 +166,8 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument convert_blank_to_none="True" name="filter" type="string"/>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
-            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="join_datasets" type="boolean">False</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
@@ -184,13 +184,13 @@
           <submodel_group name="home_based" type="submodel_group">
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No submodel</description>
-	      <variable_list type="variable_list" />
+        <variable_list type="variable_list" />
             </submodel>
           </submodel_group>
           <submodel_group name="non_home_based" type="submodel_group">
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
               <description type="string">No submodel</description>
-	      <variable_list type="variable_list" />
+        <variable_list type="variable_list" />
             </submodel>
           </submodel_group>
         </specification>
@@ -202,7 +202,7 @@
         <structure type="dictionary">
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
-	    <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
+      <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -211,27 +211,27 @@
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-	    <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+      <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="location_set" type="string">zone</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
-	      <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
-	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
-              <key name="compute_capacity_flag" type="string">True</key>
+        <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+        <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
+              <key name="compute_capacity_flag" type="boolean">True</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.developable_residential_units</key>
-	      <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
+        <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
-	      <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
-	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
+        <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+        <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.residential_units_capacity</key>
-              <key name="compute_capacity_flag" type="string">True</key>
-	      <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
+              <key name="compute_capacity_flag" type="boolean">True</key>
+        <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
@@ -261,7 +261,7 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-	    <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential), development_project.scheduled_year>=2000)</argument>
+      <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential), development_project.scheduled_year>=2000)</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
@@ -280,7 +280,7 @@
         <structure type="dictionary">
           <run type="dictionary">
             <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
-	    <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
+      <!-- <argument name="chunk_specification" type="string">{'records_per_chunk':300}</argument> -->
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_non_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -289,27 +289,27 @@
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-	    <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+      <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
             <argument name="location_set" type="string">zone</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
-	      <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
-	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
+        <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
+        <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.non_residential_sqft_capacity</key>
-	      <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
-              <key name="compute_capacity_flag" type="string">True</key>
+        <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
+              <key name="compute_capacity_flag" type="boolean">True</key>
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
-	      <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
-	      <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
+        <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
+        <key convert_blank_to_none="True" name="number_of_units_string" type="string">non_residential_sqft_capacity</key>
               <key name="capacity_string" type="string">urbansim_zone.zone.non_residential_sqft_capacity</key>
-	      <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
-              <key name="compute_capacity_flag" type="string">True</key>
+        <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string" />
+              <key name="compute_capacity_flag" type="boolean">True</key>
               <key name="sample_size_locations" type="integer">30</key>
             </argument>
             <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
@@ -339,7 +339,7 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-	    <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential==0), development_project.scheduled_year>=2000)</argument>
+      <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential==0), development_project.scheduled_year>=2000)</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
@@ -417,7 +417,7 @@
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
-	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+      <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -445,13 +445,13 @@
             <argument name="estimation_weight_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string"/>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
             <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
-            <argument convert_blank_to_none="True" name="simulation_weight_string" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
             <argument name="sample_size_locations" type="integer">30</argument>
             <argument name="estimate_config" type="string">Resources({})</argument>
@@ -486,8 +486,8 @@
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument convert_blank_to_none="True" name="filter" type="string"/>
             <argument name="join_datasets" type="boolean">True</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
-            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
@@ -495,7 +495,7 @@
         <specification type="dictionary">
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
-	    <variable_list type="variable_list" />
+      <variable_list type="variable_list" />
           </submodel>
         </specification>
       </model>
@@ -652,8 +652,8 @@
             <variable_list type="variable_list"/>
           </submodel>
         </specification>
-	</model>
-	-->
+  </model>
+  -->
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
   </model_manager>
@@ -693,7 +693,7 @@
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-	  <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
+    <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
         </argument>
         <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
         <argument name="tables_to_cache" type="selectable_list">

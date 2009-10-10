@@ -292,13 +292,13 @@
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
             <output hidden="True" name="output" type="string">(specification, index)</output>
             <argument name="agent_set" type="string">job</argument>
-            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="portion_to_unplace" type="float">0</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">employment_location_choice_model_specification</argument>
-            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</argument>
           </prepare_for_estimate>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
@@ -509,15 +509,15 @@
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
             <output hidden="True" name="output" type="string">(_specification, _index)</output>
             <argument name="agent_set" type="string">household</argument>
-            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="index_to_unplace" type="string">None</argument>
             <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">.1</argument>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
-            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
           </prepare_for_estimate>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
