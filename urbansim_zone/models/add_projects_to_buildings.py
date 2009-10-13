@@ -46,27 +46,29 @@ class AddProjectsToBuildings(Model):
         for quantity_attribute in quantity_attribute_names:
             quantity_sum = ndimage.sum(developmentproject_dataset.get_attribute(quantity_attribute), labels=project_identifier, index=unique_project_identifier)
             for i in range(unique_project_identifier.size):
-                this_identifier = unique_project_identifier[i]
-                this_label = []
-                remain = this_identifier
-                for m in multipler:
-                    this_label.append(remain // m)
-                    remain = remain % m
-                building_index = where(building_identifier==this_identifier)[0]
-                #assert building_index.size == 1
-                if building_index.size == 0:
-                    logger.log_error("building with attribute (%s) = (%s) is not in building_dataset" % (label_attribute_names, this_label) )
-                    continue
-                    #for attribute in []:
-                        #data = None
-                    #building_dataset.add_elements(name=quantity_attribute, data = current_values+quantity_sum[i], 
-                                                  #index=building_index)
-                if building_index.size > 1:
-                    logger.log_warning("There are more than 1 building with attributes (%s) = (%s)" % (label_attribute_names, this_label) )
-                    building_index = building_index[0]
-                current_values = building_dataset.get_attribute_by_index(quantity_attribute, building_index)
-                building_dataset.modify_attribute(name=quantity_attribute, data = current_values+quantity_sum[i], 
-                                                  index=building_index)
+                if quantity_sum[i] != 0:
+                    this_identifier = unique_project_identifier[i]
+                    this_label = []
+                    remain = this_identifier
+                    for m in multipler:
+                        this_label.append(remain // m)
+                        remain = remain % m
+                    building_index = where(building_identifier==this_identifier)[0]
+                    #assert building_index.size == 1
+                    if building_index.size == 0:
+                        logger.log_error("building with attribute (%s) = (%s) is not in building_dataset" % (label_attribute_names, this_label) )
+                        continue
+                        #for attribute in []:
+                            #data = None
+                        #building_dataset.add_elements(name=quantity_attribute, data = current_values+quantity_sum[i], 
+                                                      #index=building_index)
+                    if building_index.size > 1:
+                        logger.log_warning("There are more than 1 building with attributes (%s) = (%s)" % (label_attribute_names, this_label) )
+                        building_index = building_index[0]
+                        
+                    current_values = building_dataset.get_attribute_by_index(quantity_attribute, building_index)                    
+                    building_dataset.modify_attribute(name=quantity_attribute, data = current_values+quantity_sum[i], 
+                                                      index=building_index)
         return building_dataset
                 
 from numpy import arange, array, ma
@@ -119,6 +121,20 @@ class AddProjectsToBuildingsTests(opus_unittest.OpusTestCase):
         projects = self.get_projects(project_data)
         m = AddProjectsToBuildings()
         m.run(projects, self.buildings, quantity_attribute_names = ["commercial_job_spaces"])
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])), True)
+        self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
+
+    def test_add_one_project_with_building_id(self):
+        project_data = {'project_id': arange(1,5),
+                        'commercial_job_spaces': array(3*[20]+[5]), 
+#                        'zone_id': arange(1,5), 
+#                        'building_type_id': array([2]*4)
+                        'building_id': array([2, 5, 8, 11])
+                        }
+        projects = self.get_projects(project_data)
+        m = AddProjectsToBuildings()
+        m.run(projects, self.buildings, label_attribute_names=["building_id"], quantity_attribute_names = ["commercial_job_spaces"])
         self.assertEqual(ma.allequal(self.buildings.get_attribute("residential_units"), array(10*[200, 0, 0])), True)
         self.assertEqual(ma.allequal(self.buildings.get_attribute("commercial_job_spaces"), array(3*[0, 120, 0] + [0,105,0] + 6*[0, 100, 0])), True)
         self.assertEqual(ma.allequal(self.buildings.get_attribute("industrial_job_spaces"), array(10*[0, 0, 100])), True)
