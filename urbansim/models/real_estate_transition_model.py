@@ -127,7 +127,7 @@ class RealEstateTransitionModel(Model):
                 legit_index = where(logical_and(sample_indicator, filter_indicator))[0]
                 mean_size = total_spaces_in_sample_dataset[legit_index].mean()
                 # Ensure that there are some development projects to choose from
-                num_of_projects_to_sample = max( 10, int( diff / mean_size ))
+                num_of_projects_to_sample = max( 10, int( 0.25 * diff / mean_size ))
                 while total_spaces_in_sample_dataset[this_sampled_index].sum() < diff:
                     lucky_index = sample_replace(legit_index, num_of_projects_to_sample)
                     this_sampled_index = concatenate((this_sampled_index, lucky_index))
