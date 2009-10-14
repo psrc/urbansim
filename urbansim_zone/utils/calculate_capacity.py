@@ -44,12 +44,12 @@ for glu_id in range(1, 9):
         "existing_sqft_glu%s = zone.aggregate(parcel.aggregate(building.non_residential_sqft) * (parcel.disaggregate(land_use_type.generic_land_use_type_id)==%s) ) " % (glu_id, glu_id),
         
         ## existing units/job spaces excluding redevelopable parcels
-        "unredev_existing_units_glu%s = zone.aggregate(parcel.aggregate(building.residential_units) * numpy.logical_not(urbansim_parcel.parcel.is_redevelopable) * (parcel.disaggregate(land_use_type.generic_land_use_type_id)==%s) )" % (glu_id, glu_id),
-        "unredev_existing_sqft_glu%s = zone.aggregate(parcel.aggregate(building.non_residential_sqft) * numpy.logical_not(urbansim_parcel.parcel.is_redevelopable) * (parcel.disaggregate(land_use_type.generic_land_use_type_id)==%s) )" % (glu_id, glu_id),
+        "unredev_existing_units_glu%s = zone.aggregate(parcel.aggregate(building.residential_units) * numpy.logical_not(psrc_parcel.parcel.is_redevelopable) * (parcel.disaggregate(land_use_type.generic_land_use_type_id)==%s) )" % (glu_id, glu_id),
+        "unredev_existing_sqft_glu%s = zone.aggregate(parcel.aggregate(building.non_residential_sqft) * numpy.logical_not(psrc_parcel.parcel.is_redevelopable) * (parcel.disaggregate(land_use_type.generic_land_use_type_id)==%s) )" % (glu_id, glu_id),
         
         ## units and sqft on redevelopable parcels
-        "redev_units_glu%s=zone.aggregate(urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * ( parcel.parcel_sqft / 43560.0 ) * (urbansim_parcel.parcel.is_redevelopable).astype(int32) )" % (glu_id, glu_id),
-        "redev_sqft_glu%s=zone.aggregate(urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * (urbansim_parcel.parcel.is_redevelopable).astype(int32) ) " % (glu_id, glu_id),
+        "redev_units_glu%s=zone.aggregate(urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * ( parcel.parcel_sqft / 43560.0 ) * (psrc_parcel.parcel.is_redevelopable).astype(int32) )" % (glu_id, glu_id),
+        "redev_sqft_glu%s=zone.aggregate(urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * (psrc_parcel.parcel.is_redevelopable).astype(int32) ) " % (glu_id, glu_id),
 
         ## units and sqft on vacant/agriculture parcels
         "va_units_glu%s = zone.aggregate( urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * ( parcel.parcel_sqft / 43560.0 ) * numpy.logical_or( parcel.disaggregate(land_use_type.land_use_name)=='vacant',  parcel.disaggregate(land_use_type.land_use_name)=='agriculture') )" % (glu_id, glu_id), 
