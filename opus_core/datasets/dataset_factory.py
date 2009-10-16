@@ -204,7 +204,7 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
         factory = DatasetFactory()
         ds = factory.get_dataset("alldata")
         idname = ds.get_id_name()[0]
-        self.assertEqual(idname, "id")
+        self.assertEqual(idname, "alldata_id")
         self.assertEqual(ds.size(), 1)
         
     def test_create_generic_dataset(self):
