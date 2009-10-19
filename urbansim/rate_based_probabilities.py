@@ -8,7 +8,7 @@ from opus_core.logger import logger
 from numpy import array, ones
 
 
-class relocation_probabilities(Probabilities):
+class rate_based_probabilities(Probabilities):
     agent_set = 'household'
     rate_set = 'annual_relocation_rate'
     
@@ -25,7 +25,7 @@ class relocation_probabilities(Probabilities):
 
         rates = resources.get(self.rate_set, None)
         if (rates == None) or (not isinstance(rates, RateDataset)):
-            logger.log_warning("%s table is not loaded; agents have equal probability of relocating." % self.rate_set)
+            logger.log_warning("%s table is not loaded; agents in %s will have equal probability of 0.25." % (self.rate_set, self.agent_set))
             return 0.25 * ones(agents.size(), dtype="float32")
 
         probability = rates.get_rate(agents)
