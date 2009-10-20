@@ -6,6 +6,8 @@ aliases = [
         "number_of_non_home_based_jobs = building.aggregate(job.home_based_status==0)",
         "vacant_residential_units = clip_to_zero(building.residential_units - urbansim_zone.building.number_of_households)",
         "total_job_spaces = numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))",
+        "total_non_home_based_job_spaces = numpy.round(safe_array_divide(building.non_residential_sqft, urbansim_zone.building.building_sqft_per_job))",
+        "total_home_based_job_spaces = urbansim_zone.building.number_of_households",        
         "vacant_job_spaces = clip_to_zero(urbansim_zone.building.total_job_spaces - urbansim_zone.building.number_of_non_home_based_jobs)",
         "is_residential = building.disaggregate(building_type.is_residential)",
         "occupied_residential_spaces = urbansim_zone.building.is_residential * urbansim_zone.building.number_of_households",

@@ -122,7 +122,7 @@
             <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="compute_capacity_flag" type="boolean">True</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.total_job_spaces</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.total_SSS_job_spaces</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
