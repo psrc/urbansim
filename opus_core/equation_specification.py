@@ -158,7 +158,14 @@ class EquationSpecification(object):
             if idx.size > 0:
                 idx_list.append(idx[0])
         idx_array = asarray(idx_list)
-        self.variables = tuple(map(lambda x: VariableName(x), variable_names[idx_array]))
+        self.do_shrink(variable_names, idx_array)
+        
+    def do_shrink(self, variable_names, idx_array):
+        new_variables = []
+        for i in idx_array:
+            new_variables.append(self.variables[i])
+        self.variables = tuple(new_variables)
+        tuple(map(lambda x: VariableName(x), variable_names[idx_array]))
         self.coefficients = self.coefficients[idx_array]
         if self.submodels.size > 0:
             self.submodels = self.submodels[idx_array]
@@ -168,6 +175,20 @@ class EquationSpecification(object):
             self.fixed_values = self.fixed_values[idx_array]
         for field in self.other_fields.keys():
             self.other_fields[field] = self.other_fields[field][idx_array]
+            
+    def delete(self, variables):
+        """ Delete given variables from specification."""
+        variables = tuple(variables)
+        idx_list = []
+        variable_names = asarray(map(lambda x: x.get_alias(),
+                                                  self.variables))
+        nvariables = variable_names.size
+        will_not_delete = array(nvariables*[True], dtype='bool8')
+        for var in variables:
+            idx = ematch(variable_names, var)
+            if idx.size > 0:
+                will_not_delete[idx] = False
+        self.do_shrink(variable_names, where(will_not_delete)[0])
 
     def add_item(self, variable_name, coefficient_name, submodel=None, equation=None, fixed_value=None, other_fields=None):
         if isinstance(variable_name,VariableName):
@@ -359,6 +380,9 @@ class EquationSpecification(object):
         is copied for each eqs_id.
         """
         idx = where(self.other_fields[dim_name] == dim_value)[0]
+        if self.get_equations().size == 0:
+            self.equations = array(len(self.variables)*[-2], dtype='int32')
+ 
         idx_to_copy = idx[where(self.get_equations()[idx] == -2)[0]]
         for i in idx_to_copy:
             for eq in eqs_ids:
