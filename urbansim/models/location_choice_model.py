@@ -59,6 +59,7 @@ class LocationChoiceModel(ChoiceModel):
         ChoiceModel.__init__(self, choice_set=location_set, utilities=utilities,
                         probabilities=probabilities, choices=choices, sampler=sampler,
                         submodel_string=submodel_string,
+                        choice_attribute_name=location_id_string,
                         interaction_pkg=interaction_pkg,
                         run_config=run_config, estimate_config=estimate_config,
                         debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
