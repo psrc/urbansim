@@ -25,9 +25,10 @@ class AgentHierarchicalLocationChoiceModel(AgentLocationChoiceModel, Hierarchica
         HierarchicalChoiceModel.init_membership_in_nests(self)
         return AgentLocationChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
         
-    def estimate(self, *args, **kwargs):
+    def estimate(self, specification, *args, **kwargs):
         HierarchicalChoiceModel.init_membership_in_nests(self)
-        return AgentLocationChoiceModel.estimate(self, *args, **kwargs)
+        HierarchicalChoiceModel.delete_logsum_from_specification(self, specification)
+        return AgentLocationChoiceModel.estimate(self, specification, *args, **kwargs)
     
     def estimate_step(self):
         self.set_correct_for_sampling()
