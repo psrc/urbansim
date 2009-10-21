@@ -264,9 +264,12 @@ class XMLConfiguration(object):
         # don't pass an empty dict into the 'config_changes_for_estimation' or the modeling system
         # will break
         if model_specific_overrides:
-            config['config_changes_for_estimation'] = model_specific_overrides
+            config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
         if estimate_config:
-            config['config_changes_for_estimation'].merge(estimate_config)
+            if not config.get('config_changes_for_estimation'):
+                config['config_changes_for_estimation'] = {model_name: estimate_config}
+            else:
+                config['config_changes_for_estimation'].merge({model_name: estimate_config})
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):
@@ -338,8 +341,10 @@ class XMLConfiguration(object):
                     res[nest_id] = thisres
                 else:
                     res = thisres
-
-            result[submodel_id].update(res)
+            if isinstance(res, dict):
+                result[submodel_id].update(res)
+            else:
+                result[submodel_id] = res
             
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:
@@ -1288,9 +1293,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         model_name = 'model with starting_values'
         config = XMLConfiguration(f).get_estimation_configuration(model_name)
         config = config['config_changes_for_estimation'][model_name]
-        should_be = {'starting_values': {'fixed_with_starting_value': (float(42.0), True),
+        should_be = {'estimate_config': {'starting_values': {'fixed_with_starting_value': (float(42.0), False),
                                          'non_fixed_with_starting_value': float(42.0),
-                                         'guppy': float(12.5)}}
+                                         'guppy': float(12.5)}}}
         self.assertEqual(config, should_be)
 
     def test_expression_library(self):
@@ -1353,7 +1358,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the nlm has some starting values given, we need to make sure that they end up in the
         # estimation_config overrides for the model
         changes_config = estimation_config['config_changes_for_estimation']['nlm_model']
-        should_be = {'starting_values': {'default_name': float(42.0), 'explicit_name': float(0.42)}}
+        should_be = {'estimate_config': {'starting_values': {'default_name': float(42.0), 'explicit_name': float(0.42)}}}
         self.assertEqual(changes_config, should_be)
 
     def test_save_as(self):

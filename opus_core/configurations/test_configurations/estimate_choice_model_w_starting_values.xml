@@ -14,8 +14,8 @@
           <submodel type="submodel" name="No submodel" submodel_id="-2">
               <description type="string">No submodel</description>
               <variable_list type="variable_list">
-                  <variable_spec name=".fixed_with_starting_value" starting_value="42.0" fixed="True" />
-                  <variable_spec name=".non_fixed_with_starting_value" starting_value="42.0" fixed="False" />
+                  <variable_spec name=".fixed_with_starting_value" starting_value="42.0" keep_fixed="True" />
+                  <variable_spec name=".non_fixed_with_starting_value" starting_value="42.0" keep_fixed="False" />
                   <variable_spec name=".different name from coeff name" coefficient_name="guppy" starting_value="12.5" />
                   <variable_spec name=".normal"/>
                   <variable_spec name=".ignored" ignore="True"/>
