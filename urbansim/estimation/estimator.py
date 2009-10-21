@@ -52,7 +52,22 @@ class Estimator(object):
                         and ("estimate" in model[model_name])):
                             self.model_name = model_name
                             break
+        estimate_config_changes = self.config.get('config_changes_for_estimation', {}).get('estimate_config', {})
+        if len(estimate_config_changes) > 0:
+            change = Resources({'models_configuration': {self.model_name: {'controller': {'init': {'arguments': {}}}}}})
+            estimate_config_str = self.config['models_configuration'].get(self.model_name, {}).get('controller', {}).get('init', {}).get('arguments', {}).get('estimate_config', '{}')
+            estimate_config = Resources({})
+            try:
+                estimate_config = eval(estimate_config_str)
+            except:
+                pass
+ 
+            estimate_config.merge(estimate_config_changes)
+            self.config.merge(change)
+            self.config['models_configuration'][self.model_name]['controller']['init']['arguments']['estimate_config'] = 'Resources(%s)' % estimate_config
 
+            
+       
     def estimate(self, out_storage=None):
         self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False)
         self.extract_coefficients_and_specification()
