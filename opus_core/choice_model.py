@@ -528,7 +528,7 @@ class ChoiceModel(ChunkModel):
         """
         self.weights = None
         nchoices = self.get_number_of_elemental_alternatives()
-        if nchoices == self.choice_set.size():
+        if nchoices == self.choice_set.size() or self.sampler_class is None:
             self.model_interaction.set_selected_choice(agents_index)
             return (None, self.model_interaction.get_selected_choice())
         logger.log_status("Sampling alternatives for estimation ...")
