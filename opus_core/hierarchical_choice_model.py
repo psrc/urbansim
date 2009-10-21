@@ -69,7 +69,10 @@ class HierarchicalChoiceModel(ChoiceModel):
             self.estimate_config['stratum'] = strat
         if self.run_config.get('stratum', None) is None:
             self.run_config['stratum'] = strat
-        sample_size_for_each_stratum = array(map(lambda x: len(self.nested_structure[x]), self.nested_structure.keys()))
+        # Uncomment the following line when the stratified sampler can handle an array for sample_size_from_each_stratum.
+        # Right now it can handle only single number.
+        #sample_size_for_each_stratum = array(map(lambda x: len(self.nested_structure[x]), self.nested_structure.keys()))
+        sample_size_for_each_stratum = len(self.nested_structure[self.nested_structure.keys()[0]])
         if self.estimate_config.get("sample_size_from_each_stratum", None) is None:
             self.estimate_config["sample_size_from_each_stratum"] = sample_size_for_each_stratum
         if self.run_config.get("sample_size_from_each_stratum", None) is None:
@@ -88,9 +91,12 @@ class HierarchicalChoiceModel(ChoiceModel):
         self.init_membership_in_nests()
         return ChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
     
-    def estimate(self, *args, **kwargs):
+    def estimate(self, specification, *args, **kwargs):
         self.init_membership_in_nests()
-        return ChoiceModel.estimate(self, *args, **kwargs)
+        # This is because there will be __logsum_ variables in the specification when configured from the GUI,
+        # in order to define starting values. They are not supposed to be included there.
+        self.delete_logsum_from_specification(specification)
+        return ChoiceModel.estimate(self, specification, *args, **kwargs)
     
     def add_logsum_to_specification(self, specification, coefficients):
         idx = where(array(map(lambda x: x.startswith('__logsum_'), coefficients.get_names())))[0]
@@ -102,6 +108,11 @@ class HierarchicalChoiceModel(ChoiceModel):
             specification.add_item('__logsum', coefficients.get_names()[i], submodel=coefficients.get_submodels()[i],
                                    equation = eqid, other_fields={'dim_%s' % self.nest_id_name: int(coefficients.get_names()[i][9:])})
             
+    def delete_logsum_from_specification(self, specification):
+        variable_names = specification.get_variable_names()
+        idx = where(array(map(lambda x: x.startswith('__logsum_'), variable_names)))[0]
+        specification.delete(variable_names[idx])
+        
     def run_sampler_class(self, agent_set, index1=None, index2=None, sample_size=None, weight=None, 
                           include_chosen_choice=False, resources=None):
         index, chosen_choice = self.sampler_class.run(agent_set, self.choice_set, index1=index1, index2=index2, sample_size=sample_size,
@@ -204,14 +215,16 @@ def create_nested_structure_from_list(stratum, choice_set, sampler_size=None, va
     if valid_strata_larger_than is not None:
         unique_v = unique_v[where(unique_v>valid_strata_larger_than)]
     count=1
+    choice_ids = choice_set.get_id_attribute()
     for nest in unique_v:
         w = where(stratum == nest)[0]
         if sampler_size is not None:
             c = min(w.size, sampler_size)
+            nested_structure[nest] = range(count, count+c)
+            count += c
         else:
-            c = w.size
-        nested_structure[nest] = range(count, count+c)
-        count += c
+            nested_structure[nest] = choice_ids[w]
+        
     return nested_structure
         
 def create_stratum_from_nests(nested_structure, choice_set):
