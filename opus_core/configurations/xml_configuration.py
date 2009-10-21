@@ -58,6 +58,8 @@ def get_variable_dataset_and_name(variable_node):
     # TODO not sure on how to deal with constants -- any suggestions?
     if name == 'constant':
         return (None, name)
+    if name.startswith('__'):
+        return (None, name)
     splitted_name = name.split('.')
     if len(splitted_name) < 2:
         raise SyntaxError('Variable does not have dataset attribute nor give the dataset in the '
@@ -230,6 +232,7 @@ class XMLConfiguration(object):
         config['model_name'] = model_name
         config_node_path = "model_manager/models/model[@name='%s']/estimation_config" % model_name
         model_specific_overrides = self.get_section(config_node_path) or {}
+        estimate_config = {}
         # If the user have specified a custom list of models to run before the estimation, then we
         # need to append the model to estimate as well or the modeling system will forget it...
         if 'models' in model_specific_overrides:
@@ -251,18 +254,19 @@ class XMLConfiguration(object):
             for variable_node in variable_specs:
                 coeff_name = variable_node.get('coefficient_name') or get_variable_name(variable_node)
                 starting_value = float(variable_node.get('starting_value'))
-                if variable_node.get('fixed') == 'True':
-                    starting_values[coeff_name] = (starting_value, True)
+                if variable_node.get('keep_fixed') == 'True':
+                    starting_values[coeff_name] = (starting_value, False)
                 else:
                     starting_values[coeff_name] = starting_value
             if starting_values:
-                model_specific_overrides['starting_values'] = starting_values
+                estimate_config = {'estimate_config': {'starting_values': starting_values}}
 
         # don't pass an empty dict into the 'config_changes_for_estimation' or the modeling system
         # will break
         if model_specific_overrides:
-            config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
-
+            config['config_changes_for_estimation'] = model_specific_overrides
+        if estimate_config:
+            config['config_changes_for_estimation'].merge(estimate_config)
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):
@@ -308,18 +312,35 @@ class XMLConfiguration(object):
 
         for submodel_node in submodel_nodes:
             submodel_id = int(submodel_node.get('submodel_id'))
-            # group by equations if there are any, otherwise just give a list
-            equation_nodes = submodel_node.findall('equation')
-            if equation_nodes:
-                submodel_equations = {}
-                for equation_node in equation_nodes:
-                    equation_id = int(equation_node.get('equation_id'))
-                    variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
-                    submodel_equations[equation_id] = variable_list
-                result[submodel_id] = submodel_equations
+            result[submodel_id] = {}
+            # group by nests if there are any
+            nest_nodes = submodel_node.findall('nest')
+            if nest_nodes:
+                result[submodel_id]['name'] = 'nest_id'
+                nodes = nest_nodes
+                res = {}
             else:
-                result[submodel_id] = self._convert_node_to_data(submodel_node.find('variable_list'))
+                nodes = [submodel_node]
+            # group by equations if there are any, otherwise just give a list
+            for node in nodes:
+                equation_nodes = node.findall('equation')
+                if equation_nodes:
+                    submodel_equations = {}
+                    for equation_node in equation_nodes:
+                        equation_id = int(equation_node.get('equation_id'))
+                        variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
+                        submodel_equations[equation_id] = variable_list
+                    thisres = submodel_equations
+                else:
+                    thisres = self._convert_node_to_data(node.find('variable_list'))
+                if nest_nodes:
+                    nest_id = int(node.get('nest_id'))
+                    res[nest_id] = thisres
+                else:
+                    res = thisres
 
+            result[submodel_id].update(res)
+            
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:
             return {model_group: result}
