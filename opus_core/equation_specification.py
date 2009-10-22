@@ -98,6 +98,7 @@ class EquationSpecification(object):
                                  local_resources["field_variable_name"], local_resources["field_coefficient_name"],
                                  local_resources["field_fixed_value"]]:
                     self.other_fields[field] = data[field]
+            self.set_other_dim_field_names()
             if variables:
                 self.shrink(variables)
 

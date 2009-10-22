@@ -105,7 +105,10 @@ class HierarchicalChoiceModel(ChoiceModel):
         else:
             eqid = None
         for i in idx:
-            specification.add_item('__logsum', coefficients.get_names()[i], submodel=coefficients.get_submodels()[i],
+            submodel = None
+            if coefficients.get_submodels().size > 0:
+                submodel = coefficients.get_submodels()[i]
+            specification.add_item('__logsum', coefficients.get_names()[i], submodel=submodel,
                                    equation = eqid, other_fields={'dim_%s' % self.nest_id_name: int(coefficients.get_names()[i][9:])})
             
     def delete_logsum_from_specification(self, specification):
