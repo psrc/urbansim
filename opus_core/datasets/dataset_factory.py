@@ -24,6 +24,7 @@ class DatasetFactory(object):
         ('base_year', 'base_year', None, None),
         ('city', 'cities', 'city_dataset', 'CityDataset'), 
         ('building_sqft_per_job', 'building_sqft_per_job', 'building_sqft_per_job_dataset', 'BuildingSqftPerJobDataset'), 
+        ('business', 'businesses', 'business_dataset', 'BusinessDataset'),
         ('business_relocation_rate', 'annual_relocation_rates_for_business', 'business_relocation_rate_dataset', 'BusinessRelocationRateDataset'),
         ('commercial_development_location_choice_model_specification', 'commercial_development_location_choice_model_specification', None, None),
         ('commercial_employment_location_choice_model_specification', 'commercial_employment_location_choice_model_specification', None, None),
