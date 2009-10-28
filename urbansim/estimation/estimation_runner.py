@@ -91,7 +91,7 @@ class EstimationRunner(Estimator):
         if self.xml_configuration is not None:
             if reload_xml_file:
                 self.xml_configuration.initialize_from_xml_file()
-            specification_dict = self.xml_configuration.get_estimation_specification(self.estimated_model)
+            specification_dict = self.xml_configuration.get_estimation_specification(self.estimated_model, model_group=self.model_group)
         Estimator.reestimate(self, self.specification_module, specification_dict=specification_dict, type=self.model_group, submodels=submodels)
 
     def plot_utility(self, submodel=-2):
