@@ -59,11 +59,10 @@ class LocationChoiceModel(ChoiceModel):
         ChoiceModel.__init__(self, choice_set=location_set, utilities=utilities,
                         probabilities=probabilities, choices=choices, sampler=sampler,
                         submodel_string=submodel_string,
-                        choice_attribute_name=location_id_string,
                         interaction_pkg=interaction_pkg,
                         run_config=run_config, estimate_config=estimate_config,
                         debuglevel=debuglevel, dataset_pool=dataset_pool, **kwargs)
-        self.model_interaction = ModelInteractionLCM(self, interaction_pkg, self.choice_set)
+        
         self.filter = filter
         self.location_id_string = location_id_string
         if self.location_id_string is not None:
@@ -93,47 +92,58 @@ class LocationChoiceModel(ChoiceModel):
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
         
-        if self.location_id_string is not None:
-            agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
+        ## what is the use of compute location_id string in run? it gets new values anyway
+        #if self.location_id_string is not None:
+        #    location_id = agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
+
+        location_id_name = self.choice_set.get_id_name()[0]
+        if (location_id_name not in agent_set.get_known_attribute_names()):
+            agent_set.add_attribute(name=location_id_name, data=resize(array([-1]), agent_set.size()))
+                    
         if self.run_config.get("agent_units_string", None): # used when agents take different amount of capacity from the total capacity
             agent_set.compute_variables([self.run_config["agent_units_string"]], dataset_pool=self.dataset_pool)
 
         self.compute_capacity_flag = self.run_config.get("compute_capacity_flag",  False)
-        self.capacity_string = None
+        capacity_string = None
+        self.capacity = None
         if self.compute_capacity_flag:
-            try:
-                self.capacity_string = self.run_config["capacity_string"]
-            except:
+            capacity_string = self.run_config.get("capacity_string", None)
+            if capacity_string is None:
                 raise KeyError, \
                     "Entry 'capacity_string' has to be specified in 'run_config' if 'compute_capacity_flag' is True"
+            
+        ## if weights is None, use capacity for weights
+        if self.run_config.get("weights_for_simulation_string", None) is None and capacity_string is not None:
+            self.run_config.merge({"weights_for_simulation_string" : capacity_string})
+            
         return ChoiceModel.run(self,specification, coefficients, agent_set,
-                agents_index=agents_index, chunk_specification=chunk_specification, run_config=run_config,
+                agents_index=agents_index, chunk_specification=chunk_specification, run_config=self.run_config,
                 debuglevel=debuglevel)
-
 
     def run_chunk(self, agents_index, agent_set, specification, coefficients):
 
-        # move movers out
-        id_name = self.choice_set.get_id_name()[0]
-        if  (id_name not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=id_name, data=resize(array([-1]), agent_set.size()))
-        else:
-            agent_set.set_values_of_one_attribute(id_name,resize(array([-1]), agents_index.size), agents_index)
-
-        self.capacity = None
+        # unplaced agents in agents_index
+        location_id_name = self.choice_set.get_id_name()[0]
+        agent_set.set_values_of_one_attribute(location_id_name, resize(array([-1]), agents_index.size), 
+                                              agents_index)
+            
+        ## capacity may need to be re-computed for every chunk
         if self.compute_capacity_flag:
-            self.capacity = ma.filled(self.determine_units_capacity(agent_set, agents_index), 0.0)
+            self.capacity = ma.filled(self.determine_capacity(self.run_config.get("capacity_string", [])), 0.0)
             if self.capacity is not None:
                 logger.log_status("Available capacity: %s units." % self.capacity.sum())
         self.run_config.merge({"capacity":self.capacity})
         if self.run_config.get("agent_units_string", None):
             self.run_config["agent_units_all"] = agent_set.get_attribute_by_index(self.run_config["agent_units_string"], agents_index)
 
-        choices = ChoiceModel.run_chunk(self,agents_index, agent_set, specification, coefficients)
+        choices = ChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
 
         #modify locations
-        agent_set.set_values_of_one_attribute(id_name, choices, agents_index)
-        self.run_config["capacity"] = None
+        agent_set.set_values_of_one_attribute(location_id_name, choices, agents_index)
+        
+        if self.run_config.has_key("capacity"):
+            del self.run_config["capacity"]
+            
         return choices
 
     def simulate_submodel(self, data, coefficients, submodel):
@@ -168,218 +178,136 @@ class LocationChoiceModel(ChoiceModel):
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         if self.location_id_string is not None:
             agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
+        
+        capacity_for_estimation = None
+        if self.estimate_config.get("compute_capacity_flag", False):
+            capacity_string_for_estimation = self.estimate_config.get("capacity_string", None)
+            capacity_for_estimation = self.determine_capacity(agent_set=agent_set, agents_index=agents_index, capacity_string=capacity_string_for_estimation)
 
-        self.compute_capacity_flag_for_estimation = self.estimate_config.get(
-                                                "compute_capacity_flag", False)
-        self.capacity_string_for_estimation = None
-        if self.compute_capacity_flag_for_estimation:
-            try:
-                self.capacity_string_for_estimation = self.estimate_config["capacity_string"]
-            except:
-                raise KeyError, \
-                    "Entry 'capacity_string' has to be specified in 'estimate_config' if 'compute_capacity_flag' is True"
-        self.capacity_for_estimation = None
-        if self.compute_capacity_flag_for_estimation:
-            self.capacity_for_estimation = ma.filled(self.determine_units_capacity_for_estimation(
-                                                        agent_set, agents_index), 0.0)
-        self.estimate_config.merge({"capacity":self.capacity_for_estimation})
+        self.estimate_config.merge({"capacity":capacity_for_estimation})
         return ChoiceModel.estimate(self,specification, agent_set,
-                agents_index, procedure, estimate_config=estimate_config, debuglevel=debuglevel)
+                                    agents_index, procedure, estimate_config=self.estimate_config, 
+                                    debuglevel=debuglevel)
 
-    def determine_units_capacity(self, agent_set, agents_index):
+    def determine_capacity(self, capacity_string=None, *args, **kwargs):
         """Return capacity for each location.
+        Is there any case where capacity depends on agent_set?
         """
-        if self.capacity_string is None:
+        if capacity_string is None:
             return None
         
-        capacity = self.choice_set.compute_variables(self.capacity_string, dataset_pool=self.dataset_pool)
+        capacity = self.choice_set.compute_variables(capacity_string, dataset_pool=self.dataset_pool)
         return capacity
 
-    def determine_units_capacity_for_estimation(self, agent_set, agents_index):
-        try:
-            self.choice_set.compute_variables(self.capacity_string_for_estimation, dataset_pool=self.dataset_pool)
-            return self.choice_set.get_attribute(self.capacity_string_for_estimation)
-        except:
-            logger.log_warning("Computing capacity for estimation failed (%s)" % self.capacity_string_for_estimation)
-        return None
-
-
-    def get_weights_for_sampling_locations(self, agent_set=None, agents_index=None):
-        """Return a tuple where the first element is as array of weights and the second is an index of locations which
-        the weight array corresponds to. The array of weights can be a 2D array (if weights are agent specific).
-        Weights can be determined by a variable name given in 'weights_for_simulation_string' in run_config. 
-        If it is not given, it is assumed that weights are proportional to the capacity. If it is the equal sign (i.e. '='),
-        all weights are equal.
+    def create_interaction_datasets(self, agent_set, agents_index, config, submodels=[], **kwargs):
+        """Create interactiondataset with or without sampling of alternatives
+        
+        arguments to sampler_class is passed through config 
+        (run_config or estimation_config in configuration file), such as:
+        'include_chosen_choice', 'with_replacement', 'stratum', 
+        'sample_size_from_each_stratum', 'sample_size_from_chosen_stratum' 
+        (for stratified sampler)
+        
         """
-        weight_string = self.run_config.get("weights_for_simulation_string", None)
-        if weight_string is None:
-            return (self.capacity, None)
-        if weight_string == '=':
-            return (ones(self.choice_set.size()), None)
-        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
-        weight_name = VariableName(weight_string)
-        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
-    
-    def get_weights_for_sampling_locations_for_estimation (self, agent_set=None, agents_index=None):
-        weight_string = self.estimate_config.get("weights_for_estimation_string", None)
-        if weight_string == None:
-            return (None, None)
-        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
-        weight_name = VariableName(weight_string)
-        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
+        
+        nchoices = self.get_choice_set_size()
+        if nchoices==self.choice_set.size():
+            ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
+            return
+        
+        sampling_weights = self.get_sampling_weights(config, agent_set, agents_index)
+        #if filter is specified by submodel in a dict, call sampler submodel by submodel
+        if isinstance(self.filter, dict) or config.get("sample_alternatives_by_submodel", False):
+            index2 = -1 + zeros((agents_index.size, nchoices), dtype="int32")
+            attributes = {}
+            #submodels = self.model_interaction.get_submodels()
+            ###TODO: it may be possible to merge this loop with sample_alternatives_by_chunk or put it in a common function
+            for submodel in submodels:
+                agents_index_in_submodel = agents_index[self.observations_mapping[submodel]]
+                if agents_index_in_submodel.size==0:
+                    continue
+                choice_index = self.apply_filter(self.filter, agent_set=agent_set, 
+                                                 agents_index=agents_index_in_submodel,  
+                                                 submodel=submodel)
+                if choice_index is not None and choice_index.size == 0:
+                    logger.log_error("There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
+                                     (self.filter, agents_index_in_submodel.size, agent_set.get_id_attribute()[agents_index]))
+                    continue
+                chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
+                nchunks = chunk_specification.nchunks(agents_index_in_submodel)
+                chunksize = chunk_specification.chunk_size(agents_index_in_submodel)
+                interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index_in_submodel, 
+                                                  choice_index, nchoices,
+                                                  weights=sampling_weights,
+                                                  config=config,
+                                                  nchunks=nchunks, chunksize=chunksize)
+                
+                if len(submodels)>1:
+                    index2[self.observations_mapping[submodel],:] = interaction_dataset.index2                        
+                    for name in interaction_dataset.get_known_attribute_names():
+                        attr_val = interaction_dataset.get_attribute(name)
+                        if not attributes.has_key(name):
+                            attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
+                        attributes[name][self.observations_mapping[submodel],:] = attr_val
 
-    def get_agents_order(self, movers):
-        return permutation(movers.size())
-
-    def set_choice_set_size(self):
-        """If "sample_size_locations" is specified in run_config, it is considered as the choice set size. Otherwise
-        the value of resources entry "sample_proportion_locations" is considered as determining the proportion of
-        all locations to be the choice set size.
-        """
-        if self.sampler_class is not None:
-            pchoices = self.run_config.get("sample_proportion_locations", None)
-            nchoices = self.sampler_size
-            if self.sampler_size is None:
-                nchoices = self.run_config.get("sample_size_locations", None)
-            if nchoices == None:
-                if pchoices == None:
-                    logger.log_warning("Neither 'sample_proportion_locations' nor 'sample_size_locations' " +
-                                       "given. Locations will not be sampled.")
-                    nchoices = self.choice_set.size()
-                else:
-                    nchoices = int(pchoices*self.choice_set.size())
+            if len(submodels)>1:  ## if there are more than 1 submodel, merge the data by submodel and recreate interaction_dataset
+                interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
+                                                                                    interaction_dataset.dataset2, 
+                                                                                    index1=agents_index, 
+                                                                                    index2=index2)
+                for name in attributes.keys():
+                    interaction_dataset.add_attribute(attributes[name], name)
+                
+            self.update_choice_set_size(interaction_dataset.get_reduced_m())
         else:
-            nchoices = self.choice_set.size()
-        self.choice_set_size =  min(nchoices, self.choice_set.size())
+            choice_index = self.apply_filter(self.filter, agent_set=agent_set, 
+                                             agents_index=agents_index)
+            if choice_index is not None and choice_index.size == 0:
+                logger.log_error("There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
+                                 (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index]))
+                return #OR raise?
+            
+            chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
+            nchunks = chunk_specification.nchunks(agents_index)
+            chunksize = chunk_specification.chunk_size(agents_index)
+            interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index, 
+                                              choice_index, nchoices,
+                                              weights=sampling_weights,
+                                              config=config,
+                                              nchunks=nchunks, chunksize=chunksize)
+            self.update_choice_set_size(interaction_dataset.get_reduced_m())
+            
 
-    def get_choice_index(self, agent_set, agents_index, agent_subset):
-        self.weights = None
-        nchoices = self.get_number_of_elemental_alternatives()
-        if (nchoices == self.choice_set.size()) and (self.filter is None):
-            return None            
-        self.weights, location_index = self.get_weights_for_sampling_locations(agent_set, agents_index)
-        self.weights = self.apply_filter(self.filter, self.weights, agent_set, agents_index)
-        if (nchoices == self.choice_set.size()): # take all alternatives that pass through the filter and have eights larger than 0
-            index = where(self.weights > 0)[0]
-            self.choice_set_size = index.size # modify the choice set size
-            index = resize(index, (agents_index.size, self.choice_set_size))
-            return index
-        self.debug.print_debug("Sampling locations ...",3)
-        # the following model component must return a 2D array of sampled locations per agent
-        try:
-            index, chosen_choice = self.run_sampler_class(agent_subset, index2=location_index, sample_size=nchoices,
-                weight=self.weights, resources=self.run_config)
-        except Exception, e:
-            logger.log_warning("Problem with sampling alternatives.\n%s" % e)
-            index = None
-        if index == None: # sampler produced an error
-            index = array([], dtype="int32")
-        return index
-
-    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
-                                                            agents_index, agent_subset=None, submodels=[1]):
-        """Performs sampling if required. It can be done in several chunks, which is useful especially if the sampling weights
-        is a 2D array. The chunking is controlled by an entry 'chunk_specification_for_estimation' in estimate_config.
-        The method returns a tuple with a 2D index (for each agent in index of sampled choices) and an array of indices
-        of selected choices.
+        self.model_interaction.interaction_dataset = interaction_dataset
+        
+    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2):
+        """Return index to self.choice_set whose value for self.filter variable is true
+        
+        If filter is a dictionary, it chooses the one for the given submodel.
+        
         """
-        ### TODO: This needs to be rewritten as part of the ModelInteraction class. 
-        self.model_interaction.set_selected_choice(agents_index)
-        selected_choice = self.model_interaction.get_selected_choice()
-        self.weights = None
-        nchoices = self.get_number_of_elemental_alternatives()
-        if nchoices < self.choice_set.size() and self.sampler_class is not None:
-            chunk_specification = self.estimate_config.get("chunk_specification_for_estimation", ChunkSpecification({"nchunks":1}))
-            logger.log_status("Sampling locations for estimation ...")
-            index = zeros((agents_index.size, nchoices), dtype='int32')
-            selected_choice = zeros((agents_index.size,), dtype='int32')
-            if (len(submodels) > 1) or ((len(submodels) > 0) and (self.observations_mapping[submodels[0]].size < agents_index.size)):
-                for submodel in submodels:
-                    nagents_in_submodel = self.observations_mapping[submodel].size
-                    if nagents_in_submodel <= 0:
-                        continue
-                    nchunks = chunk_specification.nchunks(self.observations_mapping[submodel])
-                    chunksize = chunk_specification.chunk_size(self.observations_mapping[submodel])
-                    logger.log_status("Submodel %s sampled in %s chunk(s)." % (submodel, nchunks))
-                    for ichunk in range(nchunks):
-                        this_agents_index = self.observations_mapping[submodel][(ichunk*chunksize):min(((ichunk+1)*chunksize),
-                                                                                                       nagents_in_submodel)]
-                        this_weights, location_index, index1, chosen_choice = self.apply_filter_on_weights_and_choose_choice(agent_set, agents_index[this_agents_index],
-                                                                                                                             submodel, nchoices)
-                        index[this_agents_index, :] = index1
-                        selected_choice[this_agents_index] = chosen_choice.astype(selected_choice.dtype)
-            else:
-                if len(submodels) <= 0:
-                    subm = -2
-                else:
-                    subm = submodels[0]
-                nagents = agents_index.size
-                nchunks = chunk_specification.nchunks(agents_index)
-                chunksize = chunk_specification.chunk_size(agents_index)
-                logger.log_status("Sampling done in %s chunk(s)." % nchunks)
-                for ichunk in range(nchunks):
-                    this_agents_index = arange((ichunk*chunksize),min(((ichunk+1)*chunksize),nagents))
-                    this_weights, location_index, index1, chosen_choice = self.apply_filter_on_weights_and_choose_choice(agent_set, agents_index[this_agents_index],
-                                                                                                                    subm, nchoices)
-                    index[this_agents_index,:] = index1
-                    selected_choice[this_agents_index] = chosen_choice
-            self.model_interaction.set_selected_choice_for_LCM(selected_choice)
-        else:
-            index, selected_choice = ChoiceModel.get_choice_index_for_estimation_and_selected_choice(self,
-                                        agent_set, agents_index, agent_subset,
-                                        submodels=submodels)        
-        return (index, selected_choice)
-
-    def apply_filter_on_weights_and_choose_choice(self, agent_set, agents_index, submodel, nchoices):
-        """ TODO: document me
-        """
-        ### TODO: self.weight must be transformed in a local variable
-        self.weights, location_index = self.get_weights_for_sampling_locations_for_estimation(agent_set, agents_index)
-        this_weights = self.apply_filter(self.filter, self.weights, agent_set, agents_index, submodel)
-        index1, chosen_choice = self.run_sampler_class(agent_set, index1=agents_index, index2=location_index, sample_size=nchoices,
-            weight=this_weights, include_chosen_choice=True, resources=self.estimate_config)
-        return (this_weights, location_index, index1, chosen_choice)
-
-
-    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2):
-        """ Multiply given filter with weights. If filter is a dictionary, it choses the one for the given submodel.
-        """
-        if (filter == None) :
-            if weights is not None:
-                return weights
-            else:
-                return ones(self.choice_set.size(), dtype=int8)
-
-        #if weights is None and filter is not None, apply filter with equal weights
-        if (weights == None):
-            weights = ones(self.choice_set.size())
+        if not filter:
+            return None
 
         if isinstance(filter, dict):
             submodel_filter = filter[submodel]
         else:
             submodel_filter = filter
+            
         if isinstance(submodel_filter, str):
-            self.choice_set.compute_variables([submodel_filter], dataset_pool=self.dataset_pool)
-            filter_name = VariableName(submodel_filter)
-            my_filter = greater(self.choice_set.get_attribute(filter_name.get_alias()), 0)
+            filter_index = where(self.choice_set.compute_variables([submodel_filter], 
+                                                                   dataset_pool=self.dataset_pool))[0]
         else:
-            my_filter = greater(submodel_filter, 0)
-        if weights.ndim <> my_filter.ndim:
-            logger.log_warning("LCM: Mismatch in the rank of weights and filter. No filter applied.")
-            return weights
-        return weights*my_filter
+            filter_index = where(submodel_filter)[0]
+            
+        return filter_index
 
     def plot_choice_histograms(self, capacity=None, main =""):
         if capacity is None:
-            capacity = self.capacity_string
+            capacity = self.run_config.get("capacity_string")
         if isinstance(capacity, str):
             capacity_values = self.choice_set.get_attribute(capacity)
         else:
             capacity_values = capacity
         self.upc_sequence.plot_choice_histograms(capacity=capacity_values, main=main)
         self.upc_sequence.show_plots()
-
-from opus_core.choice_model import ModelInteraction
-class ModelInteractionLCM(ModelInteraction):
-    def set_selected_choice_for_LCM(self, selected_choice):
-        self.selected_choice = selected_choice

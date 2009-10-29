@@ -69,20 +69,20 @@ class LandUseDevelopmentLocationChoiceModel(LocationChoiceModel):
             index = concatenate((index, where(agents.get_attribute(priority_attribute)==order_id)[0]))
         return index
 
-#    def determine_units_capacity(self, agent_set, agents_index, data_objects=None):
-#        capacity = LocationChoiceModel.determine_units_capacity(self, agent_set, agents_index, data_objects)
+#    def determine_capacity(self, agent_set, agents_index, data_objects=None):
+#        capacity = LocationChoiceModel.determine_capacity(self, agent_set, agents_index, data_objects)
 #        # subtract locations taken in previous chunks
 #        taken_locations = self.choice_set.sum_over_ids(agent_set.get_attribute(self.choice_set.get_id_name()[0]), \
 #                                                       ones((agent_set.size(),)))
 #        return capacity - taken_locations
 
-    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2):
+    def apply_filter(self, filter, submodel=-2):
         """ apply filter
         """
         if submodel != -2:
             filter = filter + "_for_development_type_" + str(submodel)
 
-        return LocationChoiceModel.apply_filter(self, filter, weights, agent_set, agents_index, submodel=submodel)
+        return LocationChoiceModel.apply_filter(self, filter, submodel=submodel)
 
     def prepare_for_estimate(self,specification_dict = None,
                                   specification_storage=None,

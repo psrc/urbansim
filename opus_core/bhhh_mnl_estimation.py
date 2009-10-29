@@ -26,7 +26,7 @@ class bhhh_mnl_estimation(EstimationProcedure):
         tags = ["estimate", "result"]
         vl = 2
         nobs, alts, nvars = data.shape
-        depm = self.resources["selected_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
+        depm = self.resources["chosen_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
         coef_names = self.resources.get("coefficient_names", None)
         fixed_coefs, fixed_values = self.resources.get("fixed_values", (array([]), array([])))
         if (coef_names is not None) and (fixed_coefs.size > 0):

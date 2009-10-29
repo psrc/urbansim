@@ -95,15 +95,6 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
         return all_choices
 
-    def run_chunk(self, agents_index, agent_set, specification, coefficients):
-        result = LocationChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
-        return result
-
-    def simulate_submodel(self, data, coefficients, submodel):
-        """Keeps agent's probabilities."""
-        result = LocationChoiceModel.simulate_submodel(self, data, coefficients, submodel)
-        return result
-
     def get_movers_from_overfilled_locations(self, agent_set, agents_index):
         """Returns an index (relative to agents_index) of agents that should be removed from their locations.
         """
@@ -171,24 +162,40 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                     resources.merge({
                         variable_name:add_string+variable_string})
 
-    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
-                                                            agents_index, *args, **kwargs):
-        id_name = self.choice_set.get_id_name()[0]
-        mod_id_name = "__%s__" % id_name
-        # This should be only true when reestimating, since the agents for estimation were unplaced
-        # in the previous run and their original locations were stored in mod_id_name
-        if mod_id_name in agent_set.get_known_attribute_names():
-            agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
-        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, agent_set,
-                                                            agents_index, *args, **kwargs)
-        #logger.log_status("Unplace agents for estimation.")
-        # Copy the agents locations into a temporary attribute (called e.g. __grid_id__)
-        # in case it will be needed for reestimation
-        #if  (mod_id_name not in agent_set.get_known_attribute_names()):
-        #    agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name))) # must be a copy
-        # Agents for estimation are unplaced in order not to influence the location characteristics
-        #agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
-        return result
+    def create_interaction_dataset(self, agent_set, agents_index, config, **kwargs):
+        if config is not None and config.get("estimate", False):
+            id_name = self.choice_set.get_id_name()[0]
+            mod_id_name = "__%s__" % id_name
+            # This should be only true when reestimating, since the agents for estimation were unplaced
+            # in the previous run and their original locations were stored in mod_id_name
+            if mod_id_name in agent_set.get_known_attribute_names():
+                agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
+                result = LocationChoiceModel.create_interaction_dataset(self, agent_set,
+                                                                        agents_index, config, **kwargs)                
+                return result
+
+        return LocationChoiceModel.create_interaction_dataset(self, agent_set,
+                                                              agents_index, config, **kwargs)
+
+## above method was:
+#    def get_choice_index_for_estimation_and_chosen_choice(self, agent_set,
+#                                                            agents_index, *args, **kwargs):
+#        id_name = self.choice_set.get_id_name()[0]
+#        mod_id_name = "__%s__" % id_name
+#        # This should be only true when reestimating, since the agents for estimation were unplaced
+#        # in the previous run and their original locations were stored in mod_id_name
+#        if mod_id_name in agent_set.get_known_attribute_names():
+#            agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
+#        result = LocationChoiceModel.get_choice_index_for_estimation_and_chosen_choice(self, agent_set,
+#                                                            agents_index, *args, **kwargs)
+#        #logger.log_status("Unplace agents for estimation.")
+#        # Copy the agents locations into a temporary attribute (called e.g. __grid_id__)
+#        # in case it will be needed for reestimation
+#        #if  (mod_id_name not in agent_set.get_known_attribute_names()):
+#        #    agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name))) # must be a copy
+#        # Agents for estimation are unplaced in order not to influence the location characteristics
+#        #agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
+#        return result
 
     def prepare_for_run(self, *args, **kwargs):
         spec, coef, dummy = LocationChoiceModel.prepare_for_run(self, *args, **kwargs)

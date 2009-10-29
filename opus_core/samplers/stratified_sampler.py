@@ -3,9 +3,11 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from numpy import where, arange, take, ones, concatenate
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.datasets.dataset_pool import DatasetPool
+from numpy import where, arange, take, ones, concatenate, searchsorted
 from numpy import newaxis, ndarray, zeros, array, rank, float32
-from opus_core.misc import unique_values
+from opus_core.misc import unique_values, lookup
 from opus_core.samplers.constants import *
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
 from opus_core.sampling_toolbox import nonzerocounts
@@ -22,10 +24,11 @@ class stratified_sampler(Sampler):
         self.chosen_choice = None
         self._sampling_probability = None
         self._stratum_id = None
+        Sampler.__init__(self)
 
     def run(self, dataset1, dataset2, index1=None, index2=None, stratum=None, weight=None,
             sample_size=1, sample_size_from_each_stratum=None, sample_size_from_chosen_stratum=None, sample_rate=None,
-            include_chosen_choice=False, resources=None):
+            include_chosen_choice=False, resources=None, with_replacement=False, dataset_pool=None, **kwargs):
         """this function samples number of sample_size (scalar value) alternatives from dataset2
         for agent set specified by dataset1.
         If index1 is not None, only samples alternatives for agents with indices in index1;
@@ -36,14 +39,23 @@ class stratified_sampler(Sampler):
         array of the same length as index2 or 2d array of shape (index1.size, index2.size).
 
         Also refer to document of interaction_dataset"""
+        if dataset_pool is None:
+            try:
+                sc = SessionConfiguration()
+                dataset_pool=sc.get_dataset_pool()
+            except:
+                dataset_pool = DatasetPool()
+                        
         local_resources = Resources(resources)
         local_resources.merge_if_not_None(
                 {"dataset1": dataset1, "dataset2": dataset2,
                 "index1":index1, "index2": index2,
+                "with_replacement": with_replacement,
                 "stratum":stratum, "weight": weight,
                 "sample_size": sample_size,
                 "sample_size_from_each_stratum": sample_size_from_each_stratum,
                 "sample_size_from_chosen_stratum": sample_size_from_chosen_stratum,
+                
                 "sample_rate": sample_rate,
                 "include_chosen_choice": include_chosen_choice})
 
@@ -82,7 +94,7 @@ class stratified_sampler(Sampler):
             weight = ones(index2.size)
             rank_of_weight = 1
         else:
-            err_msg = "unkown weight type"
+            err_msg = "unknown weight type"
             logger.log_error(err_msg)
             raise TypeError, err_msg
 
@@ -108,7 +120,8 @@ class stratified_sampler(Sampler):
         chosen_choice_id = agent.get_attribute(choice.get_id_name()[0])[index1]
         #index_of_placed_agent = where(greater(chosen_choice_id, UNPLACED_ID))[0]
         chosen_choice_index = choice.try_get_id_index(chosen_choice_id, return_value_if_not_found=-1)
-
+        chosen_choice_index_to_index2 = lookup(chosen_choice_index, index2, index_if_not_found=UNPLACED_ID)
+        
         ##TODO: check all chosen strata are in selectable strata
         #i.e. chosen_choice_index is in index2
         chosen_stratum = ones(chosen_choice_index.size, dtype="int32") * NO_STRATUM_ID
@@ -129,8 +142,8 @@ class stratified_sampler(Sampler):
         strata_sample_size = ones(unique_strata.size, dtype="int32") * sample_size_from_each_stratum
         sample_rate = local_resources.get("sample_rate", None)
         if sample_rate is not None:
-            raise UnSupportedError, "Using sample_rate not implemented yet."
-            ##BUG: to be finished
+            raise UnImplementedError, "sample_rate is not implemented yet."
+            ##TODO: to be finished
             #num_elements_in_strata = histogram(selectable_strata, unique_strata)
             #strata_sample_size = round(num_elements_in_strata * sample_rate)
 
@@ -139,10 +152,10 @@ class stratified_sampler(Sampler):
             strata_sample_pairs = array(map(lambda x,y: [x,y], unique_strata, strata_sample_size))
             if rank_of_weight == 1:
                 sampled_index = self._sample_by_stratum(index1, index2, selectable_strata, prob,
-                                                        chosen_choice_index, strata_sample_pairs)
+                                                        chosen_choice_index_to_index2, strata_sample_pairs)
             elif rank_of_weight == 2:
                 sampled_index = self._sample_by_agent_and_stratum(index1, index2, selectable_strata, prob,
-                                                                  chosen_choice_index, strata_sample_pairs)
+                                                                  chosen_choice_index_to_index2, strata_sample_pairs)
         else:
             strata_sample_setting = zeros((index1.size,unique_strata.size,2), dtype="int32")
             for i in range(index1.size):
@@ -157,23 +170,38 @@ class stratified_sampler(Sampler):
                 strata_sample_setting[i,...] = strata_sample_pairs
 
             sampled_index = self._sample_by_agent_and_stratum(index1, index2, selectable_strata, prob,
-                                                              chosen_choice_index, strata_sample_setting)
-        chosen_choice = None
+                                                              chosen_choice_index_to_index2, strata_sample_setting)
+        #chosen_choice = None
+        is_chosen_choice = zeros(sampled_index.shape, dtype="bool")
         if include_chosen_choice:
             sampled_index = concatenate((chosen_choice_index[:,newaxis],sampled_index), axis=1)
-            chosen_choice = zeros(chosen_choice_index.shape, dtype="int32") - 1
-            chosen_choice[where(chosen_choice_index>UNPLACED_ID)] = 0 #make chosen_choice index to sampled_index, instead of choice (as chosen_choice_index does)
+            #chosen_choice = zeros(chosen_choice_index.shape, dtype="int32") - 1
+            #chosen_choice[where(chosen_choice_index>UNPLACED_ID)] = 0 #make chosen_choice index to sampled_index, instead of choice (as chosen_choice_index does)
                                                                       #since the chosen choice index is attached to the first column, the chosen choice should be all zeros
                                                                       #for valid chosen_choice_index
-
+            is_chosen_choice = zeros(sampled_index.shape, dtype="bool")
+            is_chosen_choice[chosen_choice_index!=UNPLACED_ID, 0] = 1
+            
             chosen_probability = zeros((chosen_choice_index.size,),dtype=float32) - 1
             for stratum in unique_strata:
                 w = chosen_stratum==stratum
                 chosen_probability[w] = (prob[chosen_choice_index[w]] / prob[selectable_strata==stratum].sum()).astype(float32)
             self._sampling_probability = concatenate((chosen_probability[:,newaxis], self._sampling_probability), axis=1)
             self._stratum_id = concatenate((chosen_stratum[:,newaxis], self._stratum_id), axis=1)
-        return (sampled_index, chosen_choice)
 
+        interaction_dataset = self.create_interaction_dataset(dataset1, dataset2, index1, sampled_index)
+        interaction_dataset.add_attribute(self._sampling_probability, '__sampling_probability')
+        interaction_dataset.add_attribute(is_chosen_choice, 'chosen_choice')
+        interaction_dataset.add_attribute(self._stratum_id, 'stratum_id')
+
+        ## to get the older returns
+        #sampled_index = interaction_dataset.get_2d_index()
+        #chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+        #where_chosen = where(interaction_dataset.get_attribute("chosen_choice"))
+        #chosen_choices[where_chosen[0]]=where_chosen[1]
+        #return (sampled_index, chosen_choice)
+        
+        return interaction_dataset    
 
     def _sample_by_stratum(self, index1, index2, stratum, prob_array, chosen_choice_index, strata_sample_setting):
         """stratum by stratum stratified sampling, suitable for 1d prob_array and sample_size is the same for all agents"""
@@ -247,10 +275,10 @@ class stratified_sampler(Sampler):
                 if nonzerocounts(this_prob) < this_size:
                     logger.log_warning("weight array dosen't have enough non-zero counts, use sample with replacement")
 
-                chosen_index_to_index2 = where(index2 == chosen_choice_index[i])[0]
+#                chosen_index_to_index2 = where(index2 == chosen_choice_index[i])[0]
                 #exclude_index passed to probsample_noreplace needs to be indexed to index2
                 this_sampled_index = probsample_noreplace( index2, sample_size=this_size,
-                                                          prob_array=this_prob, exclude_index=chosen_index_to_index2,
+                                                          prob_array=this_prob, exclude_index=chosen_choice_index[i],
                                                           return_indices=True )
                 sampled_index[i,j:j+this_size] = this_sampled_index
 
@@ -318,29 +346,34 @@ class Test(opus_unittest.OpusTestCase):
         weight=self.gridcells.get_attribute("weight")
         for icc in [0,1]:
             #icc = sample([0,1],1)   #include_chosen_choice?
-            sample_results = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
+            sample_ret = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
                             index2=index2, stratum="stratum_id", sample_size=1, weight="weight",
                             include_chosen_choice=icc)
             # get results
-            sampler = sample_results[0]
+            sampled_index = sample_ret.get_2d_index()
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            where_chosen = where(sample_ret.get_attribute("chosen_choice"))
+            chosen_choices[where_chosen[0]]=where_chosen[1]
+            
             if icc:
-                self.assertEqual(sampler.shape, (index1.size,self.num_strata+1))
+                self.assertEqual(sampled_index.shape, (index1.size,self.num_strata+1))
             else:
-                self.assertEqual(sampler.shape, (index1.size,self.num_strata))
+                self.assertEqual(sampled_index.shape, (index1.size,self.num_strata))
 
             if icc:
-                self.assertEqual( sample_results[1].size, index1.size)
+                self.assertEqual( chosen_choices.size, index1.size)
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
                 chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
-                w = where(sample_results[1]>=0)[0]
+                w = where(chosen_choices>=0)[0]
                 # for 64 bit machines, need to coerce the type to int32 -- on a
                 # 32 bit machine the astype(int32) doesn't do anything
-                chosen_choice_index[w] = sampler[w, sample_results[1][w]].astype(int32)
-                assert alltrue(equal(placed_agents_index, chosen_choice_index))
-                sampler = sampler[:,1:]
-            assert alltrue([x in index2 for x in sampler.ravel()])
-            assert all(not_equal(weight[sampler], 0.0)), "elements with zero weight in the sample"
+                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
+                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                sampled_index = sampled_index[:,1:]
+                
+            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
 
     def test_1d_weight_array_variant_sample_size(self):
 
@@ -351,51 +384,60 @@ class Test(opus_unittest.OpusTestCase):
         for icc in [0,1]:
 
             #icc = sample([0,1],1)   #include_chosen_choice?
-            sample_results = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
+            sample_ret = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
                             index2=index2, stratum="stratum_id", sample_size=0,
                             sample_size_from_chosen_stratum = sample_size_from_chosen_stratum,
                             weight="weight",include_chosen_choice=icc)
             # get results
-            sampler = sample_results[0]
-            if icc:
-                self.assertEqual(sampler.shape, (index1.size,sample_size_from_chosen_stratum+1))
-            else:
-                self.assertEqual(sampler.shape, (index1.size,sample_size_from_chosen_stratum))
+            sampled_index = sample_ret.get_2d_index()
+            chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+            where_chosen = where(sample_ret.get_attribute("chosen_choice"))
+            chosen_choices[where_chosen[0]]=where_chosen[1]
 
             if icc:
-                self.assertEqual( sample_results[1].size, index1.size)
+                self.assertEqual(sampled_index.shape, (index1.size,sample_size_from_chosen_stratum+1))
+            else:
+                self.assertEqual(sampled_index.shape, (index1.size,sample_size_from_chosen_stratum))
+
+            if icc:
+                self.assertEqual( chosen_choices.size, index1.size)
                 placed_agents_index = self.gridcells.try_get_id_index(
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
                 chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
-                w = where(sample_results[1]>=0)[0]
-                chosen_choice_index[w] = sampler[w, sample_results[1][w]].astype(int32)
-                assert alltrue(equal(placed_agents_index, chosen_choice_index))
-                sampler = sampler[:,1:]
-            assert alltrue([x in index2 for x in sampler.ravel()])
-            assert all(not_equal(weight[sampler], 0.0)), "elements with zero weight in the sample"
-            
+                w = where(chosen_choices>=0)[0]
+                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
+                self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+                sampled_index = sampled_index[:,1:]
+
+            self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+            self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
+                            
     def test_1d_weight_array_variant_sample_size_using_icc(self):
         sample_size = 2
         index1 = where(self.households.get_attribute("lucky"))[0][1:]
         index2 = where(self.gridcells.get_attribute("filter"))[0]
         weight=self.gridcells.get_attribute("weight")
-        sample_results = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
+        sample_ret = stratified_sampler().run(dataset1=self.households, dataset2=self.gridcells, index1=index1,
                         index2=index2, stratum="stratum_id", sample_size=sample_size,
                         weight="weight",include_chosen_choice=True)
         # get results
-        sampler = sample_results[0]
-        self.assertEqual(sampler.shape, (index1.size,self.num_strata*sample_size))
+        sampled_index = sample_ret.get_2d_index()
+        chosen_choices = UNPLACED_ID * ones(index1.size, dtype="int32") 
+        where_chosen = where(sample_ret.get_attribute("chosen_choice"))
+        chosen_choices[where_chosen[0]]=where_chosen[1]
 
-        self.assertEqual( sample_results[1].size, index1.size)
+        self.assertEqual(sampled_index.shape, (index1.size,self.num_strata*sample_size))
+
+        self.assertEqual( chosen_choices.size, index1.size)
         placed_agents_index = self.gridcells.try_get_id_index(
                                 self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
         chosen_choice_index = UNPLACED_ID * ones(index1.shape, dtype="int32")
-        w = where(sample_results[1]>=0)[0]
-        chosen_choice_index[w] = sampler[w, sample_results[1][w]].astype(int32)
-        assert alltrue(equal(placed_agents_index, chosen_choice_index))
-        sampler = sampler[:,1:]
-        assert alltrue([x in index2 for x in sampler.ravel()])
-        assert all(not_equal(weight[sampler], 0.0)), "elements with zero weight in the sample"
+        w = where(chosen_choices>=0)[0]
+        chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
+        self.assert_( alltrue(equal(placed_agents_index, chosen_choice_index)) )
+        sampled_index = sampled_index[:,1:]
+        self.assert_( alltrue(lookup(sampled_index.ravel(), index2, index_if_not_found=UNPLACED_ID)!=UNPLACED_ID) )
+        self.assert_( all(not_equal(weight[sampled_index], 0.0)) )
 
 if __name__ == "__main__":
     opus_unittest.main()

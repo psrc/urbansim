@@ -43,7 +43,7 @@ class bfgs_nl_estimation(EstimationProcedure):
     def estimate_dcm(self, data):
         nobs, alts, nvars, M = data.shape
         self.M = M
-        depm = self.resources["selected_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
+        depm = self.resources["chosen_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
         tags = ["estimate", "result"]
         vl = 2
         coef_names = self.resources.get("coefficient_names", None)

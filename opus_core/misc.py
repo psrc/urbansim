@@ -454,7 +454,7 @@ def flatten_list(list):
     """Flattens a nested 'list' (of 2 levels)."""
     return [element for sublist in list for element in sublist]
 
-def ncumsum(prob_array,axis=0, dtype='float64'):
+def ncumsum(prob_array, axis=0, dtype='float64'):
     """n(ormalized)-cumsum that normalizes the cumsum result by dividing the array
     by the last item in cumsum result"""
     from numpy import take, ma
@@ -782,6 +782,31 @@ def get_dataset_from_tab_storage(dataset_name, directory, package_order=['opus_c
     """See doc string to get_dataset_from_storage which  is called with storage_type='tab_storage'."""
     return get_dataset_from_storage(dataset_name, directory, 'tab_storage', package_order=package_order, dataset_args=dataset_args)
 
+def lookup(subarray, fullarray, index_if_not_found=-1):
+    """
+    look up subarray in fullarray, return the index of
+    subarray's elements in fullarray; fill index with
+    index_if_not_found for elements not found in fullarray
+
+    >>> a = array([1, 9, 2, 7, 3, 5, 6])
+    >>> b = array([0, 3, 2, 9, 7, 10])
+    >>> lookup(b, a)
+    array([-1, 4, 2, 1, 3, -1])
+    """
+    from numpy import arange, searchsorted, not_equal, rank
+    if rank(subarray)!=1 or rank(fullarray)!=1:
+        raise ValueError, "lookup only works with 1-d input arrays."
+    
+    array_size = fullarray.size
+    index_all = arange(array_size)
+    index_argsort = fullarray.argsort()
+    index_sorted = searchsorted(fullarray[index_argsort], subarray)
+    ## to avoid "index out of range" error
+    index_sorted[index_sorted == array_size] = array_size - 1
+    index_unsorted = index_all[index_argsort][index_sorted]
+    index_unsorted[not_equal(fullarray[index_unsorted], subarray)] = index_if_not_found
+    return index_unsorted
+
 from opus_core.tests import opus_unittest
 import shutil
 import opus_core
@@ -1105,6 +1130,13 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(remove_all((),()), [])
         self.assertEqual(remove_all((1,'a'),'b'), [1,'a'])
         self.assertEqual(remove_all(('a', 1,'a', 'a'),'a'), [1])
-
+        
+    def test_lookup(self):
+        from numpy import array, alltrue
+        a = array([1, 9, 2, 7, 3, 5, 6])
+        b = array([0, 3, 2, 9, 7, 10])
+        expected = array([-1, 4, 2, 1, 3, -1])
+        self.assert_(alltrue(lookup(b, a)==expected))
+        
 if __name__ == "__main__":
     opus_unittest.main()

@@ -142,7 +142,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         #logger.log_status("Buildings size: %d" % (agent_set.get_attribute_by_index(self.units_full_name).sum()))
         return AgentLocationChoiceModelMember.run(self, *args, **kargs)
 
-    def get_weights_for_sampling_locations(self, agent_set, agents_index):
+    def get_sampling_weights(self, agent_set, agents_index):
         where_developable = where(AgentLocationChoiceModelMember.apply_filter(self, self.filter, None, agent_set,
                                                                               agents_index))[0]
         if self.developable_maximum_unit_variable:
@@ -199,9 +199,6 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         else:
             return ones(self.choice_set.size())
 
-    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
-        return self.get_weights_for_sampling_locations(agent_set, agents_index)
-
     def get_agents_order(self, movers):
         """Sort in descending order according to the size in order to locate larger agents first.
         """
@@ -249,27 +246,31 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         #logger.log_status("Buildings size: %d" % (agent_set.get_attribute_by_index(self.units_full_name).sum()))
         return AgentLocationChoiceModelMember.estimate(self, *args, **kargs)
 
-    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
-                                                            agents_index, *args, **kwargs):
-        id_name = self.choice_set.get_id_name()[0]
-        mod_id_name = "__%s__" % id_name
-        if mod_id_name in agent_set.get_known_attribute_names():
-            agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
-        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, agent_set,
-                                                            agents_index, *args, **kwargs)
-        # select randomly buildings to unplace
-        ntounplace = int(agents_index.size/4.0)
-        #ntounplace = 1
-                                          #self.dataset_pool.get_dataset("urbansim_constant")["recent_years"])
-        #idx = sample_noreplace(agents_index, ntounplace)
-        tmp = randint(0, agents_index.size, ntounplace)
-        utmp = unique_values(tmp)
-        idx = agents_index[utmp]
-        logger.log_status("Unplace %s buildings." % utmp.size)
-        if  (mod_id_name not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name)))
-        agent_set.set_values_of_one_attribute(id_name,-1.0*ones((idx.size,)), idx)
-        return result
+    def create_interaction_dataset(self, agent_set, agents_index, config, *args, **kwargs):
+        if config is not None and config.get("estimate", False):
+                id_name = self.choice_set.get_id_name()[0]
+                mod_id_name = "__%s__" % id_name
+                if mod_id_name in agent_set.get_known_attribute_names():
+                    agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
+                result = LocationChoiceModel.create_interaction_dataset(self, agent_set,
+                                                                        agents_index, config, **kwargs)
+                # select randomly buildings to unplace
+                ntounplace = int(agents_index.size/4.0)
+                #ntounplace = 1
+                #self.dataset_pool.get_dataset("urbansim_constant")["recent_years"])
+                #idx = sample_noreplace(agents_index, ntounplace)
+                tmp = randint(0, agents_index.size, ntounplace)
+                utmp = unique_values(tmp)
+                idx = agents_index[utmp]
+                logger.log_status("Unplace %s buildings." % utmp.size)
+                if  (mod_id_name not in agent_set.get_known_attribute_names()):
+                    agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name)))
+                agent_set.set_values_of_one_attribute(id_name,-1.0*ones((idx.size,)), idx)
+                
+                return result
+
+        return LocationChoiceModel.create_interaction_dataset(self, agent_set,
+                                                              agents_index, config, **kwargs)
 
     def prepare_for_estimate(self, agent_set, add_member_prefix=True, specification_dict=None, specification_storage=None,
                               specification_table=None, urbansim_constant=None, building_categories=None,

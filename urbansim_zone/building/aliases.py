@@ -16,5 +16,7 @@ aliases = [
         "occupied_residential_spaces = urbansim_zone.building.is_residential * urbansim_zone.building.number_of_households",
         "occupied_non_residential_spaces = numpy.logical_not(urbansim_zone.building.is_residential) * urbansim_zone.building.number_of_non_home_based_jobs * urbansim_zone.building.building_sqft_per_job",
         "occupied_spaces = urbansim_zone.building.occupied_residential_spaces + urbansim_zone.building.occupied_non_residential_spaces",
-        "total_spaces = urbansim_zone.building.is_residential * building.residential_units + numpy.logical_not(urbansim_zone.building.is_residential) * urbansim_zone.building.non_residential_sqft"
+        "total_spaces = urbansim_zone.building.is_residential * building.residential_units + numpy.logical_not(urbansim_zone.building.is_residential) * urbansim_zone.building.non_residential_sqft",
+        "developable_residential_units_capacity = clip_to_zero(building.residential_units_capacity - building.residential_units)",
+        "developable_non_residential_sqft_capacity = clip_to_zero(building.non_residential_sqft_capacity - building.non_residential_sqft)",
            ]

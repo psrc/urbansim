@@ -58,6 +58,7 @@ def probsample_replace(source_array, size, prob_array, return_indices=False):
 
     sample_prob = uniform(0, 1, size)
     sampled_index = searchsorted(cum_prob, sample_prob)
+    sampled_index = sampled_index.astype('int32')
     if return_indices:
         return sampled_index
     else:
@@ -345,8 +346,11 @@ def sample_choice(prob_array, method="MC"):
         raise RuntimeError, "prob_array must be a 2d array"
 
     rows, columns = prob_array.shape
-    if not ma.allclose(sum(prob_array, axis=1, dtype=float64), ones((rows,))):
-        raise RuntimeError, "prob_array must add up to 1 for each row"
+    sum_prob_by_col = sum(prob_array, axis=1, dtype=float64)
+    if not ma.allclose(sum_prob_by_col, ones((rows,))):
+        strange_rows = where(sum_prob_by_col != ones((rows,)))
+        raise RuntimeError, "prob_array must add up to 1 for each row. Abnormal rows: %s" % prob_array[strange_rows,:] 
+    
 
     if method.lower() == "mc":
         cum_prob = ncumsum(prob_array, axis=1)

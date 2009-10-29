@@ -5,6 +5,7 @@
 from opus_core.choice_model import ChoiceModel
 from opus_core.specified_coefficients import SpecifiedCoefficientsFor1Submodel
 from opus_core.variables.variable_name import VariableName
+from opus_core.datasets.interaction_dataset import InteractionDataset
 from numpy import indices, int16, array, ones, put, repeat, arange, zeros
 from numpy import float32, where, log, int8
 from opus_core.logger import logger
@@ -92,23 +93,47 @@ class LandCoverChangeModel(ChoiceModel):
             agent_set_year1.delete_one_attribute(new_submodel_string)
         return self.coefficients, results[1]
 
-    def get_choice_index_for_estimation(self, agent_set, agents_index=None,
-                                         agent_subset=None, submodels=[1]):
+    def create_interaction_dataset(self, agent_set, agents_index, config,
+                                         submodels=[1], **kwargs):
         # need to work on this - return indicies of filtered choices
-        nchoices = self.get_choice_set_size()
-        index = (-1*ones((agents_index.size, nchoices))).astype("int32")
-        self.selected_choice = zeros((agents_index.size,), dtype="int32")
-        for submodel in submodels:
-            if self.observations_mapping[submodel].size > 0:
-                eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
-                idx = self.choice_set.get_id_index(eqs)
-                for i in arange(idx.size):
-                    index[self.observations_mapping[submodel],i] = idx[i]
-                selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
-                                                             agents_index[self.observations_mapping[submodel]])
-                self.selected_choice[self.observations_mapping[submodel]] = \
-                       self.choice_set.get_id_index(selchoice)
-        return index
+        if config is not None and config.get("estimate", False):
+            nchoices = self.get_choice_set_size()
+            index = (-1*ones((agents_index.size, nchoices))).astype("int32")
+            self.chosen_choice = zeros((agents_index.size,), dtype="int32")
+            for submodel in submodels:
+                if self.observations_mapping[submodel].size > 0:
+                    eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
+                    idx = self.choice_set.get_id_index(eqs)
+                    for i in arange(idx.size):
+                        index[self.observations_mapping[submodel],i] = idx[i]
+                    selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
+                                                                 agents_index[self.observations_mapping[submodel]])
+                    self.chosen_choice[self.observations_mapping[submodel]] = \
+                           self.choice_set.get_id_index(selchoice)
+            interaction_dataset=InteractionDataset(dataset1=agent_set, dataset2=self.choice_set,
+                                                   index1=agents_index, index2=index)
+            self.model_interaction.interaction_dataset = interaction_dataset
+            self.model_interaction.set_chosen_choice(agents_index, self.chosen_choice)
+        return ChoiceModel.create_interaction_dataset(self, agent_set,
+                                                      agents_index, config, **kwargs)
+
+#    def get_choice_index_for_estimation(self, agent_set, agents_index=None,
+#                                         agent_subset=None, submodels=[1]):
+#        # need to work on this - return indicies of filtered choices
+#        nchoices = self.get_choice_set_size()
+#        index = (-1*ones((agents_index.size, nchoices))).astype("int32")
+#        self.chosen_choice = zeros((agents_index.size,), dtype="int32")
+#        for submodel in submodels:
+#            if self.observations_mapping[submodel].size > 0:
+#                eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
+#                idx = self.choice_set.get_id_index(eqs)
+#                for i in arange(idx.size):
+#                    index[self.observations_mapping[submodel],i] = idx[i]
+#                selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
+#                                                             agents_index[self.observations_mapping[submodel]])
+#                self.chosen_choice[self.observations_mapping[submodel]] = \
+#                       self.choice_set.get_id_index(selchoice)
+#        return index
 
     def get_calibration_constants(self, agent_set1, agent_set2, agents_index):
         if agents_index is None:

@@ -295,7 +295,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
         raise RuntimeError, "max iteration reached without convergence."
 
     def compute_prob_correlation(self, pij, ptij, phij, index, resources):
-        selected_choice_dummy = resources['selected_choice']
+        chosen_choice_dummy = resources['chosen_choice']
         indices = unique_values(index.ravel())
         correlation = None
         for j in indices:
@@ -303,7 +303,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
             pj = pij[w]
             ptj = ptij[w]
             phj = phij[w]
-            sj = selected_choice_dummy[w]
+            sj = chosen_choice_dummy[w]
             #import pdb; pdb.set_trace()
             cor = corr(pj, ptj, phj, sj)[([0,0,0,1,1,2],[1,2,3,2,3,3])][newaxis,:] #take the upper triangle
             if correlation is None:

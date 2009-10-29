@@ -92,10 +92,10 @@ class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCh
             DevelopmentProjectLocationChoiceModel.run(self, specification=specification, coefficients=coefficients, 
                                                       agent_set=agent_set, agents_index=new_index, **kwargs)
             
-    def determine_units_capacity(self, agent_set, agents_index):
+    def determine_capacity(self, agent_set, agents_index):
         """Filter the available capacity through the current large_area_id
         """
-        capacity = DevelopmentProjectLocationChoiceModel.determine_units_capacity(self, agent_set, agents_index)
+        capacity = DevelopmentProjectLocationChoiceModel.determine_capacity(self, agent_set, agents_index)
         is_large_area = self.choice_set.compute_variables(["%s.%s == %s" % (self.choice_set.get_dataset_name(), self.large_area_id_name, 
                                                             self.this_large_area)],
                                           dataset_pool=self.dataset_pool)

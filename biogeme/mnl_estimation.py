@@ -2,15 +2,15 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from NumPtr import getpointer
+from numpy import where, zeros, float64, float32, array
 from opus_core.estimation_procedure import EstimationProcedure
 from opus_core.logger import logger
 from opus_core.misc import ematch
-#import pdb
 import biogeme
-from NumPtr import getpointer
-from numpy import where, zeros, float64, float32, array
-import tempfile
 import os
+import tempfile
+#import pdb
 
 class mnl_estimation(EstimationProcedure):
     """
@@ -43,8 +43,8 @@ class mnl_estimation(EstimationProcedure):
 
 
 
-        choice_matrix = resources["selected_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
-        selected_choice = where(choice_matrix)[1] + 1
+        choice_matrix = resources["chosen_choice"] # matrix (nobs x alts) of 0's and 1's. 1 is on positions of chosen location.
+        chosen_choice = where(choice_matrix)[1] + 1
         # flatten data into 2d
         var_names = resources["specified_coefficients"].get_variable_names_from_alt()
 
@@ -63,7 +63,7 @@ class mnl_estimation(EstimationProcedure):
                 biogeme_var_names.append(var_names[index_of_non_constants[ivar]] + "_" + str(ialt+1))
                 data_for_biogeme[:,ivar*alts+ialt] = data[:,ialt, index_of_non_constants[ivar]]
 
-        data_for_biogeme[:, alts*nvars_without_const] = selected_choice
+        data_for_biogeme[:, alts*nvars_without_const] = chosen_choice
         a_ptr = getpointer(data_for_biogeme)
 
         #

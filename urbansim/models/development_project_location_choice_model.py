@@ -50,6 +50,10 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         logger.log_status("project size: %d" % (agent_set.get_attribute(agent_set.get_attribute_name()).sum()))
         LocationChoiceModel.run(self, *args, **kargs)
 
+    def get_sampling_weights(self, config, agent_set=None, agents_index=None):
+        weight_array, where_developable = self.get_weights_for_sampling_locations(agent_set, agents_index)
+        return weight_array
+    
     def get_weights_for_sampling_locations(self, agent_set, agents_index):
         where_developable = where(self.capacity)[0]
         weight_array = (ones((agents_index.size, where_developable.size), dtype=int8)).astype(bool8)
@@ -170,14 +174,14 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         """
         return argsort(movers.get_attribute(movers.parent.get_attribute_name()))[arange(movers.size()-1,-1,-1)]
 
-    def determine_units_capacity(self, agent_set, agents_index):
-        capacity = LocationChoiceModel.determine_units_capacity(self, agent_set, agents_index)
+    def determine_capacity(self, agent_set, agents_index):
+        capacity = LocationChoiceModel.determine_capacity(self, agent_set, agents_index)
         # subtract locations taken in previous chunks
         taken_locations = self.choice_set.sum_over_ids(agent_set.get_attribute(self.choice_set.get_id_name()[0]),
                                                        ones((agent_set.size(),)))
         return capacity - taken_locations
 
-    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2):
+    def apply_filter(self, filter, agent_set, agents_index, submodel=-2):
         """ apply filter comparing to mean project size by submodel instead of 0, by shifting self.filter
         """
         project_size_filter = None
@@ -196,7 +200,12 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
                 project_size_filter = self.choice_set.get_attribute(filter_name.get_alias()) - mean_project_size
             else:
                 project_size_filter = submodel_filter - mean_project_size
-        return LocationChoiceModel.apply_filter(self, project_size_filter, weights, agent_set, agents_index, submodel=submodel)
+                
+            return LocationChoiceModel.apply_filter(self, project_size_filter, agent_set, agents_index, submodel=submodel) 
+        else:
+            if has_attr(self, 'choice_index'):
+                return self.choice_index
+        return None 
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None,

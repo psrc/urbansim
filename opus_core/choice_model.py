@@ -17,12 +17,13 @@ from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import DebugPrinter
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.chunk_model import ChunkModel
+from opus_core.chunk_specification import ChunkSpecification
 from opus_core.class_factory import ClassFactory
 from opus_core.model import get_specification_for_estimation, prepare_specification_and_coefficients
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64, isnan, isinf, unique
+from numpy import int32, compress, float64, isnan, isinf, unique, newaxis, row_stack
 from numpy.random import permutation
 
 class ChoiceModel(ChunkModel):
@@ -93,11 +94,12 @@ class ChoiceModel(ChunkModel):
         self.choice_set = choice_set
         self.upc_sequence = UPCFactory().get_model(
             utilities=utilities, probabilities=probabilities, choices=choices, debuglevel=debuglevel)
+            
         self.sampler_class = SamplerFactory().get_sampler(sampler)
         if (sampler <> None) and (self.sampler_class == None):
             logger.log_warning("Error in loading sampler class. No sampling will be performed.")
         self.sampler_size=sampler_size
-        self.weights = None
+        
         self.submodel_string = submodel_string # which attribute determines submodels
         self.run_config = run_config
         if self.run_config == None:
@@ -130,6 +132,10 @@ class ChoiceModel(ChunkModel):
         self.debug.flag = debuglevel
         if run_config == None:
             run_config = Resources()
+        ## plug in default switches: 
+        ## whether to include_chosen_choice for sampler, 
+        ## whether it is called in estimate method 
+        run_config.merge_with_defaults({"include_chosen_choice":False, "estimate":False})
         self.run_config = run_config.merge_with_defaults(self.run_config)
 
         if agents_index==None:
@@ -156,28 +162,26 @@ class ChoiceModel(ChunkModel):
 
         if agents_index.size <= 0:
             return array([], dtype='int32')
-        agentsubset = DatasetSubset(agent_set, agents_index)
 
-        self.set_choice_set_size()  
-        index = self.get_choice_index(agent_set, agents_index, agentsubset)
+        self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         
-        logger.log_status("Choice set size: " + str(nchoices))
+        ## initial specified_coefficients with dummy values as we may need to get submodel information from it
+        ## recreated specified_coefficients when the sampling is done and choice_ids is known
+        #self.model_interaction.create_specified_coefficients(coefficients, specification, choice_ids=arange(nchoices)+1)
+        submodels = specification.get_distinct_submodels()
+        self.map_agents_to_submodels(submodels, self.submodel_string, agent_set, agents_index,
+                                      dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
         
-        if isinstance(index, ndarray):
-            if (index.size <= 0) or ((index.ndim > 1) and (index.shape[1]<=0)):
-                return zeros(agents_index.size, dtype="int32")
-        #create interaction set
-        self.model_interaction.create_interaction_datasets(agents_index, index)
-
+        self.create_interaction_datasets(agent_set, agents_index, self.run_config, submodels=submodels)
+        
+        index = self.model_interaction.get_choice_index()
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
         self.run_config.merge({"index":index})
 
-        submodels = self.model_interaction.get_submodels()
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
-        self.map_agents_to_submodels(submodels, self.submodel_string, agent_set, agents_index,
-                                      dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
         
         # simulate
         choice_indices = self.simulate_chunk()
@@ -205,18 +209,11 @@ class ChoiceModel(ChunkModel):
                 self.run_config.merge({"specified_coefficients": coef[submodel]})
                 coefficients = coef[submodel].get_coefficient_values()
                 data = self.get_all_data(submodel)
-                if where(isnan(data))[2].size > 0:
-                    index_var = unique(where(isnan(data))[2])
-                    raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[index_var]
-                if where(isinf(data))[2].size > 0:
-                    index_var = unique(where(isinf(data))[2])
-                    raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[index_var]
-
                 nan_index = where(isnan(data))[2]
                 inf_index = where(isinf(data))[2]
                 if nan_index.size > 0:
                     nan_var_index = unique(nan_index)
-                    raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
+                    raise ValueError, "NaN(Not a Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
                 if inf_index.size > 0:
                     inf_var_index = unique(inf_index)
                     raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[inf_var_index]
@@ -273,17 +270,22 @@ class ChoiceModel(ChunkModel):
         self.debug.flag = debuglevel
         if estimate_config == None:
             estimate_config = Resources()
+            
+        ## plug in default switches: 
+        ## whether to include_chosen_choice for sampler, 
+        ## whether it is called in estimate method 
+        estimate_config.merge_with_defaults({"include_chosen_choice":True, "estimate":True})
         self.estimate_config = estimate_config.merge_with_defaults(self.estimate_config)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
 
         self.procedure=procedure
         if self.procedure == None:
-            self.procedure = self.estimate_config.get("estimation", None)
+            self.procedure = estimate_config.get("estimation", None)
         self.procedure = ModelComponentCreator().get_model_component(self.procedure)
         if self.procedure == None:
             raise StandardError, "No estimation procedure given, or error when loading the corresponding module."
-
+        
         if agent_set.size()<=0:
             agent_set.get_id_attribute()
 
@@ -298,8 +300,6 @@ class ChoiceModel(ChunkModel):
             
         self.model_interaction.set_agent_set(agent_set)
 
-        estimation_set = DatasetSubset(agent_set, agents_index)
-
         self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
 
@@ -311,52 +311,67 @@ class ChoiceModel(ChunkModel):
 
         if estimation_size_agents < 1.0:
             self.debug.print_debug("Sampling agents for estimation ...",3)
-            agents_for_estimation_idx = sample_noreplace(arange(estimation_set.size()),
-                                                         int(estimation_set.size()*estimation_size_agents))
+            agents_index_for_estimation = sample_noreplace(agents_index,
+                                                         int(agents_index.size*estimation_size_agents))
         else:
-            agents_for_estimation_idx = arange(estimation_set.size())
+            agents_index_for_estimation = agents_index
 
-        if agents_index is not None:
-            agents_for_estimation_idx = agents_index[agents_for_estimation_idx]
-
-        self.debug.print_debug("Number of agents for estimation: " + str(agents_for_estimation_idx.size),2)
-        if agents_for_estimation_idx.size <= 0:
+        self.debug.print_debug("Number of agents for estimation: " + str(agents_index_for_estimation.size),2)
+        if agents_index_for_estimation.size <= 0:
             self.debug.print_debug("Nothing to be done.",4)
             return None
 
         submodels = specification.get_distinct_submodels()
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, agent_set,
-                                      agents_for_estimation_idx,
+                                      agents_index_for_estimation,
                                       dataset_pool = self.dataset_pool,
                                       resources = Resources({"debug": self.debug}))
-                
-        index, self.selected_choice = \
-            self.get_choice_index_for_estimation_and_selected_choice(agent_set,
-                        agents_for_estimation_idx, estimation_set, submodels)
-
-        logger.log_status("Choice set size: " + str(nchoices))
-
-        # create interaction set
-        self.model_interaction.create_interaction_datasets(agents_for_estimation_idx, index)
         
-        self.estimate_config.merge({"index":index})
+        self.create_interaction_datasets(agent_set, agents_index_for_estimation, estimate_config, submodels=submodels)
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        #self.model_interaction.set_chosen_choice(agents_index_for_estimation)
+        self.model_interaction.set_chosen_choice_if_necessary(agents_index=agents_index_for_estimation)
+        index = self.model_interaction.get_choice_index()
         self.coefficients = create_coefficient_from_specification(specification)
-        self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])        
+        self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])
         #run estimation
         result = self.estimate_step()
-        if "selected_choice" in self.estimate_config.keys():
-            del self.estimate_config["selected_choice"]
-        del self.estimate_config["index"]
         return (self.coefficients, result)
 
+    def create_interaction_datasets(self, agent_set, agents_index, config, **kwargs):
+        """create interaction dataset agent_x_choice without sampling of alternatives
+        config can be used to pass extra parameters to the sampler
+        """
+ 
+        if self.sampler_class is None:
+            self.model_interaction.create_interaction_datasets(agents_index, arange(self.choice_set_size))
+        else:
+            nchoices = self.get_number_of_elemental_alternatives()
+            if nchoices == self.choice_set.size():  
+                #sampler class specified, but the sample size equals the size of choice set
+                self.model_interaction.create_interaction_datasets(agents_index, arange(self.choice_set_size))
+            else:
+                sampling_weights = self.get_sampling_weights(config, agent_set, agents_index)
+                choice_index = None
+                chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
+                nchunks = chunk_specification.nchunks(agents_index)
+                chunksize = chunk_specification.chunk_size(agents_index)
+                interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index, 
+                                                                        choice_index, nchoices,
+                                                                        weights=sampling_weights,
+                                                                        config=config,
+                                                                        nchunks=nchunks, chunksize=chunksize)
+                self.update_choice_set_size(interaction_dataset.get_reduced_m())
+                self.model_interaction.interaction_dataset = interaction_dataset
+             
     def estimate_step(self):
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
         self.model_interaction.compute_variables()
         coef = {}
         result = {}
-        index = self.estimate_config["index"]
+        #index = self.estimate_config["index"]
         self.debug.print_debug("Estimate ...",4)
         for submodel in self.model_interaction.get_submodels():
             logger.log_status("submodel: %s" % submodel)
@@ -365,11 +380,12 @@ class ChoiceModel(ChunkModel):
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)            
             self.coefficient_names[submodel] = self.model_interaction.get_coefficient_names(submodel)
             if self.model_interaction.is_there_data(submodel):   # observations for this submodel available
-                if index <> None:
-                    self.estimate_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
+                self.estimate_config['index'] = self.model_interaction.get_choice_index_for_submodel(submodel)
+                #if index <> None:
+                    #    self.estimate_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
                 # remove not used choices
-                is_submodel_selected_choice = self.model_interaction.get_selected_choice_for_submodel_and_update_data(submodel)
-                self.estimate_config["selected_choice"] = is_submodel_selected_choice
+                is_submodel_chosen_choice = self.model_interaction.get_chosen_choice_for_submodel_and_update_data(submodel)
+                self.estimate_config["chosen_choice"] = is_submodel_chosen_choice
                 self.estimate_config.merge({"coefficient_names":self.coefficient_names[submodel]})
                 self.estimate_config.merge({"specified_coefficients": coef[submodel]})
                 self.estimate_config.merge({"variable_names": self.model_interaction.get_variable_names(submodel)})
@@ -391,10 +407,10 @@ class ChoiceModel(ChunkModel):
                 coef[submodel].fill_beta_from_beta_alt()
 
                 if self.estimate_config.get("export_estimation_data", False):
-                    self.export_estimation_data(submodel, is_submodel_selected_choice, self.get_all_data(submodel),
+                    self.export_estimation_data(submodel, is_submodel_chosen_choice, self.get_all_data(submodel),
                                                 coef[submodel].get_coefficient_names_from_alt(),
-                                                self.estimate_config.get("estimation_data_file_name", 'estimation_data.tab'),
-                                                self.estimate_config.get("use_biogeme_data_format", False))
+                                                self.estimate_config["estimation_data_file_name"],
+                                                self.estimate_config["use_biogeme_data_format"])
 
             self.coefficients.fill_coefficients(coef)
             self.estimate_config["coefficient_names"]=None
@@ -405,13 +421,94 @@ class ChoiceModel(ChunkModel):
         if self.model_interaction.is_there_data(submodel):
             return self.procedure.run(data, upc_sequence=self.upc_sequence, resources=self.estimate_config)
         return {}
+
+    def get_sampling_weights(self, config, agent_set=None, agents_index=None):
+        """Return weights_string in the config
+        which is the value for key
+        'weights_for_estimation_string' or 'weights_for_simulation_string'.
+        Can be overwritten in child class and return an 1d or 2d array
+
+        If it is the equal sign (i.e. '='), all choices have equal weights.
         
-    def export_estimation_data(self, submodel, is_selected_choice, data, coef_names, file_name, use_biogeme_data_format=False):
-        from numpy import concatenate, newaxis, reshape, repeat
+        """
+        weights_string = None
+        
+        if config is not None:
+            if config.get('estimate', False): #if we are in estimate()
+                weights_string = config.get("weights_for_estimation_string", None)
+            else:  # otherwise
+                weights_string = config.get("weights_for_simulation_string", None)
+                
+            if weights_string == '=':
+                return ones(self.choice_set.size(), dtype="int32")
+        
+        return weights_string
+    
+    def sample_alternatives_by_chunk(self, agent_set, agents_index, 
+                                     choice_index, sample_size,
+                                     weights=None, 
+                                     with_replacement=False, 
+                                     include_chosen_choice=None,
+                                     config=None, 
+                                     nchunks=1, chunksize=None):
+        """Return interaction data with sampled alternatives (agents_index * sample_size)
+        
+        Do it in 'nchunks' iterations, and stack the results from each chunk
+        
+        """
+        if not chunksize:
+            chunksize=agents_index.size
+        index2 = -1 + zeros((agents_index.size, sample_size), dtype="int32") 
+        attributes = {}
+        for ichunk in range(nchunks):
+            index_for_ichunk = self.get_index_for_chunk(agents_index.size, ichunk, chunksize)
+            agents_index_in_ichunk = agents_index[index_for_ichunk]
+            interaction_dataset = self.sampler_class.run(agent_set, self.choice_set, 
+                                                         index1=agents_index_in_ichunk,
+                                                         index2=choice_index,
+                                                         sample_size=sample_size,
+                                                         weight=weights, 
+                                                         with_replacement=with_replacement,
+                                                         include_chosen_choice=include_chosen_choice,
+                                                         resources=config,
+                                                         dataset_pool=self.dataset_pool
+                                                         )
+            if nchunks>1:
+                index2[index_for_ichunk,:] = interaction_dataset.index2
+                for name in interaction_dataset.get_known_attribute_names():
+                    attr_val = interaction_dataset.get_attribute(name)
+                    if not attributes.has_key(name):
+                        attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
+                    attributes[name][index_for_ichunk,:] = attr_val
+                    
+        if nchunks>1:
+            interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
+                                                                                interaction_dataset.dataset2, 
+                                                                                index1=agents_index, 
+                                                                                index2=index2)
+            for name in attributes.keys():
+                interaction_dataset.add_attribute(attributes[name], name)
+
+        return interaction_dataset
+
+    def get_agents_for_chunk(self, agents_index, ichunk, chunksize):
+        """Return ichunk with size chunksize in agents_index,
+        return agents_index if chunksize >= agents_index.size
+        """
+        max_index = agents_index.size
+        return agents_index[self.get_index_for_chunk(max_index, ichunk, chunksize)]
+
+    def get_index_for_chunk(self, max_index, ichunk, chunksize):
+        """
+        """
+        return arange(ichunk*chunksize, min((ichunk+1)*chunksize, max_index))
+
+
+    def export_estimation_data(self, submodel, is_chosen_choice, data, coef_names, file_name, use_biogeme_data_format=False):
+        from numpy import concatenate, newaxis, reshape
         import os
         delimiter = '\t'
         if use_biogeme_data_format:
-            # there will be one row per observation
             nobs, alts, nvars = data.shape
 
             avs = ones(shape=(nobs,alts,1))  # if the choice is available, set to all ones
@@ -426,7 +523,7 @@ class ChoiceModel(ChunkModel):
                 iid = argsort(stratum_id, axis=1)
                 for i in range(data.shape[0]):  # re-arrange data based on stratum id
                     data[i,...] = data[i,...][iid[i,:,0]]
-                    is_selected_choice[i,:] = is_selected_choice[i,:][iid[i,:,0]]
+                    is_chosen_choice[i,:] = is_chosen_choice[i,:][iid[i,:,0]]
 
                 coef_names = coef_names + ['stratum', 'sampling_prob']
                 nvars += 2
@@ -434,7 +531,7 @@ class ChoiceModel(ChunkModel):
             except:
                 pass
 
-            selected_choice = where(is_selected_choice)[1] + 1
+            chosen_choice = where(is_chosen_choice)[1] + 1
             index_of_non_constants = []
             for i in range(nvars):
                 if not (coef_names[i] == "constant"):
@@ -451,7 +548,7 @@ class ChoiceModel(ChunkModel):
                     biogeme_var_names.append(coef_names[index_of_non_constants[ivar]] + "_" + str(ialt+1))
                     data_for_biogeme[:,1+ivar*alts+ialt] = data[:,ialt, index_of_non_constants[ivar]]
 
-            data_for_biogeme[:, 0] = selected_choice
+            data_for_biogeme[:, 0] = chosen_choice
             ids = reshape(arange(nobs)+1, (nobs,1))
             data_for_biogeme = concatenate((ids, data_for_biogeme),axis=1)
             data = data_for_biogeme
@@ -459,10 +556,9 @@ class ChoiceModel(ChunkModel):
             header = ['ID', 'choice'] + biogeme_var_names
             nrows, ncols = data.shape
         else:
-            # there will be as many rows per observations as there are alternatives
             nobs, alts, nvars = data.shape
-            ids = reshape(repeat(arange(nobs)+1, alts), (nobs,alts,1))
-            data = concatenate((ids, is_selected_choice[...,newaxis], data),axis=2)
+            ids = reshape(arange(nobs)+1, (nobs,1,1))
+            data = concatenate((ids, is_chosen_choice[...,newaxis], data),axis=2)
             nvars += 2
             nrows = nobs * alts
             header = ['ID', 'choice'] + coef_names.tolist()
@@ -482,98 +578,43 @@ class ChoiceModel(ChunkModel):
 
     def get_agents_order(self, agents):
         return permutation(agents.size())
-
+    
     def set_choice_set_size(self):
-        if self.sampler_class is not None and self.sampler_size is None:
-            logger.log_warning("'sample_size' is not given. Alternatives will not be sampled.")
-            self.choice_set_size = self.choice_set.size()
-        if self.sampler_size is None:
-            self.sampler_size = self.choice_set.size()
-        self.choice_set_size =  min(self.sampler_size, self.choice_set.size())
+        """If "sample_size" is specified in resources, it is considered as the choice set size. Otherwise
+        the value of resources entry "sample_proportion_locations" is considered as determining the size of 
+        the choice set.
+        """
+        if self.sampler_class is not None:
+            pchoices =  self.run_config.get("sample_proportion_locations", None)
+            nchoices =  self.run_config.get("sample_size_locations", None)
+            if nchoices == None:
+                if pchoices == None:
+                    logger.log_warning("Neither 'sample_proportion_locations' nor 'sample_size_locations' " +
+                                       "given. Choice set will not be sampled.")
+                    nchoices = self.choice_set.size()
+                else:
+                    nchoices = int(pchoices*self.choice_set.size())
+        else:
+            nchoices = self.choice_set.size()
+        self.choice_set_size =  min(nchoices, self.choice_set.size())
+
+    def update_choice_set_size(self, nchoices):
+        """
+        update self.choice_set_size if necessary
+        when the sampler class is stratified_sampler that won't be able to know 
+        the accurate number of choice beforehand, this method update the choice
+        set size after the sampler_class is run.
+        """
+        self.choice_set_size = nchoices
+
+    #def set_choice_set_size(self):
+        #self.choice_set_size = self.choice_set.size()
         
     def get_choice_set_size(self):
         return self.choice_set_size
 
     def get_number_of_elemental_alternatives(self):
         return self.get_choice_set_size()
-    
-    def get_choice_index(self, agent_set=None, agents_index=None, agent_subset=None):
-        """ Return index of (possibly sampled) alternatives."""
-        self.weights = None
-        nchoices = self.get_number_of_elemental_alternatives()
-        if nchoices == self.choice_set.size():
-            return None            
-        self.weights, alt_index = self.get_weights_for_sampling_alternatives(agent_set, agents_index)
-        logger.log_status("Sampling alternatives ...")
-        # the following model component must return a 2D array of sampled alternatives per agent
-        try:
-            index, chosen_choice = self.run_sampler_class(agent_subset, index2=alt_index, sample_size=nchoices,
-                                                          weight=self.weights, resources=self.run_config)
-            return index
-        except Exception, e:
-            logger.log_warning("Problem with sampling alternatives.\n%s" % e)
-            return None
-
-    def run_sampler_class(self, agent_set, index1=None, index2=None, sample_size=None, weight=None, 
-                          include_chosen_choice=False, resources=None):
-        return self.sampler_class.run(agent_set, self.choice_set, index1=index1, index2=index2, sample_size=sample_size,
-                                      weight=weight, include_chosen_choice=include_chosen_choice, resources=resources)
-        
-        
-    def get_choice_index_for_estimation_and_selected_choice(self, agent_set=None,
-                                                            agents_index=None, agent_subset=None,
-                                                            submodels=[]):
-        """ Performs sampling if required. Return tuple of index of choices to be considered for each agent that will be passed
-        to the interaction, and index of selected choices (within the whole choice_set).
-        """
-        self.weights = None
-        nchoices = self.get_number_of_elemental_alternatives()
-        if nchoices == self.choice_set.size() or self.sampler_class is None:
-            self.model_interaction.set_selected_choice(agents_index)
-            return (None, self.model_interaction.get_selected_choice())
-        logger.log_status("Sampling alternatives for estimation ...")
-        selected_choice = zeros((agents_index.size,), dtype='int32')
-        if (len(submodels) > 1) or ((len(submodels) > 0) and (self.observations_mapping[submodels[0]].size < agents_index.size)):
-            index = zeros((agents_index.size, nchoices), dtype='int32')
-            for submodel in submodels:
-                nagents_in_submodel = self.observations_mapping[submodel].size
-                if nagents_in_submodel <= 0:
-                    continue
-                alt_index, index1, chosen_choice = self.sample_and_choose_choice(agent_set, self.observations_mapping[submodel], nchoices)
-                index[self.observations_mapping[submodel], :] = index1
-                selected_choice[self.observations_mapping[submodel]] = chosen_choice.astype(selected_choice.dtype)
-        else:
-            location_index, index, selected_choice = self.sample_and_choose_choice(agent_set, agents_index, nchoices)
-        self.model_interaction.set_given_selected_choice(selected_choice)     
-        return (index, selected_choice)
-
-    def sample_and_choose_choice(self, agent_set, agents_index, nchoices):
-        self.weights, alt_index = self.get_weights_for_sampling_alternatives_for_estimation(agent_set, agents_index)
-        index1, chosen_choice = self.run_sampler_class(agent_set, index1=agents_index, index2=alt_index, sample_size=nchoices,
-                                                       weight=self.weights, include_chosen_choice=True, 
-                                                       resources=self.estimate_config)
-        return (alt_index, index1, chosen_choice)
-
-    def get_weights_for_sampling_alternatives(self, agent_set=None, agents_index=None):
-        """Return a tuple where the first element is as array of weights and the second is an index of alternatives which
-        the weight array corresponds to. The array of weights can be a 2D array (if weights are agent specific).
-        Weights can be determined by a variable name given in 'weights_for_simulation_string' in run_config.
-        If it is not given, the weights are equal.
-        """
-        weight_string = self.run_config.get("weights_for_simulation_string", None)
-        if weight_string is None:
-            return (None, None)
-        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
-        weight_name = VariableName(weight_string)
-        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
-    
-    def get_weights_for_sampling_alternatives_for_estimation (self, agent_set=None, agents_index=None):
-        weight_string = self.estimate_config.get("weights_for_estimation_string", None)
-        if weight_string == None:
-            return (None, None)
-        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
-        weight_name = VariableName(weight_string)
-        return (self.choice_set.get_attribute(weight_name.get_alias()), None)
 
     def plot_histogram(self, main="", file=None):
         """Plots histogram of choices and probabilities for the last chunk."""
@@ -662,14 +703,14 @@ class ModelInteraction:
         self.interaction_resources = None
         self.data = {}
         self.specified_coefficients = None
-        self.selected_choice = None
+        self.chosen_choice = None
         self.submodel_coefficients = {}
         
     def set_agent_set(self, agent_set):
         self.agent_set = agent_set
         factory = DatasetFactory()
         self.interaction_module, self.interaction_class_name = \
-                factory.compose_interaction_dataset_name(self.agent_set.get_dataset_name(),
+            factory.compose_interaction_dataset_name(self.agent_set.get_dataset_name(),
                                                          self.choice_set.get_dataset_name())
 
     def create_interaction_datasets(self, agents_index, choice_set_index):
@@ -681,13 +722,21 @@ class ModelInteraction:
         self.interaction_resources = Resources({"debug":self.model.debug})
         try:
             self.interaction_dataset = ClassFactory().get_class(
-                                self.interaction_package+"."+self.interaction_module,
-                                class_name=self.interaction_class_name,
-                                    arguments={"dataset1":self.agent_set, "dataset2":self.choice_set,
-                                               "index1":agents_index, "index2":choice_set_index})
+                            self.interaction_package+"."+self.interaction_module,
+                            class_name=self.interaction_class_name,
+                                arguments={"dataset1":self.agent_set, "dataset2":self.choice_set,
+                                           "index1":agents_index, "index2":choice_set_index})
         except ImportError:
-                self.interaction_dataset = InteractionDataset(dataset1=self.agent_set, dataset2=self.choice_set,
+            self.interaction_dataset = InteractionDataset(dataset1=self.agent_set, dataset2=self.choice_set,
                                               index1=agents_index, index2=choice_set_index, debug=self.model.debug)
+
+    def get_choice_index(self):
+            return self.interaction_dataset.get_2d_index()
+
+    def get_choice_index_for_submodel(self, submodel):
+        index = self.get_choice_index()
+        if index is not None:
+            return take(index, self.model.observations_mapping[submodel], axis=0)
 
     def compute_variables(self, variables=None):
         if variables is not None:
@@ -712,9 +761,9 @@ class ModelInteraction:
     def prepare_data_for_estimation(self, submodel):
         self.submodel_coefficients[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients, submodel)
         self.data[submodel] = self.interaction_dataset.create_logit_data_from_beta_alt(
-                                                                      self.submodel_coefficients[submodel], 
-                                                                      index=self.model.observations_mapping[submodel])
-
+                                                                  self.submodel_coefficients[submodel], 
+                                                                  index=self.model.observations_mapping[submodel])
+            
     def get_submodel_coefficients(self, submodel):
         return self.submodel_coefficients[submodel]
         
@@ -746,39 +795,59 @@ class ModelInteraction:
     
     def get_submodels(self):
         return self.specified_coefficients.get_submodels()
-        
-    def set_selected_choice(self, agents_index):
-        self.selected_choice = self.choice_set.get_id_index(id=
-                                        self.agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
-                                        agents_index))
-            
-    def set_given_selected_choice(self, selected_choice):
-        self.selected_choice = selected_choice
-        
-    def get_selected_choice(self):
-        return self.selected_choice
-    
-    def get_selected_choice_2d(self):
-        selected_choice_2d = zeros((self.selected_choice.size, self.specified_coefficients.nequations()), 
-                                          dtype="int32")
-        selected_choice_2d[arange(self.selected_choice.size), self.selected_choice] = 1
-        return selected_choice_2d
 
-    def get_selected_choice_for_submodel_and_update_data(self, submodel):
-        selected_choice_2d = self.get_selected_choice_2d()
-       
-        is_submodel_selected_choice = take (selected_choice_2d, indices=self.model.observations_mapping[submodel],
+    def set_chosen_choice_if_necessary(self, agents_index=None, chosen_choice=None):
+        if 'chosen_choice' not in self.interaction_dataset.get_known_attribute_names():
+            self.set_chosen_choice(agents_index=agents_index, chosen_choice=chosen_choice)
+        else:
+            self.chosen_choice = self.get_chosen_choice_index()
+            
+    def set_chosen_choice(self, agents_index=None, chosen_choice=None):
+        if chosen_choice is None: 
+            if agents_index is None:
+                raise ValueError, "Either agents_index or chosen_choice must be specified"
+            else: 
+                chosen_choice = self.choice_set.try_get_id_index(id=
+                                                                 self.agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
+                                                                                                       agents_index)
+                                                                 )            
+        if chosen_choice.ndim==1:
+            data = (self.get_choice_index() - chosen_choice[:, newaxis]) == 0
+        elif chosen_choice.ndim==2:
+            data = chosen_choice
+        assert data.shape == self.get_choice_index().shape
+        self.interaction_dataset.add_attribute(data=data,
+                                               name="chosen_choice")
+        
+        self.chosen_choice = self.get_chosen_choice_index()
+            
+    def get_chosen_choice_index(self):
+        if 'chosen_choice' in self.interaction_dataset.get_known_attribute_names():
+            chosen_choice_index = self.get_choice_index()[self.interaction_dataset.get_attribute('chosen_choice')]
+
+        return chosen_choice_index
+    
+    def get_chosen_choice(self):
+        if "chosen_choice" in self.interaction_dataset.get_known_attribute_names():
+            chosen_choice = self.interaction_dataset.get_attribute("chosen_choice")
+
+        return chosen_choice
+
+    def get_chosen_choice_for_submodel_and_update_data(self, submodel):
+        chosen_choice = self.get_chosen_choice()
+        is_submodel_chosen_choice = take(chosen_choice, indices=self.model.observations_mapping[submodel],
                                                                                             axis=0)
-        # remove not used choices
-        is_submodel_selected_choice = take (is_submodel_selected_choice, 
+        # remove choices not being chosen by any agents
+        is_submodel_chosen_choice = take(is_submodel_chosen_choice, 
                                                indices=self.submodel_coefficients[submodel].get_equations_index(), 
                                                axis=1)
-        sumchoice = is_submodel_selected_choice.sum(axis=1, dtype=int32)
+        sumchoice = is_submodel_chosen_choice.sum(axis=1, dtype=int32)
         where_not_remove = where(sumchoice == 0, False, True)
         if False in where_not_remove:
-            is_submodel_selected_choice = compress(where_not_remove, is_submodel_selected_choice, axis=0)
+            is_submodel_chosen_choice = compress(where_not_remove, is_submodel_chosen_choice, axis=0)
             self.remove_rows_from_data(where_not_remove, submodel)
-        return is_submodel_selected_choice
+
+        return is_submodel_chosen_choice
     
     def get_coefficient_names(self, submodel):
         return self.submodel_coefficients[submodel].get_coefficient_names_from_alt()
