@@ -203,7 +203,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
                 
             return LocationChoiceModel.apply_filter(self, project_size_filter, agent_set, agents_index, submodel=submodel) 
         else:
-            if has_attr(self, 'choice_index'):
+            if hasattr(self, 'choice_index'):
                 return self.choice_index
         return None 
 
