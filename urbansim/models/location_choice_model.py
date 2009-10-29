@@ -129,7 +129,10 @@ class LocationChoiceModel(ChoiceModel):
             
         ## capacity may need to be re-computed for every chunk
         if self.compute_capacity_flag:
-            self.capacity = ma.filled(self.determine_capacity(self.run_config.get("capacity_string", [])), 0.0)
+            self.capacity = ma.filled(self.determine_capacity(capacity_string=self.run_config.get("capacity_string", None), 
+                                                              agent_set=agent_set, 
+                                                              agents_index=agents_index), 
+                                      0.0)
             if self.capacity is not None:
                 logger.log_status("Available capacity: %s units." % self.capacity.sum())
         self.run_config.merge({"capacity":self.capacity})
@@ -182,14 +185,16 @@ class LocationChoiceModel(ChoiceModel):
         capacity_for_estimation = None
         if self.estimate_config.get("compute_capacity_flag", False):
             capacity_string_for_estimation = self.estimate_config.get("capacity_string", None)
-            capacity_for_estimation = self.determine_capacity(agent_set=agent_set, agents_index=agents_index, capacity_string=capacity_string_for_estimation)
+            capacity_for_estimation = self.determine_capacity(capacity_string=capacity_string_for_estimation, 
+                                                              agent_set=agent_set, 
+                                                              agents_index=agents_index)
 
         self.estimate_config.merge({"capacity":capacity_for_estimation})
         return ChoiceModel.estimate(self,specification, agent_set,
                                     agents_index, procedure, estimate_config=self.estimate_config, 
                                     debuglevel=debuglevel)
 
-    def determine_capacity(self, capacity_string=None, *args, **kwargs):
+    def determine_capacity(self, capacity_string=None, **kwargs):
         """Return capacity for each location.
         Is there any case where capacity depends on agent_set?
         """

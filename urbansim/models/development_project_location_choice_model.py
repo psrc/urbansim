@@ -174,8 +174,8 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         """
         return argsort(movers.get_attribute(movers.parent.get_attribute_name()))[arange(movers.size()-1,-1,-1)]
 
-    def determine_capacity(self, agent_set, agents_index):
-        capacity = LocationChoiceModel.determine_capacity(self, agent_set, agents_index)
+    def determine_capacity(self, capacity_string=None, agent_set=None, **kwargs):
+        capacity = LocationChoiceModel.determine_capacity(self, capacity_string=capacity_string, agent_set=agent_set, **kwargs)
         # subtract locations taken in previous chunks
         taken_locations = self.choice_set.sum_over_ids(agent_set.get_attribute(self.choice_set.get_id_name()[0]),
                                                        ones((agent_set.size(),)))
