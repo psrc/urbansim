@@ -34,10 +34,13 @@ class MonteCarloAssignmentModel(Model):
         for id1 in unique_ids:
             individual_of_id1 = where(individual_id1==id1)[0]
             n = individual_of_id1.size
+            logger.log_status("Processing %s %s: %s individuals" % (id_name1, id1, n) )
             if n > 0:
                 fractions = fraction_dataset.get_attribute(fraction_attribute_name)[fraction_id1==id1]
                 id2 = fraction_dataset.get_attribute(id_name2)[fraction_id1==id1]
-    
+                ## ignore households in geography with sum of fractions less than 1.0e-6
+                if fractions.sum() < 1.0e-3:
+                    continue
                 fractions_cumsum = ncumsum(fractions)
                 R = random(n)
                 index = searchsorted(fractions_cumsum, R)
