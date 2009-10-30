@@ -352,7 +352,7 @@ class ChoiceModel(ChunkModel):
                 #sampler class specified, but the sample size equals the size of choice set
                 self.model_interaction.create_interaction_datasets(agents_index, arange(self.choice_set_size))
             else:
-                sampling_weights = self.get_sampling_weights(config, agent_set, agents_index)
+                sampling_weights = self.get_sampling_weights(config, agent_set=agent_set, agents_index=agents_index)
                 choice_index = None
                 chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
                 nchunks = chunk_specification.nchunks(agents_index)
@@ -422,7 +422,7 @@ class ChoiceModel(ChunkModel):
             return self.procedure.run(data, upc_sequence=self.upc_sequence, resources=self.estimate_config)
         return {}
 
-    def get_sampling_weights(self, config, agent_set=None, agents_index=None):
+    def get_sampling_weights(self, config, agent_set=None, agents_index=None, **kwargs):
         """Return weights_string in the config
         which is the value for key
         'weights_for_estimation_string' or 'weights_for_simulation_string'.
@@ -441,7 +441,7 @@ class ChoiceModel(ChunkModel):
                 
             if weights_string == '=':
                 return ones(self.choice_set.size(), dtype="int32")
-        
+          
         return weights_string
     
     def sample_alternatives_by_chunk(self, agent_set, agents_index, 

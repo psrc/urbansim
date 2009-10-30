@@ -142,9 +142,9 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         #logger.log_status("Buildings size: %d" % (agent_set.get_attribute_by_index(self.units_full_name).sum()))
         return AgentLocationChoiceModelMember.run(self, *args, **kargs)
 
-    def get_sampling_weights(self, agent_set, agents_index):
-        where_developable = where(AgentLocationChoiceModelMember.apply_filter(self, self.filter, None, agent_set,
-                                                                              agents_index))[0]
+    def get_sampling_weights(self, config, agent_set=None, agents_index=None, **kwargs):
+        where_developable = AgentLocationChoiceModelMember.apply_filter(self, self.filter, None, agent_set,
+                                                                        agents_index)
         if self.developable_maximum_unit_variable:
             varlist = [self.developable_maximum_unit_variable]
         else:
@@ -190,14 +190,17 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         weight_array = take(weight_array, keep, axis=1)
         if where_developable.size <= 0:
             logger.log_warning("No developable locations available.")
-        return (weight_array, where_developable)
+            
+        self.filter_index = where_developable
+         
+        return weight_array
 
-    def apply_filter(self, filter, weights, *args, **kwargs):
-        """Do nothing since filter was already applied get_weights_for_sampling_locations."""
-        if weights is not None:
-            return weights
-        else:
-            return ones(self.choice_set.size())
+#    def apply_filter(self, filter, agent_set=None, agents_index=None, **kwargs):
+#        """Do nothing since filter was already applied get_weights_for_sampling_locations."""
+#        if weights is not None:
+#            return weights
+#        else:
+#            return ones(self.choice_set.size())
 
     def get_agents_order(self, movers):
         """Sort in descending order according to the size in order to locate larger agents first.

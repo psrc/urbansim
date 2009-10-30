@@ -50,11 +50,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         logger.log_status("project size: %d" % (agent_set.get_attribute(agent_set.get_attribute_name()).sum()))
         LocationChoiceModel.run(self, *args, **kargs)
 
-    def get_sampling_weights(self, config, agent_set=None, agents_index=None):
-        weight_array, where_developable = self.get_weights_for_sampling_locations(agent_set, agents_index)
-        return weight_array
-    
-    def get_weights_for_sampling_locations(self, agent_set, agents_index):
+    def get_sampling_weights(self, config, agent_set=None, agents_index=None, **kwargs):
         where_developable = where(self.capacity)[0]
         weight_array = (ones((agents_index.size, where_developable.size), dtype=int8)).astype(bool8)
         varlist = [self.developable_maximum_unit_full_name]
@@ -106,7 +102,10 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         weight_array = take(weight_array, keep, axis=1)
         if where_developable.size <= 0:
             logger().log_warning("No developable locations available.")
-        return (weight_array, where_developable)
+            
+        self.filter_index = where_developable  ##pass filter to apply_filter
+
+        return weight_array
 
 #    def get_probability_array_for_estimation_sampling_locations(self, location_set=None, \
 #                    agent_set=None, agents_index=None, data_objects=None, resources=None):
@@ -201,11 +200,10 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
             else:
                 project_size_filter = submodel_filter - mean_project_size
                 
-            return LocationChoiceModel.apply_filter(self, project_size_filter, agent_set, agents_index, submodel=submodel) 
-        else:
-            if hasattr(self, 'choice_index'):
-                return self.choice_index
-        return None 
+        return LocationChoiceModel.apply_filter(self, project_size_filter, 
+                                                        agent_set=agent_set, 
+                                                        agents_index=agents_index, 
+                                                        submodel=submodel)
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None,

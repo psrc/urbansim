@@ -24,9 +24,10 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
         for i in range(building_use_set.size()):
             self.filter_for_submodels[building_use_ids[i]] = VariableName("parcel.%s_possible" % building_use_prefix[i].lower())
             
-    def get_weights_for_sampling_locations(self, agent_set, agents_index):
-        weight_array, where_developable = UrbansimBuildingLocationChoiceModel.get_weights_for_sampling_locations(
-                                                                                 self, agent_set, agents_index)
+    def get_sampling_weights(self, config, agent_set=None, **kwargs):
+        weight_array, where_developable = UrbansimBuildingLocationChoiceModel.get_sampling_weights(self, config, 
+                                                                                                   agent_set=agent_set, 
+                                                                                                   **kwargs)
         # multiply by filter for submodels
         building_use_ids = agent_set.get_attribute_by_index('building_use_id', agents_index)
         for submodel, filter_variable in self.filter_for_submodels.iteritems():
@@ -34,14 +35,15 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
                 values = self.choice_set.get_attribute(filter_variable)[where_developable].astype("bool8")
                 index = where(building_use_ids == submodel)[0]
                 weight_array[index, :] = weight_array[index, :] * values
-        
-        return (weight_array, where_developable)
+                
+        self.filter_index = where_developable
+        return weight_array
 
-    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
-        if self.run_config.get("agent_units_string", "sanfrancisco.building.building_size"): # needs to be corrected
-            agent_set.compute_variables(self.run_config["agent_units_string"], dataset_pool=self.dataset_pool)
-
-        return self.get_weights_for_sampling_locations(agent_set, agents_index)
+#    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
+#        if self.run_config.get("agent_units_string", "sanfrancisco.building.building_size"): # needs to be corrected
+#            agent_set.compute_variables(self.run_config["agent_units_string"], dataset_pool=self.dataset_pool)
+#
+#        return self.get_weights_for_sampling_locations(agent_set, agents_index)
 
     def modify_agents_size(self, agent_set, size, index, non_residential_attr_name="building_sqft", 
                            residential_attr_name="residential_units"):

@@ -8,7 +8,7 @@ from numpy import zeros, array, arange, ones, float32, concatenate, where
 from numpy import int8, take, put, greater, resize
 from scipy import ndimage
 from numpy.random import permutation
-from numpy import ma
+from numpy import ma, ndarray
 from opus_core.sampler_factory import SamplerFactory
 from opus_core.choice_model import ChoiceModel
 from opus_core.variables.variable_name import VariableName
@@ -20,6 +20,8 @@ class LocationChoiceModel(ChoiceModel):
         LCM is associated with a location_set (Dataset) and a upc_sequence. Method 'run' runs a simulation for a given agent_set,
         where agents choose locations among locations. Locations can be sampled for each agent using given sampling procedure.
         Method 'estimate' runs an estimation process.
+        
+        Method determine_capacity, get_sampling_weights, and apply_filter should be called in the order from the first to last
     """
     model_name = "Location Choice Model"
     model_short_name = "LCM"
@@ -220,7 +222,7 @@ class LocationChoiceModel(ChoiceModel):
             ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
             return
         
-        sampling_weights = self.get_sampling_weights(config, agent_set, agents_index)
+        sampling_weights = self.get_sampling_weights(config, agent_set=agent_set, agents_index=agents_index)
         #if filter is specified by submodel in a dict, call sampler submodel by submodel
         if isinstance(self.filter, dict) or config.get("sample_alternatives_by_submodel", False):
             index2 = -1 + zeros((agents_index.size, nchoices), dtype="int32")
@@ -276,35 +278,49 @@ class LocationChoiceModel(ChoiceModel):
             nchunks = chunk_specification.nchunks(agents_index)
             chunksize = chunk_specification.chunk_size(agents_index)
             interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index, 
-                                              choice_index, nchoices,
-                                              weights=sampling_weights,
-                                              config=config,
-                                              nchunks=nchunks, chunksize=chunksize)
+                                                                    choice_index, nchoices,
+                                                                    weights=sampling_weights,
+                                                                    config=config,
+                                                                    nchunks=nchunks, chunksize=chunksize)
             self.update_choice_set_size(interaction_dataset.get_reduced_m())
             
 
         self.model_interaction.interaction_dataset = interaction_dataset
+
+    def get_sampling_weights(self, config, **kwargs):
+        ## there are cases where filter and weights are mutual dependent (e.g. DPLCM)
+        ## pass the filter through self.filter_index to apply_filter, 
+        ## which is either boolean array of the same size as self.choice_set or 
+        ## index of self.choice_set  
+        self.filter_index = None
+        return ChoiceModel.get_sampling_weights(self, config, **kwargs)
         
-    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2):
+    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2, **kwargs):
         """Return index to self.choice_set whose value for self.filter variable is true
         
         If filter is a dictionary, it chooses the one for the given submodel.
         
         """
+        try:import pydevd; pydevd.settrace()
+        except:pass
         if not filter:
-            return None
+            filter_index = arange(self.choice_set.size())
+            
+        if isinstance(filter, dict) and filter.has_key(submodel):
+            filter = filter[submodel]
 
-        if isinstance(filter, dict):
-            submodel_filter = filter[submodel]
-        else:
-            submodel_filter = filter
-            
-        if isinstance(submodel_filter, str):
-            filter_index = where(self.choice_set.compute_variables([submodel_filter], 
+        if isinstance(filter, str):
+            filter_index = where(self.choice_set.compute_variables([filter], 
                                                                    dataset_pool=self.dataset_pool))[0]
-        else:
-            filter_index = where(submodel_filter)[0]
-            
+        elif isinstance(filter, ndarray):
+            filter_index = filter
+
+        if hasattr(self, 'filter_index') and self.filter_index is not None:
+            choice_indicator = zeros(self.choice_set.size(), dtype='int32')
+            choice_indicator[self.filter_index] += 1
+            choice_indicator[filter_index] += 1
+            filter_index = where(choice_indicator == 2)[0]
+                        
         return filter_index
 
     def plot_choice_histograms(self, capacity=None, main =""):
