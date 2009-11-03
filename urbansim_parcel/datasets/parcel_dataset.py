@@ -32,18 +32,18 @@ class ParcelDataset(UrbansimDataset):
             ):
         """
         calculate the min and max development capacity given by constraints.
-        modelled from the method of gridcell
+        modelled from the same method in urbansim/datasets/gridcell_dataset.py
         
-        -1 is a magic number. -1 in minimum/maximum column of constraints dataset is interpreted as 
-        unconstrained i.e. minimum = 0, maximum=positive infinite
+        -1 is a magic number. -1 in minimum/maximum column of developpment_constraint dataset is interpreted as 
+        unconstrained, i.e. minimum = 0, maximum=positive infinite
 
-        if consider_constraints_as_rules is True, nothing is allowed to be built unless it is specified.  
-        not allowing any development if not specified in development_constraints table, that is,  
-        minimum and maximum default to 0. 
+        if consider_constraints_as_rules is True, nothing is allowed to be built unless the 
+        development_constraints says otherwise, disallowing any development if not 
+        specified in development_constraints table, that is, minimum and maximum default to 0. 
         
-        else if consider_constraints_as_rules is False, anything can be built unless it is disallowed explicity.
-        allowing any development if not specified in development_constriant, i.e. minimum and maximum default to -1 
-        and is intrepreted as minimum = 0, and maximum = positive infinite. 
+        else if consider_constraints_as_rules is False, anything can be built unless it is explicitly disallowed
+        by development_constraints, allowing any development if not specified in development_constriant, 
+        i.e. minimum and maximum default to -1 (equivalent to minimum = 0, and maximum = positive infinite). 
         
         """
         if (self.development_constraints <> None) and (not recompute_flag):
