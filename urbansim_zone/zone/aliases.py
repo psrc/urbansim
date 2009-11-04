@@ -11,4 +11,5 @@ aliases = [
         "developable_residential_units = numpy.maximum(0, zone.aggregate(building.residential_units_capacity - building.residential_units))",
         "residential_units_capacity = zone.aggregate(building.residential_units_capacity)",
         "non_residential_sqft_capacity = zone.aggregate(building.non_residential_sqft_capacity)",
+        "number_of_jobs = zone.number_of_agents(job)",
            ]

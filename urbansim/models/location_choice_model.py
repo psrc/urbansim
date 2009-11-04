@@ -301,8 +301,7 @@ class LocationChoiceModel(ChoiceModel):
         If filter is a dictionary, it chooses the one for the given submodel.
         
         """
-        try:import pydevd; pydevd.settrace()
-        except:pass
+
         if not filter:
             filter_index = arange(self.choice_set.size())
             
