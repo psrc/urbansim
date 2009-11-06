@@ -409,8 +409,8 @@ class ChoiceModel(ChunkModel):
                 if self.estimate_config.get("export_estimation_data", False):
                     self.export_estimation_data(submodel, is_submodel_chosen_choice, self.get_all_data(submodel),
                                                 coef[submodel].get_coefficient_names_from_alt(),
-                                                self.estimate_config["estimation_data_file_name"],
-                                                self.estimate_config["use_biogeme_data_format"])
+                                                self.estimate_config.get("estimation_data_file_name", './estimation_data.txt'),
+                                                self.estimate_config.get("use_biogeme_data_format",False))
 
             self.coefficients.fill_coefficients(coef)
             self.estimate_config["coefficient_names"]=None
@@ -505,7 +505,7 @@ class ChoiceModel(ChunkModel):
 
 
     def export_estimation_data(self, submodel, is_chosen_choice, data, coef_names, file_name, use_biogeme_data_format=False):
-        from numpy import concatenate, newaxis, reshape
+        from numpy import concatenate, newaxis, reshape, repeat
         import os
         delimiter = '\t'
         if use_biogeme_data_format:
@@ -557,8 +557,8 @@ class ChoiceModel(ChunkModel):
             nrows, ncols = data.shape
         else:
             nobs, alts, nvars = data.shape
-            ids = reshape(arange(nobs)+1, (nobs,1,1))
-            data = concatenate((ids, is_chosen_choice[...,newaxis], data),axis=2)
+            ids = reshape(repeat(arange(nobs, dtype='int32')+1, alts), (nobs,alts,1))
+            data = concatenate((ids, is_chosen_choice[...,newaxis].astype("int16"), data),axis=2)
             nvars += 2
             nrows = nobs * alts
             header = ['ID', 'choice'] + coef_names.tolist()
