@@ -1,0 +1,140 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">Configuration for the San Francisco parcel project</description>
+    <parent type="file">sanfrancisco/configs/sanfrancisco.xml</parent>
+    <expression_library type="dictionary">
+      <variable dataset="person_trip_x_zone" use="model variable" source="Python class" name="single_vehicle_to_work_travel_time" type="variable_definition">urbansim.person_trip_x_zone.from_origin_to_destination_travel_data_am_single_vehicle_to_work_travel_time</variable>
+      <variable dataset="None" use="model variable" source="expression" name="income_x_num_of_retail_jobs" type="variable_definition">person_trip.disaggregate(household.income, intermediates=[person]) * urbansim_parcel.zone.number_of_jobs_of_sector_14</variable>
+      <variable dataset="person_trip_x_zone" use="model variable" source="Python class" name="single_vehicle_to_destination_travel_cost" type="variable_definition">urbansim.person_trip_x_zone.single_vehicle_to_destination_travel_cost</variable>
+      <variable dataset="zone" use="model variable" source="Python class" name="zone_retail" type="variable_definition">urbansim_parcel.zone.number_of_jobs_of_sector_14</variable>
+      <variable dataset="travel_data" use="model variable" source="primary attribute" name="zone_id" type="variable_definition">travel_data.to_zone_id</variable>
+      <variable dataset="zone" use="model variable" source="expression" name="origin_zone_avg_bike_travel_time" type="variable_definition">urbansim.zone.origin_zone_sum_travel_data_am_bike_to_work_travel_time/urbansim.zone.origin_zone_sum_travel_data_am_biking_person_trips</variable>
+      <variable dataset="zone" use="both" source="expression" name="destination_zone_avg_bike_travel_time" type="variable_definition">safe_array_divide(urbansim.zone.destination_zone_sum_travel_data_aggregate_am_bike_to_work_travel_time, urbansim.zone.destination_zone_sum_travel_data_am_biking_person_trips)</variable>
+      <variable dataset="person_trip" use="model variable" source="Python class" name="time_5" type="variable_definition">urbansim.person_trip.travel_data_am_walk_time_in_minutes</variable>
+      <variable dataset="person_trip_x_mode" name="time" source="expression" type="variable_definition" use="both">person_trip_x_mode.agent_times_choice(time)</variable>
+      <variable dataset="person_trip" name="time_4" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.travel_data_am_walk_time_in_minutes</variable>
+      <variable dataset="person_trip" name="time_3" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.travel_data_am_total_transit_time_walk</variable>
+      <variable dataset="person_trip" name="time_1" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.travel_data_am_single_vehicle_to_work_travel_time</variable>
+      <variable dataset="person_trip" name="time_2" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.travel_data_am_double_vehicle_to_work_travel_time</variable>
+      <variable dataset="person_trip" name="travel_data_retail" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.destination_zone_number_of_jobs</variable>
+    </expression_library>
+    <available_datasets type="list">['mode','person_trip','building','parcel','household_x_building','zone','faz','large_area','gridcell','city','county','alldata', 'person_trip_x_zone']</available_datasets>
+  </general>
+  <model_manager>
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="real_estate_price_model" type="model">
+        <specification type="dictionary">
+          <submodel hidden="Children" name="Apts" submodel_id="1" type="submodel">
+            <description type="string">Apartments</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="Condo" submodel_id="2" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Condominium</description>
+          </submodel>
+          <submodel hidden="Children" name="Flats" submodel_id="3" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Flats</description>
+          </submodel>
+          <submodel hidden="Children" name="LiveWork" submodel_id="4" type="submodel">
+            <description type="string">Live - Work</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="Single" submodel_id="5" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Single-family residential</description>
+          </submodel>
+          <submodel hidden="Children" name="SRO" submodel_id="6" type="submodel">
+            <description type="string">Single Room Occupancy</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="CIE" submodel_id="7" type="submodel">
+            <description type="string">CIE</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="MIPS" submodel_id="8" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>MIPS</description>
+          </submodel>
+          <submodel hidden="Children" name="Mixed" submodel_id="9" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Mixed Use</description>
+          </submodel>
+          <submodel hidden="Children" name="MixRes" submodel_id="10" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Mixed Residential</description>
+          </submodel>
+          <submodel hidden="Children" name="OpenSpace" submodel_id="11" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Open Space</description>
+          </submodel>
+          <submodel hidden="Children" name="PDR" submodel_id="13" type="submodel">
+            <description type="string">PDR</description>
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+          </submodel>
+          <submodel hidden="Children" name="RetailEnt" submodel_id="14" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Retail and Entertainment</description>
+          </submodel>
+          <submodel hidden="Children" name="Vacant" submodel_id="16" type="submodel">
+            <variable_list type="variable_list">
+              <variable_spec name="constant"/>
+            </variable_list>
+            <description>Vacant</description>
+          </submodel>
+        </specification>
+      </model>
+    </models>
+  </model_manager>
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="untitled_indicator_batch">
+        <batch_visualization hidden="Children" type="batch_visualization" name="New visualization">
+          <indicators>['destination_zone_avg_bike_travel_time']</indicators>
+          <output_type>tab</output_type>
+          <settings>
+            <setting name="output_style">1</setting>
+          </settings>
+          <dataset_name>zone</dataset_name>
+          <visualization_type>tab</visualization_type>
+        </batch_visualization>
+      </indicator_batch>
+    </indicator_batches>
+    <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" name="base_year_data" run_id="1" type="source_data">
+        <scenario_name type="string"/>
+        <cache_directory type="string">c:/opus/data/sanfrancisco/base_year_data</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2000</end_year>
+      </run>
+    </simulation_runs>
+  </results_manager>
+</opus_project>
+

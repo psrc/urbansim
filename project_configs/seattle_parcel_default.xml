@@ -1,0 +1,62 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">Minimal user configuration for the Seattle parcel project</description>
+    <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <expression_library type="dictionary">
+      <variable dataset="parcel" name="lnunits" source="expression" type="variable_definition" use="both">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</variable>
+    </expression_library>
+  </general>
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group">
+      <indicator_batch name="zone_indicator_batch" type="indicator_batch">
+        <batch_visualization name="Zone_visualization" type="batch_visualization">
+          <settings><setting name="bucket_labels">range_labels</setting>
+          <setting name="bucket_ranges">linear_scale</setting>
+          <setting name="bucket_colors">#e0eee0, #c7e9c0, #a1d99b, #7ccd7c, #74c476, #41ab5d, #238b45, #006400, #00441b, #00340b</setting>
+          </settings><visualization_type>mapnik_map</visualization_type>
+          <indicators>['population_per_acre']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>zone</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+      <indicator_batch name="untitled_indicator_batch" type="indicator_batch">
+        <batch_visualization name="New_visualization" type="batch_visualization">
+          <settings><setting name="bucket_labels">range_labels</setting>
+          <setting name="bucket_ranges">linear_scale</setting>
+          <setting name="bucket_colors">#e0eee0,#c7e9c0,#a1d99b,#7ccd7c,#74c476,#41ab5d,#238b45,#006400,#00441b,#00340b</setting>
+          </settings><visualization_type>mapnik_map</visualization_type>
+          <indicators>['lnunits']</indicators>
+          <output_type>mapnik_map</output_type>
+          <dataset_name>parcel</dataset_name>
+        </batch_visualization>
+      </indicator_batch>
+    </indicator_batches>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" name="Run_2008_08_23_22_29" run_id="4" type="source_data">
+        <scenario_name type="string">?</scenario_name>
+        <cache_directory type="string">/Users/pwaddell/opus/data/seattle_parcel/runs/run_4.2008_08_23_22_29</cache_directory>
+        <start_year type="integer">2001</start_year>
+        <end_year type="integer">2002</end_year>
+      </run>
+      <run hidden="Children" name="Run_2008_08_17_22_39" run_id="3" type="source_data">
+        <scenario_name type="string">?</scenario_name>
+        <cache_directory type="string">/Users/pwaddell/opus/data/seattle_parcel/runs/run_3.2008_08_17_22_39</cache_directory>
+        <start_year type="integer">2001</start_year>
+        <end_year type="integer">2002</end_year>
+      </run>
+      <run hidden="Children" name="Run_2008_08_17_21_24" run_id="2" type="source_data">
+        <scenario_name type="string">?</scenario_name>
+        <cache_directory type="string">/Users/pwaddell/opus/data/seattle_parcel/runs/run_2.2008_08_17_21_24</cache_directory>
+        <start_year type="integer">2001</start_year>
+        <end_year type="integer">2002</end_year>
+      </run>
+      <run hidden="Children" name="base_year_data" run_id="1" type="source_data">
+        <scenario_name type="string"/>
+        <cache_directory type="string">/Users/pwaddell/opus/data/seattle_parcel/base_year_data</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2000</end_year>
+      </run>
+    </simulation_runs>
+  </results_manager>
+</opus_project>
