@@ -1,0 +1,135 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+#
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+#
+
+from numpy import zeros, arange
+from opus_core.regression_model import RegressionModel
+from opus_core.variables.variable_name import VariableName
+
+
+class RegressionModelWithAdditionConstantVariation(RegressionModel):
+
+    """
+    It is a RegressionModel that computes an initial error of the observations to the prediction
+    when run for the first time. Then every time it adds this error to the outcome. The 'error' attribute
+    is called '_init_error_%s' % outcome_attribute and it is stored as a primary attribute.
+    """
+    model_name = "Regression Model With Addition of Constant Variation"
+    model_short_name = "RMWACV"
+
+    def __init__(self, model_configuration=None, regression_procedure="opus_core.linear_regression",
+                  submodel_string=None, outcome_attribute = None,
+                  run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None):
+        RegressionModel.__init__(self,
+                                 regression_procedure=regression_procedure,
+                                 submodel_string=submodel_string,
+                                 run_config=run_config,
+                                 estimate_config=estimate_config,
+                                 debuglevel=debuglevel, dataset_pool=dataset_pool)
+        self.outcome_attribute = outcome_attribute
+        if (self.outcome_attribute is not None) and not isinstance(self.outcome_attribute, VariableName):
+            self.outcome_attribute = VariableName(self.outcome_attribute)
+
+    def run(self, specification, coefficients, dataset, index=None, chunk_specification=None, **kwargs):
+        """
+        See description above. If missing values of the outcome attribute are suppose to be excluded in 
+        the addition of the initial error, set an entry of run_config 'exclude_missing_values_from_initial_error' to True.
+        Additionaly, an entry 'outcome_attribute_missing_value' specifies the missing value (default is 0).
+        """
+        if self.outcome_attribute is None:
+            raise StandardError, "An outcome attribute must be specified for this model. Pass it into the initialization."
+        
+        if self.outcome_attribute.get_alias() not in dataset.get_known_attribute_names():
+            try:
+                dataset.compute_variables(self.outcome_attribute, dataset_pool=self.dataset_pool)
+            except:
+                raise StandardError, "The outcome attribute %s must be a known attribute of the dataset %s." % (
+                                                                self.outcome_attribute.get_alias(), dataset.get_dataset_name())
+        outcome = RegressionModel.run(self, specification, coefficients, dataset, index, **kwargs)
+        initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
+        if index is None:
+             index = arange(dataset.size())
+        original_data = dataset.get_attribute_by_index(self.outcome_attribute, index)
+
+        if initial_error_name not in dataset.get_known_attribute_names():
+            initial_error = original_data - outcome
+            dataset.add_primary_attribute(name=initial_error_name, data=zeros(dataset.size(), dtype="float32"))
+            exclude_missing_values = self.run_config.get("exclude_missing_values_from_initial_error", False)
+            if exclude_missing_values:
+                missing_value = self.run_config.get("outcome_attribute_missing_value", 0)
+                initial_error[original_data == missing_value] = 0
+            dataset.set_values_of_one_attribute(initial_error_name, initial_error, index)
+        else:
+            initial_error = dataset.get_attribute_by_index(initial_error_name, index)
+        return outcome + initial_error
+
+
+from opus_core.tests import opus_unittest
+from numpy import array, ma
+from opus_core.datasets.dataset import Dataset
+from opus_core.equation_specification import EquationSpecification
+from opus_core.storage_factory import StorageFactory
+from opus_core.configuration import Configuration
+
+
+class Test(opus_unittest.OpusTestCase):
+    def test_regression_model_with_constant_variation(self):
+        """Estimate the model and run it on the same data as the estimation. The result should be equal to the original data.
+        If there is a change in the explanatory variables, the result should not be equal.
+        """
+        storage = StorageFactory().get_storage('dict_storage')
+
+        table_name = 'dataset_table'
+        data = {
+                "attr1":array([30, 0, 90, 100, 65, 50]),
+                "attr2":array([2002, 1968, 1880, 1921, 1956, 1989]),
+                "attr3":array([0.5, 0.1, 0.3, 0.9, 0.2, 0.8]),
+                "outcome": array([20, 40, 15, 5, 40, 30], dtype="int32"),
+                "id": array([1,2,3,4, 5, 6])
+                }
+        storage.write_table(
+            table_name=table_name,
+            table_data=data
+            )
+        dataset = Dataset(in_storage=storage, in_table_name=table_name, id_name= "id")
+
+        specification = EquationSpecification(variables=(
+            "attr1", "attr2", "attr3", "constant"),
+            coefficients=("b1", "b2", "b3", "constant"))
+
+        model = RegressionModelWithAdditionConstantVariation(outcome_attribute = "outcome")
+        coef, dummy = model.estimate(specification, dataset, outcome_attribute = "outcome",
+                                     procedure = "opus_core.estimate_linear_regression")
+        result = model.run(specification, coef, dataset)
+
+        # if estimated and run on the same data, it should give the original outcome
+        self.assertEqual(ma.allequal(result, data["outcome"]), True)
+
+        # if some values changed it shoudn't be the same for those elements
+        dataset.set_values_of_one_attribute("attr1", array([32, 10]), arange(2))
+        result2 = model.run(specification, coef, dataset)
+        self.assertEqual(ma.allequal(result2[0:2], data["outcome"][0:2]), False)
+        self.assertEqual(ma.allequal(result2[2:], data["outcome"][2:]), True)
+        
+        # check if exclusion of missing values is working
+        dataset.set_values_of_one_attribute("outcome", array([0,0]), array([2,4]))
+        dataset.delete_one_attribute("_init_error_outcome")
+        model.run(specification, coef, dataset, run_config=Configuration({
+                                          'exclude_missing_values_from_initial_error': True}))
+        initial_error = dataset.get_attribute("_init_error_outcome")
+        self.assertEqual(ma.allequal(initial_error[array([2,4])], 0), True)
+        self.assertEqual(ma.allequal(initial_error[array([0,1,3,4,5])], 0), False)
+        
+
+if __name__=="__main__":
+    opus_unittest.main()

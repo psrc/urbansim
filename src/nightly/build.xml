@@ -1,0 +1,172 @@
+<project>
+	<property name="project_name" value="nightly" />
+	<property name="sandboxdir" value="${basedir}/../sandbox" />
+	<property name="distributiondir" value="${basedir}/../dist" />
+	<import file="${basedir}/../opus_core/common.xml" />
+	<property name="opus_version" value="${major}.${minor}" />
+	<property name="BUILDNUMBER" value="CC" />
+
+
+
+
+	<target name="demo:create-dirs">
+		<delete quiet="true" includeEmptyDirs="true">
+			<fileset dir="${sandboxdir}/release" excludes="latest_nightly_build.html, index.html, myworkspace.png, urbansim_cache.png" />
+		</delete>
+		<mkdir dir="${sandboxdir}/release/" />
+		<mkdir dir="${sandboxdir}/dist/" />
+	</target>
+
+	<target name="demo:create-eugene-opus-package" description="Create zip of eugene Opus package and put into 'release' directory">
+		<zip destfile="${sandboxdir}/release/eugene_opus_package.zip">
+			<fileset dir="${sandboxdir}" includes="eugene/" excludes="**/*.pyc" />
+		</zip>
+	</target>
+
+	<target name="demo:create-eugene-cache" description="Create zip of eugene 1980 baseyear cache and put into 'release' directory">
+		<mkdir dir="${sandboxdir}/release/eugene_1980_baseyear_cache" />
+		<property environment="env" />
+		<exec executable="python">
+			<!-- Create eugene 1980 baseyear cache from MySQL -->
+			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
+			<arg line="${sandboxdir}/opus_core/tools/create_baseyear_cache.py eugene.configs.baseline --cache-directory=${sandboxdir}/release/eugene_1980_baseyear_cache" />
+		</exec>
+		<zip destfile="${sandboxdir}/release/eugene_1980_baseyear_cache.zip">
+			<!-- Create zip of eugene 1980 baseyear cache -->
+			<fileset dir="${sandboxdir}/release" includes="eugene_1980_baseyear_cache/1980/**" />
+		</zip>
+		<exec executable="python">
+			<!-- Create eugene 1980 baseyear cache from MySQL -->
+			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
+			<arg line="${sandboxdir}/nightly/tests/test_eugene_tutorial.py ${sandboxdir}/release/eugene_1980_baseyear_cache" />
+		</exec>
+		<!-- Removed unzipped eugene 1980 baseyear cache -->
+		<delete dir="${sandboxdir}/release/eugene_1980_baseyear_cache" />
+	</target>
+
+	<target name="demo:copy-pdfs" description="Copy pdfs into 'release' directory">
+		<copy todir="${sandboxdir}/release">
+			<!-- Copy the html version of the manual -->
+			<fileset dir="${sandboxdir}/opus_manual/docs/latex/" includes="userguide.pdf" />
+			<fileset dir="${sandboxdir}/opus_manual/docs/latex/tutorials/" includes="*.pdf" />
+		</copy>
+	</target>
+
+	<target name="demo:copy-html-tutorials-into-temp" description="Copy docs html versions of tutorials into 'release/html' directory">
+		<property environment="env" />
+		<exec executable="python">
+			<!-- Copy the html versions of the tutorials -->
+			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
+			<arg line="copy_html_tutorials.py -f ${sandboxdir}/opus_manual/docs/latex/tutorials -t ${sandboxdir}/release/html" />
+		</exec>
+	</target>
+
+	<target name="demo:copy-html-userguide-into-temp" description="Copy docs html version of userguide into 'release/html' directory">
+		<copy todir="${sandboxdir}/release/html">
+			<!-- Copy the html version of the manual -->
+			<fileset dir="${sandboxdir}/opus_manual/docs/latex/" includes="userguide/**" />
+		</copy>
+	</target>
+
+	<target name="demo:zip-docs" description="Zip up the docs directory into 'release' directory.">
+		<copy todir="${sandboxdir}/release/docs">
+			<fileset dir="${sandboxdir}/opus_manual/docs/">
+				<include name="images/new-logo-medium.gif" />
+				<include name="images/*.jpg" />
+				<include name="indicators/**" />
+				<include name="latex/**/*.pdf" />
+				<include name="scripts/**" />
+				<include name="sql_indicators/**" />
+				<include name="style/**" />
+				<include name="*.html" />
+				<include name="*.shtml" />
+			</fileset>
+			<fileset dir="${sandboxdir}/opus_manual/docs/latex/" includes="userguide.pdf" />
+			<fileset dir="${sandboxdir}/opus_manual/docs/latex/tutorials/" includes="*.pdf" />
+			<fileset dir="${sandboxdir}/release/" includes="html/**" />
+		</copy>
+		<zip destfile="${sandboxdir}/release/docs.zip">
+			<fileset dir="${sandboxdir}/release/docs" />
+		</zip>
+	</target>
+
+	<target name="demo:copy-opus_upgrade" description="Copy opus_upgrade directory into 'release/opus_upgrade' directory">
+		<copy todir="${sandboxdir}/release/opus_upgrade">
+			<fileset dir="${sandboxdir}/opus_upgrade">
+				<exclude name="build.xml" />
+				<exclude name="fireman.xml" />
+				<exclude name=".*" />
+				<exclude name="**/*.pyc" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="demo:copy-installers" description="Copy installers into 'release/installers' directory">
+		<copy todir="${sandboxdir}/release/installers">
+			<fileset dir="${sandboxdir}/dist">
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="demo:rewire-release-notes" description="Redo links in release_notes.html so they point to the opus_upgrade files">
+		<replace file="${sandboxdir}/release/docs/release_notes.html" token="../../opus_upgrade" value="../opus_upgrade" />
+	</target>
+
+	<target name="cruisecontrol" depends="cc-copy, cc-installer, cc-clean" />
+
+	<target name="cc-build-demo" description="Build the über-zip-file for the Eugene demo" depends="update-python-build-number,
+						 demo:create-dirs, 
+						 demo:create-eugene-opus-package, 
+						 demo:create-eugene-cache,
+		                 demo:copy-html-userguide-into-temp,
+						 demo:copy-html-tutorials-into-temp,
+						 demo:copy-pdfs,
+						 demo:zip-docs,
+						 demo:copy-opus_upgrade,
+						 demo:copy-installers">
+	</target>
+
+	<target name="cc-demo-copy">
+		<copy todir="${sandboxdir}">
+			<fileset dir="${sandboxdir}/..">
+				<include name="eugene/**" />
+				<include name="nightly/**" />
+				<include name="opus_core/**" />
+				<include name="opus_upgrade/**" />
+				<include name="urbansim/**" />
+				<include name="opus_manual/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="cc-demo-clean">
+		<delete dir="${sandboxdir}" />
+	</target>
+
+	<target name="cc-installer" depends="update-python-build-number">
+		<property environment="env" />
+		<exec executable="python" dir="${sandboxdir}/nightly/">
+			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
+			<arg line="invoke_packager.py ${opus_version}.${BUILDNUMBER}" />
+		</exec>
+	</target>
+
+	<target name="cc-copy">
+		<copy todir="${sandboxdir}">
+			<fileset dir="${sandboxdir}/..">
+				<include name="eugene/**" />
+				<include name="nightly/**" />
+				<include name="opus_core/**" />
+				<include name="psrc/**" />
+				<include name="urbansim/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="cc-clean">
+		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.tar.gz" tofile="${distributiondir}/opus.tar.gz" />
+		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.win32.exe" tofile="${distributiondir}/opus.win32.exe" />
+		<delete dir="${sandboxdir}" />
+	</target>
+
+</project>

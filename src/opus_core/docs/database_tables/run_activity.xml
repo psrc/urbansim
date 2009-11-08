@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="database_table.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "database-table.dtd">
+
+<table>
+	<name bookmark="RunActivity">run_activity</name> 
+
+	<schema>
+		<column name="RUN_ID" type="INTEGER"></column>
+		<column name="RUN_NAME" type="TINYTEXT"></column>
+		<column name="STATUS" type="TINYTEXT"></column>
+		<column name="PROCESSOR_NAME" type="TINYTEXT"></column>
+		<column name="DATE_TIME" type="DATETIME"></column>
+		<column name="DATE_TIME_MILLISECONDS" type="DOUBLE"></column>
+		<column name="RESOURCES" type="LONGTEXT"></column>
+	</schema>	
+
+</table>

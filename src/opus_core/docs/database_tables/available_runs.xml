@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="database_table.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "database-table.dtd">
+
+<table>
+	<name bookmark="AvailableRuns">available_runs</name> 
+
+	<schema>
+		<column name="RUN_ID" type="INTEGER"></column>
+		<column name="INFO" type= "TEXT"> </column>
+		<column name="STATUS" type = "TEXT"> </column>
+	</schema>	
+
+</table>

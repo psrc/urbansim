@@ -1,0 +1,14 @@
+s=1003
+reports=addlnlat.rpt
+2.41
+~+|3|lan|*|1,2,6|..\bank2\addlanes.new|n|y
+q
+s=1005
+2.41
+~+|3|lan|*|1,2,6|..\bank2\addlanes.new|n|y
+q
+s=1006
+2.41
+~+|3|lan|*|1,2,6|..\bank2\addlanes.new|n|y
+q
+q

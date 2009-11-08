@@ -1,0 +1,95 @@
+~# Erase existing Report
+~!if exist tazvmt3.rpt erase tazvmt3.rpt
+~# Prepare report file for summary
+reports=tazvmt3.rpt
+~# Call Module 3.21 Matrix Calculations
+3.21
+~# Do calculations for PM >> mf92
+~# Select Matrix calculations
+1
+~# Save result
+y
+~# in matrix mf92
+mf92
+~# Don't change the matrix header
+n
+~# Enter the calculation on multiple lines, ending with a blank line
+(mf"pvehda"+mf"pvehs2"+mf"pvehs3"+mf"pvpool"
++mf"plttrk"+mf"pmdtrk"/1.5+mf"phvtrk"/2.0
++mf"phbw1v"+mf"phbw2v"+mf"phbw3v"+mf"phbw4v")
+*mf"pau1ds"
+
+~# No constraint matrix
+
+~# No sub-matrix
+n
+~# Send summary report to the print file
+2
+~#
+~# Do calculations for EV >> mf93
+~# Select Matrix calculations
+1
+~# Save result
+y
+~# in matrix mf93
+mf93
+~# Don't change the matrix header
+n
+~# Enter the calculation on multiple lines, ending with a blank line
+(mf"evehda"+mf"evehs2"+mf"evehs3"
++mf"elttrk"+mf"emdtrk"/1.5+mf"ehvtrk"/2.0
++mf"ehbw1v"+mf"ehbw2v"+mf"ehbw3v"+mf"ehbw4v")
+*mf"eau1ds"
+
+~# No constraint matrix
+
+~# No sub-matrix
+n
+~# Send summary report to the print file
+2
+~#
+~# Do calculations for NI >> mf94
+~# Select Matrix calculations
+1
+~# Save result
+y
+~# in matrix mf94
+mf94
+~# Don't change the matrix header
+n
+~# Enter the calculation on multiple lines, ending with a blank line
+(mf"nvehda"+mf"nvehs2"+mf"nvehs3"
++mf"nlttrk"+mf"nmdtrk"/1.5+mf"nhvtrk"/2.0
++mf"nhbw1v"+mf"nhbw2v"+mf"nhbw3v"+mf"nhbw4v")
+*mf"nau1ds"
+
+~# No constraint matrix
+
+~# No sub-matrix
+n
+~# Send summary report to the print file
+2
+~#
+~# Sum PM, EV, and NI >> mf91
+~# Select Matrix calculations
+1
+~# Save result
+y
+~# in matrix mf91
+mf91
+~# Don't change the matrix header
+n
+~# Enter the calculation, ending with a blank line
+mf92+mf93+mf94
+
+~# No constraint matrix
+
+~# No sub-matrix
+n
+~# Send summary report to the print file
+2
+~# Quit Module 3.21
+q
+~# Return report file designation to run-time inquiry
+reports=?
+9

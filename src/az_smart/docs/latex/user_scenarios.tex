@@ -1,0 +1,85 @@
+\section{Use Cases and Tools}
+
+In this section we describe several possible entry points to the AZ-SMART system, corresponding roughly to the different components of the workflow described in Figure \ref{figWorkflow}.
+This is an attempt to identify the different uses of the system and to identify
+functionality that will be needed.  Each of the following subsections
+provides a brief narrative and also a list of tools that could be utilized.
+
+\subsection{Data Preparation: Diagnostics, Exploration, Refinement}
+
+In the initial phase of model development, or during an update phase, an AZ-SMART user will 
+focus on assembling data, assessing data, and refining data for use in the model.  Data will
+likely come in a variety of formats, including disk files and database formats,
+but the data integration process envisioned for AZ-SMART will produce an integrated geodatabase.
+Many tools to facilitate this process are existing in ArcGIS, and do not need to be further extended.  Some tools that will need to be developed or customized for AZ-SMART include the following 
+(see Appendix A for a description of sample Data Preparation tools, each of which will correspond to a tool entry in a DataPreparation ToolSet under AZ-SMART):
+
+\begin{itemize}
+    \item Data Import and Export
+    \item Data Queries
+    \item Data Summaries
+    \item Data Visualization
+    \item Data Diagnostics
+    \item Data Imputation
+    \item Data Editing
+    \item Data Model Development
+\end{itemize}
+
+\subsection{Model Development: Specification, Estimation, Diagnosis}
+Once a user is satisfied that the database is usable for model development, the focus shifts to model specification and estimation.  At this point, the following tools will be the focus of attention, and will be clustered within an OPUS GUI that can be launched from within ArcGIS or independently (e.g. from a batch file, icon, or Start Menu item):
+
+\begin{itemize}
+\item Model Configuration
+\item Model Specification
+\item Model Estimation
+\item Model Diagnostics
+\item Model System Configuration
+\item DataSet Storage Configuration
+\item DataSet Statistical Profile
+\end{itemize}
+
+\subsection{Scenario Creation}
+Once the model specification and estimation process has been completed to the satisfaction of the user, the user will focus on the process of configuring a scenario to run the model on, meaning that the particular inputs that will differentiate one run from another need to be specified.  This will likely involve combinations of different control totals, transportation model networks, land use plans, development projects, or other inputs that would reflect policies or assumptions.  This activity will again be focused within the ArcGIS interface, within a Scenario Editing ToolSet consisting of tools such as:
+
+\begin{itemize}
+\item Control Totals (Load, Edit, Save)
+\item Travel Model (Configure)
+\item Land Use Plans (Load, Edit, Save)
+\item Development Projects
+\item Scenario Management (New, Load, Edit, Save, Save As, Copy, Delete)
+\end{itemize}
+
+We expect that scenario configurations will need to be archived in a central repository, potentially with version management.  If so, this would be done either with a database or a version control repository such as Subversion.
+
+
+\subsection{Run Management}
+Run management involves the configuration of runs on one or more scenarios.  It includes setting the start and end year for the simulation, and tracking the progress of a simulation, stopping and restarting a simulation if needed.  These activities will be integrated closely with the OPUS GUI, and can be launched from the ArcGIS interface as well as independently.
+
+\begin{itemize}
+\item Run Configuration (Load, Edit, Save, Save As, Delete)
+\item Start Run
+\item Monitor Run
+\item Stop Run
+\item Restart Run
+\end{itemize}
+
+\subsection{Indicators: Production, Visualization, Reporting}
+
+An OPUS indicator could be defined as any data in the OPUS system that a user
+may want to visualize or examine, whether it be prior to, during, or after a
+model run, or even in other stages such as model estimation.  A few examples
+of indicators are population densities (overall or by socioeconomic class),
+travel times, job densities (overall or by sector), and amount of developable
+land.  One may also want to examine other indicators such as probability of
+development.
+
+\begin{itemize}
+	\item Configure Indicator Computation (Scenario(s), Year(s), Comparison, Expression)
+	\item Configure Indicator Output (Map, Chart, Table)
+    \item Configure Indicator Set
+    \item Generate Indicator
+    \item Generate Indicator Set
+\end{itemize}
+
+\subsection{Run Refinement}
+Run refinement is a user defined process to refine simulation results after a run has been completed and reviewed.  We anticipate that the predominant approach to refinement of results will be to modify one or more components of the model inputs and re-running a scenario.  These modifications could include user-specified events to incorporate into the model, in addition to data edits, such as revision of the control totals.  These revisions would be documented through the metadata process, so that revised results could be fully documented.  At this point, the process would involve moving back to an earlier point in the processing, and re-using the interfaces already available there.  If there is a need to develop an alternative approach that involves more direct overriding of results, the specifications for this will need to be developed collaboratively.  Our recommendation is to wait until the model system is operational and producing results before doing much more design work on this aspect.

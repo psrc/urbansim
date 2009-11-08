@@ -1,0 +1,12 @@
+<project builds-to-keep="4" build-machine="viola.cs.washington.edu">
+    <copy-this-project>opus_core</copy-this-project>
+    <copy-this-project>urbansim</copy-this-project>
+	<build-steps>
+		<step ant-target="unit-tests" display-name="Unit Tests" html-color="yellow">
+			<log-file>unit-tests</log-file>
+		</step>
+		<step ant-target="release" display-name="Release" html-color="magenta">
+			<traffic-light-color three-lamp="+green+yellow" />
+		</step>
+	</build-steps>
+</project>

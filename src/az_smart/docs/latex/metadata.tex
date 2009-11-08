@@ -1,0 +1,34 @@
+\section{Metadata}
+
+In this section we develop an approach to managing metadata throughout the AZ-SMART system.  
+We envision three places where one would want to track metadata.  The first place is in a pre-model 
+data processing step where the user is bringing raw input data into the system to build a baseyear 
+database.  It would be useful to track data on geoprocessing steps, SQL queries that were run, and
+perhaps OPUS tools that were used in the creation of the baseyear database.  It is likely that this
+would not be done very often.  The second place for metadata tracking would be Recording the details
+of the simulation run (e.g. models, specifications, configurations, etc.).  Lastly, we envision
+recording metadata for any post-model processing that was done.  For instance, any refinement to
+model results or indicators computed would be candidates for recording metadata about.
+
+There are several built-in tools in ArcGIS to create and manage metadata within the FGDC framework.  ArcCatalog 
+provides forms for maintaining metadata about GIS datasets.  At version 9.2 ArcGIS also automatically
+tracks geoprocessing steps performed to create data, storing them in several locations, including 
+in the XML metadata document associated with the dataset.
+We propose to leverege these built in tools to track metadata about GIS datasets.  While the FGDC framework
+may be a bit cumbersome, it does provide a solid standard upon which to build metadata documentation.
+We anticipate that AZ-SMART
+users will need to define the amount and exact nature of the metadata they wish to document for each of
+the input data sources.  The system should be able to preserve geoprocessing metadata and pass forward
+any initial metadata concerning inputs.  Similarly, we anticipate a need to generate and manage
+metadata for models and scenarios, and to be able to couple these with GIS and geoprocessing
+metadata.  A run of the model system should store the metadata that describes the run configuration
+and all data inputs to it.  Furthermore, this metadata should be stored in a way that can be queried
+later as documentation of a run and its inputs, perhaps in a metadata database.  By extension, indicators
+and other postprocessing should also generate metadata and this should be available to the end user.  
+In short, we anticipate three types of metadata:
+
+\begin{itemize}
+\item Input Data
+\item Model and Run Configuration
+\item Indicator and Postprocessing
+\end{itemize}

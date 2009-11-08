@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="database_table.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "database-table.dtd">
+
+<table>
+  <name bookmark="AnnualRelocationRatesForHouseholds">table1</name>
+  <databases-that-contain-this-table baseyear="true" scenario="true"/>
+  <fit-test>medium-tests/test_annual_relocation_rates_for_households.html</fit-test>
+  <top-descriptive-text>
+The annual relocation rates for households, by combination of age and income of
+household. These values are the probabilities that a household with the given
+characteristics will relocate within the time span of one year. They do not alter from
+year to year. This table is only used by the <a href="../../models/household_relocation_choice_model.html">Household Relocation Choice Model</a>.
+  </top-descriptive-text>
+  <schema>
+    <column name="AGE_MIN"    type="INTEGER">The minimum age for which this probability is valid.</column>
+    <column name="AGE_MAX"    type="INTEGER">The maximum age for which this probability is valid, -1 means no maximum</column>
+    <column name="INCOME_MIN" type="INTEGER">The minimum income for which this probability is valid.</column>
+    <column name="INCOME_MAX" type="INTEGER">The maximum income for which this probability is valid, -1 means no maximum</column>
+    <column name="PROBABILITY_OF_RELOCATING" type="FLOAT">The probability of relocating in a year.</column>
+  </schema>
+  <end-descriptive-text>
+<ul>
+  <li>AGE_MIN must be &gt;= 0</li>
+  <li>AGE_MAX must be &gt; AGE_MIN or else -1</li>
+  <li>INCOME_MIN must be &gt;= 0 and must be a multiple of 1000.</li>
+  <li>INCOME_MAX must be &gt; INCOME_MIN and a multiple of 1000 -1 (e.g. 200,999) or else -1</li>
+  <li>PROBABILITY_OF_RELOCATING must be &gt;= 0.0 and &lt;= 1.0</li>
+  <li>The ranges must be disjoint and cover the entire space (from zero to infinity in the
+    two-dimensional space produced by age and income).</li>
+</ul>
+
+<div align="center"><center>
+
+<table border="0" width="100%">
+  <tr>
+    <td width="50%" valign="top">As an example, this table:<div align="center"><center><table border="1">
+      <tr>
+        <td>AGE_MIN</td>
+        <td>AGE_MAX</td>
+        <td>INCOME_MIN</td>
+        <td>INCOME_MAX</td>
+        <td>PROBABILITY_OF_RELOCATING</td>
+      </tr>
+      <tr>
+        <td>0</td>
+        <td>2</td>
+        <td>0</td>
+        <td>4999</td>
+        <td>0.5</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>-1</td>
+        <td>0</td>
+        <td>3999</td>
+        <td>0.6</td>
+      </tr>
+      <tr>
+        <td>0</td>
+        <td>-1</td>
+        <td>5000</td>
+        <td>-1</td>
+        <td>0.7</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>-1</td>
+        <td>4000</td>
+        <td>4999</td>
+        <td>0.9</td>
+      </tr>
+    </table>
+    </center></div><p></p>  </td>
+  </tr>
+  <tr>
+    <td width="708" height="39" valign="top" align="center">Would produce a space like this:<img border="0" src="../../images/ARRFHouseholdsExample.gif" width="548" height="363" /> <p></p>  </td>
+  </tr>
+</table>
+</center></div>
+  </end-descriptive-text>
+</table>

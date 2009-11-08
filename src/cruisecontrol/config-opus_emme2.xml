@@ -1,0 +1,25 @@
+<cruisecontrol>
+  <project name="opus_emme2" buildafterfailed="False">
+    <listeners>
+      <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <svnbootstrapper localWorkingCopy="projects/${project.name}" />
+    </bootstrappers>
+    <modificationset quietperiod="${quietperiod}">
+      <svn localWorkingCopy="projects/${project.name}" />
+      <buildstatus logdir="logs/urbansim" />
+    </modificationset>
+    <schedule interval="${interval}">
+      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build">
+      	<property name="buildpath" value="projects/${project.name}" />
+      </ant>
+    </schedule>
+    <log>
+      <merge dir="projects/${project.name}/tests" />
+    </log>
+    <publishers>
+      <antpublisher Target="trafficlights-finish" BuildFile="build.xml" anthome="${ant.home}" />
+    </publishers>
+  </project>
+</cruisecontrol>
