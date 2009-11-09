@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Population density">
+<syntax-version-2.8/>
+<indicator-documentation>
+
+<definition>
+For each year of interest, this indicator gives the population density for residential land in the selected geography.
+</definition>
+
+<specification>
+We compute the number of acres of
+residential land in each grid cell as F times the number of acres per
+grid cell, where F is the fraction of residential land for that cell.
+Next, for the selected unit of geography, we calculate the total residential area R in that geography by summing the
+residential area in each grid cell in that geography. 
+Then we find the total number of people P in the geography, and calculate the indicator as P/R.
+</specification>
+
+<interpreting-results>
+<p>A number of stakeholders want to foster compact development.
+Such stakeholders will generally favor having compact, more densely populated neighborhoods
+within the urban area, with very low density in the exurban and rural parts of the region (and in particular
+little or no growth in these parts of the region).  As an indicator of compact development, the results from this 
+indicator for user-defined or grid geographies are useful in showing the current status and trend.  
+</p>
+<p>When the selected geography is 'region,' results from this indicator don't
+give any information on concentrations of population, but rather average the density for the whole region;
+so in that case these results are useful mainly for understanding the operation of the 
+models and diagnosing problems.  
+</p>
+</interpreting-results>
+
+<related-indicators>
+<a href="pop_in_compact_nbhds.xml">Fraction of population living in compact neighborhoods</a> gives
+the fraction of the population living in neighborhoods with more than 12 people per acre.
+Other density indicators based on where people or jobs are located are 
+<a href="household_density.xml">Household density</a> and
+<a href="employment_density.xml">Employment density</a>.
+<a href="res_density.xml">Residential density</a> is based on residential units rather than households
+(in other words, on buildings rather than people and jobs).
+</related-indicators>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<source-evolution-examples>
+This version was originally written by the UrbanSim group.
+This indicator, displayed in map form, is similar to one used by 
+<a href="http://www.northwestwatch.org">Northwest Environment Watch</a> as their key
+indicator of sprawl in
+<a href="http://www.northwestwatch.org/scorecard/">Cascadia Scorecard: Seven Key Trends
+Shaping the Northwest</a>.  The Northwest Environment Watch indicator uses a somewhat
+different calculation of population density, which is performed as follows.  Start with US Census block data.
+Divide a metropolitan area into 30 x 30 meter pixels.
+Calculate the population of each pixel, based on the block(s) of which it is a part.
+(To do this, divide the 30x30 m pixel into n-squared "subpixels",
+where n is typically 3.  Then, calculate the population of
+that sub-pixel based on the population density of the census block that contains
+the center of the sub-pixel.  Aggregate the 9 sub-pixel populations
+into a single population value for the pixel.)
+Then, around each pixel in the area being considered, draw a circle of radius
+1 pixel.  If that circle contains 500 people, then stop.  Otherwise, increment
+by one pixel, and keep going until the circle contains 500 people, or the land
+area exceeds some fixed limit (calibrated so that the circle has &lt; .5 people
+per acre).  Assign the population density of the smallest circle containing at least 500
+people to the pixel at the circle's center.
+</source-evolution-examples>
+
+<limitations>
+The code for this indicator computes the number of acres of
+residential land in each grid cell as F times the number of acres per
+grid cell, where F is the fraction of residential land for that cell.
+F is only an approximation of the number of acres of residential
+land in the cell -- F is computed by the residential land share component
+of the Developer Model, which is based on real estate characteristics and does
+not consider other features, such as water or roads, that might be partially
+in the cell.  So if a cell is partially water or roads, generally this computation
+will overestimate the number of acres of residential land in the cell, and so 
+the value of this population density indicator will be an underestimate (since the persons
+located in the cell will actually be living on a smaller number of acres of residential land).
+</limitations>
+
+<how-modeled>
+This indicator is modeled by UrbanSim.
+</how-modeled>
+
+<display-format>
+<units>persons/acre</units>
+<number digits="2"/>
+</display-format>
+
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/population_density.py">urbansim.gridcell.population_density</a>
+</source>
+
+</indicator-declaration>

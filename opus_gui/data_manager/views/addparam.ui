@@ -1,0 +1,222 @@
+<ui version="4.0" >
+ <author>Fletcher Foti</author>
+ <class>AddParamGui</class>
+ <widget class="QDialog" name="AddParamGui" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>297</width>
+    <height>266</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Add New Parameter</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_3" >
+      <attribute name="title" >
+       <string>Tool Setup</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QGroupBox" name="attributesBox" >
+         <property name="title" >
+          <string>Parameter Attributes</string>
+         </property>
+         <widget class="QLineEdit" name="nameEdit" >
+          <property name="geometry" >
+           <rect>
+            <x>60</x>
+            <y>30</y>
+            <width>181</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label" >
+          <property name="geometry" >
+           <rect>
+            <x>20</x>
+            <y>30</y>
+            <width>46</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Name</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="typeComboBox" >
+          <property name="geometry" >
+           <rect>
+            <x>60</x>
+            <y>60</y>
+            <width>115</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text" >
+            <string>string</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>dir_path</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>file_path</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>db_connection_hook</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_2" >
+          <property name="geometry" >
+           <rect>
+            <x>20</x>
+            <y>60</y>
+            <width>46</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Type</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="defaultEdit" >
+          <property name="geometry" >
+           <rect>
+            <x>60</x>
+            <y>90</y>
+            <width>181</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_3" >
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>90</y>
+            <width>46</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Default</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="requiredComboBox" >
+          <property name="geometry" >
+           <rect>
+            <x>60</x>
+            <y>120</y>
+            <width>69</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text" >
+            <string>True</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>False</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_4" >
+          <property name="geometry" >
+           <rect>
+            <x>10</x>
+            <y>120</y>
+            <width>46</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text" >
+           <string>Required</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4" >
+      <attribute name="title" >
+       <string>Tool Help</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QTextEdit" name="toolhelpEdit" >
+         <property name="html" >
+          <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Use this dialog to create a new parameter which will be passed to your python tool module.  Parameters created here will be accessible in the GUI when you run the tool.&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" native="1" name="widget" >
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>45</height>
+      </size>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="addParam" >
+        <property name="text" >
+         <string>Create New Param</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QPushButton" name="cancelAddParam" >
+        <property name="text" >
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

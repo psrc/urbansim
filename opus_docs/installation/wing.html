@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Configuring Wing</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Configuring Wing</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Configuring Wing to work with Opus</h1>
+
+<p>This section provides instructions for configuring the <a href="http://wingware.com/">Wing
+IDE</a> for use with Opus.&nbsp;&nbsp; </p>
+
+<p> Wing is a commercial IDE that supports Python
+well, especially for debugging.&nbsp;&nbsp; </p>
+
+<h2>Installing Wing </h2>
+
+<p>The <a href="http://wingware.com/downloads">Wing download site</a> offers
+packages for Windows, Linux, and OS X.&nbsp;&nbsp; </p>
+
+<ul>
+  <li>On Linux, we found that an installation of the Linux RMP package for Wing version
+    2.0.3 done by <font face="Courier New" size="2">rpm
+-i wing-rpm-file</font> worked immediately for version 2.0.4 on a SuSe 10.0
+system.&nbsp;</li>
+  <li> The Mac version of Wing relies on X11, so on the Mac you’ll need to
+install X11 before running Wing. X11 comes with the Mac OS CD, but is not
+installed by default - you’ll need to install X11 separately from “Optional
+Installs.mpkg”.&nbsp; After you do this, download Wing.&nbsp; The tar file for the Mac
+expands into a folder containing the application; just copy it to your ‘applications’
+folder.&nbsp; Start X11 before you start Wing; otherwise Wing will complain.</li>
+</ul>
+
+<h2>Configuring Wing </h2>
+
+<p>The following are suggestions for configuring Wing to work with Opus: </p>
+
+<ol>
+  <li>Configure Wing to use spaces rather than tabs in Python code and to 4
+    spaces for indentation: 
+    <ol>
+      <li>Open <b>Edit </b>&gt; <b>Preferences</b></li>
+      <li>Select <b>Editor</b> &gt; <b>Indentation</b> </li>
+      <li>Set <b>Default Tab Size</b> to 4 </li>
+      <li>Set <b>Default Indent Size</b> to 4 </li>
+      <li>Set <b>Default Indent Style</b> to <b>Spaces Only</b> </li>
+    </ol>
+  </li>
+  <li>Wing does not automatically detect files that you have added or removed
+    from outside of Wing.&nbsp; However, there is a way to tell Wing to do this
+    update, via a &quot;Synch files&quot; script that combines Wing's
+    functionality of &quot;Remove deleted files&quot; and &quot;Scan for new
+    files&quot;:
+    <ol>
+      <li>Download <a href="http://wingware.com/pub/wingide/contrib/synchfiles.py">http://wingware.com/pub/wingide/contrib/synchfiles.py</a>
+        and put in Wing's scripts directory, e.g. in C:\Program Files\Wing IDE
+        2.1\scripts</li>
+      <li>Start Wing</li>
+      <li>Open your project</li>
+      <li>Open <b>Project</b> &gt; <b>Properties</b> &gt; <b>Options</b></li>
+      <li>Set <b>Project Type</b> to <b>Shared (Two Files)</b></li>
+      <li>Save your project to the root directory for your project, e.g. to C:\opusworkspace</li>
+      <li>Now when you want to update the list of files in your <b>Project</b>
+        pane, right-click in the <b>Project</b> pane and select <b>Synch files</b></li>
+    </ol>
+  </li>
+</ol>
+<h2>Debugging Externally Launched Code</h2>
+<p>Wing allows you to debug programs that are launched outside of Wing.&nbsp;
+This can be useful for Opus, since Opus sometimes uses separate processes for
+running some tasks, e.g. for running each year of a simulation.&nbsp; Information
+on this is at the bottom of the 
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/TestingAndDebugging">Testing 
+and Debugging Page</a> on the trac wiki.</p>
+
+</body>
+</html>

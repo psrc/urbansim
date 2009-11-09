@@ -1,0 +1,10 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario5">
+      <k type="integer">3</k>
+    </scenario>
+  </scenario_manager>
+</opus_project>

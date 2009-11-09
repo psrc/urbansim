@@ -1,0 +1,36 @@
+<ui version="4.0" >
+ <author>Aaron Racicot</author>
+ <class>DatabaseSettingsEditGui</class>
+ <widget class="QDialog" name="DatabaseSettingsEditGui" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>550</width>
+    <height>582</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QGroupBox" name="variableBox" >
+     <property name="title" >
+      <string>Database Settings</string>
+     </property>
+     <layout class="QGridLayout" />
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,24 @@
+~/ logsums_and_trips.mac
+~/ This macro:
+~/ 1) Sets the output format to 8.4
+~/ 2) Outputs the named full matrices (up to 9)
+~/    for the i,j pairs 1-932, 1-932.
+~/ 3) - - to the new file logsums_and_trips.dat
+~/ 4) And exits both the program and EMME/2
+~/
+~!if exist logsums_and_trips.dat erase logsums_and_trips.dat
+reports=?
+3.14
+~+|4|2|8,4|y|4|n
+~+|1|3
+lsum1
+lsum2
+lsum3
+lsum4
+wkinc1
+wkinc2
+wkinc3
+wkinc4
+~+|||y|1,938||1,938||2|logsums_and_trips.dat
+q
+q

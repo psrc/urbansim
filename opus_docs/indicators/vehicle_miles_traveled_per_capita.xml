@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Vehicle Miles Traveled per Capita">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+This indicator gives a measure of the vehicle miles traveled per person on average during a given year.
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+Total vehicle miles traveled of trips starting in a particular zone divided by the number of people living in that zone. The mean of these values for the selected geography is returned.
+</specification>
+
+<related-indicators>
+<p><a href="vehicle_miles_traveled.xml">Vehicle miles traveled</a> gives the total vehicle miles traveled with an origin in the specified geography. It is used in the calculation.</p>
+<p><a href="population.xml">Population</a> gives the total number of people living in a particular geography. It is used in the calculation.
+</p>
+</related-indicators>
+
+<limitations>
+(1) Although this indicator can be computed at any geography, it is best to calculate it using all the data and obtain a single value. 
+The reason it should only be cautiously used at any finer grained level of geography is because the measure doesn't make intuitive sense
+between commercial, industrial, and residental areas. Consider this example: during a typical work day, many trips originate in downtown
+(e.g. people going to lunch). However, not many people live in these downtown business districts; therefore, the vehicle miles traveled
+per capita will be very high for that business district. Conversely, many people living in suburbs go to work downtown and take many trips
+from there; the vehicle miles traveled per capita for the residental area will be much lower than the number of miles on average each of its residents
+are actually taking. This bias is introduced because the underlying travel model doesn't model WHO is taking a trip, just whether a trip occurs
+between two areas. This means that we cannot assign the mileage of a downtown lunch trip of a suburbanite to their respective residental geography,
+as it is not explicated that it is actually that suburbanite taking the trip. (2) Busses and other forms of mass transit are not included in these calculations.
+
+</limitations>
+
+<how-modeled>
+The value of this indicator is not completely modeled by Urbansim. Population is modeled by UrbanSim, while the vehicle miles traveled is obtained from the external travel model, Emme2.
+</how-modeled>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>miles per person</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/vehicle_miles_traveled_per_capita.py">psrc.zone.vehicle_miles_traveled_per_capita</a>
+</source>
+
+</indicator-declaration>

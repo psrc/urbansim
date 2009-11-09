@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link href="../style/book.css" rel="stylesheet" type="text/css"> 
+<title>Reading Indicator Documentation</title>
+</head>
+
+<body>
+
+<h1>Reading Indicator Documentation</h1>
+
+<p>This page briefly describes the sections of the indicator documentation,
+and is intended for people who are reading the documentation.</p>
+
+<h2>Name of Indicator</h2>
+
+		<p>
+            The name of the indicator is followed by a short definition.
+		</p>
+
+		<h3 id="interpreting_results">
+			Interpreting Results
+		</h3>
+		<p>
+            This section describes how to interpret the results from this indicator, either from a diagnostic
+            perspective, a policy perspective, or both.
+		</p>
+		<h3 id="units_and_precision">
+            Units of Measurement and Precision
+		</h3>
+        <p>
+            This section describes the units of measurement for the indicator,
+			e.g., <i>persons/acre</i>, <i>square feet</i>, or <i>unitless</i>.&nbsp; (An
+			example of a unitless indicator is <a target=href="res_vac_rate.xml">Residential
+			Vacancy Rate</a>, which is a ratio of residential units to residential
+			units).  This section also gives the default precision used when  
+			computing and displaying the indicator values, and whether it should be 
+			displayed as an ordinary number, a percentage, or in scientific notation.	
+		</p>
+		<h3 id="related">
+			Related Indicators
+		</h3>
+			<p>This section gives a list of related indicators that are also shipped with
+			UrbanSim, with links to the documentation for each.		
+		</p>
+		<h3 id="specification">
+			Specification
+		</h3>
+         <p>This section gives a human-readable specification of how the indicator can be
+            computed.  Note that the <a href="#source-code">source code</a> may in fact compute the 
+            value of the indicator in a different way, for efficiency or other reasons, but
+            the result should be the same.
+		</p>
+		<h3 id="limitations">
+			Limitations
+		</h3>
+		<p>
+            This section describes any known limitations or problems.			
+		</p>
+
+		<h3 id="how_modeled">
+           How Modeled
+		</h3>
+			<p>This section states whether the value of this indicator is determined by the
+			interactions of UrbanSim's component models, or whether it is exogenous (that
+			is, is determined outside the operation of UrbanSim).&nbsp; In some cases, the value of the indicator will be
+			exogenous for the regional geography, representing the entire region being simulated, but not for sub-regional
+			geographies.&nbsp; Since UrbanSim simulates the interaction among households, businesses and developers in the 
+			real estate market, and the effects of transportation and land use policies and other exogenous factors such as 
+			economic growth, it is generally impossible to attribute the value of an indicator to a single model component or variable as the
+			principal determining factor.&nbsp; The changes in indicator values arise from the interactions within the model system, 
+			and one can learn about the sensitivity of an indicator to changes in inputs only by examining the results of alternative scenarios.&nbsp;
+		</p>
+		<h3 id="source">
+			Indicator Source, Evolution, and Examples of Use
+		</h3>
+		<p>
+            This section describes where the definition and Python code for this indicator
+            came from, and (if known) how its specification evolved, and examples of using this indicator. 
+		</p>
+
+<h3 id="source-code">Source Code and Tests</h3>
+
+<p>This section provides a list of links to the source code for the Opus attribute or
+variable that implements this indicator.  Please see the &quot;Generating and Visualizing
+Indicators&quot; chapter in the <a href="http://www.urbansim.org/docs/opus-userguide/">Opus
+and UrbanSim Version 4 Reference Manual and Users Guide</a> for more
+information on defining indicators.</p>
+
+<p>The attribute can be a so-called &quot;primary attribute&quot;.
+This means that the value of the attribute is simply stored in the data
+store, and not computed from the values of other attributes.</li>
+Alternatively, the attribute can be represented as an Opus variable.
+In this case, the value of the attribute <em>is</em> computed from the
+values of other attributes on demand (although that value may be cached for
+later reuse).  The name of the Opus attribute will have dots in it, for 
+example &quot;urbansim.gridcell.number_of_jobs&quot; which indicates in 
+which package it is defined.</p>
+
+<p>For primary attributes, the name will be followed by the note
+&quot;(Opus primary attribute)&quot;.  The name won't be linked to
+anything.  Instead, the specification of the database table (or other
+storage structure) that contains the variable is given in the
+&quot;UrbanSim Database Tables&quot; chapter of the <a
+href="http://www.urbansim.org/docs/opus-userguide/">Opus and UrbanSim Version 4 Reference
+Manual and Users Guide</a>. 
+An example is for the indicator 
+<a href="res_units.xml">Residential units</a> -- see the item
+&quot;urbansim.gridcell.residential_units&quot; almost at the end of
+the description.  This is a primary attribute, since the number of
+residential units is stored directly in the grid cell data.</p>
+
+<!-- maybe sometime:
+     The specific attribute name will also be in the manual's index.
+-->
+
+<p>For attributes represented as variables, the name will be a link, which
+takes you to the Python class definition of that Opus variable.  The Python
+code includes the method &quot;compute&quot; that is used to compute the
+variable's value on demand, and also a unit test that can be run on demand
+to test that the variable is defined correctly.  The unit test is also run
+automatically whenever a new version of the source code is checked into the
+code repository.  An example is for the indicator <a href="population.xml">Population</a>
+-- see the item &quot;urbansim.gridcell.population&quot; at the
+end of the description.  This is an Opus variable, since the population is
+computed as the sum over the number of persons in each household placed in
+that grid cell (i.e. whose dwelling unit is in that grid cell).</p>
+
+<p>The variable name itself also provides useful information. 
+The variable name starts with the Opus package name in which the variable lives,
+such as 'urbansim' in the above examples. (Other variables might live in other 
+packages such as a package specific
+to a particular metropolitan region that is applying UrbanSim, e.g. 'psrc'.)  
+The next word 'gridcell' says that this variable is for the gridcell geography.  
+Finally, for Opus variables, 'population' (for example) is the name of the file 
+that contains the Python variable definition.  (In the file system, the filename
+also has a .py extension.)</p>
+
+</body>
+</html>

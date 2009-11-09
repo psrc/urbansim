@@ -1,0 +1,38 @@
+\chapter{Data in Opus}
+\label{chap:data-in-opus}
+
+Models written in OPUS (like any other models) operate on data, and OPUS provides extensive support for handling a wide variety of data types and formats as inputs and outputs. 
+The OPUS GUI, as shown in the preceding part of the documentation, provides an interactive interface to process data and models in the OPUS environment.  In this chapter we begin
+to make more explicit the details behind the GUI, beginning with data.
+
+The way most users interact with data is in tables, whether they are stored as spreadsheets, comma-separated ASCII files, binary files, dbf files, or database tables in a DBMS like MySQL or Postgres or MSSQL\@.  A table has rows and columns, with the columns representing attributes and the rows representing observations.  A table of households, for example, might contain colums for a unique household_id, income, number of persons, number of workers, etc.  The rows would each represent one household, with its values for each attribute.
+
+OPUS has its own internal data management capabilies, built on the Numpy Python library for array processing.  This is one of the keys to the relatively high performance of models implemented in OPUS: array-based calculations.  OPUS reads data from standard tables in external formats such as databases or ASCII files, and translates them into Numpy arrays.  Each column in a table gets translated into a one-dimensional array: think of it like a table with only one column, that can be loaded into memory and operated on very quickly.  The OPUS system stores these translated tables, called Datasets in OPUS terminology to distinguish the array-based storage from data outside of the OPUS environment, as a set of files on disk, organized within a directory that corresponds to a table name, and with one file per attribute in the Dataset.  For the most part, the inner workings of the data storage and processing in OPUS is not something a user needs to understand in too much detail, but it helps to understand a few aspects of this approach to data handling in OPUS.
+
+\section{Primary and Computed Attributes}
+
+With this preliminary introduction, we proceed to use the term Dataset to represent the OPUS representation of a table. 
+
+A \emph{Primary Attribute}, reflecting the contents of a single columns in the table, is represented in OPUS as a single array, and stored in one binary file in Numpy format on disk.  Note that OPUS keeps track of the indexing of these arrays on disk and in memory, to avoid losing the connection across the primary attributes corresponding to each observation (row in a table).  A primary attribute is one that is in the data to be loaded into a model.  It exists when the models are initialized.
+
+\emph{Computed Attributes} are also Numpy arrays, one per attribute.  We distinguish attributes that are computed as variables, or expressions from primary attributes.  The OPUS system has implemented a sophisticated way to avoid redundant calculations by keeping track of what is already computed, and re-using it if it is still available and has not been made obsolete by some other calculation.  This process of re-using already computed attributes is called \emph{caching}, and is very helpful to reducing computation.  This distinction and record-keeping also allows the system to write data to disk from memory, in order to reload and restart a model at a later time, saving space by not storing computed attributes (unless they are predicted future values of primary attributes).
+
+The next chapter will describe in much more depth the facilities offered by OPUS to implement computed attributes using variables and expressions.
+
+\section{Importing and Exporting Data}
+
+The GUI contains a set of tools in the data tab to load data into OPUS from external data sources, and to write OPUS to external data targets.  These external data storage options include:
+
+\squishlist
+\item Tab-delimited ASCII
+\item Comma-separated ASCII
+\item MySQL
+\item MS SQL
+\item Postgres
+\item SQLite
+\item PostGIS
+\item ArcGIS Geodatabases, including SDE, Personal and Flat File Geodatabases
+\item DBF formatted tables
+\squishend
+
+See also Section \ref{sec:database-server-connections} for information on configuring database server connections in the GUI.

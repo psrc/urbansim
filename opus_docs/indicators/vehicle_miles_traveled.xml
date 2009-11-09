@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Vehicle Miles Traveled">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+This indicator gives the total vehicle miles traveled for a selected geography during a given year.
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+For all the trips that are taken in a year, the trip length is summed up and attributed to the zone from which that trip originated. If all zones are aggregated, the total vehicle miles traveled for all data is produced.
+</specification>
+
+<related-indicators>
+<p><a href="vehicle_miles_traveled_per_capita.xml">Vehicle miles traveled per capita</a> gives the average number of vehicle miles traveled by each person in the specified geography. </p>
+<p><a href="greenhouse_gas_emissions_from_vehicle_travel.xml">Greenhouse gas emissions from vehicle travel</a> calculates the amount of CO<sub>2</sub> emitted per year based upon the vehicle miles traveled.
+</p>
+</related-indicators>
+
+<how-modeled>
+UrbanSim currently uses an external travel model, and the value of this indicator is computed by that travel
+model (Emme2).  Data about a trip's length, starting point,
+and destination, are obtained from the Emme2 travel model, where vehicle miles traveled is calculated from. 
+</how-modeled>
+
+<limitations>
+(1) Although this indicator can be computed at any geography, there are problems in using this indicator at fine-grained geography levels (e.g. gridcell) 
+because the unit of geography 
+where the trip orginates is attributed all the vehicle miles traveled for the whole trip. To give an 
+exaggerated example, if you traveled from your house all the way to the other side of the country, the unit of geography 
+that contains your house would have the total cross-country mileage included in its sum. 
+Because of this, it is best to use this indicator at a larger geographical level. 
+
+(2) Busses and other forms of mass transit are not included in these calculations.
+
+</limitations>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>miles</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/vehicle_miles_traveled_per_capita.py">psrc.zone.vehicle_miles_traveled_per_capita</a>
+</source>
+
+</indicator-declaration>

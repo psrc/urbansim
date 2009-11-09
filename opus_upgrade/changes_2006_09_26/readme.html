@@ -1,0 +1,43 @@
+<h4>26 September 2006</h4>
+
+<p>To create the <b> buidling_types</b> table and the <b> buildings</b> table, do the following
+steps in this sequence:</p>
+
+<ol>
+  <li>Flatten your scenario database chain. 
+  Execute <b>opus_core.database_management.flatten_scenario_database_chain</b>. In addition to 
+  other parameters, you will need to specify your scenario database and the name of the new 
+  database that represents the flattened chain. <b>Important:</b> throughout the rest of the 
+  scripts that you run, you will use this new database name as the database. 
+
+	<li>Download the scripts from <a href="changes_2006_09_26_code.zip">changes_2006_09_26_code.zip</a>
+      and unzip into a temporary directory on your computer.</li>
+	
+	<li>Execute the <font face="Courier New" size="2">do_create_building_types_table_for_elcm.py</font>
+      script to create a building_types table; you'll have to specify the
+      database name, and perhaps other parameters (see below for usage syntax),
+      e.g.:</li>
+</ol>
+<blockquote>
+  <blockquote>
+    <pre>python do_create_building_types_table_for_elcm.py -d my_database_name</pre>
+  </blockquote>
+</blockquote>
+<ol>
+	
+	<li value="3">Execute the <font face="Courier New" size="2">do_create_buildings_table.py</font>
+      script to create the buildings table, e.g.</li>
+</ol>
+
+<blockquote>
+  <blockquote>
+    <pre>python <font face="Courier New" size="2">do_create_buildings_table.py -d my_database_name</font></pre>
+  </blockquote>
+</blockquote>
+<p>To see usage information, execute '<font face="Courier New" size="2">python <i>script_name</i>
+--help</font>', e.g.:</p>
+<blockquote>
+    <pre>python do_create_building_types_table_for_elcm.py --help</pre>
+</blockquote>
+
+<p>&nbsp;</p>

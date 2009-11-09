@@ -1,0 +1,319 @@
+<variables>
+    <unit_price type="variable"> urbansim_parcel.parcel.unit_price</unit_price>
+    <hwy200 type="variable"> psrc.parcel.distance_to_highway_in_gridcell<200</hwy200>
+    <hwy600 type="variable"> psrc.parcel.distance_to_highway_in_gridcell<600</hwy600>
+    <hwy1000 type="variable"> psrc.parcel.distance_to_highway_in_gridcell<1000</hwy1000>
+    <hwy2000 type="variable"> psrc.parcel.distance_to_highway_in_gridcell<2000</hwy2000>
+    <art300 type="variable">  psrc.parcel.distance_to_arterial_in_gridcell<300</art300>
+    <art600 type="variable"> psrc.parcel.distance_to_arterial_in_gridcell<600</art600>
+    <ln_bldgage type="variable"> (ln(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean))).astype(float32)</ln_bldgage>
+    <lnsqft type="variable">(ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</lnsqft>
+    <lnsqftunit type="variable">(ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</lnsqftunit>
+    <lnlotsqft type="variable">(ln(parcel.parcel_sqft)).astype(float32)</lnlotsqft>
+    <lnunits type="variable">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</lnunits>
+    <lnlotsqftunit type="variable">(ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</lnlotsqftunit>
+    <far type="variable">(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
+    <ln_invfar type="variable">(ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</ln_invfar>
+    <lngcdacbd type="variable">(ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</lngcdacbd>
+    <lnemp30da type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
+    <lnemp20da type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
+    <lnemp10da type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
+    <lnemp30tw type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp30tw>
+    <lnemp20tw type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp20tw>
+    <lnemp10wa type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp10wa>
+    <lnemp20wa type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp20wa>
+    <lnavginc type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.average_income))).astype(float32)</lnavginc>
+    <lnempden type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
+    <lnpopden type="variable">(ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
+    <inugb type="variable"> parcel.is_inside_urban_growth_boundary</inugb>
+    <hbwavgtmda type="variable"> parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
+    <is_pre_1940 type="variable"> parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) < 1940</is_pre_1940>
+</variables>
+
+<specification_variables type="dictionary">
+  <_definition_ hidden="True">all_variables</_definition_>
+  <1 type="submodel">Agriculture
+       <constant choices="Use">Use</constant>
+       <inugb choices="Use|Skip">Use</inugb>
+       <lnemp20da choices="Use|Skip">Use</lnemp20da>
+       <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+       <lnsqft choices="Use|Skip">Use</lnsqft>
+   </1>
+  <2 type="submodel"> Civil and Quasi-Public
+       <constant choices="Use">Use</constant>
+       <inugb choices="Use|Skip">Use</inugb>
+       <is_pre_1940 choices="Use|Skip">Use</is_pre_1940>
+       <ln_invfar choices="Use|Skip">Use</ln_invfar>
+        <lnavginc choices="Use|Skip">Skip</lnavginc>
+        <lnemp10wa choices="Use|Skip">Use</lnemp10wa>
+        <lnemp20da choices="Use|Skip">Skip</lnemp20da>
+        <lnempden choices="Use|Skip">Use</lnempden>
+        <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+      </2>
+      
+  <3 type="submodel"> Commercial
+    <constant choices="Use">Use</constant>
+    <art600 choices="Use|Skip">Use</art600>
+    <art300 choices="Use|Skip">Use</art300>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp20da choices="Use|Skip">Use</lnemp20da>
+    <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+    <lnemp10wa choices="Use|Skip">Use</lnemp10wa>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+   </3>
+
+   <7 type="submodel"> Government
+       <constant choices="Use">Use</constant>
+       <art600 choices="Use|Skip">Use</art600>
+       <art300 choices="Use|Skip">Skip</art300>
+       <inugb choices="Use|Skip">Use</inugb>
+       <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+       <lnemp10wa choices="Use|Skip">Skip</lnemp10wa>
+       <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+       <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+       <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+       <lnsqft choices="Use|Skip">Use</lnsqft>
+   </7>
+   
+   <9 type="submodel"> Hospital, Convalescent Center
+        <constant choices="Use">Use</constant>
+        <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+        <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+        <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+         <lnsqft choices="Use|Skip">Use</lnsqft>
+   </9>
+   
+   <10 type="submodel"> Industrial
+         <constant choices="Use">Use</constant>
+         <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+         <inugb choices="Use|Skip">Use</inugb>
+         <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+         <ln_invfar choices="Use|Skip">Use</ln_invfar>
+         <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+         <lnemp20wa choices="Use|Skip">Use</lnemp20wa>
+         <lnempden choices="Use|Skip">Use</lnempden>
+         <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+         <lnsqft choices="Use|Skip">Use</lnsqft>
+  </10>
+  
+   <12 type="submodel"> Mining
+    <constant choices="Use">Use</constant>
+    <inugb choices="Use|Skip">Skip</inugb>
+    <lnlotsqft choices="Use|Skip">Skip</lnlotsqft>
+    <lnsqft choices="Use|Skip">Skip</lnsqft>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+   </12>
+   
+  <13 type="submodel"> Mobile Home Park
+    <constant choices="Use">Use</constant>
+    <art600 choices="Use|Skip">Use</art600>
+    <art300 choices="Use|Skip">Skip</art300>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da choices="Use|Skip">Use</lnemp20da>
+    <lnemp30tw choices="Use|Skip">Use</lnemp30tw>
+    <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 choices="Use|Skip">Use</is_pre_1940>
+  </13>
+
+   <14 type="submodel"> Multi-Family Residential (Apartment)
+    <constant choices="Use">Use</constant>
+    <art600 choices="Use|Skip">Skip</art600>
+    <art300 choices="Use|Skip">Use</art300>
+    <hwy200 choices="Use|Skip">Use</hwy200>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft choices="Use|Skip">Skip</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Skip</lnemp30da>
+    <lnemp20da choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da choices="Use|Skip">Use</lnemp10da>
+    <lnemp30tw choices="Use|Skip">Use</lnemp30tw>
+    <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+    <lnemp10wa choices="Use|Skip">Use</lnemp10wa>
+    <lnemp20wa choices="Use|Skip">Use</lnemp20wa>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <lnpopden choices="Use|Skip">Use</lnpopden>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 choices="Use|Skip">Use</is_pre_1940>
+  </14>
+
+  <15 type="submodel"> Condominium Residential
+    <constant choices="Use">Use</constant>
+    <hwy2000 choices="Use|Skip">Use</hwy2000>
+    <art600 choices="Use|Skip">Use</art600>
+    <art300 choices="Use|Skip">Skip</art300>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa choices="Use|Skip">Skip</lnemp10wa>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <lnpopden choices="Use|Skip">Use</lnpopden>
+   </15>
+    
+   <18 type="submodel"> Office
+    <constant choices="Use">Use</constant>
+    <hwy2000 choices="Use|Skip">Skip</hwy2000>
+    <art600 choices="Use|Skip">Use</art600>
+    <art300 choices="Use|Skip">Skip</art300>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp10da choices="Use|Skip">Use</lnemp10da>
+    <lnemp30tw choices="Use|Skip">Skip</lnemp30tw>
+    <lnemp10wa choices="Use|Skip">Use</lnemp10wa>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 choices="Use|Skip">Skip</is_pre_1940>
+  </18>
+
+  <19 type="submodel"> Park and Open Space
+    <constant choices="Use">Use</constant>
+    <hwy2000 choices="Use|Skip">Skip</hwy2000>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art600 choices="Use|Skip">Skip</art600>
+    <art300 choices="Use|Skip">Use</art300>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>    
+    <lnemp20da choices="Use|Skip">Skip</lnemp20da>
+    <lngcdacbd choices="Use|Skip">Skip</lngcdacbd>
+    <lnpopden choices="Use|Skip">Skip</lnpopden> 
+  </19>
+                 
+ <20 type="submodel"> Parking
+    <constant choices="Use">Use</constant>
+    <hwy200 choices="Use|Skip">Use</hwy200>
+    <art600 choices="Use|Skip">Skip</art600>
+    <art300 choices="Use|Skip">Skip</art300>
+    <hbwavgtmda choices="Use|Skip">Skip</hbwavgtmda>        
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>         
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp30tw choices="Use|Skip">Skip</lnemp30tw>    
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <lnpopden choices="Use|Skip">Skip</lnpopden>
+  </20>
+ 
+  <24 type="submodel"> Single Family Residential
+    <constant choices="Use">Use</constant>
+    <hwy2000 choices="Use|Skip">Use</hwy2000>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art300 choices="Use|Skip">Use</art300>
+    <art600 choices="Use|Skip">Use</art600>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft choices="Use|Skip">Skip</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa choices="Use|Skip">Skip</lnemp10wa>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnpopden choices="Use|Skip">Use</lnpopden>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 choices="Use|Skip">Use</is_pre_1940>
+   </24>
+
+  <25 type="submodel"> Transportation, Communication, Public Utilities
+    <constant choices="Use">Use</constant>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art300 choices="Use|Skip">Skip</art300>
+    <art600 choices="Use|Skip">Skip</art600>
+    <inugb choices="Use|Skip">Use</inugb>       
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>  
+    <lnemp20wa choices="Use|Skip">Skip</lnemp20wa>
+    <lnemp30tw choices="Use|Skip">Use</lnemp30tw> 
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnpopden choices="Use|Skip">Skip</lnpopden>
+    <lnavginc choices="Use|Skip">Skip</lnavginc>
+  </25>
+  
+  <26 type="submodel"> Vacant Developable
+    <constant choices="Use">Use</constant>
+    <hwy2000 choices="Use|Skip">Use</hwy2000>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art300 choices="Use|Skip">Use</art300>
+    <art600 choices="Use|Skip">Skip</art600>
+    <hbwavgtmda choices="Use|Skip">Skip</hbwavgtmda>
+    <lnavginc choices="Use|Skip">Use</lnavginc>
+    <lnpopden choices="Use|Skip">Skip</lnpopden>
+    <lnemp10da choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa choices="Use|Skip">Use</lnemp10wa>  
+    <lnemp20da choices="Use|Skip">Skip</lnemp20da>
+    <lnemp20wa choices="Use|Skip">Skip</lnemp20wa>
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    </26>
+
+   <28 type="submodel"> Warehousing
+    <constant choices="Use">Use</constant>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art300 choices="Use|Skip">Skip</art300>
+    <art600 choices="Use|Skip">Skip</art600>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <inugb choices="Use|Skip">Skip</inugb>  
+    <is_pre_1940 choices="Use|Skip">Skip</is_pre_1940>  
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lnemp20tw choices="Use|Skip">Use</lnemp20tw> 
+    <lnempden choices="Use|Skip">Use</lnempden>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd> 
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnpopden choices="Use|Skip">Use</lnpopden>
+   </28> 
+                
+  <30 type="submodel"> Mixed Use
+    <constant choices="Use">Use</constant>
+    <hwy200 choices="Use|Skip">Skip</hwy200>
+    <art300 choices="Use|Skip">Skip</art300>
+    <art600 choices="Use|Skip">Skip</art600>
+    <ln_bldgage choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft choices="Use|Skip">Use</lnlotsqft>
+    <lnunits choices="Use|Skip">Use</lnunits>
+    <ln_invfar choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da choices="Use|Skip">Use</lnemp30da>
+    <lnemp20tw choices="Use|Skip">Use</lnemp20tw>
+    <lnemp20wa choices="Use|Skip">Skip</lnemp20wa>
+    <lnavginc choices="Use|Skip">Skip</lnavginc>
+    <inugb choices="Use|Skip">Use</inugb>
+    <hbwavgtmda choices="Use|Skip">Use</hbwavgtmda>
+    <lnempden choices="Use|Skip">Skip</lnempden>
+    <lnpopden choices="Use|Skip">Skip</lnpopden>
+  </30>
+</specification_variables>

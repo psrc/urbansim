@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Greenhouse Gas Emissions from Vehicle Travel">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+This indicator gives the estimated greenhouse gas emissions produced by vehicles traveling from the selected geography in a given year. 
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+The value of this indicator is calculated as the 
+<a href="vehicle_miles_traveled.xml">vehicle miles traveled</a> multipled by 
+the coefficient for CO<sub>2</sub> pounds emitted per vehicle mile traveled. 
+This coefficient, 0.915, was obtained from the U.S. Environmental Protection Agency (EPA) 
+website about emission facts. The website was accessed on 5/8/2006. Please see 
+<a href="http://www.epa.gov/otaq/consumer/f00013.htm">http://www.epa.gov/otaq/consumer/f00013.htm</a>. 
+As stated on the website, the coefficient is based on "fleetwide average in-use fuel economy of 21.5 
+miles per gallon (mpg) for passenger cars...as reported in the 19th edition 
+of the "Transportation Energy Data Book," prepared for the U.S. Department of Energy."
+</specification>
+
+<related-indicators>
+<p><a href="vehicle_miles_traveled.xml">Vehicle miles traveled</a> gives the total vehicle miles traveled with an origin in the specified geography. It is used in the calculation.</p>
+<p><a href="vehicle_miles_traveled_per_capita.xml">Vehicle miles traveled per capita</a> gives the average number of vehicle miles traveled by each person in the specified geography. 
+</p>
+</related-indicators>
+
+<how-modeled>
+The value of this indicator is not directly modeled by Urbansim as it is based off of the results of the travel model, where vehicle miles traveled is calculated from. 
+</how-modeled>
+
+<limitations>
+(1) Although this indicator can be computed at any geography, it is best to calculate it using all the data and obtain a single value. 
+The reason it should only be cautiously used at any finer grained level of geography is because, for any vehicle trip that takes place, 
+all the emissions produced on that trip is assigned to the unit of geography from which the trip originated. Consider this example: 
+many people drive in from the suburbs to work downtown every work day. If calculated at the large-area geography, for example, it will look like greenhouse
+gas emissions are being created mostly along the perimeters of the cities, in the suburbs, rather than being concentrated along major
+highways and in the downtown region. This is caused by how vehicle miles traveled is calculated.
+
+(2) Another limitation is that this indicator assumes that all vehicle miles traveled are taken in passenger cars--even those trips taken in light trucks, etc. On the otherhand,
+it doesn't take into account more fuel-efficient cars like hybrids. As most vehicle travel is taken by passenger cars, using the typical passenger car as
+a baseline for measuring vehicle emissions seems reasonable. 
+
+(3) Emissions from busses and other forms of mass transit are not included in these calculations.
+</limitations>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>pounds of carbon dioxide (CO2) emitted</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/greenhouse_gas_emissions_from_vehicle_travel.py">psrc.zone.greenhouse_gas_emissions_from_vehicle_travel</a>
+</source>
+
+</indicator-declaration>

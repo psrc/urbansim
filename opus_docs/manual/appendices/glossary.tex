@@ -1,0 +1,210 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Glossary}
+
+This section defines important terms used in describing the Opus system,
+from a modeler's viewpoint.  In addition, there are a few
+technology-oriented terms that might otherwise be confused with these
+domain-specific terms.
+
+\begin{description}
+
+\item[Agent] \index{agent!definition}
+An object, such as a job or a household, that takes direct action 
+on its environment, such as making choices among a set of alternatives.  
+Typically, agents represent ``real-world'' objects from the model
+domain.  Agents have state. 
+Agents can engage in behavior, communicate, change state, etc. 
+An agent's behavior usually depends upon its context.  
+
+\item[Agent set] \index{agent set!definition}
+An object that contains a set of agents.
+
+\item[Alternative] \index{alternative!definition}
+One of the objects that an agent may choose.
+
+\item[Attribute]\index{attributes!definition}
+A value that can be attributed to a particular object.  An
+inherent characteristic of an object.  For instance, the UrbanSim
+job object may have attributes such as ``id'', ``gridcell_id'', 
+and ``is_in_scalable_sector_group''.  Attributes may be 
+"primary''\index{attributes!primary}\index{primary attributes}, in that the jobs in the input database 
+have values for that attribute.  Or attributes may be computed
+by a variable definition.  There are no ``constant'' attributes. 
+Models may modify any attributes, including ``primary'' attributes.
+
+\item[baseyear cache]\index{baseyear cache!definition}
+The file-based storage for the attribute values read from the baseyear
+database.  Access to a file-based cache is much faster than to a database. 
+Data cached during model simulation is written to a simulation cache. 
+
+\item[Characteristic] \index{characteristics!definition}
+Synonym for attribute.
+
+\item[Choice] \index{choice!definition}
+We avoid using this term because it is ambiguous: it can mean either
+a member of a choice set, or it can mean the single chosen
+alternative.
+
+\item[Choice set] \index{choice set!definition}
+An object that contains a set of alternatives.  By convention, we use
+this term instead of ``alternative set''.
+
+\item[Category] \index{category!definition}
+A single state of a nominal variable, such as a development type.
+Often used to group objects based upon their characteristics. \index{characteristics}
+
+\item[Category set] \index{category set!definition}
+A set of categories.
+
+\item[Dataset]\index{dataset!definition}
+A set of objects, such as gridcells or jobs, of the same type.
+You can think of a dataset as a table, with one column
+for each attribute, and one row for each object.  
+Each object in the dataset has a unique identifier (an integer) stored in
+an attribute whose name is referenced as ``id_name''.  
+
+In practice, a dataset often is constructed from a single
+table read from a Storage object, though some datasets 
+are constructed by joining information from multiple tables.
+
+\item[Logit Equation] \index{Logit Equation!definition}
+Also known as a Logit Transformation, this transforms the
+collection of an agent's computed direct utilities for all
+alternatives in the choice set into an estimated probability for
+each alternative:
+\begin{equation}
+    P_{ij}=\frac{e^{\lambda U_{ij}}}{\sum_{j' \in J}e^{\lambda
+    U_{ij'}}},
+\end{equation}
+
+\item[Estimated Utility Function] \index{Estimated Utility Function!definition}
+A set of paired variables and coefficients of the form $\sum
+c_{i}*v_{i}$.
+
+\item[Graphical User Interface]\index{Graphical User Interface (GUI)!definition}
+\index{GUI|see {Graphical User Interface}}
+A general term for an interactive, graphical user interface to a computer
+application.  The Opus/UrbanSim GUI provides access to much of the system's
+functionality without needing to use Python scripts.
+
+\item[Integrated Development Environment (IDE)]\index{Integrated Development Environment (IDE)!definition}
+\index{IDE|see {Integrated Development Environment}}
+An application to assist software engineers in writing programs.  An IDE might 
+include support for code browsing and searching, debugging, and so forth.
+The Opus/UrbanSim developers usually use either the 
+Eclipse\index{Integrated Development Environment (IDE)!Eclipse}\index{Eclipse IDE} or 
+Wing\index{Integrated Development Environment (IDE)!Wing}\index{Wing IDE}\@.
+
+\item[Interaction Set] \index{interaction sets!definition}
+A dataset of variables describing the interaction between two
+different datasets.  See ``Interaction Variable''.
+
+\item[Interaction Variable] \index{interaction variable!definition}
+A variable that computes the interaction between two different
+datasets, such as that gridcell ``number_of_households'' 
+variable that computes the number of households residing in
+each gridcell.
+
+\item[Logit Model] \index{Logit Model!definition} \index{model!Logit}
+A Logit model is defined using an indirect utility equation, which
+includes the error term and specifies how that error is
+distributed. For example:
+\begin{equation}
+    U_{ij}={\theta}{X}_{ij}+\epsilon_{ij}
+    =\sum_{k \in K}{\theta}_{k}X^{k}_{ij}+\epsilon_{ij},
+\end{equation}
+\indent where $\epsilon_{ij}$ is i.i.d. distributed Gumbel Type I.
+
+\item[Model] \index{model!definition}
+An object that defines behavior and that has a \verb|run()|
+method.  Models have no state. They get their data from data
+objects, and store their results in data objects.  A model can be
+a formula that calculates on the data provided to it. A model can
+be a sequence of actions to perform.  A model also can act as an
+action.  A model must have a \verb|run()| method.
+
+By convention, every model
+module contains a set of tests that test that model.
+
+\item[Model implementation] \index{model!implementation}
+A model whose specification, or both specification and
+coefficients\index{coefficients}, have been estimated to a particular data set.
+
+\item[Model object] \index{model!object}
+A model, or a model part.  Model objects act on data objects.
+
+\item[Model component] \index{model!component}
+An object that performs a logically distinct task that is part of
+how the model runs.  Every model is formed by a sequence, and
+perhaps cycle, of model steps.  Different models may 
+combine the same model components in different ways to define
+different models.
+
+Note that models can become components in other higher-level models, such as a
+land-price model and a neighborhood choice model that are parts of a
+household-location-choice model, which is part of an UrbanSim model.
+
+\item[Model specification] \index{model!specification}
+A definition of what variables are included in an econometric
+model.  Coefficient values\index{coefficient values} may, or may not, also be part of the
+specification.
+
+\item[Opus] \index{Opus!definition} The Open Platform for Urban Simulation, a new
+Python-based framework for writing urban and regional models.
+
+\item[Opus package] \index{Opus package!definition} The term ``Opus package'' refers to 
+any Python package\index{Python package} built using the Opus framework and that follows
+the Opus package guidelines.  The packages in the Opus base distribution
+will all be Opus packages in this sense, as will contributed Opus packages. See
+Section~\ref{sec:create-opus-package} for directions for creating your own Opus
+package. 
+
+\item[Puget Sound Regional Council (PSRC)]\index{PSRC}\index{Puget Sound Regional Council|see {PSRC}}
+\url{www.psrc.org}
+The Metropolitan Planning Organization for the Central Puget Sound Region in Washington
+State, which includes Seattle, Bellevue, Tacoma, and other cities, towns, and unincorporated 
+areas.  PSRC is one of the users of UrbanSim. 
+
+\item[Python package]\index{Python!packages}
+A way of structuring Python's module namespace by using ``dotted module
+names''.  See the Python documentation at \url{http://www.python.org/doc}.
+
+\item[Resources] \index{Resources!definition} 
+A Python dictionary object.  It is used to contain parameters passed
+between model steps.
+
+\item[simulation cache]\index{simulation cache!definition}
+The file-based storage for the attribute values for the datasets used by the
+models. Access to a file-based cache is much faster than to a database.  The
+baseyear attributes are stored in the baseyear cache\index{baseyear cache}.
+
+\item[]\item[Simulation cycle] \index{simulation cycle!definition}
+A set of sub-models that run in sequence before repeating.
+Typically, this refers to the outermost loop.
+
+\item[Submodel] \index{submodel!definition}
+A \ldots \emph{need to supply this definition}
+
+\item[Time step] \index{time step!definition}
+The unit of simulated time between each simulation cycle. For many
+simulations, this will be a year.
+
+\item[Variable]\index{variables!definition}
+An attribute that is computed by a variable definition.  Each
+variable definition resides in its own Python module.  The 
+Python module for a variable, e.g. ``is_industrial'', is the
+same as the variable name except with a ``.py'' extension, 
+e.g. ``is_industrial.py''.  
+
+\item[Work request system] \index{work request system!definition}
+A system for filing and tracking work requests, including bug
+reports.
+
+\end{description}

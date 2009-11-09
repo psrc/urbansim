@@ -1,0 +1,143 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+% This is the root latex source file for the Opus and UrbanSim Users Guide.
+% The guide is organized as a set of 'include' files, normally one file
+% per chapter.  It uses the Python latex documentation standards and latex
+% definition files -- see http://www.python.org/doc/current/doc/doc.html
+% Also see the "Writing Documentation" chapter in this manual for more
+% information.
+
+% Each latex source file (including the 'include' files) should have
+% the GNU Free Documentation License as a comment.
+
+\documentclass{latex_files/manual}
+\usepackage{amsmath, graphics, graphicx, subfigure,
+latex_files/rotating, latex_files/html, upquote, makeidx}
+\usepackage{color, latex_files/fancyhdr, longtable, epsfig,lscape,
+booktabs,multirow, latex_files/boxit, listings}
+% this package causes the font encodings to include an _ (underscore)
+% character -- this is useful because then searching the pdf document
+% finds names with underscores in them.  (Otherwise the underscore is
+% produced using a rule rather than a character and won't show up in
+% searches.)
+\usepackage[T1]{fontenc}
+%\usepackage[ps2pdf]{hyperref}
+
+\sloppy
+\newcommand{\tight}{\itemsep 0pt}
+\newcommand{\squishlist}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}      \setlength{\parsep}{3pt}
+      \setlength{\topsep}{3pt}       \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{1.5em} \setlength{\labelwidth}{1em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishlisttwo}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}    \setlength{\parsep}{0pt}
+      \setlength{\topsep}{0pt}     \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{2em} \setlength{\labelwidth}{1.5em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishend}{
+    \end{list}  }
+
+\newcommand{\heading}[1]{\setlength{\parskip}{1em}{\noindent\bf{#1}}} 
+
+\title{The Open Platform for Urban Simulation \\
+\includegraphics[width=0.5\textwidth]{images/opus-logo.png}\\
+{\em and} UrbanSim \\
+Version 4.2 \\ 
+%\includegraphics[width=0.15\textwidth]{graphics/new-logo-medium.png}
+ ~\\ ~\\
+Users Guide and Reference Manual\\ ~\\ ~\\ ~\\ ~\\ ~\\ ~\\}
+
+\author{Center for Urban Simulation and Policy Analysis \\
+University of Washington}
+
+%\authoraddress{Center for Urban Simulation and Policy Analysis \\
+%University of Washington \\
+%Box 353055 \\
+%Seattle, Washington 98195 \\
+
+% Put the real email address only in the pdf version (to avoid including
+% a spam magnet in the html version).  A mangled version of the address
+% (using "info (at) urbansim.org") is included in the html version by
+% a parameter to the latex2html command
+%begin{latexonly}
+%Email: \email{info@urbansim.org} \\
+%Web: \url{http://www.urbansim.org}\\
+%end{latexonly}
+
+%}
+
+\date{\textsf{\today}}
+% replace \today with a real date (\date{April 1, 2000} ...} when this
+% manual is ready for release so that reformatting doesn't cause a
+% new date to be used.  For now, setting the date to \today during
+% early editing makes it easier to handle versions.
+
+
+% release version; this is used to define the \version macro
+% omit the version unless this is a stable release -- for incremental
+% versions just let the date identify the version
+% \release{1.0.beta1}
+
+% this tells \index to actually write the .idx file
+\makeindex
+
+% not (yet) used:
+% \makemodindex                 % If this contains a lot of module sections.
+
+\begin{document}
+
+\maketitle
+
+\input{copyright}
+\input{acknowledgements}
+% The ugly "%begin{latexonly}" pseudo-environment suppresses the table
+% of contents for HTML generation.
+%
+%begin{latexonly}
+\tableofcontents
+%end{latexonly}
+
+\input{macros}
+
+% start the page numbering for the Part I page, so that it matches the
+% actual pages (as shown when viewing the pdf file with Acrobat)
+\setcounter{page}{7}
+
+\input{part-overview/overview}
+\input{part-gui/gui}
+\input{part-components/components}
+\input{part-projects/projects}
+%\input{part-model-system/model-system}
+\input{part-command-line/command-line}
+\input{part-api/api}
+\input{part-developers/developers}
+% use names for citations rather than numbers
+\bibliographystyle{apalike}
+
+% put the bibliography into the table of contents
+\clearpage
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{urbansim,cited}
+
+\appendix
+\input{appendices/appendices}
+% Module index omitted for now:
+%begin{latexonly}
+% \renewcommand{\indexname}{Module Index}
+%end{latexonly}
+% \input{mod\jobname.ind}               % Module Index
+
+\printindex
+
+\end{document}

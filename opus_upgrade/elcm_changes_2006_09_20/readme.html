@@ -1,0 +1,65 @@
+<h4>20 September 2006</h4>
+
+<p>To adjust a database for the modifications to the ELCM, do the following
+steps in this sequence:</p>
+<ol>
+  <li>Flatten your scenario database chain. 
+  Execute <b>opus_core.database_management.flatten_scenario_database_chain</b>. In addition to 
+  other parameters, you will need to specify your scenario database and the name of the new 
+  database that represents the flattened chain. <b>Important:</b> throughout the rest of the 
+  scripts that you run, you will use this new database name as the database. 
+  <li>Download the scripts from <a href="../../opus_upgrade/elcm_changes_2006_09_20/elcm_changes_2006_09_20_code.zip">elcm_changes_2006_09_20_code.zip</a>
+    and unzip into a temporary directory on your computer.</li><br />
+    
+  <li>Execute the <b>do_rename_by_swapping_employment_and_commercial_or_industrial_for_elcm.py</b>
+    script.&nbsp; This script:</li>
+	<ul>
+		<li>Renames employment_commercial_location_choice_model_specification to</li>
+		<ul><li>commercial_employment_location_choice_model_specification.</li></ul>
+		<li>Renames employment_commercial_location_choice_model_coefficients to</li>
+		<ul><li>commercial_employment_location_choice_model_coefficients.</li></ul>
+		<li>Renames employment_industrial_location_choice_model_specification to</li>
+		<ul><li>industrial_employment_location_choice_model_specification.</li></ul>
+		<li>Renames employment_industrial_location_choice_model_coefficients to</li>
+		<ul><li>industrial_employment_location_choice_model_coefficients.</li></ul>
+	</ul><br />
+	
+	<li>Execute the <b>do_copy_home_based_to_single_and_multiple_family_home_for_elcm.py</b>
+    script.&nbsp; This script:</li>
+	<ul>
+		<li>Splits employment_home_based_location_choice_model_coefficients into</li>
+			<ul>
+				<li>single_family_home_elcm_coefficients and</li>
+				<li>multiple_family_home_elcm_coefficients.</li>
+			</ul>
+		<li>Splits employment_home_based_location_choice_model_specification into</li>
+			<ul>
+				<li>single_family_home_elcm_specification and</li>
+				<li>multiple_family_home_elcm_specification.</li>
+			</ul>
+	</ul><br />
+	
+	<li>Execute the <b>do_create_building_types_table_for_elcm.py</b>
+    script.&nbsp; This script:</li>
+	<ul>
+		<li>Creates a building_types table</li>
+	</ul><br />
+	
+	<li>Execute the <b>do_combine_job_for_estimation_tables_for_elcm.py</b>
+    script.&nbsp; This script:</li>
+	<ul>
+		<li>Creates jobs_for_estimation from</li>
+		<ul>
+			<li>jobs_for_estimation_commercial and</li>
+			<li>jobs_for_estimation_industrial and</li>
+			<li>jobs_for_estimation_governmental and</li>
+			<li>jobs_for_estimation_home_based.</li>
+		</ul>
+	</ul>
+</ol>
+<p>To see usage information for any of these scripts, execute '<font face="Courier New" size="2">python <i>script_name</i>
+--help</font>', e.g.:</p>
+<blockquote>
+  <pre>python do_create_building_types_table_for_elcm.py --help</pre>
+</blockquote>
+<p>&nbsp;</p>

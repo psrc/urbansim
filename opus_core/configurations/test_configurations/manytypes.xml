@@ -1,0 +1,58 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <test_section>
+    <description type="string">a test configuration</description>
+    <quotedthing type="string" parser_action='quote_string'>test\test</quotedthing>
+    <quotedthing2 type="string" parser_action='quote_string'>'test\test'</quotedthing2>
+    <quotedthing3 type="string" parser_action='quote_string'>"test\test"</quotedthing3>
+    <empty1 type="string"/>
+    <empty2 convert_blank_to_none="True" type="string"/>
+    <emptypassword convert_blank_to_none="True" type="password"/>
+    <year type="integer">1980</year>
+    <mybool choices="True|False" type="boolean">True</mybool>
+    <ten type="float">10.0</ten>
+    <emptyint convert_blank_to_none="True" type="integer"/>
+    <emptyfloat convert_blank_to_none="True" type="float"/>
+    <years type="tuple">
+      <firstyear type="integer">1980</firstyear>
+      <lastyear type="integer">1981</lastyear>
+    </years>
+    <list_test type="list">[10, 20, 30]</list_test>
+    <vars type="variable_list">
+     <variable_spec name="gridcell.grid_variable" />
+     <variable_spec name="constant" />
+     <variable_spec name="constant" coefficient_name="constant_coeff"/>
+     <variable_spec name="ignore_me" ignore="True" />
+     <variable_spec name="gridcell.var_with_coeff" coefficient_name="the_coeff" />
+    </vars>
+    <dicttest type="dictionary">
+      <str1 type="string">squid</str1>
+      <str2 type="string">clam</str2>
+    </dicttest>
+    <selectable_list name="the selectables" type="selectable_list">
+     <a name='res1' type="selectable">True</a>
+     <a name='use return_value' return_value='res2' type="selectable">True</a>
+     <a name='dict' type="selectable">True
+      <five type="integer">5</five>
+      <string type="string">string</string>
+     </a>
+     <a name="don't choose me" type="selectable">False</a>
+    </selectable_list>
+    <models_to_run type="selectable_list">
+      <selectable type="selectable" name="real_estate_price_model">True</selectable>
+      <selectable type="selectable" name="airplane_model">False</selectable>
+    </models_to_run>
+    <mytables type="selectable_list">
+      <selectable type="selectable" name="gridcells">True</selectable>
+      <selectable type="selectable" name="zones">False</selectable>
+      <selectable type="selectable" name="jobs">True</selectable>
+    </mytables>
+    <mydatasets type="selectable_list">
+      <selectable type="selectable" name="gridcell">True</selectable>
+      <selectable type="selectable" name="zone">False</selectable>
+      <selectable type="selectable" name="job">True</selectable>
+    </mydatasets>
+  </test_section>'
+</opus_project>

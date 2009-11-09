@@ -1,0 +1,722 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Programming in Opus and UrbanSim}
+\label{chapter:programming}
+
+This chapter provides some practical details on developing programs in Opus
+and UrbanSim, including how to start a new Opus package, design guidelines,
+and Python coding standards.
+
+\section{Creating New Opus Packages}
+\label{sec:create-opus-package}
+\index{opus packages!creating new package}
+
+This section provides information on constructing a new Opus project.
+
+An Opus package is a Python package\index{Python!packages}\index{Python} that conforms to the
+Opus conventions.  If you are only creating new child XML configurations and
+modifying them with the GUI, you don't need to make a new package.  However, if
+you're writing Python code to define new variables as Python classes, to define new 
+datasets, or to define new models, then you should construct a new Opus project 
+to hold this code.  The new package should be 
+placed in your workspace, alongside of the Opus and UrbanSim packages such as 
+\package{opus_core} and \package{urbansim}.
+
+For instance, to create an
+Opus package for the fictitious ``atlantis'' MPO:
+
+\begin{enumerate}
+  \item Use the following Python commands to create a new \file{atlantis} Opus
+  package pre-populated with the structure and files expected in an Opus package
+  (replace ``atlantis'' with the name for your Opus package):
+\begin{verbatim}
+>>> from opus_core.opus_package import create_package
+>>> create_package('c:/opusworkspace', 'atlantis')
+\end{verbatim}
+\end{enumerate}
+
+This will create a new directory, e.g. \file{C:/opusworkspace/atlantis},
+containing a set of commonly useful files and directories, though some may not
+suitable to your application. For instance, you might want to delete the
+following files that are useful in the University of Washington research infrastructure,
+but perhaps not in yours:
+
+\begin{description}
+
+\item[\file{.project}] \index{.project@\file{.project} file} 
+Eclipse's\index{Integrated Development Environment (IDE)!Eclipse}\index{Eclipse IDE}
+container for project-specific information (see \url{http://www.eclipse.org/}).
+
+\item[\file{build.xml}]
+\index{build.xml@\file{build.xml} file}
+Directives for the CruiseControl\index{CruiseControl} automated build system used by the UrbanSim developers.
+
+\end{description}
+
+Each Opus package may have a different set of files and directories, depending
+upon what is needed. To illustrate what an Opus package may contain, consider
+the \package{psrc} package we created for the Puget Sound Regional
+Council's (PSRC)\index{PSRC} application
+of UrbanSim.  Here are some of the directories and files it contains.  (This
+material is in flux --- some
+of these are being superseded by information in the XML configuration file, e.g.\
+the run configurations.)
+
+
+\begin{verbatim}
+county/                         <-- Variables for the county dataset
+    __init__.py                 <-- Makes this into a Python package
+    de_population_DDD.py        <-- An Opus variable
+    ...
+docs/                           <-- PSRC-specific documents EMME\/2/
+<-- Miscellaneous stuff for PSRC's EMME/2 use estimation/ <--
+Scripts for estimating PSRC's models
+    __init__.py                 <-- Makes this into a Python package
+    estimate_dm_psrc.py         <-- Script to estimate the developer model
+    estimate_elcm_psrc.py       <-- Script to estimate the employment location
+                                    choice model
+    ...
+faz/                            <-- Additional variables for the FAZ
+dataset gridcell/                       <-- Additional variables for
+the gridcell dataset household_x_gridcell/             <-- Additional
+variables for the
+                                    household_x_gridcell dataset
+indicators/                     <-- Scripts to generate indicators
+large_area/                     <-- Variables for the large_area dataset
+run_config/                     <-- Configurations for different simulation runs
+    baseline.py                 <-- Configuration for baseline run
+    no_ugb.py                   <-- Configuration for baseline without UGB
+    ...
+tests/                          <-- Automated tests
+    __init__.py                 <-- Makes this into a Python package
+    all_tests.py                <-- Runs all of this Opus package's tests
+    test_estimation_dm_psrc.py  <-- Automated tests for estimate_dm_psrc.py
+    ...
+utils/                          <-- Miscellaneous utilities
+zone/                           <-- Additional variables for the zone dataset
+__init__.py                     <-- Makes this into a Python package
+opus_package_info.py            <-- Information about this Opus package
+\end{verbatim}
+
+\section{Unit Tests}
+\label{sec:unit-tests}
+
+This section describes how Opus developers write unit tests for Opus code. One
+of the goals of the Opus project is to practice test-driven development,
+wherein we write tests before we write \emph{any} code.  This practice is
+becoming increasingly common, since it has many advantages including
+dramatically increasing the ability to change code without breaking code.
+
+In general, each Opus module includes just two classes: a class defining the
+functionality of this module, e.g. MyClass, and a test class containing unit
+tests of MyClass.  The contents of this module are structured like
+this:
+
+\begin{verbatim}
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+#
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+#
+
+... imports ...
+
+class MyClass:
+    .... methods for this class ...
+
+from opus_core.tests import opus_unittest
+class MyClassTests(opus_unittest.OpusTestCase):
+    ... test methods ...
+
+if __name__ == '__main__':
+    opus_unittest.main()
+\end{verbatim}
+
+The file starts with the required GPL header.  Then some imports.  Then the
+MyClass class, followed by the test class whose name is the name of the primary
+class followed by ``Tests''.  Finally, the last two lines will
+cause the unit tests to be run if this module is invoked directly by Python.
+
+Test classes should derive from \verb|opus_unittest.OpusTestCase| in order to 
+ensure that the test runs in a ``clean'' environment.  In particular, 
+\verb|OpusTestCase| removes all singletons before and after each test, so
+that a singleton created by one test will not accidentally be used by another
+test. 
+
+\verb|OpusTestCase| also provides the following helper methods:
+
+\begin{description}
+  \item[assertDictsEqual(first, second, *args, **kwargs)] This is like the
+  normal \verb|assertEqual|, except that it also works for Python dictionaries
+  that may contain numpy data. 
+  \item[assertDictsNotEqual(first, second, *args, **kwargs)] This is like the
+  normal \verb|assertNotEqual|, except that it also works for Python
+  dictionaries that may contain numpy data. 
+\end{description}
+
+Tests that are defined in this manner will be automatically found and run by the
+\module{all_tests} module when it is executed. Please ensure that the test case
+class (e.g. MyClassTests) is found outside of the
+\verb|if __name__ == '__main__':| check, otherwise the tests will not be found.
+
+For more examples, check out the files in the \package{opus_core} package.
+
+\subsection{Writing Unit Tests for a Variable}
+%
+By convention, there are a set of ``unit tests'' for every Opus variable
+, and for every Opus model.  These tests check that the variable
+or model is doing the right thing, and were useful to uncover bugs when we wrote
+the tests.  In addition, the innards of the Opus system also include
+many unit tests to check that the framework works.
+
+Here are some guidelines to writing unit tests:
+\begin{itemize}
+  \item Create \emph{just enough} data for the test.  For instance, create
+  three gridcells with two attributes on each gridcell.  This
+  makes it easier to write, understand and modify tests.
+  \item Use data that has interesting differences; the test data does not have
+  to be realistic.
+  \item Use different test data for each test.  Otherwise, changing the data to
+  better serve one test can cause problems with a different test.
+\end{itemize}
+
+The \package{urbansim} package contains many examples of variables and their
+tests.  For instance, see the Python modules in \module{urbansim.gridcell}.
+
+When writing a variable, be careful about forcing the values of a variable's
+computation to be within a specified range.  This can hide
+errors.  For instance, when we were developing UrbanSim, we initially used
+numpy's \verb|clip| function to force the
+vacant_industrial_sqft variable values to be at least zero.
+However, it turned out that there was a bug in our code that led to more
+industrial jobs being allocated to a gridcell than the gridcell's industrial
+sqft could support.  This sometimes led to a negative value of
+vacant_industrial_sqft for that gridcell.  Since these negative values were
+being forced to zero, however, we saw an un-intuitive result where the number
+of industrial jobs was going up at the same time as the vacant_industrial_sqft,
+even though no new industrial sqft was being built. Removing the clip made it
+easier to diagnose the problem.
+
+\subsection{Stochastic Unit Tests}
+
+\index{Unit tests!stochastic} \index{Stochastic unit tests}
+Testing stochastic systems presents challenges for the traditional unit
+testing framework, since in general either the tests are trivial, or else
+they will sometimes fail.  A research project by our group developed a
+methodology to put stochastic unit tests on a firm statistical basis, and
+this is now used in writing such tests in Opus and UrbanSim.  See
+Hana {\v{S}}ev\v{c}\'{\i}kov\'{a}, Alan Borning, David Socha, and
+Wolf-Gideon Bleek, ``Automated Testing of Stochastic Systems: A
+Statistically Grounded Approach,'' in \emph{Proceedings of the
+International Symposium on Software Testing and Analysis}, ACM,
+July 2006 (available from
+\url{http://www.urbansim.org/papers/sevcikova-issta-2006.pdf}).
+
+A result of this is that, indeed, such stochastic unit tests may fail, even
+though the underlying code is correct.  This formerly resulted in a 
+periodic failure, which would go away when we ran the test again.  To automate
+this process, the \method{run_stochastic_test} method in the
+\class{StochasticTestCase} class now includes a keyword parameter \code{number_of_tries}
+with a default value of 5, which simply tries again that number of times.  Since
+introducing the \code{number_of_tries} parameter this issue has not come up
+
+\section{Programming by Contract}
+\label{sec:programming-by-contract}
+%
+Several of the types of Opus objects (variables, models) have
+optional \method{pre_check} and \method{post_check} methods that allow you to
+use a ``programming by contract'' model of software development. In this
+technique a piece of code, such as a variable definition, can define a
+``contract'' that specifies that if a given set of pre-conditions are met, the
+code is guaranteed to meet a given set of post-conditions. This ``contract''
+can help (a) reduce debugging time by checking for invalid inputs or outputs,
+and (b) document the assumptions and behavior of the code.
+
+Opus implements this programming by contract mechanism by automatically
+invoking the \method{pre_check} and \method{post_check} methods of variables,
+models, and simulations.  This is done only if the Resources being used
+contain the ``check_variables'' key.
+
+\begin{description}
+
+\index{Opus!Variable!pre_check@\method{pre_check}}
+\index{Opus!Model!pre_check@\method{pre_check}}
+\index{pre_check@\method{pre_check}}
+\item[\method{pre_check}] This method for an Opus
+variable is called before the variable's \method{compute} method.  This is a
+place to put optional tests of ``pre-conditions'' that this variable assumes in
+order to operate properly.
+
+\item[\method{post_check}] \index{post_check@\method{post_check}} This method for an Opus
+variable is called after the variable's \method{compute} method.  This is a
+place to put optional tests of ``post-conditions'' of what this Opus variable
+``guarantees'' it will produce given that the ``pre-conditions'' tested in the
+\method{pre_check} passed.
+
+\end{description}
+
+\section{Design Guidelines}
+
+These design guidelines are key rules that, if followed, will help you
+create code that is easy to develop and to maintain.
+
+\begin{itemize}
+
+\item Practice test-driven development.  Before you write
+{\em any} code, write an automated test that tests if that code works.
+Use this for new features as well as bug fixes.
+
+\item
+Include automated unit tests.  A unit test tests an internal part
+of the code, such as a method. A method is a contract: given
+certain assumptions about the data used by the method, the method
+is guaranteed to produce certain data.  A good rule of thumb is to
+have at least one unit test for every contract of every method. As
+always, use your judgment as to what tests to write.
+
+\item Include automated acceptance tests.
+
+% This sentence seemed incomplete:
+% An acceptance test runs the application in the same
+
+\item Never duplicate code.  Avoiding duplication results in lots of good, such
+as decoupled designs.
+
+\item Favor composition over inheritance.
+
+\item If you can think of a reason you want to use different
+versions of a method, convert the method to an class and use
+composition.
+
+\item Relentlessly keep your abstractions current with your
+understanding of the system.
+
+\item Have an abstraction for every ``real world'' object that the modeler
+interacts with, e.g. ``a run request,'' ``a queue of run requests,'' etc.
+
+\item Create decoupled designs.  A class C should only know about another
+class B when C's abstraction requires knowledge of B.
+
+\end{itemize}
+
+\section{Coding Guidelines}
+\label{coding-guidelines}
+
+These draft guidelines reflect what we believe makes for readable,
+understandable code.  (Note that not all of the code in the current Opus
+code base follows these conventions at this point.)
+
+The Enthought coding standards
+\url{https://svn.enthought.com/enthought/browser/trunk/docs/coding_standard.py}
+is a good start.  In addition, we have a number of other suggestions particular
+to Opus or our preferences.
+
+\subsection{Indentation}
+
+Use spaces rather than tabs.  (Python interprets a single space as the same
+level of indentation
+as a single tab, yet 8 spaces can look the same as 1 tab --- which can lead
+to some very confusing debugging sessions otherwise.)
+
+If for some reason you need a tab inside a
+string, use \verb|'\t'|.  This makes it easy to automatically check for and
+complain about tabs in files.
+
+Indent 4 spaces for each successive level of indentation.
+
+Indent nested functions.
+
+Use nested functions only for very minor, short ones.
+
+\subsection{Naming Conventions}
+
+Use the following naming conventions for class, method, and variable names:
+
+\begin{verbatim}
+ClassNamesLikeThis
+CONSTANTS_LIKE_THIS
+instance_variables_like_this
+method_variables_like_this
+_semi_private_method_variables_like_this
+__private_method_variables_like_this
+public_method_names_like_this
+_semi_private_method_names_like_this
+__private_method_names_like_this
+\end{verbatim}
+
+Exceptions are the class names for Opus variable classes (e.g.\
+\mbox{\tt total_land_value}), for model component classes (e.g.\
+\mbox{\tt linear_utilities}) and for pluggable model building
+blocks (e.g.\ \verb|mnl_probabilities|).  These all are lower case
+with underscores, since users specify these classes by strings
+and our experience is that it is much less confusing if strings are
+case-insensitive.
+
+If a variable name won't be used but is needed, such as when a method returns
+a pair of values of which only one is used, start the variable name with 
+\verb|dummy|, as in:
+
+\begin{verbatim}
+coef, dummy = cm.estimate(specification, ... 
+\end{verbatim} 
+
+It is important for a class to clearly communicate its intended usage
+patterns.  Part of having a well defined interface is being clear about which
+methods and which instance variables may be used from where.  This helps others
+understand how to use the class, which helps prevent usage errors.  Some
+methods, for instance, should only be called from within that class; perhaps
+they can only safely be called with data that is private to that object.
+
+Python provides three types of method names that help span the public to
+private spectrum.  Opus' convention is to use these three types of method
+names, as follows:
+
+\begin{description}
+\item[\code{def foo(self):}] This is a public method callable by anyone.  Others
+objects can always call this and expect it to do the right thing.  This
+corresponds to Java's \verb|public| methods.
+\item[\code{def _foo(self):}] This is a semi-private method.  It has a single leading
+underscore.  It should only be called by another object that is closely related
+to this class, either by inheritance or by being in the same Python package.
+This corresponds to Java's \verb|protected| and \verb|package| methods,
+respectively.
+\item[\code{def __foo(self):}] This is a private method.  It has two leading
+underscores.  It should only be called from within this class.  This
+corresponds to Java's \verb|private| methods.
+\end{description}
+
+Always use setters and getters to access another object's instance variables.
+Accessing instance variables directly ties the outside object to the particular
+implementation of the instance variable. For instance, the object can no
+longer decide to compute the variable on each access.  This leads to code that
+is harder to extend and maintain.
+
+Class names should not start with an underscore.
+
+Python has no special syntax or semantics for abstract classes, but good practice is to
+explicitly name a class as abstract, e.g.\ \verb|AbstractModel|, if it is
+abstract.
+
+Use lower case names with underscores for file names, e.g.
+\verb|my_stuff.py|, for improved readability, and because some
+file systems are case sensitive while others are case insensitive.
+Beware that some file systems have limits on the length of file
+names, so don't make them too long.
+
+Variable names should be at most 64 characters long, since
+MySQL \index{MySQL!column name length} does not allow column names with more
+than 64 characters.
+
+Historical naming issues:
+\begin{itemize}
+\item Method names \verb|thatStartWithALowerCaseLetter| are deprecated, although
+it is not urgent to change them.
+\item Method names \verb|ThatStartWithACapitalLetter| should be renamed, since this
+style is used for class names instead.
+\end{itemize}
+
+\subsection{Methods and Side-effects}
+
+A common type of bug that can be very difficult to find is when a method
+changes the value of a variable that is defined outside that method.  The next
+two guidelines help prevent these bugs.
+
+Methods that return meaningful values should not have any side effects, except
+for benign side effects. In programming language jargon, they should act as
+functions.  Benign side effects that don't change the values produced, such as
+caching a value to speed up processing, are fine though be careful that the
+lifetime of the values in the cache is what you want.
+
+Methods that have no side effects should return any values.  The one exception
+is some cases where a status code is returned.
+
+\subsection{Documentation and Comments}
+
+Have a doc string for every public class and method.  Doc strings for
+internal methods are optional -- use your good judgment.
+
+Include informative comments, of course.  Comments should be at the
+right level --- comment entire methods and potentially obscure bits of
+code; don't comment obvious things.
+
+\subsection{Source Files and Packages}
+
+Python source files may contain more than one class, if the classes are
+closely related.  If a file is getting too long, break it into several
+files however.  Exception: files containing an Opus variable definition
+must contain just the one class defining the variable.
+
+Use Python's name space mechanisms, such as modules and packages, to handle
+name space issues.  Use \verb|import myfile| or
+\verb|from myfile import MyClass|.  Don't use \verb|import *| in code in
+the repository.  (It's convenient to use at the console for interactive debugging
+however.)
+
+Avoid \verb|import as|, since it makes it harder to figure out what a name
+refers to.  If there is a name clash, use a qualified name
+instead.  For example, numpy and numpy.ma both have a log
+function.  Rather than
+using \verb|from numpy import log as nlog|,
+use \verb|import numpy|, and then within your code qualify the names, e.g.
+\verb|numpy.log|.
+
+Do not use multiple-line imports, such as:
+
+\begin{verbatim}
+from numpy import array, repeat, transpose, ndarray, reshape, \
+        indices, zeros, float32, asarray, arange, compress, \
+        logical_not, cumsum, log, where, ones, strings
+\end{verbatim}
+
+These multiple line imports make it hard to search for imports of specific functions,
+since the ``import'' is separate from some of the function names.  This in turn
+increases the chance of missing some instances of things you might want to change.
+
+\subsection{Typing Issues}
+
+Python \index{Python!types} is type-safe but dynamically typed --- no type declarations are
+needed.  This gives flexibility and good support for rapid development, but
+it's also easy to write code that is difficult to understand and maintain.
+Here is a general rule of thumb: it should be possible to write the type
+signature of any Python variable or method, in a way that lets you
+statically check that there aren't any type violations.  (Python doesn't
+require or even support such declarations, of course; this is a rule.)
+There are times you will want to violate this guideline, but make sure you
+have a good reason to do so.
+
+For non-computer-science types, here are some practical implications of
+this heuristic:
+
+\begin{itemize}
+
+\index{Python!True and False versus 1 and 0}
+\item Use an actual boolean (\verb|True| or \verb|False|) when you need a
+boolean value, not 0, 1, the empty string, or the other things that Python
+allows for booleans.
+
+\item If you have a method that takes a sequence of some kind, let it take
+sequences only.  Don't generalize the method to also allow single values
+that get coerced into a sequence --- this is confusing, and also leads to
+bugs.
+
+\item If you are writing code that uses \verb|type(x)| or \verb|is|,
+there is very likely a better way to write it (using objects and
+inheritance).
+
+\item Don't use the AND hack from \emph{Dive Into Python}
+(\url{http://diveintopython.org}).
+
+\end{itemize}
+
+The ubiquitous ``resources'' variable is a violation of this rule, of
+course (which is why there is something a bit off about it); but for now,
+we just let this be an exception.
+
+There are also a few typing style recommendations.
+
+Tuples should in general just be used locally, if you are counting on
+elements being at specific positions --- if you need to pass around a tuple
+of this kind, define a small class instead.  For example, this is a
+reasonable use of a tuple (for formatted text):
+
+\begin{verbatim}
+'Unexpected value -- squid was %s but %s was expected' % (a,b)
+\end{verbatim}
+
+Here the tuple is used quite locally, and is clear.
+
+However, if you find yourself passing around a tuple and then writing
+things like \verb|squid[4][2][8]|, see if there is a better way to do it.
+Similarly, lists used to package up a fixed number of elements, with the
+positions being significant, are also suspect.  (An exception is picking
+apart the results from SQL queries --- here you're stuck with picking it
+apart.)
+
+
+\subsection{Strings}
+
+When constructing strings by combining string parts and values, use the
+\verb|%| operator instead of the \verb|+| operator, e.g. use
+
+\begin{verbatim}
+'Could not find %s in file %s' % (value, file_name)
+\end{verbatim}
+
+not \verb|'Could not find ' + value + ' in file ' + file_name|.
+
+When quoting strings, favor single quotes (\verb|'|) over double-quotes, except
+where that doesn't make sense.
+
+
+\subsection{Functional Programming Style where Appropriate}
+
+Use list comprehensions when feasible.  Use functional programming style in
+lambda functions.
+
+
+\subsection{Classes and Methods}
+
+Always use ``new-style'' Python classes (see
+\url{http://www.python.org/doc/newstyle.html}), as they have some subtle and
+important benefits over the old-style Python classes.
+
+Always have an \verb|__init__| method for each class.  Make it the first
+method of the class.  (If there isn't anything to do, just put pass in the
+body.)  Name, and initialize, all instance variables in the
+\verb|__init__| method.
+
+Use keyword parameters in method calls, as it is more readable.
+In method definitions, use defaults as appropriate, but keep the design
+clear and understandable. If the parameter is required, just don't put a
+default.
+
+Ideally, a default for a given parameter should occur in just one
+place, and not be repeated in multiple method or function definitions.  (In
+the other definitions, use a required parameter instead and pass along the default
+from the other method or function.)  For example, suppose some method has a
+parameter that includes a default value: \verb|replace_nulls_with=0.0|.  Other
+methods that have the \verb|replace_nulls_with| parameter should require it,
+and use the value passed along from the method in which it was given the default.
+Otherwise, if you want to change the default, there would be lots of places to change.
+If it turns out to be awkward to follow this rule, and you really do need to give a default
+in lots of places, give it a name and use that name in the parameter list, e.g.
+\verb|replace_nulls_with=self.default_null_replacement_value|.
+
+\emph{We'll delete the following example in a bit --- but there are
+quite a few places in the existing code that use keyword parameters in more
+complex ways than need be, e.g.\ by setting the default to {\tt None}, and
+then having an {\tt if} in the code that tests for {\tt None} and if so sets
+the parameter to a default.  So I put in the discussion for the moment.}
+
+For example, consider the following.  (Any resemblance to actual Opus
+code is purely coincidental.)
+\begin{verbatim}
+class _Database :
+    def __init__(self, host=None, user=None, password=None, database=None, \
+        environment=None, silo_path=None, show_output=True) :
+        """ Returns a connection to this database.
+        If database does not exist, it first creates it.  If the
+        environment is given, then take host, user and pass assignments
+        from it, or partially override the environment values if specific
+        others are given.  'database' is actually a required parameter; if
+        left as None, failure is certain, but it is named nonetheless so
+        that the signature is flexible. """
+        self.show_output = show_output
+        if environment != None:
+            self.host = environment['host_name']
+            self.user = environment['user_name']
+            self.password = environment['password']
+        if host != None:
+            self.host = host
+        if user != None:
+            self.user = user
+        if password != None:
+            self.password = password
+        self.database_name = database
+        .....
+\end{verbatim}
+
+This has various useful defaults for the parameters, but could be improved.
+
+\begin{verbatim}
+class MySQLDatabase :
+    """This class provides uniform access in Opus to a MySQL database ..."""
+    def __init__(self, database,
+            host='localhost',
+            user=os.environ['MYSQLUSERNAME'],
+            password=os.environ['MYSQLPASSWORD'],
+            silo_path=None,
+            show_output=True) :
+        self.show_output = show_output
+        self.database = database
+        self.user = user
+        self.password = password
+        .....
+\end{verbatim}
+
+Note that the treatment of defaults is simplified --- having optional
+parameters that set the values of other optional parameters should be
+avoided.  Also, putting the defaults in the method header makes it clearer
+what is going on.  Naming the parameter \verb|database| and then naming
+the corresponding instance variable \verb|database_name| is confusing.
+Finally, the comment in the old code about the \verb|database| parameter
+is incorrect -- if a parameter required, just don't put in a default value.
+Python still allows using a keyword for it in the method call, and the
+keyword parameters can be in any order.  You'll get a failure if the required
+parameter is missing, which is the desired behavior.
+
+(There are other issues as well, for example, why is there something about
+silage in \package{opus_core}, but we'll ignore that for the moment.)
+
+If a variable is the name of an object, include \verb|name| in the object's
+name, e.g. variable_name, to help distinguish it from a variable that contains
+the object itself, e.g. variable.
+
+\subsection{Continuation Lines}
+
+For readability, only use Python's backslash (``\verb|\|'') continuation
+character when necessary.  This character is used to split a statement or
+expression across more than one line.  It is not necessary when the line
+break is inside a (), [], or {} pair, or in triple-quoted strings.
+
+\subsection{Open Issues}
+
+\begin{itemize}
+
+\item Need to specify naming convention for items in resources; data model.
+\emph{Note that the resources concept is being replaced by
+Traits-based configuration classes.  This provides an explicit API
+for each configurable class, and avoids many of the problems
+associated with the prior use of resources.}
+
+\item Conventions for throwing exceptions.  (We should make much more use of
+Opus-specific exceptions, rather than generic exceptions like StandardError.)
+
+\item Put all SQL strings into a single or small number of
+isolated files, so that it is easier to localize these strings to different
+databases.
+
+\item Follow the conventions in Python's PEP 290: Code
+Migration and Modernization PEP 8
+(\url{http://www.python.org/peps/pep-0290.html}) For instance, when
+searching for a substring, where you don't care about the position of the
+substring in the original string, using the in operator makes the meaning
+clear, e.g. use \verb|string2 in string1| instead of
+\verb|string1.find(string2) >= 0| or \verb|string1.find(string2) != -1|.  Also,
+when testing dictionary membership, use the 'in' keyword instead of the
+'has_key()' method. The result is shorter, more readable and runs faster.\item
+
+\item Follow the conventions in PEP 8: Style Guide for Python Code
+PEP 257 (\url{http://www.python.org/peps/pep-0008.html})
+
+\item See Python's PEP 257: Docstring Conventions
+(\url{http://www.python.org/peps/pep-0257.html}).
+
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:
+
+% LocalWords:  terhorst UrbanSim Un Uninstall uninstalling py PYTHONPATH CVS un
+% LocalWords:  urbansim init xml dir MyClass GPL TestVariables gridcells sqft
+% LocalWords:  gridcell numpy's gridcell's pre mnl ok AbstractModel MySQL de
+% LocalWords:  instanceVariablesAreWrittenLikeThis ThatStartWithACapitalLetter
+% LocalWords:  thatStartWithALowerCaseLetter myfile numpy nlog malog cumsum
+% LocalWords:  SQL comprehensions distutils setuptools Docstring userguide

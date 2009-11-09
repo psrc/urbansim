@@ -1,0 +1,5 @@
+<project name="urbansim_cache" default="unit-tests">
+
+	<import file="${basedir}/../opus_core/common.xml" />
+
+</project>

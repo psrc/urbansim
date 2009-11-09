@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Employment">
+<syntax-version-2.8/>
+
+	<indicator-documentation>
+		<definition>
+			For each year of interest, this indicator gives the total number of jobs in the selected geography. 
+		</definition>
+		<interpreting-results>
+			If the selected geography is 'region', the indicator value will be simply the total number of jobs 
+			in the region for that year; if the selected 
+			geography is 'grid', then the indicator value will be the number of jobs placed in each grid cell for the given year.
+			At geographies below 
+			the region as a whole, this indicator shows the concentrations of employment.
+		</interpreting-results>
+		<related-indicators>
+			This is related to <a href="employment_density.xml">Employment density</a>.  However, this indicator gives the total number of jobs in the selected geography,
+			while Employment density gives the number of jobs per acre of nonresidential land.
+		</related-indicators>
+		<specification>
+			If the selected geography is the entire region, we simply count the total number of jobs for the given year (including the number of unplaced jobs, if any).  
+			If the selected geography is 'grid', we count the total number of jobs placed in each grid cell for each year. 
+			For the general case, we count the total number of jobs in the grid cells that are contained in each geography.
+		</specification>
+		<limitations>
+			The employment and other data available for running UrbanSim may well not include information about the informal economy.
+			In that case UrbanSim would not take  employment in the informal economy into account.
+		</limitations>
+		<how-modeled>
+			When the geography is the entire region, the value of this indicator is exogenous (in other words, it isn't modeled by Urbansim).
+			This is because the total regional employment is
+			specified by external control totals for each year.  When the geography is smaller, the value of this indicator is modeled 
+			by UrbanSim itself, since UrbanSim models where jobs locate within the region.
+		</how-modeled>
+		<source-evolution-examples>
+			This indicator was originally written by the UrbanSim group.
+		</source-evolution-examples>
+		
+<display-format>
+<units>jobs</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/number_of_jobs.py">urbansim.gridcell.number_of_jobs</a>
+</source>
+
+</indicator-declaration>

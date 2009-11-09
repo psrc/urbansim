@@ -1,0 +1,40 @@
+~/ viaductx.mac
+~/ This macro closes the Alaskan Way viaduct to all cars and trucks,
+~/ and reduces bus speeds on the viaduct to 10mph, as a surrogate for alternate routes.
+~/ To use, call at the EMME/2 Main Menu, with the scenario as an argument:
+~/ e.g.    ~<viaductx.mac 1002
+~/
+~!if exist viaductx.rpt erase viaductx.rpt
+reports=viaductx.rpt
+s=%1%
+2.41
+~+|1|y|ul2|10|
+link=3208,3257
+link=3257,3209
+link=3209,3210
+link=3210,3211
+link=3211,3212
+link=3212,3213
+link=3257,3208
+link=3209,3257
+link=3210,3209
+link=3211,3210
+link=3212,3211
+link=3213,3212
+~+||1|2
+~+|1|y|mod|3|ab
+link=3208,3257
+link=3257,3209
+link=3209,3210
+link=3210,3211
+link=3211,3212
+link=3212,3213
+link=3257,3208
+link=3209,3257
+link=3210,3209
+link=3211,3210
+link=3212,3211
+link=3213,3212
+~+||y
+q
+reports=?

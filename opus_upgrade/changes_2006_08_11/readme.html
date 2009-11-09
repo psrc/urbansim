@@ -1,0 +1,57 @@
+<h4>11 August 2006</h4>
+
+<p>We just finished two major changes to the Opus code and data
+that will require you to completely update your Opus installation and change
+some of your baseyear data :</p>
+<ul>
+  <li>We renamed the &quot;core&quot; Opus package to be &quot;opus_core&quot;.</li>
+  <li>We removed the &quot;opus&quot; directory and all &quot;opus.&quot;
+    references from our Opus system.
+    <ul>
+      <li>All Opus packages are now top-level Python packages.</li>
+      <li>The &quot;opus&quot; directory is gone.</li>
+      <li> We
+no longer use the &quot;opus.&quot; in any of our imports or our fully-qualified
+Opus paths.</li>
+      <li> Variable specifications no longer include &quot;opus.&quot; at the
+          beginning; instead of typing:</li>
+    </ul>
+    <blockquote>
+      <blockquote>
+        <p>opus.core.func.ln(opus.urbansim.gridcell.residential_units)</p>
+      </blockquote>
+      <p>you should now type:</p>
+      <blockquote>
+        <p>ln(urbansim.gridcell.residential_units)</p>
+      </blockquote>
+    </blockquote>
+  </li>
+</ul>
+<p>To update to this new system:</p>
+
+<ol>
+  <li>Uninstall your current Opus installation, if it is from before 11 August 2006.</li>
+  <li>Install an Opus version from 11 August 2006 or after.</li>
+  <li>Remove any instance of the sub-string &quot;opus.&quot; from your Python
+    code.</li>
+  <li>Use the <a href="../../opus_upgrade/changes_2006_08_11/using_convert_databases.html">database conversion tool</a>
+    at to change your variable_name entries in your database specification
+    tables (e.g. in land_price_model_specification).&nbsp; This tool will:
+    <ul>
+      <li>Remove any instance of the sub-string &quot;opus.&quot;&nbsp;</li>
+      <li>Change any instance of &quot;core&quot; to &quot;opus_core&quot;</li>
+    </ul>
+  </li>
+</ol>
+
+<h5>Minor changes</h5>
+
+<ul>
+  <li>Created a <a href="../../web/urbansim/user/contribution/index.html">place for user contributed items</a>.</li>
+  <li>Documented steps necessary to <a href="../../opus_manual/docs/scripts/converting_3_to_4.html">convert an UrbanSim 3 baseyear
+    database into the form needed for UrbanSim 4</a>.</li>
+  <li>Moved much of <i>services</i> into <i>opus_core</i> (and are in process of
+    moving the rest of it).</li>
+  <li>The manual Opus package was renamed to opus_manual.</li>
+  <li>The emme2 Opus package was renamed to opus_emme2.</li>
+</ul>

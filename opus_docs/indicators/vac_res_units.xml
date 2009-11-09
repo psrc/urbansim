@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Vacant residential units">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+For each year of interest, this indicator gives the number of vacant residential units in the selected geography.
+</definition>
+
+<interpreting-results>
+This indicator is useful for seeing the amount of vacant housing at different units of geography.  
+</interpreting-results>
+
+<specification>
+This indicator calculates the number of vacant residential unites for each queried year. For the selected geography 
+and for each year of interest, we first find the total number of residential units, R. Then we find the number of 
+placed households per year, P. Finally, the value of the indicator is calculated as R-P.
+</specification>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<related-indicators>
+<p><a href="res_vac_rate.xml">Residential vacancy rate</a> gives the vacancy rate,
+rather than the absolute number of vacant units.
+<a href="occupied_res_units.xml">Occupied residential units</a> gives the number of occupied rather than vacant
+residential units, while <a href="res_units.xml">Residential units</a> gives the number of 
+residential units whether occupied or not.
+</p>
+<p><a href="vac_nonres_sqft.xml">Vacant nonresidential square feet</a>
+is the analogous indicator for nonresidential space.
+</p>
+</related-indicators>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<how-modeled>
+This indicator is modeled by UrbanSim.
+</how-modeled>
+
+<display-format>
+<units>residential units</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/vacant_residential_units.py">urbansim.gridcell.vacant_residential_units</a>
+</source>
+
+</indicator-declaration>

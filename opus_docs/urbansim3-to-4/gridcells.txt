@@ -1,0 +1,78 @@
+﻿-- This script updates the gridcells table to the UrbanSim4 format
+
+-- Creates a backup of the gridcells table
+CREATE TABLE gridcells_OLD
+SELECT * FROM gridcells;
+
+-- Adds appropriate columns
+ALTER TABLE gridcells ADD COLUMN commercial_sqft_per_job integer;
+ALTER TABLE gridcells ADD COLUMN industrial_sqft_per_job integer;
+ALTER TABLE gridcells ADD COLUMN governmental_sqft_per_job integer;
+
+-- Creates a temp table with both non and home-based jobs with sector id
+CREATE TABLE gridcells_TEMP
+SELECT
+  gridcells.grid_id,
+  gridcells.city_id,
+  gridcells.county_id,
+  gridcells.development_type_id,
+  gridcells.plan_type_id,
+  gridcells.zone_id,
+  gridcells.commercial_sqft,
+  gridcells.governmental_sqft,
+  gridcells.industrial_sqft,
+  gridcells.commercial_improvement_value,
+  gridcells.governmental_improvement_value,
+  gridcells.industrial_improvement_value,
+  gridcells.nonresidential_land_value,
+  gridcells.residential_improvement_value,
+  gridcells.residential_land_value,
+  gridcells.residential_units,
+  gridcells.year_built,
+  gridcells.distance_to_arterial,
+  gridcells.distance_to_highway,
+  gridcells.relative_x,
+  gridcells.relative_y,
+  gridcells.percent_water,
+  gridcells.percent_stream_buffer,
+  gridcells.percent_floodplain,
+  gridcells.percent_wetland,
+  gridcells.percent_slope,
+  gridcells.percent_open_space,
+  gridcells.percent_public_space,
+  gridcells.percent_roads,
+  gridcells.is_outside_urban_growth_boundary,
+  gridcells.fraction_residential_land,
+  gridcells.commercial_sqft_per_job,
+  gridcells.governmental_sqft_per_job,
+  gridcells.industrial_sqft_per_job,
+  sqft_for_non_home_based_jobs.sqft
+FROM gridcells
+INNER JOIN sqft_for_non_home_based_jobs
+ON gridcells.development_type_id = sqft_for_non_home_based_jobs.development_type_id;
+
+-- Updates above added colums with either a hard-coded minumum value (based
+-- on sqft_for_non_home_based_jobs) or the "actual" value based on the development_type_id
+-- code
+
+UPDATE gridcells_TEMP SET commercial_sqft_per_job = 450;
+UPDATE gridcells_TEMP SET industrial_sqft_per_job = 1000;
+UPDATE gridcells_TEMP SET governmental_sqft_per_job = 1200;
+
+UPDATE gridcells_TEMP SET commercial_sqft_per_job  =  sqft
+WHERE (development_type_id > 8 AND development_type_id < 20);
+
+UPDATE gridcells_TEMP SET industrial_sqft_per_job  =  sqft
+WHERE (development_type_id > 19 AND development_type_id < 23);
+
+UPDATE gridcells_TEMP SET governmental_sqft_per_job  =  sqft
+WHERE (development_type_id = 23);
+
+-- Deletes sqft field
+ALTER TABLE gridcells_TEMP DROP COLUMN sqft;
+
+-- Deletes original gridcells table
+DROP TABLE gridcells;
+
+-- Renames gridcells_TEMP to gridcells
+RENAME TABLE gridcells_TEMP TO gridcells;

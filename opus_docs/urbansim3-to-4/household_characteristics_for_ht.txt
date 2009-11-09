@@ -1,0 +1,7 @@
+﻿-- This script updates the household_characteristics_for_ht table to the UrbanSim4 format
+
+
+UPDATE household_characteristics_for_ht SET characteristic =
+REPLACE (characteristic, 'Age Of Head', 'age_of_head');
+
+ALTER TABLE household_characteristics_for_ht DROP COLUMN total_number_of_households

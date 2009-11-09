@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Mean household income">
+<syntax-version-2.8/>
+<indicator-documentation>
+
+<definition>
+For each year of interest, this indicator calculates the mean household income in the selected geography.
+</definition>
+
+<interpreting-results>
+For sub-regional geographies, this indicator will show concentrations of wealth and poverty.
+</interpreting-results>
+
+<specification>
+Retrieve all of the households in the selected unit of geography, and find the average of their incomes.
+</specification>
+
+<principal-uses>
+This indicator is useful both for diagnostic and evaluative purposes.  
+</principal-uses>
+
+<related-indicators>
+<a href="households.xml">Households</a> gives the total number of
+households in the selected geography.
+</related-indicators>
+
+<how-modeled>
+When the geography is the entire region, the value of this indicator is exogenous (in other words, it isn't modeled by Urbansim).
+This is because household incomes are
+specified by external control totals for each year.  When the geography is smaller, the value of this indicator is modeled 
+by UrbanSim itself, since UrbanSim models where households locate within the region.
+</how-modeled>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>dollars</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/average_income.py">urbansim.gridcell.average_income</a>
+</source>
+
+</indicator-declaration>

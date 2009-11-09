@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Population">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+For each year of interest, this indicator gives the number of people living in the selected geography.
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+The value of this indicator is calculated as the sum over 
+the number of persons in each household for the selected unit of geography, for the year of interest.
+</specification>
+
+<how-modeled>
+When the geography is the entire region, the value of this indicator is exogenous (in other words, it isn't modeled by Urbansim).
+This is because the total regional population is
+specified by external control totals for each year.  When the geography is smaller, the value of this indicator is modeled 
+by UrbanSim itself, since UrbanSim models where households locate within the region.  The population in the given unit of
+geography is derived by adding the number of people in each household in that unit.
+</how-modeled>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>persons</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/population.py">urbansim.gridcell.population</a>
+</source>
+
+</indicator-declaration>

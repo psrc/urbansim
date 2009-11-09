@@ -1,0 +1,27 @@
+\chapter{Data for Zone-based Applications}
+
+The zone based modeling is the newest model system and should be considered experimental at this point.  The zone based model system was itself modeled after that gridcell model system.  Consequently many of the tables are common with it.  Here are tables unique to the zone based model system.
+
+\section{Database Tables About Buildings}
+
+\subsection{The {\tt pseudo\_buildings} table}
+\label{sec:db-tables-pseudo-buildings}
+
+As part of the creation and testing of a zonal-level version of UrbanSim, a pseudo-buildings table has been created to contain the summary contents of the real estate development in a zone.  Pseudo buildings are meant to represent the amount of commercial, governmental, industrial, and residential space in a zone.  There are 4 pseudo building records per zone\_id, 1 each for each of the land uses.  The attributes are updated during the simulation run by the model system.
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+pseudo\_building\_id & integer & unique identifier\\ \hline
+annual\_growth & integer & \emph{(optional)} this is the amount that this type of building is allowed to grow per simulation year in terms of floor space or residential units\\ \hline
+residential\_units & integer & the number of residential units for residential pseudo buildings\\ \hline
+zone\_id & integer & the zone in which this pseudo building is in\\ \hline
+avg\_value & integer & the average value per unit or job space depending on the building\_type\_id\\ \hline
+building\_type\_id & integer & the building type that matches up with the building\_types table\\ \hline
+job\_spaces\_capacity & integer & the total number of job spaces allowed in this pseudo building\\ \hline
+residential\_units\_capacity & integer & the total number of residential units allowed in this pseudo building\\ \hline
+commercial\_job\_spaces & integer & the total number of commercial job spaces currently in this pseudo building\\ \hline
+industrial\_job\_spaces & integer & the total number of industrial job spaces currently in this pseudo building\\ \hline
+governmental\_job\_spaces & integer & the total number of governmental job spaces currently in this pseudo building\\ \hline
+\end{tabular}

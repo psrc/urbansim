@@ -1,0 +1,321 @@
+<!Doctype HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Installing on Windows</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css">
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body>
+
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+
+<table border="0" cellspacing="0" width="100%">
+
+<tbody>
+
+
+    <tr>
+
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Installing on Windows</td>
+
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing Opus &amp; UrbanSim on Windows</h1>
+
+<p>You have two options for installing Opus and UrbanSim on Windows.  The first is to use the
+<a href="windows_install_installer.html">Windows Opus installer</a>.  This option is
+simpler and is recommended for most users.  The second option is to download and 
+install Python and all of the relevant packages manually, as described below.</p>
+
+<p>These following instructions are for installing Opus &amp; UrbanSim on
+Windows.&nbsp; These installation directions have been tested with Windows XP
+and Intel processors. </p>
+
+<ol>
+
+  <li><a href="#python">Install Python</a></li>
+
+  <li><a href="#libraries">Install Python libraries and Qt</a></li>
+
+  <li>(optional) <a href="#mysql">Install MySQL</a></li>
+
+  <li><a href="#opus">Install Opus and UrbanSim</a></li>
+
+  <li><a href="#environment">Define Environment Variables for Opus and UrbanSim</a></li>
+
+  <li><a href="#test">Testing your installation</a></li>
+
+</ol>
+
+
+
+<h2>Step 1: <a name="python">Installing Python</a></h2>
+
+<p>Opus and UrbanSim are implemented in Python, making heavy use of numerical
+Python packages and other software.&nbsp; Currently, Opus and UrbanSim are known
+to work on Python 2.5.1.&nbsp; The <a href="http://www.python.org">official
+Python website</a> includes documentation, downloads, and much else.</p>
+
+<p>Download and install the Python 2.5.1 Windows installer from 
+<a href="http://www.python.org/download/">http://www.python.org/download/</a>.</p>
+
+<h2> <a name="libraries">Step 2: Installing Python Libraries and Qt</h2>
+
+<p>Opus and Urbansim require a number of Python packages, and make optional use of 
+several others.  Download and install them from the
+        list of <a href="python_packages.html">required, recommended and
+        optional Python packages</a>.  Many packages have multiple versions.  Be sure
+	to pick the ones designed for use with Windows and Python 2.5.1.</p>
+
+<h2>(optional) <a name="mysql">Step 3: Installing MySQL</a></h2>
+
+<p>MySQL is an efficient, open-source SQL database.  You don't need it to run the
+basic Eugene tutorial, although for serious use with your own dataset you will want
+a database of some sort.  Also, currently some of the unit tests use MySQL -- so if you don't
+install it, not all of the unit tests will pass.
+(However, we are steadily reducing the dependencies on the particular
+database used, with the goal of allowing Opus and UrbanSim to be used with
+any SQL database.)  If you use MySQL you can either have a local copy or run on a shared server.</p>
+
+<p>If you don't install MySQL right away, you can return and install it later if you discover you
+need it.</p>
+
+<p>Opus works with MySQL 4.1 and 5.0.</p>
+
+
+<ol>
+
+
+  <li>
+  Choose which version of MySQL to use, and download the Windows installer it
+  from <a href="http://dev.mysql.com/downloads/">http://dev.mysql.com/downloads/</a>.
+  </li>
+
+
+
+
+  <li>Install and configure MySQL via <a href="mysqlinstall.4.1.html">these
+    instructions</a>.&nbsp; <i>(Note that the installation and configuration
+    steps are identical for MySQL 4.1 and 5.0.)</i>
+  </li>
+
+
+
+
+</ol>
+
+
+
+
+<p>MySQL runs as a server. The Windows installer automatically starts this
+service and configures it to restart whenever you restart your computer. You
+also may start the service from the Windows Services control panel, or from the
+command prompt by using the command <font face="Courier New" size="2">net start
+mysql</font>, and stop it using <font face="Courier New" size="2">net stop mysql</font>.</p>
+
+
+
+
+<p>In addition to MySQL itself, you might get the <a href="http://www.mysql.com/products/tools/query-browser/">MySQL
+Query Browser</a> (for prowling around in UrbanSim databases using a graphical
+interface), and the <a href="http://www.mysql.com/products/tools/administrator/">MySQL
+Administrator</a>. These are both available as binaries.</p>
+
+
+
+<h2>Step 4: <a name="opus">Installing Opus and UrbanSim</a></h2>
+
+    
+<p>Follow the directions on the <a href="downloading_opus_urbansim.html">Downloading the Opus/UrbanSim sample data and source code</a> page.</p>
+
+<p>Those directions use a command-line subversion client.  On Windows you can use a graphical client, 
+<a href="http://tortoisesvn.tigris.org/">TortiseSVN</a>, instead.
+If you don't have it already, download TortiseSVN by
+following the link. &nbsp;(You can use another client if you prefer,
+though -- see <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a> for a list.)</p>
+
+<p>You're going to check out the source code into the <tt>opus\src</tt> directory.
+You can either get all of the Opus and UrbanSim
+packages, or just the ones you need. &nbsp;Getting them all is simpler
+but only do
+this if you have a fast internet connection and enough disk space
+(since there will be a lot of data).</p>
+
+<p>To get them all for 
+latest development release, in Windows explorer, open up the <tt>opus\src</tt> directory and right-click in an empty
+region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' field in the dialog box with: 
+'<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/trunk/</span>'
+(without the quotes). &nbsp;The checkout directory should be already
+filled in with your workspace folder. &nbsp;Pick 'OK', and your system
+should download all of the Opus/Urbansim packages.</p>
+
+<p>Alternatively, to get just the packages you need, again in Windows
+explorer, open up the <tt>opus\src</tt> directory and right-click in an
+empty
+region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of
+repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core/'</span>.
+(without the quotes). &nbsp;The checkout directory should be already
+filled
+in with your workspace folder -- but to this append '\opus_core'.
+&nbsp;(So if you used the suggested location for the workspace, the
+whole name will be '<span style="font-family: monospace;">c:\opus\src\opus_core</span>'.
+&nbsp;Pick 'OK', and your system should
+download the opus_core package. &nbsp;Do the same thing for the other
+packages you need, minimally 'urbansim', 'urbansim_gridcell', 'eugene', and
+'opus_gui'. &nbsp;In other
+words, the repository addresses for these packages are:</p>
+
+<ul>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim_gridcell</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/eugene</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui</li>
+</ul>
+
+<p>In either case, you should end up with a directory structure like this:</p>
+<pre>c:\opus
+    src
+        opus_core
+        urbansim
+        urbansim_gridcell
+        eugene
+        opus_gui
+        ....
+</pre>
+Later, you can update a package to the latest version from the
+repository by right-clicking on its folder and picking 'SVN Update'.  You can also select several packages
+at once by selecting the whole group.</p>
+
+
+<p>The above commands check out the latest development version of the code -- adjust the URLs 
+appropriately to get a stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
+for details on how to do this.</p>
+
+<h2><a name="environment">Step 5: Defining Environment Variables</a>&nbsp;</h2>
+
+<p>UrbanSim requires the following environment variables.&nbsp; The first
+tells the Python interpreter where to find the Opus/UrbanSim code.  
+The others tell the system where to find your cached data and configurations.</p>
+
+<ul>
+
+
+<li><b>PYTHONPATH</b> - This environment variable
+tells Python where to look for files outside of Python's
+'site-packages' directory (which is the default location for Python
+installers). Change PYTHONPATH to include the path to the directory
+containing the packages opus_core, urbansim, and so forth, that you downloaded in Step 4, e.g.
+<tt>C:\opus\src</tt>.
+
+<li><b>OPUS_HOME</b> - The Opus home directory (surprise).  This includes subdirectories with
+sample data for Eugene and Seattle projects, output from runs, template configurations for running simulations 
+using these projects, and probably your source code and documentation.  This is the directory you downloaded from the
+zip file and installed in Step 4.  So if you put this unzipped directory just in <tt>C:</tt>, set this variable
+to <tt>C:\opus</tt>.</li>
+
+<li><b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample data and
+caches of data for particular runs.  It defaults to the <tt>data</tt> subdirectory under <tt>OPUS_HOME</tt>,
+so if you leave the data at the default location from the zip file, don't set this variable.</li>
+    
+</ul>
+
+
+<p>The following directions illustrate how to set the OPUS_HOME environment
+variable on Windows:</p>
+
+
+
+
+<ol>
+
+
+
+
+  <li>Open the control panel by going to <b>Start</b> &gt; <b>Control Panel</b>.&nbsp;</li>
+
+
+
+
+  <li>Double click the icon labeled <b>System</b>. If you can&rsquo;t see the System
+    icon double click on the link labeled Switch to Classic View under the menu
+    labeled Control Panel on the left pane, and then double click on the icon
+    labeled System.&nbsp;</li>
+
+
+
+
+  <li>Choose the <b>Advanced</b> tab, and press the button at the bottom of the
+    panel labeled <b>Environment Variables</b>.&nbsp;</li>
+
+
+
+
+  <li>Add or edit the variable called OPUS_HOME in the list labeled <b>User
+    Variables</b>. (But see below for more on User Variables vs. System
+    Variables.)&nbsp;</li>
+
+
+
+
+  <li>Select <b>OK</b> to create the variable.&nbsp;</li>
+
+
+
+
+</ol>
+
+
+
+
+<p><span style="font-weight: bold;">User variables versus System variables</span>.&nbsp; Environment variables on
+Windows come in two flavors: user variables and system variables.&nbsp; (There
+are two separate sections in the &ldquo;Environment Variables&rdquo; control panel, one
+for User Variables and the other for System Variables.)&nbsp; User variables
+apply only to the current user login; system variables apply to all logins on
+that machine.&nbsp; If there is a variable of the same name in both, the user
+variable overrides the system variable.&nbsp;</p>
+
+<p>So, for the Opus environment variables, if you are running on a personal
+machine, it doesn&rsquo;t matter whether you employ a user variable or a system
+variable.&nbsp; If you are running on a shared machine, and are installing a
+personal copy of Opus, employ a user variable; that way others can have their
+own copy of Opus and you won&rsquo;t interfere with each other. And if you are
+running on a shared machine and are setting up an installation for lots of users
+of the machine, employ a system variable.</p>
+
+<p>One final wrinkle: the installer for some Python-based tools
+will add a directory to the PYTHONPATH system
+variable.&nbsp; If you also have a user variable named PYTHONPATH, this will
+override the system variable &mdash; so copy the information from the system
+variable, add your own directory to it, and define the PYTHONPATH user
+variable.&nbsp; And of course, if you have already installed Opus and later
+install some other Python-based tool that does this, you may need to edit your
+user variable appropriately.</p>
+
+<h2>Step 6: <a name="test">Testing your installation</a></h2>
+
+<p>Follow <a href="test_install.html">these instructions</a> to test your
+installation.</p>
+
+</body>
+</html>

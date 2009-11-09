@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Gasoline Consumed per Capita">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+This indicator gives a measure of the gasoline consumed per person on average during a given year.
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+Average vehicle miles traveled per capita divided by the average miles per gallon of gasoline for passenger cars.
+A value of 21.5 miles per gallon is used, which is taken from the EPA. Please see <a href="http://www.epa.gov/otaq/consumer/f00013.htm">http://www.epa.gov/otaq/consumer/f00013.htm</a>. 
+</specification>
+
+<related-indicators>
+<p><a href="vehicle_miles_traveled.xml">Vehicle miles traveled</a> gives the total vehicle miles traveled with an origin in the specified geography.
+<a href="vehicle_miles_traveled_per_capita.xml">Vehicle miles traveled per capita</a> gives the average vehicle miles traveled for trips with an origin in the specified geography divided by the total number of people living in that geography. It is used in the calculation.
+</p>
+</related-indicators>
+
+<limitations>
+(1) Although this indicator can be computed at any geography, it is best to calculate it using all the data and obtain a single value.
+The reason it should only be cautiously used at any finer grained level of geography is due to how the vehicle miles traveled per
+capita indicator is computed (which is used in the calculation of gasoline consumed per capita). Please see 
+<a href="vehicle_miles_traveled_per_capita.xml#limitations">Vehicle miles traveled per capita</a>
+
+(2) Busses and other forms of mass transit are not included in these calculations.
+
+</limitations>
+
+<how-modeled>
+The value of this indicator is not modeled by Urbansim. It is based off of vehicle miles traveled which is obtained from the external travel model, Emme2.
+</how-modeled>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>gallons per person</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/gasoline_consumed_per_capita.py">psrc.zone.gasoline_consumed_per_capita</a>
+</source>
+
+</indicator-declaration>

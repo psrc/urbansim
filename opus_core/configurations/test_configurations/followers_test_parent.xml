@@ -1,0 +1,11 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <mydict type="dictionary">
+      <a type="string">atest</a>
+      <b type="string">btest</b>
+      <c type="string">ctest</c>
+      <d type="string">dtest</d>
+    </mydict>
+    <project_name type="string">test_project</project_name>
+  </general>
+</opus_project>

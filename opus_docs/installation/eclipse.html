@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+
+
+  <title>Configuring Eclipse</title>
+  <link href="../style/book.css" rel="stylesheet" type="text/css">
+ 
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+ 
+<body>
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  
+<table border="0" cellspacing="0" width="100%">
+
+    <tbody>
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Configuring Eclipse</td>
+
+    </tr>
+
+  
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Configuring Eclipse to work with Opus</h1>
+
+
+<p>This section provides instructions for configuring the <a href="http://www.eclipse.org"> Eclipse IDE</a> for use with Opus.&nbsp;&nbsp; </p>
+
+
+<p>
+Eclipse is a free, open-source IDE (Integrated Development Environment) with a
+large and growing set of plugins. Eclipse provide a
+great interface to svn repositories and it&rsquo;s free.&nbsp; In addition to the
+basic Eclipse framework itself, the PyDev plugin provides a decent Python
+editing environment within Eclipse. There are directions for installing and
+configuring it on the PyDev FAQ page <a href="http://pydev.sourceforge.net/faq.html">http://pydev.sourceforge.net/faq.html</a>. </p>
+
+
+<h2>Installing Eclipse </h2>
+
+
+<p>SuSe Linux contains an Eclipse
+package.&nbsp; For Windows and the Mac, or Linux if you are using a distribution
+that doesn&rsquo;t already have Eclipse, download the tar file for your platform
+from <a href="http://www.eclipse.org/downloads">http://www.eclipse.org/downloads</a>.&nbsp;
+Double-click on the downloaded file to expand it. There is no further install
+procedure - just put the &lsquo;eclipse&rsquo; folder in a convenient place (for
+example, on the &lsquo;C:&rsquo; drive on Windows, or in your home directory on Linux or
+the Mac).&nbsp; Then double-click on the Eclipse app to start it.&nbsp;&nbsp; </p>
+
+
+<p>
+Directions for installing and configuring PyDev are on the <a href="http://pydev.sourceforge.net/faq.html">PyDev
+FAQ page</a>.&nbsp;&nbsp;</p>
+<p>You will also want a subversion client -- we recommend <a href="http://www.eclipse.org/subversive/">subversive</a>.
+&nbsp;Direct your Eclipse to the subversive update site and install it.
+&nbsp;(See the directions on the subversive download page for
+information on how to do this.) </p>
+
+
+<h2>The Eclipse Workspace</h2>
+
+<p>Eclipse has a 'workspace' in which it keeps the source code and configuration information.  You can put this anywhere you want --
+just make sure your PYTHONPATH is set to find the code.  If you want to keep your source code in the <tt>opus/src</tt> directory
+as suggested in <a href="opus_directory_tree.html">Opus Directory Tree</a>, set your workspace to be the <tt>opus/src</tt> directory.</p>
+
+<h2>Configuring Eclipse </h2>
+
+
+<p>The following are suggestions for configuring Eclipse to work with Opus
+(these directions were tested with Eclipse version 3.1.1 and PyDev version
+0.9.8.5, but as usual later versions will probably work as well.): </p>
+
+
+<ol>
+
+  <li>Configure Eclipse to use spaces rather than tabs in Python code and to 4
+    spaces for indentation: 
+    
+    <ol>
+
+      <li>Open <b>Window </b>&gt; <b>Preferences... </b>&gt; <b>Pydev</b> (on Mac:  <b>File </b>&gt; <b>Preferences... </b>&gt; <b>Pydev</b>)</li>
+
+      <li>Set <b>Tab length</b> to 4 </li>
+
+      <li>Make sure <b>Substitute spaces for tabs?</b> is checked </li>
+
+      <li>Uncheck <b>Assume tab spacing when files contain tabs?</b> so that you
+        detect tabs in files that should not have them </li>
+
+    
+    </ol>
+
+  </li>
+
+  <li>Configure Eclipse to make it easy to run a Python program:
+    
+    <ol>
+
+      <li>Open Eclipse</li>
+
+      <li>Select <b>Run</b> &gt; <b>External Tools</b> &gt; <b>External Tools...</b></li>
+
+      <li>Click on <b>Program</b> in the <b>Configurations</b> pane</li>
+
+      <li>Click the <b>New</b> button to create a new configuration</li>
+
+      <li>Fill in the following values:
+        
+        <ul>
+
+          <li><b>Name:</b> Python</li>
+
+          <li><b>Location:</b>
+            C:\Python25\python.exe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            (a common path for Windows)<br>
+
+            or browse to your Python location via the <b>Browse File System&hellip;</b> button.<br>
+
+            On the Macintosh, you can find the path by typing &lsquo;which python&rsquo; at a terminal window.
+            (If you're using the system version, the path is probably &lsquo;/usr/bin/python&rsquo;; 
+            if you've installed your own version of Python, &lsquo;/usr/local/bin/python&rsquo; will probably
+            be right.)</li>
+
+          <li><b>Arguments:</b> -u ${resource_loc}</li>
+
+        
+        </ul>
+
+      </li>
+
+      <li>Click <b>Apply</b> and close the <b>External Tools</b> dialog box</li>
+     
+     </ol>
+      
+   <li>Configure Eclipse/PyDev to use automatic code completion:
+   
+     <ol>
+     
+       <li>Open Eclipse</li>
+       
+       <li>Select <b>Window</b> &gt; <b>Preferences</b> &gt; <b>PyDev</b> &gt; <b>Code Completion</b></li>
+       
+       <li>Make sure that 'Use Code Completion?' is checked</li>
+       
+       <li>Switch to <b>Interpreter - Python</b></li>
+       
+       <li>Next to the 'Python Interpreters' box click 'Add'</li>
+       
+       <li>Browse to your python.exe (e.g. c:\python25\python.exe)</li>
+     
+     </ol>
+    
+    </li>
+        
+
+  </li>
+
+</ol>
+
+
+<h2>Checking out the Source Code</h2>
+
+<p>Assuming you've set your Eclipse workspace to the <tt>opus/src</tt> directory, you want to check out code so that the 
+packages are directly under this directory, e.g. <tt>opus/src/opus_core</tt>, <tt>opus/src/urbansim</tt>, etc.  
+Using subversive, you can either check out the desired packages one at a time, or use multiple select to get the lot of them.</p>
+
+<p>For advanced users only: you can also select the next-level-up node in subversion,
+e.g. <tt>trunk</tt> or a specific version e.g. <tt>tags/4.2.0</tt> -- but in this case be careful!  You'll end up with an extra layer
+of directories under <tt>opus/src</tt>, such as <tt>opus/src/trunk</tt> -- in this case adjust your PYTHONPATH appropriately.</p> 
+
+<h2>Using Eclipse</h2>
+
+<p>To run a Python program:</p>
+
+<ol>
+
+  <li>Select the corresponding .py file in your project (e.g., via the <b>Resources</b>
+    pane, or by selecting an opened file)</li>
+
+  <li>Select <b>Run</b> &gt; <b>External Tools</b> menu</li>
+
+  <li>If <b>Python </b>appears in the list, select select it to and Eclipse will
+    run your Python program. </li>
+
+  <li>If this is the first time you have run this eclipse run configuration, <b>Python</b>
+    won't be in this list. In this case: 
+    
+    <ol>
+
+      <li>Select the menu item <b>Run </b>&gt; <b>External Tools </b>&gt; <b>External
+        Tools...</b> </li>
+
+      <li>Select <b>Python</b> in the <b>Configurations </b>pane</li>
+
+      <li>Press <b>Run</b> to run your Python program</li>
+
+      <li>(The next time you open <b>Run</b> &gt; <b>External Tools</b>, <b>Python</b>
+        will be in the list)</li>
+
+    
+    </ol>
+
+  </li>
+
+</ol>
+
+<p>To run a unit test:</p>
+
+
+<ol>
+
+  <li>Open the file (for example) &lsquo;opus_core.tests.test_sampling_toolbox.py&rsquo;</li>
+
+  <li>Select <b>Run</b> &gt; <b>External Tools &gt; Python</b> to run this file
+    as a Python program. </li>
+
+  <li>The output will be shown in the Eclipse console window.</li>
+
+</ol>
+
+
+</body>
+</html>

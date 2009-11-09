@@ -1,0 +1,8 @@
+digraph untitled
+	{
+		household -> building;
+		job -> building;
+		building -> parcel;
+		parcel -> zone;
+		travel_data -> zone;
+	}

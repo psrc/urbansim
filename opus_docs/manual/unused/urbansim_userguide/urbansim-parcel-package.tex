@@ -1,0 +1,296 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{The \package{urbansim} Opus Package}
+
+\emph{NOTE: this is preliminary draft documentation of the UrbanSim model system, incorporating
+plans for extensions of the system to address the needs of the AZ-SMART model system and 
+the PSRC model system for a parcel-based version of the system.  It is not fully implemented in 
+code at this point.  Once code and
+documentation are consistent, this will be folded into the main UrbanSim documentation.  Separate, 
+brief documentation will be generated for the configuration of these models for specific
+applications like PSRC and AZ-SMART.}
+
+\section{Introduction}
+
+UrbanSim is implemented (as of version 4) as a package in the Open Platform for Urban Simulation (Opus).
+It is a general and customizable package for creating models and model systems, estimating model
+parameters, creating scenarios for alternative policy assumptions, running the model system on these
+scenarios, and evaluating them.  In the current version of UrbanSim, support has been added for 
+generalizing the use of different kinds of geographic units.  Previously the system has been implemented
+with a focus on the use of gridcell geography only.  Now it supports implementing models and model
+systems using alternatives such as parcels (and buildings), or zones, which could represent any spatial
+unit of analysis that aggregates from parcels or gridcells.  These geographies can now also be mixed -- 
+allowing zonal variables to be computed and used in a gridcell or parcel model, or gridcell variables to be
+used in a parcel model, for example.  As a result of this new flexibility, the documentation and the urbansim 
+Opus package have been reorganized.
+
+The urbansim package makes extensive use of functionality in the opus_core package, and provides additional
+classes to implement datasets, models, and model systems.  The package has been re-organized into the 
+following structure (\emph{note: this has not yet been completed, and the following is only for illustration purposes}):
+
+urbansim
+\begin{itemize}
+	\item{data}
+		\begin{itemize}
+			\item{building}
+			\item{business}
+			\item{development_constraints}
+			\item{development_project_proposal}
+			\item{development_site}
+			\item{development_template}
+			\item{gridcell}
+			\item{household}
+			\item{job}
+			\item{parcel}
+			\item{person}
+			\item{planned_land_use}
+			\item{region}
+			\item{travel_data}
+			\item{zone}
+		\end{itemize}
+	\item{models}
+		\begin{itemize}
+			\item{development_project_location_choice_model|}
+			\item{development_project_proposal_choice_model}
+			\item{employment_location_choice_model}
+			\item{employment_relocation_choice_model}
+			\item{employment_transition_model}
+			\item{household_location_choice_model}
+			\item{household_relocation_choice_model}
+			\item{household_transition_model}
+			\item{land_price_model}
+			\item{real_estate_price_model}
+		\end{itemize}
+\end{itemize}
+
+\emph{Note: the datasets and models reflect available modules, not all of which would be used in a
+particular model application.}
+
+\section{Datasets}
+\label{sec:urbansim-datasets}
+ 
+%
+All datasets defined in \package{urbansim} are implemented as children of the
+Opus \package{opus_core} class \class{Dataset} described in
+Section~\ref{sec:opus-core-datasets}. Each dataset sets default values for several
+class properties, such as a name of the unique identifier (\verb|id_name|),
+dataset name (\verb|dataset_name|), \verb|in_table_name| and
+\verb|out_table_name|. 
+
+The \package{urbansim} datasets are defined in \verb|urbansim.datasets|. 
+We use the following naming convention: For module name we use the dataset 
+name in lower case in singular form, where single words are connected by
+'_', and ending with ``_dataset''.
+For class name we capitalize the first letters in each word of the dataset 
+name, use singular form and add 'Dataset' at the end. For example, a dataset for
+development projects is defined in class \class{DevelopmentProjectDataset}
+implemented in the module \file{development_project_dataset.py}. For interaction
+sets, we connect the two dataset names in the same way, but with 
+an 'x' in the module name and an 'X' in the class name. For example, an
+interaction set of development projects and gridcells is defined in
+\class{DevelopmentXProjectGridcellDataset} implemented in
+\file{development_project_x_gridcell_dataset.py}.
+
+\subsection{Predefined Datasets}
+ 
+%
+Table~\ref{tab:urbansim-datasets} lists dataset classes that are predefined in
+\package{urbansim} (in alphabetical order), including the default value for
+\verb|dataset_name|, \verb|in_table_name|, \verb|id_name| and name of the
+module in which the class is implemented (excluding '.py'). In most cases they
+correspond to database tables described in
+Chapter~\ref{chapter:urbansim-database-tables}. The corresponding table name
+is the value of \verb|in_table_name|.
+
+%begin{latexonly}
+%end{latexonly}
+\begin{table}
+\begin{center}
+\begin{tabular}{|l||l||l|}\hline
+\multicolumn{1}{|c||}{dataset_name} & \multicolumn{1}{c||}{in_table_name (default)}&
+\multicolumn{1}{c|}{id_name (default)} \\\hline\hline
+%
+city* & cities & city_id 
+\\
+building & buildings & building_id 
+\\
+building_type & building_types & building_type_id 
+\\
+control_total (households) & annual_household_control_totals & year 
+\\ 
+control_total (jobs) & annual_employment_control_totals & year, sector_id 
+\\ 
+county* & counties & county_id 
+\\
+development_constraint & development_constraints & constraint_id 
+\\ 
+development_event & development_events_exogenous & grid_id, scheduled_year 
+\\
+development_event_history & development_event_history & grid_id, scheduled_year 
+\\
+development_group & development_type_groups & group_id 
+\\
+development_project & -- & project_id 
+\\
+development_project_proposal & -- & development_project_proposal_id
+\\
+development_site* & development_sites & development_site_id
+\\
+development_type & development_types, & development_type_id 
+\\
+& development_type_group_definitions & 
+\\
+employment_sector & sector_id & employment_sectors 
+\\
+employment_sector_group & employment_adhoc_sector_groups & group_id 
+\\
+faz* & fazes & faz_id 
+\\
+fazdistrict* & -- & fazdistrict_id 
+\\
+gridcell* & gridcells & grid_id 
+\\
+household_characteristic & household_characteristics_for_ht & --
+\\
+household & households & household_id
+\\
+job_building_type & job_building_types & id 
+\\
+job & jobs & job_id 
+\\
+large_area* & large_areas & large_area_id 
+\\
+neighborhood* & neighborhoods & neighborhood_id 
+\\
+parcel* & parcels & parcel_id
+\\
+planned_development & planned_developments & planned_development_id
+\\
+plan_type & plan_types & plan_type_id 
+\\
+plan_type_group & plan_type_groups & group_id 
+\\
+race & race_names & race_id 
+\\
+rate (households) & annual_relocation_rates_for_households & age_min, income_min 
+\\
+rate (jobs) & annual_relocation_rates_for_jobs & sector_id 
+\\
+region & regions & region_id 
+\\
+ring & rings & ring_id 
+\\
+target_vacancy & target_vacancies & year
+\\
+travel_data & travel_data & from_zone_id, to_zone_id 
+\\
+vacant_land_and_building_type & & 
+\\
+zone* & zones & zone_id 
+\\\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:urbansim-datasets}Datasets defined in \package{urbansim}. A dataset
+  marked with * is a location set, i.e. it represents a set of locations of
+  a specific geographical unit and can be visualized as a two-dimensional image.}
+\end{table}
+%begin{latexonly}
+%end{latexonly}
+
+\section{Variables}
+
+%
+Variables predefined in \package{urbansim} are structured according to the
+dataset to which they belong. They are implemented in directories of the same
+name as \verb|dataset_name| which is placed in the top directory of
+\package{urbansim}. For example, all gridcell variables are placed in
+``urbansim.gridcell'', all interaction variables of households and
+gridcells are placed in ``urbansim.household_x_gridcell''. All variables
+are defined as children of the Opus \package{opus_core} class \class{Variable} and
+thus they follow the guidelines presented in Section~\ref{sec:opus-variable}.
+
+\section{Models}
+\label{sec:urbansim-models}
+\modelsindex
+
+\package{urbansim} has a set of predefined models, each
+of them implemented as a child of one of the core Opus models
+\modelsindex described in Section~\ref{sec:opus-core-models}.  They
+are hierarchically structured and a few of them are created using
+specific creators.  All
+\package{urbansim} models are placed in
+``urbansim.models''.
+
+
+\subsection{Overview}
+
+The models to execute when running UrbanSim are determined by the configuration
+(see Section~\ref{sec:model-system-configuration}). Its entry ``models'' is a
+list of character strings that identify the models to run in that order.
+UrbanSim defines following models, grouped by their use in a gridcell, parcel or zone level model
+application: 
+
+\input{parcel-models-list}
+\input{parcel-models}
+%
+\subsection{Choices Classes}
+%
+\label{sec:urbansim-choices}
+This section describes \class{Choices} classes (see
+Section~\ref{sec:choices}) that are implemented in \package{urbansim}.
+
+\subsubsection{lottery_choices}
+\index{lottery_choices}
+%
+This class determines choices by taking capacity into account. The
+\method{run()} method takes as arguments \verb|probability| which must be a 2D
+array (number of observations $\times$ number of (sampled) alternatives) and
+\verb|resources| which must contain an entry ``capacity''. This entry should
+be a numpy array \numpyindex or list giving capacity of each alternative of the universe.
+\verb|resources| can contain an entry ``agent_units'' which is a 1D numpy array \numpyindex
+or list giving for each agent the number of units to be removed from capacity
+when placing this agent. Default value is 1 for each agent.  \verb|resources|
+can also contain an entry ``index'' which is a 1 or 2D array of indices of
+alternatives for each agent. If it is a 1D array, it is assumed to be the same
+for all agents. If alternatives were previously sampled, it is the index of
+the sampled alternatives within the universe. The shape of ``index'' should
+correspond to the shape of \verb|probability| or its second dimension if 1D.
+If no ``index'' entry is given, it is created for all alternatives given by
+``capacity'' and appended to \verb|resources|.
+
+The \method{run()} method invokes the \package{opus_core} module
+\class{random_choices_from_index} which returns indices of agent's
+choices made independently of one another.  The indices are chosen
+values from the entry ``index''. Using capacity, it is then
+determined for which choices there is an overflow in agent's
+interest. If there is no overflow the method simply returns the
+obtained indices. Otherwise, from agents that selected choices with
+overflow, a number that corresponds to the overflow is randomly
+sampled. Those agents are marked for making a new choice.  The
+probability cells that correspond to the not available alternatives
+are set to zero and the process is repeated.  The maximum number of
+iterations of this process can be controlled by the entry
+``lottery_max_iterations'' in \verb|resources| which is by default
+3. If there is still overflow after reaching the maximum number of
+iterations, in the resulting array there is a value -1 for agents
+that couldn't find any choice.
+
+
+\subsubsection{first_agent_first_choices}
+%
+\index{first_agent_first_choices}
+This class is a child of \class{lottery_choices}. It allows only one agent per
+choice. In case of overflow, the first agent keeps the choice, all others must
+choose again.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

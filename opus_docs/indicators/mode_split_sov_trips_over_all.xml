@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Percentage of trips taken in a single occupancy vehicle">
+<syntax-version-2.8/>
+
+<indicator-documentation>
+
+<definition>
+This indicator gives a ratio of the number of trips taken in a single occupancy car to the total number of trips taken overall.
+</definition>
+
+<interpreting-results>
+Please see <a href="#how-modeled">How Modeled</a> for information on interpreting the results from this indicator.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<specification>
+The total number of single occupancy car trips taken over a year is divided by the total number of trips taken that year.
+</specification>
+
+<related-indicators>
+<p><a href="mode_split_bike_trips_over_all.xml">Percentage of trips taken by bike</a></p>
+<p><a href="mode_split_walk_trips_over_all.xml">Percentage of trips walked</a></p>
+<p><a href="mode_split_carpool_trips_over_all.xml">Percentage of trips taken via carpool</a></p>
+<p><a href="mode_split_transit_trips_over_all.xml">Percentage of trips taken on mass transit</a></p>
+<p><a href="mode_split_park_ride_trips_over_all.xml">Percentage of trips taken as park and ride</a></p>
+<p><a href="mode_split_bike_trips_over_all_excluding_walk.xml">Percentage of trips except walking taken by bike</a></p>
+<p><a href="mode_split_human_powered_over_all.xml">Percentage of trips taken by bike or walked</a></p>
+<p><a href="mode_split_carpooling_over_automobile_trips.xml">Percentage of automobile trips which are carpools</a>
+</p>
+</related-indicators>
+
+<how-modeled>
+Please see the <a href="mode_split_bike_trips_over_all.xml#how-modeled">How Modeled</a> section of the Percentage of trips biked mode split indicator for a description of how 
+mode split indicators are created.
+</how-modeled>
+
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<display-format>
+<units>none</units>
+<number digits="0"/>
+</display-format>
+
+</indicator-documentation>
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/mode_split_sov_trips_over_all.py">psrc.zone.mode_split_sov_trips_over_all</a>
+</source>
+
+</indicator-declaration>

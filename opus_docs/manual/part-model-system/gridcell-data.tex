@@ -1,0 +1,569 @@
+\chapter{Data for Gridcell-based Applications}
+
+
+\section{Database Tables about Grid Cells}
+\label{sec:gridcell-tables}
+
+\subsection{The {\tt gridcells} table}
+
+Geographic information partitioned into a rectangular grid of rectangular cells.
+
+The ``improvement_value'' fields, below, indicate the value (e.g., dollars) of
+all buildings of a particular type that are in this grid cell. For instance,
+commercial_improvement_value is the total value of all commercial buildings in
+this grid cell. The use of ``improvement'' indicates that buildings are
+considered ``improvements'' over the grid cell's land value.
+
+Attributes that are marked as optional are only required by specific variables. Thus,
+if they are needed or not depends on model specifications.
+Attributes that are NOT marked as optional are used by various models. In some situations,
+(e.g. by skiping specific models) some of those attributes may not be required. 
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+grid_id & integer & Unique identifier  \\
+\hline
+commercial_sqft & integer & The sum of the square footage of buildings that are classified as commercial (generally including retail and office land uses). This is not a measure of land area.  \\
+\hline
+development_type_id & integer & Index into the Development Types table  \\
+\hline
+distance_to_arterial & float &  \emph{(optional) } Units: \verb|urbansim_constants|.units \\
+\hline
+distance_to_highway & float &  \emph{(optional) } Units: \verb|urbansim_constants|.units \\
+\hline
+governmental_sqft & integer & The sum of the square footage of buildings that are classified as governmental\\
+\hline
+industrial_sqft & integer & The sum of the square footage of buildings that are classified as industrial\\
+\hline
+commercial_improvement_value & integer & See description, above  \\
+\hline
+industrial_improvement_value & integer & See description, above  \\
+\hline
+governmental_improvement_value & integer & See description, above  \\
+\hline
+nonresidential_land_value & integer & Units, e.g. dollars  \\
+\hline
+residential_improvement_value & integer & See description, above  \\
+\hline
+residential_land_value & integer & Units, e.g. dollars  \\
+\hline
+residential_units & integer & Number of residential units  \\
+\hline
+relative_x & integer & X coordinate in grid coordinate system  \\
+\hline
+relative_y & integer & Y coordinate in grid coordinate system  \\
+\hline
+year_built & integer & e.g. 2002  \\
+\hline
+plan_type_id & integer & An id indicating the plan type of the grid cell  \\
+\hline
+percent_agricultural_protected_land & integer & \emph{(optional) }
+\\
+\hline
+percent_water & integer & \emph{(optional) } Percentage of this cell covered by water  \\
+\hline
+percent_stream_buffer & integer & \emph{(optional) } Percentage of this cell covered by stream buffer  \\
+\hline
+percent_floodplain & integer & \emph{(optional) } Percentage of this cell covered by flood plain  \\
+\hline
+percent_wetland & integer & \emph{(optional) } Percentage of this cell covered by wetland  \\
+\hline
+percent_slope & integer & \emph{(optional) } Percentage of this cell covered by slope  \\
+\hline
+percent_open_space & integer & \emph{(optional) } Percentage of this cell covered by open space  \\
+\hline
+percent_public_space & integer & \emph{(optional) } Percentage of this cell covered by public space  \\
+\hline
+percent_roads & integer & \emph{(optional) } Percentage of this cell covered by roads  \\
+\hline
+percent_undevelopable & integer & \emph{(optional) }
+\\
+\hline
+is_outside_urban_growth_boundary & boolean & \emph{(optional) } \\
+\hline
+is_state_land & boolean & \emph{(optional) }
+\\
+\hline
+is_federal_land & boolean & \emph{(optional) }
+\\
+\hline
+is_inside_military_base & boolean & \emph{(optional) }
+\\
+\hline
+is_inside_national_forest & boolean & \emph{(optional) }
+\\
+\hline
+is_inside_tribal_land & boolean & \emph{(optional) }
+\\
+\hline
+zone_id & integer & Traffic analysis zone that contains this grid cell's centroid  \\
+\hline
+city_id & integer & \emph{(optional) } City this grid cell belongs to  \\
+\hline
+county_id & integer & \emph{(optional) } County this grid cell belongs to  \\
+\hline
+fraction_residential_land & float & Fraction of residential land in this cell  \\
+\hline
+total_nonres_sqft & integer & \emph{(optional) }
+\\
+\hline
+total_undevelopable_sqft & integer & \emph{(optional) }
+\\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item fraction_residential_land must be between 0 and 1
+\item commercial_sqft, governmental_sqft and residential_units must be \textgreater{}= 0
+\item development_type_id must be a valid index in the \verb|development_types|
+table
+\item distance_to_arterial,  distance_to_highway must be \textgreater{}= 0
+\item grid_id must be unique and \textgreater{} 0
+\item commercial_improvement_value,  industrial_improvement_value, residential_improvement_value, 
+and governmental_improvement_value 
+must be \textgreater{}= 0 
+\item nonresidential_land_value and residential_land_value must be \textgreater{}= 0
+\item relative_x,relative_y coordinate pairs must be unique, and
+\textgreater{}= 1.
+\item The relative_x and relative_y columns are measured in grid cell units.
+They are specifically \textbf{not} latitude/longitude or any other universal
+measurement system. For example this sparse grid (6 cells in a 3x3 grid; cells
+are labeled with grid_id, relative_x, relative_y):
+
+\begin{tabular}{ccc}
+(1,1,1)  &(2,2,1)  &-  \\
+(3,1,2)  &(4,2,2)  &(5,3,2)  \\
+-  &-  &(6,3,3)
+
+\end{tabular}
+
+\item year_built must be less than or equal to the start date of the scenario and larger 
+than absolute_min_year which can be defined in the \verb|urbansim_constants| table (default is 1800).
+\item plan_type must be a valid index in the \verb|plan_types| table
+\item All percent_* attributes must be between 0 and 100
+\item zone_id must be a valid id in the \verb|zones| table
+\item city_id must be a valid index into the \verb|cities| table or zero if
+there is no city
+\item county_id must be a valid index into the \verb|counties| table or zero if
+there is no county
+\item For gridcells with any households on them (i.e., household.grid_id =
+gridcell.grid_id), the gridcell.residential_units must be greater than 0.
+\end{itemize}
+
+\subsection{The {\tt plan_types} table}
+
+\verb|plan_types| are synonymous with Zoning types: for example
+``residential2''. Also synonymous with Planned Land Use (PLU) types. The
+distinction is arbitrary and is to be made by the user.
+
+One row per plan type.
+
+\begin{tabular}{lll}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+plan_type_id & integer & Unique identifier  \\
+\hline
+name & varchar & Unique name of the Plan Type  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item plan_type_id must be unique, greater than zero, and less than or equal to 9999.
+We recommend that plan_type_id start at 1 and be sequential.
+\item name must be unique.
+
+\end{itemize}
+
+
+\section{Database Tables about Development Types}
+\label{sec:development-tables}
+
+%\emph{Note: tables about development types are no longer needed, 
+%even for gridcell-based projects, since the
+%real estate development model that used them, which was based on modeling
+%a transition from one development type to another, has been replaced
+%in the gridcell applications with a real estate development project location
+%choice model.  The descriptions in this section are retained in the documentation 
+%mainly to include this disclaimer, and for readers that need access to the older
+%information}.
+
+
+\emph{Development types} are used to classify a grid cell according to the
+``type'' of development currently in the grid cell.  For instance, grid cells
+with only a few residential units and no other square footage might be
+classified as ``low density residential'' which may be abbreviated as ``R1''.
+Other grid cells may be classified as mixed use, commercial, etc.  The set of
+development types to use is arbitrary.
+
+Development types are grouped by two nested mechanisms: \emph{groups} and
+\emph{non-overlapping-groups}. Each development type may be a member of
+multiple groups. Each group may be a member of multiple
+non-overlapping-groups. All of the groups in a non-overlapping-group must be
+disjoint (i.e., may not share any development types); in other words, each
+development type must belong to at most one group in each
+non-overlapping-group.
+
+Groups and non-overlapping-groups are used in the computation of the variables
+in the models, so to fully understand them requires understanding the model 
+definitions.
+
+\subsection{The {\tt development_types} table}
+
+This table is used by the Events Coordinator (see Section~\ref{sec:events-coordinator}).
+Each row defines one development type.
+
+\begin{tabular}{lll}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline development_type_id & integer & Unique identifier for this row.  \\
+
+\hline name & varchar & Name of the development type.  \\
+
+\hline min_units & integer & Minimum number of units to be in this development
+type.  \\
+
+\hline max_units & integer & Maximum number of units to be in this development
+type.  \\
+
+\hline min_sqft & integer & Minimum square feet to be in this development type.
+\\
+
+\hline max_sqft & integer & Maximum square feet to be in this development type.
+\\
+
+\hline
+
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item development_type_id must be unique and greater than zero. We recommend that it starts at 1 and is sequential.
+\item min_units must be \textgreater{}= 0.
+\item max_units must be \textgreater{}= min_units.
+\item min_sqft must be \textgreater{}= 0.
+\item max_sqft must be \textgreater{}= min_sqft.
+\item The development types should not overlap, and should completely cover the
+space.  A grid cell should only be able to be in a single development type.
+\end{itemize}
+
+\subsection{The {\tt development_type_groups} table}
+\label{sec:development-tables-type-groups}
+
+Each row defines one development type group, but not the group's
+membership - the memberships are defined in the \verb|development_type_group_definitions| table.
+
+\begin{tabular}{lll}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline group_id & integer & Unique identifier for this row.  \\
+
+\hline name & varchar & Unique name of the development type group.  \\
+
+\hline non_overlapping_groups & varchar & Name of the non-overlapping-group or
+empty for no non-overlapping-group.  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item group_id must be unique, and greater than zero.
+\item name must be unique. The required development type groups must be lower
+case with underscores between words e.g. high_density_residential. We recommend
+that all names follow this style.
+\item names and non_overlapping_groups names must not contain spaces must be lower-case.
+\item Development types must not overlap across the groups in the same
+non_overlapping_groups.
+\end{itemize}
+
+The set of required development type groups and non-overlapping-groups is
+determined by the set of variables used by the models being estimated or
+simulated.  Thus, there is no way to a-priori specify which development type
+groups will be needed for your application of UrbanSim. There are two exceptions:
+First, the model Events Coordinator (\ref{sec:events-coordinator}) is internally using groups 'residential', 'mixed_use', 'commercial',
+'industrial', and 'governmental'. Second, the Land Price Model (\ref{sec:land-price-model}) is using by default a filter
+that requires a group called 'developable'. Therefore, if you do not change this settings, make sure your
+table contain these entries.
+
+\subsection{The {\tt development_type_group_definitions} table}
+
+This table defines the set of \verb|development_types| in each
+development type group. Each row defines one ``belongs to'' relationship (a
+particular development type that ``belongs to'' a particular
+development type group).
+
+\begin{tabular}{lll}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline
+development_type_id & integer & Index into the \verb|development_types| table  \\
+\hline
+group_id & integer & Index into the \verb|development_type_groups| table  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item development_type_id must be a valid index into the \verb|development_types| table
+\item group_id must be a valid index into the \verb|development_type_groups| table
+\item The combination of development_type_id and group_id must be unique
+
+\end{itemize}
+
+
+
+\section{Database Tables about Development Events}
+\label{sec:db-tables-events}
+
+These tables represent events in the real estate development. Events that are scheduled 
+to take place in the future are stored in the {\tt development_events} table,
+events that occured prior to the base year are stored in the {\tt development_event_history} table.
+
+Both tables can contain columns of the pattern ``{\it units}_{\tt change_type}''. Each value determines
+a type of change for that type of {\it units}. Possible values are:
+\begin{itemize} \tight
+\item ``A'' for Add
+\item ``R'' for Replace
+\item ``D'' for Delete
+\end{itemize}
+If this column is missing for a certain type of units, the default value is ``A'' for all events.
+
+\subsection{The {\tt development_events} table}
+\label{sec:db-tables-development-events-exogenous}
+
+These development events are changes to grid cells which are scheduled to take
+place
+in the future. For any given year, it is possible to schedule any number of
+changes to the attributes of any number of gridcells. Each change represents
+that addition, subtruction or replacement of the specified number of sqft, residential units, and
+improvement values.  For example, if
+grid cell 23 is to grow by 200 residential units in 2008 (an apartment building
+is built), the table would include a row with scheduled_year = 2008, grid_id =
+23, residential_units = 200, and residential_units_change_type = 'A'.
+
+The value in the ``improvement_value'' fields, below, are used to indicate how
+to change the associated improvement_value for this grid cell. Each event will
+add/subtract/replace (improvement_value * (number
+of units [or sqft] being built by this event)) to the current improvement value
+in
+this grid cell.  The units of the improvement is currency value, e.g. dollars.
+
+The described procedure is implemented in Events Coordinator (see Section~\ref{sec:events-coordinator}).
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+grid_id & integer & Grid cell where the event takes place  \\
+\hline
+scheduled_year &short & Year in which the event will be implemented  \\
+\hline
+residential_units & integer & \\
+\hline
+commercial_sqft & integer & \\
+\hline
+industrial_sqft & integer & \\
+\hline
+governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+residential_improvement_value & integer & See description, above  \\
+\hline
+commercial_improvement_value & integer & See description, above  \\
+\hline
+industrial_improvement_value & integer & See description, above  \\
+\hline
+governmental_improvement_value & integer & See description, above  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item grid_id must be a valid id in the \verb|gridcells| table
+\end{itemize}
+
+
+\subsection{The {\tt development_event_history} table}
+\label{sec:table-development-event-history}
+
+The development event history records the development events that occurred
+prior to the base year. It is used by the development project transition model~(\ref{sec:development-project-transition-model}),
+and for ``unrolling'' the baseyear to create versions of the gridcell data for
+prior years.
+
+This table uses a subset of the schema used for
+\verb|development_events|.  It
+can be considered an extension back in time of the \verb|development_events|
+table, though with additional constraints, specified below.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+grid_id & integer & Grid cell where the event takes place  \\
+\hline
+scheduled_year &short & Year in which the event was implemented  \\
+\hline
+starting_development_type_id & integer & \emph{(optional) }
+This will be the value of the development_type for this gridcell after
+``unrolling'' this development event. \\
+\hline
+residential_units & integer & \\
+\hline
+commercial_sqft & integer & \\
+\hline
+industrial_sqft & integer & \\
+\hline
+governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+residential_improvement_value & integer & See description, above  \\
+\hline
+commercial_improvement_value & integer & See description, above  \\
+\hline
+industrial_improvement_value & integer & See description, above  \\
+\hline
+governmental_improvement_value & integer & See description, above  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item grid_id must be a valid id in the \verb|gridcells| table
+\item starting_development_type_id must be a valid index into the \verb|development_types| table
+\item starting_development_type_id is only required if the process of unrolling gridcells is activated.
+\item Entries for which scheduled_year is greater than or equal to the base year will not be used.
+\end{itemize}
+
+\section{Database Tables About Development Constraints}
+%
+\subsection{The {\tt development_constraints} table}
+\index{development constraints}
+%
+This table defines rules that restrict the possible development types a
+developer can create on a particular grid cell.  Each row defines one rule.
+Development is not allowed on any gridcell that matches any of these rules.  A
+gridcell matches a rule if the attribute values for the gridcell match all of
+the values in the rule (rule columns with the value ``-1'' are ignored when
+determining a match). The table is used by the Development Project Location Choice Model 
+(see page~\pageref{real-estate-development-model-gridcell} and Section~\ref{sec:development-project-lcm}) 
+when computing the amount of allowed development 
+in grid cells.
+
+\begin{tabular}{llp{3.5in}}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline constraint_id & integer & Unique rule identification number  \\
+
+\hline \emph{name-of-a-gridcell-attribute-1} & integer or float &  Value for this
+attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
+\emph{don't care}) \\\hline
+... & ... & ... \\\hline
+\emph{name-of-a-gridcell-attribute-N} & integer or float & \\
+\hline min_units & integer & Minimum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at least this number of residential units. \\
+
+\hline max_units & integer & Maximum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at most this number of residential units. \\
+
+\hline min_commercial_sqft & integer & Minimum number of commercial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of commercial sqft. \\
+
+\hline max_commercial_sqft & integer & Maximum number of commercial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of commercial sqft. \\
+
+\hline min_industrial_sqft & integer & Minimum number of industrial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of industrial sqft. \\
+
+\hline max_industrial_sqft & integer & Maximum number of industrial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of industrial sqft. \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item constraint_id must be a unique positive integer.
+
+\item \emph{name-of-a-gridcell-attribute-[1...N]} are names of a gridcell attributes,
+e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
+names is determined by the set of numeric column names on the gridcell table.
+
+\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
+equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
+
+\end{itemize}
+
+\section{Database Tables About Target Vacancies}
+
+\subsection{The {\tt target_vacancies} table}
+\label{sec:table-target-vacancies-gridcell}
+
+This version of \verb|target_vacancies| table is used by the development project transition
+model~(\ref{sec:development-project-transition-model}) in gridcell-based applications. 
+It gives the model information about acceptable vacancy rates. The table
+has one row for each year the simulation runs. Each row gives target values for
+the residential and nonresidential vacancies for that year, which are defined
+below.  Only data after the base year is used.
+
+\begin{tabular}{lll}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline year & integer & Year of the simulation for which the vacancy
+targets
+apply  \\
+
+\hline target_total_residential_vacancy & float & Ratio of unused residential
+units to total residential units  \\
+
+\hline target_total_non_residential_vacancy & float & Ratio of unused
+nonresidential sqft to total nonresidential sqft  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item There must be exactly one row for each year to be simulated.
+\item target_total_residential_vacancy and target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\end{itemize}
+

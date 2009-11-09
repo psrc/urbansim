@@ -1,0 +1,10 @@
+<opus_project>
+  <submodel type="submodel" name="submodel1" submodel_id="1">
+    <description type="string">test submodel</description>
+    <variables type="variable_list">a, b, c</variables>
+  </submodel>
+
+  <submodel type="submodel" name="taken name" submodel_id="2">
+    <variables type="variable_list">1, 2, 3</variables>
+  </submodel>
+</opus_project>

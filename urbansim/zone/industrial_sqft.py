@@ -1,0 +1,10 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
+
+from abstract_sum_from_gridcells import abstract_sum_from_gridcells
+
+class industrial_sqft(abstract_sum_from_gridcells):
+    """Sum of residential land values for the zone.
+"""
+    gc_variable = "industrial_sqft"

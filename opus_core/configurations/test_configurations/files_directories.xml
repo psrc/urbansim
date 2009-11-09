@@ -1,0 +1,13 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
+      <file1 type="file">testfile</file1>
+      <file2 parser_action="prefix_with_opus_data_path" type="file">testfile</file2>
+      <dir1 type="directory">testdir</dir1>
+      <dir2 parser_action="prefix_with_opus_data_path" type="directory">testdir</dir2>
+    </scenario>
+  </scenario_manager>
+</opus_project>

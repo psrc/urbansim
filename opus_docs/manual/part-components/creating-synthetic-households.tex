@@ -1,0 +1,63 @@
+\chapter{Creating Synthetic Households for OPUS Modeling Applications}
+
+\emph{Disclaimer: The household synthesizer described in this chapter is functional, but has not been fully integrated into the OPUS GUI, and some of the tools to support pre-processing data to use in the synthesizer, and to post-process synthesizer results to make them fully usable, are not done yet.  Stay tuned for this to be completed in the next maintenance release, 4.2.1.}
+
+UrbanSim and other models such as activity-based travel model are microsimulation models that simulate the choices of individual households and persons.  In order to operationalize such models, a synthetic household population is needed.  Although there are now several household synthesizers in existence and use, it was deemed important to tightly integrate a household synthesizer into OPSUS in order to support UrbanSim and activity-based travel modeling within the OPUS environment.
+
+A new household synthesizer has been developed and contributed to the OPUS user community through a collaboration with Ram Pendyala and Karthik Konduri at Arizona State University.  A paper submitted for presentation to TRB 2010 describes the algorithm and results on a test application. The paper is \emph{A methodology to match distributions of both household and person attributes in the generation of synthetic populations}, by Xin Ye, Karthic Konduri, Ram Pendyala, Bhargava Sana, and Paul Waddell. 
+
+The UrbanSim group at UW has begun the process of fully integrating the synthesizer into OPUS, by adding an interface in the GUI, and adding supporting tools to create the inputs for the synthesizer, and to post process outputs from the synthesizer.  The synthesizer uses inputs from the U.S. Census by census block group, and from the Public Use Microdata sample.  Tools have been coded to create these inputs from standard census data files, and to set up and launch the synthesizer.  These tools are visible in the tools section of the data tab in the GUI.  They are now in testable condition but have not been extensively tested.
+
+The synthesizer creates a household table and a persons table, with categories for several characteristics and a geographic identifier of a census block group.  Post-processing tools allow the imputation of point values for catergorical characteristics such as income, and also for assigning synthetic households to specific buildings.  The latter step is currently being integrated into the GUI, and depends on having an estimated household location choice model, since this model is used to place the households that are assigned to a block group into a specific building.
+
+The table below provides an example of the household and person characteristics used in the initial development and testing of the synthesizer.  See the paper for details of the algorithm and for validation results.
+
+\begin{centering}
+\begin{tabular}{p{2in}ll}
+%\hline
+\textbf{Household Attributes} & \textbf{Description} & \textbf{Value} \\
+\hline
+Household Type	& Family: Married Couple	& 1\\ %\hline
+&	Family: Male Householder, No Wife &	2 \\ %\hline
+&	Family: Female Householder, No Husband & 3 \\ %\hline
+&	Non-family: Householder Alone	& 4 \\ %\hline
+&	Non-family: Householder Not Alone	& 5 \\ \hline
+Household Size &	1 Person	& 1 \\ %\hline
+&	2 Persons	 & 2\\ %\hline
+&	3 Persons	& 3 \\ %\hline 
+&	4 Persons	& 4 \\ %\hline
+&	5 Persons &	5 \\ %\hline
+&	6 Persons	& 6  \\ %\hline
+&	7 or more Persons & 7 \\ \hline
+Household Income	& \$0 - \$14,999 &	1\\ %\hline
+&	\$15,000 - \$24,999  &	2\\ %\hline
+&	\$25,000 - \$34,999 &	3\\ %\hline
+&	\$35,000 - \$44,999 &	4\\ %\hline
+&	\$45,000 - \$59,999 &	5\\ %\hline
+&	\$60,000 - \$99,999 	& 6\\ %\hline
+&	\$100,000 - \$149,999 & 7\\ %\hline
+&	Over \$150,000 &	8\\ %\hline
+\textbf{Person attributes}		& & \\ \hline
+Gender	& Male	& 1\\ %\hline
+&	Female	& 2\\ \hline
+Age	& Under 5 years	& 1\\ %\hline
+&	5 to 14 years	& 2\\ %\hline
+&	15 to 24 years	& 3\\ %\hline
+&	25 to 34 years	& 4\\ %\hline
+&	35 to 44 years	& 5\\ %\hline
+&	45 to 54 years	& 6\\ %\hline
+&	55 to 64 years	& 7\\ %\hline
+&	65 to 74 years	& 8\\ %\hline
+&	75 to 84 years	& 9\\ %\hline
+&	85 and more	 & 10\\ \hline
+Ethnicity &	White alone	& 1\\ %\hline
+&	Black or African American alone	& 2\\ %\hline
+&	American Indian and Alask Native alone	& 3\\ %\hline
+&	Asian alone	& 4\\ %\hline
+&	Native Hawaiian and Other Pacific Islander alone &	5\\ %\hline
+&	Some other race alone	& 6\\ %\hline
+&	Two or more races	& 7\\ \hline
+\end{tabular}
+\end{centering}
+
+

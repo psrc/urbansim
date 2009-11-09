@@ -1,0 +1,48 @@
+<project>
+
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
+	<property environment="env" />
+
+	<target name="get-opus-home" unless="opus.home">
+		<property name="opus.home" value="${env.OPUS_HOME}" />
+	</target>
+
+
+    <!-- Default target defintions -->
+
+	<target name="unit-tests" depends="get-opus-home">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<env key="OPUS_HOME" value="${opus.home}" />
+			<arg line="${basedir}/tests/all_tests.py" />
+		</exec>
+	</target>
+
+	<target name="unit-tests-with-xml-output" depends="get-opus-home">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<env key="OPUS_HOME" value="${opus.home}" />
+			<arg line="${basedir}/tests/all_tests.py -x" />
+		</exec>
+	</target>
+
+	<target name="integration-tests" depends="get-opus-home">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<env key="OPUS_HOME" value="${opus.home}" />
+			<arg line="${basedir}/tests/all_tests.py -i" />
+		</exec>
+	</target>
+
+	<target name="integration-tests-with-xml-output" depends="get-opus-home">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<env key="OPUS_HOME" value="${opus.home}" />
+			<arg line="${basedir}/tests/all_tests.py -i -x" />
+		</exec>
+	</target>
+
+	<target name="cruisecontrol" depends="unit-tests-with-xml-output" />
+
+</project>

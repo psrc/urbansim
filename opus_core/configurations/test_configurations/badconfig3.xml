@@ -1,0 +1,8 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <data_manager>
+    <s>teststring</s>
+  </data_manager>
+</opus_project>

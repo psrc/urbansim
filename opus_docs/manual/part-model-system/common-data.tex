@@ -1,0 +1,216 @@
+\chapter{Common Data}
+
+Data requirements for the system are one of the most common questions that people have when thinking of implementing the UrbanSim system in their area.  The common perception is that UrbanSim is very data intensive and that it's data requirements present a major obstacle to implementing a working model system.  While there is an element of truth to that, but it is important to understand that the data requirements are driven by the type and extent of the modeling one would like to implement.
+
+Theoretically, a model system could be extremely simple.  It could contain one model and one dataset.  An example of this would be a "persons aging model."  A dataset could be set up that has a record for every person in the area being modeled with two attributes: a unique identifier (e.g. person_id) and a column representing that person's age.  The persons aging model would be a configuration of a "simple model" and would consist of an expression that adds one to each person's age at the conclusion of a simulation year.
+
+On the other extreme the data requirements could be quite high.  If a model system consisted of a real estate price model, a development model, a workplace choice model, a travel model, and household and employment location and relocation choice models, it is easy to begin to see that the data requirements would be quite high.  In this case one would need some kind of data on every parcel, building, household, person, and job in the region with appropriate relationships set up between each one.
+
+The other major consideration is what kind of model system architecture you will be using.  In other words, what is the smallest geographic unit you will model at? Will you be modeling at the parcel level, gridcell level, or zone level?  This is the biggest single decision to make when setting up a base year database.
+
+There are certain tables that would be required in order to run any of the aformentioned model system architectures.  In this section we will attempt to describe these tables and provide a minimal set of columns.
+
+\subsection{households} 
+
+This is a table of households. It contains one record for each household in the modeled region. This information is typically estimated or "synthesized." There are household synthesizers available that can generate the information needed for this table from census data. Usually source data for this table consists of SF1, SF3, CTPP, and PUMS data from the U.S. Census.  These attributes are commonly found in households tables, but any descriptive fields could be used.
+
+\begin{description}
+\item household\_id - unique identifier
+\item building\_id - identifies which building the household lives in.
+\item persons - number of persons in the household
+\item workers - number of workers in the household
+\item age\_of\_head - the age of the head of household
+\item income - the income of the household as an integer
+\item children - the number of children in the household
+\end{description}
+
+\subsection{jobs} 
+
+This table contains a record for each job in the modeled region. This information can be obtained from commercial or government sources.
+
+\begin{description}
+\item job\_id - unique identifier
+\item building\_id - identifies which building the business occupies
+  \begin{itemize}
+  \item One way to assign jobs to buildings is to geocode the businesses which gives them a parcel\_id, then assigning them "up" to the building\_id record according to the building that sits on the parcel
+  \item A location choice model could also be utilized 
+  \end{itemize}
+\item job\_sector\_type\_id - identifies the sector of the business (e.g. SIC, NAICS, other)
+\item building\_type - corresponds to job\_building\_types table, determines if the job is home based or not 
+\end{description}
+
+\subsection{zones} 
+
+This table refers to Traffic Analysis Zones (TAZs). It could hold any attributes recorded or maintained at a TAZ level.
+
+\begin{description}
+\item zone\_id - unique identifier (likely the same as taz\_id)
+\item taz\_id - unique identifier for linking to TAZ geometry 
+\end{description}
+
+
+\subsection{land\_use\_types} 
+
+This is a lookup table to give land uses readable names. Land use types could be any typology that a modeler may want to represent.
+
+\begin{description}
+\item land\_use\_type\_id - unique identifier
+\item generic\_land\_use\_type\_id - identifies the more aggregate land use type that this land use type falls into
+\item land\_use\_type\_name - readable name to identify land use type
+\item land\_use\_type\_description - readable description of the land use type
+\item unit\_name - readable name that is used by the model so that it can interpret what units are used for different land use types: building\_sqft for non-residential and mixed-use buildings, parcel\_sqft for vacant parcels, residential\_units for residential buildings 
+\end{description}
+
+\subsection{generic\_land\_use\_types} 
+
+This is a lookup table for a more general or aggregate level of land use types.
+
+\begin{description}
+\item generic\_land\_use\_type\_id - unique identifier
+\item generic\_land\_use\_type\_name - readable name that identifies generic land use types
+\end{description}
+
+\subsection{cities} 
+
+This table refers to cities within the study area. It could hold any attributes recorded or maintained at a city level.
+
+\begin{description}
+\item city\_id - unique identifier
+\item city\_name - readable name to identify the city 
+\end{description}
+
+\subsection{counties} 
+
+This table refers to counties within the study area. It could hold any attributes recorded or maintained at a county level.
+
+\begin{description}
+\item county\_id - unique identifier
+\item county\_name - readable county name
+\end{description}
+
+\subsection{building\_types} 
+
+This table identifies a typology of building uses. Often this will be the same as the land use, but in some cases it may make sense for it to be different. For instance, in the case where 4 buildings reside on a parcel, and 3 of them are residential with 1 being commercial, the land use might be residential but the buildings identified with their own use.
+
+\begin{description}
+\item building\_type\_id - unique identifier
+\item generic\_building\_type\_id - identifies the more aggregate building type this building type falls into
+\item building\_type\_name - readable identifier for building type
+\item is\_residential - identifies whether or not the building type is residential
+\item unit\_name - identifies the units used by the modeling system for this type of building (e.g. building\_sqft, parcel\_sqft, or residential\_units) 
+\end{description}
+
+\subsection{development\_constraints} 
+
+This table represents constraints on new development. There are two parts to this table that are not immediately apparent just by examining the attributes:
+
+\emph{Selection criteria fields} - These fields could be any parcel attribute that the modeler wishes to use to constrain development. Many examples will be geographical in nature: is\_in\_floodplain or city\_id. Other examples could represent other parcel or gridcell attributes such as ownership\_id. These fields are expandable to include any attribute of a parcel the modeler may want to restrict development by. The same fields must exist in the parcels or gridcells tables for the models to find matches in this table.
+
+\emph{Constraint fields} - These fields indicate the nature of development allowed under a certain plan\_type. The minimum and maximum fields are informed by the constraint\_type field which indicates the unit of measurement of the constraint (e.g. units per acre or FAR). 
+
+The models are designed for the most restrictive constraints to be used in the case of multiple matches on selection criteria.
+
+\begin{description}
+\item plan\_type\_id - identifier for the plan type
+\item ownership\_type\_id - allows constraints to be implemented on a particular ownership type
+\item city\_id - allows particular cities to have their own specific development constraints
+\item county\_id - allows particular counties to have their own specific development constraints
+\item is\_in\_floodplain - allows floodplains to have their own specific development constraints
+\item is\_on\_steep\_slope - allows steep slopes to have their own specific development constraints
+\item is\_in\_fault\_zone - allows fault zones to have their own specific development constraints
+\item generic\_land\_use\_type\_id - specifies which land use type is allowed
+\item constraint\_type - indicates the unit of measure for the `minimum' and `maximum' fields
+\item minimum - number indicating the minimum number allowed
+\item maximum - number indicating the maximum number allowed 
+\item development\_constraint\_id - unique identifier 
+\end{description}
+
+\subsection{travel\_data} 
+
+This table contains travel data generated by an external travel model. The fields represented below are the approximate a minimum number of fields on travel times, but additional travel information can be leveraged by the model system. The table would be updated throughout a simulation run by the external travel model, but would need to be populated for the base year.
+
+\begin{description}
+\item from\_zone\_id - a TAZ identifier from the zones table
+\item to\_zone\_id - a TAZ identifier from the zones table
+\item am\_single\_vehicle\_to\_work\_travel\_time - the time taken for a single occupant vehicle traveling to work during the AM peak time
+\item am\_transit\_to\_work\_travel\_time - the time taken for a transit trip to work during the AM peak time 
+\end{description}
+
+\subsection{target\_vacancies} 
+
+This table contains vacancy rates for each building type for each simulation year. The developer model, in each year, will check to see what the current vacancy rate is per building type then compare that against the corresponding target vacancy rate. If the current rate is higher than what is in this table, the developer model will not develop anything. If it is lower, and development constraints allow it, the developer model attempts to develop the area using templates until the target vacancy rate is met.
+
+\begin{description}
+\item year - year in which vacancy rate applies
+\item building\_type\_id - identifies which building type the vacancy rate and year applies to
+\item target\_vacancy\_rate - the vacancy rate applied 
+\end{description}
+
+\subsection{employment\_adhoc\_sector\_groups} 
+
+See explanation of employment\_adhoc\_sector\_group\_definitions table.
+
+\begin{description}
+\item group\_id - unique identifier
+\item name - a readable name defining an employment group 
+\end{description}
+
+\subsection{employment\_adhoc\_sector\_group\_definitions} 
+
+This table, combined with employment\_adhoc\_sector\_groups, defines an adhoc aggregation of employment sectors. These employment group definitions are adhoc in the sense that there is no defined way to aggregate certain sectors together. Groups such as `retail' or `services' are fairly ambiguous. This table structure allows disaggregate employment sectors to be aggregated, and have overlapping categories. These tables are mainly used for variables and indicator calculations and not in the simulation system. For instance, we may want to ask the question of a simulation: what is the growth in services employment within the CBD? These tables allow us to define what `services' employment actually is, then calculate these indicators.
+
+\begin{description}
+\item job\_sector\_type\_id - the job sector type (not unique, a job sector may appear in more than one group)
+\item group\_id - the group id that the sector belongs to 
+\end{description}
+
+\subsection{household\_characteristics\_for\_ht} 
+
+This table provides the household transition model with information it needs to add new households in each simulation year.
+
+\begin{description}
+\item characteristic - includes categories about households such as income, workers, children
+\item minimum - the representative minimum number that this category represents
+\item maximum - the representative maximum number that this category represents 
+\end{description}
+
+\subsubsection{annual\_employment\_control\_totals} 
+
+This table contains the number and type of jobs to be added and located by the model system for each year.  The employment transition model uses the information in this table to add jobs to the jobs table.
+
+\subsubsection{annual\_household\_constrol\_totals}
+
+This table contains the number and type of households to be added and located in each year by the model system.  The household transition model uses the information in this table to add households to the households table.
+
+\subsubsection{annual\_relocation\_rates\_for\_households} 
+
+This table breaks down households into groups based on head of household age and income level, then assigns a probability of a household characterized in this way relocating in a given simulation year. The age and income level groups are arbitrary, and the rate of relocation can be set to zero to eliminate all relocation.  The household relocation model uses the information in this table to unplace households in the households table (e.g. set their building_id = -1).
+
+\begin{description}
+\item hh\_rate\_id - unique identifier
+\item age\_min - minimum age of head of household
+\item age\_max - maximum age of head of household
+\item income\_min - minimum income of household
+\item income\_max - maximum income of household
+\item probability\_of\_relocating - the probability that a household with these characteristics will relocate 
+\end{description}
+
+\subsubsection{annual\_relocation\_rates\_for\_jobs} 
+
+This table assigns a probability of a job in a particular sector relocating in a given simulation year. The rate of relocation can be set to zero to eliminate all relocation.  The employment relocation model uses the information in this table to unplace jobs in the jobs table (e.g. set their building_id = -1).
+
+\begin{description}
+\item job\_rate\_id - unique identifier
+\item job\_sector\_type\_id - corresponds to the job\_sector\_types\_table
+\item job\_relocation\_probability - the probability that a job in this sector will relocate 
+\end{description}
+
+\subsubsection{job\_building\_types} 
+
+This table specifies which jobs are home based or not. This table currently exists as a convenience to the way the code is structured and could be moved directly into the jobs table.
+
+\begin{description}
+\item id - unique identifier
+\item name - readable name (home\_based or non\_home\_based)
+\item home\_based - boolean value corresponding to the `name' field 
+\end{description}

@@ -1,0 +1,7 @@
+<opus_project>
+    <general>
+        <parent type="file">parent.xml</parent>
+    </general>
+    <local type="string">local</local>
+    <shadowing type="string">shadowed_value_child</shadowing>
+</opus_project>

@@ -1,0 +1,9 @@
+﻿-- This script deletes the tables no longer used by UrbanSim4
+-- NOTE: run this script last as some previous scripts may make use
+-- of these tables prior to their deletion here
+
+DROP TABLE model_variables;
+DROP TABLE household_characteristics_for_hlc;
+DROP TABLE residential_units_for_home_based_jobs;
+DROP TABLE sqft_for_non_home_based_jobs;
+DROP TABLE transition_types;

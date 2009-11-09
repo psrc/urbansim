@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Nonresidential square foot value">
+<syntax-version-2.8/>
+<indicator-documentation>
+<definition>
+For each year of interest, this indicator shows the average value per square foot of nonresidential floorspace in 
+each unit of geography.
+</definition>
+
+<interpreting-results>
+This indicator is useful for seeing the average value per square foot of nonresidential floorspace in different 
+parts of the region or in the region as a whole.
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<limitations>
+<p>This indicator gives the <i>average</i> value per square foot of nonresidential floorspace 
+over the specified geography.
+UrbanSim does not model the land and improvement values of individual parcels, 
+and therefore cannot provide a complete distribution of values, or 
+statistics such as minimum and maximum values. </p>
+
+<p>UrbanSim currently does not model demolitions of existing buildings, and
+and demolished residential units or nonresidential space will continue to show
+up in the database.  For example, if in a given year the Developer 
+Model simulates the replacement of an older building with 5000 sqare feet of nonresidential floor space with a 
+new building with 25,000 square feet, afterwards the UrbanSim database will include 30,000 square feet (representing
+both the old and new building), rather than the correct value of 25,000.
+This means that the average value per nonresidential square foot
+may be lower than it should be in geographies that have experienced redevelopment.</p>
+</limitations>
+
+<specification>
+For a given year, we first find the total nonresidential land value L by summing the nonresidential land values 
+for all the grid cells in the unit of geography.
+Then, we find the total nonresidential improvement value I by summing the commercial, industrial, and governmental
+improvement values.
+Finally, we find the total nonresidential square footage A by summing the commercial, industrial, and governmental 
+square footage.  
+The value of this indicator is then (L + I)/A.
+</specification>
+		
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<how-modeled>
+This indicator is modeled by UrbanSim.
+</how-modeled>
+
+<display-format>
+<units>monetary units, e.g., dollars</units>
+<number digits="2"/>
+</display-format>
+
+<related-indicators>
+<a href="nonres_sqft.xml">Nonresidential square feet</a> gives the total number of nonresidential square feet.  
+</related-indicators>
+		
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/nonresidential_improvement_value.py">urbansim.gridcell.nonresidential_improvement_value</a>
+</source>
+
+</indicator-declaration>
+

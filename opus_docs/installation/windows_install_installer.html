@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<title>Installing on Windows using the Opus Installer</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css">
+
+
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+
+<body>
+
+
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+
+<table border="0" cellspacing="0" width="100%">
+    <tbody>
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Installing on Windows</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing Opus &amp; UrbanSim on Windows using the Opus Installer</h1>
+
+These following instructions are for installing Opus &amp; UrbanSim on
+Windows using the Opus Installer.  This  works either for installing a stable
+release of the system or for installing the 
+latest development version of the system (there is an option in the installation 
+process to select which version of the code and sample data you want).
+These installation directions have been tested with Windows XP
+and Intel processors. The Opus Installer <em>requires</em> an internet connection during installation.
+<p>
+<b> Are you an ArcGIS user?  Please read our <A href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/PythonAndArcGIS">OPUS-ArcGIS installation notes</A>
+ before running the OPUS installer.</b>
+</p>
+
+<ol>
+  <li><a href="#download_installer">Download the Opus Installer</a></li>
+  <li><a href="#run_installer">Run the Opus Installer</a></li>
+  <li><a href="#select_options">Select what to install</a></li>
+  <li><a href="#test_installation">Test your installation</a></li>
+</ol>
+
+<h2>Step 1: <a name="download_installer">Download the Opus Installer</a></h2>
+
+The Opus Installer can be downloaded from
+<a href="http://www.urbansim.org/opus/installer/opus_installer.exe">here</a>.
+This will download an executable file called <b>opus_installer.exe</b>.
+
+<h2>Step 2: <a name="run_installer">Run the Opus Installer</a></h2>
+
+During the course of the installer, Opus and Urbansim code will be installed.
+A number of programs that Opus and
+Urbansim depends upon will also be installed. In order to install these other
+programs, the Opus Installer will launch other installers that may require
+you to click through them. With a high-speed connection, expect
+installation to take around 30 minutes. The Opus Installer will also prompt
+you to reboot your computer at the end of the installation process. You
+should do so at your earliest convenience. <br><br>
+
+The Opus and Urbansim code can then be found in the src subdirectory of the 
+installation directory that you specify (the default is C:/opus). 
+It will also create a data directory which will hold the results of simulations. 
+If the hard drive which contains your installation directory 
+does not have enough capacity to store the results of simulations, you should 
+move the directory to another drive and 
+update the OPUS_DATA_PATH environment variable to your new data directory. 
+
+<p>To run the installer, double-click the <b>opus_installer.exe</b> file downloaded in <a href="#download_installer">step one</a>.
+A set of options will appear that looks like:</p>
+
+<img src="images/opus_installer_options.jpg" alt="Opus Installer Options" width="628" height="480"><br />
+
+<p>See the <a href="#select_options">options</a> section to determine if you have any additional
+installation requirements beyond the default. </p>
+
+<h2>Step 3: <a name="select_options">Select the programs and components to install</a></h2>
+
+<p>The Opus Installer will install a number of programs and components by default. The installer is
+also capable of installing other programs and packages that you may wish to use.
+In this section, we describe what is installed by default and the additional software that can be installed
+if chosen. </p>
+
+<ul>
+	<li><a href="#required_software">Required Software</a></li>
+	<li><a href="#optional_software">Optional Software</a></li>
+	<li><a href="#required_python_packages">Required Python Packages</a></li>
+	<li><a href="#optional_python_packages">Optional Python Packages</a></li>
+	<li><a href="#opus_urbansim">Opus and Urbansim</a></li>
+</ul>
+
+<h3><a name="required_software">Required Software (installed by default)</a></h3>
+
+Opus and UrbanSim are implemented in the Python programming language. The <a href="http://www.python.org">official
+Python website</a> includes documentation, downloads, and much else. The Opus Installer will
+download and install Python 2.5. If you already have Python 2.5 installed,
+the installer will skip the installation of Python.
+
+<h3><a name="optional_software">Optional Software</a></h3>
+
+There are a few different programs that may be useful to you.
+
+<p><b>Database integration</b>: If you require a database server to be
+installed on your local machine, the Opus Installer provides options to
+download <b>MySQL</b> or <b>PostgreSQL</b>. Opus-specific
+configuration options for MySQL can be found <a href="mysqlinstall.4.1.html">
+here</a>. Opus can also interoperate with other database management
+systems such as Microsoft SQL Server (MS-SQL), but are not available through the installer.</p>
+
+<p><b>R Project</b>: If you have interest in using
+the R project's environment for integrated statistical analysis
+and visualization. More information can be found
+<a href="http://www.r-project.org/">here</a>.</p>
+
+<h3><a name="required_python_packages">Required Python Packages (installed by default)</a></h3>
+
+Opus and UrbanSim make heavy use of numerical
+Python packages for scientific computing, graphical packages, and also requires software for communicating with databases. This part of the installer will
+download and install these required packages. Information about each
+is readily available on the internet for those interested. <b>Note: The PyQt installer may 
+declare that it cannot find Python 2.5 installed on your system. You should ignore this message and
+continue with the installation.</b>
+    
+<h3><a name="optional_python_packages">Optional Python Packages</a></h3>
+
+<!--
+If you have set up a database server on your local machine (for example,
+if you <a href="#optional_software">choose</a> to do so in the installer),
+or wish to communicate with a database, you will need to install the
+appropriate python package. This allows Python to communicate with your database.
+Install...
+<ul>
+	<li><b>psycopg</b>, if you need to communicate with a PostgreSQL database</li>
+	<li><b>MySQLdb</b>, if you need to communicate with a MySQL database</li>
+	<li><b>pyodbc</b>, if you need to communicate with a Microsoft SQL (MS-SQL) database</li>
+</ul>
+-->
+
+<p> You may wish to install a number of optional python packages:</p>
+<ul>
+	<li><b>RPy</b>: Install this package if you have installed R (for example,
+	in the <a href="#optional_software">optional software</a> section of this
+	installer). This is a Python interface for the statistical programming
+	language R (tested with version 0.4.6).</li>
+
+<?--
+	<li><b>PyQt</b>: Selecting this option will install a number of components. Of most importance,
+	it will install Qt, a framework for creating graphical user interfaces.
+	It also installs PyQt, which allows Python to use Qt.
+	More information can be found at the
+	<a href="http://www.riverbankcomputing.co.uk/pyqt/">PyQt website</a>.
+	<b>Note: If you choose to install PyQt,
+	the PyQt installer may declare that it cannot find
+	Python 2.5 installed on your system. You should ignore this message and
+	continue with the installation.</b></li>
+-->
+
+	<li><b>dbfpy</b>: If you need to use .dbf files (for example, those
+	produced by ArcGIS), choose to install dbfpy.</li>
+</ul>
+
+<h3><a name="opus_urbansim">Opus and Urbansim (installed by default)</a></h3>
+
+The Opus Installer will download this code from the subversion repository to 
+a folder in your opus directory called src (for source code).
+For those of you who plan on doing software development,
+it may be easier to follow the <a href="ide_setup.html">IDE installation
+instructions</a> for downloading, using, changing, and committing Opus code.
+
+<p> Currently, the installer will install the following Opus and UrbanSim specific packages:</p>
+
+<ol>
+	<li> <b>opus_core</b>: the fundamental Opus code
+	<li> <b>urbansim</b>: the code for the basic UrbanSim modeling system
+	<li> <b>opus_gui</b>: the code for the graphical interface
+	<li> <b>urbansim_gridcell</b>: configurations for the gridcell version of the system (used for the Eugene application)
+	<li> <b>eugene</b>: an example application of UrbanSim to the Eugene, Oregon region
+	<li> <b>urbansim_parcel</b>: code and configurations for the parcel version of the system (used for the Seattle application)
+	<li> <b>psrc</b>, <b>psrc_parcel</b>, <b>seattle_parcel</b>: code and configurations for Seattle application
+</ol>
+
+<h2>Step 4: <a name="test_installation">Test your installation</a></h2>
+
+Follow <a href="test_install.html">these instructions</a> to test if your
+installation was successful.
+</body>
+</html>
+

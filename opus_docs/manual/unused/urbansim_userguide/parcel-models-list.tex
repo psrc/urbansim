@@ -1,0 +1,40 @@
+\emph{Parcel Level Model Application (NEW: to be used in AZ-SMART, PSRC, and others)}
+\begin{description}
+  \tight
+  \item[``real_estate_price_model''] - activates the \verb|RealEstatePriceModel| which
+  predicts property value per unit (see Section~\ref{sec:real-estate-price-model}).
+  \item[``development_project_proposal_choice_model''] - activates
+  the \\ \verb|DevelopmentProjectProposalChoiceModel| that selects among
+  proposed projects on development sites 
+  (see Section~\ref{sec:development-project-proposal-cm}).
+  \item[``prescheduled_events''] - activates the
+  \verb|PrescheduledEventsModel| which creates building events from
+  given projects (see Section~\ref{sec:prescheduled-events-model}) and
+  the \verb|EventsCoordinator| which processes the actual development
+  (see Section~\ref{sec:events-coordinator}).
+  \item[``household_transition_model''] - activates the
+  \verb|HouseholdTransitionModel| which simulates deaths and births in the
+  population of households (see Section~\ref{sec:household-transition-model}).
+  \item[``employment_transition_model''] - activates the
+  \verb|EmploymentTransitionModel| which simulates creation and loss of jobs
+  (see Section~\ref{sec:employment-transition-model}).
+  \item[``household_relocation_model''] - activates the
+  \verb|AgentRelocationModel| where agents are set to be households. It
+  determines which households will move to another location in the simulated
+  year (see Section~\ref{sec:agent-relocation-model}).
+  \item[``household_location_choice_model''] - activates the
+  \verb|AgentLocationChoiceModel| where agents are set to be households. It
+  places moving households in an available location (see
+  Section~\ref{sec:agent-lcm}).
+  \item[``employment_relocation_model''] - activates the
+  \verb|AgentRelocationModel| where agents are set to be jobs. It determines
+  which jobs will be moved to another location in the simulated year (see
+  Section~\ref{sec:agent-relocation-model}).
+  \item[``employment_location_choice_model''] - activates the
+  \verb|AgentLocationChoiceModelMember| where agents are set to those types of jobs
+  that are contained in the table \file{job_building_types}.
+  For each type, it places moving jobs in an available location (see
+  Section~\ref{sec:elcm}). An exception is the type 'governmental' for which the \verb|ScalingJobsModel| is activated
+  (see Section~\ref{sec:scaling-jobs-model}).
+\end{description}
+

@@ -1,0 +1,41 @@
+<opus_project>
+  <data_manager>
+    <tool_library>
+      <tool_group name="group1">
+        <tool name="a tool">
+          <class_module>synthesizer_import_raw_pums_data_to_db</class_module>
+          <params>
+            <param name="raw_pums_file_path" param_type="file_path" required="True" />
+          </params>
+        </tool>
+        <tool name="another tool">
+          <class_module>correct_tool</class_module>
+          <params>
+            <param name="database_server_connection" param_type="db_connection_hook" required="True" />
+            <param name="database_name" param_type="string" required="True" />
+          </params>
+        </tool>
+      </tool_group>
+      <tool_group name="group2">
+        <tool name="a third tool">
+          <class_module>sql_data_to_opus</class_module>
+          <tool name="malplaced tool file" />
+          <params>
+            <tool_group name="malplaced tool group" />
+            <param name="database_server_connection" param_type="db_connection_hook" required="True" />
+            <param name="database_name" param_type="string" required="True" />
+          </params>
+        </tool>
+        <tool name="a tool">
+          <class_module>esri_data_to_opus</class_module>
+          <params>
+            <param name="esri_data_path" param_type="dir_path" required="True" />
+            <param name="esri_table_name" param_type="dir_path" required="True" />
+            <param name="opus_data_directory" param_type="dir_path" required="True" />
+            <param name="opus_data_year" param_type="string" required="True" />
+          </params>
+        </tool>
+      </tool_group>
+    </tool_library>
+  </data_manager>
+</opus_project>

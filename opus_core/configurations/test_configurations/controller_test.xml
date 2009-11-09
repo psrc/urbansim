@@ -1,0 +1,23 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <model_manager>
+    <models hidden="False" name="Models">
+      <model name="real_estate_price_model" type="model">
+        <structure>
+          <prepare_for_run type="dictionary">
+            <name type="string" name="name">prepare_for_run</name>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" type="string">real_estate_price_model_specification</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+    </models>
+  </model_manager>
+  <scenario_manager>
+    <scenario type="scenario" name="baseline">
+    </scenario>
+  </scenario_manager>
+</opus_project>

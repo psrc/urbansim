@@ -1,0 +1,39 @@
+~/ viaductr.mac
+~/ This macro restores the Alaskan Way viaduct to all car, truck, and bus traffic.
+~/ To use, call at the EMME/2 Main Menu, with the scenario as an argument:
+~/ e.g.    ~<viaductr.mac 1002
+~/
+~!if exist viaductr.rpt erase viaductr.rpt
+reports=viaductr.rpt
+s=%1%
+2.41
+~+|1|y|ul2|50|
+link=3208,3257
+link=3257,3209
+link=3209,3210
+link=3210,3211
+link=3211,3212
+link=3212,3213
+link=3257,3208
+link=3209,3257
+link=3210,3209
+link=3211,3210
+link=3212,3211
+link=3213,3212
+~+||1|2
+~+|1|y|mod|3|ashijtuvb
+link=3208,3257
+link=3257,3209
+link=3209,3210
+link=3210,3211
+link=3211,3212
+link=3212,3213
+link=3257,3208
+link=3209,3257
+link=3210,3209
+link=3211,3210
+link=3212,3211
+link=3213,3212
+~+||y
+q
+reports=?

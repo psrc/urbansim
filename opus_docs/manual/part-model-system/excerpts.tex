@@ -1,0 +1,124 @@
+
+\begin{table}[ht]
+\caption{Attributes of Core Datasets Used in Puget Sound Parcel-based UrbanSim Application}
+%\addlinespace
+\label{tab:parcel-attributes}
+\begin{tabular}{p{3cm}p{2.8cm}p{2.7cm}p{2.5cm}p{2.5cm}}
+\toprule
+Parcels & Buildings & Households    & Persons & Jobs \\
+\midrule
+parcel\_id  & non\_residential\_sqft    & household\_id & person\_id & job\_id \\
+tax\_exempt\_flag & year\_built & income    & household\_id & sector\_id\\
+parcel\_sqft\_in\_gis & parcel\_id  & persons    & member\_id & join\_flag\\
+x\_coord\_sp &  land\_area  & workers & relate & sqft\\
+y\_coord\_sp    & building\_quality\_id & children &    age & taz\_est\\
+x\_coord\_utm   & improvement\_value    & building\_size    & sex & building\_type\\
+y\_coord\_utm   & stories   & tenure    & edu & building\_id\\
+grid\_id    & tax\_exempt   & race\_id & age\_of\_head  \\
+zone\_id    & building\_type\_id    & employment\_status & race\_id &\\
+census\_block   &  building\_id & building\_id & work\_at\_home &\\
+city\_id    & template\_id  & & earning & \\
+county\_id   &  sqft\_per\_unit & & job\_id & \\
+id\_parcel  & & & &\\
+id\_plat & & & &\\
+is\_inside\_urban\_growth\_boundary & & & & \\
+residential\_units  & & & & \\
+plan\_type\_id & & & &\\
+plan\_type\_description & & & &\\
+num\_building\_records & & & &\\
+GenericLandUse1 & & & &\\
+land\_use\_type\_id & & & &\\
+land\_value & & & &\\
+parcel\_sqft & & & &\\
+faz\_id & & & &\\
+large\_area\_id & & & &\\
+zipcode & & & &\\
+zip\_id & & & &\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+This data structure includes a representation of each individual person, household, job, building and parcel
+in the entire metropolitan area, and their associations, meaning, for example, which building each household occupies, and which parcel each building
+is on.  This is a `microsimulation' data structure, and makes it straightforward to model choices or changes in the status of any individual agent or
+object.  It also makes it possible to summarize output from the model with a great deal of flexibility.  A spatial hierarchy is also used in the data
+model to allow aggregation and disaggregation of information across multiple spatial levels.  Parcels are associated with zones (used in the travel
+model), gridcells, Forecast Analysis Zones (FAZ), Large Areas (districts used for analysis of results), census blocks, cities, counties, and zip codes.  This
+means that it is straightforward to aggregate or query information such as how many households of each income are in each zone, for example, or what
+the employment density is within a FAZ.  We can also use these spatial relationships to assign information about travel conditions, predicted by the travel
+model on a zone to zone basis, with households, jobs, and locations by using the zone level of geography.  These relationships are shown in Figure
+\ref{fig:geographic-relationships}.
+
+The land use and building type coding systems used by each of the counties were not consistent
+with each other, so a more general classification was created that would allow the use of a uniform typology across the region.  These land use
+types are shown in Table \ref{tab:landuse}.  Buildings are classified also, using a generic building type that approximates the generic lans use type (they cannot be identical, since there are more land uses to describe vacant land and other uses), along with a somewhat more detailed building type.  A profile
+of buildings in the Puget Sound database, and their classification, is shown in Table \ref{tab:buildings}.
+
+
+
+\begin{table}[ht]
+\begin{center}
+\caption{Generic Land Use Codes}
+%\addlinespace
+\label{tab:landuse}
+\begin{tabular}{{l}p{3.5cm}}
+\toprule
+1   & single\_family\_residential\\
+2   & multi\_family\_residential\\
+3   & office\\
+4   & commercial\\
+5   & industrial\\
+6   & mixed\_use\\
+7   & government\\
+8   & other\\
+9   & no code\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{table}[ht]
+\begin{center}
+\caption{Building Types and Characteristics in Central Puget Sound}
+%\addlinespace
+\label{tab:buildings}
+\begin{tabular}{p{1cm}p{3cm}p{2cm}{r}{r}{r}}
+\toprule
+Building Type Id    & Description   & Generic Building Type & Frequency & Residential Units &   Non-res Sqft (000) \\
+\midrule
+1   & Agriculture   & other & 1,702 & 4 & 6,923\\
+2   & Civic and Quasi-Public &  government  & 2,574 & 212   & 26,821\\
+3   & Commercial    & commercial    & 19,272    & 2,181 & 210,751\\
+4   & Condo Residential & multi-family residential &    9,829   & 132,678   & 0\\
+5   & Government    & government    & 847   & 72    & 71,410\\
+6   & Group Quarters    & other &   391 & 6,893 & 3,856\\
+7   & Hospital / Convalescent Center    & government    & 715   & 118   & 21,407\\
+8   & Industrial    & industrial    & 3,783 & 85    & 91,254\\
+9   & Military &    government  & 10    & 4 & 32\\
+10  & Mixed-Use & mixed-use & 529   & 1,562 & 2,580\\
+11  & Mobile Home   & single family residential & 26,691    & 26,691    & 0\\
+12  & Multi-Family Residential  & multi-family residential  & 45,215    & 317,612   & 52,784\\
+13  & Office    & office    & 10,713    & 1,434 & 193,696\\
+14  & Outbuilding   & other  & 37,789   & 519   & 29,312\\
+15  & Park and Open Space   & other &   7 & 0   & 564\\
+16  & Parking   & other & 1,043 & 150   & 25,606\\
+17  & Recreation &  other   & 1,407 & 2,138 & 12,560\\
+18  & School    & other &   2,678   & 192   & 57,487\\
+19  & Single Family Residential & single family residential & 818,703   & 893,328   & 992\\
+20  & Transportation Communication Utilities    & industrial    & 1,319 & 199   & 10,389\\
+21  & Warehousing   & industrial    & 10,138    & 756   & 228,374\\
+22  & No Code   & other &   13,788  & 3,864 & 8,681\\
+\midrule
+Total & & & 1,009,143   & 1,390,692 &   1,055,489\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+
+The parcel and building data used in UrbanSim allow for representation of mixed use development, with multiple buildings per parcel.  Representation
+of a single mixed use building can be accommodated by using two building components, each of a single use, and both associated with the same
+parcel.

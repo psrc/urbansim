@@ -1,0 +1,46 @@
+
+opus_visum interface
+the package is available in the opus svn repository under opus_visum
+requires VISUM 10 or later and VisumPy
+Ben Stabler, bstabler@ptvamerica.com, 06122008
+Liming Wang, lmwang@u.washington.edu, 06122008
+
+0) The opus_visum interface is setup as follows:
+	a) for the current time step, opus starts VISUM as a COM automation server
+	b) opus then loads the version file for the year being run
+	c) opus copies zone attributes to VISUM
+	d) runs the procedure file (demand generation, assignment, skims, etc)
+	d) saves the skim data from VISUM to opus cache data
+
+1) A VISUM folder (such as c:/visum/eugene) with the following:
+	a) a version file for each year modeled - such as 1980.ver, 1990.ver
+	b) an assignment and skimming procedure file - such as opus.par
+	c) and any additional VISUM files used by the procedure file - such as 
+		filters, python scripts, etc
+		
+2) The version file should contain the following:
+	a) demand segments for assignment
+	b) assignment demand matrices assigned to demand segments
+	c) skim matrices - note that skim matrices only need to be kept in RAM
+	d) all zone attributes used by opus
+	
+3) Configure the visum_travel_model.py configuration file (at for example:
+	C:\opus\src\eugene\configs\baseline_visum_travel_model.py)
+	a) set config_changes:description
+	b) set config_changes:years
+	c) set the visum folder - VisumConfiguration(r'C:/visum/eugene', mode='full')
+	
+4) Configure the visum_configuration.py configuration file (at for example:
+	C:\opus\src\opus_visum\configs\visum_configuration.py)
+	a) set visum_version_number (10 is the default)
+	b) set the od matrix references such as [visum od matrix number: opus travel_data table]:
+		1:'transit_trips',   #'transit (PuT - public transport) trips',
+		2:'auto_trips',      #'auto trips',
+	c) set the skim matrix references such as [visum skim matrix number: opus travel_data table]:
+		1: 'auto_travel_time',         #'auto assigned travel time (ttc)',
+		2: 'transit_in_vehicle_time'   #'PuT in-vehicle time (ivt)',
+	d) set the urbansim_to_tm_variables to pass zone data from opus to VISUM
+	e) set the years_to_run such as:
+
+5) Run OPUS with VISUM as the travel modeling package (for example:
+	python opus_core\tools\start_run.py -c eugene.configs.baseline_visum_travel_model)

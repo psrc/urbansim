@@ -1,0 +1,12 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <parent type="file">child_scenarios.xml</parent>
+    <project_name type="string">test_project</project_name>
+  </general>  
+  <scenario_manager>
+    <scenario type="scenario" name="grandchild">
+      <parent type="scenario_name">child_scenario</parent>
+      <description type="string">this is the grandchild</description>
+    </scenario>
+  </scenario_manager>
+</opus_project>

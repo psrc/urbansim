@@ -1,0 +1,15 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable type="selectable" name="job">True</selectable>
+        <selectable type="selectable" name="household">False</selectable>
+        <selectable type="selectable" name="gridcell">True<nchunks type="integer">4</nchunks>
+        </selectable>
+      </datasets_to_preload>
+    </scenario>
+  </scenario_manager>
+</opus_project>

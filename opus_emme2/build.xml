@@ -1,0 +1,5 @@
+<project name="opus_emme2" default="unit-tests">
+
+	<import file="${basedir}/../opus_core/common.xml" />
+
+</project>

@@ -1,0 +1,37 @@
+<h4>16 November 2006</h4>
+
+<p>To convert the interaction set names, do the following
+steps in this sequence:</p>
+
+<ol>
+	
+	<li>Download the scripts from <a href="changes_2006_11_16_interaction_set_changes_code.zip">changes_2006_11_16_interaction_set_changes_code.zip</a>
+      and unzip into a temporary directory on your computer.</li>
+	
+	<li>The set of changes that will be made are listed in the substitutions list in
+      the <font face="Courier New" size="2">substitutions.txt</font>
+      file.&nbsp; If you have additional interaction datasets that
+      are not in that list, add additional lines before you run the script.</li>
+	
+	<li>Execute the <font face="Courier New" size="2">do_interaction_set_changes.py</font>
+      script to update the names of the interaction sets in the variable_name
+      field of all specification tables in the given database,
+      e.g.:</li>
+</ol>
+<blockquote>
+  <blockquote>
+    <pre>python do_interaction_set_changes.py= -d my_database_name -t my_table_name</pre>
+  </blockquote>
+</blockquote>
+
+<p>The <font face="Courier New" size="2">-d</font> and 
+<font face="Courier New" size="2">-t</font> options may be used multiple times 
+within the same command to specify additional databases or tables.</p>
+
+<p>In the case of a problem, or if your environment variables have not been set,
+see usage information by executing:</p>
+<blockquote>
+    <pre>python do_interaction_set_changes.py --help</pre>
+</blockquote>
+
+<p>&nbsp;</p>

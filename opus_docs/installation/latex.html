@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Using LaTeX with Opus</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Using LaTeX</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Writing and Formatting Opus Documentation using the LaTeX Document Preparation System</h1>
+
+<p>This section provides instructions for using LaTeX.&nbsp; The Opus and
+UrbanSim Reference Manual and Users Guide (aka Manual) are written using the
+LaTeX document preparation system.&nbsp; Advantages of LaTeX are that it is
+open-source, platform independent, provides a rich set of features for indexing
+and cross-referencing, and is the standard used for documenting Python packages.
+It also typesets elegantly, particularly for mathematical formulae. The
+disadvantage is that it is not a WYSIWYG (“what you see is what you get”)
+system.&nbsp; Instead, you edit a source document with a text editor, then use LaTeX
+to format it and produce a pdf file and / or a set of html pages.&nbsp; The home page for
+the LaTeX project is at <a href="http://www.latex-project.org/">http://www.latex-project.org/</a>.  If you are new with LaTeX, 
+also take a look at the <a href="http://www.tug.org/begin.html">Getting
+Started with TeX, LaTeX, and Friends</a> page. </p>
+
+<p>The source for the Manual resides in the opus_docs/manual package.
+&nbsp; The root LaTeX source file is 'opus-userguide.tex'.&nbsp;
+It includes a set of other .tex files for the major parts, which in turn include
+other files (normally one file per chapter).&nbsp; The
+latex files use the Python latex documentation standards and latex definition
+files (although not yet consistently); see <a href="http://www.python.org/doc/2.5.2/doc/doc.html">http://www.python.org/doc/2.5.2/doc/doc.html</a>.&nbsp; 
+(Python itself changed from LaTeX to a custom reStructuredText markup as of version 2.6, but that's another story.)</p>
+
+<h2>Installing a LaTeX environment </h2>
+
+<p>There are many applications and environments that support editing LaTeX
+files -- see the <a href="http://www.latex-project.org/ftp.html">LaTeX project download page</a>.</p>
+
+<p>SuSe comes with LaTeX, as do most other Linux distributions.</p>
+
+<p>On the Mac, use <a href="http://www.uoregon.edu/~koch/texshop/">TeXShop</a> or <a href="http://www.tug.org/mactex">MacTeX</a>.</p>
+
+<p> On Windows, you can use <a href="http://www.tug.org/protext/">proTeXt</a>.  The 
+<a href="http://texlipse.sourceforge.net/">Texlipse</a>
+Eclipse plug-in also provides LaTeX support.</p>
+
+
+<h2>Running LaTeX</h2>
+<p>The easiest way to rebuild a local version of the pdf and html documentation
+for the Manual is to use a Python script that is in the opus_docs Opus
+package:</p>
+<ol>
+  <li>Get the opus_docs package from the
+    subversion repository and put it in your workspace (e.g., to C:\opus\src\opus_docs)</li>
+  <li>Open a command window and navigate to the location of your opus_docs/manual
+    directory.</li>
+  <li>Run this command to build a local copy of the documentation:</li>
+</ol>
+<blockquote>
+  <pre><font face="Courier New" size="2">python build_docs.py</font></pre>
+  <p>The new pdf file, and associated html pages, will be in the opus_docs/manual
+  directory</p>
+</blockquote>
+<p>The <build_docs</tt> script also generates the html version of the manual using latex2html; 
+if you don't have that program, this final command will fail (but the pdf of the manual will
+still be generated).</p>
+<p>Alternatively, you can issue the individual commands:</p>
+<pre>
+pdflatex opus-userguide
+makeindex opus-userguide.idx
+bibtex opus-userguide
+pdflatex opus-userguide
+pdflatex opus-userguide
+</pre>
+
+<p>If you get an error message that the file <tt>userguide.ind</tt> wasn't
+  found (this will happen the first time you do the above command), just hit
+  return and continue, since the next step will create this index file.</p>
+<tt>makeindex</tt> generates the index, and <tt>bibtex</tt> generates the bibliography.
+You have to run latex a couple of times after making the index and bibliography files
+to incorporate the index and resolve any cross-references correctly.</p>
+
+</body>
+</html>

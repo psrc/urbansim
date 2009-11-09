@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Residential density">
+<syntax-version-2.8/>
+<indicator-documentation>
+
+<definition>
+This indicator gives the average number of residential units per acre of residential land for each year of interest in the selected geography.
+</definition>
+
+<interpreting-results>
+See <a href="pop_density.xml#interpreting-results">Population density: Interpreting Results</a>.
+(However, this indicator is in terms of residential units rather
+than people, and gives the number of residential units whether occupied or not.)
+</interpreting-results>
+
+<specification>
+First, we find the total number of residential units R. Then, we find the amount of the residential land L.  To do this,
+for each grid cell we multiply
+the number of acres per grid cell by the fraction of residential land for that grid cell, and sum the results.
+The value of the indicator is then R/L. 
+</specification>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<related-indicators>
+<p>Other density indicators based on where people or jobs are located are 
+<a href="pop_density.xml">Population density</a> and
+Employment density.</p>
+
+<p><a href="res_units.xml">Residential units</a> gives the total number of residential units rather than density.</p>
+
+</related-indicators>
+
+<limitations>
+The code for this indicator computes the number of acres of
+residential land in each grid cell as F times the number of acres per
+grid cell, where F is the fraction of residential land for that cell.
+F is only an approximation of the number of acres of residential
+land in the cell -- F is computed by the residential land share component
+of the Developer Model, which is based on real estate characteristics and does
+not consider other features, such as water or roads, that might be partially
+in the cell.  So if a cell is partially water or roads, generally this computation
+will overestimate the number of acres of residential land in the cell, and so 
+the value of this residential density indicator will be an underestimate (since the residential units
+placed in the cell will actually be located within a smaller number of acres of residential land).
+</limitations>
+		
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<how-modeled>
+This indicator is modeled by UrbanSim.
+</how-modeled>
+
+<display-format>
+<units>residential units/acre</units>
+<number digits="2"/>
+</display-format>
+
+</indicator-documentation>
+
+<source>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/residential_density.py">urbansim.gridcell.residential_density</a>
+</source>
+
+</indicator-declaration>

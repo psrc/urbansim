@@ -1,0 +1,8 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <parent type="file">followers_test_parent.xml</parent>
+    <mydict type="dictionary">
+      <x followers="c,d" type="string">xtest</x>
+    </mydict>
+    <project_name type="string">test_project</project_name>
+  </general></opus_project>

@@ -1,0 +1,106 @@
+\chapter{The Open Platform for Urban Simulation}
+
+\section{Opus Design Objectives}
+In 2005, the Center for Urban Simulation and Policy Analysis at the University of Washington 
+began a project to re-engineer UrbanSim as a more general software platform to support
+integrated modeling, and has launched an international collaboration to use and further 
+develop the Open Platform for Urban Simulation (Opus).  The broad vision for the effort is 
+to develop a robust, modular and extensible open source framework and process for 
+developing and using model components and integrated model systems, and to facilitate 
+increased collaboration among developers and users in the evolution of the platform and 
+its applications.  
+
+Opus is motivated by lessons learned from the UrbanSim project, and by a desire to collaborate 
+on a single platform so that projects can more easily leverage each other's work and focus on 
+experimenting with and applying models, instead of spending their resources creating and 
+maintaining model infrastructures.  
+A similar project that provides inspiration for the Opus project is the R project (www.r-project.org).  
+R \cite{ihaka-gentleman-1996} is an Open Source software system that supports the statistical 
+computing community.  It provides a language, basic system shell, and many core and 
+user-contributed packages to estimate, analyze and visualize an extremely broad range of statistical 
+models.  Much of the cause for the rapidly growing success of this system, and its extensive and 
+actively-contributing user community, is due to the excellent design of its core architecture and 
+language.  It provides a very small core, a minimal interactive shell that can be bypassed completely 
+if a user wants to run a batch script, and a set of well-tested and documented core packages.  Equally 
+importantly, it provides a very standard and easy way to share user-contributed components.  Much 
+of the Opus architecture is based upon the R architecture.
+
+The design of the core Opus architecture draws heavily on the experience of the UrbanSim project in 
+software engineering and management of complex open source software development projects, and 
+in the usability of these systems by stakeholders ranging from software developers, to modelers, to 
+end-users.   
+
+The high-level design goals for Opus are to create a system that is very:
+
+\squishlist
+\item Productive - to transform what users can do
+\item Flexible - to support experimentation
+\item	Fast and scalable - to support production runs
+\item	Straightforward - to make the system easy to use and extend
+\item	Sharable - to benefit from others' work
+\squishend
+
+The following are some of the design requirements that emerged from these design goals:
+\squishlist
+\item	Have a low cost for developing new models.  It should be easy for modelers around the world to code, test, document, package, and distribute new models.  And it should be easy for modelers to download, use, read, understand, and extend packages created by others.
+\item	Make it easy to engage in experimentation and prototyping, and then to move efficiently to production mode and have models that run very quickly.  
+\item	Have an interactive command-line interface so that it is easy to explore the code, do quick experiments, inspect data, etc.
+\item	Be flexible so that it is easy to experiment with different combinations of parts, algorithms, data, and visualizations.
+\item	Make it easy to inspect intermediate data, in order to aid the often complex diagnosis of problems found in large-scale production runs.
+\item	Be extensible so that users can modify the behaviour of existing models without modifying the parts being extended, or build new models from existing parts, or replace existing parts with others that provide the same services in a different way.
+\item	Be easy to integrate with other systems that provide complementary facilities, such as estimation, data visualization, data storage, GIS, etc.
+\item	Be scriptable so that it is straight forward to move from experimentation or development into the mode of running batches of simulations.
+\item	Run on a variety of operating systems, with a variety of data stores (e.g. databases).
+\item	Handle data sets that are significantly larger than available main memory.
+\item	Make it easy to take advantage of parallel processing, since much of the advances in chip processing power will come in the form of having multiple `cores' on a single chip.
+\item	Provide an easy mechanism for sharing packages, so that people can leverage each others work.
+\item	Provide a mechanism for communities of people to collaborate on the creation and use of model systems specific to their interests.
+\squishend
+
+\section{Key Features of Opus}
+\subsection{Graphical User Interface}
+From the 4.2 release of OPUS, a flexible, cross-platform user interface has been added that organizes the functionality in OPUS into conveniently accessible tabs oriented towards the workflow of developing and using models.  The data manager tab contains a data browser and tools for a variety of data manipulations and conversion of data to and from GIS and SQL data repositories to the OPUS data format, geoprocessing tools in external GIS systems such as ESRI and Postgis, and data synthesis tools.  The model manager provides infrasructure to create new models, configure them, specify the variables to use as predictive variables, and estimate model parameters using Ordinary Least Squares or Maximum Likelihood methods, depending on the model.  The Scenario Manager provides convenient organization of model scenarios and the capacity to launch simulations and monitor them.  The Results Manager manages the voluminous output of simulations and provides means to compute and visualize indicators derived from simulation results, and to display these results in maps, charts and tables.  The GUI is data-driven from XML files, and can be readily extended by users who wish to add tools,  variables, indicators, and other functionality.
+
+\subsection{Python as the Base Language}
+One of the most important parts in the system is the choice of programming language on which to build.  This language must allow us to build a system with the above characteristics.  
+After considering several different languages (C/C++, C\#, Java, Perl, Python, R, Ruby) we choose Python for the language in which to implement Opus. Python provides a mature object-oriented language with good management of the use of memory, freeing up the memory when an object is no longer needed (automatic garbage collection).  Python has a concise and clean syntax that results in programs that generally are 1/5 as long as comparable Java programs.  In addition, Python has an extensive set of excellent open-source libraries.  Many of these libraries are coded in C/C++ and are thus are very efficient.  There are also several mechanisms for `wrapping' other existing packages and thus making them available to Python code.  
+
+Some  of the Python libraries used by Opus as building blocks or foundational components are:
+\squishlist
+\item \emph{Numpy}: an open-source Python numerical library containing a wide variety of useful and fast array functions, which are used throughout Opus to provide high performance computation for large data sets.  The syntax for Numpy is quite similar to other matrix processing packages used in statistics, such as R, Gauss, Matlab, Scilab, and Octave, and it provides a very simple interface to this functionality from Python.  See http://numpy.scipy.org/ for more details and documentation.
+\item \emph{Scipy}: a scientific library that builds on Numpy, and adds many kinds of statistical and computational tools, such as non-linear optimization, which are used in estimating the parameters for models estimated with Maximum Likelihood methods.  See http://scipy.org/ for details.
+\item \emph{Matplotlib}: a 2-dimensional plotting package that also uses Numpy.  It is used in Opus to provide charting and simple image mapping capabilities.  See http://matplotlib.sourceforge.net/ for details.
+\item \emph{SQLAlchemy}: provides a general interface from Python to a wide variety of Database Management Systems (DBMS), such as MySQL, Postgres, MS SQL Server, SQLite, and others.  It allows Opus to move data between a database environment and Opus, which stores data internally in the Numpy format.  See http://www.sqlalchemy.org/ for details.
+\item \emph{PyQt4}: a Python interface to the Qt4 library for Graphical User Interface (GUI) development.  This has been used to create the new Opus/UrbanSim GUI.  See http://www.riverbankcomputing.co.uk/pyqt/ for details.
+\squishend
+
+Python is an interpretive language, which makes it easy to do small experiments from Python's interactive command line.  For instance, we often write a simple test of a numarray function to confirm that our understanding of the documentation is correct.  It is much easier to try things out in Python, than in Java or C++, for instance.
+At the same time, Python has excellent support for scripting and running batch jobs, since it is easy to do a lot with a few lines of Python, and Python `plays well' with many other languages.  
+
+Python's ability to work well for quick experiments, access high-performance libraries, and script other applications means that modelers need only learn one language for these tasks.
+Opus extends the abstractions available in Python with domain-specific abstractions useful for urban modelers, as described below.
+
+\subsection{Integrated Model Estimation and Application}
+Model application software in the land use and transportation domain has generally been written to apply a model, provided a set of inputs that include the initial data and the model coefficients. The process of generating model coefficients is generally handled by a separate process, generally using commercial econometric software. Unfortunately, there are many problems that this process does not assist users in addressing, or which the process may actually exacerbate. There are several potential sources of inconsistency that can cause significant problems in operational use, and in the experience of the authors this is one of the most common sources of problems in modelling applications.  
+
+First, if estimation and application software applications are separate, model specifications must be made redundantly - once in the estimation software and once in the application software.  This raises the risk of application errors, some of which may not be perceived immediately by the user. Second, separate application and estimation software requires that an elaborate process be created to undertake the steps of creating an estimation data set that can be used by the estimation software, again giving rise to potential for errors. Third, there are many circumstances in which model estimation is done in an iterative fashion, due to experimentation with the model specification, updates to data, or other reasons.  As a result of these concerns, a design objective for Opus is the close integration of model estimation and application, and the use of a single repository for model specifications.  This is addressed in the Opus design by designating a single repository for model specification, by incorporating parameter estimation as an explicit step in implementing a model, and by providing well-integrated packages to estimate model parameters.
+
+\subsection{Database Management, GIS and Visualization}
+The extensive use of spatial data as the common element within and between models, and the need for spatial computations and visualization, make clear that the Opus platform requires access to these functions.  Some of these are handled internally by efficient array processing and image processing capabilities of the Python Numeric library.  But database management and GIS functionality will be accessed by coupling with existing Open Source database servers such as MySQL (www.mysql.org) and Postgres (www.postgresql.org), and GIS libraries such as QuantumGIS (www.qgis.org).  Interfaces to some commercial DBMS are available through the SQLAlchemy library. An interface to the ESRI ArcGIS system has been implemented and is being refined.
+
+\subsection{Documentation, Examples and Tests}
+Documentation, examples and tests are three important ways to help users understand what a package can do, and how to use the package.  Documentation for Opus and UrbanSim is created in both Adobe portable document format (pdf) and web-based format (html, xml), and is available locally with an installation, or can be accessed at any time from the UrbanSim web site.  The pdf format makes it easy to print the document, and can produce more readable documents.  Web-based documentation can be easier to navigate, and are particularly useful for automatically extracted code documentation.
+
+\subsection{Open Source License}
+The choice of a license is an crucial one for any software project, as it dictates the legal framework for the management of intellectual property embedded in the code.  Opus has been released under the GNU General Public License (GPL).  GPL is a standard license used for Open Source software.  It allows users to obtain the source code as well as executables, to make modifications as desired, and to redistribute the original or modified code, provided that the distributed code also carries the same license as the original.  It is a license that is intended to protect software from being converted to a proprietary license that would make the source code unavailable to users and developers.
+
+The use of Open Source licensing is seen as a necessary precondition to the development of a collaborative software development effort such as envisioned for Opus.  It ensures that the incentives for information sharing are positive and symmetrical for all participants, which is crucial to encourage contributions by users and collaborating developers.  By contrast, a software project using a proprietary license has incentives not to release information that might compromise the secrecy of intellectual property that preserves competitive advantage. 
+There are now many Open Source licenses available (see www.opensource.org), some of which allow derived work to be commercialized.  Some software projects use a dual licensing scheme, releasing one version of the software under a GPL licence, and another (functionally identical) version of the software under a commercial licence, which allows also distributing software as a commercial application.  Opus developers have opted to retain the GPL license approach as it is a pure Open Source license, and does not generate asymmetries in the incentives for information sharing. Any packages contributed to Opus by other groups must be licensed under a GPL-compatible license – we encourage them to be licensed under GPL itself, or less desirably, under LGPL (the library version of GPL).
+
+\subsection{Test, Build and Release Processes}
+Any software project involving more than one developer requires some infrastructure to coordinate development activities, and infrastructure is needed to test software in order to reduce the likelihood of software bugs, and a release process is needed to manage the packaging of the system for access by users.  For each module written in Opus, unit tests are written that validate the functioning of the module. A testing program has also been implemented that runs all the tests in all the modules within Opus as a single batch process.  
+For the initial release process, a testing program is being used to involve a small number of developers and users in testing the code and documentation.  
+
+The release process involves three types of releases of the software: major, minor, and maintenance. The version numbers reflect the release status as follows: a release numbered 4.2.8 would reflect major release 4, minor release 2 and maintenance release 8.  Maintenance releases are for fixing bugs only.  Minor releases are for modest additions of features, and major releases are obviously for more major changes in the system.
+
+The Opus project currently uses the \emph{Subversion} version control system for maintaining a shared repository for the code as it is developed by multiple developers. Write access to the repository is maintained by a core group of developers who control the quality of the code in the system, and this group can evolve over time as others begin actively participating in the further development of the system. A repository will also be set up for users who wish to contribute packages for use in Opus, with write access.

@@ -1,0 +1,9 @@
+<opus_project>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <test>
+      <inherited inherited="True">
+      </inherited>
+  </test>
+</opus_project>

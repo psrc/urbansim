@@ -1,0 +1,21 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <parent type="file">estimate.xml</parent>
+    <expression_library type="dictionary">
+      <variable source="primary attribute" type="variable_definition" use="model variable" name="test_agent.income">income</variable>
+      <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.income_times_2"> opus_core.test_agent.income_times_2</variable>
+      <variable source="Python class" type="variable_definition" use="model variable" name="test_agent.i2"> opus_core.test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10"> 5*opus_core.test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_ds_qualified"> 5*test_agent.income_times_2</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_times_10_using_primary"> 10*test_agent.income</variable>
+      <variable source="expression" type="variable_definition" use="model variable" name="test_agent.income_less_than">def income_less_than(i): return test_agent.income&lt;i</variable>
+    </expression_library>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
+      <year type="integer">1980</year>
+    </scenario>
+  </scenario_manager>
+</opus_project>

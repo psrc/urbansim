@@ -1,0 +1,44 @@
+<project name="opus_docs">
+
+    <echo>entering opus_docs build</echo>
+
+	<import file="${basedir}/../opus_core/common.xml" />
+
+    <echo>defining build-latex-docs </echo>
+	<target name="build-latex-docs">
+        <echo>starting build-latex-docs </echo>
+		<exec executable="python" failonerror="true">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/manual/build_docs.py" />
+		</exec>
+	</target>
+
+    <echo>defining build-tutorials</echo>
+	<target name="build-tutorials">
+	    <echo>starting build-tutorials</echo>
+		<exec executable="python" failonerror="true">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/tutorials/build_docs.py" />
+		</exec>
+	</target>
+	
+    <echo>defining copy-to-webserver</echo>
+	<target name="copy-to-webserver">
+	    <echo>starting copy-to-webserver</echo>
+		<move file="${basedir}/manual/opus-userguide.pdf" tofile="${webdir}/docs/opus-userguide.pdf" />
+		<move file="${basedir}/manual/opus-userguide" tofile="${webdir}/docs/opus-userguide" />
+		<move file="${basedir}/tutorials/run-eugene-model.pdf" todir="${webdir}/docs/tutorials" />
+		<move file="${basedir}/tutorials/run-eugene-model" tofile="${webdir}/docs/tutorials/run-eugene-model" />
+		<move file="${basedir}/tutorials/lorenz-curve.pdf" todir="${webdir}/docs/tutorials" />
+		<move file="${basedir}/tutorials/lorenz-curve" tofile="${webdir}/docs/tutorials/lorenz-curve" />
+		<move file="${basedir}/installation" todir="${webdir}/docs" />
+		<move file="${basedir}/indicators" todir="${webdir}/docs" />
+		<move file="${basedir}/urbansim3-to-4" todir="${webdir}/docs" />
+		<move file="${basedir}/style" todir="${webdir}/docs" />
+	</target>
+
+	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
+
+    <echo>leaving opus_docs build</echo>
+
+</project>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="database_table.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "database-table.dtd">
+
+<table>
+	<name bookmark="Zones">table3</name>
+	<databases-that-contain-this-table baseyear="true" scenario="true"/>
+	<fit-test>medium-tests/test_zones_table.html</fit-test>
+	<top-descriptive-text>
+		<p>Traffic analysis zones are geographic regions. In UrbanSim, these zones are rasterized
+		by the grid cells (the zones are distorted to fit to cell boundaries and thus will have
+		rough or stair-stepped edges).</p>
+		<p>These data should be updated with the results of any travel model run.</p>
+	</top-descriptive-text>
+	<schema>
+		<column name="ZONE_ID" type="INTEGER">Unique identifier</column>
+		<column name="TRAVEL_TIME_TO_AIRPORT" type="INTEGER">Units: Minutes</column>
+		<column name="TRAVEL_TIME_TO_CBD" type="INTEGER">Units: Minutes</column>
+		<column name="FAZ_ID" type="INTEGER" optional="true"> Foreign key of the FAZ (forecast analysis zone) 
+			containing this zone.  This field is required by the Opus implementation of the home-based 
+			employment location choice model, which uses this field instead of the zones_in_faz table (zones_in_faz 
+			no longer exists). This field is not required for the Java version of the model.</column>
+		<column name="YEAR" type="INTEGER">Units: Years</column>			
+	</schema>
+	<end-descriptive-text>
+		<ul>
+		  <li>ZONE_ID must be unique and greater than zero</li>
+		  <li>TRAVEL_TIME_TO_AIRPORT must be &gt;= 0 and &lt;= <a
+		    href="../../autogen/full-api/org/urbansim/data/misc/CompileTimeConstants.html#ABSOLUTE_MAX_TRAVEL_TIME">ABSOLUTE_MAX_TRAVEL_TIME</a></li>
+		  <li>TRAVEL_TIME_TO_CBD must be &gt;= 0 and &lt;= <a
+		    href="../../autogen/full-api/org/urbansim/data/misc/CompileTimeConstants.html#ABSOLUTE_MAX_TRAVEL_TIME">ABSOLUTE_MAX_TRAVEL_TIME</a></li>
+		</ul>
+	</end-descriptive-text>
+</table>

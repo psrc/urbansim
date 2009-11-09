@@ -1,0 +1,640 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Generating and Visualizing Indicators}
+\indicatorsindex
+
+As used in the planning literature, an indicator is a
+variable that conveys information on the condition or
+trend of an attribute of the system considered.  The
+indicator will then have a specific value at a given time.
+For UrbanSim, indicators provide the principal mechanism
+for presenting simulation results to modelers and other stakeholders so
+that they can be assessed and compared.  In addition, modelers use
+indicators diagnostically to help assess whether the
+system is operating in a reasonable fashion and to help debug problems.
+
+We will often be interested in the value of an indicator at different levels of
+aggregation, for example, 
+population in each grid cell, in different political divisions of
+the region, and for the region as a whole.  We will often also be
+interested in the change in the value of an indicator
+in successive years, or from each year of the
+simulation to the baseyear, or between two different scenarios.
+Indicator values should be displayed in an
+appropriate way, for example, using graphs,
+\index{graphs} tables, \index{tables} or choropleth maps.
+\index{maps} Some key indicators for both policy
+evaluation and model diagnosis include population, residential
+units, land value, employment, and square feet of commercial,
+industrial, and governmental space, all at various levels of
+aggregation, from the grid cell up.
+
+Requests for indicator visualizations can be made using either a graphical
+interface (Section \ref{sec:indicator-configuration-gui}), or a Python
+script (Section \ref{sec:indicator-configuration-script}).  The GUI is more
+user-friendly, but only allows a single indicator request to be made at a
+time.  Scripts are Python code, but one script can specify an entire
+batch of indicators to be computed. Some of the more advanced functionality is
+also available only through the script. 
+
+There is online documentation for some of the indicators, 
+linked from \url{http://www.urbansim.org/docs/indicators/index.xml}.  
+See Section \ref{sec:writing-indicators} for information on writing indicator
+\indicatorsindex documentation.  (Formerly we computed the values for
+indicators using SQL queries, but this proved too slow in many cases, so we
+switched to using Opus attributes exclusively.  There was much more
+extensive documentation for the SQL versions of the indicators; if there is
+demand for this and as time allows, we will also provide documentation for
+other indicators represented as Opus attributes.)
+
+\section{Using Opus Attributes in Indicators}
+
+The basic class for dealing with data in Opus is the class \class{Dataset}
+  (Section \ref{sec:opus-core-datasets}).  A dataset
+  is a collection of attributes for a
+particular type of entity, such as a set of grid cells, or a set of
+households.  Each member in this set has the same set of characteristics,
+such as income of household.  In Opus, these characteristics are called
+attributes. Attributes can be either read
+from a data store (primary attributes) \primaryattributesindex or computed
+using an Opus variable definition (computed
+attributes). \computedattributesindex
+
+Any Opus attribute (primary or computed)
+\computedattributesindex\primaryattributesindex can be used as an
+indicator, \indicatorsindex although of course only some attributes
+will be particularly \emph{useful} as
+indicators. \indicatorsindex The primary attributes \primaryattributesindex
+of interest are commonly in the database tables for the given Opus
+application.  For UrbanSim, these database tables and their attributes
+are documented in Chapter
+\ref{chapter:urbansim-database-tables}, ``UrbanSim Database Tables.''  
+% (A
+% fine point: models or other Opus code can also create other primary
+% attributes, \primaryattributesindex even on the fly --- so the database
+% tables don't provide a comprehensive list of primary
+% attributes. \primaryattributesindex However, probably all of the primary
+% attributes \primaryattributesindex of interest for indicators
+% \indicatorsindex will be in the database tables.)  
+Each computed attribute
+\computedattributesindex is defined by an Opus variable
+definition.
+
+Indicators can be computed and visualized, via a
+GUI\ref{sec:indicator-configuration-gui} or Python script
+\ref{sec:indicator-configuration-script}. Before describing these in detail, 
+a number of different ways that attributes can be specified needs to be
+described; specifically, attributes can be specified through its
+fully-qualified name, as an aggregation of other attributes, or as an expression
+involving multiple attributes. 
+
+\subsection{Definition through Fully-qualified Name}
+
+For both primary \primaryattributesindex and computed attributes,
+\computedattributesindex the attribute to be used as an
+indicator \indicatorsindex can be identified by its fully-qualified name,
+for example:
+
+\begin{itemize}
+\tight
+\item \module{urbansim.gridcell.residential_units}
+\item \module{urbansim.gridcell.population}
+\end{itemize}
+
+Of these, \module{urbansim.gridcell.residential_units} is a
+primary \primaryattributesindex attribute --- the number of residential
+units is part of the data stored for each gridcell. 
+\computedattributesindex Population is computed, even for
+gridcells; for a gridcell, it is computed by summing the number of
+persons in each household located in that grid cell. 
+
+Attributes can also be in project-specific packages in
+addition to ones in the \package{urbansim} package.  For example, in our
+PSRC \psrcindex application of UrbanSim, one of the indicators
+\indicatorsindex is
+\module{psrc.zone.travel_time_hbw_am_drive_alone_to_cbd}, for the
+\verb|zone| geography defined for this application.
+
+As with other Opus variables, the variable
+name for variables used as indicators \indicatorsindex can
+be a template that matches a family of related variables,
+such as \module{psrc.houeshold.has_DDD_cars}.  This variable
+ can then be instantiated with a particular number of cars,
+e.g.\ \module{psrc.houeshold.has_2_cars}.
+
+\subsection{Definition through Aggregation}
+
+Attributes can also be specified as aggregations of primary or computed
+attributes. For example:
+
+\begin{itemize}
+\tight
+\item \module{zone.aggregate(gridcell.residential_units, function=sum)}
+\item \module{alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)}
+\end{itemize}
+
+In these examples, an attribute defined at a particular geographic dataset is
+aggregated to a larger dataset. For example,
+\module{zone.aggregate(gridcell.residential_units, function=sum)} will, for
+every zone, sum the residential_units of all gridcells that comprise that zone. 
+The second example,
+\module{alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs, function=sum)}, will
+result in a single value because the alldata dataset represents a single
+regional value. The number of home-based jobs in all zones will be added
+together to produce a single region-level total. 
+
+\subsection{Definition through Expressions}
+
+Variable expressions may also be used in the place of an attribute 
+(see Chapter~\ref{chapter:expressions}). For example, the following are
+all valid attribute declarations for an indicator: 
+
+\begin{itemize}
+\tight
+\item \module{2 * urbansim.gridcell.population + 1}
+\item \module{urbansim.gridcell.residential_units + urbansim.gridcell.commercial_units}
+\end{itemize}
+
+\section{The Indicator GUI}
+\label{sec:indicator-configuration-gui}
+
+The Indicator GUI is implemented using the Enthought Traits packages
+(\url{http://www.enthought.com}).  It provides a graphical editor for
+specifying and generating an indicator.  The GUI can be started by running
+the indicator_gui.py located in the indicators subdirectory of each
+project. For example, for the PSRC application, run
+\file{psrc/indicators/indicator_gui.py}.  This will open the indicator GUI.
+
+Currently, there are two parts of the GUI: one for specifying scenario 
+information, and another for specifying the indicator. 
+
+\subsection{Specifying Scenario Information}
+The scenario specification pane is where you input information 
+about which scenario results should be used for computing the indicators. 
+The fields are:
+
+\begin{itemize}
+
+\tight
+
+\item \code{Cache directory} is the directory holding the cache with the
+simulation results from which indicators are to be produced.
+
+\item \code{Comparison cache directory} is an optional field. It can be set to
+point to another cache directory of simulation results.  If it is
+specified, the computed indicators will be compared between the two
+scenarios. See section \ref{sec:indicator-cross-scenario} for more details.
+
+\item \code{Compare to another cache directory} is a checkbox that toggles
+on and off the ability to specify a comparison cache directory.
+
+\end{itemize}
+
+\subsection{Specifying Indicators}
+
+The indicator specification pane is where you specify the indicator you
+wish to compute. There are a number of possible output types.  Three of
+these (Tab-deliminated table, Comma-separated table, and Dbf table) are all
+variants of a basic ``table'' output type, only varying by the particular
+format.  ``Chart'' and ``map'' produce \file{.png} files with an
+appropriate chart or map, produced by the \package{matplotlib} package.
+See Section \ref{sec:indicator-configuration-script}
+for more information on these output formats.
+
+The fields are:
+
+\begin{itemize}
+\tight
+\item \code{Type} is the output type of the indicator.
+
+\item \code{Attribute} is the fully qualified path of an opus variable, as 
+described at the beginning of this section. 
+
+\item \code{Name} is the desired name of the indicator. This field is optional.
+It defaults to the attribute field.
+
+\item \code{Dataset} is the dataset for which the indicator should be 
+computed from (e.g. grid cell, zone).
+
+\item \code{Years} lets you select the years for
+which these indicator values should be computed. Examples include
+``2001,2003'' and ``2010-2020'', the latter of which results in 
+the indicator being computed for all years between 2010 and 2020
+inclusive. 
+
+\item \code{Comparison cache directory} is an optional field. It can 
+be set to point to another cache directory of simulation results.
+If it is specified, the computed indicators will be compared 
+between the two scenarios. See section \ref{sec:indicator-cross-scenario} 
+for more details. 
+
+\item \code{Compare to another cache directory} is a checkbox that toggles
+on and off the ability to specify a comparison cache directory.
+
+\end{itemize}
+
+Some of the visualization types have additional fields. For example, the
+\verb|map| visualization type has a \code{Scale} field which specifies 
+the minimum and maximum values for the map coloring. 
+
+There is a ``run all requests'' button at the bottom of the GUI that starts the 
+indicator computations.  There is also a ``view results'' button that launches 
+a static HTML page with the results of the indicator computations in a web 
+browser (see section \ref{sec:indicator-results}). In addition, the ``file'' 
+menu includes items for saving a configuration, and opening a previously saved 
+one.  (The ``run'' action is also available via the run menu.) When the 
+indicators are being computed, both the ``run all requests'' and ``view 
+results'' buttons are grayed out. It is safe, however, to change the fields in 
+the GUI to different values in preparation for the next batch.
+
+
+\section{Constructing a Batch of Indicators using a Python Script}
+\label{sec:indicator-configuration-script}
+
+It is also possible to set up a indicator request configuration
+programatically, i.e.\ using a Python script. A full example can be found at 
+\module{opus_core.indicator_framework.make_indicators_example}. In this 
+section, the elements of setting up an indicator request configuration 
+is described. There are three parts: setting up the \verb|SourceData| 
+object, generating a list of indicator objects, and running the 
+indicators through the \verb|IndicatorFactory|.
+
+\subsection{Constructing the SourceData object}
+\label{subsec:SourceData}
+The first step is to construct a \verb|SourceData| object.
+The \verb|SourceData| specifies 
+the location of the simulation results that should be 
+used for computing the indicators, the years for which the indicators should be
+computed, and, optionally, a second data directory for which the indicators will
+be compared against. Each indicator requires a source data object to be passed
+to it. Every \verb|SourceData| object accepts the following arguments:
+\begin{itemize}
+\tight
+\item \code{dataset_pool_configuration} is an object that handles which 
+datasets get loaded and in what order. 
+
+\item \code{cache_directory} is a path to the directory containing the 
+simulation results that the indicators should be computed from.
+
+\item \code{comparison_cache_directory} is an optional field. Set this field 
+to the path to a second cache directory in order to run a 
+cross-scenario indicator comparison. See \ref{sec:indicator-cross-scenario}
+for more information.
+
+\item \code{run_description} is a description of this indicator batch. 
+This field is optional. 
+
+\item \code{years} are the default years that all the indicators that use this
+\verb|SourceData| object will be computed for.
+This field is optional, although, if absent, every indicator will need to
+individually specify a years parameter to its constructor. 
+
+\end{itemize}
+
+Here is an example. All indicators that use this \verb|SourceData| object, and don't
+override the default, will be computed for 2010, 2015, and 2018. 
+
+\begin{verbatim}
+source_data = SourceData(
+   cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
+   comparison_cache_directory = r'D:\urbansim_cache\run_1091.2006_11_14_12_12',
+   years = [2010, 2015, 2018],
+   dataset_pool_configuration = DatasetPoolConfiguration(
+         package_order=['urbansim','opus_core'],
+         ),                  
+)
+\end{verbatim}
+
+The \verb|package_order| parameter to \verb|dataset_pool_configuration| needs to
+include all packages that the relevant indicators are defined for. For example,
+to include all indicators available for the Eugene application of UrbanSim,
+\code{package_order=['eugene', 'urbansim', 'opus_core']}.
+
+\subsection{Creating Indicator Objects}
+
+The next step is to create a list of indicators to generate. There are a 
+number of different visualization types available. 
+
+\begin{itemize}
+\tight
+\item \code{table} \index{tables} produce a table \index{tables} of indicator \indicatorsindex values
+\item \code{chart} \index{charts} produce a chart \index{charts} or graph \index{graphs} using matplotlib \matplotlibindex
+\item \code{map} \index{maps} produce a choropleth map \index{maps} using matplotlib \matplotlibindex
+\item \code{dataset_table} produces a table for every specified year 
+with the values of each of the specified indicators.
+\end{itemize}
+
+First, the fields 
+that are common to each visualization type are described, and then examples and
+specific fields are described for each visualization type. Every indicator 
+object takes the following parameters:
+
+\begin{itemize}
+\tight
+\item \code{source_data} references the \verb|SourceData| object to be used for
+this indicator (see Section~ \ref{subsec:SourceData}). 
+
+\item \code{dataset_name} is the name of the dataset that this indicator will be 
+computed for.
+
+\item \code{years} are the years that the indicator will be computed for.
+This field is optional if the \verb|SourceData| object also 
+has a years field. The indicator years field overrides
+the \verb|SourceData| years field.
+
+\item \code{name} is the desired name of the indicator. This field is optional. 
+The default name is the indicator attribute, although 
+some indicators overload the default name. Name replaces 
+the old 'as' syntax.
+
+\end{itemize}
+
+\subsection{Table}
+A table is a simple output file that can be read into a spreadsheet application. 
+A Table object accepts the following parameters:
+
+\begin{itemize}
+\tight
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
+\item \code{output_type} specifies whether the results should be separated 
+by tabs or commas, or output as a dbf file (``tab'', ``csv'', or ``dbf'', respectively).
+\end{itemize}
+
+An example:
+\begin{verbatim}
+Table(
+    source_data = source_data,
+    dataset_name = 'zone',
+    attribute = 'urbansim.zone.industrial_sqft',
+    output_type = 'tab',
+    years = [2000, 2005] 
+) 
+\end{verbatim}
+
+\subsection{Map}
+
+Matplotlib maps can be constructed through the Map object. 
+Matplotlib automatically creates a color
+ramp using a continual color range.  The continual range of colors can be
+quite useful for distinguishing different values. 
+A Map object accepts the following parameters:
+
+\begin{itemize}
+\tight
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
+\item \code{scale} is a two element list that specifies the min and max values 
+for the scale of the values on the map. It is optional and defaults to the
+min/max values of the indicator. 
+\end{itemize}
+  
+An example:
+\begin{verbatim}
+Map( 
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'my_population_at_zone_level',
+    attribute = 'urbansim.zone.population',
+    years = [2010, 2020], 
+    scale = [-5000, 250000]
+)
+\end{verbatim}
+
+\subsection{Chart}
+
+Matplotlib charts can be constructed through the Chart object. 
+Charts should only be used when there are a small number of different 
+entities (e.g. at higher levels of geographic aggregation).
+A Chart object accepts the following parameters:
+
+\begin{itemize}
+\tight
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
+\end{itemize}
+
+An example:
+\begin{verbatim}
+Chart(
+    source_data = source_data,
+    dataset_name = 'gridcell',
+    name = 'my_population_at_gridcell',
+    attribute = 'urbansim.gridcell.population',
+)
+\end{verbatim}
+
+\subsection{Dataset Table}
+Dataset tables can be constructed through the DatasetTable object. 
+This indicator is useful for examining the values of different 
+variables for the values of a particular geography. 
+A DatasetTable object accepts the following parameters:
+
+\begin{itemize}
+\tight
+\item \code{attributes} is the the fully qualified opus path of the indicator.
+\item \code{exclude_condition} determines the condition under which certain rows 
+are not included in the result. This is an indicator expression.
+For example, "urbansim.gridcell.population>0" will eliminate all rows 
+where the population is greater than zero. This field is optional.
+\end{itemize}
+
+An example:
+\begin{verbatim}
+DatasetTable(
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'pop_and_ind_sqft',
+    attributes = [ 
+      'urbansim.zone.population',
+      'urbansim.zone.industrial_sqft',                     
+    ],
+    exclude_condition = 'urbansim.gridcell.population>0' 
+)
+\end{verbatim}
+
+\subsection{Operations}
+
+A small set of indicator operations are also supported. 
+Every indicator object except DatasetTable 
+accepts an optional parameter \emph{operation}. This parameter can take on the
+following values:
+
+\begin{itemize}
+\tight
+  \item \code{change} returns the difference of the specified
+  attribute for the current year with respect to the baseyear (currently fixed
+  at 2000).
+  \item \code{percent_change} returns the percent difference of the specified
+  attribute for the current year with respect to the baseyear (currently fixed
+  at 2000). 
+  \item \code{size} returns the size of the data set used.
+\end{itemize}
+
+An example using operations:
+\begin{verbatim}
+Table(
+    source_data = source_data,
+    dataset_name = 'large_area',
+    name = 'de_population_change',
+    operation = 'change',
+    years = [2015]
+)
+\end{verbatim}
+
+\subsection{Creating the Indicators}
+After the indicator list has been created, an
+\verb|IndicatorFactory| can process the list of indicators you have specified. 
+For example:
+
+\begin{verbatim}
+from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+IndicatorFactory().create_indicators(indicators = indicators)
+\end{verbatim}
+
+\subsection{Cross-scenario Indicators}
+\label{sec:indicator-cross-scenario}
+
+Cross-scenario comparisons are currently generated by specifying two 
+cache directories that each contain the simulation results for the 
+scenarios that you wish to compare. The comparison is 
+accomplished with a subtract. To be more specific, for each specified 
+indicator, the indicator is computed for both cache directories. Then
+the indicator values from the comparison cache directory are subtracted
+from the values of the indicator from the cache directory. 
+In the near future, a percent different comparison will also be provided.
+
+\subsection{Indicator Results}
+\label{sec:indicator-results}
+
+A static HTML page that describes the computed indicators for a given
+cache directory is automatically updated everytime an indicator from 
+that cache directory is computed. For every indicator request, the 
+details of the request are displayed, as well as a link to the generated 
+indicator. The HTML file is located in the indicators subdirectory of the 
+cache directory and is named \verb|indicator_results.html|.
+
+\section{When to Compute Indicator Values}
+\indicatorsindex
+
+Both the GUI and script-based indicator configuration requests invoke a
+class \class{IndicatorFactory}.  The indicator factory fires up separate
+processes for each indicator.  So the indicators \indicatorsindex for a
+given year (or up to a given year) can be run as soon as the flt files for
+that year have been written out from the simulation, even if the simulation
+is still running.  Doing this in fact can be quite useful for long
+simulation runs spanning several days --- run some indicators
+\indicatorsindex on early years in the output to see if things look OK, and
+if not, stop the simulation.  Of course it is also fine to run any or all
+of the indicators \indicatorsindex after the simulation has completed.
+
+\section{Defining New Indicators}
+\indicatorsindex
+
+To add a new indicator \indicatorsindex that uses Opus attributes,
+define an appropriate variable. (As usual,
+a good way to proceed is to find an existing definition that is similar to
+what you want, and copy and modify it.)  If the indicator \indicatorsindex
+is a specialized one, it should be defined in a package specific to that
+application, rather than in the \package{urbansim} package.  (And even if
+the indicator \indicatorsindex is of general utility, it should probably be
+in a separate package unless you are part of the core development team ---
+that way, if you upgrade to a version of the \package{urbansim} package,
+your indicator \indicatorsindex definition won't be lost.)
+
+For example, here is the definition for the ``population'' variable
+ in \module{urbansim.faz.population}.
+
+\numpyindex
+\begin{verbatim}
+from opus_core.variables.variable import Variable
+from urbansim.functions import attribute_label
+from variable_functions import my_attribute_label
+from opus_core.logger import logger
+
+class population(Variable):
+    """Number of peope in this faz"""
+    _return_type="int32"
+
+    def dependencies(self):
+        return [attribute_label("gridcell", "faz_id"), 
+                attribute_label("gridcell", "population"), 
+                my_attribute_label("faz_id")]
+
+    def compute(self, dataset_pool):
+        gridcell = dataset_pool.get_dataset('gridcell')
+        return self.get_dataset().sum_over_ids(gridcell.get_attribute("faz_id"), 
+                                   gridcell.get_attribute("population"))
+
+    def post_check(self, values, dataset_pool):
+        size = dataset_pool.get_dataset('gridcell').get_attribute("population").sum()
+        self.do_check("x >= 0 and x <= " + str(size), values)
+    
+
+from opus_core.tests import opus_unittest
+from urbansim.variable_test_toolbox import VariableTestToolbox
+from numpy import array
+from numpy import ma
+
+class Tests(opus_unittest.OpusTestCase):
+    variable_name = "urbansim.faz.population"
+ 
+    def test_my_inputs(self):
+        population = array([21,22,27,42]) 
+        gridcell_county_ids = array([1,2,1,3]) 
+        grid_id = array([1,2,3,4])
+        
+        values = VariableTestToolbox().compute_variable(self.variable_name, 
+            {"faz":{
+                "faz_id":array([1,2, 3])}, 
+            "gridcell":{ 
+                "population":population,
+                "faz_id":gridcell_county_ids, 
+                "grid_id":grid_id}}, 
+            dataset = "faz")
+
+        should_be = array([48, 22, 42])
+        
+        self.assertEqual(ma.allclose(values, should_be, rtol=1e-2), True, 
+                         msg = "Error in " + self.variable_name)
+
+
+if __name__=='__main__':
+    opus_unittest.main()
+\end{verbatim}
+
+Again, this is just an ordinary Opus variable. Here
+is a brief explanation of the different parts of the definition (see
+also Section~\ref{sec:opus-variable}).  We define a new class
+\class{population}, which must be a subclass of \class{Variable}.
+ (The convention is that the names of Opus variables
+ are lower case, even though usually Python
+class names are capitalized.)  Its values depend on the
+values of certain other variables, which are listed
+in the \method{dependencies} method.  The \method{compute} method is
+where the action is: this defines how the values of this variable
+ are computed.  In this case, we know that each
+\verb|faz| (Forecast Analysis Zone) contains a number of gridcells. 
+The \verb|sum_over_ids| method iterates through
+the gridcells, adding up populations depending on which
+\verb|faz| the gridcell is in, and returns an array of
+the population in each \verb|faz|.  If invoked, the
+\method{post_check} method performs a sanity check on the results:
+is the population in each \verb|faz| between 0 and the total
+population in all the grid cells?  (See Section
+\ref{sec:programming-by-contract}.)  Finally, a unit test is defined
+for this variable. This unit test, as with any other
+Opus unit test, sets up just enough data to test whether the
+variable's value is being computed correctly for a
+small example (Section \ref{sec:unit-tests}). The
+\verb|if__name__=='__main__':| part at the end means that the test
+will be run if the file is run from the command line, but not if it
+is merely imported.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

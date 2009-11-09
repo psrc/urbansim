@@ -1,0 +1,58 @@
+\bf{Gridcell Level Model Application (the traditional UrbanSim Application)}
+\begin{description}
+  \tight
+  \item[``land_price_model''] - activates the \verb|LandPriceModel| which
+  predicts residential and non-residential land value (see
+  Section~\ref{sec:land-price-model}).
+  \item[``development_project_transition_model''] - activates the
+  \verb|DevelopmentProjectTransitionModel| which creates projects of different
+  types for development (see
+  Section~\ref{sec:development-project-transition-model}).
+  \item[``residential_development_project_location_choice_model''] - activates
+  the \\ \verb|DevelopmentProjectLocationChoiceModel| for residential projects
+  only. It places the newly created projects of residential type into locations
+  (see Section~\ref{sec:development-project-lcm}).
+  \item[``commercial_development_project_location_choice_model''] - activates
+  the \\ \verb|DevelopmentProjectLocationChoiceModel| for commercial projects
+  only. It places the newly created projects of commercial type into locations
+  (see Section~\ref{sec:development-project-lcm}).
+  \item[``industrial_development_project_location_choice_model''] - activates
+  the \\ \verb|DevelopmentProjectLocationChoiceModel| for industrial projects
+  only. It places the newly created projects of industrial type into locations
+  (see Section~\ref{sec:development-project-lcm}).
+  \item[``development_event_transition_model''] - activates the
+  \verb|DevelopmentEventTransitionModel| which creates development events from
+  given projects (see Section~\ref{sec:development-event-transition-model}) and
+  the \verb|EventsCoordinator| which processes the actual annual development
+  (see Section~\ref{sec:events-coordinator}).
+  \item[``residential_land_share_model''] - activates the
+  \verb|ResidentialLandShareModel| which predicts the fraction of residential
+  land (see Section~\ref{sec:residential-land-share-model}).
+  \item[``household_transition_model''] - activates the
+  \verb|HouseholdTransitionModel| which simulates deaths and births in the
+  population of households (see Section~\ref{sec:household-transition-model}).
+  \item[``employment_transition_model''] - activates the
+  \verb|EmploymentTransitionModel| which simulates creation and loss of jobs
+  (see Section~\ref{sec:employment-transition-model}).
+  \item[``household_relocation_model''] - activates the
+  \verb|AgentRelocationModel| where agents are set to be households. It
+  determines which households will move to another locations in the simulated
+  year (see Section~\ref{sec:agent-relocation-model}).
+  \item[``household_location_choice_model''] - activates the
+  \verb|AgentLocationChoiceModel| where agents are set to be households. It
+  places moving households to another locations (see
+  Section~\ref{sec:agent-lcm}).
+  \item[``employment_relocation_model''] - activates the
+  \verb|AgentRelocationModel| where agents are set to be jobs. It determines
+  which jobs will be moved to another locations in the simulated year (see
+  Section~\ref{sec:agent-relocation-model}).
+  \item[``employment_location_choice_model''] - activates the
+  \verb|AgentLocationChoiceModelMember| where agents are set to those types of jobs
+  that are contained in the table \file{job_building_types}.
+  For each type, it places moving jobs to another locations (see
+  Section~\ref{sec:elcm}). An exception is the type 'governmental' for which the \verb|ScalingJobsModel| is activated
+  (see Section~\ref{sec:scaling-jobs-model}).
+  \item[``distribute_unplaced_jobs_model''] - activates the \verb|DistributeUnplacedJobsModel| which
+  places  all non-placed jobs randomly to another locations (see Section~\ref{sec:distribute-unplaced-jobs-model}).
+\end{description}
+

@@ -1,0 +1,156 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Selected Methods and Functions in \package{opus_core}}
+\label{appendix:selected-methods}
+%
+This chapter lists selected methods and functions implemented in the \package{opus_core} package.
+For more information and information about arguments see our Trac site at www.urbansim.org (Browse Source).
+
+%
+\section{Dataset}
+%
+\label{appendix:selected-methods-dataset}
+%
+The class \class{Dataset} is implemented in
+\verb|opus_core.datasets.dataset.py|. 
+It is a child of \class{AbstractDataset} (\verb|opus_core.datasets.abstract_dataset.py|)
+and most of its methods is inherited from the parent class. Here we group the methods 
+according to their use cases, thinking about a dataset as a table with rows and columns.
+
+%
+\subsection{Selected Methods}
+%
+\paragraph{Adding columns}~\\[1mm]
+{\tt add\_attribute (data, name, ...)}\\
+{\tt add\_primary\_attribute (data, name)}
+
+\paragraph{Adding rows}~\\[1mm]
+{\tt add\_elements (data, ...)}
+
+\paragraph{Obtaining columns}~\\[1mm]
+{\tt get\_attribute (name)} \\
+{\tt get\_attribute\_by\_id (name, id)} \\
+{\tt get\_attribute\_by\_index (name, index)}\\
+{\tt get\_multiple\_attributes (names)} \\
+{\tt get\_id\_attribute()} \\
+{\tt get\_attribute\_as\_column (name)}
+
+\paragraph{Obtaining rows}~\\[1mm]
+{\tt get\_data\_element (index, ...)} \\
+{\tt get\_data\_element\_by\_id (id, ...)}
+
+\paragraph{Obtaining column names}~\\[1mm]
+{\tt get_id_name ()} \\
+{\tt get_attribute_names ()} \\
+{\tt get_known_attribute_names ()} \\
+{\tt get_primary_attribute_names ()} \\
+{\tt get_computed_attribute_names ()} \\
+{\tt get_nonloaded_attribute_names ()} \\
+{\tt get_attributes_in_memory ()} \\
+{\tt get_cached_attribute_names ()} \\
+{\tt get_attribute_long_names ()}
+
+\paragraph{Modifying columns}~\\[1mm]
+{\tt modify\_attribute (name, data, index=None)} \\
+{\tt set\_value\_of\_attribute\_by\_id (attribute, value, id)}
+
+\paragraph{Deleting columns}~\\[1mm]
+{\tt delete\_one\_attribute (name)} \\
+{\tt delete\_computed\_attributes ()}
+
+ \paragraph{Deleting rows}~\\[1mm]
+ {\tt remove\_elements (index)}\\
+ {\tt subset (n, is_random=False)}\\
+ {\tt subset\_by\_index (index, ...)}\\
+ {\tt subset\_by\_ids (ids, ...)}\\
+ {\tt subset\_where\_variable\_larger\_than_threshold (attribute, threshold=0, ...)}
+ 
+\paragraph{Computing variables}~\\[1mm]
+ {\tt compute_variables (names, dataset_pool=None, ...)}\\
+ {\tt compute_one_variable_with_unknown_package (variable_name, }\\
+ \hspace*{3cm} {\tt dataset_pool=None, package_order=None)}
+ 
+\paragraph{I/O methods}~\\[1mm]
+{\tt load\_dataset (..., attributes=None, in_storage=None, in_table_name=None, ...)} \\
+{\tt load\_dataset_if_not_loaded (..., attributes=None, in_storage=None,} \\
+\hspace*{3cm} {\tt in_table_name=None, ...)}\\
+{\tt write\_dataset (..., attributes=None, out_storage=None, out_table_name=None, }\\
+ \hspace*{3cm} {\tt ...)} \\
+{\tt flush\_attribute (name)} \\
+{\tt flush\_dataset ()}  \\
+{\tt load_and_flush_dataset ()}  \\
+{\tt get_cache_directory ()}  \\
+{\tt remove_cache_directory ()}
+
+\paragraph{Obtaining row indicies}~\\[1mm]
+{\tt get_id_index (id)}  \\
+{\tt try_get_id_index (id, return_value_if_not_found=-1)}  \\
+{\tt get_index_where_variable_larger_than_threshold (attribute, threshold=0)}  \\
+{\tt get_filtered_index (filter, threshold=0, index=None, dataset_pool=None, }\\
+\hspace*{3cm} {\tt ...)}
+
+\paragraph{Connecting two datasets}~\\[1mm]
+{\tt connect_datasets (dataset)}  \\
+{\tt join (dataset, name, join_attribute=None, ...)}  \\
+{\tt join_by_rows (dataset, ...)}  \\
+{\tt aggregate_dataset_over_ids (dataset, function='sum', attribute_name=None,}\\
+\hspace*{3cm} {\tt constant=None)}
+
+\paragraph{Data analysis}~\\[1mm]
+{\tt summary (names=[], ...)}  \\
+{\tt size ()}  \\
+{\tt attribute_sum (name)}  \\
+{\tt attribute_average (name)}  \\
+{\tt aggregate_all (function='sum', attribute_name=None)}  \\
+{\tt correlation_matrix (names)}  \\
+{\tt correlation_coefficient (name1, name2)}  \\
+{\tt categorize (attribute_name, bins)}  \\
+{\tt get_data_type (attribute, ...)}
+
+\paragraph{Plotting methods}~\\[1mm]
+{\tt plot_histogram (name, main="", filled_value=0.0, bins=None)}  \\
+{\tt r_histogram (name, main="", prob=1, breaks=None)}  \\
+{\tt plot_scatter (name_x, name_y, main="", npoints=None, ...)}  \\
+{\tt r_scatter (name_x, name_y, main="", npoints=None)}  \\
+{\tt r_image (name, main="", xlab="x", ylab="y", min_value=None, max_value=None, }\\
+\hspace*{3cm} {\tt file=None, pdf=True)}  \\
+{\tt plot_map (name, ...)}
+
+\paragraph{Memory management}~\\[1mm]
+{\tt itemsize_in_memory ()}  \\
+{\tt unload_attributes (names)}  \\
+{\tt unload_all_attributes ()}  \\
+{\tt unload_primary_attributes ()}  \\
+{\tt unload_computed_attributes ()}  \\
+{\tt unload_one_attribute (name)}
+
+\paragraph{Other methods}~\\[1mm]
+{\tt get_dataset_name ()}  \\
+{\tt get_attribute_header (name)}  \\
+{\tt filled_masked_attribute (name, filled_value=0)}  \\
+{\tt get_version (name)}  \\
+{\tt has_attribute (attribute_name)}  \\
+{\tt get_coordinate_system ()}\\
+{\tt create_subset_window_by_ids (ids)}
+
+\subsection{Useful Functions}
+%
+Examples of creating and using datasets are given in Section~\ref{sec:datasets}. Two functions
+that support creating datasets from an flt storage and a tab delimited storage, respectively, are implemented in 
+the module \module{opus_core.misc}:
+
+{\tt get_dataset_from_flt_storage (dataset_name, directory, }\\
+\hspace*{3cm} {\tt package_order=['opus_core'], dataset_args=None)}\\
+{\tt get_dataset_from_tab_storage (dataset_name, directory, }\\
+\hspace*{3cm} {\tt package_order=['opus_core'], dataset_args=None)}
+
+If the dataset is defined in a package (for example, dataset 'gridcell' is defined
+in the \package{urbansim} package), put the package name into the {\tt package_order} list. 
+Otherwise, put all arguments that the {\tt Dataset}'s constructor needs into 
+{\tt dataset_args} in form of a dictionary. Both functions return a dataset object.

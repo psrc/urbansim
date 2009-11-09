@@ -1,0 +1,60 @@
+// This file has automatically been generated.
+// Fri May 13 21:01:50 2005
+// Michel Bierlaire, EPFL (c) 2001-2004
+
+BIOGEME Version 1.2 [Fri Dec 3 17:24:40 GMT 2004]
+Author: Michel Bierlaire, EPFL (2001-2004)
+
+
+Model: Multinomial Logit
+Number of estimated parameters: 5
+Sample size: 2000
+Null log-likelihood:	-4605.17
+Init log-likelihood:	-4605.17
+Final log-likelihood:	-4437.73
+Likelihood ratio test:	334.878
+Rho-square:		0.0363589
+Adjusted rho-square:		0.0352731
+Final gradient norm:	0.00805066
+Variance-covariance:	from finite difference hessian
+Utility parameters
+******************
+            Name Value		Std err		t-test		   Robust Std err	Robust t-test
+        b_dur_nc -6.6564332e-003	+1.3274313e-003	-5.0145216e+000	   +1.5615970e-003	-4.2625806e+000
+        b_phiw_h +2.5698409e-002	+2.5932318e-003	+9.9098005e+000	   +2.6138578e-003	+9.8316020e+000
+        b_pliw_l +6.8065952e-002	+7.0126248e-003	+9.7062019e+000	   +6.8465923e-003	+9.9415810e+000
+        b_pmiw_m +2.1821904e-002	+3.5433495e-003	+6.1585525e+000	   +3.5418969e-003	+6.1610783e+000
+        b_pmnwmj +1.4359481e-001	+2.2370047e-002	+6.4190659e+000	   +1.9970030e-002	+7.1905153e+000
+Scale parameters
+****************
+            Name	Value		Std err		t-test1	Robust Std err		Robust t-test1
+          Scale1 +1.0000000e+000	 fixed
+
+Utility functions
+*****************
+1	alt1	av	b_dur_nc * dur_nc_1 + b_pmiw_m * pmiw_m_1 + b_pmnwmj * pmnwmj_1 + b_phiw_h * phiw_h_1 + b_pliw_l * pliw_l_1
+10	alt10	av	b_dur_nc * dur_nc_10 + b_pmiw_m * pmiw_m_10 + b_pmnwmj * pmnwmj_10 + b_phiw_h * phiw_h_10 + b_pliw_l * pliw_l_10
+2	alt2	av	b_dur_nc * dur_nc_2 + b_pmiw_m * pmiw_m_2 + b_pmnwmj * pmnwmj_2 + b_phiw_h * phiw_h_2 + b_pliw_l * pliw_l_2
+3	alt3	av	b_dur_nc * dur_nc_3 + b_pmiw_m * pmiw_m_3 + b_pmnwmj * pmnwmj_3 + b_phiw_h * phiw_h_3 + b_pliw_l * pliw_l_3
+4	alt4	av	b_dur_nc * dur_nc_4 + b_pmiw_m * pmiw_m_4 + b_pmnwmj * pmnwmj_4 + b_phiw_h * phiw_h_4 + b_pliw_l * pliw_l_4
+5	alt5	av	b_dur_nc * dur_nc_5 + b_pmiw_m * pmiw_m_5 + b_pmnwmj * pmnwmj_5 + b_phiw_h * phiw_h_5 + b_pliw_l * pliw_l_5
+6	alt6	av	b_dur_nc * dur_nc_6 + b_pmiw_m * pmiw_m_6 + b_pmnwmj * pmnwmj_6 + b_phiw_h * phiw_h_6 + b_pliw_l * pliw_l_6
+7	alt7	av	b_dur_nc * dur_nc_7 + b_pmiw_m * pmiw_m_7 + b_pmnwmj * pmnwmj_7 + b_phiw_h * phiw_h_7 + b_pliw_l * pliw_l_7
+8	alt8	av	b_dur_nc * dur_nc_8 + b_pmiw_m * pmiw_m_8 + b_pmnwmj * pmnwmj_8 + b_phiw_h * phiw_h_8 + b_pliw_l * pliw_l_8
+9	alt9	av	b_dur_nc * dur_nc_9 + b_pmiw_m * pmiw_m_9 + b_pmnwmj * pmnwmj_9 + b_phiw_h * phiw_h_9 + b_pliw_l * pliw_l_9
+
+
+Correlation of coefficients
+***************************
+    Coefficient1	    Coefficient2	    Covariance	   Correlation	        t-test	      Rob. cov.     Rob. corr.     Rob. t-test
+    ~~~~~~~~~~~~	    ~~~~~~~~~~~~	    ~~~~~~~~~~	   ~~~~~~~~~~~	        ~~~~~~        ~~~~~~~~~     ~~~~~~~~~~     ~~~~~~~~~~~
+        b_phiw_h	        b_pmiw_m	-3.7564779e-007	-4.0881377e-002	+8.6613170e-001 * -5.1791585e-007	-5.5942431e-002	+8.5799687e-001 *
+        b_pliw_l	        b_pmnwmj	+2.8148914e-006	+1.7943788e-002	-3.2383738e+000   +4.7456638e-006	+3.4709134e-002	-3.6164023e+000
+        b_phiw_h	        b_pmnwmj	-9.9658021e-006	-1.7179243e-001	-5.1352801e+000   -9.9560644e-006	-1.9073352e-001	-5.7151421e+000
+        b_pmiw_m	        b_pmnwmj	+1.1218529e-005	+1.4153212e-001	-5.4981256e+000   +1.2024672e-005	+1.7000378e-001	-6.1876843e+000
+        b_phiw_h	        b_pliw_l	-1.9836410e-007	-1.0907900e-002	-5.6465726e+000   -2.3824168e-007	-1.3312552e-002	-5.7556648e+000
+        b_pliw_l	        b_pmiw_m	+2.2600726e-007	+9.0955252e-003	+5.9073907e+000   +2.6500291e-007	+1.0927989e-002	+6.0260387e+000
+        b_dur_nc	        b_pmnwmj	-7.3570110e-007	-2.4775501e-002	-6.6950308e+000   -1.3288607e-006	-4.2611984e-002	-7.4762186e+000
+        b_dur_nc	        b_pmiw_m	+5.3747352e-007	+1.1426968e-001	-7.8258301e+000   +7.5571814e-007	+1.3663280e-001	-7.7588196e+000
+        b_dur_nc	        b_phiw_h	-4.6927470e-007	-1.3632444e-001	-1.0538716e+001   -6.9133445e-007	-1.6937031e-001	-9.9127237e+000
+        b_dur_nc	        b_pliw_l	+5.1370802e-007	+5.5185333e-002	-1.0576699e+001   +4.1558565e-007	+3.8870229e-002	-1.0731364e+001

@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+
+<head>
+<title>Testing Your Install</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css">
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; Testing Your Install</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Testing Your Install</h1>
+
+
+<p>There are three steps to testing your install:</p>
+
+<ol>
+  <li>Make sure Python is working.</li>
+  <li>Test that Python can find your Opus packages.</li>
+  <li>(Optional) Check that the Opus packages pass their unit tests.</li>
+</ol>
+
+<h2>Making Sure Python is Working</h2>
+<p>Open a command window.&nbsp;</p>
+<ul>
+  <li>On Windows, this can be done using the Start menu — choose “Programs,”
+    then “Accessories”, then “Command Prompt.”&nbsp;</li>
+  <li>On Linux, this is the shell.&nbsp;</li>
+  <li>On the Macintosh, choose the “Terminal” application under “Applications/Utilities.”&nbsp;</li>
+</ul>
+<p>Now check that Python itself is installed and working by typing <tt>python</tt> at the
+command prompt to start a Python session.  For example, here are the results for this on Windows:</p>
+<pre>C:\&gt;python
+Python 2.5.1 (r251:54863, Apr 18 2007, 08:51:08) [MSC v.1310 32 bit (Intel)] on win32
+Type "copyright", "credits" or "license()" for more information.
+&gt;&gt;&gt;</pre>
+
+<p>Once you’re in Python, type in a simple expression and see if you get a
+reasonable answer: </p>
+<pre>&gt;&gt;&gt; 3+4
+7
+&gt;&gt;&gt;</pre>
+
+<h2>Can Python find the Opus packages?</h2>
+<p>Now test that the opus_core and urbansim packages are downloaded and that
+Python can find them.  The <tt>opus_core</tt> package also has a version number you can check:</p>
+<pre>&gt;&gt;&gt; import opus_core
+&gt;&gt;&gt; import urbansim
+&gt;&gt;&gt; opus_core.__version__
+'4.2.0'
+</pre>
+(The version number will be different of course for development versions or other stable
+releases -- see <a href="releases.html">Opus Revisions and Releases</a>.)
+
+<h2>Do the unit tests pass?</h2>
+<p>As an optional part of testing the installation, all of the base Opus
+packages have unit tests that should succeed. </p>
+<p>The unit tests in each Opus package are set up to run as standalone Python
+programs: simply invoke Python on the file containing the unit test. For
+instance, to test the Python module opus_core.tests.test_sampling_toolbox.py,
+open a command shell, connect to the directory <tt>opus/src/opus_core/tests</tt>,
+and type:</p>
+<pre>python test_sampling_toolbox.py
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.084s
+
+OK
+</pre>
+<p>where a period gets printed each time a test is run, perhaps along with some
+additional information, followed by a summary at
+the end.&nbsp; If you have installed Opus to a different directory, use that
+path in the above command instead.</p>
+
+<p>To run all of the unit tests defined in the opus_core package, and thus
+perform a more comprehensive test of your installation, invoke opus_core's
+all_tests.py &#252;ber-test module:</p>
+<pre>python C:\opus\src\opus_core\tests\all_tests.py
+
+WARNING: Could not import gdal library. Skipping test_input_numpy_output_geotiff.
+
+================================================================================
+opus_core.VVV_lagLLL.VVV_lagLLLTests
+test_lag_variable
+================================================================================
+-------------------------------------( OK )-------------------------------------
+
+================================================================================
+opus_core.store.attribute_cache.AttributeCacheTests
+test_determine_field_names
+================================================================================
+-------------------------------------( OK )-------------------------------------
+
+================================================================================
+opus_core.store.attribute_cache.AttributeCacheTests
+test_getting_data_from_prior_years
+================================================================================
+Loading attr From Cache cache_directory c:\docume~1\socha\locals~1\temp\opus_tmp39upx7\cache\2000 (testdata)
+Loading id From Cache cache_directory c:\docume~1\socha\locals~1\temp\opus_tmp39upx7\cache\2000 (testdata)
+-------------------------------------( OK )-------------------------------------
+
+(and so on and so on ...)</pre>
+<p>Cautions: particularly if you don't have a fast machine, running
+all_tests.py may be time consuming, but you can always cancel the tests part way through.  Also, some
+of the unit tests depend on having MySQL available -- if you don't have it, those
+tests won't pass.  (Other stuff will still run fine however.) </p>
+<p>Every Opus package has a ‘tests’ directory with a ‘all_tests.py’
+module. The ‘all_tests’ module will scan all files in the package searching for
+unit tests. It will run all that it finds. Note: unit tests that are ‘hidden’
+behind an if __name__ == '__main__': check will not be found. </p>
+<p>As part of our automated build process at CUSPA, we automatically run ‘all_tests’
+every time a new version of a package is checked into our subversion repository.</p>
+
+</body>
+</html>

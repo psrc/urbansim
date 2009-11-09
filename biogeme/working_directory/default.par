@@ -1,0 +1,27 @@
+// This file has automatically been generated.
+// Tue Aug  8 00:05:44 2006
+// Michel Bierlaire, EPFL 2001-2006
+
+// BIOGEME Version 1.5[Fri Aug 4 16:28:10 CEST 2006]
+// Michel Bierlaire, EPFL
+
+[GEV]
+gevAlgo = "BIO"
+gevScreenPrintLevel = 1
+gevLogFilePrintLevel = 2
+gevRandomDistrib = "PSEUDO"
+gevPrintVarCovarAsList = 1
+gevPrintVarCovarAsMatrix = 0
+gevPrintPValue  = 1
+gevDecimalDigitsStats = 3
+gevSignificantDigitsParameters = 3
+gevDecimalDigitsTTest  = 2
+
+[BasicTrustRegion]
+BTRMaxIter = 1000
+
+[cfsqp]
+cfsqpMaxIter = 1000
+
+[solvopt]
+solvoptMaxIter = 1000

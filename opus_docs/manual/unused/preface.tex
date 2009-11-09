@@ -1,0 +1,119 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+{\huge Preface}
+\label{preface}
+
+Opus is a new platform for urban and regional simulation, designed to
+support the development and integration of model
+components \index{models!components} for simulating the
+effects of major transportation investments and policy changes
+on transportation, \index{transportation} land use, \index{land use}
+and the environment. \index{environmental impacts}
+Opus consists of a collection of packages\index{Python!packages}\index{packages}
+written in the Python\index{Python} language. The choice of
+Python was based on Python's
+balance of characteristics, which provide a good combination of a
+productive development (even for users who are not expert programmers), and
+good performance due to the availability of Python
+libraries for fast
+numeric processing \index{numeric processing} that use C or C++
+to implement computationally intensive
+aspects.  The basic functionality of Opus is implemented in a package named \package{opus_core}.
+
+UrbanSim Version 4 \index{UrbanSim!Version 4} is implemented as a set of
+Opus packages. (Previous versions \index{UrbanSim!previous versions} were in Java.) 
+The decision to migrate from Java to Python 
+was based on the faster development and computation time available
+in the Python environment with numeric libraries, and on the objective of
+making models \index{models} in UrbanSim more modular than they had been in the previous
+Java version, allowing users to rapidly configure models, \index{models} estimate their
+parameters, and use them. In addition, Python is turning out to be a more
+accessible language for modelers, which addresses another key goal: \index{goals} to
+create a system where modelers can write their own models, and understand
+the models written by other modelers.
+
+\index{User contributions}
+
+This document covers both the base set of Opus packages and the UrbanSim
+system implemented in a set of Opus packages.  As descriptions
+become available, other packages besides those related to UrbanSim will be
+added.  We expect that over time many users and developers will contribute
+packages to the system, making their work available to others in the same
+way that they themselves have benefited from others' work.
+
+The document includes both a user guide and reference manual.  Part
+\ref{part-overview} is currently just this introduction and a
+technical overview of the UrbanSim model system, but will soon also
+include a technical overview of Opus. Part \ref{part-user-guide}
+describes how to install and use Opus and UrbanSim.  Part
+\ref{part-reference-guide} contains reference material on the
+details of Opus and UrbanSim. Part \ref{part-developers} provides
+information for software developers (i.e., people who will be
+writing new Opus packages or documentation).  A short Glossary is
+provided in an appendix.
+
+This document will continue to evolve --- questions and open issues are in
+italics. \index{document conventions} Please feel free to send your comments, 
+criticisms, and
+suggestions to
+% ** two versions of email address - avoid a real one for the html pages so that
+% we aren't such a spam magnet
+%begin{latexonly}
+\email{info@urbansim.org}. \index{contact information}
+%end{latexonly}
+\begin{htmlonly}
+{\tt info(at)urbansim.org}. \index{contact information}
+\end{htmlonly}
+
+\index{latest documentation}
+The latest version (as a pdf file, and as html pages) is linked from
+\url{http://www.urbansim.org/}.
+
+\newpage
+{\huge Acknowledgments}
+
+This research has been funded in part by the National Science Foundation, 
+grants CMS-9818378, EIA-0121326 and EIA-0090832, and by the Puget
+Sound Regional Council, the Maricopa Association of Governments, and the 
+Environmental Protection Agency.  
+
+The software implementation of UrbanSim and the Open Platform for Urban 
+Simulation has been developed by contributions of numerous people at the 
+Center for Urban Simulation.  Alan Borning, Co-director of the Center 
+for Urban Simulation and Policy Analysis, has been instrumental in the 
+development of the software implementation of UrbanSim and the Open 
+Platform for Urban Simulation, most recently by implementing the Opus
+ expression language and by implementing
+a design for using XML to store and manipulate configurations in a new 
+Graphical User Interface.  Hana Sevcikova has been the principal software 
+engineer
+on the new Open Platform for Urban Simulation, and has done much of the 
+implementation of the conversion of UrbanSim from Java to the new Opus 
+platform in Python.  She has also implemented new Bayesian Melding methods 
+to calibrate uncertainty in the model system.  Liming Wang has made invaluable 
+contributions to the development of UrbanSim, especially in the new Opus 
+platform.  He has developed the sampling toolbox used as a core component
+of the choice models, has implemented most of the new real estate development
+ model, and the new home based job choice and workplace choice models.
+Travis Kriplean has also contributed immensely to the project, creating 
+an installer for the Windows platform, taking the lead on the development 
+of the
+indicator framework used in the results manager of the new Graphical User
+ Interface, and generally contributing to the project.  Jesse Ayers has 
+contributed
+extensively in the creation of the Graphical User Interface and in the 
+implementation of connections between UrbanSim and ArcGIS.  Aaron Racocort 
+has been essential in the new GUI development.  David Socha contributed
+substantially to the previous version of UrbanSim in Java, and to the 
+conversion to the new Python-based platform.  In fact, too many other 
+people have contributed in too many ways to be adequately acknowledged.  
+This work is an ongoing collaboration.
+
+
+% LocalWords:  borning UrbanSim pdf

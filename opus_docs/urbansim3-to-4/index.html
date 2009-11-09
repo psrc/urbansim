@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <title>Migrating from UrbanSim 3 to UrbanSim 4</title>
+
+
+  <link href="../style/book.css" rel="stylesheet" type="text/css">
+
+  <meta name="Microsoft Border" content="none, default">
+
+</head>
+
+ 
+<body>
+
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+<table border="0" cellspacing="0" width="100%">
+
+  <tbody>
+
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="../installation/images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%">Migrating from
+UrbanSim 3 to UrbanSim 4</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Migrating from UrbanSim 3 to UrbanSim 4</h1>
+
+<p>This document describes the steps necessary to migrate an
+UrbanSim 3 application to work with UrbanSim 4.</p>
+
+<p>If you find any omissions or errors, please report them to
+bugs at urbansim dot org.&nbsp;&nbsp;</p>
+
+<h2>General Comments</h2>
+
+<p>Be careful to use the same version of the documentation as
+the code, since the documentation and code continue to change
+daily.</p>
+
+<p>UrbanSim 4 does not have a consistency checker.&nbsp; In
+general, the consistency constraints of UrbanSim 3 still apply
+to UrbanSim 4, unless the relevant database table columns have
+changed in their semantics (see the list of table changes,
+below).</p>
+
+<p>The "configurations" mentioned in the manual are
+similar to the "scenario file" used in UrbanSim 3,
+though they use different technology.&nbsp; Both specify how to
+setup or configure the simulation.&nbsp; The UrbanSim 4
+configuration allows you to configure much more of the
+simulation than was possible with the scenario file.&nbsp;</p>
+
+<p>Do not have NULL values in any database column used by
+UrbanSim 4.&nbsp; If you do, UrbanSim 4 will fail in confusing
+ways.</p>
+
+We recommend that you use lower-case names for databases, tables, and
+columns.&nbsp; Our experience is that using a single case for all
+of these avoids problems if you ever need to migrate your data to
+another database system or operating system.&nbsp; Opus converts
+all table and column
+names into lower-case when it creates a dataset from a database
+table.
+<p>The set of variables used by a model is determined completely
+by the model's specification.&nbsp; Thus, it is impossible for our
+User Manual to document the set of variables used by a model.
+</p>
+
+<p>The set of variable names implemented in UrbanSim 4's <i>urbansim</i>
+package is different than those that came with UrbanSim 3.&nbsp;
+Some UrbanSim 3 variables have no direct counter-part in
+UrbanSim 4, and UrbanSim 4 contains many variables not found in
+UrbanSim 3.</p>
+
+<p>UrbanSim 4 makes it clearer that the set of appropriate
+accessibility variables depends upon the region being modeled,
+and the particular implementation of the region's travel
+model.&nbsp; Thus, in UrbanSim 4, the accessibility variables
+are packaged in the <i>psrc</i> package that is used to
+specialize UrbanSim to run on the Puget Sound Regional Council's
+metropolitan area.</p>
+
+<p>The use of development type is much less prominent in
+UrbanSim 4, since the developer model now is a location choice
+model where projects (agents) choose from gridcells
+(locations).&nbsp;&nbsp;</p>
+
+<p>User lower-case for the name of any Python package containing
+a module defining an Opus variable.&nbsp; For instance, the
+Python package 'gridcell' within <i>urbansim</i> must be
+lower-case, so that Opus can find the Opus variables defined
+within that package, e.g. 'urbansim.gridcell.acres_of_land'.</p>
+
+<p>We recommend using lower-case for the name of all Python
+packages.</p>
+
+<p>Use lower-case for any Opus variable names.</p>
+
+<h2>Changes to Specific <a name="baseyear">
+Baseyear Database</a>
+Tables</h2>
+
+<p>This section describes the specific changes needed to be made
+to the tables in the baseyear database.</p>
+
+<h4 align="left">accessibilities</h4>
+
+<ul>
+
+  <li>
+    <p align="left">This table is no longer used in
+UrbanSim 4.&nbsp; Instead, the data are drawn directly from the
+travel_data table.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">accessibilities_input</h4>
+
+<ul>
+
+  <li>
+    <p align="left">This table is no longer used in
+UrbanSim 4.&nbsp; Instead, the data are drawn directly from the
+travel_data table.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">annual_employment_control_totals</h4>
+
+<ul>
+
+  <li>
+    <p align="left">No longer uses column
+'total_employment'. </p>
+
+  </li>
+
+  <li>See the MySQL script <a href="annual_employment_control_totals.txt">annual_employment_control_totals.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<h4 align="left">developer_model_coefficients<br>
+
+developer_model_specification</h4>
+
+<ul>
+
+  <li>
+    <p align="left">The developer model as it existed in
+Java is no longer in UrbanSim 4.&nbsp; Instead, there is a family
+of development project location choice models, one for each type of
+building, that determine where to place new development
+projects.&nbsp; The set of development projects to build is
+computed by randomly sampling from the historical set of development
+projects until enough development has been scheduled for the current
+year.&nbsp; For more details, see the Users Manual.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">development_constraints</h4>
+
+<ul>
+
+  <li>
+    <p align="left">The 'plan_type_x' field (that could
+contain multiple plan types) has been replaced with the 'plan_type_id'
+field (that contains either a -1 for "don't care" or a single plan type
+id).&nbsp;&nbsp; </p>
+
+  </li>
+
+  <li>
+    <p align="left">The 'devtype_x' field is no longer
+used. </p>
+
+  </li>
+
+  <li>
+    <p align="left">This table now has six additional
+columns, specifying the development constraint for gridcells matching
+the rest of the field values (except for the constraint_id). </p>
+
+    <ul>
+
+      <li>
+        <p align="left">min_units </p>
+
+      </li>
+
+      <li>
+        <p align="left">max_units </p>
+
+      </li>
+
+      <li>
+        <p align="left">min_commercial_sqft </p>
+
+      </li>
+
+      <li>
+        <p align="left">max_commercial_sqft </p>
+
+      </li>
+
+      <li>
+        <p align="left">min_industrial_sqft </p>
+
+      </li>
+
+      <li> max_industrial_sqft</li>
+
+    </ul>
+
+  </li>
+
+  <li> The conversion process for this table is a very manual
+process. It would be difficult if not impossible to write a script to
+do this. In general though, this is what we did to convert the UrbanSim
+v3 table to v4. The development_constraints, development_types, and
+plan_types tables were all exported to an Excel document for ease of
+manipulation. I sorted the development_constraints table by plantype_x
+then devtype_x. Then for each unique plantype_x, I wrote down which
+devtype_x numbers were not accounted for. This represented for each
+plantype_x what devtype's were allowed. I made a new
+development_constraints table with the appropriate format (see above),
+and entered for each plan_type_id all of the appropriate numbers in
+each field (various commercial/industrial sqft and residential unit
+min/max numbers). This took care of constraining land conversions based
+on zoning. The next issue was constraining land conversions based on
+locational/environmental attributes. In the Eugene case it was easy, if
+a cell was in a wetland, outside the urban growth boundary, in a stream
+buffer, on a steep slope, or in a floodplain, no development was
+allowed, so a zero went in each field. Your application may be
+substantially more complicated than this because various combinations
+of zoning and environmental attributes may be combined. You may have 2
+or more records for a plan_type_id in a case where you may constrain
+differently depending on combinations of attributes.</li>
+
+</ul>
+
+<h4 align="left">development_events_exogenous</h4>
+
+<p align="left">This table replaces the development_events
+table used in
+UrbanSim 3.&nbsp; It uses the same schema, except that all of the
+improvement_value fields must contain 'A' (for adding units or
+sqft).&nbsp;&nbsp;</p>
+
+<p align="left">This name change was done since the
+development_events dataset
+will contain both prescheduled development events from the
+development_events_exogenous table as well as development events
+created by the
+sequence of development_project_transition model (to create new
+development
+projects; not events), the *_development_project_location_choice_models
+(to
+place those projects), the development_event_transition_model (to
+convert the
+development projects into development events), and the
+events_coordinator (to
+process those newly created events).</p>
+
+<h4 align="left">development_event_history</h4>
+
+<ul>
+
+  <li>
+Removed the following fields, since
+they were not being used: 
+    <ul>
+
+      <li>commercial_improvement_value_change_type</li>
+
+      <li>industrial_improvement_value_change_type</li>
+
+      <li>residential_improvement_value_change_type</li>
+
+      <li> governmental_improvement_value_change_type</li>
+      <li>fraction_residential_land_value_change_type</li>
+      <li>residential_units_change_type</li>
+      <li>commercial_sqft_change_type</li>
+      <li>industrial_sqft_change_type</li>
+      <li>governmental_sqft_change_type</li>
+      <li>development_type_change_type</li>
+
+    </ul>
+
+  </li>
+
+  <li>See the MySQL script <a href="development_event_history.txt">development_event_history.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<h4 align="left">development_types</h4>
+
+<ul>
+
+  <li>
+    <p align="left">The "primary_use_id" column is no
+longer used, and thus may be dropped from this table.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">employment_adhoc_sector_groups</h4>
+
+<ul>
+
+  <li>
+    <p align="left">The "elc_sector"
+and "scalable_sector" are no longer used to determine which
+employment location choice model to use for choosing the
+location for a job.&nbsp; Thus, they may be deleted from that
+table. Instead, the model to use for a job is determined as
+follows: </p>
+
+    <ul>
+
+      <li>
+        <p align="left">Use the <i>Non-Home-Based
+Employment Location Choice Model </i>
+for non-home-based jobs whose employment sector is listed in the
+non_home_based_employment_location_choice_model_specification
+table. </p>
+
+      </li>
+
+      <li>
+        <p align="left">Use the <i>Home-Based
+Employment Location Choice Model </i> for
+home-based jobs whose employment sector is listed in the
+home_based_employment_location_choice_model_specification table. </p>
+
+      </li>
+
+      <li>
+        <p align="left">Use the <i>Scaling
+Procedure for Jobs Model </i> for all other jobs. </p>
+
+      </li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<h4 align="left">gridcell</h4>
+
+<ul>
+
+  <li>
+    <p align="left">Add three new columns, containing
+reasonable, positive (greater than zero) values for each record: </p>
+
+    <ul>
+
+      <li>
+        <p align="left">commercial_sqft_per_job </p>
+
+      </li>
+
+      <li>
+        <p align="left">industrial_sqft_per_job </p>
+
+      </li>
+
+      <li> governmental_sqft_per_job</li>
+
+    </ul>
+
+  </li>
+
+  <li>See the MySQL script <a href="gridcells.txt">gridcells.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<h4 align="left">household_characteristics_for_ht</h4>
+
+<ul>
+
+  <li>
+    <p align="left">Rename all instances of characteristic
+&ldquo;age of head&rdquo; to be
+&ldquo;age_of_head&rdquo;.&nbsp; In general, the values of
+the characteristics field must not have any spaces or tabs. </p>
+
+  </li>
+
+  <li>
+    <p align="left">The column
+'total_number_of_households' is no longer used. </p>
+
+  </li>
+
+  <li>See the MySQL script <a href="household_characteristics_for_ht.txt">household_characteristics_for_ht.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<h4 align="left">jobs</h4>
+
+<ul>
+
+  <li>
+    <p align="left">Add a new integer 'building_type'
+column defining the type of space used by this job.&nbsp;
+Currently, the set of allowable values are hard-coded in the code (we
+plan to move these into the configuration at some point) as follows: </p>
+
+    <ul>
+
+      <li>
+        <p align="left">1 = commercial sqft </p>
+
+      </li>
+
+      <li>
+        <p align="left">2 = governmental sqft </p>
+
+      </li>
+
+      <li>
+        <p align="left">3 = industrial sqft </p>
+
+      </li>
+
+      <li> 4 = residential unit</li>
+
+    </ul>
+
+  </li>
+
+  <li>See the MySQL script <a href="jobs.txt">jobs.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<h4 align="left">jobs_for_estimation</h4>
+
+<ul>
+
+  <li>
+    <p align="left">UrbanSim 4 needs three of these
+tables, one for each of the types of employment location choice
+model.&nbsp; Each of these three tables contains only jobs to use
+for estimating the given type of jobs. </p>
+
+    <ul>
+
+      <li>
+        <p align="left">jobs_for_estimation_commercial </p>
+
+      </li>
+
+      <li>
+        <p align="left">jobs_for_estimation_home_based </p>
+
+      </li>
+
+      <li>
+        <p align="left">jobs_for_estimation_industrial </p>
+
+      </li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<h4 align="left">model_variables</h4>
+
+<ul>
+
+  <li>
+    <p align="left">This table is no longer used in
+UrbanSim 4.&nbsp; Instead, the variables used by a model are those
+listed in the model's specification and coefficient tables.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">sampling_rates</h4>
+
+<ul>
+
+  <li>
+    <p align="left">This table is no longer used in
+UrbanSim 4.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">urbansim_constants</h4>
+
+<p align="left">The following fields are no longer used in
+UrbanSim 4:</p>
+
+<ul>
+
+  <li>
+    <p align="left">developer_model_estimation_threshold_count
+    </p>
+
+  </li>
+
+  <li>
+    <p align="left">logit_choice_set_size_for_estimation </p>
+
+  </li>
+
+  <li>
+    <p align="left">number_of_developer_model_history_years
+- instead, the development_event_history table is "unrolled" for every
+year for which it has data. </p>
+
+  </li>
+
+  <li>
+    <p align="left">max_persons_per_household_for_control_totals
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">zones</h4>
+
+<ul>
+
+  <li>
+    <p align="left">Add the column
+&rsquo;faz_id&rsquo; to the zones table, indicating the
+Forecast Analysis Zone (FAZ) for each zone.
+    </p>
+
+  </li>
+
+</ul>
+
+<h4 align="left">zones_in_faz</h4>
+
+<ul>
+
+  <li>
+    <p align="left">This table is no longer used in
+UrbanSim 4.&nbsp; Instead, UrbanSim 4 uses the faz_id column in the
+zones table.
+    </p>
+
+  </li>
+
+</ul>
+
+<h2>Specification and Coefficients Tables </h2>
+
+<p>In UrbanSim 4, the specification and coefficient tables, e.g.
+land_price_model_specification and land_price_model_coefficients,
+are intermediary tables <i>produced</i> by the running the
+integrated estimation process.&nbsp; Thus, if you need to update
+the set of variables used by a model, or you need to re-estimate
+the coefficients, you should do this by re-running the
+estimation process; you probably should never directly edit the
+specification or coefficients tables in the database.&nbsp; </p>
+
+<h2>Database Tables no Longer Used </h2>
+
+<p>The following tables were used by UrbanSim 3 but are no longer
+used by
+UrbanSim 4: </p>
+
+<ul>
+
+  <li>household_characteristics_for_hlc </li>
+
+  <li>residential_units_for_home_based_jobs </li>
+
+  <li>sqft_for_non_home_based_jobs</li>
+
+  <li>transition_types</li>
+
+  <li>See the MySQL script <a href="general_table_cleanup.txt">general_table_cleanup.txt</a>
+that was used to convert the Eugene 1980 Baseyear database to the
+UrbanSim4 format</li>
+
+</ul>
+
+<a name="final">
+</a>
+</body>
+</html>

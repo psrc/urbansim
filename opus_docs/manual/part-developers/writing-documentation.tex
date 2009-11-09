@@ -1,0 +1,327 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Writing Documentation}
+
+This chapter provides information and guidelines on writing Opus and
+UrbanSim documentation.  This guide is written using \LaTeX{}.{\index{LaTeX@\LaTeX{}}}
+Other documentation includes a growing number of tutorials, and
+documentation on individual indicators.  Tutorials can be written using a
+variety of formatters, including \LaTeX{} and wiki; guidelines for writing
+tutorials is on our trac wiki at
+\url{http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/ContributingTutorials}.
+Documentation for individual indicators is written using XML files;
+guidelines for writing indicator documentation are given in Section
+\ref{sec:writing-indicators}.
+
+We use \LaTeX{} for the guide and other major documents,
+since it produces elegantly formatted printable document, handles
+mathematics well, and includes facilities for cross-referencing and
+indexing.  In addition to a pdf version of the documentation written using
+\LaTeX{}, we use the latex2html \index{latex2html}
+converter program to produce an html version.
+
+\section{The Reference Manual and User Guide}
+
+The Opus and UrbanSim 4 documentation in this guide follows the Python
+documentation standards (or at least it's supposed to), and is
+written using \LaTeX{} and the Python
+documentation macros.  The latest version of this Guide (as a pdf file),
+and the Opus tutorial, is automatically posted on the UrbanSim website at
+\url{http://www.urbansim.org/} whenever a new version of any of the
+manual's components is checked in to the subversion repository.  There is
+also an html version produced using latex2html, also produced by the same
+build script.
+
+The Guide includes a table of contents and a (currently rudimentary) index.
+The Adobe \index{Adobe} pdf reader also includes a nice full-text-search tool that can,
+of course, be used on this manual when reading the pdf version online.
+
+%begin{latexonly}
+\begin{seealso}
+\seetitle[http://docs.python.org/doc/doc.html]{Documenting Python} {This
+  document describes how to document Python using the \LaTeX{} macros
+  developed for the purpose.}
+
+\seetitle[http://docs.python.org/download.html]{Python Documentation
+  Download page} {The download page provides links for downloading the
+  Python documentation in various formats, in particular \LaTeX{} source.
+  The macros in the \file{texinputs/} subdirectory there have been copied
+  into the \file{docs/latex} directory (and occasionally modified) for use
+  in formatting this Guide.  Other manuals there are also useful as
+  examples of using the macros.}
+\end{seealso}
+%end{latexonly}
+\begin{htmlonly}
+See also:
+
+Documenting Python (http://docs.python.org/doc/doc.html): This document
+describes how to document Python using the \LaTeX{} macros
+developed for the purpose.
+
+Python Documentation Download page (http://docs.python.org/download.html):
+The download page provides links for downloading the Python documentation
+in various formats, in particular \LaTeX{} source.  The macros in the
+\file{texinputs/} subdirectory there have been copied into the
+\file{docs/latex} directory (and occasionally modified) for use in
+formatting this Guide.  Other manuals there are also useful as examples
+of using the macros.
+\end{htmlonly}
+
+\section{Using Python Macros}
+
+The Python macros include logical markup for the elements of the language
+and related concepts.  Use the \LaTeX{} macros defined in python.sty to
+format source code, along with function, method, and file names, and so
+forth.  This ensures a uniform appearance.  Also, the Python documentation
+states that sometime in the future, the Python documentation is likely to
+be converted to XML or some other structured markup, and using the logical
+markup now will facilitate the transition.  Here are some useful examples
+of such macros.  See the ``Inline Markup'' section of ``Documenting Python''
+for the complete list
+(\url{http://www.python.org/doc/current/doc/inline-markup.html}).
+
+\begin{verbatim}
+\module{spam}
+\file{parrot.py}
+\function{setup()}
+\method{append()}
+\member{sproket}
+\program{pkgtool}
+\url{http://www.conglomocorp.com}
+\kbd{Control-D}
+\samp{import sys; sys.exit()}.
+\code{sys.argv[0]}
+\class{Exception}
+\character{\e n}     % this is for \n
+\samp{\program{python} \programopt{-m} \var{module} [arg] ...},
+\keyword{kwd}
+\exception{expt}
+\class{Giraffe}
+\pytype{string}           % built-in Python type
+\UNIX    % the system
+\Cpp{}
+\end{verbatim}
+
+In addition to the standard Python macros, we've redefined the ``package'' macro 
+to also add the package to the index, and added another macro ``variable'' for 
+formatting Opus variables and expressions.  These are defined in the file 
+\file{opus_docs/manual/macros.tex}.
+
+
+\section{Writing Email Addresses in Documentation}
+
+The Reference Manual and User Guide is published on the UrbanSim website in
+both pdf and html form.  To avoid serving as a spam magnet, please don't put
+real email addresses in the document -- instead use circumlocutions of
+some sort, e.g.\
+
+\begin{verbatim}
+info (at) urbansim.org
+\end{verbatim}
+
+\section{Indexing}
+
+Ideally, terms should be indexed as documentation is written.  Use
+\verb|\index{ ... }| and related commands to accomplish this.  Consider
+what would be useful for a reader of the manual in deciding what and where
+to place index commands.  For example, for ``primary attribute'' there
+should probably be an index entry where this term is first used or defined,
+but not every place it is used.  (There's full text search for that after all.)
+
+The \verb|\index{ ... }| command produces no text where it is written, and
+it's best to put the command next to the word it indexes, with no spaces
+between them, so that the page number isn't off by one if the word begins
+or ends a page.
+
+Some particular cases:
+
+\begin{description}
+
+\item[Subentries] For index terms with a subentry, use this form:
+  \verb|\index{MySQL!column name lengths}|.
+
+\item[Cross-references] Entries that are simply ``See'' and another entry
+  can be created using the vertical bar with this command:
+  \verb+\index{IDE|see{Interactive Development Environment}}+.  These
+  commands are probably best placed in the glossary next to the given term.
+
+\item[Font changes] Use the standard Python macros to get the correct font
+  for file names, package names, and so forth.  For example, \LaTeX{}
+  can be rendered using its traditional typography in the
+  index using \verb|{\index{latex@\LaTeX{}}}|.  For file names, classes and
+  similar terms whose nature isn't immediately obvious, put an additional
+  appropriate term in the index entry.  For example
+  \verb|\index{Model@\class{Model} class}| generates ``\class{Model} class''
+  in the index.
+
+\end{description}
+
+The index is in two-column format, so for very long words in the index (e.g. 
+class names), you can suggest hyphenation points to \LaTeX{}.
+
+\section{Some Other Guidelines}
+
+Here are a few other guidelines.  \emph{These are mostly noted as a result
+  of noticing issues in the existing documentation \ldots later, we can
+  have a more coherent list.}
+
+\begin{itemize}
+
+\item Use the \verb|\begin{verbatim}| environment to format larger blocks of
+source code.
+
+\item Use logical rather than physical markup, for example the
+\verb|\emph{ ... }| environment for emphasis (italics), rather than
+\verb|\em| or \verb|\it|.
+
+\item Use the \verb|\ldots| macro to produce three dots (\ldots) indicating
+  ellipses --- if you just write three periods in a row they are spaced too
+  closely (for example: ...).
+
+\item The latex2html \index{latex2html} program handles the mathematical typesetting from
+  \LaTeX{} by including the math as a bitmap.  This is reasonable for
+  actual equations, but looks a bit odd for simple symbols in the middle of
+  a sentence.  There should be a switch to turn these into ordinary text,
+  or in the extreme we could write alternate latex or html macros.
+  However, if this can't be fixed, avoid using the math typesetting
+  environments if you don't need them.  For example, to produce a
+  backslash, use \verb|\textbackslash| or \verb$\verb|\|$ rather than
+  \verb|$\backslash$| (since in latex2html \index{latex2html} the first two options produce a
+  character, the third a GIF image).
+
+\item Do not use underscores in \verb|.tex| filenames. Use hyphens instead (i.e. use `-' instead of `_').
+
+\end{itemize}
+
+
+\emph{Normally, a good heuristic is to copy the existing examples in the
+  manual when writing new ones.  However, much of the \LaTeX{} here doesn't yet
+  take advantage of these macros.  So look at the description linked above
+  instead for now.}
+
+\section{Writing Indicator Documentation}
+\label{sec:writing-indicators}
+
+Documentation on an individual indicator is contained in an XML file, to
+make it convenient to browse to the indicator documentation on the web.
+
+These XML files go in the \module{opus_docs} project, in the directory
+\file{opus_docs/docs/indicators}.  The new indicator should also be added
+to the \file{predefined_indicators.xml} file in an appropriate category.
+(At the moment we don't support having multiple indicator directories,
+e.g.\ for specific applications of UrbanSim, but we will probably add this
+in the future.)
+
+The indicator documentation is
+linked from \url{http://www.urbansim.org/}.  There is also a link
+to a web page, ``Reading Indicator Documentation,'' which briefly describes
+each section of the indicator documentation.  It is intended for people who
+are reading the documentation (as opposed to writing it).
+Each section of the documentation for an individual indicator
+also includes a link to the corresponding section of the ``Reading
+Indicator Documentation'' web page.
+
+The technical documentation for each indicator should be relatively neutral.  There is also
+an experimental Indicator Perspectives framework, which allows different organizations
+to present their perspectives on which indicators are important and how to interpret
+them.  Support for this may be added to UrbanSim 4 in the future.  The mechanism is
+outlined in the following paper:
+Alan Borning, Batya Friedman, Janet Davis, and Peyina Lin,
+``Informing Public Deliberation: Value Sensitive Design of Indicators for a
+Large-Scale Urban Simulation,'' \emph{Proceedings of the 9th European
+Conference on Computer Supported Cooperative Work}, Paris, September 2005.  (Available
+from \url{http://www.urbansim.org/papers/}.)
+
+The technical documentation for each indicator includes a definition,
+related indicators, limitations, and other information.  The web display
+also includes links to the Opus variable or primary attribute for that
+indicator.
+
+Required elements in the XML are marked as \emph{required}; if these
+are missing a note in red (such as ``specification missing'') will
+appear in the rendered web page. Other elements are optional; if
+omitted the heading will still appear in the rendered web page, with
+an appropriate note. The DTD file that formally specifies the syntax
+of an XML indicator definition is \file{indicator-declaration.dtd};
+the file \file{indicators.xsl} specifies how the indicator is
+rendered on a web page when browsing.
+
+\begin{description}
+
+\item[Definition] \emph{(required)} A short, accurate definition of this
+indicator.  In the rendered web page, this appears directly under the
+indicator name (there isn't a separate heading ``definition'').
+
+\item[Principal Uses] What are the principal uses of this indicator?  (This
+element should say whether the indicator is useful for policy evaluation,
+or mostly diagnostic.  An indicator is useful for policy evaluation if it
+is useful in evaluating whether particular policy goals are supported or not by
+different scenarios.  An indicator is useful for diagnosis if it has a
+clear directionality given different test input scenarios.)
+
+\item[Interpreting Results] Describes how to interpret the results from
+this indicator, either from a diagnostic perspective, a policy perspective,
+or both.
+
+\item[Display Format]
+\emph{(Appears as ``Units of Measurement and Precision'')} This
+section provides a machine-readable specification of the default
+display for the indicator data.  Since it is machine-readable, it
+must use a set of XML elements, rather than being free-form English
+text.  The first element should specify the units used, e.g.\
+\verb|<units>square feet</units>| or
+\verb|<units>persons/acre</units>|.  If the data is unitless then
+this element should be \verb|<unitless/>| (this would be the case
+for ratios, e.g.\ a vacancy rate).  The next element should specify
+how numbers should be displayed, and how many decimal places of
+precision should be used.  The options here are
+\verb|<numberdigits="N"/>|, \verb|<percentage digits="N"/>|, or
+\verb|<scientific digits="N"/>|, where N in each case is the number
+of digits.  For percentages, this is the number of digits
+\emph{after} the decimal place, so that if N=2 the value 0.08352222
+would displayed as 8.35\%.
+
+\item[Specification] \emph{(required)} A human-readable specification of
+how the indicator can be computed.  This is not necessarily the same as how
+it is actually computed.
+
+\item[Limitations] Known limitations or problems.
+
+\item[Related Indicators] A short discussion of related indicators.  If
+this indicator could be computed as the composite of other indicators, list
+them here, and describe the relation (see ``Jobs per capita'' for an
+example).  Another example of using this category is in the ``Employment
+density'', ``Household density'', and ``Population density'' indicators,
+which all show different aspects of density.  However, if this indicator is
+just related to others in its category, by virtue of being in that
+category, then that information can probably be safely omitted.
+
+\item[How Modeled]
+This element should describe whether the value of this indicator is
+determined by the interactions of UrbanSim's component models, or whether
+it is exogenous (that is, is determined outside the operation of UrbanSim).
+In some cases, the value of the indicator will be exogenous for the
+regional geography, but not for sub-regional geographies.  If this element
+is omitted, the default output is ``Not specified.  (In this case,
+normally one can assume that the value of this indicator is modeled by
+UrbanSim itself, as opposed to being exogenous, that is, coming from an
+external source such as a control total.)''
+
+\item[Indicator Source, Evolution, and Examples of Use]
+Where did the definition and code for this indicator come from?  How
+has its specification evolved?  If known, provide examples of using this
+indicator (including citations).
+
+\item[Source] This element gives a link to the source code for the
+indicator if it is defined as an Opus variable.  If it is a primary
+attribute, the attribute should be listed (with no link), followed by
+``Opus primary attribute'' in parentheses.  (See for example the
+documentation for ``Residential units''.)
+
+\end{description}

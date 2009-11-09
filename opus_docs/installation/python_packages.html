@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+
+<head>
+<title>Installing Python Packages</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css">
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt;   Python Packages</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing Python Packages</h1>
+
+<p>Some additional Python libraries are required, recommended, or optional
+for use with Opus.&nbsp; You must have the required libraries to run
+Opus.&nbsp; The recommended libraries are not necessary to run Opus, but
+certain functionality will be unavailable without them.&nbsp; The optional
+libraries are Python modules that are needed only in special
+cases.&nbsp;</p>
+
+<p>We've listed version numbers for the packages, and have tested the
+  Opus/UrbanSim code with those versions.  Generally you should also be
+  able to use more recent versions of the packages, except as specifically noted.</p>
+
+<p>Caution! For binary versions of the packages, the package you need
+depends on the version of Python you are using.  Be sure you have the right
+one.  In most cases, the Python version number (e.g. 2.5) will be part of the
+filename.</p>
+
+<p>Some of these packages are available for download from
+the <a href="http://www.urbansim.org/opus/third-party/">UrbanSim
+third-party software directory</a>.  (The advantage of getting the packages
+from the UrbanSim third-party directory is that we've tested the system
+with this particular set of versions.)  We will also provide links to
+websites where they can be downloaded below.</p>
+
+<p>In many cases, obtaining these packages is made simpler by the use of
+ Easy Install, a Python module that can help you download and build Python
+ packages.  For more on Easy
+ Install, <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit
+ the PEAK webpage</a>.
+
+<p>Download <a href="http://peak.telecommunity.com/dist/ez_setup.py">ez_setup.py</a> to 
+  your computer.  Run it (from the directory it's in) by typing
+  
+<pre>$ python ez_setup.py</pre>
+
+You can use Easy Install to download and install a package, or to install a package 
+(either a *.egg file or a *.tar.gz) already downloaded to your computer.  To install 
+downloaded package, type the following at the command prompt:
+<pre>$ easy_install [<i>filename</i>]</pre>
+where [<i>filename</i>] is the path from your current location of the downloaded file.</p>
+
+<h2><i>Required</i> Python Packages</h2>
+    <ul>
+      <li><b>numpy 1.2.1</b>
+        (<a href="http://numpy.scipy.org/">http://numpy.scipy.org/</a>) is
+        a fast array-processing library used throughout Opus.  (Earlier versions, back to 1.0.4,
+        currently work as well, but if you are downloading a fresh numpy get the new one.)</li>
+      
+      <li><b>scipy 0.7.0</b>
+        (<a href="http://www.scipy.org/">http://www.scipy.org/</a>) is
+        open-source software for mathematics, science, and
+        engineering. Generally you need to get a version of scipy that is
+        compatible with your numpy version.  Opus needs the scipy.ndimage
+        package. <i> (If you have trouble installing scipy you
+        can <a href="scipy.html">install just the ndimage
+        packages</a> -- however the ndimage file is for an old version of numpy - 1.0.4.)</i></li>
+          
+      <li><b>SQLAlchemy 0.4.5</b> (or greater) (<a href="http://www.sqlalchemy.org">http://www.sqlalchemy.org</a>)
+        allows programmatic access to a variety of database engines.</li>
+
+      <li><b>Elixir 0.6.0</b> (or greater) (<a href="http://elixir.ematia.de/trac/wiki">http://elixir.ematia.de</a>)
+        is a declarative layer on top of the SQLAlchemy library.</li>
+        
+     <li><b>PyQt 4.4.4 (or greater)</b> (<a href="http://www.riverbankcomputing.co.uk/software/pyqt/">http://www.riverbankcomputing.co.uk/pyqt/</a>) is a
+     package that allows Python to interface with the Qt application framework to produce nice graphical user interfaces.
+     This requires Qt to run.  For windows, there is a downloadable *.exe file on the Riverbank Computing downloads page that contains Qt, PyQt, and everything to
+     create the necessary bindings.  For Mac and Linux, you will need to download and install Qt separately.  There are more details on this on the Riverbank Computing webpage.</li>
+        
+    </ul>
+<h2><i>Recommended</i> Python Packages</h2>
+    <ul>
+      <li>If you are using MySQL, install <b>MySQL-python 1.2.2</b> (<a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a>).&nbsp;
+        This
+        provides our connection from Python to MySQL.&nbsp;&nbsp;(If you will
+        build this package from scratch, you will need to install the
+        mysql-devel package, too.)</li>
+        
+      <li><b>matplotlib 0.98.5.2</b> (<a href="http://matplotlib.sourceforge.net/">http://matplotlib.sourceforge.net/</a>)
+        is a quite full-featured Python package for creating plots and graphs.</li>
+        
+      <li><b>mapnik 0.5.1</b> (<a href="http://mapnik.org/">http://mapnik.org/</a>)
+        is a toolkit for developing mapping applications.</li>
+        
+    </ul>
+<h2><i>Optional </i>Python Packages</h2>
+    <ul>
+      <li>If you are using R, install <b>RPy</b> (<a href="http://rpy.sourceforge.net/">http://rpy.sourceforge.net/</a>).&nbsp;
+        This
+        is a Python interface for the statistical programming language R (tested
+        with version 0.4.6).</li>
+    <li>If you need to use .dbf files (for example, those produced by ArcGIS),
+        install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>
+    </ul>
+
+</body>
+</html>

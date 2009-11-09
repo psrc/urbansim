@@ -1,0 +1,329 @@
+\chapter{Data for Parcel-based Applications}
+
+\section{Database Tables About Parcels}
+
+\subsection{The {\tt parcels} table}
+\label{sec:db-tables-parcels}
+
+This table contains attributes about parcels.  In general, there will be an identifier in this table for every other level of geography that you may want to aggregate up to.  In this example, there are attributes for zones, cities, counties, census blocks, etc.  Having these identifiers on the parcel makes it easier to aggregate indicators up to higher level geographies.  Any other attributes that one may want to restrict development by, or update throughout a simulation could be stored here as well.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+%\begin{description}
+parcel\_id & integer & unique identifier \\ \hline
+zone\_id & integer &  id number for the zone that the parcel's centroid falls within \\ \hline
+land\_use\_type\_id & integer & identifies the land use of the parcel \\ \hline
+city\_id & integer & id number for the city that the parcel's centroid falls within \\ \hline
+county\_id & integer & id number for the county that the parcel's centroid falls within\\ \hline
+plan\_type\_id & integer & id number that identifies the parcel's plan type\\ \hline
+parcel\_sqft & integer & square feet of the parcel as an integer \\ \hline
+assessor\_parcel\_id & integer & \emph{(optional)} original tax assessor's id number\\ \hline
+tax\_exempt\_flag & integer & \emph{(optional)} identifies parcel as tax exempt or not\\ \hline
+land\_value & long & value of the land from the assessor \\ \hline
+is\_in\_flood\_plain & integer & \emph{(optional)} indicates whether or not a parcel is in a flood plain\\ \hline
+is\_on\_steep\_slope & integer & \emph{(optional)} indicates whether or not a parcel is on a steep slope\\ \hline
+is\_in\_fault\_zone & integer & \emph{(optional)} indicates whether or not a parcel is in a fault zone\\ \hline
+centroid\_x & long & state plane x coordinate of parcel centroid \\ \hline
+centroid\_y & long & state plane y coordinate of parcel centroid\\ \hline
+census\_block\_id & integer &  \emph{(optional)} id number for the census block that the parcel's centroid falls within\\ \hline
+raz\_id & integer & \emph{(optional)} id number for the raz that the parcel's centroid falls within\\ \hline
+\end{tabular}
+
+\section{Database Tables about Buildings}
+
+\subsection{The {\tt buildings} table}
+
+In all recently developed UrbanSim applications, buildings of all types have been represented in their own
+table, and linked to the unit of geography used for location choice: gridcell, parcel, or zone.  This configuration
+provides a simple and flexible means or organizing the data for UrbanSim.  The buildings table is similar
+for each of the types of applications, whether gridcell, parcel or zone -- the only significant difference is the
+location identifier.  In the table below, parcel id is included, but for gridcell or zone applications, the user
+should substitute gridcell id or zone id.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+building\_id & integer & unique identifier \\ \hline
+building\_quality\_id & integer & \emph{(optional)} identified for building quality\\ \hline
+building\_type\_id & integer & identifier for building type; valid id in the \verb|building_types| table\\ \hline
+improvement\_value & long & value of building (replacement cost)\\ \hline
+land\_area & long & land area (usually in sqft) associated with building, includes footprint plus associated area such as landscaping and parking.\\ \hline
+non\_residential\_sqft & long & non-residential square footage of building\\ \hline 
+parcel\_id & integer & identifier of parcel in which building is located\\ \hline
+residential\_units & integer & number of residential units in the building\\ \hline
+sqft\_per\_unit & integer & number of residential square feet per unit in the building\\ \hline
+stories & integer & \emph{(optional)} number of stories in the building\\ \hline
+tax\_exempt & integer & \emph{(optional)} indicator for whether building is tax-exempt\\ \hline
+year\_built & integer & year of construction of the building\\ \hline
+\end{tabular}
+
+
+\subsection{The {\tt building_types} table}
+%
+This is a table about available types of buildings.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+building\_type\_id & integer & unique identifier \\ \hline
+building\_type\_name & varchar & name of the building type \\\hline
+description & varchar & \emph{(optional)} description of the building type \\\hline
+generic_building_type_id & integer & \emph{(optional)} identifier for generic building type \\\hline
+generic_building_type_description & varchar & \emph{(optional)}\\\hline
+is_residential & boolean & 1 if this building type is residential, 0 otherwise \\\hline
+unit_name & varchar & name of units for this building type, e.g. 'commercial_sqft' or 'residential_units' \\\hline
+\end{tabular}
+
+
+\section{Database Tables About Development Projects}
+
+\subsection{The {\tt development\_project\_proposals} table}
+\label{sec:db-tables-development-project-proposals}
+
+A record in this table, when combined with one or more records in the development\_project\_components table, represents a "known" development project. 
+This table would be populated with projects known to be coming in the future. 
+This table would also be populated during a simulation run for projects that are not yet complete, in other words, 
+projects that are in the middle of developing according to their velocity function. 
+It is entirely possible for a simulation run to happen without pre-populating this table with records.
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+development\_project\_id & integer & unique identifier \\ \hline
+development\_template\_id & integer & indicates the development template that represents the project\\ \hline
+far & float & floor to area ratio of the project\\ \hline
+percent\_open & integer & the percent of the land area of the project accounted for by "overhead" uses such as rights of way or open space\\ \hline
+status\_id & integer & this represents active, proposed, or planned developments with the following codes: 
+1: in active development, 2: proposed for development, 3: planned and will be developed, 4: tentative, 
+5: not available (already developed, 6: refused\\ \hline
+parcel\_id & integer & indicates the parcel\_id on which the development occurs\\ \hline
+start\_year & integer &  the year in which this project is expected to begin building\\ \hline
+built\_sqft\_to\_date & integer & the number of non-residential sqft built in the current simulation year\\ \hline
+built\_units\_to\_date & integer & the number of residential units built in the current simulation year \\ \hline
+\end{tabular}
+
+
+\subsection{The {\tt development\_project\_proposal\_components} table}
+\label{sec:db-tables-development-project-proposal-components}
+
+A record in this table represents a portion of a development project identified in the development\_project\_proposals table. 
+In some sense a single record here is meant to represent a single building, or part of a building. 
+Therefore individual records here do not necessarily represent single free-standing buildings, 
+although they are mostly treated that way. This table allows for the flexible representation of mixed uses to occur on a parcel. 
+Examples include multiple free-standing buildings with different uses, a single building with multiple uses inside of it 
+(a single record for each use), or further complex representations of mixed use. This table is not required 
+by UrbanSim, but it is created by the developer model and cached every simulation year. 
+
+\begin{tabular}{p{2.1in}lp{3.3in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+development\_project\_component\_id & integer & unique identifier\\ \hline
+development\_project\_id & integer & identifies which development the project belongs to\\ \hline
+percent\_of\_building\_sqft & integer & identifies the percentage of the building that this component takes up.
+100\% would indicate a free-standing building with a single use, and several records with percent\_of\_building\_sqft 
+adding up to 100\% would indicate a multiple use single building. \\ \hline
+construction\_cost\_per\_unit & integer & the per unit construction cost for residential uses only\\ \hline
+sqft\_per\_unit & integer & the square footage per residential unit\\ \hline
+building\_type\_id & integer & indicates the building type of this particular component\\ \hline
+land\_area & integer & the land area "claimed" by the building component, including not only the building footprint 
+but also additional land used such as yards, parking lots, etc. \\ \hline
+residential\_units & integer & the number of residential units in the building component \\ \hline
+\end{tabular}
+
+\subsection{The {\tt development\_templates} table}
+\label{sec:db-tables-development-templates}
+\index{development templates}
+
+This table, along with corresponding records in the development\_template\_components table, 
+represents development templates that can be used to define virtually any size and configuration of a development project, 
+from a single house on an infill lot to a large subdivision, to a mixed use project with retail on the first floor and 
+condominiums above. The contents of this table are roughly comparable to the development\_projects table, 
+since development templates become proposals once they are determined to fit within a parcel and are allowed by development 
+constraints, and then become projects if they are chosen to be constructed. See also page~\pageref{sec-development-templates}.
+
+
+\begin{tabular}{p{2in}lp{3.5in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+development\_template\_id & integer & unique identifier\\ \hline
+percent\_open & integer & the percent of the land area of the project accounted for by "overhead" uses such as rights of way or open space\\ \hline
+min\_land & integer & minimum amount of land in square feet to be utilized for this development\\ \hline
+max\_land & integer & maximum amount of land in square feet to be utilized for this development\\ \hline
+density\_type & integer & a readable name that describes the `density' field: units per acre, FAR\\ \hline
+density & integer & indicates the density of the development\\ \hline
+land\_use\_type\_id & integer & specifies the land use type for the development template\\ \hline
+development\_type & integer & a readable name that describes the type of development this record represents (e.g. SFR-parcel, MFR-apartment, MFR-condo, etc.), this field is not used by the model and is there to make the table more readable \\ \hline
+\end{tabular}
+
+\subsection{The {\tt development\_template\_components} table}
+\label{sec:db-tables-development-template-components}
+
+This table is roughly equivalent to the development\_project_proposal_components table and represents buildings or parts 
+of buildings to be included in a particular development template.  By breaking development templates into components, 
+development project templates can be configured as hierarchies or combinations of building blocks, providing a very flexible 
+means of representing a wide variety of development types.  Note that the templates can be generated using real or hypothetical data, 
+since they will be compared to regulatory constraints and the size constraints of parcels.
+
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+development\_template\_component\_id & integer & unique identifier\\ \hline
+development\_template\_id & integer & indicates which development template this component belongs to\\ \hline
+building\_type\_id & integer & indicates the building type of this particular component\\ \hline
+percent\_of\_building\_sqft & integer & identifies the percentage of the building that this component takes up\\
+construction\_cost\_per\_unit & integer & the per unit construction cost\\ \hline
+building\_sqft\_per\_unit & integer & the square footage per residential unit \\ \hline
+\end{tabular}
+
+\subsection{The {\tt velocity\_functions} table}
+\label{sec:db-tables-velocity-functions}
+
+This table is designed to hold the velocity functions that specify the rate at which development is built out.  A Development Project Proposal has a calculated variable called units_proposed that is the total number of units that will be built.  The calculated variable annual_construction_schedule on the Development Project Proposal Components dataset uses units_proposed to select which of the velocity functions in this table should apply
+based on the building_type_id and units_proposed of the Development Project Proposal Component.
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+velocity\_function\_id & integer & unique identifier\\ \hline
+annual\_construction\_schedule & string &  this field will contain a numbered list in brackets of this form: `[25, 50, 75, 100]' 
+indicating with each entry the percentage complete that the project would be in each year from its initiation.  A particular development\_template\_component or development\_project\_component will have one velocity\_function\_id attached to it.  This could take the form [0, 0, 0, 33, 66, 100] for example, would have no construction in its first 3 years, then in year 4 it would be 33\% complete, and 66\% and 100\% complete in years 5 and 6 respectively.\\ \hline
+building\_type\_id & integer & indicates the building type that this particular velocity function applies to\\ \hline
+minimum\_units & integer & lower bound on a range of units that this velocity function applies to\\ \hline
+maximum\_units & integer & upper bound on a range of units that this velocity function applies to\\ \hline
+\end{tabular}
+
+
+\subsection{The {\tt demolition\_cost\_per\_sqft} table}
+\label{sec:db-tables-demolition-cost-per-sqft}
+
+This table provides information to the developer model about the costs of demolition by building type. These numbers are used to calculate the cost of demolition of existing development so that a more accurate cost of redevelopment can be calculated.
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+building\_type\_id & integer & building type\\ \hline
+demolition\_cost\_per\_sqft & integer & cost in dollars per sqft of demolition\\ \hline 
+\end{tabular}
+
+
+\subsection{The {\tt building\_sqft\_per\_job} table}
+\label{sec:db-tables-building-sqft-per-job}
+
+This table contains information on the amount of space each job will take in a particular building type, by zone.
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+zone\_id & integer & the zone the record applies to\\ \hline
+building\_type\_id & integer & the building type the record applies to\\ \hline
+building\_sqft\_per\_job & integer & the sqft per job each job will take in a particular building type in a particular zone \\ \hline
+\end{tabular}
+
+\section{Database Tables About Development Constraints}
+
+\subsection{The {\tt development_constraints} table}
+\index{development constraints}
+%
+Note that this table is substantially different than its counterpart for a gridcell-based
+model application.  This is because the real estate development model is fundamentally
+different as well.  The model that uses this table in a parcel-based application is the 
+development\_project\_proposal\_sampling\_model (see page~\pageref{sec:model-system-development-project-proposal-sampling-model}), 
+which evaluates alternative 
+development templates that can be placed on a parcel according to the constraints
+specified in this table, and then computes a return on investment on the remaining
+viable proposals, before choosing which proposals to build.
+This table defines rules that restrict the possible development types a
+developer can create on a particular parcel.  Each row defines one rule.
+Development is not allowed on any parcel that matches any of these rules. See also page~\pageref{sec-development-constraints}.
+
+\begin{tabular}{llp{3.5in}}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline constraint_id & integer & Unique rule identification number  \\
+
+\hline constraint\_type & string (14) &  units\_per\_acre or far (floor-area-ratio) \\
+
+\hline generic\_land\_use\_type\_id & integer & Id of a record in the generic\_land\_use\_types table \\
+
+\hline maximum & integer & Maximum value for the allowed development, in terms of the constraint type \\
+
+\hline minimum & integer & Minimum value for the allowed development, in terms of the constraint type \\
+
+\hline plan_type_id & integer & Id of a record in the plan_types table. \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item constraint_id must be a unique positive integer.
+
+\end{itemize}
+
+\section{Database Tables About Target Vacancy Rates}
+
+\subsection{The {\tt target_vacancies} table}
+\label{sec:table-target-vacancies-parcel}
+
+The \verb|target_vacancies| table is used by the development proposal choice
+model. It gives the model information about acceptable vacancy rates. The table
+has one row for each year the simulation runs. Each row gives target values for
+the residential and nonresidential vacancies for that year, which are defined
+below.  Only data after the base year is used.
+
+\begin{tabular}{lll}
+
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline year & integer & Year of the simulation for which the vacancy
+targets
+apply  \\
+
+\hline target_vacancy & float & Ratio of unused 
+space to total space, based on residential\_unit or sqft   \\
+
+\hline building_type_id & Integer & Id of a record in the building_types table  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item There must be exactly one row for each year to be simulated.
+\item target_vacancy must be between 0 and 1, inclusive.
+\end{itemize}
+
+
+\section{Database Tables About Refinement of Simulation Results}
+\subsection{The {\tt refinements} table}
+\label{sec:db-tables-refinements}
+
+This table is used by the refinement model to adjust simulation results to incorporate added information or constraints specified by the user. The entries in this table define refinements to make to an existing simulation run. No fields can be null, if the attribute is not needed put a single quote (') in the field.
+
+\begin{tabular}{p{2.3in}lp{3.2in}}
+%\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+refinement\_id & integer & unique identifier\\ \hline
+agent\_expression & string & string expression defining what agents to add or subtract, e.g. households, jobs\\ \hline
+location\_capacity\_attribute & string & defines a capacity attribute such as non\_residential\_sqft\\ \hline
+location\_expression & string & expression defining where to add or subtract agents, e.g. `zone = 123'\\ \hline
+amount & integer & number of agents to add or subtract\\ \hline
+year & integer & year to which this refinement applies\\ \hline
+action & string & add, subtract, or target are the valid entries\\ \hline
+transaction\_id & integer & if two or more records have matching transaction ids the refinement model will attempt to balance between the refinements \\ \hline
+\end{tabular}

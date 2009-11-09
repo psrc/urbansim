@@ -1,0 +1,20 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario type="scenario" name="test_scenario">
+      <description type="string">a test scenario</description>
+      <includeyears parser_action="include" type="path">scenario_manager/scenario/stuff_to_include</includeyears>
+      <includexy parser_action="include" type="path">scenario_manager/scenario/morestuff</includexy>
+      <stuff_to_include parser_action="only_for_includes" type="dictionary">
+        <firstyear type="integer">2000</firstyear>
+        <lastyear type="integer">2020</lastyear>
+      </stuff_to_include>
+      <morestuff type="dictionary">
+        <x type="integer">10</x>
+        <y type="integer">20</y>
+      </morestuff>
+    </scenario>
+  </scenario_manager>
+</opus_project>

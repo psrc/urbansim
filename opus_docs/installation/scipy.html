@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Installing local versions of scipy's ndimage (or stsci) packages</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.html">Installing Opus &amp; UrbanSim</a>
+        &gt; <a href="python_packages.html">Python Packages</a>
+        &gt; Installing local versions of scipy's ndimage and stsci packages</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing local versions of scipy's ndimage (or stsci) packages</h1>
+
+<p>These instructions are for people who are having problems installing scipy
+from the executable or building it from source.&nbsp; These instructions have been tested on
+Linux.</p>
+
+<h3>Install scipy.ndimage</h3>
+<p>Opus needs both numpy and the scipy.ndimage package.&nbsp; The scipy.ndimage
+package is included in numarray, but not in numpy.&nbsp; If you need it, the
+recommended route is to install scipy.&nbsp;&nbsp;</p>
+<p>In some cases, it is not practical to install scipy.&nbsp; For instance,
+installing scipy can be difficult if you need to build scipy from source on a
+Linux machine where you do not have root permissions.&nbsp;&nbsp;</p>
+<p>If you cannot install scipy, you can instead install just the scipy.ndimage.&nbsp;
+We have stashed a copy of this package on our website and modified it to install
+into the scipy directory of your site-packages directory.&nbsp; This version of scipy.ndimage
+works with an older version of numpy (1.0.4), but
+not newer ones unfortunately.  Here are the
+instructions for installing this package:</p>
+<ol>
+  <li>Create a site-packages directory into which to install additional packages
+    (e.g.: ~home/python25/lib/python2.5/site-packages).</li>
+  <li>Add this site-packages directory to your PYTHONPATH.</li>
+  <li>Create a scipy directory within site-packages (e.g. ~home/python25/lib/python2.5/site-packages/scipy).&nbsp;
+    This is needed so that the two scipy subpackages have a place in which to
+    install.</li>
+  <li>Create a __init__.py file in the scipy folder (e.g.
+    ~/home/python25/lib/python2.5/site-packages/scipy/__init__.py).&nbsp; Python needs this
+    file to exist in
+    order to be able to import scipy.&nbsp; The file may be empty.</li>
+  <li>Download <a href="http://www.urbansim.org/opus/ndimage.zip">ndimage.zip</a>.&nbsp;
+    This version is compatible with the latest Opus and UrbanSim.</li>
+  <li>Unzip ndimage.zip.</li>
+  <li>cd into the unzipped directory.</li>
+  <li>Make a temporary directory in which to install the code, say <tt>~/temp_install_dir</tt>.
+  <li>Build and install the package via a command like the following.&nbsp; (The path after the --prefix parameter
+    is the location containing the Python lib directory in which to install the code.)
+  <pre>python setup.py install --prefix=~/temp_install_dir</pre></li>
+  <li>Now move the directory <tt>~/temp_install_dir/lib/python2.5/site-packages/ndimage</tt> into the 
+    scipy directory in site-packages.  If your site-packages directory is at the example location above,
+    you should end up with an ndimage directory in this location: 
+    <tt>~home/python25/lib/python2.5/site-packages/scipy/ndimage</tt>
+</ol>
+
+<p>The reason for doing the last two steps rather than installing ndimage directly is that we want it 
+to be a subpackage under scipy rather than its own package at the top level.</p>
+
+<h3>Install scipy.stsci (rarely needed)</h3>
+<p>In rare cases, you may also want the stsci package.&nbsp; This package is not
+used by Opus or UrbanSim.&nbsp; You should only need this
+if you have written code that used numarray.convolve or numarray.image, or want
+to write code that uses stsci.&nbsp; As with ndimage, this package is included in numarray,
+but not in numpy.&nbsp;&nbsp;</p>
+
+<p>If
+you need to install scipy.stsci and cannot install the full scipy package, repeat steps 6-8, above, for <a href="http://www.urbansim.org/opus/stsci.zip">stsci.zip</a>.</p>
+
+</body>
+</html>

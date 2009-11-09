@@ -1,0 +1,442 @@
+% Copyright (c) 2005-2009 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{UrbanSim Database Tables}
+\label{chapter:urbansim-database-tables}
+
+\section{General Database Information}
+\subsection{Baseyear Database}
+\subsection{Scenario Database}
+\subsubsection{Scenario Linking}
+\subsection{Output Database}
+\section{Tables Used by Models}
+\section{Table Definitions}
+\subsection{The {\tt some_table} table}
+\subsubsection{Short Description of Table}
+\subsubsection{Actual Table Definition}
+\subsubsection{Notes, Pitfalls, Restrictions}
+\subsection{The {\tt next_some_table} table}
+\subsubsection{Short Description of Table}
+\subsubsection{Actual Table Definition}
+\subsubsection{Notes, Pitfalls, Restrictions}
+
+This chapter describes what UrbanSim needs in its baseyear database, ways in
+which the baseyear may be structured, how to create a set of scenario databases
+that share much of their data, and the use of output databases.
+
+UrbanSim currently uses three types of databases, each of which is described in
+more details in following sections:
+
+\begin{description}
+\item[baseyear database] -- defining the initial state of a simulation in a
+particular base year.
+\item[scenario database] -- defining changes to a baseyear (or another scenario)
+database.
+\item[output database] -- optional repository for simulation results.
+\end{description}
+
+Most database tables are optional. The required set of tables is determined by
+the variables used by the models.  This can be found by looking at the models'
+specification tables.
+
+
+
+
+
+
+\section{Input Database Design: Baseyear and Scenario Databases}
+\label{urbansim-database-tables-baseyear-scenario-db}
+
+UrbanSim gets its input data from either a \emph{baseyear} database or a
+\emph{scenario} database.  The UrbanSim simulator treats \emph{baseyear} and
+\emph{scenario} databases as read-only databases, however other data
+preparation applications such as the estimators or the household synthesizer
+may write to them.  In fact, when the run manager starts a new simulation, the
+first step is to copy the baseyear data into the baseyear cache. The
+simulation then reads all of its baseyear information from the baseyear cache
+and writes all results to the simulation cache. \simulationcacheindex Data is only written to the
+output database when specified (currently done manually).
+
+At the moment, UrbanSim only supports the MySQL \mysqlindex database server (we will be
+adding support for other database servers).
+
+A \emph{baseyear} database contains a snapshot of the base
+information defining the initial state before the UrbanSim
+simulation. Most of the data typically is about a particular year,
+e.g., geographic information, initial household and job information,
+etc., for a given year.
+
+A \emph{scenario} database contains additional and augmenting information to
+alter the base year data when simulating a particular scenario e.g., new
+transportation links, an expanded urban growth boundary, etc. Any of the tables
+may be placed in either of the databases, although typically most are placed in
+the baseyear database.  The scenario databases typically only contains tables
+specifying different possible futures, e.g. tables of exogenous events
+scheduled for future years.
+
+The way that the scenario can modify the information in the baseyear database or
+another scenario database is determined by the scenario linking.
+
+\subsection{Scenario Linking}
+\subsubsection{blah}
+
+The scenario databases are linked to each other and, eventually, to a baseyear
+database via a tree structure: each scenario can refer to exactly one parent
+database; that parent can be either another scenario or a baseyear database.
+The baseyear database is the root of the tree.  In this way, multiple scenarios
+may share the same baseyear.
+
+When UrbanSim looks for a particular input database table, it traverses this
+chain looking for that table.  The first table matching that name is used.  In
+this way, any tables contained in the scenario database ``shadow'' or ``hide''
+the same-named tables in the scenario's parent database(s).
+
+Consider these example of how to create derivative scenarios:\\
+
+\begin{center}
+\includegraphics*{scenarios}
+\end{center}
+
+\begin{itemize}
+\item Scenario 1 is the base year plus a larger urban growth boundary, thus
+scenario 1's parent is the base year database. The UrbanSim scenario file will
+specify the scenario 1 database as the ``scenario-data''.
+\item Scenario 2 is the base year plus a major employer leaving the
+municipality. Scenario 2's parent is also the base year database. The UrbanSim
+scenario file will specify the scenario 2 database as the ``scenario-data''.
+\item Scenario 3 is the same as scenario 1, but with additional changes in the
+zoning laws to compensate for the larger UGB. Scenario 3's parent is scenario 1
+and the UrbanSim scenario file will specify the scenario 3 database as the
+``scenario-data''.
+\item Scenario 4 is the same as scenario 1, but with changes in the population
+demographics as a result of the larger UGB. Scenario 4's parent is scenario 1
+and the UrbanSim scenario file will specify the scenario 4 database as the
+``scenario-data''.
+\end{itemize}
+
+Any table in a scenario database ``hides'' the same-named table in the
+scenario's parent database.
+
+\subsection{Scenario Database Design}
+
+The only required table in the scenario database is the
+\verb|scenario_information| table (see Sec.~\ref{urbansim-database-tables-scenario-inforamtion}).
+This table points to a baseyear database, or
+to another scenario database.
+
+In addition, the scenario database may include any other tables for data that
+is different in this scenario. For example, if the scenario is simulating a
+large retail development in the suburbs, the \verb|development_events_exogenous| table
+would be included in the scenario database.  In this way, a scenario database
+may change any of the information contained in the baseyear.
+
+\section{Output Database}
+
+An output database may contain the results of an UrbanSim simulation.  This
+database is optional; the urbansim cache is the primary storage location for
+simulation inputs and results.
+
+\section{General Database Design}
+
+\subsection{Guidelines}
+
+Here are some guidelines on database design:
+
+\begin{itemize}
+\item Use only lower-case letters, digits, and underscores for the names of
+databases, database tables, and database columns. This avoids problems when
+moving database between different operating systems (e.g. between Windows \windowsindex and
+Linux). \linuxindex
+\item The \verb|tables_to_cache| entry of the \verb|run_configuration| in
+\verb|urbansim.configs.base_config| lists the tables required for the models used in
+the Puget Sound region.  (This information \emph{should} be in the
+\package{psrc} \psrcindex package, not the \package{urbansim} package; we will fix this in
+the future.)
+\item Avoid overly abbreviated names.  While very short names were required by
+some other systems, UrbanSim itself has no limit on the length of names. Most
+database system allow database names, table names and column names to be 32
+characters, 64 characters (e.g. MySQL), \mysqlindex or more.
+\end{itemize}
+
+\subsection{Data Types}
+
+\index{Python!data types} \index{Opus!data types} \index{MySQL!data
+types} When Opus reads data from a database table, it stores the
+data in a Python type that is close to the type of the corresponding
+column in the database.  The particular mapping between database
+types and Python types currently is defined for MySQL \mysqlindex
+and should be re-defined for each additional type of database.  The
+conversion for MySQL is:
+
+\begin{tabular}{ll}
+MySQLdb FIELD_TYPE & Python/numpy type \\
+\hline
+tinyint(1) & bool8 \\
+short & int16 \\
+int24 & int32 \\
+long & int32 \\
+longlong & int64 \\
+float & float32 \\
+double & float32 \emph{(this should be float64)} \\
+decimal & float64 \\
+\end{tabular}
+
+Similarly, when writing from Python to a database, Opus converts from Python
+types to database-specific data types.  The conversion for MySQL is:
+
+\begin{tabular}{ll}
+Python/numpy type & MySQL type \\
+\hline
+bool8 & int(1) \\
+int8 & int(8) \\
+int16 & int(16) \\
+int32 & int(32) \\
+int64 & int(64) \\
+float32 & double \\
+float64 & decimal \\
+\end{tabular}
+
+Note that these conversions are not symmetrical, since multiple
+database types map onto a single Python type.  The result is that
+when written back to the database, the column types may change from
+that of the input database table.
+
+\section{What Tables are Used by a Model?}
+
+\section{Miscellaneous Database Tables}
+
+This section provides some information about some of the input database tables.
+For each table, it defines the table's schema followed by a list of rules that
+should be true for the entries in the table.
+
+\subsection{Coefficient and Specification tables}
+
+The UrbanSim models are configured through user specified
+variables and coefficients. The coefficients should be
+estimated separately for each region to be modeled by UrbanSim. The art and
+science of estimating the coefficients is a matter for a series of college
+courses so this description assumes that appropriate variables for each model
+have been chosen, and the appropriate coefficients have been estimated for
+those variables.
+
+Each of the regression models and Logit models have two associated
+tables: a table to store the specification of what variables to use
+for that model, and a table to store the estimated coefficients to
+use for those variables.  The names of these tables are composed by
+appending either \verb|_coefficients| or \verb|_specification| to
+the model name.  The tables for the land price model, for instance,
+are \verb|land_price_model_coefficients| and
+\verb|land_price_model_specification|.
+
+All coefficient tables share the same schema, as do all
+specification tables. The schemas are:
+
+\subsubsection{Coefficient table}
+
+\begin{tabular}{|l|l|p{4.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline
+sub_model_id & integer &  Identifier for a submodel, if used by the model, or
+-2 if not used by this model. \\
+
+\hline
+coefficient_name & varchar & Unique name of a coefficient  \\
+
+\hline
+estimate & double & The estimated value of this coefficient \\
+
+\hline
+standard_error & double & \emph{(optional) }
+The standard error of this estimated value. This is for reference only and is
+not used by UrbanSim.  \\
+
+\hline
+t_statistic & double & \emph{(optional) }
+The t-statistic of this coefficient for the test of significance from 0. This
+is for reference only and is not used by UrbanSim.  \\
+
+\hline p_value & double & \emph{(optional) } The p-value of this t-statistic,
+gives the Prob(|x|\textgreater{}|estimated coefficient|) when x is drawn from a
+t-distribution with mean 0. This is for reference only and is not used by
+UrbanSim.   \\
+
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item sub_model_id must be in the appropriate cross-reference table for each
+model.
+\item Each combination of (sub_model_id, coefficient_name) must be unique.
+\end{itemize}
+
+\subsubsection{Specification table}
+
+\begin{tabular}{|l|l|p{4.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline sub_model_id & integer & Defines the submodel, if the model
+contains submodels. The attribute defining the submodel is
+determined by the \verb|submodel_string| parameter of the model. The
+values in this field are the id values of that
+\verb|submodel_string| attribute of the model's dataset. The
+employment location choice models, for instance, define submodels by
+employment sectors, so the values of this field are the
+\verb|sector_id| values
+of the jobs dataset. \\
+
+\hline
+equation_id & integer & If a submodel has multiple equations, this field
+contains an id identifying which equation this row applies to.  If a model does
+not have multiple equations, use ``-2'' for this field. \\
+
+\hline
+coefficient_name & varchar & Each sub-model does not have
+multiple equations, so use '-2' in this column  \\
+
+\hline
+variable_name & varchar & \\
+
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item The sub_model_id values must exist in the \verb|submodel_string| attribute
+of the model's dataset.
+\item Each combination of (sub_model_id, coefficient_name)
+must exist in the model's coefficients table.
+\item variable_name must be a legitimate specification for an Opus variable.
+\item Each combination of (sub_model_id, equation_id, variable_name) must be unique.
+\item Specific models have additional requirements: see Developer Model and Non-home-based Employment Location Choice Model. 
+
+\end{itemize}
+
+A legitimate specification for an Opus variable may be one of the following:
+
+\begin{itemize}
+
+\item The word \verb|constant| indicating a value specific to this combination
+of (sub_model_id, equation_id).
+
+\item The name of a primary attribute of a dataset, specified as a period-separated
+tuple of dataset name, attribute name, .e.g.
+\verb|parcel.percent_slope|.
+
+\item The name of a dataset attribute, specified as a period-separated triple of
+Opus package name, dataset name, attribute name, .e.g. \verb|urbansim.parcel.population|.
+
+\end{itemize}
+
+\subsection{The {\tt development_constraints} table}
+
+This table defines rules that restrict the possible development types a
+developer can create on a particular parcel.  Each row defines one rule.
+Development is not allowed on any parcel that matches any of these rules.  A
+parcel matches a rule if the attribute values for the parcel match all of
+the values in the rule (rule columns with the value ``-1'' are ignored when
+determining a match).
+
+\begin{tabular}{|l|l|p{3.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline constraint_id & integer & Unique rule identification number  \\
+
+\hline \emph{name-of-a-parcel-attribute} & integer or float &  Value for this
+attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
+\emph{don't care}) \\
+
+\hline min_units & integer & Minimum number of residential units for a parcel.
+A development project may only be placed on this parcel if it will result in
+this parcel containing at least this number of residential units. \\
+
+\hline max_units & integer & Maximum number of residential units for a parcel.
+A development project may only be placed on this parcel if it will result in
+this parcel containing at most this number of residential units. \\
+
+\hline min_commercial_sqft & integer & Minimum number of commercial
+sqft. for a parcel.  A development project may only be placed on
+this parcel if it will
+result in this parcel containing at least this number of commercial sqft. \\
+
+\hline max_commercial_sqft & integer & Maximum number of commercial
+sqft. for a parcel. A development project may only be placed on
+this parcel if it will
+result in this parcel containing at most this number of commercial sqft. \\
+
+\hline min_industrial_sqft & integer & Minimum number of industrial
+sqft. for a parcel.  A development project may only be placed on
+this parcel if it will
+result in this parcel containing at least this number of industrial sqft. \\
+
+\hline max_industrial_sqft & integer & Maximum number of industrial
+sqft. for a parcel. A development project may only be placed on
+this parcel if it will
+result in this parcel containing at most this number of industrial sqft. \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item constraint_id must be a unique positive integer.
+
+\item \emph{name-of-a-parcel-attribute} is the name of a parcel attribute,
+e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
+names is determined by the set of numeric column names on the parcel table.
+
+\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
+equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
+
+\end{itemize}
+
+\subsection{The {\tt target_vacancies} table}
+\label{sec:table-target-vacancies}
+
+The \verb|target_vacancies| table is used by the developer project transition
+model. It gives the model information about acceptable vacancy rates. The table
+has one row for each year the simulation runs. Each row gives target values for
+the residential and nonresidential vacancies for that year, which are defined
+below.  Only data after the base year is used.
+
+\begin{tabular}{|l|l|l|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline year & integer & Year of the simulation for which the vacancy
+targets
+apply  \\
+
+\hline target_total_residential_vacancy & float & Ratio of unused residential
+units to total residential units  \\
+
+\hline target_total_non_residential_vacancy & float & Ratio of unused
+nonresidential sqft to total nonresidential sqft  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item There must be exactly one row for each year to be simulated.
+\item target_total_residential_vacancy must be between 0 and 1, inclusive.
+\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

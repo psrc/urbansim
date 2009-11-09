@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>MySQL Installation and Configuration for Windows</title>
+<link href="../style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE">MySQL Installation and Configuration for Windows</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing and Configuring MySQL for Windows</h1>
+
+<p>This document describes the MySQL installation and configuration 
+process for Windows. These instructions have been tested with MySQL 4.1.8 and 5.0.</p>
+
+<h2>Contents</h2>
+
+<ul>
+	<li><a href="#install">Installing MySQL</a></li>
+	<li><a href="#configure">Configuring MySQL</a></li>
+	<li><a href="#final">Some Final Steps</a></li>
+	<li><a href="#done">Done</a></li>
+</ul>
+
+
+
+<a name="install" /><h3>Installing MySQL</h3>
+
+<p>Download the Windows installer for MySQL from <a href="http://dev.mysql.com/downloads/">http://dev.mysql.com/downloads/</a>.</p>
+
+<p>To install the MySQL package, follow the subsequent steps:</p>
+
+<p>Execute the installer, e.g. <strong>mysql-4.1.8-Setup.exe</strong>.</p>
+
+<p>At the first screen, simply press 'Next'.</p>
+
+<img src="images/mysqlinst1.jpg" alt="MySQL Server 4.1 - Setup Wizard" width="504" height="379"><br />
+
+<p>At the following screen, choose either 'Typical' or 'Complete'. Advanced users may
+choose 'Custom'. If you are unsure, choose 'Typical'. Once you have made your
+selection, press the `Next' button.</p>
+
+<img src="images/mysqlinst2.jpg" alt="MySQL Server 4.1 - Setup Wizard" width="504" height="379"><br />
+
+<p>At the next screen, review your selections. When you are sure that you have made the
+correct choices, press the 'Install' button. If you want to make changes, use the
+`Back' button to go back and correct your previous choices.</p>
+
+<img src="images/mysqlinst3.jpg" alt="MySQL Server 4.1 - Setup Wizard" width="504" height="379"><br />
+
+<p>Once the installation process has completed, you will be asked to sign up for or log in 
+to a MySQL.com account. This manual does not cover the processes that those choices would 
+entail. Make your choice and select the 'Next' button</p>
+
+<img src="images/mysqlinst4.jpg" alt="MySQL.com Sign Up - Setup Wizard" width="504" height="379"><br />
+
+<p>Ensure that the 'Configure the MySQL Server now' checkbox is checked on the next 
+screen and press 'Finish' to continue on to the configuration phase.</p>
+
+<img src="images/mysqlinst5.jpg" alt="MySQL Server 4.1 - Setup Wizard" width="504" height="379"><br />
+
+
+
+<a name="configure" /><h3>Configuring MySQL</h3>
+
+<p>To configure MySQL for use with UrbanSim, follow the instructions below.</p>
+
+<p>To begin the configuration process, simply press the 'Next' button.</p>
+
+<img src="images/mysql0.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>On the next screen, choose the 'Detailed Configuration' option and press the 'Next' 
+button.</p>
+
+<img src="images/mysql1.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>The following screen asks you to select a server type. Choose an option that is 
+appropriate to your needs, or select 'Developer Machine' if you are unsure. When you have
+made your choice, press the 'Next' button.</p>
+
+<img src="images/mysql2.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>When prompted for the type of database usage, please choose 'Non-transactional Database 
+Only' to configure the server to be compatable with UrbanSim. <i>(The
+MyISAM format stores each table as a set of three files: a .frm,
+a .MYD, and a .MYI file.&nbsp; The InnoDB format does not use
+these files.)</i>&nbsp; Press the 'Next' button.</p>
+
+<img src="images/mysql3.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>On the next screen, press the 'Next' button.</p>
+
+<img src="images/mysql4.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>When asked to set networking options, leave the defaults and press the 'Next' button.</p>
+
+<img src="images/mysql5.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>On the following screen, make sure the 'Standard Character Set' option is selected and 
+proceed by pressing the 'Next' button.</p>
+
+<img src="images/mysql6.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>When asked to set Windows options, check 'Include Bin Directory in Windows PATH'. The 
+rest of the defaults are correct. Press the 'Next' button.</p> 
+
+<img src="images/mysql7.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>On the next screen, enter your password twice into the provided fields and press 'Next'.
+If you cannot press 'Next', the passwords do not match and must be re-entered.</p>
+
+<img src="images/mysql8.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>Press 'Execute' on the next screen to apply the configuration.</p>
+
+<img src="images/mysql9.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+<p>Finally, press the 'Finish' button once all the changes have been applied.</p>
+
+<img src="images/mysql10.jpg" alt="MySQL Server Instance Configuration Wizard" width="504" height="379"><br />
+
+
+
+</a>
+
+
+
+<a name="final" /><h3>Some Final Steps</h3>
+
+<p>Open <strong>Start &gt; Programs &gt; MySQL &gt; MySQL Server 4.1 &gt; MySQL Command Line 
+Client</strong> and enter the password you entered in the configuration step. Enter each of 
+the three commands exactly as	shown below, replacing each instance of <em>your_password</em>
+with the password you chose before.</p>
+
+<pre>GRANT create, delete, drop, index, insert, select, update, alter, 
+	create temporary tables, file, reload ON *.* 
+	TO urbansim@localhost IDENTIFIED BY '<em>your_password</em>';
+	
+SET PASSWORD FOR 'urbansim'@'localhost' = OLD_PASSWORD('<em>your_password</em>'); 
+
+FLUSH PRIVILEGES;</pre>
+
+<p>After completing this step, close the MySQL Command Line Client window.</p>
+
+
+
+</a>
+
+
+
+<a name="done" /><h3>Done</h3>
+
+<p>You have completed the installation and configuration of MySQL for use with UrbanSim.</p>
+
+<p>If you want to use MySQL with Opus or UrbanSim, you will also need MySQL-python.&nbsp;
+If you have not already done so, please install it, as noted in the general
+installation instructions.</p>
+</body>
+</html>

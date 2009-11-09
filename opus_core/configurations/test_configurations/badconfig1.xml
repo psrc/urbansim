@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<opus_project>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  <scenario_manager>
+    <test_scenario4 type="scenario">
+      <s type="string">teststring</s>
+    </test_scenario4>
+  </scenario_manager
+</opus_project>

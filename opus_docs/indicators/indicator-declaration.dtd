@@ -1,0 +1,35 @@
+<!ELEMENT indicator-declaration 	(sql-query | available-years | indicator-documentation | tests)>
+<!ATTLIST indicator-declaration display-name CDATA #REQUIRED
+					 		    uses-subtype CDATA #IMPLIED>
+<!ELEMENT sql-query (general|region|grid|zone)>
+<!ELEMENT general (#PCDATA)>
+<!ELEMENT region (#PCDATA)>
+<!ELEMENT grid (#PCDATA)>
+<!ELEMENT zone (#PCDATA)>
+<!ELEMENT available-years (all-exported-years | all-exported-years-except-first | sql-available-years)>
+<!ELEMENT all-exported-years EMPTY>
+<!ELEMENT all-exported-years-except-first EMPTY>
+<!ELEMENT sql-available-years (#PCDATA)>
+<!ELEMENT indicator-documentation 	(definition
+									|principal-uses
+									|interpreting-results
+									|limitations
+									|related-indicators
+									|specification
+									|how-modeled
+									|display-format
+									|source-evolution-examples)>
+<!ELEMENT display-format (units|unitless|number|percentage|scientific)>
+<!ELEMENT units (#PCDATA)>
+<!ELEMENT number EMPTY>
+<!ELEMENT percentage EMPTY>
+<!ELEMENT scientific EMPTY>
+<!ATTLIST number digits CDATA #REQUIRED>
+<!ATTLIST percentage digits CDATA #REQUIRED>
+<!ATTLIST scientific digits CDATA #REQUIRED>
+
+<!ELEMENT tests	(test-setup
+				|expected-result+)>
+<!ELEMENT test-setup (#PCDATA)>
+<!ELEMENT expected-result (#PCDATA)>
+<!ATTLIST expected-result geography CDATA #REQUIRED>
