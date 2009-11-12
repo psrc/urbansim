@@ -4,7 +4,7 @@
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
 	<property environment="env" />
 
-	<target name="get-opus-home" unless="opus.home">
+	<target name="get-opus-home"  unless="opus.home">
 		<property name="opus.home" value="${env.OPUS_HOME}" />
 	</target>
 
@@ -15,6 +15,7 @@
 		<exec executable="python" failonerror="True">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<env key="OPUS_HOME" value="${opus.home}" />
+			<env key="OPUS_DATA_PATH" value="${opus.home}/data" />
 			<arg line="${basedir}/tests/all_tests.py" />
 		</exec>
 	</target>
@@ -23,6 +24,7 @@
 		<exec executable="python" failonerror="True">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<env key="OPUS_HOME" value="${opus.home}" />
+			<env key="OPUS_DATA_PATH" value="${opus.home}/data" />
 			<arg line="${basedir}/tests/all_tests.py -x" />
 		</exec>
 	</target>
@@ -31,6 +33,7 @@
 		<exec executable="python" failonerror="True">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<env key="OPUS_HOME" value="${opus.home}" />
+			<env key="OPUS_DATA_PATH" value="${opus.home}/data" />
 			<arg line="${basedir}/tests/all_tests.py -i" />
 		</exec>
 	</target>
@@ -39,6 +42,7 @@
 		<exec executable="python" failonerror="True">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<env key="OPUS_HOME" value="${opus.home}" />
+			<env key="OPUS_DATA_PATH" value="${opus.home}/data" />
 			<arg line="${basedir}/tests/all_tests.py -i -x" />
 		</exec>
 	</target>

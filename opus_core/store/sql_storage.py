@@ -346,14 +346,14 @@ else:
                             }
                         )
                         
-                                    
-                    if db.database_server_config.protocol == 'sqlite':
-                        from decimal import Decimal
-                        
-                        expected_results = [(1,Decimal(str(1.1)),'bar'), (2,Decimal(str(2.2)),'foo')]
-                    else:
-                        expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
-                    
+#                    # new version of sqlit doesn't seem to need this special treatment anymore
+#                    if db.database_server_config.protocol == 'sqlite':
+#                        from decimal import Decimal
+#                        
+#                        expected_results = [(1,Decimal(str(1.1)),'bar'), (2,Decimal(str(2.2)),'foo')]
+#                    else:
+#                        expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
+                    expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
                     # Verify the data through a DatabaseServer database connection        
                     tbl = db.get_table('test_write_table')
                     s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
