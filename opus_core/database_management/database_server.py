@@ -189,14 +189,14 @@ class Tests(opus_unittest.OpusTestCase):
             server = self.get_mysql_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
-        
-    def test_postgres_create_drop_and_has_database(self):
+    #TODO: turn it on when postgres is properly set up
+    def MASKtest_postgres_create_drop_and_has_database(self):
         if 'postgres' in get_testable_engines():
             server = self.get_postgres_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
-
-    def test_mssql_create_drop_and_has_database(self):
+    #TODO: turn it on when mssql is properly set up
+    def MASKtest_mssql_create_drop_and_has_database(self):
         if 'mssql' in get_testable_engines():
             if not 'MSSQLDEFAULTDB' in os.environ:
                 logger.log_warning('MSSQLDEFAULTDB is not set in the environment variables. Skipping test_mssql_create_drop_and_has_database')
