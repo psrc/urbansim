@@ -6,6 +6,12 @@
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
       <variable name="zone.population_per_acre" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.population_per_acre</variable>
+      <variable use="both" source="expression" name="zone.population" type="variable_definition">urbansim_parcel.zone.population</variable>
+      <variable use="both" source="expression" name="zone.number_of_households" type="variable_definition">urbansim_parcel.zone.number_of_households</variable>
+      <variable use="indicator" source="expression" name="faz.number_of_households" type="variable_definition">faz.aggregate(urbansim_parcel.zone.number_of_households)</variable>
+      <variable use="indicator" source="expression" name="faz.population" type="variable_definition">faz.aggregate(urbansim_parcel.zone.population)</variable>
+      <variable use="indicator" source="expression" name="large_area.number_of_households" type="variable_definition">large_area.aggregate(urbansim_parcel.zone.number_of_households, intermediates=[faz])</variable>
+      <variable use="indicator" source="expression" name="large_area.population" type="variable_definition">large_area.aggregate(urbansim_parcel.zone.population, intermediates=[faz])</variable>     
       <variable name="parcel.hwy200" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;200</variable>
       <variable name="parcel.hwy600" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;600</variable>
       <variable name="parcel.hwy1000" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;1000</variable>
@@ -72,11 +78,19 @@
       <variable name="building.ln_empden_zone_service" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(zone.aggregate(urbansim.job.is_in_employment_sector_group_service))/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</variable>
       <variable name="building.ln_unit_price_trunc" source="expression" type="variable_definition" use="model variable">ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))</variable>
       <variable name="building.unit_price" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.building.unit_price</variable>
+      <variable name="building.ln_residential_units" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</variable>
+      <variable use="model variable" source="expression" name="building.population_density" type="variable_definition">(ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</variable>
       <variable name="household_x_building.has_children_x_is_single_family_residential" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * urbansim.building.is_single_family_residential</variable>
       <variable name="household_x_building.has_children_x_percent_households_with_children_within_walking_distance" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * building.disaggregate(psrc_parcel.parcel.percent_households_with_children_within_walking_distance)</variable>
       <variable name="household_x_building.is_high_income_x_ln_sqft_per_unit" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</variable>
       <variable name="household_x_building.is_young_x_percent_young_households_within_walking_distance" source="expression" type="variable_definition" use="model variable">urbansim.household.is_young * building.disaggregate(psrc_parcel.parcel.percent_young_households_within_walking_distance)</variable>
-      <variable name="building.ln_residential_units" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</variable>
+     <variable use="model variable" source="expression" name="household_x_building.disposable_inc" type="variable_definition">ln_bounded(household.income - ((urbansim_parcel.building.unit_price/10.) * urbansim_parcel.building.building_sqft_per_unit))</variable>
+     <variable use="model variable" source="expression" name="household_x_building.inc_x_mfr" type="variable_definition">ln(household.income) * urbansim.building.is_multi_family_residential</variable>
+     <variable use="model variable" source="expression" name="household_x_building.persons_x_size" type="variable_definition">(household.persons) * urbansim.building.sqft_per_unit</variable>
+     <variable use="model variable" source="expression" name="household_x_building.income_x_size" type="variable_definition">ln_bounded(urbansim.household.income) * ln(psrc_parcel.building.sqft_per_unit)</variable>
+      <variable use="model variable" source="expression" name="household_x_building.same_area_type" type="variable_definition">urbansim_parcel.household.residence_area_type_id_lag1 == building.disaggregate(zone.area_type_id)</variable>
+      <variable use="model variable" source="expression" name="household_x_building.same_area" type="variable_definition">urbansim_parcel.household.residence_large_area_id_lag1 == building.disaggregate(faz.large_area_id)</variable>
+     <variable use="model variable" source="expression" name="household_x_building.one_pers_x_not_sfr" type="variable_definition">(household.persons &lt; 2) * numpy.logical_not(urbansim.building.is_single_family_residential)</variable>
     </expression_library>
     <dataset_pool_configuration hidden="True" type="class">
       <class_name type="string">DatasetPoolConfiguration</class_name>
