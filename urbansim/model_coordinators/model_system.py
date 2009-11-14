@@ -7,6 +7,7 @@ from opus_core.logger import logger
 from opus_core.fork_process import ForkProcess
 from opus_core.model_coordinators.model_system import ModelSystem as CoreModelSystem
 from opus_core.model_coordinators.model_system import RunModelSystem
+from opus_core.configuration import Configuration
 
 class ModelSystem(CoreModelSystem):
     """
@@ -52,6 +53,26 @@ class ModelSystem(CoreModelSystem):
                 models = year_models_dict['models']  #travel model format
             for opus_path in models:
                 self._fork_new_process(opus_path, resources, optional_args=['-y', year])
+    
+    def update_config_for_multiple_runs(self, config):
+        models_to_update = config.get('models_with_sampled_coefficients', [])
+        if 'models_in_year' not in config.keys():
+            config['models_in_year'] = {}
+        if config['models_in_year'].get(config['base_year']+1, None) is None:
+            config['models_in_year'][config['base_year']+1]= config.get('models')
+        
+        for umodel in models_to_update:
+            try:
+                i = config['models_in_year'][config['base_year']+1].index(umodel)
+                new_model_name = '%s_sampled_coef' % umodel
+                config['models_in_year'][config['base_year']+1][i] = new_model_name
+            except:
+                pass
+            config["models_configuration"][new_model_name] = Configuration(config["models_configuration"][umodel])
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_coefficients"] = True
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["distribution"] = "'normal'"
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["cache_storage"] = "base_cache_storage" 
+
 
 if __name__ == "__main__":
     try: import wingdbstub

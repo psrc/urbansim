@@ -418,8 +418,10 @@ class Coefficients(object):
         sample_one_value_from_uniform_distribution (a, b, center_around_value). See example in test_sample_coefficients_mixed_distr.
         """
         if distribution == 'normal':
+            logger.log_status('Sampling coefficient values from normal distribution.')
             return self.sample_values_from_normal_distribution(**kwargs)
         elif distribution == 'uniform':
+            logger.log_status('Sampling coefficient values from uniform distribution.')
             return self.sample_values_from_uniform_distribution(**kwargs)
         elif distribution is None: 
             if not isinstance(distribution_dictionary, dict):

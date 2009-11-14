@@ -68,6 +68,9 @@ class ModelSystem(object):
 
         if 'expression_library' in resources:
             VariableFactory().set_expression_library(resources['expression_library'])
+            
+        if resources.get('sample_input', False):
+            self.update_config_for_multiple_runs(resources)
 
         cache_directory = self.simulation_state.get_cache_directory()
         log_file = os.path.join(cache_directory, log_file_name)
@@ -482,8 +485,7 @@ class ModelSystem(object):
         resources['cache_directory'] = cache_directory
 
         self._fork_new_process(
-            '%s' % class_path, resources, delete_temp_dir=False,
-            optional_args=optional_arguments, run_in_background=run_in_background)
+            '%s' % class_path, resources, delete_temp_dir=False, run_in_background=run_in_background)
         self._notify_stopped()
 
     def run_in_same_process(self, resources, class_path='opus_core.model_coordinators.model_system'):
@@ -556,7 +558,9 @@ class ModelSystem(object):
         self.running_conditional.notifyAll()
         self.running_conditional.release()
 
-
+    def update_config_for_multiple_runs(self, config):
+        raise NotImplementedError('update_config_for_multiple_runs')
+    
 class RunModelSystem(object):
     def __init__(self, model_system, resources, skip_cache_after_each_year = False, log_file_name = 'run_model_system.log'):
 
