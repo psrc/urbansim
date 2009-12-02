@@ -3,6 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import array, dtype
+from opus_core.logger import logger
 
 try:
     import sqlalchemy
@@ -100,7 +101,11 @@ class sql_storage(Storage):
                 table_data[col_name].append(row[column])
                     
         for col_name, (column, col_type) in col_data.items():
-            table_data[col_name] = array(table_data[col_name], dtype=col_type)
+            try:
+                table_data[col_name] = array(table_data[col_name], dtype=col_type)
+            except:
+                logger.log_error("Error occurred when exporting column %s; it may be caused by NULL values." % col_name)
+                raise
                    
         self._dispose_db(db)
         return table_data
