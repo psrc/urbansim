@@ -16,8 +16,7 @@ from opus_core.variables.variable_name import VariableName
 import re
 
 class RealEstateTransitionModel(Model):
-    """ The model behind household transition model and employment transition
-    model
+    """
     """
     
     model_name = "Real Estate Transition Model"
@@ -43,10 +42,9 @@ class RealEstateTransitionModel(Model):
         ## TODO: enable arguments to discard attributes in sample_from_dataset
         """
         
-        if sample_from_dataset:
-            self.sample_from_dataset = sample_from_dataset
-        else:
+        if not sample_from_dataset:
             sample_from_dataset = realestate_dataset
+            
         #if dataset_pool is None:
         #    dataset_pool = SessionConfiguration().get_dataset_pool()
         if year is None:

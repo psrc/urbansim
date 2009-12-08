@@ -15,7 +15,7 @@ from opus_core.variables.variable_name import VariableName
 import re
 
 class TransitionModel(Model):
-    """ The model behind household transition model and employment transition
+    """ The generic model behind household transition model and employment transition
     model
     """
     
