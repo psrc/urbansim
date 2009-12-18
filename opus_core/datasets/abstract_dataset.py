@@ -1809,7 +1809,7 @@ class AbstractDataset(object):
         if alias!=short:
             if alias in self._aliases:
                 if vname!=self._aliases[alias]:
-                    raise ValueError, "same alias for two expressions: %s and %s" % (vname.get_expression(), self._aliases[alias])
+                    raise ValueError, "same alias for two expressions: %s and %s" % (vname.get_expression(), self._aliases[alias].get_expression())
             else:
                 self._aliases[alias] = vname
             # make sure the alias isn't used for a primary attribute

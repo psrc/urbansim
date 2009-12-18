@@ -83,7 +83,7 @@ class Storage:
                 column_size = next_column_size
             
             if not next_column_size == column_size:
-                raise ValueError('Data in each column must be of the same length.')
+                raise ValueError('Data in each column must be of the same length: %s(%s)!=%s' % (next_column_size, column_name, column_size))
             
         
         if column_size is None:
