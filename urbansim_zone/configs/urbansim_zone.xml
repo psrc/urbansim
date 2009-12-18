@@ -226,7 +226,7 @@
 		      <key convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units_capacity</key> 
 		      -->
               <key name="compute_capacity_flag" type="string">True</key>
-              <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units</key>
+              <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units_capacity</key>
               <key name="sample_alternatives_by_submodel" type="string">True</key>
 		      <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string" />
               <key name="sample_size_locations" type="integer">30</key>

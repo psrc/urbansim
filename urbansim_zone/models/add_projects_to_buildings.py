@@ -6,6 +6,7 @@ from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.misc import digits
 from numpy import column_stack, row_stack, where, unique
+from numpy import ones, logical_and, logical_not, all
 from scipy import ndimage
 
 class AddProjectsToBuildings(Model):
@@ -25,9 +26,13 @@ class AddProjectsToBuildings(Model):
             logger.log_warning("Empty development project dataset. Skip add_projects_to_buildings.")
             return building_dataset
 
+        is_placed_project = ones(developmentproject_dataset.size(), dtype='bool')
         for label_attribute in label_attribute_names:
             project_label_attribute = developmentproject_dataset.get_attribute_as_column(label_attribute)
+            is_placed_project = logical_and(is_placed_project, project_label_attribute[:,0]>0)
+            
             building_lable_attribute = building_dataset.get_attribute_as_column(label_attribute)
+
             if project_labels is None:
                 project_labels = project_label_attribute
             else:
@@ -39,12 +44,17 @@ class AddProjectsToBuildings(Model):
                 building_labels = column_stack((building_labels, building_lable_attribute))
         max_digits = digits( row_stack((project_labels, building_labels)).max(axis=0) )
         multipler = array([10**d for d in max_digits[1:] + [0]])
-        project_identifier = (project_labels * multipler).sum(axis=1)
-        unique_project_identifier = unique(project_identifier)
         building_identifier = (building_labels * multipler).sum(axis=1)
+        project_identifier = (project_labels * multipler).sum(axis=1)
+        if not all(is_placed_project):
+            logger.log_warning("There are %s projects with %s less than 0; they are not being processed." % (logical_not(is_placed_project).sum(), 
+                                                                                                             ",".join(label_attribute_names)))
+            project_identifier = project_identifier[is_placed_project]
+        unique_project_identifier = unique(project_identifier)
         
         for quantity_attribute in quantity_attribute_names:
-            quantity_sum = ndimage.sum(developmentproject_dataset.get_attribute(quantity_attribute), labels=project_identifier, index=unique_project_identifier)
+            developmentproject_quantity = developmentproject_dataset.get_attribute(quantity_attribute)[is_placed_project]
+            quantity_sum = ndimage.sum(developmentproject_quantity, labels=project_identifier, index=unique_project_identifier)
             for i in range(unique_project_identifier.size):
                 if quantity_sum[i] != 0:
                     this_identifier = unique_project_identifier[i]
