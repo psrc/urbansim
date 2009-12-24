@@ -6,7 +6,8 @@ from opus_core.logger import logger
 from opus_core.model import Model
 from opus_core.misc import ncumsum
 from numpy.random import random
-from numpy import searchsorted, unique, where, ones
+from numpy import searchsorted, unique, where, ones, allclose
+from opus_core.sampling_toolbox import normalize
                 
 class MonteCarloAssignmentModel(Model):
     """Assign individuals from one geography (dataset1) to another (dataset2) with
@@ -39,8 +40,10 @@ class MonteCarloAssignmentModel(Model):
                 fractions = fraction_dataset.get_attribute(fraction_attribute_name)[fraction_id1==id1]
                 id2 = fraction_dataset.get_attribute(id_name2)[fraction_id1==id1]
                 ## ignore households in geography with sum of fractions less than 1.0e-6
-                if fractions.sum() < 1.0e-3:
+                if fractions.sum() < 1.0e-2:
                     continue
+                if not allclose(fractions.sum(), 1.0, rtol=1.e-2):
+                    fractions = normalize(fractions)
                 fractions_cumsum = ncumsum(fractions)
                 R = random(n)
                 index = searchsorted(fractions_cumsum, R)
