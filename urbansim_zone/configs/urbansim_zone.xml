@@ -14,6 +14,50 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="scheduled_development_events_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.scheduled_events_model</class_module>
+            <class_name>ScheduledEventsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ScheduledEventsModel</name>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Scheduled Development Events Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">SDEM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">scheduled_development_events</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="scheduled_employment_events_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.scheduled_events_model</class_module>
+            <class_name>ScheduledEventsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ScheduledEventsModel</name>
+            <argument name="dataset" type="string">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Scheduled Employment Events Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">SEEM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">scheduled_employment_events</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>      
       <model name="employment_relocation_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
