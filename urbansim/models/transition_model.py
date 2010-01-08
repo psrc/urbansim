@@ -5,8 +5,8 @@
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
-from numpy import array, where, ones, zeros, setdiff1d
-from numpy import arange, concatenate, resize, int32, float64
+from numpy import array, where, ones, zeros, setdiff1d, logical_and
+from numpy import arange, concatenate, resize, int32, float64, ceil
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
@@ -22,15 +22,24 @@ class TransitionModel(Model):
     model_name = "Transition Model"
     model_short_name = "TM"
     
-    def __init__(self, dataset, control_total_dataset=None, model_name=None, model_short_name=None):
+    def __init__(self, dataset, 
+                 dataset_accounting_attribute=None,
+                 control_total_dataset=None, 
+                 model_name=None, 
+                 model_short_name=None):
         self.dataset = dataset
+        self.dataset_accounting_attribute = dataset_accounting_attribute
         self.control_totals = control_total_dataset
         if model_name:
             self.model_name = model_name
         if model_short_name:
             self.model_short_name = model_short_name
         
-    def run(self, year=None, target_attribute_name='number_of_households', sample_filter="", reset_dataset_attribute_value={}, dataset_pool=None,  **kwargs):
+    def run(self, year=None, 
+            target_attribute_name='number_of_households', 
+            sample_filter="", 
+            reset_dataset_attribute_value={}, 
+            dataset_pool=None,  **kwargs):
         """ sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
         """
         #if dataset_pool is None:
@@ -96,23 +105,44 @@ class TransitionModel(Model):
                     else:
                         indicator *= dataset_attribute == aval
                         
-            actual_num = indicator.sum()
             target_num = column_values[target_attribute_name][index]
-            if actual_num != target_num:
-                legit_index = where(logical_and(indicator, filter_indicator))[0]
-                if actual_num < target_num:
-                    lucky_index = sample_replace(legit_index, target_num - actual_num)
-                    to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                elif actual_num > target_num:
-                    lucky_index = sample_noreplace(legit_index, actual_num-target_num)
-                    to_be_removed = concatenate((to_be_removed, lucky_index))
+            ## if accounting attribute is None, count number of agents with indicator = True 
+            if self.dataset_accounting_attribute is None:
+                actual_num = indicator.sum()
+                action_num = 0
+                if actual_num != target_num:
+                    legit_index = where(logical_and(indicator, filter_indicator))[0]
+                    if actual_num < target_num:
+                        lucky_index = sample_replace(legit_index, target_num - actual_num)
+                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                    elif actual_num > target_num:
+                        lucky_index = sample_noreplace(legit_index, actual_num-target_num)
+                        to_be_removed = concatenate((to_be_removed, lucky_index))
+                    action_num = lucky_index.size
+            else: 
+                ## sum accounting attribute for agents with indicator = True; 
+                ## assume dataset_accouting_attribute is a primary attribute 
+                accounting = self.dataset.get_attribute(self.dataset_accounting_attribute) * indicator
+                actual_num = accounting.sum()
+                mean_size = float(actual_num) / indicator.sum()
+                action_num = 0
+                if actual_num != target_num:
+                    legit_index = where(logical_and(indicator, filter_indicator))[0]
+                    while actual_num + action_num < target_num:
+                        lucky_index = sample_replace(legit_index, ceil((target_num - actual_num - action_num)/mean_size) )
+                        action_num += accounting[lucky_index].sum()
+                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                    while actual_num - action_num > target_num:
+                        lucky_index = sample_noreplace(legit_index, ceil((actual_num - target_num - action_num)/mean_size) )
+                        action_num += accounting[lucky_index].sum()
+                        to_be_removed = concatenate((to_be_removed, lucky_index))                
             
             ##log status
             action = "0"
-            if lucky_index is not None:
-                action_num = lucky_index.size
+            if lucky_index is not None:                    
                 if actual_num < target_num: action = "+" + str(action_num)
                 if actual_num > target_num: action = "-" + str(action_num)
+                    
             cat = [ str(criterion[col]) for col in column_names]
             cat += [str(actual_num), str(target_num), action]
             logger.log_status("\t".join(cat))
@@ -169,6 +199,7 @@ from numpy import array, logical_and, int32, int8
 from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
+from urbansim_parcel.datasets.business_dataset import BusinessDataset
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
@@ -665,6 +696,53 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = ect_set.get_attribute("number_of_jobs")[6:9]
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
+
+    def test_accounting_attribute(self):
+        """
+        """
+        annual_employment_control_totals_data = {
+            "year":           array([2000,   2000,  2000,  2001]),
+            "sector_id":      array([    1,     2,     3,     2]),
+            "number_of_jobs": array([25013,  1513,  5000, 10055])
+            }
+
+
+        business_data = {
+            "business_id":arange(1500)+1,
+            "grid_id": array(1500*[1]),
+            "sector_id": array(500*[1] +
+                               500*[2] + 
+                               500*[3]),
+            "jobs":      array(500*[10] + 
+                               500*[10] +
+                               500*[10]),
+                            
+            }
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='bs_set', table_data=business_data)
+        bs_set = BusinessDataset(in_storage=storage, in_table_name='bs_set')
+
+        storage.write_table(table_name='ect_set', table_data=annual_employment_control_totals_data)
+        ect_set = ControlTotalDataset(in_storage=storage, in_table_name='ect_set', what='',
+                                      id_name=[])
+
+        model = TransitionModel(bs_set, dataset_accounting_attribute='jobs', control_total_dataset=ect_set)
+        model.run(year=2000, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
+
+        results = bs_set.get_attribute('jobs').sum()
+        should_be = [(ect_set.get_attribute("number_of_jobs")[0:3]).sum()]
+        self.assertEqual(ma.allclose(should_be, results, rtol=10),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+        cats = 3
+        results = zeros(cats, dtype=int32)
+        for i in range(0, cats):
+            results[i] = ( bs_set.get_attribute('jobs')*(bs_set.get_attribute('sector_id') == ect_set.get_attribute("sector_id")[i])).sum()
+        should_be = ect_set.get_attribute("number_of_jobs")[0:3]
+        self.assertEqual(ma.allclose(results, should_be, rtol=10),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+
         
 if __name__=='__main__':
     opus_unittest.main()
