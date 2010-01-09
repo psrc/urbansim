@@ -28,8 +28,8 @@
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
-            <argument name="control_total_table" parser_action="quote_string" type="string">scheduled_development_events</argument>
-            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+            <argument name="scheduled_events_table" parser_action="quote_string" type="string">scheduled_development_events</argument>
+            <argument name="scheduled_events_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
@@ -50,8 +50,8 @@
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
-            <argument name="control_total_table" parser_action="quote_string" type="string">scheduled_employment_events</argument>
-            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+            <argument name="scheduled_events_table" parser_action="quote_string" type="string">scheduled_employment_events</argument>
+            <argument name="scheduled_events_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
