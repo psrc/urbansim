@@ -228,7 +228,7 @@ class ResultBrowser(QWidget, Ui_ResultsBrowser):
         run_name = self.current_run
         indicator_name = self.current_indicator
         indicator_dataset = self.current_indicator_dataset
-        start_year = self.current_year
+        start_year = int(self.current_year)
         end_year = start_year
 
         if run_name is None or indicator_name is None or start_year is None:

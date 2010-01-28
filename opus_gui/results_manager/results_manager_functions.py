@@ -113,7 +113,7 @@ def update_available_runs(project, scenario_name = '?'):
     for run_node in run_nodes:
         cache_directory = os.path.normpath(run_node.find('cache_directory').text)
         if not os.path.exists(cache_directory):
-            results_manager.delete_run(run_node)
+            results_manager.delete_run(run_node, force=True)   #force deleting base_year_data entry when the directory doesn't exist
             removed_runs.append(run_node.get('name'))
             continue
         # Add the cachedir to the list of seen cachedirs

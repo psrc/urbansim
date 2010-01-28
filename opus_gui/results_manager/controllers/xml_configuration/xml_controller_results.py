@@ -58,14 +58,14 @@ class XmlController_Results(XmlController):
         assert self.has_selected_item()
         self.delete_run(self.selected_item().node)
 
-    def delete_run(self, run_node):
+    def delete_run(self, run_node, force=False):
         '''
         Remove a run both from the services database and from the model.
         @param run_node (Element): the node to remove.
         '''
         # Prevent the user from removing base years
         cache_directory = run_node.find('cache_directory').text
-        if cache_directory.endswith('base_year_data'):
+        if cache_directory.endswith('base_year_data') and not force:
             msg = ('Removing the base year data directory is restricted from '
                    'within OpusGUI since doing so will make it impossible to '
                    'run any simulations or estimations.')
@@ -75,7 +75,11 @@ class XmlController_Results(XmlController):
             return
         try:
             run_manager = get_run_manager()
-            run_id = int(run_node.get('run_id', '-1'))
+            run_id = run_node.get('run_id')
+            try:
+                run_id = int(run_id)
+            except:
+                run_id = -1
             run_manager.delete_everything_for_this_run(run_id, cache_directory)
             run_manager.close()
             self.project.delete_node(run_node)

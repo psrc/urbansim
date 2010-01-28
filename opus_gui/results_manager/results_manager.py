@@ -71,8 +71,8 @@ class ResultsManager(AbstractManager):
         simulation_node = self.project.find('results_manager/simulation_runs')
         self.xml_controller.model.insert_node(run_node, simulation_node)
 
-    def delete_run(self, run_node):
-        self.xml_controller.delete_run(run_node)
+    def delete_run(self, run_node, force=False):
+        self.xml_controller.delete_run(run_node, force=force)
 
     def importRun(self):
         dlg = ImportRunDialog(self, self.base_widget)
