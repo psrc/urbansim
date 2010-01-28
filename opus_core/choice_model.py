@@ -165,7 +165,6 @@ class ChoiceModel(ChunkModel):
 
         self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
-        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         
         ## initial specified_coefficients with dummy values as we may need to get submodel information from it
         ## recreated specified_coefficients when the sampling is done and choice_ids is known
@@ -175,7 +174,7 @@ class ChoiceModel(ChunkModel):
                                       dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
         
         self.create_interaction_datasets(agent_set, agents_index, self.run_config, submodels=submodels)
-        
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         index = self.model_interaction.get_choice_index()
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
