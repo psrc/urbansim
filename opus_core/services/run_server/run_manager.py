@@ -401,10 +401,11 @@ class RunManager(AbstractService):
             cache_directory = self.get_cache_directory(run_id)
 
         try:
-            shutil.rmtree(cache_directory,onerror = self._handle_deletion_errors)
+            ##TODO: why this line is needed when the line below does the same thing and better
+            #shutil.rmtree(cache_directory,onerror = self._handle_deletion_errors)
 
             while os.path.exists(cache_directory):
-                shutil.rmtree(cache_directory)
+                shutil.rmtree(cache_directory, onerror = self._handle_deletion_errors)
         except:
             pass
 
