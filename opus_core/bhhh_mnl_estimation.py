@@ -79,8 +79,10 @@ class bhhh_mnl_estimation(EstimationProcedure):
         adj_ll_ratio = 1-((l_1-nvars)/l_0)
         
         # http://en.wikipedia.org/wiki/Akaike_information_criterion 
-        aic = 2 * nvars - 2 * l_1
+        aic = 2 * index_of_not_fixed_values.size - 2 * l_1
         logger.log_status("Akaike's Information Criterion (AIC): ", str(aic), tags=tags, verbosity=vl)
+        bic = -2 * l_1 + index_of_not_fixed_values.size * log(nobs)
+        logger.log_status("Bayesian Information Criterion (BIC): ", str(bic), tags=tags, verbosity=vl)
         
         logger.log_status("Number of Iterations: ", it+1, tags=tags, verbosity_level=vl)
         logger.log_status("***********************************************", tags=tags, verbosity_level=vl)
