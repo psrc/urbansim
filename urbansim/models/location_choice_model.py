@@ -219,8 +219,14 @@ class LocationChoiceModel(ChoiceModel):
         
         nchoices = self.get_choice_set_size()
         if nchoices==self.choice_set.size():
-            ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
-            return
+            if self.filter is None:
+                ChoiceModel.create_interaction_datasets(self, agent_set, agents_index, config)
+                return
+            else:  # apply filter without doing sampling
+                filter_index = self.apply_filter(self.filter, agent_set, agents_index)
+                self.model_interaction.create_interaction_datasets(agents_index, filter_index)
+                self.update_choice_set_size(filter_index.size)
+                return
         
         sampling_weights = self.get_sampling_weights(config, agent_set=agent_set, agents_index=agents_index)
         #if filter is specified by submodel in a dict, call sampler submodel by submodel
