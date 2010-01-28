@@ -25,6 +25,6 @@ class HouseholdLocationChoiceModelByZones(HouseholdLocationChoiceModel):
             #self.choice_set.flush_dataset() # this (after a while) slows down the simulation considerably
             
         # set the right parcels
-        parcels = agent_set.compute_variables(["household.disaggregate(building.parcel_id)"],
-                                              dataset_pool = self.dataset_pool)
-        agent_set.modify_attribute(name="parcel_id", data = parcels)
+        #parcels = agent_set.compute_variables(["household.disaggregate(building.parcel_id)"],
+        #                                      dataset_pool = self.dataset_pool)
+        #agent_set.modify_attribute(name="parcel_id", data = parcels)

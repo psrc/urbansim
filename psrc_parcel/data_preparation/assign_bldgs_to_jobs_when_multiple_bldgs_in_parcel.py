@@ -11,6 +11,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique_values
+from opus_core.model import Model
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
 from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
@@ -308,7 +309,9 @@ class AssignBuildingsToJobs:
         logger.log_status("Assigning building_id to jobs done.")
 
         
-class RunAssignBldgsToJobs:
+class RunAssignBldgsToJobs(Model):
+    model_name = 'Assigning Buildings To Jobs'
+    
     def run(self, job_dataset, dataset_pool):
         AssignBuildingsToJobs().run(job_dataset, dataset_pool)
         ds = CreateBuildingSqftPerJobDataset()._do_run(dataset_pool)
