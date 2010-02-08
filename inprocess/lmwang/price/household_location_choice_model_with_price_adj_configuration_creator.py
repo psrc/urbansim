@@ -5,7 +5,7 @@ from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
 class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
-    _model_name = "household_location_choice_model_with_price_adj"
+    _model_name = "inprocess.lmwang.price.household_location_choice_model_with_price_adj"
 
     def __init__(self,
                 agent_set = 'household',

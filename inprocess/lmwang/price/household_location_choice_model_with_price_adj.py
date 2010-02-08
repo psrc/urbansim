@@ -23,7 +23,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
         CLOSE = 0.05
         maxiter = 30
         submarkets = define_submarket(self.choice_set, submarket_id_expression="urbansim_parcel.building.zone_id * 100 + building.building_type_id")
-        capacity_string = self.capacity_string
+        capacity_string = self.run_config.get("capacity_string", None)
         demand_string = self.run_config.get('demand_string', 'demand')
 
         ##set demand_string, so the demand for each submodel will be added as a choice_set attribute
@@ -79,7 +79,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
 
         self.plot_data(data_for_plot['sdratio'], main='sdratio_submkt')
 
-        buiding_types = self.choice_set.get_attribute('building_type_id')
+        building_types = self.choice_set.get_attribute('building_type_id')
         data_for_plot['unit_price'] = concatenate( (self.choice_set.get_id_attribute()[:,newaxis], data_for_plot['unit_price'] ),
                                                    axis = 1)        
         for building_type in [4, 12, 19]:

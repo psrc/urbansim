@@ -25,13 +25,14 @@ class HlcmWithPriceAdj(Baseline):
 
         }
         config.replace(config_changes)
+        config["models_configuration"]["household_location_choice_model_with_price_adj"] = {}
         config["models_configuration"]["household_location_choice_model_with_price_adj"]["controller"] = \
               HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(
                   location_set = "building",
                   sampler = "opus_core.samplers.weighted_sampler",
                   sample_size_locations = 50,
                   input_index = 'hrm_index',
-                  filter = 'building.unit_price',
+#                  filter = 'building.unit_price',
                   demand_string="demand",
                   capacity_string = "urbansim_parcel.building.vacant_residential_units",
                   nchunks=1,
