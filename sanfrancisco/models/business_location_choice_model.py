@@ -63,7 +63,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         return (weight_array, where_available)
 
 
-    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2):
+    def apply_filter(self, filter, agent_set=None, agents_index=None, submodel=-2):
         """ apply filter comparing to mean size by submodel instead of 0, by shifting self.filter
         """
         size_filter = None
@@ -85,7 +85,11 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                     size_filter = size_filter * (self.choice_set.get_attribute(submodel_string.alias())==submodel)
             else:
                 size_filter = submodel_filter - mean_size
-        return LocationChoiceModel.apply_filter(self, size_filter, weights, agent_set, agents_index, submodel=submodel)
+            filter_index = where(size_filter>0)[0]
+        return LocationChoiceModel.apply_filter(self, size_filter, 
+                                                agent_set=agent_set, 
+                                                agents_index=agents_index, 
+                                                submodel=submodel)
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None, agent_set=None,

@@ -20,7 +20,7 @@
           <init type="dictionary">
             <argument name="submodel_string" parser_action="quote_string" type="string">building_use_id</argument>
             <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(building.unit_price)</argument>
-            <argument name="filter_attribute" parser_action="quote_string" type="string">None</argument>
+            <argument name="filter_attribute" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
           </init>
           <run type="dictionary">
             <argument name="dataset" type="string">building</argument>
@@ -43,7 +43,7 @@
           <init type="dictionary">
             <name name="name" type="string">TransitionModel</name>
             <argument name="dataset" type="string">business</argument>
-            <argument name="dataset_accounting_attribute" type="string">employment</argument>
+            <argument name="dataset_accounting_attribute" parser_action="quote_string" type="string">employment</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Business Transition Model</argument>
             <argument name="model_short_name" parser_action="quote_string" type="string">BTM</argument>
           </init>
@@ -55,35 +55,10 @@
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
-	        <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
-          </run>
-        </structure>
-      </model>      
-      <!--
-      <model name="business_transition_model" type="model">
-        <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">sanfrancisco.models.business_transition_model</class_module>
-            <class_name>BusinessTransitionModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name hidden="True" name="name" type="string">BusinessTransitionModel</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-          </init>
-          <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">control_totals</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
-            <argument name="in_table_name" type="string">annual_business_control_totals</argument>
-          </prepare_for_run>
-          <run type="dictionary">
-            <argument name="control_totals" type="string">control_totals</argument>
-            <argument name="business_set" type="string">business</argument>
-            <argument name="year" type="string">year</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
-      -->
       <model name="business_relocation_model" type="model">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
@@ -100,17 +75,13 @@
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
             <output hidden="True" name="output" type="string">brm_resources</output>
-            <argument name="arguments" type="string">{"what": "'business'",  
-            										  "rate_storage": "base_cache_storage",
-                                   					  "rate_table": "'annual_relocation_rates_for_business'"}
-            </argument>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_business</argument>
           </prepare_for_run>
           <run type="dictionary">
-            <output hidden="True" name="output" type="string">erm_index</output>
-            <argument name="arguments" type="string">{"agent_set": "business", 
-            										  "resources": "brm_resources"}
-            </argument>            
-            <argument hidden="True" name="resources" type="string">brm_index</argument>
+            <output hidden="True" name="output" type="string">brm_index</output>
+            <argument name="agent_set" type="string">business</argument>
+            <argument name="resources" type="string">brm_resources</argument>
           </run>
         </structure>
       </model>
@@ -123,81 +94,204 @@
           <init type="dictionary">
             <name hidden="True" name="name" type="string">BusinessLocationChoiceModel</name>
             <argument name="location_set" type="string">building</argument>
-            <argument 
-            {
-                      "location_set":"building",
-                      "model_name":"'Business Location Choice Model'",
-                      "short_name":"'BLCM'",
-                      "choices":"'urbansim.lottery_choices'",
-                      "submodel_string":"'business.sector_id'",
-                      "filter": None,
-                      "location_id_string":"'building_id'",
-                      "run_config":{ "estimation":"opus_core.bhhh_mnl_estimation",
-				                     "sampler":"opus_core.samplers.weighted_sampler",
-				                     "sample_size_locations":50,
-				                     "specification_table":"business_location_choice_model_specification",
-				                     "coefficients_table":"business_location_choice_model_coefficients",
-				                     "compute_capacity_flag":True,
-				                     "capacity_string":"building.non_residential_sqft",
-				                     "number_of_agents_string":"business.sqft",
-				                     "number_of_units_string":"sanfrancisco.building.vacant_non_residential_sqft",},
-                      "estimate_config":{ "estimation":"opus_core.bhhh_mnl_estimation",
-				                     "sampler":"opus_core.samplers.weighted_sampler",
-				                     "sample_size_locations":50,
-				                     "specification_table":"business_location_choice_model_specification",
-				                     "coefficients_table":"business_location_choice_model_coefficients",
-				                     "compute_capacity_flag":True,
-				                     "capacity_string":"building.non_residential_sqft",
-				                     "number_of_agents_string":"business.sqft",
-				                     "number_of_units_string":"sanfrancisco.building.vacant_non_residential_sqft",},
-            
-            }  <!--- HERE we go -->
+            <argument name="model_name" parser_action="quote_string" type="string">Business Location Choice Model</argument>
+            <argument name="short_name" parser_action="quote_string" type="string">BLCM</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">business.sector_id</argument>
+            <argument name="sampler" convert_blank_to_none="True" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="filter" convert_blank_to_none="True" type="string"/>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">50</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string">building.non_residential_sqft</key>
+              <key name="number_of_agents_string" parser_action="quote_string" type="string">business.sqft</key>
+              <key name="number_of_units_string" parser_action="quote_string" type="string">sanfrancisco.building.vacant_non_residential_sqft</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key name="sample_size_locations" type="integer">50</key>
             </argument>
           </init>
-          <estimate type="dictionary">
-            <output hidden="True" name="output" type="string">(coefficients, _)</output>
-            <argument name="agent_set" type="string">household</argument>
-            <argument hidden="True" name="agents_index" type="string">_index</argument>
-            <argument name="data_objects" type="string">datasets</argument>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output hidden="True" name="output" type="string">(specification, coefficients, _index)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">business_location_choice_model_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">business_location_choice_model_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string">business</argument>
+            <argument hidden="True" name="agents_index" type="string">brm_index</argument>
+            <argument hidden="True" name="specification" type="string">specification</argument>
+            <argument hidden="True" name="coefficients" type="string">coefficients</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':5000}</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument hidden="True" name="specification" type="string">_specification</argument>
-          </estimate>
+          </run>
           <prepare_for_estimate type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_estimate</name>
-            <output hidden="True" name="output" type="string">(_specification, _index)</output>
-            <argument name="agent_set" type="string">household</argument>
+            <output hidden="True" name="output" type="string">(specification, index)</output>
+            <argument name="agent_set" type="string">business</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="index_to_unplace" type="string">None</argument>
-            <argument name="join_datasets" type="boolean">True</argument>
             <argument name="portion_to_unplace" type="string">.1</argument>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
+            <argument name="join_datasets" type="boolean">False</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string"/>
           </prepare_for_estimate>
-          <prepare_for_run type="dictionary">
-            <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <output hidden="True" name="output" type="string">(_specification, _coefficients)</output>
-            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
-          </prepare_for_run>
-          <run type="dictionary">
-            <argument name="agent_set" type="string">household</argument>
-            <argument hidden="True" name="agents_index" type="string">hrm_index</argument>
-            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
-            <argument hidden="True" name="coefficients" type="string">_coefficients</argument>
-            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+          <estimate type="dictionary">
+            <output hidden="True" name="output" type="string">(coefficients, dummy)</output>
+            <argument name="agent_set" type="string">business</argument>
+            <argument hidden="True" name="agents_index" type="string">index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-            <argument hidden="True" name="specification" type="string">_specification</argument>
-            <argument name="maximum_runs" type="integer">10</argument>
+            <argument hidden="True" name="specification" type="string">specification</argument>
+          </estimate>
+        </structure>
+      </model>
+      <model name="building_transition_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">sanfrancisco.models.building_transition_model</class_module>
+            <class_name>BuildingTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">BuildingTransitionModel</name>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+          </init>
+          <run type="dictionary">
+            <output hidden="True" name="output" type="string">new_building_index</output>
+            <argument name="building_set" type="string">building</argument>
+            <argument name="building_use_classification_table" type="string">building_use_classification</argument>
+            <argument name="vacancy_table" type="string">target_vacancy</argument>
+            <argument name="history_table" type="string">development_event_history</argument>
+            <argument name="year" type="string">year</argument>
+            <argument name="location_set" type="string">parcel</argument>
+            <argument name="resources" type="string">model_resources</argument>
           </run>
         </structure>
       </model>
-      
-      
+      <model name="building_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <group_by_attribute type="list">('building_use_classification', 'name')</group_by_attribute>
+          <import name="import" type="dictionary">
+            <class_module>sanfrancisco.models.building_location_choice_model</class_module>
+            <class_name>BuildingLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="location_set" type="string">parcel</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">building.building_use_id</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">UNITS_capacity</argument>
+            <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="number_of_agents_string" convert_blank_to_none="True" parser_action="quote_string" type="string">sanfrancisco.parcel.UNITS</argument>
+            <argument name="number_of_units_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="developable_maximum_unit_variable" convert_blank_to_none="True" parser_action="quote_string" type="string">UNITS_capacity</argument>
+            <argument name="developable_minimum_unit_variable" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">sanfrancisco.building.building_class_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="weights_for_simulation_string" type="string">None</key>
+            </argument>
+            <argument name="run_config" type="dictionary">
+              <key name="agent_units_string" convert_blank_to_none="True" type="string">sanfrancisco.building.building_size</key>
+            </argument>
+            <name name="name" type="string">BuildingLocationChoiceModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">building_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">building_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'records_per_chunk':500}</argument>
+            <argument name="agent_set" type="string">building</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="agents_index" type="string">new_building_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">development_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">building</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="buildings_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, dummy)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">building</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+        </structure>
+      </model>
+      <model name="process_pipeline_events" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">sanfrancisco.models.process_pipeline_events</class_module>
+            <class_name>ProcessPipelineEvents</class_name>
+          </import>
+          <init type="dictionary" hidden="True">
+            <name hidden="True" name="name" type="string">ProcessPipelineEvents</name>
+          </init>
+          <run type="dictionary">
+            <output hidden="True" name="output" type="string">scheduled_development_events</output>
+            <argument name="building_dataset" type="string">building</argument>
+            <argument name="year" type="string" hidden="True">year</argument>
+            <argument name="storage" type="string" hidden="True">base_cache_storage</argument>
+          </run>
+        </structure>
+      </model>
+      <!--
+      <model name="household_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      -->
+      <model name="household_location_choice_model" type="model">
+        <structure type="dictionary">
+          <init type="dictionary">
+   	    <argument name="estimation_weight_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="submodel_string" parser_action="quote_string" type="string">sanfrancisco.household.household_size_category</argument>
+	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+          </init>
+        </structure>
+      </model>
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
@@ -224,11 +318,11 @@
   </model_manager>
   <scenario_manager>
     <scenario executable="True" name="sanfrancisco_baseline" type="scenario">
-      <parent type="scenario_name">urbansim_parcel_baseline</parent>
-      <base_year type="integer">2000</base_year>
+      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+      <base_year type="integer">2001</base_year>
       <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2001</firstyear>
-        <lastyear type="integer">2002</lastyear>
+        <firstyear type="integer">2002</firstyear>
+        <lastyear type="integer">2005</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
         <selectable name="process_pipeline_events" type="selectable">True</selectable>
@@ -323,6 +417,7 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
+          <selectable name="building_type" type="selectable">False</selectable>
           <selectable name="parcel" type="selectable">True
           	<package_name type="string">sanfrancisco</package_name>
           </selectable>
@@ -348,6 +443,12 @@
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
     <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data" followers="Results">
+      <run hidden="Children" type="source_data" name="base_year_data" run_id="3">
+        <scenario_name type="string"/>
+        <cache_directory type="string">/workspace/urbansim_cache/sanfrancisco/base_year_data</cache_directory>
+        <start_year type="integer">2009</start_year>
+        <end_year type="integer">2009</end_year>
+      </run>
     </simulation_runs>
   </results_manager>
 </opus_project>

@@ -364,9 +364,11 @@
             <argument name="probabilities" parser_action="quote_string" type="string">urbansim.household_relocation_probabilities</argument>
           </init>
           <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
             <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_households</argument>
             <argument name="what" parser_action="quote_string" type="string">households</argument>
+            <output hidden="True" name="output" type="string">hrm_resources</output>
           </prepare_for_run>
           <run type="dictionary">
             <output hidden="True" name="output" type="string">hrm_index</output>

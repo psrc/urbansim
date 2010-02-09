@@ -3,10 +3,9 @@
 # See opus_core/LICENSE
 
 from urbansim.models.building_location_choice_model import BuildingLocationChoiceModel as UrbansimBuildingLocationChoiceModel
-from urbansim.models.agent_location_choice_model_member import AgentLocationChoiceModelMember
-from numpy import where, arange, array, ones, zeros, int8
+from numpy import where, arange, zeros
 from numpy import logical_or, logical_not
-from opus_core.variable_name import VariableName
+from opus_core.variables.variable_name import VariableName
 from opus_core.resources import Resources
 from opus_core.datasets.dataset import Dataset
 
@@ -71,7 +70,7 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
                 building_set.join_by_rows(estimation_set,
                                           require_all_attributes=False,
                                           change_ids_if_not_unique=True)
-                index = arange(building_set.size()-estimation_set.size(), agent_set.size())
+                index = arange(building_set.size()-estimation_set.size(), building_set.size())
             else:
                 index = building_set.get_id_index(estimation_set.get_id_attribute())
         else:

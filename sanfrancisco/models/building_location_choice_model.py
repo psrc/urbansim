@@ -25,18 +25,18 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
             self.filter_for_submodels[building_use_ids[i]] = VariableName("parcel.%s_possible" % building_use_prefix[i].lower())
             
     def get_sampling_weights(self, config, agent_set=None, **kwargs):
-        weight_array, where_developable = UrbansimBuildingLocationChoiceModel.get_sampling_weights(self, config, 
-                                                                                                   agent_set=agent_set, 
-                                                                                                   **kwargs)
+        weight_array = UrbansimBuildingLocationChoiceModel.get_sampling_weights(self, config, 
+                                                                                agent_set=agent_set, 
+                                                                                **kwargs)
+        where_developable = self.filter_index
         # multiply by filter for submodels
-        building_use_ids = agent_set.get_attribute_by_index('building_use_id', agents_index)
+        building_use_ids = agent_set.get_attribute_by_index('building_use_id', kwargs['agents_index'])
         for submodel, filter_variable in self.filter_for_submodels.iteritems():
             if filter_variable.get_alias() in self.choice_set.get_known_attribute_names():
                 values = self.choice_set.get_attribute(filter_variable)[where_developable].astype("bool8")
                 index = where(building_use_ids == submodel)[0]
                 weight_array[index, :] = weight_array[index, :] * values
                 
-        self.filter_index = where_developable
         return weight_array
 
 #    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
