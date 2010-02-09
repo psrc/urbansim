@@ -86,7 +86,7 @@ CLUSTER_ATTRIBUTES = set( ['K', 'URL', 'bgcolor', 'color', 'colorscheme', 'fillc
 # This version freezes dictionaries used as values within dictionaries.
 #
 class frozendict(dict):
-    def _blocked_attribute(obj):
+    def _blocked_attribute(self, obj):
         raise AttributeError, "A frozendict cannot be modified."
     _blocked_attribute = property(_blocked_attribute)
 

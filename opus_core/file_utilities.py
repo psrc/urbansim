@@ -26,13 +26,7 @@ def get_resources_from_file(filename):
 def get_resources_from_string(resources_string):
     """Given a string containing a dictionary, this will load the dictionary from the file."""
     return Configuration(pickle.loads(resources_string))
-    
-def write_to_file(file_name, content_string):
-    """Given a file name and a content_string, write the string to the file """
-    f = open(filename, "w")
-    f.write(content_string)
-    f.close()
-    
+       
 def write_to_file(file_name, content_string_list):
     """Given a file name and a content_string_list, write the list of strings to the file """
     f = open(file_name, "w")

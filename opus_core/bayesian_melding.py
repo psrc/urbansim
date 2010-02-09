@@ -68,7 +68,7 @@ class ObservedData:
     def get_year(self):
         return self.year
     
-    def get_values_for_quantity(variable_name):
+    def get_values_for_quantity(self, variable_name):
         return self.get_quantity_objects()[self.get_index_for_quantity(variable_name)].get_values()
                 
     def get_quantity_object_by_index(self, index):
