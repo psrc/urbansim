@@ -443,12 +443,6 @@
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
     <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data" followers="Results">
-      <run hidden="Children" type="source_data" name="base_year_data" run_id="3">
-        <scenario_name type="string"/>
-        <cache_directory type="string">/workspace/urbansim_cache/sanfrancisco/base_year_data</cache_directory>
-        <start_year type="integer">2009</start_year>
-        <end_year type="integer">2009</end_year>
-      </run>
     </simulation_runs>
   </results_manager>
 </opus_project>
