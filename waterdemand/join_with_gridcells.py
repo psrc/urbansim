@@ -22,9 +22,9 @@ print "Create ConsumptionDataset object"
 from waterdemand.datasets.consumption_dataset import ConsumptionDataset
 consumption = ConsumptionDataset(in_storage = storage, in_table_name=consumption_type + "_grid")
 
-from urbansim.datasets.gridcells import GridcellSet
+from urbansim.datasets.gridcell_dataset import GridcellDataset
 from numpy import array
-from opus_core.miscellaneous import unique_values
+from opus_core.misc import unique_values
 
 consumption_grid_id = consumption.get_attribute("grid_id")
 years = consumption.get_attribute("billyear")
@@ -36,7 +36,7 @@ cache_directory = "D:/urbansim_cache/water_demand"
 for year in arange(1991, 2001):
     print year
     flt_storage = StorageCreator().build_storage(type="flt", location=os.path.join(cache_directory, str(year)))
-    gridcells = GridcellSet(in_storage=flt_storage)
+    gridcells = GridcellDataset(in_storage=flt_storage)
     grid_id_idx = array(map(lambda x: gridcells.try_id_mapping(x, -1), consumption_grid_id))
     year_idx = where(years==year)[0]
     grid_id_idx_for_year = grid_id_idx[year_idx]
