@@ -1,0 +1,40 @@
+<html><head><title>Synthesizer Menu</title></head>
+
+<body>
+<div align="justify">
+
+<p>
+The Synthesizer Menu has the following options available in it.
+</p>
+
+<p>
+<img src="../images/varcorr.png" alt="imblogo"/> Set Corresponding Variables<br><br>
+
+<b>Run Default Transformations</b><br>
+This step needs to be run only if user chooses to utilize the default Census 2000 data. In this step, the default census categories for some household, groupquarter, and person variables of interest are consolidated. This needs to be done before the set correspondence step in the case that default categories of the census variables defined in PopGen are used. Go to the <b>File Manager</b> window on the left hand side of the screen.  Click the (+) sign on <b>Data Tables</b>, if it’s not already extended.  Right-click on <b>housing_pums</b> and select <b>Default Transformation</b>. The default transformation takes about a minute to process. Repeat the process for the <b>person_pums</b> and <b>mastersftable"resolution"</b> (i.e. mastersftableblockgroup or mastersftablecensustract) data tables. <br><br>
+
+Before running the synthesizer, correspondence between the categories of the housing, groupquarter and person variables of interest in the sample file and the corresponding columns in the summary files needs to be set. This is done by selecting <b>Synthesizer -> Set Correspondence</b> menu option. A screen pops  up listing all the sample and marginal variables for households, persons and group quarters. The correspondence between the two is then set by manually selecting the variables and adding relationships.Correspondences must be set for at least one control variable in household, person, and group quarters.
+</p>
+
+<p>
+<img src="../images/parameters.png" alt="imblogo"/> Parameters/Settings<br>
+The run parameters can be set using the <b>Synthesizer -> Parameters/ Settings</b> option. The tolerances and maximum number of iterations for both IPF and IPU procedures can be controlled. You are also given the option to change the number of draws and the p-value tolerance during the synthetic population generation. You can choose from among three rounding procedures available - Arithmetic, Bucket and Stochastic Rounding. Rounding of the household frequencies is done after the IPU procedure.
+</p>
+
+<p>
+<img src="../images/run.png" alt="imblogo"/> Run<br>
+To start the population synthesizer, go to <b>Synthesizer -> Run</b> or select the Run icon in the toolbar. Next, go to <b>Select Geographies</b> and a pop up screen appears with a list of all the geographies (at the resolution selected for the synthesis). Next, you will need to select one or more geographies from the list and click on <b>Select</b>. Once all the desired geographies have been chosen, select <b>OK</b> at the bottom of the window.  Finally, select <b>Run Synthesizer</b> and the population synthesis begins. You will be prompted for permission to pre-process the data and also if multiple-cores (if available on the computer) should be used for parallel processing. Following this, the algorithm is executed and progress can be monitored from the output on the screen.
+</p>
+
+<p>
+<img src="../images/stop.png" alt="imblogo"/> Stop<br>
+This option can used to the stop the a Synthesizer run in progress.
+</p>
+
+</div>
+
+
+</body>
+
+
+</html>

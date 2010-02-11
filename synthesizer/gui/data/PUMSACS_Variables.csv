@@ -1,0 +1,428 @@
+variablename,description,type,defaultvar
+text,text,text,bigint
+ACR,Lot size,H,0
+ADJUST,Adjustment factor for dollar amounts (6 implied decimal places),H,0
+AGS,Sales of Agriculture Product,H,0
+BDS,Bedrooms,H,0
+BLD,Units in structure,H,0
+BUS,Business or medical office on property,H,0
+CONP,Condo fee (monthly amount),H,0
+DIVISION,Division code,H,0
+ELEP,Electricity (monthly cost),H,0
+FACRP,Lot size allocation,H,0
+FAGSP,Sales of Agricultural Products allocation,H,0
+FBDSP,Number of bedrooms allocation,H,0
+FBLDP,Units in structure allocation,H,0
+FBUSP,Business or medical office on property allocation,H,0
+FCONP,Condominium fee allocation,H,0
+FELEP,Electricity (monthly cost) allocation,H,0
+FES,Family type and employment status,H,0
+FFSP,Food stamp amount (yearly amount) allocation,H,0
+FFULP,House heating fuel (yearly cost) allocation,H,0
+FGASP,Gas (monthly cost) allocation,H,0
+FHFLP,House heating fuel allocation,H,0
+FINCP,Family income,H,0
+FINSP,Fire hazard flood insurance allocation,H,0
+FKITP,Complete kitchen facilities allocation,H,0
+FMHP,Mobile home costs allocation,H,0
+FMRGIP,Payment include fire hazard flood insurance allocation,H,0
+FMRGP,Regular mortgage payment allocation,H,0
+FMRGTP,Payment include real estate taxes allocation,H,0
+FMRGXP,Mortgage status allocation,H,0
+FMVYP,When moved into this house or apartment allocation,H,0
+FPLMP,Complete plumbing facilities allocation,H,0
+FRMSP,Rooms allocation,H,0
+FRNTMP,Meals included in rent allocation,H,0
+FRNTP,Monthly rent allocation,H,0
+FS,Food stamp amount,H,0
+FSMP,Second mortgage payment allocation,H,0
+FSMXHP,Home equity loan status allocation,H,0
+FSMXSP,Second mortgage status allocation,H,0
+FTAXP,Taxes on property allocation,H,0
+FTELP,Telephones in house allocation,H,0
+FTENP,Tenure allocation,H,0
+FULP,House heating fuel (yearly cost),H,0
+FVACSP,Vacancy status allocation,H,0
+FVALP,Value allocation,H,0
+FVEHP,Vehicles available by household allocation,H,0
+FWATP,Water (yearly cost) allocation,H,0
+FYBLP,When structure first built allocation,H,0
+GASP,Gas (monthly cost),H,0
+GRNTP,Gross rent,H,0
+GRPIP3,Gross rent as a percentage of household income past 12 months,H,0
+HFL,House heating fuel,H,0
+HHL,Household language,H,0
+HHT,Household/family type,H,1
+HINCP,Household income,H,1
+HUGCL,Flag to indicate grandchild living in H unit,H,0
+HUPAC,Family presence and age of children,H,0
+HUPAOC,HH presence and age of own children,H,1
+HUPARC,HH presence and age of related children,H,0
+INSP,Fire/hazard/flood insurance (yearly amount),H,0
+KIT,Complete kitchen facilities,H,0
+LNGI,Linguistic isolation,H,0
+MHP,Mobile home costs (yearly amount),H,0
+MRGI,Payment include fire/hazard/flood insurance,H,0
+MRGP,Mortgage payment (monthly amount),H,0
+MRGT, Payment include real estate taxes,H,0
+MRGX,Mortgage status,H,0
+MV,When moved into this house or apartment,H,0
+NOC,Number of own children in household (unweighted),H,0
+NP,Number of person records following this H record,H,1
+NPF,Number of persons in family (unweighted),H,0
+NPP,Grandparent headed household with no parent present,H,0
+NR,Presence of nonrelative in household,H,0
+NRC,Number of related children in household (unweighted),H,0
+OCPIP,Selected monthly owner costs as a percentage of household income during the past 12 months,H,0
+PARTNER,Unmarried parnter household,H,0
+PLM,Complete plumbing facilities,H,0
+PSF,Presence of subfamilies in Household,H,0
+PUMA,Public use microdata area code (PUMA)Designates area of 100000 or more population.  Use with ST for unique code.,H,1
+R18,Presence of persons under 18 years in household (unweighted),H,0
+R60,Presence of persons 60 years and over in household (unweighted),H,0
+R65,Presence of persons 65 years and over in household (unweighted),H,0
+REGION,Region code,H,0
+RESMODE,Response mode,H,0
+RMS,Rooms,H,0
+RNTM,Meals included in rent,H,0
+RNTP,Monthly rent,H,0
+RT,Record Type,H,0
+SERIALNO,H unit/GQ person serial number,H,1
+SMOCP,Selected monthly owner costs,H,0
+SMP,Second mortgage payment (monthly amount),H,0
+SMX,Second mortgage or home equity loan status,H,0
+SRNT,Specified rent unit,H,0
+ST,State code,H,1
+SVAL,Specified value unit,H,0
+TAXP,Property taxes (yearly amount),H,0
+TEL,Telephone in Unit,H,0
+TEN,Tenure,H,0
+TYPE,Type of unit,H,1
+VACS,Vacancy status,H,0
+VAL,Property value,H,0
+VEH,Vehicles (1 ton or less) available,H,0
+WATP,Water (yearly cost),H,0
+WGTP,H Weight,H,0
+WGTP1,H Weight replicate 1,H,0
+WGTP10,H Weight replicate 10,H,0
+WGTP11,H Weight replicate 11,H,0
+WGTP12,H Weight replicate 12,H,0
+WGTP13,H Weight replicate 13,H,0
+WGTP14,H Weight replicate 14,H,0
+WGTP15,H Weight replicate 15,H,0
+WGTP16,H Weight replicate 16,H,0
+WGTP17,H Weight replicate 17,H,0
+WGTP18,H Weight replicate 18,H,0
+WGTP19,H Weight replicate 19,H,0
+WGTP2,H Weight replicate 2,H,0
+WGTP20,H Weight replicate 20,H,0
+WGTP21,H Weight replicate 21,H,0
+WGTP22,H Weight replicate 22,H,0
+WGTP23,H Weight replicate 23,H,0
+WGTP24,H Weight replicate 24,H,0
+WGTP25,H Weight replicate 25,H,0
+WGTP26,H Weight replicate 26,H,0
+WGTP27,H Weight replicate 27,H,0
+WGTP28,H Weight replicate 28,H,0
+WGTP29,H Weight replicate 29,H,0
+WGTP3,H Weight replicate 3,H,0
+WGTP30,H Weight replicate 30,H,0
+WGTP31,H Weight replicate 31,H,0
+WGTP32,H Weight replicate 32,H,0
+WGTP33,H Weight replicate 33,H,0
+WGTP34,H Weight replicate 34,H,0
+WGTP35,H Weight replicate 35,H,0
+WGTP36,H Weight replicate 36,H,0
+WGTP37,H Weight replicate 37,H,0
+WGTP38,H Weight replicate 38,H,0
+WGTP39,H Weight replicate 39,H,0
+WGTP4,H Weight replicate 4,H,0
+WGTP40,H Weight replicate 40,H,0
+WGTP41,H Weight replicate 41,H,0
+WGTP42,H Weight replicate 42,H,0
+WGTP43,H Weight replicate 43,H,0
+WGTP44,H Weight replicate 44,H,0
+WGTP45,H Weight replicate 45,H,0
+WGTP46,H Weight replicate 46,H,0
+WGTP47,H Weight replicate 47,H,0
+WGTP48,H Weight replicate 48,H,0
+WGTP49,H Weight replicate 49,H,0
+WGTP5,H Weight replicate 5,H,0
+WGTP50,H Weight replicate 50,H,0
+WGTP51,H Weight replicate 51,H,0
+WGTP52,H Weight replicate 52,H,0
+WGTP53,H Weight replicate 53,H,0
+WGTP54,H Weight replicate 54,H,0
+WGTP55,H Weight replicate 55,H,0
+WGTP56,H Weight replicate 56,H,0
+WGTP57,H Weight replicate 57,H,0
+WGTP58,H Weight replicate 58,H,0
+WGTP59,H Weight replicate 59,H,0
+WGTP6,H Weight replicate 6,H,0
+WGTP60,H Weight replicate 60,H,0
+WGTP61,H Weight replicate 61,H,0
+WGTP62,H Weight replicate 62,H,0
+WGTP63,H Weight replicate 63,H,0
+WGTP64,H Weight replicate 64,H,0
+WGTP65,H Weight replicate 65,H,0
+WGTP66,H Weight replicate 66,H,0
+WGTP67,H Weight replicate 67,H,0
+WGTP68,H Weight replicate 68,H,0
+WGTP69,H Weight replicate 69,H,0
+WGTP7,H Weight replicate 7,H,0
+WGTP70,H Weight replicate 70,H,0
+WGTP71,H Weight replicate 71,H,0
+WGTP72,H Weight replicate 72,H,0
+WGTP73,H Weight replicate 73,H,0
+WGTP74,H Weight replicate 74,H,0
+WGTP75,H Weight replicate 75,H,0
+WGTP76,H Weight replicate 76,H,0
+WGTP77,H Weight replicate 77,H,0
+WGTP78,H Weight replicate 78,H,0
+WGTP79,H Weight replicate 79,H,0
+WGTP8,H Weight replicate 8,H,0
+WGTP80,H Weight replicate 80,H,0
+WGTP9,H Weight replicate 9,H,0
+WIF,Workers in family during the past 12 months,H,0
+WKEXREL,Work experience of householder and spouse,H,0
+WORKSTAT, Work status of householder or spouse in family households,H,0
+YBL,When structure first built,H,0
+ADJUST,Adjustment factor for dollar amounts (6 implied decimal places),P,0
+AGEP,Age,P,1
+ANC,Ancestry recode,P,0
+ANC1P,Recoded Detailed Ancestry- first entry,P,0
+ANC2P,Recoded Detailed Ancestry- second entry,P,0
+CIT,Citizenship status,P,0
+COW,Class of worker,P,0
+DDRS,Difficulty dressing,P,0
+DECADE,Decade of entry,P,0
+DEYE,Vision or hearing difficulty,P,0
+DOUT,Difficulty going out,P,0
+DPHY,Physical difficulty,P,0
+DREM,Difficulty remembering,P,0
+DRIVESP,Number of vehicles calculated from JWRI,P,0
+DS,Disability recode,P,0
+DWRK,Difficulty working,P,0
+ENG,Ability to speak English,P,0
+ESP,Employment status of parents,P,0
+ESR,Employment status recode,P,1
+FAGEP,Age allocation flag,P,0
+FANCP,Ancestry allocation flag,P,0
+FCITP,Citizenship allocation flag,P,0
+FCOWP,Class of worker allocation flag,P,0
+FDDRSP,Difficulty dressing allocation flag,P,0
+FDEYEP,Vision difficulty allocation flag,P,0
+FDOUTP,Difficulty going out allocation flag,P,0
+FDPHYP,Physical difficulty allocation flag,P,0
+FDREMP,Difficulty remembering allocation flag,P,0
+FDWRKP,Difficulty working allocation flag,P,0
+FENGP,Ability to speak English allocation flag,P,0
+FER,Child born within the past 12 months,P,0
+FESRP,Employment status recode allocation flag,P,0
+FFERP,Children born within the past 12 months allocation flag,P,0
+FGCLP,Grandchildren living in house allocation flag,P,0
+FGCMP,Months responsible for grandchildren allocation flag,P,0
+FGCRP,Responsible for grandchildren allocation flag,P,0
+FHISP,Detailed Hispanic origin allocation flag,P,0
+FINDP,Industry allocation flag,P,0
+FINTP,Interest dividend and net rental income allocation flag,P,0
+FJWDP,Time of departure to work allocation flag,P,0
+FJWMNP,Travel time to work allocation flag,P,0
+FJWRIP,Vehicle occupancy allocation flag,P,0
+FJWTRP,Means of transportation to work allocation flag,P,0
+FLANP,Language spoken at home allocation flag,P,0
+FLANXP,Language other than English allocation flag,P,0
+FMARP,Marital status allocation flag,P,0
+FMIGP,Mobility status allocation flag,P,0
+FMIGSP,Migration state allocation flag,P,0
+FMILPP,Military periods of service allocation flag,P,0
+FMILSP,Military service allocation flag,P,0
+FMILYP,Years of military service allocation flag,P,0
+FOCCP,Occupation allocation flag,P,0
+FOIP,All other income allocation flag,P,0
+FPAP,Public assistance income allocation flag,P,0
+FPOBP,Place of birth allocation flag,P,0
+FPOWSP,Place of work state allocation flag,P,0
+FRACP,Detailed race allocation flag,P,0
+FRELP,Relationship allocation flag,P,0
+FRETP,Retirement income allocation flag,P,0
+FSCHGP,Grade attending allocation flag,P,0
+FSCHLP,Highest education allocation flag,P,0
+FSCHP,School enrollment allocation flag,P,0
+FSEMP,Self-employment income allocation flag,P,0
+FSEXP,Sex allocation flag,P,0
+FSSIP,Supplementary Security Income allocation flag,P,0
+FSSP,Social Security income allocation flag,P,0
+FWAGP,Wages and salary income allocation flag,P,0
+FWKHP,Usual hours worked per week past 12 months allocation flag,P,0
+FWKLP,Last worked allocation flag,P,0
+FWKWP,Weeks worked past 12 months allocation flag,P,0
+FYOEP,Year of entry allocation flag,P,0
+GCL,Grandchildren living in this house,P,0
+GCM,Months responsible for grandchildren,P,0
+GCR,Responsible for grandchildren,P,0
+HISP,Recoded detailed Hispanic origin,P,0
+INDP,Industry recode,P,0
+INTP,Interest dividends and net rental income past 12 months (signed),P,0
+JWAP,Time of arrival at work- hour and minute,P,0
+JWDP,Time of departure for work- hour and minute,P,0
+JWMNP,Travel time to work,P,0
+JWRIP,Vehicle occupancy,P,0
+JWTR,Means of transportation to work,P,0
+LANP,Language spoken at home,P,0
+LANX,Language other than English at home,P,0
+MAR,Marital Status,P,0
+MIG,Mobility status (lived here 1 year ago),P,0
+MIGPUMA,Migration PUMA,P,0
+MIGSP,Migration recode- State or foreign country code,P,0
+MIL,Military Status,P,0
+MILB,Served August 1990- August 2001 (including Persian Gulf War),P,0
+MILC,Served September 1980- July 1990,P,0
+MILD,Served May 1975- August 1980,P,0
+MILE,Served Vietnam era (August 1964- April 1975),P,0
+MILF,Served March 1961- July 1964,P,0
+MILG,Served February 1955- February 1961,P,0
+MILH,Served Korean War (July 1950- January 1955),P,0
+MILI,Served January 1947- June 1950,P,0
+MILJ,Served World War II (December 1941- December 1946),P,0
+MILK,Served November 1941 or earlier,P,0
+MILPA,Served September 2001 or later,P,0
+MILY,Years of active duty military service,P,0
+MSP,Married spouse present/spouse absent,P,0
+NAICSP,NAICS Industry code,P,0
+NATIVITY,Nativity,P,0
+NOP,Nativity of Parent,P,0
+NWAB,Temporary absence from work,P,0
+NWAV,Available for work,P,0
+NWLA,On layoff from work,P,0
+NWLK,Looking for work,P,0
+NWRE,Informed of recall,P,0
+OC,Own Child,P,0
+OCCP,Occupation recode,P,0
+OIP,All other income past 12 months,P,0
+PAOC,Presence and age of own children,P,0
+PAP,Public assistance income past 12 months,P,0
+PERNP,Total person's earnings,P,0
+PINCP,Total person's income (signed),P,0
+POBP,Place of birth (Recode),P,0
+POVPIP,Person poverty status recode,P,0
+POWPUMA,Place of work PUMA,P,0
+POWSP,Place of work - State or foreign country recode,P,0
+PUMA,Public use microdata area code (PUMA)Designates area of 100000 or more population.  Use with ST for unique code.,P,1
+PWGTP,Person's weight,P,0
+PWGTP1,Person's Weight replicate 1,P,0
+PWGTP10,Person's Weight replicate 10,P,0
+PWGTP11,Person's Weight replicate 11,P,0
+PWGTP12,Person's Weight replicate 12,P,0
+PWGTP13,Person's Weight replicate 13,P,0
+PWGTP14,Person's Weight replicate 14,P,0
+PWGTP15,Person's Weight replicate 15,P,0
+PWGTP16,Person's Weight replicate 16,P,0
+PWGTP17,Person's Weight replicate 17,P,0
+PWGTP18,Person's Weight replicate 18,P,0
+PWGTP19,Person's Weight replicate 19,P,0
+PWGTP2,Person's Weight replicate 2,P,0
+PWGTP20,Person's Weight replicate 20,P,0
+PWGTP21,Person's Weight replicate 21,P,0
+PWGTP22,Person's Weight replicate 22,P,0
+PWGTP23,Person's Weight replicate 23,P,0
+PWGTP24,Person's Weight replicate 24,P,0
+PWGTP25,Person's Weight replicate 25,P,0
+PWGTP26,Person's Weight replicate 26,P,0
+PWGTP27,Person's Weight replicate 27,P,0
+PWGTP28,Person's Weight replicate 28,P,0
+PWGTP29,Person's Weight replicate 29,P,0
+PWGTP3,Person's Weight replicate 3,P,0
+PWGTP30,Person's Weight replicate 30,P,0
+PWGTP31,Person's Weight replicate 31,P,0
+PWGTP32,Person's Weight replicate 32,P,0
+PWGTP33,Person's Weight replicate 33,P,0
+PWGTP34,Person's Weight replicate 34,P,0
+PWGTP35,Person's Weight replicate 35,P,0
+PWGTP36,Person's Weight replicate 36,P,0
+PWGTP37,Person's Weight replicate 37,P,0
+PWGTP38,Person's Weight replicate 38,P,0
+PWGTP39,Person's Weight replicate 39,P,0
+PWGTP4,Person's Weight replicate 4,P,0
+PWGTP40,Person's Weight replicate 40,P,0
+PWGTP41,Person's Weight replicate 41,P,0
+PWGTP42,Person's Weight replicate 42,P,0
+PWGTP43,Person's Weight replicate 43,P,0
+PWGTP44,Person's Weight replicate 44,P,0
+PWGTP45,Person's Weight replicate 45,P,0
+PWGTP46,Person's Weight replicate 46,P,0
+PWGTP47,Person's Weight replicate 47,P,0
+PWGTP48,Person's Weight replicate 48,P,0
+PWGTP49,Person's Weight replicate 49,P,0
+PWGTP5,Person's Weight replicate 5,P,0
+PWGTP50,Person's Weight replicate 50,P,0
+PWGTP51,Person's Weight replicate 51,P,0
+PWGTP52,Person's Weight replicate 52,P,0
+PWGTP53,Person's Weight replicate 53,P,0
+PWGTP54,Person's Weight replicate 54,P,0
+PWGTP55,Person's Weight replicate 55,P,0
+PWGTP56,Person's Weight replicate 56,P,0
+PWGTP57,Person's Weight replicate 57,P,0
+PWGTP58,Person's Weight replicate 58,P,0
+PWGTP59,Person's Weight replicate 59,P,0
+PWGTP6,Person's Weight replicate 6,P,0
+PWGTP60,Person's Weight replicate 60,P,0
+PWGTP61,Person's Weight replicate 61,P,0
+PWGTP62,Person's Weight replicate 62,P,0
+PWGTP63,Person's Weight replicate 63,P,0
+PWGTP64,Person's Weight replicate 64,P,0
+PWGTP65,Person's Weight replicate 65,P,0
+PWGTP66,Person's Weight replicate 66,P,0
+PWGTP67,Person's Weight replicate 67,P,0
+PWGTP68,Person's Weight replicate 68,P,0
+PWGTP69,Person's Weight replicate 69,P,0
+PWGTP7,Person's Weight replicate 7,P,0
+PWGTP70,Person's Weight replicate 70,P,0
+PWGTP71,Person's Weight replicate 71,P,0
+PWGTP72,Person's Weight replicate 72,P,0
+PWGTP73,Person's Weight replicate 73,P,0
+PWGTP74,Person's Weight replicate 74,P,0
+PWGTP75,Person's Weight replicate 75,P,0
+PWGTP76,Person's Weight replicate 76,P,0
+PWGTP77,Person's Weight replicate 77,P,0
+PWGTP78,Person's Weight replicate 78,P,0
+PWGTP79,Person's Weight replicate 79,P,0
+PWGTP8,Person's Weight replicate 8,P,0
+PWGTP80,Person's Weight replicate 80,P,0
+PWGTP9,Person's Weight replicate 9,P,0
+QTRBIR,Quarter of birth,P,0
+RAC1P,Recoded detailed race code,P,1
+RAC2P,Recoded detailed race code,P,0
+RAC3P,Recoded detailed race code,P,0
+RACAIAN,American Indian and Alaska Native recode (American Indian and Alaska Native alone or in combination with one or more other races),P,0
+RACASN,Asian recode (Asian alone or in combination with one or more other races),P,0
+RACBLK,Black or African American recode (Black alone or in combination with one or more other races),P,0
+RACNHPI,Native Hawaiian and Other Pacific Islander recode (Native Hawaiian and Other Pacific Islander alone or in combination with one or more other races),P,0
+RACNUM,Number of major race groups represented,P,0
+RACSOR,Some other race recode (Some other race alone or in combination with one or more other races),P,0
+RACWHT,White recode (White alone or in combination with one or more other races),P,0
+RC,Related child,P,0
+REL,Relationship,P,1
+RETP,Retirement income past 12 months,P,0
+RT,Record Type,P,0
+SCH,School enrollment,P,0
+SCHG,Grade level attending,P,0
+SCHL,Educational attainment,P,0
+SEMP,Self-employment income past 12 months (signed),P,0
+SERIALNO,H unit/GQ person serial number,P,1
+SEX,Sex,P,1
+SFN,Subfamily number,P,0
+SFR,Subfamily relationship,P,0
+SOCP,SOC Occupation code,P,0
+SPORDER,Person number,P,1
+SSIP,Supplementary Security Income past 12 months,P,0
+SSP,Social security income past 12 months,P,0
+ST,State code,P,1
+UWRK,Worked last week,P,0
+VPS,Veteran period of service,P,0
+WAGP,Wages or salary income past 12 months,P,0
+WAOB,World area of birth,P,0
+WKHP,Usual hours worked per week past 12 months,P,0
+WKL,When last worked,P,0
+WKW,Weeks worked past 12 months,P,0
+YOEP,Year of entry,P,0

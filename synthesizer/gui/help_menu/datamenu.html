@@ -1,0 +1,43 @@
+<html>
+
+<head>
+<title>Data Menu</title>
+<link rel="stylesheet" type="text/css" href="default.css" title="default"/>
+</head>
+
+<body>
+
+<p>
+The Data Menu is mainly used for processing and importing the data required for a particular project into MySQL database tables and for viewing and modifying them. It has the following options available in it.
+</p>
+
+<p>
+<img src="../images/datasource.png" alt="imblogo"/> Data Source Connection<br>
+This option can be used to changed the MySQL database connection settings for a particular project.
+</p>
+
+<p>
+<img src="../images/fileimport.png" alt="imblogo"/> Import<br>
+The next step after the project setup involves the importing of data into the MySQL database for further processing and running the synthesizer. This can be done using the <b>Data -> Import</b> menu option or by selecting the green down arrow Import icon in the toolbar. Importing the data involves the following 6 steps:
+
+<ol STYLE="list-style-type: decimal">
+<li>Processing Geographic Correspondence data
+<li>Processing Housing PUMS/ Sample data
+<li>Processing Person PUMS/ Sample data
+<li>Processing Housing Summary data
+<li>Processing Person Summary data
+<li>Processing Region's Shape file
+</ol>
+
+The import process begins by clicking on <b>Start</b>. The completion of each step is indicated by a check symbol beside it. The first 5 steps download the census files if required, parses them and then uploads them into the MySQL database as tables. During this process, you will be prompted to overwrite any files if they already exist and also for the selection of the specific variables to be imported into the database. The final step downloads and extracts the shape files containing the boundaries of the geographies selected.
+</p>
+
+<p>
+<img src="../images/modifydata.png" alt="imblogo"/> View and Modify<br>
+This option is activated only when a particular table in the <b>Data Tables</b> section of the <b>File Manager</b> area is selected. It pulls up the data table to be viewed and edited.
+</p>
+
+</body>
+
+
+</html>

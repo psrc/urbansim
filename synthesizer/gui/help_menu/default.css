@@ -1,0 +1,597 @@
+/**
+ * desert.css
+ *
+ * Copyright (c) 2003-2006 John Willinsky
+ * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+ *
+ * Site-wide shared stylesheet.
+ *
+ * $Id: desert.css,v 1.1 2007/06/18 17:43:13 asmecher Exp $
+ */
+
+/**
+ * Common HTML elements
+ */
+
+body {
+	margin: 0;
+	padding: 0;
+	//background-color: #C2C2C2;
+	background-color: #FFE699;
+	color: #111;
+	font-family: Arial,Helvetica,Verdana,sans-serif,Helvetica;
+}
+
+div {
+	line-height: 140%;
+	text-align: left;
+}
+
+table {
+	border: 0;
+	border-spacing: 0;
+	font-size: 1em;
+}
+
+form {
+	margin: 0;
+}
+
+a {
+	text-decoration: underline;
+}
+
+a:link {
+	color: #C70000;
+}
+
+a:active {
+	color: #111111;
+}
+
+a:visited {
+	color: #762D1E;
+}
+
+a:hover {
+	color: #111111;
+	background: #B38600;
+	
+}
+
+a.plain {
+	color: #111111;
+	background: none;
+}
+
+a.plain:hover {
+	text-decoration: none;
+}
+
+ul {
+	margin: 0.25em 0 0.75em 0;
+	padding: 0 0 0 2.5em;
+}
+
+tt {
+	font-size: 1.25em;
+}
+
+
+/**
+ * Main layout elements
+ */
+
+#container {
+	line-height: 125%;
+	text-align: left;
+}
+
+#header {
+	padding: 0;
+	margin: 0 auto;
+	text-align: center;
+	background: #FFCC33;
+	border-bottom: 2px solid #B38600;
+}
+
+#headerTitle {
+	text-align: center;
+	margin: 0 auto;
+	padding-bottom: 10px;
+	/*padding-top: 10px;*/
+	height: 100px;
+	background: #FFCC33;
+	/*#F29CB4  DF81A0*/ 
+	width: 1000px;		
+}
+
+#header h1 {
+
+	margin: 0 auto;
+	padding: 0.25em 0 0.5em 0;
+	font-family: sans-serif,Times,'Times New Roman',Garamond;
+	font-weight: normal;
+}
+
+#header h2 {
+
+	margin: 0 auto;
+	padding: 0em 0 1em 0;
+	font-family: sans-serif,Times,'Times New Roman',Garamond;
+	font-weight: normal;
+}
+
+#header h2.cap {
+
+	margin: 0 auto;
+	padding: 0em 0 0em 0;
+	font-family: samarkan, sans-serif,Times,'Times New Roman',Garamond;
+	font-weight: normal;
+	font-size: 1.8em;
+	color: #4F6228;
+}
+
+#body {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+
+#footerContent {
+	width: 800px;
+	margin: 0 auto;
+}
+
+#sidebar {
+	width: 245px;
+	margin: 0;
+	padding: 1em 0em 1em 0em;
+	font-size: 0.8em;
+	font-family: comic Sans MS,Arial;
+}
+
+#sidebarl {
+	float: left;
+	width: 170px;
+	margin: 0;
+	padding: 1em 0em 1em 0em;
+	font-size: 0.8em;
+	font-family: comic Sans MS,Arial;
+}
+
+#main {
+	width: 700px; 
+	background: #FFFFFF; 
+	margin-right: 175px;
+	margin-left: 175px;
+	padding: 0.5em 1em 2em 1em;
+	border-bottom: 2px solid #B38600;
+	border-left: 2px solid #B38600;
+	border-right: 2px solid #B38600;
+}
+
+#main h2 {
+	margin: 0em 1em 0.5em 0em;
+	padding-top: 0.5em;
+	font-family: Garamond,'Times New Roman',Times,serif;
+	font-weight: normal;
+}
+
+#main h3 {
+	margin: 0em 1em 0.5em 0em;
+	padding-top: 0em;
+	font-family: Garamond,'Times New Roman',Times,serif;
+	font-weight: normal;
+}
+
+#navbar {
+	margin-right: 0;
+	width: 100%;
+	padding-top: 0;
+	padding-left: 0px;
+	border-bottom: 1px solid #898e79;
+}
+
+#breadcrumb {
+	padding-top: 1em;
+	font-size: 0.9em;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #B38600;
+	margin-bottom: 6px;
+}
+
+#content {
+	margin: 0;
+	padding: 0;
+	padding-top: 0.5em;
+	font-size: 0.75em;
+	border-top: 0px solid #000;
+}
+
+#content div {
+	text-align: justify;
+}
+
+#content h3 {
+	margin: 0em 1em 0.25em 0em;
+	padding-top: 0.75em;
+	font-family: Garamond,'Times New Roman',Times,serif;
+	font-weight: normal;
+	font-size: 1.8em;
+	line-height: 1.35em;
+}
+
+#content h4 {
+	margin: 0em 1em 0.25em 0em;
+	padding-top: 0.75em;
+	font-family: Garamond,'Times New Roman',Times,serif;
+	font-weight: normal;
+	font-size: 1.5em;
+}
+
+#content h5 {
+	margin: 0em 1em 0.25em 0em;
+	padding-top: 0.75em;
+	font-weight: bold;
+	font-size: 1em;
+}
+
+
+/**
+ * Navigation bar
+ */
+ 
+
+#navbar a {
+	font-size: 0.65em;
+	letter-spacing: 0.05em;
+}
+
+#navbar a:link {
+}
+
+#navbar a:active {
+}
+
+#navbar a:visited {
+}
+
+#navbar a:hover {
+}
+
+/**
+
+* Top navigation
+*/
+#topnav 
+{
+text-align: right;
+font-size: 0.65em;
+margin-top: 0;
+padding-right: 5px;
+
+}
+
+#topnav p
+{
+margin-top: 0px;
+padding-top: 5px;
+padding-right: 10px;
+}
+
+
+#topnav li
+{
+
+display: inline;
+list-style-type: none;
+padding-right: 10px;
+
+}
+
+
+
+/**
+ * Sidebar
+ */
+
+#developedBy {
+	text-transform: uppercase;
+	font-size: 0.95em;
+}
+
+#sidebar div.block {
+	font-size: 1em;
+	padding-bottom: 1.5em;
+}
+
+#sidebar div.block span.blockTitle {
+	display: block;
+	padding: 0.5em 0 0.5em 0;
+	font-size: 1em;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+#sidebar div.block span.blockSubtitle {
+	display: block;
+	padding: 0;
+}
+
+#sidebar input.textField, #sidebar select.selectMenu, #sidebar input.button {
+	font-size: 1em;
+}
+
+#sidebarl div.block {
+	font-size: 1em;
+	padding-bottom: 1.5em;
+}
+
+#sidebarl div.block span.blockTitle {
+	display: block;
+	padding: 0.5em 0 0.5em 0;
+	font-size: 1em;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+/**
+ * Breadcrumbs
+ */
+
+#breadcrumb a {
+	text-decoration: none;
+}
+
+#breadcrumb a.current {
+	font-weight: bold;
+}
+
+
+/**
+ * Footer elements
+ */
+
+#footer div.debugStats {
+	font-size: 0.6em;
+}
+
+
+/**
+ * Additional text styles
+ */
+
+span.disabled, label.disabled {
+	color: #666;
+}
+
+a.action, a.file {
+	font-size: 0.85em;
+	text-transform: uppercase;
+}
+
+a.icon {
+	text-decoration: none;
+}
+
+a.icon:hover {
+	background: none;
+}
+
+span.formRequired {
+	color: #333;
+	font-size: 0.9em;
+}
+
+span.instruct {
+}
+
+span.heading {
+	font-size: 0.85em;
+	text-transform: uppercase;
+}
+
+span.highlight {
+	border-bottom: 1px dotted #000;
+}
+
+.nowrap {
+	white-space: nowrap;
+}
+
+
+/**
+ * Table styles
+ */
+
+table.info {
+}
+
+table.info td {
+	padding: 0;
+	padding-bottom: 0.5em;
+	padding-right: 0.5em;
+}
+
+table.listing {
+}
+
+table.listing td {
+	padding: 0.25em 0.5em 0.25em 0.5em;
+}
+
+table.listing tr.heading td, table.listing td.heading, table.info td.heading {
+	font-size: 0.85em;
+	text-transform: uppercase;
+	font-weight: normal;
+	line-height: 120%;
+	padding: 0.75em 0.5em 1em 0.5em;
+}
+
+table.info td.heading {
+	padding-left: 0;
+}
+
+
+table.listing td.nodata, table.info td.nodata {
+	text-align: center;
+	font-style: italic;
+}
+
+table.listing td.headseparator {
+	border-top: 1px dotted #000;
+	font-size: 0.1em;
+	line-height: 1%;
+}
+
+table.listing td.endseparator {
+	border-bottom: 1px dotted #000;
+	font-size: 0.25em;
+	line-height: 10%;
+}
+
+table.listing td.separator, table.info td.separator {
+	border-top: 1px dotted #DDDDD0;
+	font-size: 0.1em;
+	line-height: 1%;
+}
+
+table.data {
+}
+
+table.data tr {
+}
+
+table.data td {
+	padding-bottom: 0.25em;
+}
+
+table.data td.label {
+	padding-right: 1em;
+}
+
+table.data td.value {
+}
+
+table.data td.separator {
+	padding: 0.5em;
+	font-size: 0.1em;
+	line-height: 1%;
+}
+
+table.data td.heading {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+table.nested tr {
+	padding: 0;
+	margin: 0;
+}
+
+span.nested {
+	padding: 0 4px 0 0;
+	font-size: 1.2em;
+}
+
+/**
+ * Form-specific elements
+ */
+
+span.formError {
+	color: #900;
+	font-weight: bold;
+	font-size: 1em;
+}
+
+ul.formErrorList {
+	color: #900;
+}
+
+
+/**
+ * Other organizational elements
+ */
+
+ul.menu {
+	margin: 0;
+	padding: 0;
+}
+
+ul.menu li {
+	margin: 0;
+	padding: 0;
+	padding-right: 1.5em;
+	display: inline;
+}
+
+ul.menu li.current {
+	font-weight: bold;
+}
+
+ul.menu a {
+	font-size: 0.85em;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
+ul.steplist {
+	margin: 0;
+	padding: 0;
+	list-style-type: decimal;
+}
+
+ul.steplist li {
+	margin: 0;
+	padding: 0;
+	font-size: 0.85em;
+	padding-right: 0.5em;
+	display: inline;
+	text-transform: uppercase;
+}
+
+ul.steplist li.current {
+	font-weight: bold;
+}
+
+ul.steplist a {
+	text-decoration: none;
+}
+
+ul.plain {
+	list-style-type: none;
+	padding-left: 1.5em;
+}
+
+ul.cfp li {
+	color: #B38600;
+	font-size: 1.25em;
+}
+
+ul.cfp li span{
+	color: #000000;
+	font-size: .8em;
+
+}
+
+div.separator {
+	width: 100%;
+	margin-top: 1em;
+	margin-bottom: 0.25em;
+	padding: 0;
+	border-bottom: 1px dotted #000;
+	font-size: 0.5em;
+	line-height: 25%;
+}
+
+div.double_separator {
+        width: 100%;
+        margin-top: 1em;
+        margin-bottom: 0.25em;
+        padding: 0;
+        border-bottom-style: double;
+        font-size: 0.5em;
+        line-height: 25%;
+}

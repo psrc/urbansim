@@ -1,0 +1,1884 @@
+county,tract,bg,STATE,pumano,countyname,statename
+int,int,int,int,int,text,text
+1,0,0,1,2000,Autauga, Alabama
+3,0,0,1,0,Baldwin, Alabama
+5,0,0,1,0,Barbour, Alabama
+7,0,0,1,0,Bibb, Alabama
+9,0,0,1,0,Blount, Alabama
+13,0,0,1,0,Butler, Alabama
+15,0,0,1,0,Calhoun, Alabama
+17,0,0,1,0,Chambers, Alabama
+19,0,0,1,0,Cherokee, Alabama
+21,0,0,1,0,Chilton, Alabama
+25,0,0,1,0,Clarke, Alabama
+31,0,0,1,0,Coffee, Alabama
+33,0,0,1,0,Colbert, Alabama
+39,0,0,1,0,Covington, Alabama
+43,0,0,1,0,Cullman, Alabama
+45,0,0,1,0,Dale, Alabama
+47,0,0,1,0,Dallas, Alabama
+49,0,0,1,0,DeKalb, Alabama
+51,0,0,1,0,Elmore, Alabama
+53,0,0,1,0,Escambia, Alabama
+55,0,0,1,0,Etowah, Alabama
+59,0,0,1,0,Franklin, Alabama
+61,0,0,1,0,Geneva, Alabama
+69,0,0,1,0,Houston, Alabama
+71,0,0,1,0,Jackson, Alabama
+73,0,0,1,0,Jefferson, Alabama
+77,0,0,1,0,Lauderdale, Alabama
+79,0,0,1,0,Lawrence, Alabama
+81,0,0,1,0,Lee, Alabama
+83,0,0,1,0,Limestone, Alabama
+87,0,0,1,0,Macon, Alabama
+89,0,0,1,0,Madison, Alabama
+91,0,0,1,0,Marengo, Alabama
+93,0,0,1,0,Marion, Alabama
+95,0,0,1,0,Marshall, Alabama
+97,0,0,1,0,Mobile, Alabama
+99,0,0,1,0,Monroe, Alabama
+101,0,0,1,0,Montgomery, Alabama
+103,0,0,1,0,Morgan, Alabama
+109,0,0,1,0,Pike, Alabama
+111,0,0,1,0,Randolph, Alabama
+113,0,0,1,0,Russell, Alabama
+115,0,0,1,0,St. Clair, Alabama
+117,0,0,1,0,Shelby, Alabama
+121,0,0,1,0,Talladega, Alabama
+123,0,0,1,0,Tallapoosa, Alabama
+125,0,0,1,0,Tuscaloosa, Alabama
+127,0,0,1,0,Walker, Alabama
+133,0,0,1,0,Winston, Alabama
+20,0,0,2,0,Anchorage Municipality, Alaska
+90,0,0,2,0,Fairbanks North Star Borough, Alaska
+110,0,0,2,0,Juneau City and Borough, Alaska
+122,0,0,2,0,Kenai Peninsula Borough, Alaska
+170,0,0,2,0,Matanuska-Susitna Borough, Alaska
+1,0,0,4,0,Apache, Arizona
+3,0,0,4,0,Cochise, Arizona
+5,0,0,4,0,Coconino, Arizona
+7,0,0,4,0,Gila, Arizona
+9,0,0,4,0,Graham, Arizona
+12,0,0,4,0,La Paz, Arizona
+13,0,0,4,0,Maricopa, Arizona
+15,0,0,4,0,Mohave, Arizona
+17,0,0,4,0,Navajo, Arizona
+19,0,0,4,0,Pima, Arizona
+21,0,0,4,0,Pinal, Arizona
+23,0,0,4,0,Santa Cruz, Arizona
+25,0,0,4,0,Yavapai, Arizona
+27,0,0,4,0,Yuma, Arizona
+3,0,0,5,0,Ashley, Arkansas
+5,0,0,5,0,Baxter, Arkansas
+7,0,0,5,0,Benton, Arkansas
+9,0,0,5,0,Boone, Arkansas
+15,0,0,5,0,Carroll, Arkansas
+19,0,0,5,0,Clark, Arkansas
+23,0,0,5,0,Cleburne, Arkansas
+27,0,0,5,0,Columbia, Arkansas
+29,0,0,5,0,Conway, Arkansas
+31,0,0,5,0,Craighead, Arkansas
+33,0,0,5,0,Crawford, Arkansas
+35,0,0,5,0,Crittenden, Arkansas
+45,0,0,5,0,Faulkner, Arkansas
+51,0,0,5,0,Garland, Arkansas
+55,0,0,5,0,Greene, Arkansas
+57,0,0,5,0,Hempstead, Arkansas
+59,0,0,5,0,Hot Spring, Arkansas
+63,0,0,5,0,Independence, Arkansas
+69,0,0,5,0,Jefferson, Arkansas
+71,0,0,5,0,Johnson, Arkansas
+83,0,0,5,0,Logan, Arkansas
+85,0,0,5,0,Lonoke, Arkansas
+91,0,0,5,0,Miller, Arkansas
+93,0,0,5,0,Mississippi, Arkansas
+103,0,0,5,0,Ouachita, Arkansas
+107,0,0,5,0,Phillips, Arkansas
+111,0,0,5,0,Poinsett, Arkansas
+113,0,0,5,0,Polk, Arkansas
+115,0,0,5,0,Pope, Arkansas
+119,0,0,5,0,Pulaski, Arkansas
+123,0,0,5,0,St. Francis, Arkansas
+125,0,0,5,0,Saline, Arkansas
+131,0,0,5,0,Sebastian, Arkansas
+139,0,0,5,0,Union, Arkansas
+143,0,0,5,0,Washington, Arkansas
+145,0,0,5,0,White, Arkansas
+149,0,0,5,0,Yell, Arkansas
+1,0,0,6,0,Alameda, California
+5,0,0,6,0,Amador, California
+7,0,0,6,0,Butte, California
+9,0,0,6,0,Calaveras, California
+11,0,0,6,0,Colusa, California
+13,0,0,6,0,Contra Costa, California
+15,0,0,6,0,Del Norte, California
+17,0,0,6,0,El Dorado, California
+19,0,0,6,0,Fresno, California
+21,0,0,6,0,Glenn, California
+23,0,0,6,0,Humboldt, California
+25,0,0,6,0,Imperial, California
+29,0,0,6,0,Kern, California
+31,0,0,6,0,Kings, California
+33,0,0,6,0,Lake, California
+35,0,0,6,0,Lassen, California
+37,0,0,6,0,Los Angeles, California
+39,0,0,6,0,Madera, California
+41,0,0,6,0,Marin, California
+45,0,0,6,0,Mendocino, California
+47,0,0,6,0,Merced, California
+53,0,0,6,0,Monterey, California
+55,0,0,6,0,Napa, California
+57,0,0,6,0,Nevada, California
+59,0,0,6,0,Orange, California
+61,0,0,6,0,Placer, California
+63,0,0,6,0,Plumas, California
+65,0,0,6,0,Riverside, California
+67,0,0,6,0,Sacramento, California
+69,0,0,6,0,San Benito, California
+71,0,0,6,0,San Bernardino, California
+73,0,0,6,0,San Diego, California
+75,0,0,6,0,San Francisco, California
+77,0,0,6,0,San Joaquin, California
+79,0,0,6,0,San Luis Obispo, California
+81,0,0,6,0,San Mateo, California
+83,0,0,6,0,Santa Barbara, California
+85,0,0,6,0,Santa Clara, California
+87,0,0,6,0,Santa Cruz, California
+89,0,0,6,0,Shasta, California
+93,0,0,6,0,Siskiyou, California
+95,0,0,6,0,Solano, California
+97,0,0,6,0,Sonoma, California
+99,0,0,6,0,Stanislaus, California
+101,0,0,6,0,Sutter, California
+103,0,0,6,0,Tehama, California
+107,0,0,6,0,Tulare, California
+109,0,0,6,0,Tuolumne, California
+111,0,0,6,0,Ventura, California
+113,0,0,6,0,Yolo, California
+115,0,0,6,0,Yuba, California
+1,0,0,8,0,Adams, Colorado
+5,0,0,8,0,Arapahoe, Colorado
+13,0,0,8,0,Boulder, Colorado
+14,0,0,8,0,Broomfield, Colorado
+29,0,0,8,0,Delta, Colorado
+31,0,0,8,0,Denver, Colorado
+35,0,0,8,0,Douglas, Colorado
+37,0,0,8,0,Eagle, Colorado
+39,0,0,8,0,Elbert, Colorado
+41,0,0,8,0,El Paso, Colorado
+43,0,0,8,0,Fremont, Colorado
+45,0,0,8,0,Garfield, Colorado
+59,0,0,8,0,Jefferson, Colorado
+67,0,0,8,0,La Plata, Colorado
+69,0,0,8,0,Larimer, Colorado
+75,0,0,8,0,Logan, Colorado
+77,0,0,8,0,Mesa, Colorado
+83,0,0,8,0,Montezuma, Colorado
+85,0,0,8,0,Montrose, Colorado
+87,0,0,8,0,Morgan, Colorado
+101,0,0,8,0,Pueblo, Colorado
+107,0,0,8,0,Routt, Colorado
+117,0,0,8,0,Summit, Colorado
+119,0,0,8,0,Teller, Colorado
+123,0,0,8,0,Weld, Colorado
+1,0,0,9,0,Fairfield, Connecticut
+3,0,0,9,0,Hartford, Connecticut
+5,0,0,9,0,Litchfield, Connecticut
+7,0,0,9,0,Middlesex, Connecticut
+9,0,0,9,0,New Haven, Connecticut
+11,0,0,9,0,New London, Connecticut
+13,0,0,9,0,Tolland, Connecticut
+15,0,0,9,0,Windham, Connecticut
+1,0,0,10,0,Kent, Delaware
+3,0,0,10,0,New Castle, Delaware
+5,0,0,10,0,Sussex, Delaware
+1,0,0,11,0,District of Columbia , District of Columbia
+1,0,0,12,0,Alachua, Florida
+3,0,0,12,0,Baker, Florida
+5,0,0,12,0,Bay, Florida
+7,0,0,12,0,Bradford, Florida
+9,0,0,12,0,Brevard, Florida
+11,0,0,12,0,Broward, Florida
+15,0,0,12,0,Charlotte, Florida
+17,0,0,12,0,Citrus, Florida
+19,0,0,12,0,Clay, Florida
+21,0,0,12,0,Collier, Florida
+23,0,0,12,0,Columbia, Florida
+27,0,0,12,0,DeSoto, Florida
+31,0,0,12,0,Duval, Florida
+33,0,0,12,0,Escambia, Florida
+35,0,0,12,0,Flagler, Florida
+39,0,0,12,0,Gadsden, Florida
+49,0,0,12,0,Hardee, Florida
+51,0,0,12,0,Hendry, Florida
+53,0,0,12,0,Hernando, Florida
+55,0,0,12,0,Highlands, Florida
+57,0,0,12,0,Hillsborough, Florida
+61,0,0,12,0,Indian River, Florida
+63,0,0,12,0,Jackson, Florida
+69,0,0,12,0,Lake, Florida
+71,0,0,12,0,Lee, Florida
+73,0,0,12,0,Leon, Florida
+75,0,0,12,0,Levy, Florida
+81,0,0,12,0,Manatee, Florida
+83,0,0,12,0,Marion, Florida
+85,0,0,12,0,Martin, Florida
+86,0,0,12,0,Miami-Dade, Florida
+87,0,0,12,0,Monroe, Florida
+89,0,0,12,0,Nassau, Florida
+91,0,0,12,0,Okaloosa, Florida
+93,0,0,12,0,Okeechobee, Florida
+95,0,0,12,0,Orange, Florida
+97,0,0,12,0,Osceola, Florida
+99,0,0,12,0,Palm Beach, Florida
+101,0,0,12,0,Pasco, Florida
+103,0,0,12,0,Pinellas, Florida
+105,0,0,12,0,Polk, Florida
+107,0,0,12,0,Putnam, Florida
+109,0,0,12,0,St. Johns, Florida
+111,0,0,12,0,St. Lucie, Florida
+113,0,0,12,0,Santa Rosa, Florida
+115,0,0,12,0,Sarasota, Florida
+117,0,0,12,0,Seminole, Florida
+119,0,0,12,0,Sumter, Florida
+121,0,0,12,0,Suwannee, Florida
+127,0,0,12,0,Volusia, Florida
+129,0,0,12,0,Wakulla, Florida
+131,0,0,12,0,Walton, Florida
+133,0,0,12,0,Washington, Florida
+9,0,0,13,0,Baldwin, Georgia
+13,0,0,13,0,Barrow, Georgia
+15,0,0,13,0,Bartow, Georgia
+21,0,0,13,0,Bibb, Georgia
+29,0,0,13,0,Bryan, Georgia
+31,0,0,13,0,Bulloch, Georgia
+33,0,0,13,0,Burke, Georgia
+35,0,0,13,0,Butts, Georgia
+39,0,0,13,0,Camden, Georgia
+45,0,0,13,0,Carroll, Georgia
+47,0,0,13,0,Catoosa, Georgia
+51,0,0,13,0,Chatham, Georgia
+55,0,0,13,0,Chattooga, Georgia
+57,0,0,13,0,Cherokee, Georgia
+59,0,0,13,0,Clarke, Georgia
+63,0,0,13,0,Clayton, Georgia
+67,0,0,13,0,Cobb, Georgia
+69,0,0,13,0,Coffee, Georgia
+71,0,0,13,0,Colquitt, Georgia
+73,0,0,13,0,Columbia, Georgia
+77,0,0,13,0,Coweta, Georgia
+81,0,0,13,0,Crisp, Georgia
+85,0,0,13,0,Dawson, Georgia
+87,0,0,13,0,Decatur, Georgia
+89,0,0,13,0,DeKalb, Georgia
+91,0,0,13,0,Dodge, Georgia
+95,0,0,13,0,Dougherty, Georgia
+97,0,0,13,0,Douglas, Georgia
+103,0,0,13,0,Effingham, Georgia
+105,0,0,13,0,Elbert, Georgia
+107,0,0,13,0,Emanuel, Georgia
+111,0,0,13,0,Fannin, Georgia
+113,0,0,13,0,Fayette, Georgia
+115,0,0,13,0,Floyd, Georgia
+117,0,0,13,0,Forsyth, Georgia
+119,0,0,13,0,Franklin, Georgia
+121,0,0,13,0,Fulton, Georgia
+123,0,0,13,0,Gilmer, Georgia
+127,0,0,13,0,Glynn, Georgia
+129,0,0,13,0,Gordon, Georgia
+131,0,0,13,0,Grady, Georgia
+135,0,0,13,0,Gwinnett, Georgia
+137,0,0,13,0,Habersham, Georgia
+139,0,0,13,0,Hall, Georgia
+143,0,0,13,0,Haralson, Georgia
+145,0,0,13,0,Harris, Georgia
+147,0,0,13,0,Hart, Georgia
+151,0,0,13,0,Henry, Georgia
+153,0,0,13,0,Houston, Georgia
+157,0,0,13,0,Jackson, Georgia
+169,0,0,13,0,Jones, Georgia
+175,0,0,13,0,Laurens, Georgia
+177,0,0,13,0,Lee, Georgia
+179,0,0,13,0,Liberty, Georgia
+185,0,0,13,0,Lowndes, Georgia
+187,0,0,13,0,Lumpkin, Georgia
+189,0,0,13,0,McDuffie, Georgia
+195,0,0,13,0,Madison, Georgia
+199,0,0,13,0,Meriwether, Georgia
+205,0,0,13,0,Mitchell, Georgia
+207,0,0,13,0,Monroe, Georgia
+213,0,0,13,0,Murray, Georgia
+215,0,0,13,0,Muscogee, Georgia
+217,0,0,13,0,Newton, Georgia
+219,0,0,13,0,Oconee, Georgia
+223,0,0,13,0,Paulding, Georgia
+225,0,0,13,0,Peach, Georgia
+227,0,0,13,0,Pickens, Georgia
+233,0,0,13,0,Polk, Georgia
+237,0,0,13,0,Putnam, Georgia
+245,0,0,13,0,Richmond, Georgia
+247,0,0,13,0,Rockdale, Georgia
+255,0,0,13,0,Spalding, Georgia
+257,0,0,13,0,Stephens, Georgia
+261,0,0,13,0,Sumter, Georgia
+267,0,0,13,0,Tattnall, Georgia
+275,0,0,13,0,Thomas, Georgia
+277,0,0,13,0,Tift, Georgia
+279,0,0,13,0,Toombs, Georgia
+285,0,0,13,0,Troup, Georgia
+291,0,0,13,0,Union, Georgia
+293,0,0,13,0,Upson, Georgia
+295,0,0,13,0,Walker, Georgia
+297,0,0,13,0,Walton, Georgia
+299,0,0,13,0,Ware, Georgia
+303,0,0,13,0,Washington, Georgia
+305,0,0,13,0,Wayne, Georgia
+311,0,0,13,0,White, Georgia
+313,0,0,13,0,Whitfield, Georgia
+321,0,0,13,0,Worth, Georgia
+1,0,0,15,0,Hawaii, Hawaii
+3,0,0,15,0,Honolulu, Hawaii
+7,0,0,15,0,Kauai, Hawaii
+9,0,0,15,0,Maui, Hawaii
+1,0,0,16,0,Ada, Idaho
+5,0,0,16,0,Bannock, Idaho
+11,0,0,16,0,Bingham, Idaho
+13,0,0,16,0,Blaine, Idaho
+17,0,0,16,0,Bonner, Idaho
+19,0,0,16,0,Bonneville, Idaho
+27,0,0,16,0,Canyon, Idaho
+31,0,0,16,0,Cassia, Idaho
+39,0,0,16,0,Elmore, Idaho
+51,0,0,16,0,Jefferson, Idaho
+53,0,0,16,0,Jerome, Idaho
+55,0,0,16,0,Kootenai, Idaho
+57,0,0,16,0,Latah, Idaho
+65,0,0,16,0,Madison, Idaho
+69,0,0,16,0,Nez Perce, Idaho
+75,0,0,16,0,Payette, Idaho
+83,0,0,16,0,Twin Falls, Idaho
+1,0,0,17,0,Adams, Illinois
+7,0,0,17,0,Boone, Illinois
+11,0,0,17,0,Bureau, Illinois
+19,0,0,17,0,Champaign, Illinois
+21,0,0,17,0,Christian, Illinois
+27,0,0,17,0,Clinton, Illinois
+29,0,0,17,0,Coles, Illinois
+31,0,0,17,0,Cook, Illinois
+37,0,0,17,0,DeKalb, Illinois
+43,0,0,17,0,DuPage, Illinois
+49,0,0,17,0,Effingham, Illinois
+51,0,0,17,0,Fayette, Illinois
+55,0,0,17,0,Franklin, Illinois
+57,0,0,17,0,Fulton, Illinois
+63,0,0,17,0,Grundy, Illinois
+73,0,0,17,0,Henry, Illinois
+75,0,0,17,0,Iroquois, Illinois
+77,0,0,17,0,Jackson, Illinois
+81,0,0,17,0,Jefferson, Illinois
+83,0,0,17,0,Jersey, Illinois
+85,0,0,17,0,Jo Daviess, Illinois
+89,0,0,17,0,Kane, Illinois
+91,0,0,17,0,Kankakee, Illinois
+93,0,0,17,0,Kendall, Illinois
+95,0,0,17,0,Knox, Illinois
+97,0,0,17,0,Lake, Illinois
+99,0,0,17,0,LaSalle, Illinois
+103,0,0,17,0,Lee, Illinois
+105,0,0,17,0,Livingston, Illinois
+107,0,0,17,0,Logan, Illinois
+109,0,0,17,0,McDonough, Illinois
+111,0,0,17,0,McHenry, Illinois
+113,0,0,17,0,McLean, Illinois
+115,0,0,17,0,Macon, Illinois
+117,0,0,17,0,Macoupin, Illinois
+119,0,0,17,0,Madison, Illinois
+121,0,0,17,0,Marion, Illinois
+133,0,0,17,0,Monroe, Illinois
+135,0,0,17,0,Montgomery, Illinois
+137,0,0,17,0,Morgan, Illinois
+141,0,0,17,0,Ogle, Illinois
+143,0,0,17,0,Peoria, Illinois
+145,0,0,17,0,Perry, Illinois
+157,0,0,17,0,Randolph, Illinois
+161,0,0,17,0,Rock Island, Illinois
+163,0,0,17,0,St. Clair, Illinois
+165,0,0,17,0,Saline, Illinois
+167,0,0,17,0,Sangamon, Illinois
+173,0,0,17,0,Shelby, Illinois
+177,0,0,17,0,Stephenson, Illinois
+179,0,0,17,0,Tazewell, Illinois
+183,0,0,17,0,Vermilion, Illinois
+195,0,0,17,0,Whiteside, Illinois
+197,0,0,17,0,Will, Illinois
+199,0,0,17,0,Williamson, Illinois
+201,0,0,17,0,Winnebago, Illinois
+203,0,0,17,0,Woodford, Illinois
+1,0,0,18,0,Adams, Indiana
+3,0,0,18,0,Allen, Indiana
+5,0,0,18,0,Bartholomew, Indiana
+11,0,0,18,0,Boone, Indiana
+17,0,0,18,0,Cass, Indiana
+19,0,0,18,0,Clark, Indiana
+21,0,0,18,0,Clay, Indiana
+23,0,0,18,0,Clinton, Indiana
+27,0,0,18,0,Daviess, Indiana
+29,0,0,18,0,Dearborn, Indiana
+31,0,0,18,0,Decatur, Indiana
+33,0,0,18,0,DeKalb, Indiana
+35,0,0,18,0,Delaware, Indiana
+37,0,0,18,0,Dubois, Indiana
+39,0,0,18,0,Elkhart, Indiana
+41,0,0,18,0,Fayette, Indiana
+43,0,0,18,0,Floyd, Indiana
+47,0,0,18,0,Franklin, Indiana
+49,0,0,18,0,Fulton, Indiana
+51,0,0,18,0,Gibson, Indiana
+53,0,0,18,0,Grant, Indiana
+55,0,0,18,0,Greene, Indiana
+57,0,0,18,0,Hamilton, Indiana
+59,0,0,18,0,Hancock, Indiana
+61,0,0,18,0,Harrison, Indiana
+63,0,0,18,0,Hendricks, Indiana
+65,0,0,18,0,Henry, Indiana
+67,0,0,18,0,Howard, Indiana
+69,0,0,18,0,Huntington, Indiana
+71,0,0,18,0,Jackson, Indiana
+73,0,0,18,0,Jasper, Indiana
+75,0,0,18,0,Jay, Indiana
+77,0,0,18,0,Jefferson, Indiana
+79,0,0,18,0,Jennings, Indiana
+81,0,0,18,0,Johnson, Indiana
+83,0,0,18,0,Knox, Indiana
+85,0,0,18,0,Kosciusko, Indiana
+87,0,0,18,0,LaGrange, Indiana
+89,0,0,18,0,Lake, Indiana
+91,0,0,18,0,LaPorte, Indiana
+93,0,0,18,0,Lawrence, Indiana
+95,0,0,18,0,Madison, Indiana
+97,0,0,18,0,Marion, Indiana
+99,0,0,18,0,Marshall, Indiana
+103,0,0,18,0,Miami, Indiana
+105,0,0,18,0,Monroe, Indiana
+107,0,0,18,0,Montgomery, Indiana
+109,0,0,18,0,Morgan, Indiana
+113,0,0,18,0,Noble, Indiana
+119,0,0,18,0,Owen, Indiana
+127,0,0,18,0,Porter, Indiana
+129,0,0,18,0,Posey, Indiana
+133,0,0,18,0,Putnam, Indiana
+135,0,0,18,0,Randolph, Indiana
+137,0,0,18,0,Ripley, Indiana
+141,0,0,18,0,St. Joseph, Indiana
+143,0,0,18,0,Scott, Indiana
+145,0,0,18,0,Shelby, Indiana
+147,0,0,18,0,Spencer, Indiana
+149,0,0,18,0,Starke, Indiana
+151,0,0,18,0,Steuben, Indiana
+153,0,0,18,0,Sullivan, Indiana
+157,0,0,18,0,Tippecanoe, Indiana
+163,0,0,18,0,Vanderburgh, Indiana
+167,0,0,18,0,Vigo, Indiana
+169,0,0,18,0,Wabash, Indiana
+173,0,0,18,0,Warrick, Indiana
+175,0,0,18,0,Washington, Indiana
+177,0,0,18,0,Wayne, Indiana
+179,0,0,18,0,Wells, Indiana
+181,0,0,18,0,White, Indiana
+183,0,0,18,0,Whitley, Indiana
+11,0,0,19,0,Benton, Iowa
+13,0,0,19,0,Black Hawk, Iowa
+15,0,0,19,0,Boone, Iowa
+17,0,0,19,0,Bremer, Iowa
+19,0,0,19,0,Buchanan, Iowa
+27,0,0,19,0,Carroll, Iowa
+33,0,0,19,0,Cerro Gordo, Iowa
+45,0,0,19,0,Clinton, Iowa
+49,0,0,19,0,Dallas, Iowa
+57,0,0,19,0,Des Moines, Iowa
+61,0,0,19,0,Dubuque, Iowa
+65,0,0,19,0,Fayette, Iowa
+87,0,0,19,0,Henry, Iowa
+97,0,0,19,0,Jackson, Iowa
+99,0,0,19,0,Jasper, Iowa
+103,0,0,19,0,Johnson, Iowa
+105,0,0,19,0,Jones, Iowa
+111,0,0,19,0,Lee, Iowa
+113,0,0,19,0,Linn, Iowa
+123,0,0,19,0,Mahaska, Iowa
+125,0,0,19,0,Marion, Iowa
+127,0,0,19,0,Marshall, Iowa
+139,0,0,19,0,Muscatine, Iowa
+149,0,0,19,0,Plymouth, Iowa
+153,0,0,19,0,Polk, Iowa
+155,0,0,19,0,Pottawattamie, Iowa
+163,0,0,19,0,Scott, Iowa
+167,0,0,19,0,Sioux, Iowa
+169,0,0,19,0,Story, Iowa
+179,0,0,19,0,Wapello, Iowa
+181,0,0,19,0,Warren, Iowa
+183,0,0,19,0,Washington, Iowa
+187,0,0,19,0,Webster, Iowa
+191,0,0,19,0,Winneshiek, Iowa
+193,0,0,19,0,Woodbury, Iowa
+9,0,0,20,0,Barton, Kansas
+15,0,0,20,0,Butler, Kansas
+21,0,0,20,0,Cherokee, Kansas
+35,0,0,20,0,Cowley, Kansas
+37,0,0,20,0,Crawford, Kansas
+45,0,0,20,0,Douglas, Kansas
+51,0,0,20,0,Ellis, Kansas
+55,0,0,20,0,Finney, Kansas
+57,0,0,20,0,Ford, Kansas
+59,0,0,20,0,Franklin, Kansas
+61,0,0,20,0,Geary, Kansas
+79,0,0,20,0,Harvey, Kansas
+91,0,0,20,0,Johnson, Kansas
+99,0,0,20,0,Labette, Kansas
+103,0,0,20,0,Leavenworth, Kansas
+111,0,0,20,0,Lyon, Kansas
+113,0,0,20,0,McPherson, Kansas
+121,0,0,20,0,Miami, Kansas
+125,0,0,20,0,Montgomery, Kansas
+155,0,0,20,0,Reno, Kansas
+161,0,0,20,0,Riley, Kansas
+169,0,0,20,0,Saline, Kansas
+173,0,0,20,0,Sedgwick, Kansas
+175,0,0,20,0,Seward, Kansas
+177,0,0,20,0,Shawnee, Kansas
+191,0,0,20,0,Sumner, Kansas
+209,0,0,20,0,Wyandotte, Kansas
+5,0,0,21,0,Anderson, Kentucky
+9,0,0,21,0,Barren, Kentucky
+13,0,0,21,0,Bell, Kentucky
+15,0,0,21,0,Boone, Kentucky
+19,0,0,21,0,Boyd, Kentucky
+21,0,0,21,0,Boyle, Kentucky
+29,0,0,21,0,Bullitt, Kentucky
+35,0,0,21,0,Calloway, Kentucky
+37,0,0,21,0,Campbell, Kentucky
+43,0,0,21,0,Carter, Kentucky
+47,0,0,21,0,Christian, Kentucky
+49,0,0,21,0,Clark, Kentucky
+51,0,0,21,0,Clay, Kentucky
+59,0,0,21,0,Daviess, Kentucky
+67,0,0,21,0,Fayette, Kentucky
+71,0,0,21,0,Floyd, Kentucky
+73,0,0,21,0,Franklin, Kentucky
+81,0,0,21,0,Grant, Kentucky
+83,0,0,21,0,Graves, Kentucky
+85,0,0,21,0,Grayson, Kentucky
+89,0,0,21,0,Greenup, Kentucky
+93,0,0,21,0,Hardin, Kentucky
+95,0,0,21,0,Harlan, Kentucky
+101,0,0,21,0,Henderson, Kentucky
+107,0,0,21,0,Hopkins, Kentucky
+111,0,0,21,0,Jefferson, Kentucky
+113,0,0,21,0,Jessamine, Kentucky
+115,0,0,21,0,Johnson, Kentucky
+117,0,0,21,0,Kenton, Kentucky
+121,0,0,21,0,Knox, Kentucky
+125,0,0,21,0,Laurel, Kentucky
+133,0,0,21,0,Letcher, Kentucky
+137,0,0,21,0,Lincoln, Kentucky
+141,0,0,21,0,Logan, Kentucky
+145,0,0,21,0,McCracken, Kentucky
+151,0,0,21,0,Madison, Kentucky
+157,0,0,21,0,Marshall, Kentucky
+163,0,0,21,0,Meade, Kentucky
+167,0,0,21,0,Mercer, Kentucky
+173,0,0,21,0,Montgomery, Kentucky
+177,0,0,21,0,Muhlenberg, Kentucky
+179,0,0,21,0,Nelson, Kentucky
+183,0,0,21,0,Ohio, Kentucky
+185,0,0,21,0,Oldham, Kentucky
+193,0,0,21,0,Perry, Kentucky
+195,0,0,21,0,Pike, Kentucky
+199,0,0,21,0,Pulaski, Kentucky
+205,0,0,21,0,Rowan, Kentucky
+209,0,0,21,0,Scott, Kentucky
+211,0,0,21,0,Shelby, Kentucky
+217,0,0,21,0,Taylor, Kentucky
+227,0,0,21,0,Warren, Kentucky
+231,0,0,21,0,Wayne, Kentucky
+235,0,0,21,0,Whitley, Kentucky
+239,0,0,21,0,Woodford, Kentucky
+1,0,0,22,0,Acadia Parish, Louisiana
+3,0,0,22,0,Allen Parish, Louisiana
+5,0,0,22,0,Ascension Parish, Louisiana
+7,0,0,22,0,Assumption Parish, Louisiana
+9,0,0,22,0,Avoyelles Parish, Louisiana
+11,0,0,22,0,Beauregard Parish, Louisiana
+15,0,0,22,0,Bossier Parish, Louisiana
+17,0,0,22,0,Caddo Parish, Louisiana
+19,0,0,22,0,Calcasieu Parish, Louisiana
+31,0,0,22,0,De Soto Parish, Louisiana
+33,0,0,22,0,East Baton Rouge Parish, Louisiana
+37,0,0,22,0,East Feliciana Parish, Louisiana
+39,0,0,22,0,Evangeline Parish, Louisiana
+41,0,0,22,0,Franklin Parish, Louisiana
+45,0,0,22,0,Iberia Parish, Louisiana
+47,0,0,22,0,Iberville Parish, Louisiana
+51,0,0,22,0,Jefferson Parish, Louisiana
+53,0,0,22,0,Jefferson Davis Parish, Louisiana
+55,0,0,22,0,Lafayette Parish, Louisiana
+57,0,0,22,0,Lafourche Parish, Louisiana
+61,0,0,22,0,Lincoln Parish, Louisiana
+63,0,0,22,0,Livingston Parish, Louisiana
+67,0,0,22,0,Morehouse Parish, Louisiana
+69,0,0,22,0,Natchitoches Parish, Louisiana
+71,0,0,22,0,Orleans Parish, Louisiana
+73,0,0,22,0,Ouachita Parish, Louisiana
+75,0,0,22,0,Plaquemines Parish, Louisiana
+77,0,0,22,0,Pointe Coupee Parish, Louisiana
+79,0,0,22,0,Rapides Parish, Louisiana
+83,0,0,22,0,Richland Parish, Louisiana
+85,0,0,22,0,Sabine Parish, Louisiana
+89,0,0,22,0,St. Charles Parish, Louisiana
+93,0,0,22,0,St. James Parish, Louisiana
+95,0,0,22,0,St. John the Baptist Parish, Louisiana
+97,0,0,22,0,St. Landry Parish, Louisiana
+99,0,0,22,0,St. Martin Parish, Louisiana
+101,0,0,22,0,St. Mary Parish, Louisiana
+103,0,0,22,0,St. Tammany Parish, Louisiana
+105,0,0,22,0,Tangipahoa Parish, Louisiana
+109,0,0,22,0,Terrebonne Parish, Louisiana
+111,0,0,22,0,Union Parish, Louisiana
+113,0,0,22,0,Vermilion Parish, Louisiana
+115,0,0,22,0,Vernon Parish, Louisiana
+117,0,0,22,0,Washington Parish, Louisiana
+119,0,0,22,0,Webster Parish, Louisiana
+121,0,0,22,0,West Baton Rouge Parish, Louisiana
+1,0,0,23,0,Androscoggin, Maine
+3,0,0,23,0,Aroostook, Maine
+5,0,0,23,0,Cumberland, Maine
+7,0,0,23,0,Franklin, Maine
+9,0,0,23,0,Hancock, Maine
+11,0,0,23,0,Kennebec, Maine
+13,0,0,23,0,Knox, Maine
+15,0,0,23,0,Lincoln, Maine
+17,0,0,23,0,Oxford, Maine
+19,0,0,23,0,Penobscot, Maine
+23,0,0,23,0,Sagadahoc, Maine
+25,0,0,23,0,Somerset, Maine
+27,0,0,23,0,Waldo, Maine
+29,0,0,23,0,Washington, Maine
+31,0,0,23,0,York, Maine
+1,0,0,24,0,Allegany, Maryland
+3,0,0,24,0,Anne Arundel, Maryland
+5,0,0,24,0,Baltimore, Maryland
+9,0,0,24,0,Calvert, Maryland
+11,0,0,24,0,Caroline, Maryland
+13,0,0,24,0,Carroll, Maryland
+15,0,0,24,0,Cecil, Maryland
+17,0,0,24,0,Charles, Maryland
+19,0,0,24,0,Dorchester, Maryland
+21,0,0,24,0,Frederick, Maryland
+23,0,0,24,0,Garrett, Maryland
+25,0,0,24,0,Harford, Maryland
+27,0,0,24,0,Howard, Maryland
+31,0,0,24,0,Montgomery, Maryland
+33,0,0,24,0,Prince George's, Maryland
+35,0,0,24,0,Queen Anne's, Maryland
+37,0,0,24,0,St. Mary's, Maryland
+39,0,0,24,0,Somerset, Maryland
+41,0,0,24,0,Talbot, Maryland
+43,0,0,24,0,Washington, Maryland
+45,0,0,24,0,Wicomico, Maryland
+47,0,0,24,0,Worcester, Maryland
+510,0,0,24,0,Baltimore city, Maryland
+1,0,0,25,0,Barnstable, Massachusetts
+3,0,0,25,0,Berkshire, Massachusetts
+5,0,0,25,0,Bristol, Massachusetts
+9,0,0,25,0,Essex, Massachusetts
+11,0,0,25,0,Franklin, Massachusetts
+13,0,0,25,0,Hampden, Massachusetts
+15,0,0,25,0,Hampshire, Massachusetts
+17,0,0,25,0,Middlesex, Massachusetts
+21,0,0,25,0,Norfolk, Massachusetts
+23,0,0,25,0,Plymouth, Massachusetts
+25,0,0,25,0,Suffolk, Massachusetts
+27,0,0,25,0,Worcester, Massachusetts
+5,0,0,26,0,Allegan, Michigan
+7,0,0,26,0,Alpena, Michigan
+9,0,0,26,0,Antrim, Michigan
+15,0,0,26,0,Barry, Michigan
+17,0,0,26,0,Bay, Michigan
+21,0,0,26,0,Berrien, Michigan
+23,0,0,26,0,Branch, Michigan
+25,0,0,26,0,Calhoun, Michigan
+27,0,0,26,0,Cass, Michigan
+29,0,0,26,0,Charlevoix, Michigan
+31,0,0,26,0,Cheboygan, Michigan
+33,0,0,26,0,Chippewa, Michigan
+35,0,0,26,0,Clare, Michigan
+37,0,0,26,0,Clinton, Michigan
+41,0,0,26,0,Delta, Michigan
+43,0,0,26,0,Dickinson, Michigan
+45,0,0,26,0,Eaton, Michigan
+47,0,0,26,0,Emmet, Michigan
+49,0,0,26,0,Genesee, Michigan
+51,0,0,26,0,Gladwin, Michigan
+55,0,0,26,0,Grand Traverse, Michigan
+57,0,0,26,0,Gratiot, Michigan
+59,0,0,26,0,Hillsdale, Michigan
+61,0,0,26,0,Houghton, Michigan
+63,0,0,26,0,Huron, Michigan
+65,0,0,26,0,Ingham, Michigan
+67,0,0,26,0,Ionia, Michigan
+69,0,0,26,0,Iosco, Michigan
+73,0,0,26,0,Isabella, Michigan
+75,0,0,26,0,Jackson, Michigan
+77,0,0,26,0,Kalamazoo, Michigan
+81,0,0,26,0,Kent, Michigan
+87,0,0,26,0,Lapeer, Michigan
+89,0,0,26,0,Leelanau, Michigan
+91,0,0,26,0,Lenawee, Michigan
+93,0,0,26,0,Livingston, Michigan
+99,0,0,26,0,Macomb, Michigan
+101,0,0,26,0,Manistee, Michigan
+103,0,0,26,0,Marquette, Michigan
+105,0,0,26,0,Mason, Michigan
+107,0,0,26,0,Mecosta, Michigan
+109,0,0,26,0,Menominee, Michigan
+111,0,0,26,0,Midland, Michigan
+115,0,0,26,0,Monroe, Michigan
+117,0,0,26,0,Montcalm, Michigan
+121,0,0,26,0,Muskegon, Michigan
+123,0,0,26,0,Newaygo, Michigan
+125,0,0,26,0,Oakland, Michigan
+127,0,0,26,0,Oceana, Michigan
+129,0,0,26,0,Ogemaw, Michigan
+133,0,0,26,0,Osceola, Michigan
+137,0,0,26,0,Otsego, Michigan
+139,0,0,26,0,Ottawa, Michigan
+143,0,0,26,0,Roscommon, Michigan
+145,0,0,26,0,Saginaw, Michigan
+147,0,0,26,0,St. Clair, Michigan
+149,0,0,26,0,St. Joseph, Michigan
+151,0,0,26,0,Sanilac, Michigan
+155,0,0,26,0,Shiawassee, Michigan
+157,0,0,26,0,Tuscola, Michigan
+159,0,0,26,0,Van Buren, Michigan
+161,0,0,26,0,Washtenaw, Michigan
+163,0,0,26,0,Wayne, Michigan
+165,0,0,26,0,Wexford, Michigan
+3,0,0,27,0,Anoka, Minnesota
+5,0,0,27,0,Becker, Minnesota
+7,0,0,27,0,Beltrami, Minnesota
+9,0,0,27,0,Benton, Minnesota
+13,0,0,27,0,Blue Earth, Minnesota
+15,0,0,27,0,Brown, Minnesota
+17,0,0,27,0,Carlton, Minnesota
+19,0,0,27,0,Carver, Minnesota
+21,0,0,27,0,Cass, Minnesota
+25,0,0,27,0,Chisago, Minnesota
+27,0,0,27,0,Clay, Minnesota
+35,0,0,27,0,Crow Wing, Minnesota
+37,0,0,27,0,Dakota, Minnesota
+41,0,0,27,0,Douglas, Minnesota
+45,0,0,27,0,Fillmore, Minnesota
+47,0,0,27,0,Freeborn, Minnesota
+49,0,0,27,0,Goodhue, Minnesota
+53,0,0,27,0,Hennepin, Minnesota
+59,0,0,27,0,Isanti, Minnesota
+61,0,0,27,0,Itasca, Minnesota
+67,0,0,27,0,Kandiyohi, Minnesota
+79,0,0,27,0,Le Sueur, Minnesota
+83,0,0,27,0,Lyon, Minnesota
+85,0,0,27,0,McLeod, Minnesota
+91,0,0,27,0,Martin, Minnesota
+93,0,0,27,0,Meeker, Minnesota
+95,0,0,27,0,Mille Lacs, Minnesota
+97,0,0,27,0,Morrison, Minnesota
+99,0,0,27,0,Mower, Minnesota
+103,0,0,27,0,Nicollet, Minnesota
+105,0,0,27,0,Nobles, Minnesota
+109,0,0,27,0,Olmsted, Minnesota
+111,0,0,27,0,Otter Tail, Minnesota
+115,0,0,27,0,Pine, Minnesota
+119,0,0,27,0,Polk, Minnesota
+123,0,0,27,0,Ramsey, Minnesota
+131,0,0,27,0,Rice, Minnesota
+137,0,0,27,0,St. Louis, Minnesota
+139,0,0,27,0,Scott, Minnesota
+141,0,0,27,0,Sherburne, Minnesota
+145,0,0,27,0,Stearns, Minnesota
+147,0,0,27,0,Steele, Minnesota
+153,0,0,27,0,Todd, Minnesota
+157,0,0,27,0,Wabasha, Minnesota
+163,0,0,27,0,Washington, Minnesota
+169,0,0,27,0,Winona, Minnesota
+171,0,0,27,0,Wright, Minnesota
+1,0,0,28,0,Adams, Mississippi
+3,0,0,28,0,Alcorn, Mississippi
+11,0,0,28,0,Bolivar, Mississippi
+25,0,0,28,0,Clay, Mississippi
+27,0,0,28,0,Coahoma, Mississippi
+29,0,0,28,0,Copiah, Mississippi
+31,0,0,28,0,Covington, Mississippi
+33,0,0,28,0,DeSoto, Mississippi
+35,0,0,28,0,Forrest, Mississippi
+39,0,0,28,0,George, Mississippi
+43,0,0,28,0,Grenada, Mississippi
+45,0,0,28,0,Hancock, Mississippi
+47,0,0,28,0,Harrison, Mississippi
+49,0,0,28,0,Hinds, Mississippi
+51,0,0,28,0,Holmes, Mississippi
+57,0,0,28,0,Itawamba, Mississippi
+59,0,0,28,0,Jackson, Mississippi
+67,0,0,28,0,Jones, Mississippi
+71,0,0,28,0,Lafayette, Mississippi
+73,0,0,28,0,Lamar, Mississippi
+75,0,0,28,0,Lauderdale, Mississippi
+79,0,0,28,0,Leake, Mississippi
+81,0,0,28,0,Lee, Mississippi
+83,0,0,28,0,Leflore, Mississippi
+85,0,0,28,0,Lincoln, Mississippi
+87,0,0,28,0,Lowndes, Mississippi
+89,0,0,28,0,Madison, Mississippi
+91,0,0,28,0,Marion, Mississippi
+93,0,0,28,0,Marshall, Mississippi
+95,0,0,28,0,Monroe, Mississippi
+99,0,0,28,0,Neshoba, Mississippi
+101,0,0,28,0,Newton, Mississippi
+105,0,0,28,0,Oktibbeha, Mississippi
+107,0,0,28,0,Panola, Mississippi
+109,0,0,28,0,Pearl River, Mississippi
+113,0,0,28,0,Pike, Mississippi
+115,0,0,28,0,Pontotoc, Mississippi
+117,0,0,28,0,Prentiss, Mississippi
+121,0,0,28,0,Rankin, Mississippi
+123,0,0,28,0,Scott, Mississippi
+127,0,0,28,0,Simpson, Mississippi
+133,0,0,28,0,Sunflower, Mississippi
+137,0,0,28,0,Tate, Mississippi
+139,0,0,28,0,Tippah, Mississippi
+145,0,0,28,0,Union, Mississippi
+149,0,0,28,0,Warren, Mississippi
+151,0,0,28,0,Washington, Mississippi
+153,0,0,28,0,Wayne, Mississippi
+163,0,0,28,0,Yazoo, Mississippi
+1,0,0,29,0,Adair, Missouri
+7,0,0,29,0,Audrain, Missouri
+9,0,0,29,0,Barry, Missouri
+19,0,0,29,0,Boone, Missouri
+21,0,0,29,0,Buchanan, Missouri
+23,0,0,29,0,Butler, Missouri
+27,0,0,29,0,Callaway, Missouri
+29,0,0,29,0,Camden, Missouri
+31,0,0,29,0,Cape Girardeau, Missouri
+37,0,0,29,0,Cass, Missouri
+43,0,0,29,0,Christian, Missouri
+47,0,0,29,0,Clay, Missouri
+49,0,0,29,0,Clinton, Missouri
+51,0,0,29,0,Cole, Missouri
+55,0,0,29,0,Crawford, Missouri
+69,0,0,29,0,Dunklin, Missouri
+71,0,0,29,0,Franklin, Missouri
+77,0,0,29,0,Greene, Missouri
+83,0,0,29,0,Henry, Missouri
+91,0,0,29,0,Howell, Missouri
+95,0,0,29,0,Jackson, Missouri
+97,0,0,29,0,Jasper, Missouri
+99,0,0,29,0,Jefferson, Missouri
+101,0,0,29,0,Johnson, Missouri
+105,0,0,29,0,Laclede, Missouri
+107,0,0,29,0,Lafayette, Missouri
+109,0,0,29,0,Lawrence, Missouri
+113,0,0,29,0,Lincoln, Missouri
+119,0,0,29,0,McDonald, Missouri
+127,0,0,29,0,Marion, Missouri
+131,0,0,29,0,Miller, Missouri
+141,0,0,29,0,Morgan, Missouri
+145,0,0,29,0,Newton, Missouri
+147,0,0,29,0,Nodaway, Missouri
+159,0,0,29,0,Pettis, Missouri
+161,0,0,29,0,Phelps, Missouri
+165,0,0,29,0,Platte, Missouri
+167,0,0,29,0,Polk, Missouri
+169,0,0,29,0,Pulaski, Missouri
+175,0,0,29,0,Randolph, Missouri
+177,0,0,29,0,Ray, Missouri
+183,0,0,29,0,St. Charles, Missouri
+187,0,0,29,0,St. Francois, Missouri
+189,0,0,29,0,St. Louis, Missouri
+195,0,0,29,0,Saline, Missouri
+201,0,0,29,0,Scott, Missouri
+207,0,0,29,0,Stoddard, Missouri
+209,0,0,29,0,Stone, Missouri
+213,0,0,29,0,Taney, Missouri
+215,0,0,29,0,Texas, Missouri
+217,0,0,29,0,Vernon, Missouri
+219,0,0,29,0,Warren, Missouri
+221,0,0,29,0,Washington, Missouri
+225,0,0,29,0,Webster, Missouri
+510,0,0,29,0,St. Louis city, Missouri
+13,0,0,30,0,Cascade, Montana
+29,0,0,30,0,Flathead, Montana
+31,0,0,30,0,Gallatin, Montana
+47,0,0,30,0,Lake, Montana
+49,0,0,30,0,Lewis and Clark, Montana
+63,0,0,30,0,Missoula, Montana
+81,0,0,30,0,Ravalli, Montana
+93,0,0,30,0,Silver Bow, Montana
+111,0,0,30,0,Yellowstone, Montana
+1,0,0,31,0,Adams, Nebraska
+19,0,0,31,0,Buffalo, Nebraska
+25,0,0,31,0,Cass, Nebraska
+43,0,0,31,0,Dakota, Nebraska
+47,0,0,31,0,Dawson, Nebraska
+53,0,0,31,0,Dodge, Nebraska
+55,0,0,31,0,Douglas, Nebraska
+67,0,0,31,0,Gage, Nebraska
+79,0,0,31,0,Hall, Nebraska
+109,0,0,31,0,Lancaster, Nebraska
+111,0,0,31,0,Lincoln, Nebraska
+119,0,0,31,0,Madison, Nebraska
+141,0,0,31,0,Platte, Nebraska
+153,0,0,31,0,Sarpy, Nebraska
+155,0,0,31,0,Saunders, Nebraska
+157,0,0,31,0,Scotts Bluff, Nebraska
+1,0,0,32,0,Churchill, Nevada
+3,0,0,32,0,Clark, Nevada
+5,0,0,32,0,Douglas, Nevada
+7,0,0,32,0,Elko, Nevada
+19,0,0,32,0,Lyon, Nevada
+23,0,0,32,0,Nye, Nevada
+31,0,0,32,0,Washoe, Nevada
+510,0,0,32,0,Carson City , Nevada
+1,0,0,33,0,Belknap, New Hampshire
+3,0,0,33,0,Carroll, New Hampshire
+5,0,0,33,0,Cheshire, New Hampshire
+7,0,0,33,0,Coos, New Hampshire
+9,0,0,33,0,Grafton, New Hampshire
+11,0,0,33,0,Hillsborough, New Hampshire
+13,0,0,33,0,Merrimack, New Hampshire
+15,0,0,33,0,Rockingham, New Hampshire
+17,0,0,33,0,Strafford, New Hampshire
+19,0,0,33,0,Sullivan, New Hampshire
+1,0,0,34,0,Atlantic, New Jersey
+3,0,0,34,0,Bergen, New Jersey
+5,0,0,34,0,Burlington, New Jersey
+7,0,0,34,0,Camden, New Jersey
+9,0,0,34,0,Cape May, New Jersey
+11,0,0,34,0,Cumberland, New Jersey
+13,0,0,34,0,Essex, New Jersey
+15,0,0,34,0,Gloucester, New Jersey
+17,0,0,34,0,Hudson, New Jersey
+19,0,0,34,0,Hunterdon, New Jersey
+21,0,0,34,0,Mercer, New Jersey
+23,0,0,34,0,Middlesex, New Jersey
+25,0,0,34,0,Monmouth, New Jersey
+27,0,0,34,0,Morris, New Jersey
+29,0,0,34,0,Ocean, New Jersey
+31,0,0,34,0,Passaic, New Jersey
+33,0,0,34,0,Salem, New Jersey
+35,0,0,34,0,Somerset, New Jersey
+37,0,0,34,0,Sussex, New Jersey
+39,0,0,34,0,Union, New Jersey
+41,0,0,34,0,Warren, New Jersey
+1,0,0,35,0,Bernalillo, New Mexico
+5,0,0,35,0,Chaves, New Mexico
+6,0,0,35,0,Cibola, New Mexico
+9,0,0,35,0,Curry, New Mexico
+13,0,0,35,0,Dona Ana, New Mexico
+15,0,0,35,0,Eddy, New Mexico
+17,0,0,35,0,Grant, New Mexico
+25,0,0,35,0,Lea, New Mexico
+27,0,0,35,0,Lincoln, New Mexico
+29,0,0,35,0,Luna, New Mexico
+31,0,0,35,0,McKinley, New Mexico
+35,0,0,35,0,Otero, New Mexico
+39,0,0,35,0,Rio Arriba, New Mexico
+43,0,0,35,0,Sandoval, New Mexico
+45,0,0,35,0,San Juan, New Mexico
+47,0,0,35,0,San Miguel, New Mexico
+49,0,0,35,0,Santa Fe, New Mexico
+55,0,0,35,0,Taos, New Mexico
+61,0,0,35,0,Valencia, New Mexico
+1,0,0,36,0,Albany, New York
+3,0,0,36,0,Allegany, New York
+5,0,0,36,0,Bronx, New York
+7,0,0,36,0,Broome, New York
+9,0,0,36,0,Cattaraugus, New York
+11,0,0,36,0,Cayuga, New York
+13,0,0,36,0,Chautauqua, New York
+15,0,0,36,0,Chemung, New York
+17,0,0,36,0,Chenango, New York
+19,0,0,36,0,Clinton, New York
+21,0,0,36,0,Columbia, New York
+23,0,0,36,0,Cortland, New York
+25,0,0,36,0,Delaware, New York
+27,0,0,36,0,Dutchess, New York
+29,0,0,36,0,Erie, New York
+31,0,0,36,0,Essex, New York
+33,0,0,36,0,Franklin, New York
+35,0,0,36,0,Fulton, New York
+37,0,0,36,0,Genesee, New York
+39,0,0,36,0,Greene, New York
+43,0,0,36,0,Herkimer, New York
+45,0,0,36,0,Jefferson, New York
+47,0,0,36,0,Kings, New York
+49,0,0,36,0,Lewis, New York
+51,0,0,36,0,Livingston, New York
+53,0,0,36,0,Madison, New York
+55,0,0,36,0,Monroe, New York
+57,0,0,36,0,Montgomery, New York
+59,0,0,36,0,Nassau, New York
+61,0,0,36,0,New York, New York
+63,0,0,36,0,Niagara, New York
+65,0,0,36,0,Oneida, New York
+67,0,0,36,0,Onondaga, New York
+69,0,0,36,0,Ontario, New York
+71,0,0,36,0,Orange, New York
+73,0,0,36,0,Orleans, New York
+75,0,0,36,0,Oswego, New York
+77,0,0,36,0,Otsego, New York
+79,0,0,36,0,Putnam, New York
+81,0,0,36,0,Queens, New York
+83,0,0,36,0,Rensselaer, New York
+85,0,0,36,0,Richmond, New York
+87,0,0,36,0,Rockland, New York
+89,0,0,36,0,St. Lawrence, New York
+91,0,0,36,0,Saratoga, New York
+93,0,0,36,0,Schenectady, New York
+95,0,0,36,0,Schoharie, New York
+99,0,0,36,0,Seneca, New York
+101,0,0,36,0,Steuben, New York
+103,0,0,36,0,Suffolk, New York
+105,0,0,36,0,Sullivan, New York
+107,0,0,36,0,Tioga, New York
+109,0,0,36,0,Tompkins, New York
+111,0,0,36,0,Ulster, New York
+113,0,0,36,0,Warren, New York
+115,0,0,36,0,Washington, New York
+117,0,0,36,0,Wayne, New York
+119,0,0,36,0,Westchester, New York
+121,0,0,36,0,Wyoming, New York
+123,0,0,36,0,Yates, New York
+1,0,0,37,0,Alamance, North Carolina
+3,0,0,37,0,Alexander, North Carolina
+7,0,0,37,0,Anson, North Carolina
+9,0,0,37,0,Ashe, North Carolina
+13,0,0,37,0,Beaufort, North Carolina
+17,0,0,37,0,Bladen, North Carolina
+19,0,0,37,0,Brunswick, North Carolina
+21,0,0,37,0,Buncombe, North Carolina
+23,0,0,37,0,Burke, North Carolina
+25,0,0,37,0,Cabarrus, North Carolina
+27,0,0,37,0,Caldwell, North Carolina
+31,0,0,37,0,Carteret, North Carolina
+33,0,0,37,0,Caswell, North Carolina
+35,0,0,37,0,Catawba, North Carolina
+37,0,0,37,0,Chatham, North Carolina
+39,0,0,37,0,Cherokee, North Carolina
+45,0,0,37,0,Cleveland, North Carolina
+47,0,0,37,0,Columbus, North Carolina
+49,0,0,37,0,Craven, North Carolina
+51,0,0,37,0,Cumberland, North Carolina
+53,0,0,37,0,Currituck, North Carolina
+55,0,0,37,0,Dare, North Carolina
+57,0,0,37,0,Davidson, North Carolina
+59,0,0,37,0,Davie, North Carolina
+61,0,0,37,0,Duplin, North Carolina
+63,0,0,37,0,Durham, North Carolina
+65,0,0,37,0,Edgecombe, North Carolina
+67,0,0,37,0,Forsyth, North Carolina
+69,0,0,37,0,Franklin, North Carolina
+71,0,0,37,0,Gaston, North Carolina
+77,0,0,37,0,Granville, North Carolina
+79,0,0,37,0,Greene, North Carolina
+81,0,0,37,0,Guilford, North Carolina
+83,0,0,37,0,Halifax, North Carolina
+85,0,0,37,0,Harnett, North Carolina
+87,0,0,37,0,Haywood, North Carolina
+89,0,0,37,0,Henderson, North Carolina
+91,0,0,37,0,Hertford, North Carolina
+93,0,0,37,0,Hoke, North Carolina
+97,0,0,37,0,Iredell, North Carolina
+99,0,0,37,0,Jackson, North Carolina
+101,0,0,37,0,Johnston, North Carolina
+105,0,0,37,0,Lee, North Carolina
+107,0,0,37,0,Lenoir, North Carolina
+109,0,0,37,0,Lincoln, North Carolina
+111,0,0,37,0,McDowell, North Carolina
+113,0,0,37,0,Macon, North Carolina
+115,0,0,37,0,Madison, North Carolina
+117,0,0,37,0,Martin, North Carolina
+119,0,0,37,0,Mecklenburg, North Carolina
+123,0,0,37,0,Montgomery, North Carolina
+125,0,0,37,0,Moore, North Carolina
+127,0,0,37,0,Nash, North Carolina
+129,0,0,37,0,New Hanover, North Carolina
+131,0,0,37,0,Northampton, North Carolina
+133,0,0,37,0,Onslow, North Carolina
+135,0,0,37,0,Orange, North Carolina
+139,0,0,37,0,Pasquotank, North Carolina
+141,0,0,37,0,Pender, North Carolina
+145,0,0,37,0,Person, North Carolina
+147,0,0,37,0,Pitt, North Carolina
+151,0,0,37,0,Randolph, North Carolina
+153,0,0,37,0,Richmond, North Carolina
+155,0,0,37,0,Robeson, North Carolina
+157,0,0,37,0,Rockingham, North Carolina
+159,0,0,37,0,Rowan, North Carolina
+161,0,0,37,0,Rutherford, North Carolina
+163,0,0,37,0,Sampson, North Carolina
+165,0,0,37,0,Scotland, North Carolina
+167,0,0,37,0,Stanly, North Carolina
+169,0,0,37,0,Stokes, North Carolina
+171,0,0,37,0,Surry, North Carolina
+175,0,0,37,0,Transylvania, North Carolina
+179,0,0,37,0,Union, North Carolina
+181,0,0,37,0,Vance, North Carolina
+183,0,0,37,0,Wake, North Carolina
+189,0,0,37,0,Watauga, North Carolina
+191,0,0,37,0,Wayne, North Carolina
+193,0,0,37,0,Wilkes, North Carolina
+195,0,0,37,0,Wilson, North Carolina
+197,0,0,37,0,Yadkin, North Carolina
+15,0,0,38,0,Burleigh, North Dakota
+17,0,0,38,0,Cass, North Dakota
+35,0,0,38,0,Grand Forks, North Dakota
+59,0,0,38,0,Morton, North Dakota
+89,0,0,38,0,Stark, North Dakota
+93,0,0,38,0,Stutsman, North Dakota
+101,0,0,38,0,Ward, North Dakota
+1,0,0,39,0,Adams, Ohio
+3,0,0,39,0,Allen, Ohio
+5,0,0,39,0,Ashland, Ohio
+7,0,0,39,0,Ashtabula, Ohio
+9,0,0,39,0,Athens, Ohio
+11,0,0,39,0,Auglaize, Ohio
+13,0,0,39,0,Belmont, Ohio
+15,0,0,39,0,Brown, Ohio
+17,0,0,39,0,Butler, Ohio
+19,0,0,39,0,Carroll, Ohio
+21,0,0,39,0,Champaign, Ohio
+23,0,0,39,0,Clark, Ohio
+25,0,0,39,0,Clermont, Ohio
+27,0,0,39,0,Clinton, Ohio
+29,0,0,39,0,Columbiana, Ohio
+31,0,0,39,0,Coshocton, Ohio
+33,0,0,39,0,Crawford, Ohio
+35,0,0,39,0,Cuyahoga, Ohio
+37,0,0,39,0,Darke, Ohio
+39,0,0,39,0,Defiance, Ohio
+41,0,0,39,0,Delaware, Ohio
+43,0,0,39,0,Erie, Ohio
+45,0,0,39,0,Fairfield, Ohio
+47,0,0,39,0,Fayette, Ohio
+49,0,0,39,0,Franklin, Ohio
+51,0,0,39,0,Fulton, Ohio
+53,0,0,39,0,Gallia, Ohio
+55,0,0,39,0,Geauga, Ohio
+57,0,0,39,0,Greene, Ohio
+59,0,0,39,0,Guernsey, Ohio
+61,0,0,39,0,Hamilton, Ohio
+63,0,0,39,0,Hancock, Ohio
+65,0,0,39,0,Hardin, Ohio
+69,0,0,39,0,Henry, Ohio
+71,0,0,39,0,Highland, Ohio
+73,0,0,39,0,Hocking, Ohio
+75,0,0,39,0,Holmes, Ohio
+77,0,0,39,0,Huron, Ohio
+79,0,0,39,0,Jackson, Ohio
+81,0,0,39,0,Jefferson, Ohio
+83,0,0,39,0,Knox, Ohio
+85,0,0,39,0,Lake, Ohio
+87,0,0,39,0,Lawrence, Ohio
+89,0,0,39,0,Licking, Ohio
+91,0,0,39,0,Logan, Ohio
+93,0,0,39,0,Lorain, Ohio
+95,0,0,39,0,Lucas, Ohio
+97,0,0,39,0,Madison, Ohio
+99,0,0,39,0,Mahoning, Ohio
+101,0,0,39,0,Marion, Ohio
+103,0,0,39,0,Medina, Ohio
+105,0,0,39,0,Meigs, Ohio
+107,0,0,39,0,Mercer, Ohio
+109,0,0,39,0,Miami, Ohio
+113,0,0,39,0,Montgomery, Ohio
+117,0,0,39,0,Morrow, Ohio
+119,0,0,39,0,Muskingum, Ohio
+123,0,0,39,0,Ottawa, Ohio
+127,0,0,39,0,Perry, Ohio
+129,0,0,39,0,Pickaway, Ohio
+131,0,0,39,0,Pike, Ohio
+133,0,0,39,0,Portage, Ohio
+135,0,0,39,0,Preble, Ohio
+137,0,0,39,0,Putnam, Ohio
+139,0,0,39,0,Richland, Ohio
+141,0,0,39,0,Ross, Ohio
+143,0,0,39,0,Sandusky, Ohio
+145,0,0,39,0,Scioto, Ohio
+147,0,0,39,0,Seneca, Ohio
+149,0,0,39,0,Shelby, Ohio
+151,0,0,39,0,Stark, Ohio
+153,0,0,39,0,Summit, Ohio
+155,0,0,39,0,Trumbull, Ohio
+157,0,0,39,0,Tuscarawas, Ohio
+159,0,0,39,0,Union, Ohio
+161,0,0,39,0,Van Wert, Ohio
+165,0,0,39,0,Warren, Ohio
+167,0,0,39,0,Washington, Ohio
+169,0,0,39,0,Wayne, Ohio
+171,0,0,39,0,Williams, Ohio
+173,0,0,39,0,Wood, Ohio
+175,0,0,39,0,Wyandot, Ohio
+1,0,0,40,0,Adair, Oklahoma
+13,0,0,40,0,Bryan, Oklahoma
+15,0,0,40,0,Caddo, Oklahoma
+17,0,0,40,0,Canadian, Oklahoma
+19,0,0,40,0,Carter, Oklahoma
+21,0,0,40,0,Cherokee, Oklahoma
+27,0,0,40,0,Cleveland, Oklahoma
+31,0,0,40,0,Comanche, Oklahoma
+37,0,0,40,0,Creek, Oklahoma
+39,0,0,40,0,Custer, Oklahoma
+41,0,0,40,0,Delaware, Oklahoma
+47,0,0,40,0,Garfield, Oklahoma
+49,0,0,40,0,Garvin, Oklahoma
+51,0,0,40,0,Grady, Oklahoma
+65,0,0,40,0,Jackson, Oklahoma
+71,0,0,40,0,Kay, Oklahoma
+79,0,0,40,0,Le Flore, Oklahoma
+81,0,0,40,0,Lincoln, Oklahoma
+83,0,0,40,0,Logan, Oklahoma
+87,0,0,40,0,McClain, Oklahoma
+89,0,0,40,0,McCurtain, Oklahoma
+97,0,0,40,0,Mayes, Oklahoma
+101,0,0,40,0,Muskogee, Oklahoma
+109,0,0,40,0,Oklahoma, Oklahoma
+111,0,0,40,0,Okmulgee, Oklahoma
+113,0,0,40,0,Osage, Oklahoma
+115,0,0,40,0,Ottawa, Oklahoma
+119,0,0,40,0,Payne, Oklahoma
+121,0,0,40,0,Pittsburg, Oklahoma
+123,0,0,40,0,Pontotoc, Oklahoma
+125,0,0,40,0,Pottawatomie, Oklahoma
+131,0,0,40,0,Rogers, Oklahoma
+133,0,0,40,0,Seminole, Oklahoma
+135,0,0,40,0,Sequoyah, Oklahoma
+137,0,0,40,0,Stephens, Oklahoma
+139,0,0,40,0,Texas, Oklahoma
+143,0,0,40,0,Tulsa, Oklahoma
+145,0,0,40,0,Wagoner, Oklahoma
+147,0,0,40,0,Washington, Oklahoma
+3,0,0,41,0,Benton, Oregon
+5,0,0,41,0,Clackamas, Oregon
+7,0,0,41,0,Clatsop, Oregon
+9,0,0,41,0,Columbia, Oregon
+11,0,0,41,0,Coos, Oregon
+13,0,0,41,0,Crook, Oregon
+15,0,0,41,0,Curry, Oregon
+17,0,0,41,0,Deschutes, Oregon
+19,0,0,41,0,Douglas, Oregon
+27,0,0,41,0,Hood River, Oregon
+29,0,0,41,0,Jackson, Oregon
+31,0,0,41,0,Jefferson, Oregon
+33,0,0,41,0,Josephine, Oregon
+35,0,0,41,0,Klamath, Oregon
+39,0,0,41,0,Lane, Oregon
+41,0,0,41,0,Lincoln, Oregon
+43,0,0,41,0,Linn, Oregon
+45,0,0,41,0,Malheur, Oregon
+47,0,0,41,0,Marion, Oregon
+51,0,0,41,0,Multnomah, Oregon
+53,0,0,41,0,Polk, Oregon
+57,0,0,41,0,Tillamook, Oregon
+59,0,0,41,0,Umatilla, Oregon
+61,0,0,41,0,Union, Oregon
+65,0,0,41,0,Wasco, Oregon
+67,0,0,41,0,Washington, Oregon
+71,0,0,41,0,Yamhill, Oregon
+1,0,0,42,0,Adams, Pennsylvania
+3,0,0,42,0,Allegheny, Pennsylvania
+5,0,0,42,0,Armstrong, Pennsylvania
+7,0,0,42,0,Beaver, Pennsylvania
+9,0,0,42,0,Bedford, Pennsylvania
+11,0,0,42,0,Berks, Pennsylvania
+13,0,0,42,0,Blair, Pennsylvania
+15,0,0,42,0,Bradford, Pennsylvania
+17,0,0,42,0,Bucks, Pennsylvania
+19,0,0,42,0,Butler, Pennsylvania
+21,0,0,42,0,Cambria, Pennsylvania
+25,0,0,42,0,Carbon, Pennsylvania
+27,0,0,42,0,Centre, Pennsylvania
+29,0,0,42,0,Chester, Pennsylvania
+31,0,0,42,0,Clarion, Pennsylvania
+33,0,0,42,0,Clearfield, Pennsylvania
+35,0,0,42,0,Clinton, Pennsylvania
+37,0,0,42,0,Columbia, Pennsylvania
+39,0,0,42,0,Crawford, Pennsylvania
+41,0,0,42,0,Cumberland, Pennsylvania
+43,0,0,42,0,Dauphin, Pennsylvania
+45,0,0,42,0,Delaware, Pennsylvania
+47,0,0,42,0,Elk, Pennsylvania
+49,0,0,42,0,Erie, Pennsylvania
+51,0,0,42,0,Fayette, Pennsylvania
+55,0,0,42,0,Franklin, Pennsylvania
+59,0,0,42,0,Greene, Pennsylvania
+61,0,0,42,0,Huntingdon, Pennsylvania
+63,0,0,42,0,Indiana, Pennsylvania
+65,0,0,42,0,Jefferson, Pennsylvania
+67,0,0,42,0,Juniata, Pennsylvania
+69,0,0,42,0,Lackawanna, Pennsylvania
+71,0,0,42,0,Lancaster, Pennsylvania
+73,0,0,42,0,Lawrence, Pennsylvania
+75,0,0,42,0,Lebanon, Pennsylvania
+77,0,0,42,0,Lehigh, Pennsylvania
+79,0,0,42,0,Luzerne, Pennsylvania
+81,0,0,42,0,Lycoming, Pennsylvania
+83,0,0,42,0,McKean, Pennsylvania
+85,0,0,42,0,Mercer, Pennsylvania
+87,0,0,42,0,Mifflin, Pennsylvania
+89,0,0,42,0,Monroe, Pennsylvania
+91,0,0,42,0,Montgomery, Pennsylvania
+95,0,0,42,0,Northampton, Pennsylvania
+97,0,0,42,0,Northumberland, Pennsylvania
+99,0,0,42,0,Perry, Pennsylvania
+101,0,0,42,0,Philadelphia, Pennsylvania
+103,0,0,42,0,Pike, Pennsylvania
+107,0,0,42,0,Schuylkill, Pennsylvania
+109,0,0,42,0,Snyder, Pennsylvania
+111,0,0,42,0,Somerset, Pennsylvania
+115,0,0,42,0,Susquehanna, Pennsylvania
+117,0,0,42,0,Tioga, Pennsylvania
+119,0,0,42,0,Union, Pennsylvania
+121,0,0,42,0,Venango, Pennsylvania
+123,0,0,42,0,Warren, Pennsylvania
+125,0,0,42,0,Washington, Pennsylvania
+127,0,0,42,0,Wayne, Pennsylvania
+129,0,0,42,0,Westmoreland, Pennsylvania
+131,0,0,42,0,Wyoming, Pennsylvania
+133,0,0,42,0,York, Pennsylvania
+1,0,0,44,0,Bristol, Rhode Island
+3,0,0,44,0,Kent, Rhode Island
+5,0,0,44,0,Newport, Rhode Island
+7,0,0,44,0,Providence, Rhode Island
+9,0,0,44,0,Washington, Rhode Island
+1,0,0,45,0,Abbeville, South Carolina
+3,0,0,45,0,Aiken, South Carolina
+7,0,0,45,0,Anderson, South Carolina
+11,0,0,45,0,Barnwell, South Carolina
+13,0,0,45,0,Beaufort, South Carolina
+15,0,0,45,0,Berkeley, South Carolina
+19,0,0,45,0,Charleston, South Carolina
+21,0,0,45,0,Cherokee, South Carolina
+23,0,0,45,0,Chester, South Carolina
+25,0,0,45,0,Chesterfield, South Carolina
+27,0,0,45,0,Clarendon, South Carolina
+29,0,0,45,0,Colleton, South Carolina
+31,0,0,45,0,Darlington, South Carolina
+33,0,0,45,0,Dillon, South Carolina
+35,0,0,45,0,Dorchester, South Carolina
+37,0,0,45,0,Edgefield, South Carolina
+39,0,0,45,0,Fairfield, South Carolina
+41,0,0,45,0,Florence, South Carolina
+43,0,0,45,0,Georgetown, South Carolina
+45,0,0,45,0,Greenville, South Carolina
+47,0,0,45,0,Greenwood, South Carolina
+49,0,0,45,0,Hampton, South Carolina
+51,0,0,45,0,Horry, South Carolina
+53,0,0,45,0,Jasper, South Carolina
+55,0,0,45,0,Kershaw, South Carolina
+57,0,0,45,0,Lancaster, South Carolina
+59,0,0,45,0,Laurens, South Carolina
+63,0,0,45,0,Lexington, South Carolina
+67,0,0,45,0,Marion, South Carolina
+69,0,0,45,0,Marlboro, South Carolina
+71,0,0,45,0,Newberry, South Carolina
+73,0,0,45,0,Oconee, South Carolina
+75,0,0,45,0,Orangeburg, South Carolina
+77,0,0,45,0,Pickens, South Carolina
+79,0,0,45,0,Richland, South Carolina
+83,0,0,45,0,Spartanburg, South Carolina
+85,0,0,45,0,Sumter, South Carolina
+87,0,0,45,0,Union, South Carolina
+89,0,0,45,0,Williamsburg, South Carolina
+91,0,0,45,0,York, South Carolina
+11,0,0,46,0,Brookings, South Dakota
+13,0,0,46,0,Brown, South Dakota
+29,0,0,46,0,Codington, South Dakota
+81,0,0,46,0,Lawrence, South Dakota
+83,0,0,46,0,Lincoln, South Dakota
+93,0,0,46,0,Meade, South Dakota
+99,0,0,46,0,Minnehaha, South Dakota
+103,0,0,46,0,Pennington, South Dakota
+135,0,0,46,0,Yankton, South Dakota
+1,0,0,47,0,Anderson, Tennessee
+3,0,0,47,0,Bedford, Tennessee
+9,0,0,47,0,Blount, Tennessee
+11,0,0,47,0,Bradley, Tennessee
+13,0,0,47,0,Campbell, Tennessee
+17,0,0,47,0,Carroll, Tennessee
+19,0,0,47,0,Carter, Tennessee
+21,0,0,47,0,Cheatham, Tennessee
+25,0,0,47,0,Claiborne, Tennessee
+29,0,0,47,0,Cocke, Tennessee
+31,0,0,47,0,Coffee, Tennessee
+35,0,0,47,0,Cumberland, Tennessee
+37,0,0,47,0,Davidson, Tennessee
+43,0,0,47,0,Dickson, Tennessee
+45,0,0,47,0,Dyer, Tennessee
+47,0,0,47,0,Fayette, Tennessee
+51,0,0,47,0,Franklin, Tennessee
+53,0,0,47,0,Gibson, Tennessee
+55,0,0,47,0,Giles, Tennessee
+57,0,0,47,0,Grainger, Tennessee
+59,0,0,47,0,Greene, Tennessee
+63,0,0,47,0,Hamblen, Tennessee
+65,0,0,47,0,Hamilton, Tennessee
+69,0,0,47,0,Hardeman, Tennessee
+71,0,0,47,0,Hardin, Tennessee
+73,0,0,47,0,Hawkins, Tennessee
+77,0,0,47,0,Henderson, Tennessee
+79,0,0,47,0,Henry, Tennessee
+81,0,0,47,0,Hickman, Tennessee
+89,0,0,47,0,Jefferson, Tennessee
+93,0,0,47,0,Knox, Tennessee
+97,0,0,47,0,Lauderdale, Tennessee
+99,0,0,47,0,Lawrence, Tennessee
+103,0,0,47,0,Lincoln, Tennessee
+105,0,0,47,0,Loudon, Tennessee
+107,0,0,47,0,McMinn, Tennessee
+109,0,0,47,0,McNairy, Tennessee
+111,0,0,47,0,Macon, Tennessee
+113,0,0,47,0,Madison, Tennessee
+115,0,0,47,0,Marion, Tennessee
+117,0,0,47,0,Marshall, Tennessee
+119,0,0,47,0,Maury, Tennessee
+123,0,0,47,0,Monroe, Tennessee
+125,0,0,47,0,Montgomery, Tennessee
+129,0,0,47,0,Morgan, Tennessee
+131,0,0,47,0,Obion, Tennessee
+133,0,0,47,0,Overton, Tennessee
+141,0,0,47,0,Putnam, Tennessee
+143,0,0,47,0,Rhea, Tennessee
+145,0,0,47,0,Roane, Tennessee
+147,0,0,47,0,Robertson, Tennessee
+149,0,0,47,0,Rutherford, Tennessee
+151,0,0,47,0,Scott, Tennessee
+155,0,0,47,0,Sevier, Tennessee
+157,0,0,47,0,Shelby, Tennessee
+163,0,0,47,0,Sullivan, Tennessee
+165,0,0,47,0,Sumner, Tennessee
+167,0,0,47,0,Tipton, Tennessee
+177,0,0,47,0,Warren, Tennessee
+179,0,0,47,0,Washington, Tennessee
+183,0,0,47,0,Weakley, Tennessee
+185,0,0,47,0,White, Tennessee
+187,0,0,47,0,Williamson, Tennessee
+189,0,0,47,0,Wilson, Tennessee
+1,0,0,48,0,Anderson, Texas
+5,0,0,48,0,Angelina, Texas
+7,0,0,48,0,Aransas, Texas
+13,0,0,48,0,Atascosa, Texas
+15,0,0,48,0,Austin, Texas
+19,0,0,48,0,Bandera, Texas
+21,0,0,48,0,Bastrop, Texas
+25,0,0,48,0,Bee, Texas
+27,0,0,48,0,Bell, Texas
+29,0,0,48,0,Bexar, Texas
+37,0,0,48,0,Bowie, Texas
+39,0,0,48,0,Brazoria, Texas
+41,0,0,48,0,Brazos, Texas
+49,0,0,48,0,Brown, Texas
+53,0,0,48,0,Burnet, Texas
+55,0,0,48,0,Caldwell, Texas
+57,0,0,48,0,Calhoun, Texas
+61,0,0,48,0,Cameron, Texas
+67,0,0,48,0,Cass, Texas
+71,0,0,48,0,Chambers, Texas
+73,0,0,48,0,Cherokee, Texas
+85,0,0,48,0,Collin, Texas
+89,0,0,48,0,Colorado, Texas
+91,0,0,48,0,Comal, Texas
+97,0,0,48,0,Cooke, Texas
+99,0,0,48,0,Coryell, Texas
+113,0,0,48,0,Dallas, Texas
+121,0,0,48,0,Denton, Texas
+135,0,0,48,0,Ector, Texas
+139,0,0,48,0,Ellis, Texas
+141,0,0,48,0,El Paso, Texas
+143,0,0,48,0,Erath, Texas
+147,0,0,48,0,Fannin, Texas
+149,0,0,48,0,Fayette, Texas
+157,0,0,48,0,Fort Bend, Texas
+167,0,0,48,0,Galveston, Texas
+171,0,0,48,0,Gillespie, Texas
+179,0,0,48,0,Gray, Texas
+181,0,0,48,0,Grayson, Texas
+183,0,0,48,0,Gregg, Texas
+185,0,0,48,0,Grimes, Texas
+187,0,0,48,0,Guadalupe, Texas
+189,0,0,48,0,Hale, Texas
+199,0,0,48,0,Hardin, Texas
+201,0,0,48,0,Harris, Texas
+203,0,0,48,0,Harrison, Texas
+209,0,0,48,0,Hays, Texas
+213,0,0,48,0,Henderson, Texas
+215,0,0,48,0,Hidalgo, Texas
+217,0,0,48,0,Hill, Texas
+219,0,0,48,0,Hockley, Texas
+221,0,0,48,0,Hood, Texas
+223,0,0,48,0,Hopkins, Texas
+225,0,0,48,0,Houston, Texas
+227,0,0,48,0,Howard, Texas
+231,0,0,48,0,Hunt, Texas
+233,0,0,48,0,Hutchinson, Texas
+241,0,0,48,0,Jasper, Texas
+245,0,0,48,0,Jefferson, Texas
+249,0,0,48,0,Jim Wells, Texas
+251,0,0,48,0,Johnson, Texas
+257,0,0,48,0,Kaufman, Texas
+259,0,0,48,0,Kendall, Texas
+265,0,0,48,0,Kerr, Texas
+273,0,0,48,0,Kleberg, Texas
+277,0,0,48,0,Lamar, Texas
+281,0,0,48,0,Lampasas, Texas
+291,0,0,48,0,Liberty, Texas
+293,0,0,48,0,Limestone, Texas
+303,0,0,48,0,Lubbock, Texas
+309,0,0,48,0,McLennan, Texas
+321,0,0,48,0,Matagorda, Texas
+323,0,0,48,0,Maverick, Texas
+325,0,0,48,0,Medina, Texas
+329,0,0,48,0,Midland, Texas
+331,0,0,48,0,Milam, Texas
+339,0,0,48,0,Montgomery, Texas
+341,0,0,48,0,Moore, Texas
+347,0,0,48,0,Nacogdoches, Texas
+349,0,0,48,0,Navarro, Texas
+355,0,0,48,0,Nueces, Texas
+361,0,0,48,0,Orange, Texas
+363,0,0,48,0,Palo Pinto, Texas
+365,0,0,48,0,Panola, Texas
+367,0,0,48,0,Parker, Texas
+373,0,0,48,0,Polk, Texas
+375,0,0,48,0,Potter, Texas
+381,0,0,48,0,Randall, Texas
+397,0,0,48,0,Rockwall, Texas
+401,0,0,48,0,Rusk, Texas
+407,0,0,48,0,San Jacinto, Texas
+409,0,0,48,0,San Patricio, Texas
+419,0,0,48,0,Shelby, Texas
+423,0,0,48,0,Smith, Texas
+427,0,0,48,0,Starr, Texas
+439,0,0,48,0,Tarrant, Texas
+441,0,0,48,0,Taylor, Texas
+449,0,0,48,0,Titus, Texas
+451,0,0,48,0,Tom Green, Texas
+453,0,0,48,0,Travis, Texas
+457,0,0,48,0,Tyler, Texas
+459,0,0,48,0,Upshur, Texas
+463,0,0,48,0,Uvalde, Texas
+465,0,0,48,0,Val Verde, Texas
+467,0,0,48,0,Van Zandt, Texas
+469,0,0,48,0,Victoria, Texas
+471,0,0,48,0,Walker, Texas
+473,0,0,48,0,Waller, Texas
+477,0,0,48,0,Washington, Texas
+479,0,0,48,0,Webb, Texas
+481,0,0,48,0,Wharton, Texas
+485,0,0,48,0,Wichita, Texas
+489,0,0,48,0,Willacy, Texas
+491,0,0,48,0,Williamson, Texas
+493,0,0,48,0,Wilson, Texas
+497,0,0,48,0,Wise, Texas
+499,0,0,48,0,Wood, Texas
+3,0,0,49,0,Box Elder, Utah
+5,0,0,49,0,Cache, Utah
+11,0,0,49,0,Davis, Utah
+21,0,0,49,0,Iron, Utah
+35,0,0,49,0,Salt Lake, Utah
+39,0,0,49,0,Sanpete, Utah
+43,0,0,49,0,Summit, Utah
+45,0,0,49,0,Tooele, Utah
+47,0,0,49,0,Uintah, Utah
+49,0,0,49,0,Utah, Utah
+51,0,0,49,0,Wasatch, Utah
+53,0,0,49,0,Washington, Utah
+57,0,0,49,0,Weber, Utah
+1,0,0,50,0,Addison, Vermont
+3,0,0,50,0,Bennington, Vermont
+5,0,0,50,0,Caledonia, Vermont
+7,0,0,50,0,Chittenden, Vermont
+11,0,0,50,0,Franklin, Vermont
+15,0,0,50,0,Lamoille, Vermont
+17,0,0,50,0,Orange, Vermont
+19,0,0,50,0,Orleans, Vermont
+21,0,0,50,0,Rutland, Vermont
+23,0,0,50,0,Washington, Vermont
+25,0,0,50,0,Windham, Vermont
+27,0,0,50,0,Windsor, Vermont
+1,0,0,51,0,Accomack, Virginia
+3,0,0,51,0,Albemarle, Virginia
+9,0,0,51,0,Amherst, Virginia
+13,0,0,51,0,Arlington, Virginia
+15,0,0,51,0,Augusta, Virginia
+19,0,0,51,0,Bedford, Virginia
+23,0,0,51,0,Botetourt, Virginia
+27,0,0,51,0,Buchanan, Virginia
+31,0,0,51,0,Campbell, Virginia
+33,0,0,51,0,Caroline, Virginia
+35,0,0,51,0,Carroll, Virginia
+41,0,0,51,0,Chesterfield, Virginia
+47,0,0,51,0,Culpeper, Virginia
+53,0,0,51,0,Dinwiddie, Virginia
+59,0,0,51,0,Fairfax, Virginia
+61,0,0,51,0,Fauquier, Virginia
+65,0,0,51,0,Fluvanna, Virginia
+67,0,0,51,0,Franklin, Virginia
+69,0,0,51,0,Frederick, Virginia
+73,0,0,51,0,Gloucester, Virginia
+75,0,0,51,0,Goochland, Virginia
+83,0,0,51,0,Halifax, Virginia
+85,0,0,51,0,Hanover, Virginia
+87,0,0,51,0,Henrico, Virginia
+89,0,0,51,0,Henry, Virginia
+93,0,0,51,0,Isle of Wight, Virginia
+95,0,0,51,0,James City, Virginia
+99,0,0,51,0,King George, Virginia
+105,0,0,51,0,Lee, Virginia
+107,0,0,51,0,Loudoun, Virginia
+109,0,0,51,0,Louisa, Virginia
+117,0,0,51,0,Mecklenburg, Virginia
+121,0,0,51,0,Montgomery, Virginia
+137,0,0,51,0,Orange, Virginia
+139,0,0,51,0,Page, Virginia
+143,0,0,51,0,Pittsylvania, Virginia
+145,0,0,51,0,Powhatan, Virginia
+147,0,0,51,0,Prince Edward, Virginia
+149,0,0,51,0,Prince George, Virginia
+153,0,0,51,0,Prince William, Virginia
+155,0,0,51,0,Pulaski, Virginia
+161,0,0,51,0,Roanoke, Virginia
+163,0,0,51,0,Rockbridge, Virginia
+165,0,0,51,0,Rockingham, Virginia
+167,0,0,51,0,Russell, Virginia
+169,0,0,51,0,Scott, Virginia
+171,0,0,51,0,Shenandoah, Virginia
+173,0,0,51,0,Smyth, Virginia
+177,0,0,51,0,Spotsylvania, Virginia
+179,0,0,51,0,Stafford, Virginia
+185,0,0,51,0,Tazewell, Virginia
+187,0,0,51,0,Warren, Virginia
+191,0,0,51,0,Washington, Virginia
+195,0,0,51,0,Wise, Virginia
+197,0,0,51,0,Wythe, Virginia
+199,0,0,51,0,York, Virginia
+510,0,0,51,0,Alexandria city, Virginia
+540,0,0,51,0,Charlottesville city, Virginia
+550,0,0,51,0,Chesapeake city, Virginia
+590,0,0,51,0,Danville city, Virginia
+600,0,0,51,0,Fairfax city, Virginia
+630,0,0,51,0,Fredericksburg city, Virginia
+650,0,0,51,0,Hampton city, Virginia
+660,0,0,51,0,Harrisonburg city, Virginia
+670,0,0,51,0,Hopewell city, Virginia
+680,0,0,51,0,Lynchburg city, Virginia
+683,0,0,51,0,Manassas city, Virginia
+700,0,0,51,0,Newport News city, Virginia
+710,0,0,51,0,Norfolk city, Virginia
+730,0,0,51,0,Petersburg city, Virginia
+740,0,0,51,0,Portsmouth city, Virginia
+760,0,0,51,0,Richmond city, Virginia
+770,0,0,51,0,Roanoke city, Virginia
+775,0,0,51,0,Salem city, Virginia
+790,0,0,51,0,Staunton city, Virginia
+800,0,0,51,0,Suffolk city, Virginia
+810,0,0,51,0,Virginia Beach city, Virginia
+820,0,0,51,0,Waynesboro city, Virginia
+840,0,0,51,0,Winchester city, Virginia
+3,0,0,53,0,Asotin, Washington
+5,0,0,53,0,Benton, Washington
+7,0,0,53,0,Chelan, Washington
+9,0,0,53,0,Clallam, Washington
+11,0,0,53,0,Clark, Washington
+15,0,0,53,0,Cowlitz, Washington
+17,0,0,53,0,Douglas, Washington
+21,0,0,53,0,Franklin, Washington
+25,0,0,53,0,Grant, Washington
+27,0,0,53,0,Grays Harbor, Washington
+29,0,0,53,0,Island, Washington
+31,0,0,53,0,Jefferson, Washington
+33,0,0,53,0,King, Washington
+35,0,0,53,0,Kitsap, Washington
+37,0,0,53,0,Kittitas, Washington
+39,0,0,53,0,Klickitat, Washington
+41,0,0,53,0,Lewis, Washington
+45,0,0,53,0,Mason, Washington
+47,0,0,53,0,Okanogan, Washington
+49,0,0,53,0,Pacific, Washington
+53,0,0,53,0,Pierce, Washington
+57,0,0,53,0,Skagit, Washington
+61,0,0,53,0,Snohomish, Washington
+63,0,0,53,0,Spokane, Washington
+65,0,0,53,0,Stevens, Washington
+67,0,0,53,0,Thurston, Washington
+71,0,0,53,0,Walla Walla, Washington
+73,0,0,53,0,Whatcom, Washington
+75,0,0,53,0,Whitman, Washington
+77,0,0,53,0,Yakima, Washington
+3,0,0,54,0,Berkeley, West Virginia
+5,0,0,54,0,Boone, West Virginia
+9,0,0,54,0,Brooke, West Virginia
+11,0,0,54,0,Cabell, West Virginia
+19,0,0,54,0,Fayette, West Virginia
+25,0,0,54,0,Greenbrier, West Virginia
+27,0,0,54,0,Hampshire, West Virginia
+29,0,0,54,0,Hancock, West Virginia
+33,0,0,54,0,Harrison, West Virginia
+35,0,0,54,0,Jackson, West Virginia
+37,0,0,54,0,Jefferson, West Virginia
+39,0,0,54,0,Kanawha, West Virginia
+43,0,0,54,0,Lincoln, West Virginia
+45,0,0,54,0,Logan, West Virginia
+47,0,0,54,0,McDowell, West Virginia
+49,0,0,54,0,Marion, West Virginia
+51,0,0,54,0,Marshall, West Virginia
+53,0,0,54,0,Mason, West Virginia
+55,0,0,54,0,Mercer, West Virginia
+57,0,0,54,0,Mineral, West Virginia
+59,0,0,54,0,Mingo, West Virginia
+61,0,0,54,0,Monongalia, West Virginia
+67,0,0,54,0,Nicholas, West Virginia
+69,0,0,54,0,Ohio, West Virginia
+77,0,0,54,0,Preston, West Virginia
+79,0,0,54,0,Putnam, West Virginia
+81,0,0,54,0,Raleigh, West Virginia
+83,0,0,54,0,Randolph, West Virginia
+97,0,0,54,0,Upshur, West Virginia
+99,0,0,54,0,Wayne, West Virginia
+107,0,0,54,0,Wood, West Virginia
+109,0,0,54,0,Wyoming, West Virginia
+1,0,0,55,0,Adams, Wisconsin
+5,0,0,55,0,Barron, Wisconsin
+9,0,0,55,0,Brown, Wisconsin
+15,0,0,55,0,Calumet, Wisconsin
+17,0,0,55,0,Chippewa, Wisconsin
+19,0,0,55,0,Clark, Wisconsin
+21,0,0,55,0,Columbia, Wisconsin
+25,0,0,55,0,Dane, Wisconsin
+27,0,0,55,0,Dodge, Wisconsin
+29,0,0,55,0,Door, Wisconsin
+31,0,0,55,0,Douglas, Wisconsin
+33,0,0,55,0,Dunn, Wisconsin
+35,0,0,55,0,Eau Claire, Wisconsin
+39,0,0,55,0,Fond du Lac, Wisconsin
+43,0,0,55,0,Grant, Wisconsin
+45,0,0,55,0,Green, Wisconsin
+49,0,0,55,0,Iowa, Wisconsin
+55,0,0,55,0,Jefferson, Wisconsin
+57,0,0,55,0,Juneau, Wisconsin
+59,0,0,55,0,Kenosha, Wisconsin
+61,0,0,55,0,Kewaunee, Wisconsin
+63,0,0,55,0,La Crosse, Wisconsin
+67,0,0,55,0,Langlade, Wisconsin
+69,0,0,55,0,Lincoln, Wisconsin
+71,0,0,55,0,Manitowoc, Wisconsin
+73,0,0,55,0,Marathon, Wisconsin
+75,0,0,55,0,Marinette, Wisconsin
+79,0,0,55,0,Milwaukee, Wisconsin
+81,0,0,55,0,Monroe, Wisconsin
+83,0,0,55,0,Oconto, Wisconsin
+85,0,0,55,0,Oneida, Wisconsin
+87,0,0,55,0,Outagamie, Wisconsin
+89,0,0,55,0,Ozaukee, Wisconsin
+93,0,0,55,0,Pierce, Wisconsin
+95,0,0,55,0,Polk, Wisconsin
+97,0,0,55,0,Portage, Wisconsin
+101,0,0,55,0,Racine, Wisconsin
+105,0,0,55,0,Rock, Wisconsin
+109,0,0,55,0,St. Croix, Wisconsin
+111,0,0,55,0,Sauk, Wisconsin
+115,0,0,55,0,Shawano, Wisconsin
+117,0,0,55,0,Sheboygan, Wisconsin
+121,0,0,55,0,Trempealeau, Wisconsin
+123,0,0,55,0,Vernon, Wisconsin
+125,0,0,55,0,Vilas, Wisconsin
+127,0,0,55,0,Walworth, Wisconsin
+131,0,0,55,0,Washington, Wisconsin
+133,0,0,55,0,Waukesha, Wisconsin
+135,0,0,55,0,Waupaca, Wisconsin
+137,0,0,55,0,Waushara, Wisconsin
+139,0,0,55,0,Winnebago, Wisconsin
+141,0,0,55,0,Wood, Wisconsin
+1,0,0,56,0,Albany, Wyoming
+5,0,0,56,0,Campbell, Wyoming
+13,0,0,56,0,Fremont, Wyoming
+21,0,0,56,0,Laramie, Wyoming
+25,0,0,56,0,Natrona, Wyoming
+29,0,0,56,0,Park, Wyoming
+33,0,0,56,0,Sheridan, Wyoming
+37,0,0,56,0,Sweetwater, Wyoming
+39,0,0,56,0,Teton, Wyoming
+41,0,0,56,0,Uinta, Wyoming
+3,0,0,72,0,Aguada Municipio, Puerto Rico
+5,0,0,72,0,Aguadilla Municipio, Puerto Rico
+7,0,0,72,0,Aguas Buenas Municipio, Puerto Rico
+9,0,0,72,0,Aibonito Municipio, Puerto Rico
+11,0,0,72,0,A±asco Municipio, Puerto Rico
+13,0,0,72,0,Arecibo Municipio, Puerto Rico
+17,0,0,72,0,Barceloneta Municipio, Puerto Rico
+19,0,0,72,0,Barranquitas Municipio, Puerto Rico
+21,0,0,72,0,Bayam?n Municipio, Puerto Rico
+23,0,0,72,0,Cabo Rojo Municipio, Puerto Rico
+25,0,0,72,0,Caguas Municipio, Puerto Rico
+27,0,0,72,0,Camuy Municipio, Puerto Rico
+29,0,0,72,0,Can?vanas Municipio, Puerto Rico
+31,0,0,72,0,Carolina Municipio, Puerto Rico
+33,0,0,72,0,Cata±o Municipio, Puerto Rico
+35,0,0,72,0,Cayey Municipio, Puerto Rico
+39,0,0,72,0,Ciales Municipio, Puerto Rico
+41,0,0,72,0,Cidra Municipio, Puerto Rico
+43,0,0,72,0,Coamo Municipio, Puerto Rico
+47,0,0,72,0,Corozal Municipio, Puerto Rico
+51,0,0,72,0,Dorado Municipio, Puerto Rico
+53,0,0,72,0,Fajardo Municipio, Puerto Rico
+55,0,0,72,0,Guﬂnica Municipio, Puerto Rico
+57,0,0,72,0,Guayama Municipio, Puerto Rico
+59,0,0,72,0,Guayanilla Municipio, Puerto Rico
+61,0,0,72,0,Guaynabo Municipio, Puerto Rico
+63,0,0,72,0,Gurabo Municipio, Puerto Rico
+65,0,0,72,0,Hatillo Municipio, Puerto Rico
+69,0,0,72,0,Humacao Municipio, Puerto Rico
+71,0,0,72,0,Isabela Municipio, Puerto Rico
+75,0,0,72,0,Juana D?az Municipio, Puerto Rico
+77,0,0,72,0,Juncos Municipio, Puerto Rico
+79,0,0,72,0,Lajas Municipio, Puerto Rico
+81,0,0,72,0,Lares Municipio, Puerto Rico
+85,0,0,72,0,Las Piedras Municipio, Puerto Rico
+87,0,0,72,0,Lo?za Municipio, Puerto Rico
+89,0,0,72,0,Luquillo Municipio, Puerto Rico
+91,0,0,72,0,Manat? Municipio, Puerto Rico
+97,0,0,72,0,Mayag?ez Municipio, Puerto Rico
+99,0,0,72,0,Moca Municipio, Puerto Rico
+101,0,0,72,0,Morovis Municipio, Puerto Rico
+103,0,0,72,0,Naguabo Municipio, Puerto Rico
+105,0,0,72,0,Naranjito Municipio, Puerto Rico
+107,0,0,72,0,Orocovis Municipio, Puerto Rico
+109,0,0,72,0,Patillas Municipio, Puerto Rico
+111,0,0,72,0,Pe±uelas Municipio, Puerto Rico
+113,0,0,72,0,Ponce Municipio, Puerto Rico
+115,0,0,72,0,Quebradillas Municipio, Puerto Rico
+119,0,0,72,0,R?o Grande Municipio, Puerto Rico
+121,0,0,72,0,Sabana Grande Municipio, Puerto Rico
+123,0,0,72,0,Salinas Municipio, Puerto Rico
+125,0,0,72,0,San Germﬂn Municipio, Puerto Rico
+127,0,0,72,0,San Juan Municipio, Puerto Rico
+129,0,0,72,0,San Lorenzo Municipio, Puerto Rico
+131,0,0,72,0,San Sebastiﬂn Municipio, Puerto Rico
+133,0,0,72,0,Santa Isabel Municipio, Puerto Rico
+135,0,0,72,0,Toa Alta Municipio, Puerto Rico
+137,0,0,72,0,Toa Baja Municipio, Puerto Rico
+139,0,0,72,0,Trujillo Alto Municipio, Puerto Rico
+141,0,0,72,0,Utuado Municipio, Puerto Rico
+143,0,0,72,0,Vega Alta Municipio, Puerto Rico
+145,0,0,72,0,Vega Baja Municipio, Puerto Rico
+149,0,0,72,0,Villalba Municipio, Puerto Rico
+151,0,0,72,0,Yabucoa Municipio, Puerto Rico
+153,0,0,72,0,Yauco Municipio, Puerto Rico

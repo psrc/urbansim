@@ -1,0 +1,72 @@
+<html>
+
+<head>
+<title>Project Setup Wizard</title>
+<link rel="stylesheet" type="text/css" href="default.css" title="default"/>
+</head>
+
+<body>
+
+<p>
+This is done using the <b>File -> New Project</b> option on the menu bar at the top or by selecting the <b>New Project</b> icon at the top left of the page. The project setup is based on a wizard GUI which has 6 steps. In order to create a project and eventually run the synthesizer, all 6 steps must be completed.  Here are the 6 required steps to creating a project:
+</p>
+
+<p>
+<b>Step 1: Region</b>
+<ol STYLE="list-style-type: lower-alpha">
+<li>Enter a project name.
+<li>Select a project file location on your computer.
+<li>Enter a project description (Optional).
+<li>A list of all the counties in the US is displayed beside a map. Select one or more geographies (counties) to be selected for the synthesis.
+</ol>
+</p>
+
+<p>
+The formats of all the inputs files required in steps 2 through 4 can be found in the <b>Help</b> section. They can be accessed by selecting <b>Help -> Data Structures</b> option. Note that only tab-delimited and comma-separated ascii file formats are supported by PopGen at this time.
+</p>
+
+<p>
+<b>Step 2: Geographic Resolution</b>
+<ol STYLE="list-style-type: lower-alpha">
+<li>Specify which geographic resolution you would like to use for the project (i.e. county, census tract, census blockgroup, or Traffic Analysis Zone (TAZ). The standard options are census tract and blockgroup levels. Any other level (such as a TAZ) may also be used as long as correspondence between that geography and PUMA (from where the 	population will be sampled) is provided.
+<li>Choose whether or not you would like to provide correspondence between the Geography and PUMA. If yes is chosen, you will need to provide a Geographic Correspondence file in step 2c. If no is chosen, the default MABLE/Geocorr2K: Geographic Correspondence 	Engine will be used.
+<li>If yes is chosen in Step 2b, provide your own Geographic Correspondence file.
+</ol>
+</p>
+
+<p>
+<b>Step 3: Population Sample</b>
+<ol STYLE="list-style-type: lower-alpha">
+<li>Choose whether or not you will provide your own sample data. If no is chosen, the default setting will use the US Census Public Use Microdata Sample for year 2000. Sample data from PUMS can be automatically downloaded from the census website or user provided data can be used.
+<li>If sample data is being provided, browse to select the appropriate household, person and groupquarter files on your computer. Groupquarter data is optional, but if the person 	control totals include residents of groupquarters, then groupquarter information needs to be provided in order to generate a representative synthetic population.
+</ol>
+</p>
+
+<p>
+<b>Step 4: Marginal Totals</b>
+<ol STYLE="list-style-type: lower-alpha">
+<li>Choose whether or not you will provide your own marginal totals data. Data for population characteristics of interest needs to be provided. Again, if no is chosen, the default setting will use the US Census Summary File data for year 2000.
+<li>If providing your own marginal totals data, choose the appropriate file locations on your computer. Groupquarter data is optional, but if the person control totals include residents of groupquarters, then groupquarter information needs to be provided in order to generate a representative synthetic population.
+</ol>
+</p>
+
+<p>
+<b>Step 5: MySQL Connection Settings </b>
+<ol STYLE="list-style-type: lower-alpha">
+<li>PopGen uses MySQL to manage data. Enter your mysql credentials including hostname, 	username and password to proceed with the wizard. A MySQL connection needs to be established before continuing to the next step.
+</p>
+
+<p>
+<b>Step 6: Project Summary </b><br><br>
+A summary of all the steps with the chosen options specified is displayed. The user can go back and change any of the chosen settings if necessary.
+</p>
+
+<p>
+Click on <b>Finish</b> to complete the project setup.<br>
+<b>Note:</b> Once <b>Finish</b> is selected and the project is created, ONLY the Project Description and the Geographic Resolution can be modified.
+</p>
+
+</body>
+
+
+</html>

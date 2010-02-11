@@ -1,0 +1,278 @@
+variablename,description,type,alphanumeric,defaultvar,beginning,ending,length
+text,text,text,text,int,int,int,int
+RECTYPE,Record Type,H,A,0,1,1,1
+SERIALNO,Housing/Group Quarters (GQ) Unit Serial Number,H,A,1,2,8,7
+SAMPLE,Sample Identifier,H,A,0,9,9,1
+STATE,State Code,H,A,1,10,11,2
+REGION,Region  Code,H,A,0,12,12,1
+DIVISION,Division Code,H,A,0,13,13,1
+PUMANO,Public Use Microdata Area Code (PUMA),H,A,1,14,18,5
+PUMA1,Super Public Use Microdata Area Code (SuperPUMA),H,A,0,19,23,5
+MSACMSA5,Metropolitan Area (MA): MSA/CMSA for PUMA,H,A,0,24,27,4
+MSAPMSA5,Metropolitan Area: MSA/PMSA for PUMA,H,A,0,28,31,4
+MSACMSA1,Metropolitan Area: MSA/CMSA for SuperPUMA,H,A,0,32,35,4
+MSAPMSA1,Metropolitan Area: MSA/PMSA for SuperPUMA,H,A,0,36,39,4
+AREATYP5,Metropolitan Area: PUMA Relationship to MA,H,A,0,40,41,2
+AREATYP1,Metropolitan Area: SuperPUMA Relationship to MA,H,A,0,42,43,2
+TOTPUMA5,Total Area of PUMA,H,N,0,44,57,14
+LNDPUMA5,Land Area of PUMA,H,N,0,58,71,14
+TOTPUMA1,Total Area of SuperPUMA,H,N,0,72,85,14
+LNDPUMA1,Land Area of SuperPUMA,H,N,0,86,99,14
+SUBSAMPL,Subsample number,H,A,0,100,101,2
+HWEIGHT,Housing unit weight,H,A,0,102,105,4
+PERSONS,Number of person records following this housing record,H,A,1,106,107,2
+UNITTYPE,Type of unit,H,A,1,108,108,1
+HSUB,Substitution Flag,H,A,0,109,109,1
+HAUG,Augmentation Flag,H,A,0,110,110,1
+VACSTAT,Vacancy Status,H,A,0,111,111,1
+VACSTATA,Vacancy Status Allocation Flag,H,A,0,112,112,1
+TENURE,Home Ownership,H,A,0,113,113,1
+TENUREA,Home Ownership Allocation Flag,H,A,0,114,114,1
+BLDGSZ,Size of Building,H,A,0,115,116,2
+BLDGSZA,Size of Building Allocation Flag,H,A,0,117,117,1
+YRBUILT,Year Building Built,H,A,0,118,118,1
+YRBUILTA,Year Building Built Allocation Flag,H,A,0,119,119,1
+YRMOVED,Year Moved In,H,A,0,120,120,1
+YRMOVEDA,Year Moved In Allocation Flag,H,A,0,121,121,1
+ROOMS,Number of Rooms,H,A,0,122,122,1
+ROOMSA,Number of Rooms Allocation Flag,H,A,0,123,123,1
+BEDRMS,Number of Bedrooms,H,A,0,124,124,1
+BEDRMSA,Number of Bedrooms Allocation Flag,H,A,0,125,125,1
+CPLUMB,Complete Plumbing Facilities,H,A,0,126,126,1
+CPLUMBA,Complete Plumbing Facilities Allocation Flag,H,A,0,127,127,1
+CKITCH,Complete Kitchen Facilities,H,A,0,128,128,1
+CKITCHA,Complete Kitchen Facilities Allocation Flag,H,A,0,129,129,1
+PHONE,Telephone Availability,H,A,0,130,130,1
+PHONEA,Telephone Availability Allocation Flag,H,A,0,131,131,1
+FUEL,Heating Fuel,H,A,0,132,132,1
+FUELA,Heating Fuel Allocation Flag,H,A,0,133,133,1
+VEHICL,Number of Vehicles Available,H,A,0,134,134,1
+VEHICLA,Number of Vehicles Available Allocation Flag,H,A,0,135,135,1
+BUSINES,Commercial Business on Property,H,A,0,136,136,1
+BUSINESA,Commercial Business on Property Allocation Flag,H,A,0,137,137,1
+ACRES,Acreage,H,A,0,138,138,1
+ACRESA,Acreage Allocation Flag,H,A,0,139,139,1
+AGSALES,Sales of Agricultural Products in 1999,H,A,0,140,140,1
+AGSALESA,Sales of Agricultural Products in 1999 Allocation Flag,H,A,0,141,141,1
+ELEC,Cost of Electricity (annual),H,A,0,142,145,4
+ELECA,Cost of Electricity (annual) Allocation Flag,H,A,0,146,146,1
+GAS,Cost of Gas (annual),H,A,0,147,150,4
+GASA,Cost of Gas (annual) Allocation Flag,H,A,0,151,151,1
+WATER,Cost of Water and Sewer (annual),H,A,0,152,155,4
+WATERA,Cost of Water and Sewer (annual) Allocation Flag,H,A,0,156,156,1
+OIL,Cost of Oil Kerosene or Wood (annual),H,A,0,157,160,4
+OILA,Cost of Oil Kerosene or Wood (annual) Allocation Flag,H,A,0,161,161,1
+RENT,Monthly Rent,H,A,0,162,165,4
+RENTA,Monthly Rent Allocation Flag,H,A,0,166,166,1
+MEALS,Meals Included in Rent,H,A,0,167,167,1
+MEALSA,Meals Included in Rent Allocation Flag,H,A,0,168,168,1
+MORTG1,Mortgage Status,H,A,0,169,169,1
+MORTG1A,Mortgage Status Allocation Flag,H,A,0,170,170,1
+MRT1AMT,Mortgage Payment (monthly amount),H,A,0,171,175,5
+MRT1AMTA,Mortgage Payment (monthly amount) Allocation Flag,H,A,0,176,176,1
+MORTG2,Second Mortgage Status,H,A,0,177,177,1
+MORTG2A,Second Mortgage Status Allocation Flag,H,A,0,178,178,1
+MRT2AMT,Second Mortgage Payment (monthly amount),H,A,0,179,183,5
+MRT2AMTA,Second Mortgage Payment (monthly amount) Allocation Flag,H,A,0,184,184,1
+TAXINCL,Property Tax Status,H,A,0,185,185,1
+TAXINCLA,Property Tax Status Allocation Flag,H,A,0,186,186,1
+TAXAMT,Property Tax Amount (annual),H,A,0,187,188,2
+TAXAMTA,Property Tax Amount (annual) Allocation Flag,H,A,0,189,189,1
+INSINCL,Property Insurance Status,H,A,0,190,190,1
+INSINCLA,Property Insurance Status Allocation Flag,H,A,0,191,191,1
+INSAMT,Property Insurance Amount (annual),H,A,0,192,195,4
+INSAMTA,Property Insurance Amount (annual) Allocation Flag,H,A,0,196,196,1
+CONDFEE,Condominium Fee (monthly),H,A,0,197,200,4
+CONDFEEA,Condominium Fee (monthly) Allocation Flag,H,A,0,201,201,1
+VALUE,Property Value,H,A,0,202,203,2
+VALUEA,Property Value Allocation Flag,H,A,0,204,204,1
+MHLOAN,Mobile Home Loan Status,H,A,0,205,205,1
+MHLOANA,Mobile Home Loan Status Allocation Flag,H,A,0,206,206,1
+MHCOST,Mobile Home Costs,H,A,0,207,211,5
+MHCOSTA,Mobile Home Costs Allocation Flag,H,A,0,212,212,1
+HHT,Household/Family Type,H,A,1,213,213,1
+P65,Number of people 65 years and over in household,H,A,0,214,215,2
+P18,Number of people under 18 years in household,H,A,0,216,217,2
+NPF,Number of people in family,H,A,0,218,219,2
+NOC,Number of own children under 18 years in household,H,A,1,220,221,2
+NRC,Number of related children under 18 years in household,H,A,0,222,223,2
+PSF,Presence of Subfamily in Household,H,A,0,224,224,1
+PAOC,Presence and Age of Own Children under 18 years,H,A,0,225,225,1
+PARC,Presence and Age of Related Children under 18 years,H,A,0,226,226,1
+SVAL,Specified Value Indicator,H,A,0,227,227,1
+SMOC,Selected Monthly Owner Costs,H,A,0,228,232,5
+SMOCAPI,Selected Monthly Owner Costs as a Percentage of Household Income,H,A,0,233,235,3
+SRNT,Specified Rent Indicator,H,A,0,236,236,1
+GRENT,Gross Rent,H,A,0,237,240,4
+GRAPI,Gross Rent as a Percentage of Household Income,H,A,0,241,243,3
+FNF,Farm/Nonfarm Recode,H,A,0,244,244,1
+HHL,Household Language,H,A,0,245,245,1
+LNGI,Linguistic Isolation,H,A,0,246,246,1
+WIF,Number of workers in family,H,A,0,247,247,1
+EMPSTAT,Family Type and Employment Status,H,A,0,248,248,1
+WORKEXP,Family Type and Work Experience of Householder,H,A,0,249,250,2
+HINC,Household Total Income in 1999,H,A,1,251,258,8
+FINC,Family Total Income in 1999,H,A,0,259,266,8
+RECTYPE,Record Type,P,A,0,1,1,1
+SERIALNO,Housing/Group Quarters (GQ) Unit Serial Number,P,A,1,2,8,7
+PNUM,Person Sequence Number,P,A,1,9,10,2
+PAUG,Augmented Person Flag,P,A,0,11,11,1
+DDP,Data-defined Person Flag,P,A,0,12,12,1
+PWEIGHT,Person Weight,P,A,0,13,16,4
+RELATE,Relationship,P,A,1,17,18,2
+RELATEA,Relationship Allocation Flag,P,A,0,19,19,1
+OC,Own Child Indicator,P,A,0,20,20,1
+RC,Related Child Indicator,P,A,0,21,21,1
+PAOCF,Presence and Age of Own Children Females,P,A,0,22,22,1
+SEX,Sex,P,A,1,23,23,1
+SEXA,Sex Allocation Flag,P,A,0,24,24,1
+AGE,Age,P,A,1,25,26,2
+AGEA,Age Allocation Flag,P,A,0,27,27,1
+HISPAN,Hispanic or Latino Origin,P,A,0,28,29,2
+HISPANA,Hispanic or Latino Origin Allocation Flag,P,A,0,30,30,1
+NUMRACE,Number of Major Race Groups Marked,P,A,0,31,31,1
+WHITE,White recode,P,A,0,32,32,1
+BLACK,Black or African American recode,P,A,0,33,33,1
+AIAN,American Indian and Alaska Native recode,P,A,0,34,34,1
+ASIAN,Asian recode,P,A,0,35,35,1
+NHPI,Native and Other Pacific Islander recode,P,A,0,36,36,1
+OTHER,Some other race recode,P,A,0,37,37,1
+RACE1,Race Recode 1,P,A,1,38,38,1
+RACE2,Race Recode 2,P,A,0,39,40,2
+RACE3,Race Recode 3,P,A,0,41,42,2
+RACEA,Race Allocation Flag,P,A,0,43,43,1
+MARSTAT,Marital Status,P,A,0,44,44,1
+MARSTATA,Marital Status Allocation Flag,P,A,0,45,45,1
+MSP,Married Spouse Present Recode,P,A,0,46,46,1
+SFN,Subfamily Number for this person,P,A,0,47,47,1
+SFREL,Subfamily Relationship,P,A,0,48,48,1
+ENROLL,School Enrollment; Attended since February 1 2000,P,A,0,49,49,1
+ENROLLA,School Enrollment: Attended since February 1 2000 Allocation Flag,P,A,0,50,50,1
+GRADE,School Enrollment: Grade Level Attending,P,A,0,51,51,1
+GRADEA,School Enrollment: Grade Level Attending Allocation Flag,P,A,0,52,52,1
+EDUC,Educational Attainment,P,A,0,53,54,2
+EDUCA,Educational Attainment Allocation Flag,P,A,0,55,55,1
+ANCFRST5,Ancestry Code 1 for 5% file,P,A,0,56,58,3
+ANCSCND5,Ancestry Code 2 for 5% file,P,A,0,59,61,3
+ANCA,Ancestry Allocation Flag,P,A,0,62,62,1
+ANCR,Ancestry Recode,P,A,0,63,63,1
+SPEAK,Non-English Language,P,A,0,64,64,1
+SPEAKA,Non-English Language Allocation Flag,P,A,0,65,65,1
+LANG5,Language Spoken for 5% file,P,A,0,66,68,3
+LANGA,Language Spoken Allocation Flag,P,A,0,69,69,1
+ENGABIL,English Ability,P,A,0,70,70,1
+ENGABILA,English Ability Allocation Flag,P,A,0,71,71,1
+POB5,Place of Birth for 5% file,P,A,0,72,74,3
+POBA,Place of Birth Allocation Flag,P,A,0,75,75,1
+CITIZEN,Citizenship Status,P,A,0,76,76,1
+CITIZENA,Citizenship Status Allocation Flag,P,A,0,77,77,1
+YR2US,Year of Entry to United States,P,A,0,78,81,4
+YR2USA,Year of Entry to United States Allocation Flag,P,A,0,82,82,1
+MOB,Residence 5 Years Ago,P,A,0,83,83,1
+MOBA,Residence 5 Years Ago Allocation Flag,P,A,0,84,84,1
+MIGST5,Migration State or Foreign Country Code for 5% file,P,A,0,85,87,3
+MIGSTA,Migration State or Foreign County Code Allocation Flag,P,A,0,88,88,1
+MIGPUMA5,Migration PUMA,P,A,0,89,93,5
+MIGPUMA1,Migration SuperPUMA,P,A,0,94,98,5
+MIGAREA5,Migration PUMA Relationship to MA,P,A,0,99,100,2
+MIGAREA1,Migration SuperPUMA Relationship to MA,P,A,0,101,102,2
+MIGCMA5,Migration MA: MSA/CMSA for Migration PUMA,P,A,0,103,106,4
+MIGCMA1,Migration MA: MSA/CMSA for Migration SuperPUMA,P,A,0,107,110,4
+MIGPMA5,Migration MA: MSA/PMSA for Migration PUMA,P,A,0,111,114,4
+MIGPMA1,Migration MA: MSA/PMSA for Migration SuperPUMA,P,A,0,115,118,4
+SENSORY,Sensory Disability,P,A,0,119,119,1
+SENSORYA,Sensory Disability Allocation Flag,P,A,0,120,120,1
+PHYSCL,Physical Disability,P,A,0,121,121,1
+PHYSCLA,Physical Disability Allocation Flag,P,A,0,122,122,1
+MENTAL,Mental Disability,P,A,0,123,123,1
+MENTALA,Mental Disability Allocation Flag,P,A,0,124,124,1
+SLFCARE,Self-Care Disability,P,A,0,125,125,1
+SLFCAREA,Self-Care Disability Allocation Flag,P,A,0,126,126,1
+ABGO,Able to Go Out Disability,P,A,0,127,127,1
+ABGOA,Able to Go Out Disability Allocation Flag,P,A,0,128,128,1
+ABWORK,Employment Disability,P,A,0,129,129,1
+ABWORKA,Employment Disability Allocation Flag,P,A,0,130,130,1
+DISABLE,Disability Recode,P,A,0,131,131,1
+GRANDC,Presence of Grandchildren under 18 years,P,A,0,132,132,1
+GRANDCA,Presence of Grandchildren under 18 years Allocation Flag,P,A,0,133,133,1
+RSPNSBL,Responsible for Grandchildren,P,A,0,134,134,1
+RSPNSBLA,Responsible for Grandchildren Allocation Flag,P,A,0,135,135,1
+HOWLONG,Length of Responsibility for Grandchildren,P,A,0,136,136,1
+HOWLONGA,Length of Responsibility for Grandchildren Allocation Flag,P,A,0,137,137,1
+MILTARY,Military Service,P,A,0,138,138,1
+MILTARYA,Military Service Allocation Flag,P,A,0,139,139,1
+VPS1,Veteran's Period of Service 1:  On active duty April 1995 or later,P,A,0,140,140,1
+VPS2,Veteran's Period of Service 2:  On active duty August 1990 to March 1995 (including Persian Gulf War),P,A,0,141,141,1
+VPS3,Veteran's Period of Service 3:  On active duty September 1980 to July 1990,P,A,0,142,142,1
+VPS4,Veteran's Period of Service 4:  On active duty May 1975 to August 1980,P,A,0,143,143,1
+VPS5,Veteran's Period of Service 5: On active duty during the Vietnam Era (August 1964 to April 1975),P,A,0,144,144,1
+VPS6,Veteran's Period of Service 6:  On active duty February 1955 to July 1964,P,A,0,145,145,1
+VPS7,Veteran's Period of Service 7:  On active duty during the Korean War (June 1950 to January 1955),P,A,0,146,146,1
+VPS8,Veteran's Period of Service 8:  On active duty during World War II (September 1940 to July 1947),P,A,0,147,147,1
+VPS9,Veteran's Period of Service 9: On active duty any other time,P,A,0,148,148,1
+VPSA,Veteran's Period of Service Allocation Flag,P,A,0,149,149,1
+MILYRS,Years of Military Service,P,A,0,150,150,1
+MILYRSA,Years of Military Service Allocation Flag,P,A,0,151,151,1
+VPSR,Veteran's Period of Service Recode,P,A,0,152,153,2
+ESR,Employment Status Recode,P,A,1,154,154,1
+ESRA,Employment Status Allocation Flag,P,A,0,155,155,1
+ESP,Employment Status of Parent(s),P,A,0,156,156,1
+POWST5,Place of Work State or Foreign Country Code for 5% file,P,A,0,157,159,3
+POWSTA,Place of Work State or Foreign Country Code Allocation Flag,P,A,0,160,160,1
+POWPUMA5,Place of Work PUMA,P,A,0,161,165,5
+POWPUMA1,Place of Work SuperPUMA,P,A,0,166,170,5
+POWAREA5,Place of Work PUMA Relationship to MA,P,A,0,171,172,2
+POWAREA1,Place of Work SuperPUMA Relationship to MA,P,A,0,173,174,2
+POWCMA5,Place of Work MA: MSA/CMSA for Place of Work PUMA,P,A,0,175,178,4
+POWCMA1,Place of Work MA: MSA/CMSA for Place of Work SuperPUMA,P,A,0,179,182,4
+POWPMA5,Place of Work MA: MSA/PMSA for Place of Work PUMA,P,A,0,183,186,4
+POWPMA1,Place of Work MA: MSA/PMSA for Place of Work SuperPUMA,P,A,0,187,190,4
+TRVMNS,Means of Transportation to Work,P,A,0,191,192,2
+TRVMNSA,Means of Transportation to Work Allocation Flag,P,A,0,193,193,1
+CARPOOL,Vehicle Occupancy,P,A,0,194,194,1
+CARPOOLA,Vehicle Occupancy Allocation Flag,P,A,0,195,195,1
+LVTIME,Time Leaving for Work,P,A,0,196,198,3
+LVTIMEA,Time Leaving for Work Allocation Flag,P,A,0,199,199,1
+TRVTIME,Travel Time to Work,P,A,0,200,202,3
+TRVTIMEA,Travel Time to Work Allocation Flag,P,A,0,203,203,1
+LAYOFF,Layoff from Job,P,A,0,204,204,1
+ABSENT,Absent from Work,P,A,0,205,205,1
+RECALL,Return-to-Work Recall,P,A,0,206,206,1
+LOOKWRK,Looking for Work,P,A,0,207,207,1
+BACKWRK,Back to Work,P,A,0,208,208,1
+LASTWRK,Year Last Worked,P,A,0,209,209,1
+LASTWRKA,Year Last Worked Allocation Flag,P,A,0,210,210,1
+INDCEN,Industry (Census),P,A,0,211,213,3
+INDCENA,Industry (Census) Allocation Flag,P,A,0,214,214,1
+INDNAICS,Industry (NAICS),P,A,0,215,222,8
+OCCCEN5,Occupation (Census) for 5% file,P,A,0,223,225,3
+OCCCENA,Occupation (Census) Allocation Flag,P,A,0,226,226,1
+OCCSOC5,Occupation (SOC) for 5% file,P,A,0,227,233,7
+CLWKR,Class of Worker,P,A,0,234,234,1
+CLWKRA,Class of Worker Allocation Flag,P,A,0,235,235,1
+WRKLYR,Worked in 1999,P,A,0,236,236,1
+WRKLYRA,Worked in 1999 Allocation Flag,P,A,0,237,237,1
+WEEKS,Weeks Worked in 1999,P,A,0,238,239,2
+WEEKSA,Weeks Worked in 1999 Allocation Flag,P,A,0,240,240,1
+HOURS,Hours per Week in 1999,P,A,0,241,242,2
+HOURSA,Hours per Week in 1999 Allocation Flag,P,A,0,243,243,1
+INCWS,Wage/Salary Income in 1999,P,A,0,244,249,6
+INCWSA,Wage/Salary Income in 1999 Allocation Flag,P,A,0,250,250,1
+INCSE,Self-Employment Income in 1999,P,A,0,251,256,6
+INCSEA,Self-Employment Income in 1999 Allocation Flag,P,A,0,257,257,1
+INCINT,Interest Income in 1999,P,A,0,258,263,6
+INCINTA,Interest Income in 1999 Allocation Flag,P,A,0,264,264,1
+INCSS,Social Security Income in 1999,P,A,0,265,269,5
+INCSSA,Social Security Income in 1999 Allocation Flag,P,A,0,270,270,1
+INCSSI,Supplemental Security Income in 1999,P,A,0,271,275,5
+INCSSIA,Supplemental Security Income in 1999 Allocation Flag,P,A,0,276,276,1
+INCPA,Public Assistance Income in 1999,P,A,0,277,281,5
+INCPAA,Public Assistance Income in 1999 Allocation Flag,P,A,0,282,282,1
+INCRET,Retirement Income in 1999,P,A,0,283,288,6
+INCRETA,Retirement Income in 1999 Allocation Flag,P,A,0,289,289,1
+INCOTH,Other Income in 1999,P,A,0,290,295,6
+INCOTHA,Other Income in 1999 Allocation Flag,P,A,0,296,296,1
+INCTOT,Person's Total Income in 1999,P,A,0,297,303,7
+INCTOTA,Person's Total Income in 1999 Allocation Flag,P,A,0,304,304,1
+EARNS,Person's Total Earnings in 1999,P,A,0,305,311,7
+POVERTY,Person's Poverty Status,P,A,0,312,314,3
