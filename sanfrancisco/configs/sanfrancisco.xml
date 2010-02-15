@@ -27,6 +27,7 @@
           </run>
           <prepare_for_estimate type="dictionary">
             <argument name="filter_variable" parser_action="quote_string" type="string">building.unit_price</argument>
+            <argument name="dataset" type="string">building</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
             <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(building.unit_price)</argument>
@@ -134,7 +135,7 @@
             <output hidden="True" name="output" type="string">(specification, index)</output>
             <argument name="agent_set" type="string">business</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
-            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">business_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="index_to_unplace" type="string">None</argument>
             <argument name="portion_to_unplace" type="string">.1</argument>
@@ -231,11 +232,15 @@
             <output name="output" type="string">(specification, index)</output>
             <argument name="specification_storage" type="string">base_cache_storage</argument>
             <argument name="specification_table" parser_action="quote_string" type="string">development_location_choice_model_specification</argument>
-            <argument name="agent_set" type="string">building</argument>
-            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="building_set" type="string">building</argument>
+	    <!--
+	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string">building.year_built&gt;1990</argument>
+	    -->
             <argument name="data_objects" type="string">datasets</argument>
+            <argument name="constants" type="string">urbansim_constant</argument>
+            <argument name="base_year" type="integer">2001</argument>
             <argument convert_blank_to_none="True" name="buildings_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="buildings_for_estimation_storage" type="string">base_cache_storage</argument>
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
           <estimate type="dictionary">
@@ -303,7 +308,11 @@
    	    <argument name="estimation_weight_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
             <argument name="submodel_string" parser_action="quote_string" type="string">sanfrancisco.household.household_size_category</argument>
 	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
           </init>
+          <prepare_for_estimate type="dictionary">
+	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+          </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
@@ -336,6 +345,14 @@
         <firstyear type="integer">2001</firstyear>
         <lastyear type="integer">2001</lastyear>
       </years>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="business" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">False</selectable>
+        <selectable name="parcel" type="selectable">True</selectable>
+        <selectable name="urbansim_constant" type="selectable">True</selectable>
+      </datasets_to_preload>
     </estimation_config>
   </model_manager>
   <scenario_manager>
