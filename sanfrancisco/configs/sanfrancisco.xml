@@ -154,7 +154,7 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
-              <variable_spec name=""/>
+              <variable_spec name=".lnbldage"/>
             </variable_list>
           </submodel>
         </specification>
@@ -251,7 +251,7 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
-              <variable_spec name=""/>
+              <variable_spec name=".lnlotsqft"/>
             </variable_list>
           </submodel>
         </specification>
@@ -309,7 +309,7 @@
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
-              <variable_spec name=""/>
+              <variable_spec name=".ln_residential_units"/>
             </variable_list>
           </submodel>
         </specification>
