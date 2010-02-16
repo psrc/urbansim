@@ -177,6 +177,8 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
             self.modify_agents_size(agent_set, minimum(proposed_building_sizes,max_building_size), agents_index)
             proposed_building_sizes = agent_set.get_attribute_by_index(self.units_full_name, agents_index)
             if self.run_config.get("agent_units_string", None): # needs to be corrected
+                if VariableName(self.run_config["agent_units_string"]).get_alias() not in agent_set.get_known_attribute_names():
+                    agent_set.compute_variables(self.run_config["agent_units_string"])
                 self.run_config["agent_units_all"] = agent_set.get_attribute_by_index(self.run_config["agent_units_string"], agents_index)
             logger.log_warning("Not enough building capacity. Large building sizes reduced to %s" % max_building_size)
         proposed_building_sizes = reshape(proposed_building_sizes, (proposed_building_sizes.size,1))
