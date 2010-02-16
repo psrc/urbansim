@@ -109,7 +109,7 @@
               <key name="number_of_units_string" parser_action="quote_string" type="string">sanfrancisco.building.vacant_non_residential_sqft</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
-              <key name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
               <key name="sample_size_locations" type="integer">50</key>
             </argument>
           </init>
@@ -151,14 +151,6 @@
             <argument hidden="True" name="specification" type="string">specification</argument>
           </estimate>
         </structure>
-        <specification type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
-            <description type="string">No submodel</description>
-            <variable_list type="variable_list">
-              <variable_spec name=".lnbldage"/>
-            </variable_list>
-          </submodel>
-        </specification>
       </model>
       <model name="building_transition_model" type="model">
         <structure type="dictionary">
