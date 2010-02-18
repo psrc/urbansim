@@ -270,6 +270,7 @@
           </run>
         </structure>
       </model>
+      <!--
       <model name="household_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -294,6 +295,7 @@
           </run>
         </structure>
       </model>
+      -->
       <model name="household_location_choice_model" type="model">
         <structure type="dictionary">
           <init type="dictionary">
