@@ -19,15 +19,15 @@
           </init>
           <prepare_for_run type="dictionary">
             <name hidden="True" name="name" type="string">prepare_for_run</name>
-            <argument name="refinement_dataset_name" parser_action="quote_string" type="string">refinement            </argument>
-            <argument name="refinement_storage" type="string">base_cache_storage            </argument>
-            <argument name="refinement_table_name" parser_action="quote_string" type="string">refinements            </argument>
+            <argument name="refinement_dataset_name" parser_action="quote_string" type="string">refinement</argument>
+            <argument name="refinement_storage" type="string">base_cache_storage</argument>
+            <argument name="refinement_table_name" parser_action="quote_string" type="string">refinements</argument>
             <output hidden="True" name="output" type="string">refinement</output>
           </prepare_for_run>
           <run type="dictionary">
             <name hidden="True" name="name" type="string">run</name>
-            <argument name="refinement_dataset" type="string">refinement            </argument>
-            <argument hidden="True" name="dataset_pool" type="string">dataset_pool            </argument>
+            <argument name="refinement_dataset" type="string">refinement</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
           </run>
         </structure>
     </model>
