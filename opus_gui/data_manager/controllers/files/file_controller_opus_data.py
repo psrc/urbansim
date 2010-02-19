@@ -14,6 +14,7 @@ from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_gui.abstract_manager.models.table_model import TableModel
 from opus_gui.data_manager.controllers.dialogs.executetool import ExecuteToolGui
 from opus_gui.abstract_manager.controllers.files.file_controller import FileController
+from opus_gui.data_manager.data_manager_functions import get_path_to_tool_modules
 
 
 class FileController_OpusData(FileController):
@@ -304,14 +305,16 @@ class FileController_OpusData(FileController):
             parentfilepath = self.model.filePath(self.currentIndex.parent())
 
             params = self.getOptionalParams()
-            window = ExecuteToolGui(self.treeview, tool_node,
-                                    self.tool_library_node,
-                                    params)
+            window = ExecuteToolGui(parent_widget = self.treeview,
+                                    tool_node = tool_node,
+                                    tool_config = None,
+                                    tool_library_node = self.tool_library_node, 
+                                    params=params)
             window.show()
         return
 
     def getOptionalParams(self):
-        params = {}
+        params = {'tool_path': get_path_to_tool_modules(self.manager.project)}
         if self.classification == 'database':
             params['opus_data_directory'] = str(self.model.filePath(self.currentIndex.parent()))
             params['opus_data_year'] = str(self.model.fileName(self.currentIndex))
