@@ -96,9 +96,9 @@ class MapnikMap(Visualization):
                 dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
                 dataset.load_dataset()
 
-                if dataset.get_coordinate_system() is not None:
-                    dataset.compute_variables(names = dataset.get_coordinate_system())
-                
+#                if dataset.get_coordinate_system() is not None:
+#                    dataset.compute_variables(names = dataset.get_coordinate_system())
+#                
                 for indicator_name, computed_name in attributes:
                         
                     indicator = computed_indicators[indicator_name]
