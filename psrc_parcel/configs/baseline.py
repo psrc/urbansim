@@ -18,17 +18,22 @@ class Baseline(UrbansimParcelConfiguration):
     
     def __init__(self):
         config = UrbansimParcelConfiguration()
+        if os.environ.has_key('OPUS_DATA_PATH'):
+            data_path_prefix = os.path.join(os.environ['OPUS_DATA_PATH'], 'psrc_parcel')
+        else:
+            data_path_prefix = os.path.join(os.environ['OPUS_HOME'], 'data/psrc_parcel')
+            
         config_changes = {
             'project_name':'psrc_parcel',
             'description':'PSRC parcel baseline',
-            'cache_directory': os.path.join(os.environ['OPUS_HOME'], 'data/psrc_parcel/base_year_data'),
+            'cache_directory': os.path.join(data_path_prefix, 'base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-               cache_directory_root = os.path.join(os.environ['OPUS_HOME'], 'data/psrc_parcel/runs'),
+               cache_directory_root = os.path.join(data_path_prefix, 'runs'),
                 cache_from_database = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     #existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/runs/cache_hh_persons_init',
-                    existing_cache_to_copy = os.path.join(os.environ['OPUS_HOME'], 'data/psrc_parcel/base_year_data'),
+                    existing_cache_to_copy = os.path.join(data_path_prefix, 'base_year_data'),
                    ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
