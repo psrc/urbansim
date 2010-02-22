@@ -18,11 +18,13 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
     def run_chunk(self, agents_index, agent_set, specification, coefficients):
         """
         This method overwrites the run_chunk method in LocationChoiceModel by introducing iterative adjustment
-        to the unit_price attribute of choice_set according to its demand
+        to the price attribute of choice_set according to its demand
         """
         CLOSE = 0.05
         maxiter = 30
-        submarkets = define_submarket(self.choice_set, submarket_id_expression="urbansim_parcel.building.zone_id * 100 + building.building_type_id")
+        #submarkets = define_submarket(self.choice_set, submarket_id_expression="urbansim_parcel.building.zone_id * 100 + building.building_type_id")
+        submarkets = define_submarket(self.choice_set, submarket_id_expression="building.building_id")
+        price_attribute_name = "average_value_per_unit"
         capacity_string = self.run_config.get("capacity_string", None)
         demand_string = self.run_config.get('demand_string', 'demand')
 
@@ -33,24 +35,25 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
 
         data_for_plot = {}
         data_for_plot['sdratio'] = sdratio_submarket[:, newaxis]
-        data_for_plot['unit_price'] = self.choice_set.get_attribute("unit_price")[:, newaxis]
-
+        data_for_plot[price_attribute_name] = self.choice_set.get_attribute(price_attribute_name)[:, newaxis]
+        residential_building_types = {1:'SFR',2:'MFR'}
         for i in range(1, maxiter+1, 1):
             submarkets_w_demand = where(submarkets.get_attribute('demand')>0)[0]
             logger.start_block("HLCM with bidding choice iteration %s" % i)
             logger.log_status("submarket sdratio:")
             self.log_descriptives(data_array=sdratio_submarket[submarkets_w_demand])
-            logger.log_status("building unit_price by building_type_id:")
-            self.log_descriptives(dataset=self.choice_set, attribute='unit_price', by='building_type_id', 
-                                  show_values={4:'CONDO',12:'MFH',19:'SFH'})
+            logger.log_status("building %s by building_type_id:" % price_attribute_name)
+            self.log_descriptives(dataset=self.choice_set, attribute=price_attribute_name, by='building_type_id', 
+                                  show_values=residential_building_types)
             logger.log_status("excess demand by building_type_id:")
             demand_submarket = submarkets.get_attribute('demand')
             demand_supply = demand_submarket - sdratio_submarket * demand_submarket
             w_excess_demand = where(demand_supply > 0)[0]
-            submarket_building_type_id = submarkets.get_id_attribute() % 100
+            #submarket_building_type_id = submarkets.get_id_attribute() % 100
+            submarket_building_type_id = self.choice_set.get_attribute_by_id("building_type_id", submarkets.get_id_attribute())
             self.log_descriptives(data_array=demand_supply[w_excess_demand],
                                   by=submarket_building_type_id[w_excess_demand], 
-                                  show_values={4:'CONDO',12:'MFH',19:'SFH'})
+                                  show_values=residential_building_types)
 
             #if allclose(sdratio_submarket, 1, atol=CLOSE):
             if alltrue(sdratio_submarket[submarkets_w_demand] > 1):
@@ -63,16 +66,16 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
             price_adj[price_adj > 1.10] = 1.10
             price_adj[price_adj < 0.9] = 0.9
 
-            unit_price = self.choice_set.get_attribute("unit_price")
+            price_attribute = self.choice_set.get_attribute(price_attribute_name)
 
-            self.choice_set.set_values_of_one_attribute("unit_price", unit_price * price_adj)
+            self.choice_set.set_values_of_one_attribute(price_attribute_name, price_attribute * price_adj)
             self.choice_set.set_values_of_one_attribute(demand_string, zeros(self.choice_set.size(), dtype="float32"))
             choices = HouseholdLocationChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
 
             sdratio_submarket, sdratio_choice = self.compute_sdratio(submarkets, self.choice_set, capacity_string, demand_string)
 
             data_for_plot['sdratio'] = concatenate( (data_for_plot['sdratio'], sdratio_submarket[:,newaxis]), axis=1)
-            data_for_plot['unit_price'] = concatenate( (data_for_plot['unit_price'], self.choice_set.get_attribute("unit_price")[:,newaxis]),
+            data_for_plot[price_attribute_name] = concatenate( (data_for_plot[price_attribute_name], self.choice_set.get_attribute(price_attribute_name)[:,newaxis]),
                                                        axis = 1)
 
             logger.end_block()
@@ -80,16 +83,17 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
         self.plot_data(data_for_plot['sdratio'], main='sdratio_submkt')
 
         building_types = self.choice_set.get_attribute('building_type_id')
-        data_for_plot['unit_price'] = concatenate( (self.choice_set.get_id_attribute()[:,newaxis], data_for_plot['unit_price'] ),
+        data_for_plot[price_attribute_name] = concatenate( (self.choice_set.get_id_attribute()[:,newaxis], data_for_plot[price_attribute_name] ),
                                                    axis = 1)        
         for building_type in [4, 12, 19]:
-            self.plot_data(data_for_plot['unit_price'][building_types==building_type,:],
-                           main='unit_price_bldg_type_%s' % building_type )
+            self.plot_data(data_for_plot[price_attribute_name][building_types==building_type,:],
+                           main='%s_bldg_type_%s' % (price_attribute_name, building_type) )
 
         return choices
 
     def compute_sdratio(self, submarkets, choice_set, capacity_string, demand_string):
-        choice_submarket_id = choice_set.compute_variables("urbansim_parcel.%s.%s" % (choice_set.get_dataset_name(), submarkets.get_id_name()[0]))
+        #choice_submarket_id = choice_set.compute_variables("urbansim_parcel.%s.%s" % (choice_set.get_dataset_name(), submarkets.get_id_name()[0]))
+        choice_submarket_id = choice_set.get_attribute("building_id")
         choice_submarket_index = submarkets.get_id_index( choice_submarket_id )
         supply = submarkets.sum_over_ids( choice_submarket_id, self.capacity )
 
