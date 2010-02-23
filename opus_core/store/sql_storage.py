@@ -15,6 +15,7 @@ except ImportError:
 try:
     from sqlalchemy.databases.mysql import MSBigInteger, MSString, MSChar
     from sqlalchemy.databases.mssql import MSString as MicrosoftString
+    from sqlalchemy.databases.postgres import PGBigInteger
 except:
     pass
 
@@ -224,6 +225,9 @@ class sql_storage(Storage):
                 return dtype('S') 
         except:
             pass
+
+        if isinstance(column_type, PGBigInteger):
+            return dtype('int64')
         
         if isinstance(column_type, Integer):
             return dtype('i')
