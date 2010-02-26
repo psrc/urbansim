@@ -4,8 +4,7 @@
 
 from opus_core.logger import logger
 from opus_core.variables.variable import Variable
-from numpy import array
-from scipy import ndimage
+from numpy import array, newaxis
 
 class abstract_access_within_threshold_variable(Variable):
     """abstract variable for access to zone attribute within a given threshold, 
@@ -13,6 +12,7 @@ class abstract_access_within_threshold_variable(Variable):
     This is a variable for zone dataset
     """
 
+    from_origin = True
     _return_type = "int32"
     threshold = "to_be_defined"
     travel_data_attribute  = "to_be_defined_in_fully_qualified_name"
@@ -25,19 +25,19 @@ class abstract_access_within_threshold_variable(Variable):
 
     def compute(self, dataset_pool):
         travel_data = dataset_pool.get_dataset('travel_data')
-
         zones = dataset_pool.get_dataset('zone')
+        
         zone_ids = zones.get_id_attribute()
-        dest_zone_index = zones.get_id_index(travel_data.get_attribute("to_zone_id"))
-        dest_zone_attribute = zones.get_attribute(self.zone_attribute_to_access)[dest_zone_index]
+        zone_attribute = zones.get_attribute(self.zone_attribute_to_access)
+        travel_data_attribute_mat = travel_data.get_attribute_as_matrix(self.travel_data_attribute, fill=self.threshold+1)
         
-        is_within_threshold = (travel_data.get_attribute(self.travel_data_attribute) <= self.threshold).astype('int32')
+        if self.from_origin:
+            vv = (travel_data_attribute_mat <= self.threshold)[:, zone_ids] * zone_attribute[newaxis,:]            
+            results = vv.sum(axis=1)[zone_ids]
+        else:
+            vv = (travel_data_attribute_mat <= self.threshold)[zone_ids, :] * zone_attribute[:, newaxis]            
+            results = vv.sum(axis=0)[zone_ids]
         
-        from_zone_id = travel_data.get_attribute("from_zone_id")
-        f = getattr(ndimage, self.function)
-        results = array(f(dest_zone_attribute*is_within_threshold,
-                                    labels=from_zone_id, index=zone_ids))
-
         return results
 
 ## unittest in child classes

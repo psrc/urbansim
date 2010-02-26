@@ -3,7 +3,7 @@
   <general>
     <project_name type="string">psrc_zone</project_name>
     <description type="string">PSRC zone baseline</description>
-    <parent type="file">psrc_zone/configs/urbansim_zone.xml</parent>
+    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
     <dataset_pool_configuration type="class">
       <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
@@ -15,7 +15,7 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <save_estimation_results type="boolean">False</save_estimation_results>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene_zone/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_zone/base_year_data</cache_directory>
       <estimation_database_configuration type="class">
         <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
@@ -35,13 +35,13 @@
       </years>
       <seed type="integer">1</seed>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-        <selectable name="pseudo_building" type="selectable">True</selectable>
+        <selectable name="building" type="selectable">True</selectable>
         <selectable name="zone" type="selectable">True</selectable>
         <selectable name="household" type="selectable">True</selectable>
         <selectable name="job" type="selectable">True</selectable>
         <selectable name="development_event_history" type="selectable">True</selectable>
         <selectable name="target_vacancy" type="selectable">True</selectable>
-        <selectable name="job_building_type" type="selectable">True</selectable>
+        <selectable name="home_based_status" type="selectable">True</selectable>
         <selectable name="building_type" type="selectable">True</selectable>
       </datasets_to_preload>
       <dataset_pool_configuration type="class">
@@ -81,7 +81,7 @@
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">runs</argument>
+        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">psrc_zone/runs</argument>
         <argument name="cache_from_database" type="boolean">False</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
@@ -93,12 +93,12 @@
           <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
           <selectable name="annual_household_control_totals" type="selectable">True</selectable>
           <selectable name="households" type="selectable">True</selectable>
-          <selectable name="job_building_types" type="selectable">True</selectable>
+          <selectable name="home_based_status" type="selectable">True</selectable>
           <selectable name="building_types" type="selectable">True</selectable>
           <selectable name="jobs" type="selectable">True</selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="zones" type="selectable">True</selectable>
-          <selectable name="pseudo_buildings" type="selectable">True</selectable>
+          <selectable name="buildings" type="selectable">True</selectable>
           <selectable name="counties" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
           <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
@@ -116,8 +116,8 @@
           <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
           <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
           <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
+          <selectable name="annual_household_relocation_rates" type="selectable">True</selectable>
+          <selectable name="annual_job_relocation_rates" type="selectable">True</selectable>
           <selectable name="base_year" type="selectable">True</selectable>
           <selectable name="cities" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>

@@ -1,3 +1,4 @@
+<!--
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
@@ -29,7 +30,7 @@
           <prepare_for_run type="dictionary">
             <output name="output" type="string">erm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_jobs</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_job_relocation_rates</argument>
             <argument name="what" parser_action="quote_string" type="string">jobs</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
@@ -55,7 +56,7 @@
           <prepare_for_run type="dictionary">
             <output name="output" type="string">hrm_resources</output>
             <argument name="rate_storage" type="string">base_cache_storage</argument>
-            <argument name="rate_table" parser_action="quote_string" type="string">annual_relocation_rates_for_households</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_household_relocation_rates</argument>
             <argument name="what" parser_action="quote_string" type="string">households</argument>
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
@@ -755,8 +756,8 @@
           <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
           <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
           <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-          <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
+          <selectable name="annual_household_relocation_rates" type="selectable">True</selectable>
+          <selectable name="annual_job_relocation_rates" type="selectable">True</selectable>
           <selectable name="base_year" type="selectable">True</selectable>
           <selectable name="cities" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>
@@ -777,3 +778,4 @@
   <base_year type="integer"/>
   <cache_directory type="string"/>
 </opus_project>
+-->
