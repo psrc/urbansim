@@ -162,7 +162,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
             max_id = agent_set.get_attribute(agent_set.get_id_name()[0]).max()
             ids = arange(max_id+1,max_id+1+add_projects)
             agent_set.add_elements(data={"project_id":ids,
-                location_set.get_id_name()[0]:zeros((add_projects,)),
+                self.location_set.get_id_name()[0]:zeros((add_projects,)),
                 "improvement_value":array(improvement_values),
                 agent_set.get_attribute_name(): project_average_size*ones((add_projects,))},
                 require_all_attributes=False)
