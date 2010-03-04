@@ -402,7 +402,7 @@
           </import>
           <init type="dictionary">
             <name hidden="True" name="name" type="string">DevelopmentProjectProposalRegressionModel</name>
-            <argument name="submodel_string" parser_action="quote_string" type="string">land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">land_use_type_id=development_project_proposal.disaggregate(development_template.land_use_type_id)</argument>
             <argument name="filter_attribute" parser_action="quote_string" type="string">urbansim_parcel.development_project_proposal.is_size_fit</argument>
             <argument name="outcome_attribute_name" parser_action="quote_string" type="string">ln_unit_price_expected</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>

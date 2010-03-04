@@ -248,7 +248,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                        "DevelopmentProjectProposalRegressionModel"},
             "init": {
                 "name": "DevelopmentProjectProposalRegressionModel",
-                "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'", 
+                "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(development_template.land_use_type_id)'", 
                               #"submodel_string": "'building_type_id=development_project_proposal.disaggregate(development_template.building_type_id)'", 
                               #"filter_attribute": "'urbansim_parcel.development_project_proposal.is_viable'",
                               "filter_attribute": "'urbansim_parcel.development_project_proposal.is_size_fit'",
