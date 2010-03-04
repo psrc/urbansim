@@ -151,6 +151,16 @@ class ChoiceModel(ChunkModel):
         else:
             self.compute_demand_flag = False
 
+        ## calculate cumulative supply that is compatible with demand calculation
+        if self.run_config.get("supply_string", None):
+            choice_id_name = self.choice_set.get_id_name()[0]
+            current_choice = agent_set.get_attribute(choice_id_name)
+            agent_set.modify_attribute(choice_id_name, zeros(agents_index.size)-1, index=agents_index)
+            supply = self.choice_set.compute_variables(self.run_config.get("supply_string"), dataset_pool=self.dataset_pool)
+            self.choice_set.add_primary_attribute(name=VariableName(self.run_config.get("supply_string")).get_alias(),
+                                                  data=supply)
+            agent_set.modify_attribute(choice_id_name, current_choice)
+
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.model_interaction.set_agent_set(agent_set)

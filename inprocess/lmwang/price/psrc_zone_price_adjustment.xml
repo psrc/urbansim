@@ -78,8 +78,38 @@
           </submodel>
         </specification>
       </model>
-    </models>
-    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration"/>
+    </models>    
+    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="zone" type="selectable">True</selectable>
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="parcel" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
+        </selectable>
+        <selectable name="person" type="selectable">False<package_name type="string">urbansim_parcel</package_name>
+        </selectable>
+        <selectable name="job" type="selectable">True</selectable>
+      </datasets_to_preload>
+      <save_estimation_results type="boolean">True</save_estimation_results>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_zone/base_year_data</cache_directory>
+      <estimation_database_configuration type="class">
+        <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+        <argument name="database_name" type="string"/>
+      </estimation_database_configuration>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['psrc_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+      <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+      <low_memory_mode type="boolean">False</low_memory_mode>
+      <base_year type="integer">2000</base_year>
+      <years type="tuple">
+        <firstyear type="integer">2000</firstyear>
+        <lastyear type="integer">2000</lastyear>
+      </years>
+    </estimation_config>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
   </model_manager>
   <scenario_manager followers="debuglevel,base_year,cache_directory">

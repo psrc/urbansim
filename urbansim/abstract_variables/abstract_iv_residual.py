@@ -10,7 +10,7 @@ from numpy.linalg import inv
 
 class abstract_iv_residual(Variable):
     """"""
-    p = "to_be_specified_in_full_qualified_variable_name" # dependent variable in 1 stage IV regression
+    p = "to_be_specified_in_full_qualified_variable_name" # dependent variable in 1st stage IV regression
     iv = "to_be_specified_in_full_qualified_variable_name" # IV
     filter = "to_be_specified_in_full_qualified_variable_name" #filter deciding which records are inclued in IV regression
 
@@ -26,7 +26,7 @@ class abstract_iv_residual(Variable):
         filter = ds.get_attribute(self._get_alias(self.filter)) 
         # dependent variable - price
         y = ds.get_attribute_as_column(self._get_alias(self.p))[filter, :]
-        # independent variabls - in vector
+        # independent variables - in vector
         z = ds.get_attribute_as_column(self._get_alias(self.iv))[filter, :]
         #import pdb; pdb.set_trace()
         z = concatenate( (ones(z.shape), z), axis=-1)
