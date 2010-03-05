@@ -349,7 +349,7 @@
   </model_manager>
   <scenario_manager>
     <scenario executable="True" name="PSRC_baseline" type="scenario">
-      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+    <!--  <parent type="scenario_name">urbansim_parcel_baseline</parent>  -->
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2001</firstyear>
@@ -539,12 +539,6 @@
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
     <simulation_runs name="Simulation Runs" setexpanded="True" type="all_source_data">
-      <run hidden="Children" name="base_year_data" run_id="1" type="source_data">
-        <scenario_name type="string">psrc_parcel</scenario_name>
-        <cache_directory type="string">/urbansim_cache/psrc_parcel/base_year_data</cache_directory>
-        <end_year type="integer">2000</end_year>
-        <start_year type="integer">2000</start_year>
-      </run>
     </simulation_runs>
   </results_manager>
 </opus_project>
