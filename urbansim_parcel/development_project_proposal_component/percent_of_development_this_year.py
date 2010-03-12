@@ -26,7 +26,7 @@ class percent_of_development_this_year(Variable):
         def get_one_velocity(velocity_string, idx):
             a = array(eval(velocity_string))
             if idx >= a.size:
-                return 100
+                return 0
             if idx == 0:
                 return a[idx]
             else:
@@ -59,7 +59,7 @@ class Tests(opus_unittest.OpusTestCase):
              },
         })
         SimulationState().set_current_time(2007)
-        should_be = array([50, 100,  25,  0, 50, 25, 25, 100])
+        should_be = array([50, 0,  25,  0, 50, 25, 25, 0])
 
         tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
         
@@ -87,7 +87,7 @@ class Tests(opus_unittest.OpusTestCase):
              },            
         })
         SimulationState().set_current_time(2007)
-        should_be = array([50, 100,  25,  0, 50, 25, 25, 100])
+        should_be = array([50, 0,  25,  0, 50, 25, 25, 0])
 
         tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
 
