@@ -1,4 +1,4 @@
-<project name="z_template_project" default="unit-tests">
+<project name="zurich_gridcell" default="unit-tests">
 
 	<import file="${basedir}/../opus_core/common.xml" />
 
