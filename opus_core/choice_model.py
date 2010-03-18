@@ -753,9 +753,10 @@ class ModelInteraction:
         else:
             var_list_for_this_choice_set = \
                     self.specified_coefficients.get_variables_without_constants_and_reserved_names()
-        self.interaction_dataset.compute_variables(var_list_for_this_choice_set,
-                                                       dataset_pool=self.model.dataset_pool,
-                                                       resources = self.interaction_resources)
+        if var_list_for_this_choice_set is not None and len(var_list_for_this_choice_set) > 0:
+            self.interaction_dataset.compute_variables(var_list_for_this_choice_set,
+                                                           dataset_pool=self.model.dataset_pool,
+                                                           resources = self.interaction_resources)
 
     def prepare_data_for_simulation(self, submodel):
         # free up memory from previous chunks
@@ -816,7 +817,7 @@ class ModelInteraction:
             if agents_index is None:
                 raise ValueError, "Either agents_index or chosen_choice must be specified"
             else: 
-                chosen_choice = self.choice_set.try_get_id_index(id=
+                chosen_choice = self.choice_set.get_id_index(id=
                                                                  self.agent_set.get_attribute_by_index(self.choice_set.get_id_name()[0],
                                                                                                        agents_index)
                                                                  )            
