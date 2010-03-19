@@ -407,8 +407,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                      "submodel_string":None, #"'psrc.person.household_income'",
                      "filter": "'urbansim_parcel.job.is_untaken_non_home_based_job'",
                      "location_id_string":"'job_id'",
-                     "run_config":"models_configuration['workplace_choice_model_for_resident']",
-                     "estimate_config":"models_configuration['workplace_choice_model_for_resident']"
+                     "run_config":models_configuration['workplace_choice_model_for_resident'],
+                     "estimate_config":models_configuration['workplace_choice_model_for_resident']
                      }},
              "prepare_for_run": {
                  "name": "prepare_for_run",
