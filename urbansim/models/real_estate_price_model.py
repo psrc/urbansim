@@ -42,7 +42,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
             index = dataset.get_filtered_index(self.filter_attribute, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)
         outcome = RegressionModelWithAdditionInitialResiduals.run(self, specification, coefficients, dataset,
-                                         index, chunk_specification,
+                                         index, chunk_specification=chunk_specification,
                                          run_config=run_config, debuglevel=debuglevel)
         if (outcome == None) or (outcome.size <= 0):
             return outcome

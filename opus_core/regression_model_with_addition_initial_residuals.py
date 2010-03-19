@@ -33,7 +33,7 @@ class RegressionModelWithAdditionInitialResiduals(RegressionModel):
         if (self.outcome_attribute is not None) and not isinstance(self.outcome_attribute, VariableName):
             self.outcome_attribute = VariableName(self.outcome_attribute)
 
-    def run(self, specification, coefficients, dataset, index=None, chunk_specification=None, **kwargs):
+    def run(self, specification, coefficients, dataset, index=None, **kwargs):
         """
         See description above. If missing values of the outcome attribute are suppose to be excluded from
         the addition of the initial residuals, set an entry of run_config 'exclude_missing_values_from_initial_error' to True.
