@@ -65,6 +65,11 @@ class OpusProject(object):
             self.name = 'unnamed_project'
         os.environ['OPUSPROJECTNAME'] = self.name
         self.dirty = False
+        
+    def load_minimal_project(self):
+        ''' Setup the project as if it was loaded with an absolute minimal project config file '''
+        minimal_config = XMLConfiguration()
+        self._read_xml_from_config(minimal_config)
 
     def open(self, filename):
         '''
@@ -93,7 +98,7 @@ class OpusProject(object):
 
     def save(self, filename = None):
         '''
-        Save a project file to disk
+        Save a project file to disk. Does not update the project filename.
         @param filename (String): filename to save under.
         If filename is None, the filename that the project loaded from is used.
         @return: flag and message (tuple(boolean, String)
@@ -110,7 +115,7 @@ class OpusProject(object):
             self.xml_config.save_as(filename)
         except IOError, ex:
             return (False, 'An error occurred when trying to save the project.\n'
-                    'The error is described as: ' + str(ex))
+                    'The error is described as:\n' + str(ex))
 
         self.dirty = False
         return (True, 'Project successfully saved')
@@ -351,4 +356,22 @@ class OpusProject(object):
         @return root node for project (Element) or None
         '''
         return self._root_node
+
+    def get_template_nodes(self, skip_model_templates = True):
+        '''
+        Get a list with all templated nodes in the project.
+        
+        @param skip_model_templates (bool) whether or not to ignore templates under model_manager/templates 
+        
+        An empty list is returned if there are no templated nodes are in the project 
+        (or no templated nodes are outside of model_system/templates when skip_model_templates is set to True)
+        '''
+        xml_tree = copy.deepcopy(self.root_node())
+        
+        # remove the model_system/templates section if we are ignoring model templates
+        # note: This assumes that the xml follows the xml schema and has exactly one model_manager/templates
+        if skip_model_templates == True and xml_tree.find('model_manager/templates') != None:
+            xml_tree.find('model_manager').remove(xml_tree.find('model_manager/templates'))
+            
+        return [n for n in xml_tree.getiterator() if n.get('field_identifier') is not None]
 
