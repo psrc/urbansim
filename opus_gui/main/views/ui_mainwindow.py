@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Documents and Settings\Christoffer Klang\My Documents\workspace\opus_trunk\opus_gui\main\views\mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Thu May 21 16:23:28 2009
-#      by: PyQt4 UI code generator 4.4.3
+# Created: Sat Feb 27 18:12:26 2010
+#      by: PyQt4 UI code generator 4.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -93,7 +93,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1093, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1093, 27))
         self.menubar.setObjectName("menubar")
         self.menuProject = QtGui.QMenu(self.menubar)
         self.menuProject.setObjectName("menuProject")
@@ -247,6 +247,12 @@ class Ui_MainWindow(object):
         icon22.addPixmap(QtGui.QPixmap(":/Images/Images/database_link.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actDatabaseSettings.setIcon(icon22)
         self.actDatabaseSettings.setObjectName("actDatabaseSettings")
+        self.actNewProject = QtGui.QAction(MainWindow)
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(":/Images/Images/xml_document.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actNewProject.setIcon(icon23)
+        self.actNewProject.setObjectName("actNewProject")
+        self.menuProject.addAction(self.actNewProject)
         self.menuProject.addAction(self.actOpenProject)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actSaveProject)
@@ -333,5 +339,8 @@ class Ui_MainWindow(object):
         self.actLaunchResultBrowser.setToolTip(QtGui.QApplication.translate("MainWindow", "Open Result Browser", None, QtGui.QApplication.UnicodeUTF8))
         self.actDatabaseSettings.setText(QtGui.QApplication.translate("MainWindow", "Database Connection Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actDatabaseSettings.setToolTip(QtGui.QApplication.translate("MainWindow", "Open Database Connection Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actNewProject.setText(QtGui.QApplication.translate("MainWindow", "New Project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actNewProject.setToolTip(QtGui.QApplication.translate("MainWindow", "Create a new project based on a built-in or custom project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actNewProject.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusmain_rc

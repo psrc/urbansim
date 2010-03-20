@@ -1,0 +1,13 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">Sample Eugene project</description>
+    <project_name hidden="True" type="string" >eugene_gridcell</project_name>
+    <parent type="file">templated_project_nodes_multi_level_grand_parent.xml</parent>
+  </general>
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group" field_identifier="template_from_parent"/>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data" />
+  </results_manager>
+  <test_section name="Test section" field_identifier="parent" type="string">parent</test_section>
+</opus_project>

@@ -1,0 +1,35 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">model templates with project templates parent</description>
+    <project_name hidden="True" type="string">model_template_parent</project_name>
+  </general>
+  <model_manager>
+   <templates hidden="True" name="Model Templates" parser_action="skip">
+      <model_template name="complex_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument field_data_type="dataset" field_identifier="model_template_parent" name="dataset" type="string"/>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model_template>
+   </templates>
+  </model_manager>
+  
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
+  </results_manager>
+  <test name="Test section" field_identifier="template_from_parent" type="string">grand parent</test>
+</opus_project>
+
+
+
+

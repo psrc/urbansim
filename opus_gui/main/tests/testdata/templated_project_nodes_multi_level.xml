@@ -1,0 +1,17 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string" field_identifier="template_from_base">Sample Eugene project</description>
+    <project_name hidden="True" type="string">eugene_gridcell</project_name>
+    <parent type="file">templated_project_nodes_multi_level_parent.xml</parent>
+    <dataset_pool_configuration type="class">
+      <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+      <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['eugene', 'urbansim', 'opus_core']</argument>
+    </dataset_pool_configuration>
+  </general>
+  <results_manager>
+    <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
+  </results_manager>
+</opus_project>

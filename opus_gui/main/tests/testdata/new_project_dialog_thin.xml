@@ -1,0 +1,8 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">Newly created project</description>
+    <project_name hidden="True" type="string" field_identifier="Project name">new_project</project_name>
+  </general>
+</opus_project>
+

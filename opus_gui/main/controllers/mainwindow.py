@@ -8,6 +8,7 @@ import os, sys
 from lxml.etree import ElementTree, Comment
 from PyQt4.QtCore import Qt, QVariant, QThread, QString, QObject, SIGNAL
 from PyQt4.QtCore import QSettings, QRegExp
+from PyQt4 import QtGui
 from PyQt4.QtGui import QSpinBox, QMenu, QMainWindow, QMessageBox
 from PyQt4.QtGui import QWidget, QTabWidget
 from PyQt4.QtGui import QAction, QFileDialog, QToolButton, QIcon
@@ -29,6 +30,8 @@ from opus_gui.data_manager.data_manager import DataManager
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.util import common_dialogs
 
+from opus_gui.main.controllers.dialogs.load_project_template_dialog import LoadProjectTemplateDialog
+from opus_gui.main.controllers.dialogs.new_project_dialog import NewProjectDynamicDialog
 from opus_gui.general_manager.controllers.variable_library import VariableLibrary
 
 class OpusGui(QMainWindow, Ui_MainWindow):
@@ -112,6 +115,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Connect trigger slots using a little quickie function
         def connect(action, callback):
             QObject.connect(action, SIGNAL("triggered()"), callback)
+        connect(self.actNewProject, self.newProject)
         connect(self.actOpenProject, self.openProject)
         connect(self.actSaveProject, self.saveProject)
         connect(self.actSaveProjectAs, self.saveProjectAs)
@@ -311,6 +315,31 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.update_saved_state()
         update_models_to_run_lists()
+        
+        
+    def newProject(self):
+        ''' User selected "New Project" menu option '''
+        # Ask to save any changes before openeing a new project
+        if self.okToCloseProject() == False: return
+
+        # Close the currently opened project
+        self.closeProject()
+        
+        # let the user select a project to base the new project on
+        load_dialog = LoadProjectTemplateDialog(self)
+        if load_dialog.exec_() != load_dialog.Accepted:
+            return
+        
+        template_project = load_dialog.template_project
+        
+        # let the user fill in any project specific changes
+        new_project_dialog = NewProjectDynamicDialog(template_project, parent_widget = self) 
+        if new_project_dialog.exec_() != new_project_dialog.Accepted:
+            return
+        
+        # open the newly created project
+        self.openProject(new_project_dialog.new_project_filename)
+            
 
     def saveProject(self, filename = None):
         '''

@@ -191,7 +191,7 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
                 return 'False'
             return (widget, lambda x = widget: 'True' if x.isChecked() else 'False')
 
-        # default to QLineEdit
+        # default to QLineEdit (string value editing)
         widget = QtGui.QLineEdit()
         widget.setText(default_value)
         return (widget, widget.text)
@@ -199,10 +199,11 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
     def _widget_and_method_for_template_node(self, template_node):
         '''
         Create a suitable widget for the given template node depending on it's type argument.
-        For example, a node of type "string" should get a QLineEdit, while one with type="integer"
-        should get a QSpinBox widget.
+        For example, a node of type "string" should get a QLineEdit, while with type="integer"
+        we should get a QSpinBox widget.
         Special widgets can be created if the node has an attribute 'field_data_type'.
         For example; one special case is 'dataset', where a combobox with the available datasets is returned.
+
         'field_data_type' is used if it exists, otherwise 'type' is used. If neither attributes are
         present a QLineEdit is used.
         '''
@@ -227,6 +228,8 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             del widget
             del item
 
+	# fetch all nodes that have a field_identifier attribute on them and index them by
+	# this attribute (field_identifier -> xml node)
         templated_nodes = [(n.get('field_identifier'), n) for n in self.model_node.getiterator() if
                            n.get('field_identifier') is not None]
 

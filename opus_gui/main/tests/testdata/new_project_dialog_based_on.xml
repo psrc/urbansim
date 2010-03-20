@@ -1,0 +1,27 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  
+  <general>
+    <description type="string">Sample Eugene project</description>
+    <project_name hidden="True" type="string">eugene_gridcell</project_name>
+  </general>
+  
+  <single_level name="single_level_node" type="string" field_identifier="template_single_level">parent value single</single_level>
+  
+  <multi_level_1 name="multi_level_1" type="class">
+    <multi_level_2 name="multi_level_2" type="class">
+        <multi_level_3 name="multi_level_3" type="string" field_identifier="template_multi_level">parent value multi
+            <multi_level_4 name="multi_level_4" type="string">this should not be in the child</multi_level_4>
+        </multi_level_3>
+        <non_templated_node type="string">this should not be in the child</non_templated_node>
+    </multi_level_2>
+  </multi_level_1>
+  
+  <parent_exclusive>
+    <unique_to_parent>
+        this should not be in the child
+    </unique_to_parent>
+  </parent_exclusive>
+
+</opus_project>
+
