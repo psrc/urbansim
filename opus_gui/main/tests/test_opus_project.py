@@ -23,7 +23,7 @@ class TestOpusProject(opus_unittest.OpusTestCase):
         ok, msg = self.p.open(fn)
         if not ok:
             print msg
-        self.assertTrue(self.p.is_open())
+        self.assertTrue(self.p.is_open(), 'Project file could not be opened')
         return self.p
 
     def project_is_closed(self, instance):
@@ -244,6 +244,67 @@ class TestOpusProject(opus_unittest.OpusTestCase):
         self.assert_(p.find('a').get('inherited') is None)
         # it should also have inserted the node between the first and the second node
         self.assert_(p.find('a/pretty/deep')[1] is path)
+        
+        
+    # ============================================
+    # Tests for collecting templated project nodes
+    # ============================================
+    
+    def test_get_template_nodes_with_model_template_filter(self):
+        p = self._open('templated_project_nodes_with_model_templates.xml')
+        
+        expected_keys_with_out_model_templates = ['template_from_child', 'template_from_parent']
+        expected_keys_with_out_model_templates.sort()
+        
+        expected_keys_with_model_templates = expected_keys_with_out_model_templates + \
+            ['model_template_child', 'model_template_parent']
+        expected_keys_with_model_templates.sort()
+
+        # Fetch with out model templates nodes
+        collected_keys = [node.get('field_identifier') for node in p.get_template_nodes()]
+        collected_keys.sort()
+        
+        self.assertEqual(collected_keys, expected_keys_with_out_model_templates)
+        
+        # fetch with model templates
+        collected_keys = [node.get('field_identifier') for node in p.get_template_nodes(skip_model_templates = False)]
+        collected_keys.sort()
+        
+        self.assertEqual(collected_keys, expected_keys_with_model_templates)
+        
+        # validate that the default is to fetch templates without the model templates
+        collected_keys = [node.get('field_identifier') for node in p.get_template_nodes(skip_model_templates = True)]
+        collected_keys_default = [node.get('field_identifier') for node in p.get_template_nodes()]
+        self.assertEqual(collected_keys, collected_keys_default)
+
+
+    def test_get_template_nodes_single_level(self):
+        p = self._open('templated_project_nodes_single_level.xml')
+        
+        expected_keys = ['template_one', 'template_two']
+        expected_keys.sort()
+        
+        collected_template_keys = [node.get('field_identifier') for node in p.get_template_nodes()]
+        collected_template_keys.sort()
+        
+        self.assertEqual(collected_template_keys, expected_keys)
+        
+        
+    def test_get_template_nodes_multi_level(self):
+        p = self._open('templated_project_nodes_multi_level.xml')
+        
+        expected_keys = ['template_from_base', 
+                         'template_from_parent', 
+                         'parent', # this field_identifier is overwriting the same node "grandparent" in the grandparent
+                         'template_from_grandparent']
+        expected_keys.sort()
+
+        collected_template_keys = [node.get('field_identifier') for node in p.get_template_nodes()]
+        collected_template_keys.sort()
+        
+        self.assertEqual(collected_template_keys, expected_keys)
+
+
 
 if __name__ == '__main__':
     opus_unittest.main()
