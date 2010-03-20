@@ -24,10 +24,14 @@ def element_id(node):
 def node_identity_string(node):
     '''
     Get a string that is unique for this node. This string is assembled by taking the
-    tag and the 'name' attribute (separated by a colon) for each node in the nodes path.
+    tag and the 'name' attribute (separated by a colon) for each node in the nodes path except the root.
 
-    For example, the following xml structure will return '/root:parent/node:child'
-        <root name="parent"><node name="child" /></root>
+    For example, the following XML structure will return the string '/parent:i am a parent/node:child'
+        <root>
+         <parent name="i am a parent">
+          <node name="child" />
+         </parent>
+        </root>
 
     @param node (Element) the node to get id string for
     @return the id string (str)
@@ -41,7 +45,7 @@ def strip_comments(tree_root):
     ''' Strip a tree of all comment nodes '''
     # lxml includes comments when iterating over child nodes, so in order to avoid having
     # to constantly check if an item is a comment or an element we strip all comments.
-    # the obvious drawback is that any comments are stripped from the XML.
+    # This means that any manually added comments are removed upon saving the file. 
     for node in tree_root.getiterator():
         if isinstance(node, _Comment):
             node.getparent().remove(node)
