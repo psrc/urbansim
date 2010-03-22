@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<test_info>
+
+	<!-- This is the table information is taken from -->
+	<io_info 
+
+		input_table_name = "small_detroit"
+		input_db_url = "mysql://root@localhost/UrbanSim" 		
+	
+		x_column = 'centroidx'
+		y_column = 'centroidy'		
+		id_column = 'BLDG_ID'
+
+		output_table_name = "z_sanity_check"
+		output_db_url = "mysql://root@localhost/UrbanSim" 		
+		io_overwrite_table = "TRUE"
+		
+	/>
+			
+	<!-- This is the info used for a test -->
+	<model_info 
+		
+		type = "Num" 		
+		test_attribute = "SQFT_PER_UNIT" 
+		null_value = "0"
+		train_attributes = "STORIES, centroidx, centroidy"
+
+	/>
+	
+
+</test_info>

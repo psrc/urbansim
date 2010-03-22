@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<test_info>
+
+	<!-- This is the table information is taken from -->
+	<io_info 
+
+		input_table_name = "z_sanity_check"
+		input_db_url = "mysql://root@localhost/UrbanSim_test_data" 		
+	
+		x_column = 'X_SP'
+		y_column = 'Y_SP'		
+		id_column = 'PARCEL_ID'
+		
+	/>
+			
+	<!-- This is the info used for a test -->
+	<model_info 
+		
+		type = "Num" 		
+		test_attribute = "BldgSF" 
+		null_value = "0"
+		train_attributes = "GeneralCategory, Bedrooms, Stories, X_SP, Y_SP, NumberofBuildingsParcel"
+
+	/>
+	
+
+</test_info>

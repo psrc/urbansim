@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<test_info>
+
+	<!-- This is the table information is taken from -->
+	<io_info 
+		input_table_name = "z_sanity_check"
+		input_db_url = "mysql://root@localhost/UrbanSim" 		
+	
+		x_column = 'centroidx'
+		y_column = 'centroidy'
+		id_column = 'BLDG_ID'
+		
+		output_table_name = "z_sanity_check_gui"
+		output_db_url = "mysql://root@localhost/UrbanSim" 
+		
+		extra_attributes = ""
+		force_to_numeric = "centroidx, centroidy, STORIES, SQFT_PER_UNIT"
+		force_to_class = "BUILDING_TYPE_ID"
+	/>
+				
+	<!-- This is the info used for a test -->
+	<model_info 
+	
+		attributes = "STORIES, centroidx, centroidy, BUILDING_TYPE_ID, SQFT_PER_UNIT"	
+		
+		log_trans_attributes = "STORIES, SQFT_PER_UNIT"	
+
+	/>
+
+</test_info>

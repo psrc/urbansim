@@ -524,6 +524,57 @@
           </params>
         </tool>
       </tool_group>
+      <tool_group name="data_imputation_tools" setexpanded="True">
+        <tool name="missing_value_replacement_tool">
+          <class_module>missing_value_replacement_tool</class_module>
+          <params>
+            <param name="io_input_table_name" param_type="string" required="True">your_table_name</param>
+            <param name="io_input_db_url" param_type="string" required="True">mysql://root@localhost/your_database</param>
+            <param name="io_output_table_name" param_type="string" required="False">output_table_name</param>
+            <param name="io_output_db_url" param_type="string" required="False">mysql://root@localhost/output_database</param>
+            <param name="io_overwrite_table" param_type="string" required="True">TRUE_or_FALSE</param>
+            <param name="io_force_to_numeric" param_type="string" required="True">numeric_attributes</param>
+            <param name="io_force_to_class" param_type="string" required="True">categorical_attributes</param>
+            <param name="io_x_column" param_type="string" required="True">X_SP</param>
+            <param name="io_y_column" param_type="string" required="True">Y_SP</param>
+            <param name="io_id_column" param_type="string" required="True">unique_attribute</param>
+            <param name="mi_type" param_type="string" required="True">Num_or_Cat</param>
+            <param name="mi_test_attribute" param_type="string" required="True">attribute_to_fix</param>
+            <param name="mi_null_value" param_type="string" required="True">value_to_be_fixed</param>
+            <param name="mi_train_attributes" param_type="string" required="True">attributes_used_for_predictions</param>
+          </params>
+        </tool>
+        <tool name="mv_run_from_configuration">
+          <class_module>mv_run_from_configuration</class_module>
+          <params>
+            <param name="path_to_config" param_type="string" required="True">C:\your\config\path</param>
+          </params>
+        </tool>
+        <tool name="outlier_detection_tool">
+          <class_module>outlier_detection_tool</class_module>
+          <params>
+            <param name="io_input_table_name" param_type="string" required="True">your_table_name</param>
+            <param name="io_input_db_url" param_type="string" required="True">mysql://root@localhost/your_database</param>
+            <param name="io_output_table_name" param_type="string" required="False">output_table_name</param>
+            <param name="io_output_db_url" param_type="string" required="False">mysql://root@localhost/output_database</param>
+            <param name="io_overwrite_table" param_type="string" required="True">TRUE_or_FALSE</param>
+            <param name="io_force_to_numeric" param_type="string" required="True">numeric_attributes</param>
+            <param name="io_force_to_class" param_type="string" required="True">categorical_attributes</param>
+            <param name="io_x_column" param_type="string" required="True">X_SP</param>
+            <param name="io_y_column" param_type="string" required="True">Y_SP</param>
+            <param name="io_id_column" param_type="string" required="True">unique_attribute</param>
+            <param name="io_extra_attributes" param_type="string" required="True">other_columns_to_put_in_output_table</param>
+            <param name="mi_attributes" param_type="string" required="True">Attributes_to_use</param>
+            <param name="mi_log_trans_attributes" param_type="string" required="False">attributes_with_log_distribution</param>
+          </params>
+        </tool>
+        <tool name="od_run_from_configuration">
+          <class_module>od_run_from_configuration</class_module>
+          <params>
+            <param name="path_to_config" param_type="string" required="True">C:\your\config\path</param>
+          </params>
+        </tool>
+      </tool_group>
       <tool_group name="template_tools" setexpanded="True">
         <tool name="template_tool">
           <class_module>template_tool</class_module>

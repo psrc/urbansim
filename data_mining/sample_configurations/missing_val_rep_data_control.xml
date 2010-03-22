@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<test_info>
+
+    <!-- This is the table information is taken from -->
+    <io_info 
+
+        input_table_name = "z_sanity_check"
+        input_db_url = "mysql://root@localhost/UrbanSim_test_data"         
+    
+        x_column = 'X_SP'
+        y_column = 'Y_SP'        
+        id_column = 'PARCEL_ID'
+        
+        
+        output_table_name = "z_sanity_check_out_weka_num"
+		output_db_url = "mysql://root@localhost/branch_v2_testing" 
+		overwrite_table = "TRUE"
+        
+        
+    >
+    	<!-- These are the criteria for rows that are queried -->
+		<test_criteria>
+			<or>
+				<tc attribute="GeneralCategory" type="E" value="Single Family Residential" vt= "string" />
+				<tc attribute="GeneralCategory" type="E" value="Multi-Family Residential" vt= "string" />
+			</or>
+			<or>
+				<tc attribute="Stories" type="NE" value="0" vt= "int" />
+			</or>
+		</test_criteria>
+     
+    </io_info>
+            
+    <!-- This is the info used for a test -->
+    <model_info 
+        
+        type = "Num"         
+        test_attribute = "BldgSF" 
+        train_attributes = "GeneralCategory, Bedrooms, Stories, X_SP, Y_SP, NumberofBuildingsParcel"
+    >
+    	
+    	<!-- These are values that should be considered null -->
+		<null_values>
+			<v attribute="BldgSF" type="LT" value="10" vt= "int" /> 
+			<v attribute="BldgSF" type="GT" value="10000000" vt= "int" />
+			<v attribute="GeneralCategory" type="E" value="Hospital" vt= "string" />
+		</null_values>
+		
+	</model_info>
+    
+
+</test_info>

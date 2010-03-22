@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<test_info>
+
+	<!-- This is the table information is taken from -->
+	<io_info 
+
+		input_table_name = "z_sanity_check"
+		input_db_url = "mysql://root@localhost/UrbanSim_test_data" 		
+	
+		x_column = 'X_SP'
+		y_column = 'Y_SP'		
+		id_column = 'PARCEL_ID'
+		
+		display_all_predictions = 'True'
+		
+		log_folder_address = '/Users/samclark/Desktop/UrbanSim_Eclipse/Test_Results/Z_SANITY_NUM'
+		overwrite_folder = "TRUE"
+		
+		overall_results_table_name = "All_test_results"
+		overall_results_db_url = "mysql://root@localhost/UrbanSim_test_data"
+		
+	/>
+			
+	<!-- This is the info used for a test -->
+	<model_info 
+		
+		type = "Num" 		
+		test_attribute = "BldgSF" 
+		null_value = "0"
+		train_attributes = "GeneralCategory, Bedrooms, Stories, X_SP, Y_SP, NumberofBuildingsParcel"
+
+		classifier = "weka.classifiers.lazy.IBk"
+		options = "-I -K 10 -A weka.core.neighboursearch.KDTree"				
+		
+		fs_evaluation_class =  "weka.attributeSelection.CfsSubsetEval"
+		fs_search_class = "weka.attributeSelection.BestFirst"
+		fs_start_attributes = "X_SP, Y_SP, GeneralCategory"	
+		
+	/>
+	
+
+</test_info>
