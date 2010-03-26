@@ -633,7 +633,7 @@
       <model name="workplace_choice_model_for_resident" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module>urbansim_parcel.models.workplace_choice_model_for_resident</class_module>
+            <class_module>urbansim_parcel.models.workplace_choice_model</class_module>
             <class_name>WorkplaceChoiceModel</class_name>
           </import>
           <init type="dictionary">
@@ -656,7 +656,7 @@
 	      <key name="number_of_agents_string" parser_action="quote_string" type="string">job.number_of_agents(person)</key>
 	    </argument>
         <argument name="estimate_config" type="dictionary">
-	      <key name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</key>
+	      <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
 	      <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
 	      <key name="sample_size_locations" type="integer">30</key>
 	      <key name="weights_for_estimation_string" parser_action="quote_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
@@ -703,7 +703,6 @@
           </estimate>
         </structure>
       </model>
-
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="dictionary">
