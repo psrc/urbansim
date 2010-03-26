@@ -63,7 +63,7 @@ class FileController_OpusData(FileController):
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
         summaryGroupBox = QGroupBox(container)
-        summaryGroupBox.setTitle(QString("Summary statistics for dataset %s"%table_name))
+        summaryGroupBox.setTitle(QString("Year: %s  Run name: %s" % (parent_name,table_name_full.split('/')[-3])))
         summaryGroupBox.setFlat(True)
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Grab the summary data
