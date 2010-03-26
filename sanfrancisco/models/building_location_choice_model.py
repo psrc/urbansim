@@ -22,7 +22,11 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
         building_use_prefix = building_use_set.get_attribute('building_use')
         self.filter_for_submodels = {}
         for i in range(building_use_set.size()):
-            self.filter_for_submodels[building_use_ids[i]] = VariableName("parcel.%s_possible" % building_use_prefix[i].lower())
+            if self.filter is not None:
+                filter_str = "(parcel.%s_possible) * (%s)" % (building_use_prefix[i].lower(), self.filter)
+            else:
+                filter_str = "parcel.%s_possible" % building_use_prefix[i].lower()
+            self.filter_for_submodels[building_use_ids[i]] = VariableName(filter_str)
             
     def get_sampling_weights(self, config, agent_set=None, **kwargs):
         weight_array = UrbansimBuildingLocationChoiceModel.get_sampling_weights(self, config, 
