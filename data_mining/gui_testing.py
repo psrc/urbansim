@@ -1,6 +1,17 @@
 #Way of testing the function that will be part of the GUI
 from xml.dom import minidom
+
+#Setup env variables
+import sys
+import os
+sys.path.append('/Users/samclark/Desktop/UrbSimSandbox/trunk/urbansim')
+sys.path.append('/Users/samclark/Desktop/UrbSimSandbox/trunk/opus_core')
+sys.path.append('/Users/samclark/Desktop/UrbSimSandbox/trunk')
+os.environ['OPUS_HOME'] = '/Users/samclark/Desktop/UrbSimSandbox'
+
+print "VARIABLES SET"
 from null_val_rep import run_test
+import data_mining.PrintOutput
 
 def opusRun(progressCB, logCB, params=[]):
     
@@ -10,7 +21,7 @@ def opusRun(progressCB, logCB, params=[]):
 
     xml_doc = changeDictionaryIntoXml(params)
     
-    run_test(xml_doc)
+    run_test(xml_doc, logCB, progressCB, False)
     
 def logCB(line):
     print line
@@ -45,8 +56,8 @@ def changeDictionaryIntoXml(params):
 
 #Info that will be passed to this function
 params = {
-        "io_input_table_name" : "small_detroit",
-        "io_input_db_url" : "mysql://root:Schul3r09@localhost/UrbanSim",         
+        "io_input_table_name" : "z_check1",
+        "io_input_db_url" : "mysql://root:Schul3r09@localhost/detroit_data",         
         "io_x_column" : 'centroidx',
         "io_y_column" : 'centroidy',        
         "io_id_column" : 'BLDG_ID',

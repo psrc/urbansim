@@ -17,8 +17,12 @@ from models.weka_cat_model import Cat_model
 from models.weka_outlier_models import NB_outlier
 
 #loads system variables
+import os
+dSep = '\\'
+if os.name == 'posix' :
+    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py") 
 
 #Checking if pygame has been installed
 use_drawing = True

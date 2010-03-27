@@ -4,9 +4,13 @@ import numpy
 import math, time, copy, random, os, sys, subprocess
 from data_mining.PrintOutput import PrintOutput
 
-#loads system variables
+#loads system variables                                                                                  
+import os
+dSep = '\\'
+if os.name == 'posix' :
+    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
 
 class Query_manager :
     def __init__(self, io_info_element, logCB = None, progressCB = None) :

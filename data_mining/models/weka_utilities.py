@@ -1,9 +1,13 @@
 import os
 import time
 
-#loads system variables
+#loads system variables                                                                               
+dSep = '\\'
+if os.name == 'posix' :
+    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
+
 
 #utility functions used for WEKA models
 def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query_manager, model):

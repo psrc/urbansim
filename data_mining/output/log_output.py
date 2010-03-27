@@ -6,9 +6,14 @@ import shutil
 import datetime
 import time
 
-#loads system variables
+#loads system variables                                                                                  
+import os
+dSep = '\\'
+if os.name == 'posix' :
+    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
+
 
 class Log_manager :
     def __init__(self, xml_elem, config_address):

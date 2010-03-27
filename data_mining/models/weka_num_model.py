@@ -8,10 +8,13 @@ import time
 from weka_utilities import test_file_creation, feature_selection, Test_result
 from data_mining.PrintOutput import PrintOutput
 
-#loads system variables
-path = os.environ.get('OPUS_HOME') 
-path += "\\src\\data_mining\\"
-execfile(path + "SYSTEM_VARIABLES.py") 
+#loads system variables                                                                                  
+dSep = '\\'
+if os.name == 'posix' :
+    dSep = '/'
+path = os.environ.get('OPUS_HOME')
+execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
+
 
 class Num_model :
 
