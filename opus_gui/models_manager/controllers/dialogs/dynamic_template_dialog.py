@@ -1,6 +1,7 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
+
 from opus_gui.util.icon_library import IconLibrary
 from opus_gui.util.convenience import hide_widget_on_value_change
 
@@ -228,8 +229,8 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
             del widget
             del item
 
-	# fetch all nodes that have a field_identifier attribute on them and index them by
-	# this attribute (field_identifier -> xml node)
+    # fetch all nodes that have a field_identifier attribute on them and index them by
+    # this attribute (field_identifier -> xml node)
         templated_nodes = [(n.get('field_identifier'), n) for n in self.model_node.getiterator() if
                            n.get('field_identifier') is not None]
 
