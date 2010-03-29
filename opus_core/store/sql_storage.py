@@ -300,6 +300,7 @@ else:
                 server.close()
             
         def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_not_including_port(self):
+            import urllib
             for db, server, storage in self.dbs:
                 if db.protocol != 'sqlite':
                     if db.protocol == 'postgres':
@@ -315,6 +316,8 @@ else:
                                    db.host_name, 
                                    db.database_name)
                     actual_url = storage.get_storage_location()
+                    # It seems to have random cases where get_storage_location() returns quoted URL
+                    actual_url = urllib.unquote(actual_url)
                     urls_are_equal = expected_url==actual_url
                     # Careful!  Don't put the URLs in the assertion, so if there is a failure they don't get printed in the CruiseControl log
                     self.assert_(urls_are_equal, "expected and actual URLs not equal")
