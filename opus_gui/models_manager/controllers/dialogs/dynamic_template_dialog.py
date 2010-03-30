@@ -167,12 +167,13 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
 
         #  Integer & Float
         if data_type  in ['integer', 'float']:
+
             if data_type == 'integer':
                 widget = QtGui.QSpinBox()
-                widget.setMaximum(sys.maxint)
             else:
                 widget = QtGui.QDoubleSpinBox()
-                widget.setMaximum(2**64)
+
+            widget.setMaximum(2147483646) # docs says int is the limit here, assuming int32
             widget.setMinimum(-widget.maximum())
 
             try:
