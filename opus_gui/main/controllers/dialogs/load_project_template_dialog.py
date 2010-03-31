@@ -81,7 +81,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             try:
                 file = open(filename, 'r')
                 return filename
-            except Exception as e:
+            except Exception, e:
                 self._show_error('Could not load the custom project template.<br/>' + 
                                  'Please revise the entered filename.<br/>' + 
                                  'The error was:<br/><strong>' + str(e) + '</strong>')
@@ -99,7 +99,7 @@ class LoadProjectTemplateDialog(QDialog, Ui_LoadProjectTemplateDialog):
             if flag is not True:
                 raise Exception(message)
             return project
-        except Exception as ex:
+        except Exception, ex:
             self._show_error('There was a problem loading the specified project template<br/>' + 
                              'The error was:<br/>'+
                              '<strong>' + str(ex) + '</strong>')
