@@ -15,7 +15,7 @@ from opus_gui.util.icon_library import IconLibrary
 from opus_gui.main.views.dialogs.ui_new_project_dynamic_dialog import Ui_NewProjectDynamicDialog
 
 from opus_gui.main.controllers.dialogs.new_project_dialog_functions import merge_templated_nodes_with_project
-from bzrlib.util.elementtree.ElementTree import SubElement
+from lxml.etree import SubElement
 
 class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
     '''
