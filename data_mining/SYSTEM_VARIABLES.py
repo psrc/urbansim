@@ -1,11 +1,12 @@
-import os
+import os, sys
 
 #FOR PLATFORM                                                                                                                          
 #If windows set to backslash  
 WIN = True
-if os.name == 'posix' :
+try :
+    sys.getwindowsversion()
+except AttributeError :
     WIN = False
-
 
 FOLDER_TYPE = "\\"
 if not WIN :
@@ -14,15 +15,16 @@ if not WIN :
     
 #loads system variables
 path = os.environ.get('OPUS_HOME')
-path += FOLDER_TYPE + "src" + FOLDER_TYPE + "data_mining" + FOLDER_TYPE
-
+path = os.path.join(path, "src", "data_mining")
 
 #System variables
 
 #for outlier detection
-BINARY = path + 'models\WinLOF.exe'
-if not WIN :
-    BINARY = path + 'models/knn_binary_mac'
+BINARY = ""
+if WIN :
+    BINARY = os.path.join(path, 'models', 'WinLOF.exe')
+else :
+    BINARY = os.path.join(path, 'models', 'knn_binary_mac')
 
 #FOR OUTPUT
 #Prints what is happening with the test

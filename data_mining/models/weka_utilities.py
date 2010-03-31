@@ -2,12 +2,9 @@ import os
 import time
 
 #loads system variables                                                                               
-dSep = '\\'
-if os.name == 'posix' :
-    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
-
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 #utility functions used for WEKA models
 def test_file_creation(IS_NUM_TEST, IS_PCA, test_filename, train_filename, query_manager, model):
@@ -180,8 +177,10 @@ def feature_selection(test_filename, train_filename, query_manager, info, model,
 
     test_filename_fs = "test_fs" + str(int(time.time())) + ".arff"
     train_filename_fs = "train_fs" + str(int(time.time())) + ".arff"
+
+    path_spef_weka = os.path.join( path, "models", "weka.jar")
             
-    fs_string = "java -Xmx1024m -cp models" + FOLDER_TYPE +"weka.jar weka.filters.supervised.attribute.AttributeSelection"
+    fs_string = "java -Xmx1024m -cp " + path_spef_weka + " weka.filters.supervised.attribute.AttributeSelection"
     fs_string += " -E \"" + model.evaluation_class + "\" "
     fs_string += " -S \"" + model.search_class + " -P "
     for attribute in model.start_attributes :

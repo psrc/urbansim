@@ -12,7 +12,8 @@ from models.ldof_model import LDOF_model
 
 #loads system variables
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 #Runs all the tests
 def run_test(xml_config_address, logCB=None, progressCB=None, usingConfig=True) :

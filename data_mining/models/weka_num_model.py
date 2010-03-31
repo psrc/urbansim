@@ -9,12 +9,9 @@ from weka_utilities import test_file_creation, feature_selection, Test_result
 from data_mining.PrintOutput import PrintOutput
 
 #loads system variables                                                                                  
-dSep = '\\'
-if os.name == 'posix' :
-    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
-
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 class Num_model :
 
@@ -121,9 +118,10 @@ class Num_model :
                       
         #Running tests
         model_name = "saved_model" + str(int(time.time()))
-        train_string = "java -Xmx1024m -cp " + path + "models" + FOLDER_TYPE + "weka.jar " + self.test_classifier + " -d " + model_name  + " " + self.test_options + " -t " + train_filename + " >> " + train_log
-        test_string = "java -Xmx1024m -cp " + path + "models" + FOLDER_TYPE + "weka.jar " + self.test_classifier + " -l " + model_name + " -T " + test_filename + " -p 0 >> " + result_filename
-    
+        path_spef_weka = os.path.join( path, "models", "weka.jar")
+        train_string = "java -Xmx1024m -cp " + path_spef_weka + " " + self.test_classifier + " -d " + model_name  + " " + self.test_options + " -t " + train_filename + " >> " + train_log
+        test_string = "java -Xmx1024m -cp " +  path_spef_weka + " " + self.test_classifier + " -l " + model_name + " -T " + test_filename + " -p 0 >> " + result_filename
+
         self.printOut.pLog( "PRED- Training model")
         os.system(train_string)
         self.printOut.pLog( "PRED- Making predictions")

@@ -10,13 +10,9 @@ from data_mining.PrintOutput import PrintOutput
 
 
 #loads system variables                                                                                  
-import os
-dSep = '\\'
-if os.name == 'posix' :
-    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
-
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 #Keeps track of information about the current data
 class Data_profiler :

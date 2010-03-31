@@ -9,7 +9,8 @@ from data_mining.PrintOutput import PrintOutput
 
 #loads system variables
 path = os.environ.get('OPUS_HOME')
-execfile(path + "\\src\\data_mining\\" + "SYSTEM_VARIABLES.py") 
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 #Stores information about the test that was run
 class Test_result :

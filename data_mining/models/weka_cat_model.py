@@ -7,12 +7,9 @@ from weka_utilities import test_file_creation, feature_selection, Test_result
 from data_mining.PrintOutput import PrintOutput
 
 #loads system variables                                                                                   
-dSep = '\\'
-if os.name == 'posix' :
-    dSep = '/'
 path = os.environ.get('OPUS_HOME')
-execfile(path + dSep + "src" + dSep + "data_mining" + dSep + "SYSTEM_VARIABLES.py")
-
+path = os.path.join(path, "src", "data_mining", "SYSTEM_VARIABLES.py")
+execfile(path) 
 
 class Cat_model :
     def __init__(self, xml_elem, MAKE_ALL_PREDS, logCB = None, progressCB = None) :
@@ -118,9 +115,10 @@ class Cat_model :
 
         #Running tests
         model_name = "saved_model" + str(int(time.time()))
-        path_spef = path + "models" + FOLDER_TYPE
-        train_string = "java -Xmx1024m -cp " + path_spef + "weka.jar:" +  path_spef  + "libsvm.jar " + self.test_classifier + " -d " + model_name  + " " + self.test_options + " -t " + train_filename + " >> " + train_log
-        test_string = "java -Xmx1024m -cp " +  path_spef + "weka.jar:" +  path_spef  + "libsvm.jar " + self.test_classifier + " -l " + model_name + " -T " + test_filename + " -p 0 >> " + result_filename
+        path_spef_weka = os.path.join( path, "models", "weka.jar")
+        path_spef_libsvm = os.path.join( path, "models", "libsvm.jar")
+        train_string = "java -Xmx1024m -cp " + path_spef_weka + ":" +  path_spef_libsvm  + " " + self.test_classifier + " -d " + model_name  + " " + self.test_options + " -t " + train_filename + " >> " + train_log
+        test_string = "java -Xmx1024m -cp " +  path_spef_weka + ":" +  path_spef_libsvm  + " " + self.test_classifier + " -l " + model_name + " -T " + test_filename + " -p 0 >> " + result_filename
 
         self.printOut.pLog( "PRED- Training model")
         os.system(train_string)
