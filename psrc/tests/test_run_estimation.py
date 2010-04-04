@@ -23,7 +23,7 @@ from psrc.tests.test_run_estimation_in_new_process import __file__ as test_run_e
 
 class TestRunEstimation(opus_unittest.OpusIntegrationTestCase):
     def setUp(self):
-        self.estimation_runner = EstimationRunner()
+        pass
         
     def tearDown(self):
         pass
@@ -32,7 +32,7 @@ class TestRunEstimation(opus_unittest.OpusIntegrationTestCase):
         cache_dir = mkdtemp(prefix='test_estimation_runner_tmp')
         try:
             # Cache to a temporary folder.
-            ev = ('%s "%s" psrc.tests.test_run_estimation_config --cache-directory="%s"' 
+            ev = ('%s "%s" -c psrc.tests.test_run_estimation_config --cache-directory="%s"' 
                 % (sys.executable, create_baseyear_cache_script_path, cache_dir))
             logger.log_status("Invoking '%s'" % ev)
             return_code = os.system(ev)

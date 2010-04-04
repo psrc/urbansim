@@ -84,7 +84,7 @@ class CacheScenarioDatabase(Model):
                 
                 table = database.get_table(table_name)
                 
-                id_name = [primary_key.name for primary_key in table.primary_key]                    
+                id_name = [primary_key.name.lower() for primary_key in table.primary_key]
 
                 dataset = Dataset(resources=config, 
                                   in_storage=in_storage,
