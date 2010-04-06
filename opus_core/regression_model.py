@@ -222,6 +222,7 @@ class RegressionModel(ChunkModel):
 
         coef = {}
         estimated_coef={}
+        self.outcome = {}
         dataset.compute_variables([outcome_attribute], dataset_pool=self.dataset_pool, resources=compute_resources)
         regression_resources=Resources(estimate_config)
         regression_resources.merge({"debug":self.debug})
@@ -237,9 +238,8 @@ class RegressionModel(ChunkModel):
                                                             index = estimation_idx[self.observations_mapping[submodel]])
             self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]
             if (self.data[submodel].shape[0] > 0) and (self.data[submodel].size > 0) and (self.procedure is not None): # observations for this submodel available
-                regression_resources.merge({"outcome":
-                    dataset.get_attribute_by_index(
-                        outcome_variable_name.get_alias(), estimation_idx[self.observations_mapping[submodel]])})
+                self.outcome[submodel] = dataset.get_attribute_by_index(outcome_variable_name.get_alias(), estimation_idx[self.observations_mapping[submodel]])   
+                regression_resources.merge({"outcome":  self.outcome[submodel]})
                 regression_resources.merge({"coefficient_names":self.coefficient_names[submodel].tolist(),
                             "constant_position": coef[submodel].get_constants_positions()})
                 estimated_coef[submodel] = self.procedure.run(self.data[submodel], self.regression,
