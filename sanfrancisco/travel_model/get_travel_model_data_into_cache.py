@@ -1,88 +1,139 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2005-2010 University of Washington and the SFCTA
 # See opus_core/LICENSE 
 
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from numpy import array, where, zeros, logical_and
+from numpy import array, where, zeros, logical_and, logical_or
 import os, csv
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
+from champUtil import SkimUtil, TRIPMODE
+
+from opus_core.misc import get_config_from_opus_path
 
 class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
     """
     A class to access the output of travel models.
     """
-   
+    TABLE_NAME = "travel_data"
+
     def get_travel_data_from_travel_model(self, config, 
-                                          year, zone_set, 
-                                          tm_output_file="tm_output.txt",
-                                          ):
+                                          year, zone_set ):
         """
         Returns a new travel data set populated by a travel model
-        The columns in the travel data set are those given in header of the tm_output.txt.
         """
+        logger.log_status("Running GetTravelModelDataIntoCache with year %d" % (year))
+        logger.log_status(zone_set)
         tm_config = config['travel_model_configuration']
-
-        tm_data_dir = os.path.join(tm_config['directory'], tm_config[year])
-        tm_output_file = tm_config['tm_to_urbansim_variable_file']
-        tm_output_full_name = os.path.join(tm_data_dir, tm_output_file)
         
-        table_name = "travel_data"
-        data_dict = self._read_output_file(tm_output_full_name)
-        
-        in_storage = StorageFactory().get_storage('dict_storage')
+        base_dir    = tm_config['travel_model_base_directory']    
+        run_dir     = os.path.join(base_dir, tm_config[year]['year_dir'])
+        in_storage  = StorageFactory().get_storage('dict_storage')
+        max_zone_id = zone_set.get_id_attribute().max()
         in_storage.write_table(
-                table_name=table_name,
-                table_data=data_dict
+                table_name=self.TABLE_NAME,
+                table_data=self._read_skims(run_dir, max_zone_id)
             )
                 
-        travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=table_name)
-        max_zone_id = zone_set.get_id_attribute().max()
-        remove_index = where(logical_or(travel_data_set.get_attribute("from_zone_id")>max_zone_id,
-                                        travel_data_set.get_attribute("to_zone_id")>max_zone_id))[0]
-        travel_data_set.size()
-        travel_data_set.remove_elements(remove_index)
+        travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=self.TABLE_NAME)
+        # This isn't necessary
+        # remove_index = where(logical_or(travel_data_set.get_attribute("from_zone_id")>max_zone_id,
+        #                                travel_data_set.get_attribute("to_zone_id")>max_zone_id))[0]
+        # travel_data_set.size()
+        # travel_data_set.remove_elements(remove_index)
         return travel_data_set
 
-    def _read_output_file(self, filename, MISSING_VALUE=-9999):
-        """"""
+    def _read_skims(self, run_dir, maxTAZ, MISSING_VALUE=9999):
+        """ Read the travel times for O/D pairs from the AM skim tables into a dictionary;
+            Columns are origin taz, dest taz, distance (? roadway ?), travel times for
+              auto (DA), WLW, WMW, WBW, WPW (what about the others?)
+              
+            Assuming zero values are invalid; substituting in missing values
+        """
+        logger.start_block("Opening and reading skims for travel times")
+        return_data = \
+            { "from_zone_id":[],  "to_zone_id":[],  "dist":[], \
+              "hwy":[],           "bus":[],         "lrt":[], \
+              "bart":[],          "exp":[] \
+            }
         
-        fd = open(filename, 'r')
-        header_line = fd.readline().strip()
-        headers = header_line.split(",")
-        
-        return_dict = {}
-        
-#        text_file = open(filename, 'r')
-        
-        for item in headers:
-            return_dict[item] = []
+        skims   = SkimUtil(run_dir, useTempTrn = True, timeperiods=[2], trnskims=["WLW", "WMW", "WBW", "WPW"])
+        maxTAZ  = min(skims.getMaxTAZnum(), maxTAZ)
+        modes   = dict((v,k) for k,v in TRIPMODE.iteritems())
+        logger.log_status("Opened and read Skims")
 
-        reader = csv.reader(fd)
-        for items in reader:
-            for col_index in range(0, len(items)):
-                value = items[col_index]
-                if value == '':  #missing value
-                    value = MISSING_VALUE
-                try: #if it's a number, convert it to a float
-                    return_dict[headers[col_index]].append(float(value))
-                except ValueError: #otherwise, leave it as a string
-                    return_dict[headers[col_index]].append(value)
-            
-        fd.close()
-        
-        for item, value in return_dict.iteritems():
+        for otaz in range(1, maxTAZ+1):
+            for dtaz in range(1, maxTAZ+1):
+                return_data["from_zone_id"].append(otaz)
+                return_data["to_zone_id"].append(dtaz)
+                
+                # auto 
+                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["DA"],
+                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
+                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
+                                                              purpose=1, totalstops=1, 
+                                                              todepart=2, tddepart=4)
+                if d > 0:   return_data["dist"].append(d)
+                else:       return_data["dist"].append(MISSING_VALUE)
+                if t > 0:   return_data["hwy"].append(t)
+                else:       return_data["hwy"].append(MISSING_VALUE)
+                
+                # WLW
+                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToLocal"],
+                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
+                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
+                                                              purpose=1, totalstops=1, 
+                                                              todepart=2, tddepart=4)
+                if t > 0:   return_data["bus"].append(t)
+                else:       return_data["bus"].append(MISSING_VALUE)
+                
+                # WMW
+                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToMUNI"], 
+                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
+                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
+                                                              purpose=1, totalstops=1,
+                                                              todepart=2, tddepart=4)
+                if t > 0:   return_data["lrt"].append(t)
+                else:       return_data["lrt"].append(MISSING_VALUE)
+
+                # WBW
+                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToBART"], 
+                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
+                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
+                                                              purpose=1, totalstops=1,
+                                                              todepart=2, tddepart=4)
+                if t > 0:   return_data["bart"].append(t)
+                else:       return_data["bart"].append(MISSING_VALUE)
+                
+                # WPW
+                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToPremium"],
+                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
+                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
+                                                              purpose=1, totalstops=1,
+                                                              todepart=2, tddepart=4)
+                if t > 0:   return_data["exp"].append(t)
+                else:       return_data["exp"].append(MISSING_VALUE)
+                
+            if otaz % 100 == 0: logger.log_status("Completed all destionations for otaz up to %d" % (otaz))
+
+        # convert to numpy array        
+        for item, value in return_data.iteritems():
             try:
-                return_dict[item] = array(value)
+                return_data[item] = array(value)
             except:
                 ##TODO: add handling for string array
                 pass
         
-        return return_dict
+        
+        del skims
+        modes.clear()
+        
+        logger.end_block()
+        return return_data
 
     
 if __name__ == "__main__":
@@ -92,16 +143,29 @@ if __name__ == "__main__":
     from opus_core.file_utilities import get_resources_from_file
     parser = OptionParser()
     parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
-                      help="Name of file containing resources")
+                      help="Name of file containing resources", default=None)
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
+    #these options were added by SFCTA
+    parser.add_option("-c", "--alt-config", dest="alt_config", action="store", type="string",
+                      help="opus path to config if pickled resources not available", default=None)
+    parser.add_option("-d", "--alt-cache-dir", dest="alt_cache_dir", action="store", type="string",
+                      help="cache directory if pickled resources not available", default=None)
     (options, args) = parser.parse_args()
     
-    r = get_resources_from_file(options.resources_file_name)
-    resources = Resources(get_resources_from_file(options.resources_file_name))
+    #options here added by SFCTA
+    if (options.alt_config is not None) and (options.alt_cache_dir is not None):
+        resources=get_config_from_opus_path(options.alt_config)
+        resources['cache_directory']=options.alt_cache_dir
+    elif options.resources_file_name is not None:
+        r = get_resources_from_file(options.resources_file_name)
+        resources = Resources(get_resources_from_file(options.resources_file_name))
+    else:
+        parser.print_help()
+        sys.exit(1)
 
     SessionConfiguration(new_instance=True,
-                         package_order=resources['dataset_pool_configuration'].package_order,                    
+                         package_order=resources['dataset_pool_configuration'].package_order,
                          in_storage=AttributeCache())
 
 #    logger.enable_memory_logging()

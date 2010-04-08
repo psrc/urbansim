@@ -299,13 +299,13 @@
       <model name="household_location_choice_model" type="model">
         <structure type="dictionary">
           <init type="dictionary">
-   	    <argument name="estimation_weight_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="estimation_weight_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
             <argument name="submodel_string" parser_action="quote_string" type="string">sanfrancisco.household.household_size_category</argument>
-	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
           </init>
           <prepare_for_estimate type="dictionary">
-	    <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
           </prepare_for_estimate>
         </structure>
         <specification type="dictionary">
@@ -320,29 +320,32 @@
     </models>
     <travel_model_configuration type="dictionary">
       <urbansim_to_tm_variable_file type="string">lumodelout.csv</urbansim_to_tm_variable_file>
-      <tm_to_urbansim_variable_file type="string">tm_output.csv</tm_to_urbansim_variable_file>
+      <tm_variable_order type="list">['tm.SFTAZ','tm.HHPOP','tm.HHLDS','tm.EMPRES','tm.CIE','tm.MED','tm.MIPS','tm.PDR','tm.RETAIL','tm.VISITOR','tm.TOTALEMP','tm.HHINCQ1','tm.HHINCQ2','tm.HHINCQ3','tm.HHINCQ4','tm.AVGINCQ1','tm.AVGINCQ2','tm.AVGINCQ3','tm.AVGINCQ4','tm.AVGHHINC']</tm_variable_order>
       <urbansim_to_tm_variable_mapping type="dictionary">
-        <variable use="model" source="expression" name="SFTAZ" type="variable_definition">(zone.zone_id).astype(int16)</variable>
-        <variable use="model" source="expression" name="HHPOP" type="variable_definition">zone.aggregate(sanfrancisco.household.persons)</variable>
-        <variable use="model" source="expression" name="HHLDS" type="variable_definition">zone.aggregate(where(sanfrancisco.household.household_id,1,0))</variable>
-        <variable use="model" source="expression" name="EMPRES" type="variable_definition">zone.aggregate(sanfrancisco.household.nfulltime)+zone.aggregate(sanfrancisco.household.nparttime)</variable>
-        <variable use="model" source="expression" name="CIE" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='CIE',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="MED" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='MED',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="MIPS" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='MIPS',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="PDR" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='PDR',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="RETAIL" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='RETAILENT',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="VISITOR" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='VISITOR',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
-        <variable use="model" source="expression" name="TOTALEMP" type="variable_definition">zone.aggregate(sanfrancisco.business.employment, intermediates=[building,parcel])</variable>
-        <variable use="model" source="expression" name="HHINCQ1" type="variable_definition">zone.aggregate(sanfrancisco.household.income &lt; 25*(177.1/124))</variable>
-        <variable use="model" source="expression" name="HHINCQ2" type="variable_definition">zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124)))</variable>
-        <variable use="model" source="expression" name="HHINCQ3" type="variable_definition">zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124)))</variable>
-        <variable use="model" source="expression" name="HHINCQ4" type="variable_definition">zone.aggregate(sanfrancisco.household.income &gt;=75*(177.1/124))</variable>
-        <variable use="model" source="expression" name="AVGINCQ1" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &lt; 25*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &lt; 25*(177.1/124))))</variable>
-        <variable use="model" source="expression" name="AVGINCQ2" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124))))</variable>
-        <variable use="model" source="expression" name="AVGINCQ3" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124))))</variable>
-        <variable use="model" source="expression" name="AVGINCQ4" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=75*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=75*(177.1/124))))</variable>
-        <variable use="model" source="expression" name="AVGHHINC" type="variable_definition">zone.aggregate(sanfrancisco.household.income,function=mean)</variable>
+        <variable use="model" source="expression" name="tm.SFTAZ" type="variable_definition">(zone.zone_id).astype(int16)</variable>
+        <variable use="model" source="expression" name="tm.HHPOP" type="variable_definition">zone.aggregate(sanfrancisco.household.persons)</variable>
+        <variable use="model" source="expression" name="tm.HHLDS" type="variable_definition">zone.aggregate(where(sanfrancisco.household.household_id,1,0))</variable>
+        <variable use="model" source="expression" name="tm.EMPRES" type="variable_definition">zone.aggregate(sanfrancisco.household.nfulltime)+zone.aggregate(sanfrancisco.household.nparttime)</variable>
+        <variable use="model" source="expression" name="tm.CIE" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='CIE',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.MED" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='MED',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.MIPS" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='MIPS',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.PDR" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='PDR',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.RETAIL" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='RETAILENT',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.VISITOR" type="variable_definition">zone.aggregate(where(sanfrancisco.business.sector=='VISITOR',sanfrancisco.business.employment,0), intermediates=[building, parcel])</variable>
+        <variable use="model" source="expression" name="tm.TOTALEMP" type="variable_definition">zone.aggregate(sanfrancisco.business.employment, intermediates=[building,parcel])</variable>
+        <variable use="model" source="expression" name="tm.HHINCQ1" type="variable_definition">zone.aggregate(sanfrancisco.household.income &lt; 25*(177.1/124))</variable>
+        <variable use="model" source="expression" name="tm.HHINCQ2" type="variable_definition">zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124)))</variable>
+        <variable use="model" source="expression" name="tm.HHINCQ3" type="variable_definition">zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124)))</variable>
+        <variable use="model" source="expression" name="tm.HHINCQ4" type="variable_definition">zone.aggregate(sanfrancisco.household.income &gt;=75*(177.1/124))</variable>
+        <variable use="model" source="expression" name="tm.AVGINCQ1" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &lt; 25*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &lt; 25*(177.1/124))))</variable>
+        <variable use="model" source="expression" name="tm.AVGINCQ2" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=25*(177.1/124))*(sanfrancisco.household.income &lt; 45*(177.1/124))))</variable>
+        <variable use="model" source="expression" name="tm.AVGINCQ3" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=45*(177.1/124))*(sanfrancisco.household.income &lt; 75*(177.1/124))))</variable>
+        <variable use="model" source="expression" name="tm.AVGINCQ4" type="variable_definition">1000*safe_array_divide(zone.aggregate((sanfrancisco.household.income &gt;=75*(177.1/124))*sanfrancisco.household.income),zone.aggregate((sanfrancisco.household.income &gt;=75*(177.1/124))))</variable>
+        <variable use="model" source="expression" name="tm.AVGHHINC" type="variable_definition">zone.aggregate(sanfrancisco.household.income,function=mean)</variable>
       </urbansim_to_tm_variable_mapping>
+      <tazdataprocessor_srcdir type="string">Q:\Model Projects\Model Programs\TazDataProcessor9county</tazdataprocessor_srcdir>
+      <tazdataprocessor_datadir type="string">Q:\Model Projects\Model Programs\TazDataProcessor9county\input\p2007</tazdataprocessor_datadir>
+      <popsyn_srcdir type="string">Q:\Model Projects\Model Programs\PopSyn9county</popsyn_srcdir>
       <model name="get_cache_data_into_travel_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -361,10 +364,18 @@
             <class_module>sanfrancisco.travel_model.run_sanfrancisco_travel_model</class_module>
             <class_name>RunSanfranciscoTravelModel</class_name>
           </import>
-          <prepare_for_run type="dictionary">
+          <run type="dictionary">
             <argument name="run_config" type="string" hidden="False">scenario_dir_name</argument>
             <argument name="year" type="string" hidden="False">year</argument>
-          </prepare_for_run>
+          </run>
+        </structure>
+      </model>
+      <model name="get_travel_model_data_into_cache" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>sanfrancisco.travel_model.get_travel_model_data_into_cache</class_module>
+            <class_name>GetTravelModelDataIntoCache</class_name>
+          </import>
           <run type="dictionary">
             <argument name="run_config" type="string" hidden="False">scenario_dir_name</argument>
             <argument name="year" type="string" hidden="False">year</argument>
@@ -489,25 +500,22 @@
           </tables_to_cache_nchunks>
         </argument>
       </creating_baseyear_cache_configuration>
-<!--
       <travel_model_configuration type="dictionary">
         <travel_model_base_directory type="string">X:\Projects\LUCI\Runs\lmz_2010.03.18</travel_model_base_directory>
+<!--
         <years_to_run key_name="year" type="category_with_special_keys">
-          <run_description type="dictionary">
-            <year type="integer">2002</year>
-            <year_dir type="string">2002_model</year_dir>
-          </run_description>
           <run_description type="dictionary">
             <year type="integer">2005</year>
             <year_dir type="string">2005_model</year_dir>
           </run_description>
         </years_to_run>
+-->
         <models_to_run config_name="models" type="selectable_list">
           <selectable name="sanfrancisco.travel_model.get_cache_data_into_travel_model" type="selectable">True</selectable>
           <selectable name="sanfrancisco.travel_model.run_sanfrancisco_travel_model" type="selectable">True</selectable>
+          <selectable name="sanfrancisco.travel_model.get_travel_model_data_into_cache" type="selectable">True</selectable>
         </models_to_run>
       </travel_model_configuration>
--->
       <advanced type="category">
         <dataset_pool_configuration type="class">
           <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
