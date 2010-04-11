@@ -16,22 +16,24 @@ class abstract_percent_SSS_difference_from_DDD(Variable):
 
     _return_type = "float32"
 
-    def __init__(self, dataset_name, variable_name, year):
+    def __init__(self, dataset_name, variable_name, year, package_name='urbansim'):
+        self._package_name = package_name
         self._dataset_name = dataset_name
         self._variable_name = variable_name
         self._year = year
         Variable.__init__(self)
 
     def dependencies(self):
-        return ["urbansim.%s.%s" % (self._dataset_name, self._variable_name)]
+        return ["%s.%s.%s" % (self._package_name, self._dataset_name, self._variable_name)]
 
     def compute(self, dataset_pool):
         current_year = SimulationState().get_current_time()
         lag = current_year - self._year
-        lag_variable_name = 'urbansim.%s.%s_lag%s' % (
-            self._dataset_name,
-            self._variable_name,
-            lag)
+        lag_variable_name = '%s.%s.%s_lag%s' % (
+                                                self._package_name,
+                                                self._dataset_name,
+                                                self._variable_name,
+                                                lag)
 
         dataset = self.get_dataset()
         current_values = dataset.get_attribute(self._variable_name)
