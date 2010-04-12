@@ -39,7 +39,8 @@ class BusinessTransitionModel(Model):
                           "sector_id":array([], dtype='int32'),
                           self.business_id_name:array([], dtype='int32'), 
                           "sqft":array([], dtype=int32),
-                          "employment":array([], dtype=int32),}
+                          "employment":array([], dtype='int32'),
+                          "activity_id":array([], dtype='int32')}
 
         business_set.compute_variables(
             map(lambda x: "%s.%s.is_of_sector_%s" 
@@ -91,6 +92,8 @@ class BusinessTransitionModel(Model):
                                                  business_set.get_attribute("sqft")[sampled_business]))
             self.new_businesses["employment"] = concatenate((self.new_businesses["employment"],
                                                        business_set.get_attribute("employment")[sampled_business]))
+            self.new_businesses["activity_id"] = concatenate((self.new_businesses["activity_id"],
+                                                       business_set.get_attribute("activity_id")[sampled_business]))
             
             new_max_id = self.max_id+diff
             self.new_businesses[self.business_id_name]=concatenate((self.new_businesses[self.business_id_name], 
@@ -127,6 +130,8 @@ class BusinessTransitionModel(Model):
                                                  business_set.get_attribute("sqft")[sampled_business]))
             self.new_businesses["employment"] = concatenate((self.new_businesses["employment"],
                                                        employment[sampled_business]))
+            self.new_businesses["activity_id"] = concatenate((self.new_businesses["activity_id"],
+                                                 business_set.get_attribute("activity_id")[sampled_business]))
             
             new_max_id = self.max_id+sampled_business.size
             self.new_businesses[self.business_id_name]=concatenate((self.new_businesses[self.business_id_name], 
