@@ -309,7 +309,7 @@ class XMLConfiguration(object):
         ungrouped_nodes = model_node.findall('specification/submodel')
 
         result = {}
-        result['_definition_'] = all_vars
+        dataset_names = []
 
         # iterate over just the submodels in the given group (or over the ungrouped if no group is
         # provided
@@ -336,10 +336,12 @@ class XMLConfiguration(object):
                     for equation_node in equation_nodes:
                         equation_id = int(equation_node.get('equation_id'))
                         variable_list = self._convert_node_to_data(equation_node.find('variable_list'))
+                        dataset_names += map(get_variable_dataset, equation_node.find('variable_list'))
                         submodel_equations[equation_id] = variable_list
                     thisres = submodel_equations
                 else:
                     thisres = self._convert_node_to_data(node.find('variable_list'))
+                    dataset_names += map(get_variable_dataset, node.find('variable_list'))
                 if nest_nodes:
                     nest_id = int(node.get('nest_id'))
                     res[nest_id] = thisres
@@ -349,7 +351,9 @@ class XMLConfiguration(object):
                 result[submodel_id].update(res)
             else:
                 result[submodel_id] = res
-            
+                
+        result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
+        
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:
             return {model_group: result}
