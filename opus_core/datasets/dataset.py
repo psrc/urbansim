@@ -805,12 +805,13 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.compute_variables([expr1, expr2])
         autogen_name = VariableName(expr1).get_short_name()
         ds.flush_dataset()
-        box1 = ds.attribute_boxes[autogen_name]
-        box2 = ds.attribute_boxes['a']
-        self.assert_(not box1.is_cached())
-        self.assert_(box1.is_in_memory())
-        self.assert_(box2.is_cached())
-        self.assert_(not box2.is_in_memory())
+        box = ds.attribute_boxes['a']
+        self.assert_(box.is_cached())
+        self.assert_(not box.is_in_memory())
+        #autogen variable is deleted
+        self.assert_(autogen_name not in ds.get_known_attribute_names())
+
+ 
 
     def test_store_primary_and_computed_attributes(self):
         in_storage = StorageFactory().get_storage('dict_storage')
