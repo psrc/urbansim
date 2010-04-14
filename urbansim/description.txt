@@ -36,5 +36,5 @@ suggested_python_packages:
 #     and user's world.
 publish:
 	data_objects/householdset/household 
-	data_objects/householdset 
+	data_objects/householdset  
 	
