@@ -277,7 +277,12 @@ class ModelSystem(object):
 
                             # capture namespace for interactive estimation
                             self.run_year_namespace = locals()
-                            self.flush_datasets(resources.get("datasets_to_cache_after_each_model",[]))
+                            if resources['flush_variables']:
+                                AttributeCache().delete_computed_tables()
+                                datasets_to_cache = SessionConfiguration().get_dataset_pool().datasets_in_pool().keys()
+                            else:
+                                datasets_to_cache = resources.get("datasets_to_cache_after_each_model",[])
+                            self.flush_datasets(datasets_to_cache)
                             del model
                             collect()
 

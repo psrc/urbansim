@@ -82,6 +82,13 @@ class AttributeCache(Storage):
         storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
         return storage.write_table(table_name, table_data, mode)
 
+    def delete_computed_tables(self):
+        year = SimulationState().get_current_time()
+        storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
+        tables = storage.get_table_names()
+        tables = [table for table in tables if (table.endswith('.computed'))]
+        for table in tables:
+            storage.delete_table(table)
 
     def get_column_names(self, table_name, lowercase=True):
         columns = self._get_column_names_and_years(table_name, lowercase)
@@ -304,7 +311,42 @@ class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):
         actual = self.storage.get_table_names()
         actual.sort()
         self.assertEquals(expected, actual)
+  
+class AttributeCacheDeleteTests(opus_unittest.OpusTestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp_attribute_cache_delete')
+        self.storage = AttributeCache(self.temp_dir)
+        self.tables_keep = ['test_table1', 'test_table2']
+        self.tables_delete = ['test_table1.computed', 'test_table2.computed']
+        for table in self.tables_keep+self.tables_delete:
+            os.makedirs(os.path.join(self.temp_dir, '1980', table))
+            open(os.path.join(self.temp_dir, '1980', table, 'attr1.i16'), 'w').close()
+            open(os.path.join(self.temp_dir, '1980', table, 'attr2.i32'), 'w').close()
+        self._SimulationState_time = SimulationState().get_current_time()
+    
+    def tearDown(self):
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir)
+        SimulationState().set_current_time(self._SimulationState_time)
+    
+    def get_table_path(self, year, table):
+        return os.path.join(self.temp_dir,  "%s" % year, table)
         
+    def test_delete_computed_tables(self):
+        year = 1980
+        SimulationState().set_current_time(year)
+        #check if all tables exist before the test
+        for table in self.tables_keep+self.tables_delete: 
+            self.assert_(os.path.exists(self.get_table_path(year, table)))
+        self.storage.delete_computed_tables()
+        
+        #check if the right tables exist
+        for table in self.tables_keep: 
+            self.assert_(os.path.exists(self.get_table_path(year, table)))
+        # and not the others
+        for table in self.tables_delete: 
+            self.assert_(not os.path.exists(self.get_table_path(year, table)))
+ 
 
 if __name__ == '__main__':
     opus_unittest.main()

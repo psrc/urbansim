@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-
+import shutil
 from glob import glob
 import numpy
 from opus_core.logger import logger
@@ -206,7 +206,12 @@ class file_flt_storage(Storage):
 #    def _get_base_directory(self):
 #        return self._base_directory
     
-        
+    def delete_table(self, table_name):
+        dir = os.path.join(self._get_base_directory(), table_name)
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+            logger.log_status("Table %s successfully deleted." % dir)
+            
     def _get_files(self, table_name=''):
         dataset_path = os.path.join(self._get_base_directory(), table_name)
         if os.path.exists(dataset_path):
