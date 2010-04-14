@@ -137,18 +137,29 @@ class ModelSystem(object):
         finally:
             logger.disable_file_logging(log_file)
 
-    def flush_datasets(self, dataset_names):
+    def flush_datasets(self, dataset_names, after_model=False):
         dataset_pool = SessionConfiguration().get_dataset_pool()
         for dataset_name in dataset_names:
             if dataset_pool.has_dataset(dataset_name):
-                self.flush_dataset(dataset_pool.get_dataset(dataset_name))
+                self.flush_dataset(dataset_pool.get_dataset(dataset_name), after_model=after_model)
 
-    def flush_dataset(self, dataset):
+    def flush_dataset(self, dataset, after_model=False):
         """Write the PRIMARY attributes of this dataset to the cache."""
         if dataset and isinstance(dataset, Dataset):
+            if after_model and len(dataset.get_attribute_names()) <= len(dataset.get_id_name()):
+                return
             dataset.delete_computed_attributes()
             dataset.load_and_flush_dataset()
 
+    def flush_datasets_after_model(self, resources):
+        if resources['flush_variables']:
+            AttributeCache().delete_computed_tables()
+            # this will also delete computed attributes
+            datasets_to_cache = SessionConfiguration().get_dataset_pool().datasets_in_pool().keys()
+        else:
+            datasets_to_cache = resources.get("datasets_to_cache_after_each_model",[])
+        self.flush_datasets(datasets_to_cache, after_model=True)
+        
     def _run_year(self, year, models, simulation_state, debuglevel,
                   resources, write_datasets_to_cache_at_end_of_year):
         """
@@ -277,12 +288,7 @@ class ModelSystem(object):
 
                             # capture namespace for interactive estimation
                             self.run_year_namespace = locals()
-                            if resources['flush_variables']:
-                                AttributeCache().delete_computed_tables()
-                                datasets_to_cache = SessionConfiguration().get_dataset_pool().datasets_in_pool().keys()
-                            else:
-                                datasets_to_cache = resources.get("datasets_to_cache_after_each_model",[])
-                            self.flush_datasets(datasets_to_cache)
+                            self.flush_datasets_after_model(resources)
                             del model
                             collect()
 

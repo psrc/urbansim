@@ -329,15 +329,18 @@ class Dataset(AbstractDataset):
             name = VariableName(name)
         short_name = name.get_alias()
         if short_name <> self.hidden_id_name:
-            type = self._get_attribute_type(short_name)
-            if (type not in (AttributeType.LAG, AttributeType.EXOGENOUS)) and (not is_anonymous_autogen_name(short_name)):
-                self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 8)
-                # anonymous attributes (i.e. ones with an autogen short name) still get unloaded but
-                # aren't written out to the cache -- they will need to be recomputed if needed later
-                self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
+            if not is_anonymous_autogen_name(short_name):
+                type = self._get_attribute_type(short_name)
+                if (type not in (AttributeType.LAG, AttributeType.EXOGENOUS)):
+                    self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 8)
+                    self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
                                    out_table_name=self._get_in_table_name_for_cache())
-                self.attribute_boxes[short_name].set_is_cached(True)
-                self.unload_one_attribute(short_name)
+                    self.attribute_boxes[short_name].set_is_cached(True)
+                    self.unload_one_attribute(short_name)
+            else:
+               # anonymous attributes (i.e. ones with an autogen short name) get deleted 
+               # and will need to be recomputed if needed later
+                self.delete_one_attribute(name)
 
     def write_dataset(self, resources = None, attributes=None, out_storage=None,
                        out_table_name=None, valuetypes=None):

@@ -211,6 +211,8 @@ class file_flt_storage(Storage):
         if os.path.exists(dir):
             shutil.rmtree(dir)
             logger.log_status("Table %s successfully deleted." % dir)
+            return True
+        return False
             
     def _get_files(self, table_name=''):
         dataset_path = os.path.join(self._get_base_directory(), table_name)
