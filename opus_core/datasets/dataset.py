@@ -328,7 +328,7 @@ class Dataset(AbstractDataset):
         if not isinstance(name, VariableName):
             name = VariableName(name)
         short_name = name.get_alias()
-        if short_name <> self.hidden_id_name:
+        if (short_name <> self.hidden_id_name) and (short_name in self.get_attributes_in_memory()):
             if not is_anonymous_autogen_name(short_name):
                 type = self._get_attribute_type(short_name)
                 if (type not in (AttributeType.LAG, AttributeType.EXOGENOUS)):
