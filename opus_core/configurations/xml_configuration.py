@@ -354,7 +354,7 @@ class XMLConfiguration(object):
                 
         ## filter out variable definition we won't use - to allow variables of the same alias but for different dataset
         ## stop doing this if there are variables with unknown dataset_name
-        if None in dataset_names:
+        if None in dataset_names or '' in dataset_names:
             result['_definition_'] = all_vars
         else:
             result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
