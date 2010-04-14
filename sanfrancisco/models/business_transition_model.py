@@ -183,6 +183,8 @@ class Tests(StochasticTestCase):
              "building_id": array(6000*[1] + 4000*[2] + 3000*[3]),
              "sector_id": array(4000*[1] + 1000*[2] + 1000*[15] + 2000*[1] + 1000*[2] + 1000*[15] +
                             1000*[1] + 1000*[2] + 1000*[15], dtype=int32),
+             "activity_id": array(4000*[1] + 1000*[2] + 1000*[15] + 2000*[1] + 1000*[2] + 1000*[15] +
+                            1000*[1] + 1000*[2] + 1000*[15], dtype=int32),
             "sqft": array(13000*[10]),
             "employment": array(4000*[10] + 1000*[20] + 1000*[150] + 2000*[1] + 1000*[2] + 1000*[15] +
                             1000*[100] + 1000*[200] + 1000*[30])
@@ -397,6 +399,7 @@ class Tests(StochasticTestCase):
             "business_id": arange(13001, 15001),
             "building_id": array(2000*[0]),
             "sector_id": array(2000*[1]),
+            "activity_id": array(2000*[1]),
             "sqft": array(2000*[10]),
             "employment": array(2000*[100])
             }
