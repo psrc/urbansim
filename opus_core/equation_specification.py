@@ -516,6 +516,16 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
     submodels = len(variables)*[sub_model]
     return (variables, coefficients, equations, submodels, fixed_values, other_fields)
 
+def get_full_variable_specification_for_var_coef(var_coef, definition):
+    """get full variable name from definition diectionary by looking up the alias""" 
+    if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
+        i = definition["alias"].index(var_coef)
+        variable = definition["variables"][i]
+    else:
+        variable = var_coef
+        i = None
+    return variable, i
+
 def get_variables_coefficients_equations_from_dict(dict_spec, definition={}):
     variables = []
     coefficients = []
@@ -543,24 +553,22 @@ def get_variables_coefficients_equations_from_dict(dict_spec, definition={}):
         
         for var, coef in dict_spec.items():
             if not equation_ids:
-                if ("variables" in definition.keys()) and (var in definition["alias"]):
-                    i = definition["alias"].index(var)
-                    variables.append(definition["variables"][i])
-                    coefficients.append(definition["coefficients"][i])
-                    fixed_values.append(definition["fixed_values"][i])
+                var_name, var_index = get_full_variable_specification_for_var_coef(var, definition)
+                variables.append(var_name)
+                if var_index is not None:
+                    coefficients.append(definition["coefficients"][var_index])
+                    fixed_values.append(definition["fixed_values"][var_index])
                 else:
-                    variables.append(var)
                     coefficients.append(coef)
                     fixed_values.append(0)
             elif type(coef) is list or type(coef) is tuple:
                 for i in range(len(coef)):
                     if coef[i] != 0:
-                        if ("variables" in definition.keys()) and (var in definition["alias"]):
-                            j = definition["alias"].index(var)
-                            variables.append(definition["variables"][j])
-                            fixed_values.append(definition["fixed_values"][j])
+                        var_name, var_index = get_full_variable_specification_for_var_coef(var, definition)
+                        variables.append(var_name)
+                        if var_index is not None:
+                            fixed_values.append(definition["fixed_values"][var_index])
                         else:
-                            variables.append(var)
                             fixed_values.append(0)
                         coefficients.append(coef[i])
                         equations.append(equation_ids[i])
@@ -574,25 +582,25 @@ def get_variables_coefficients_from_list(list_spec, definition={}):
     coefficients = []
     fixed_values = []
     error = False
+    
     for var_coef in list_spec:
         if isinstance(var_coef, str):
             #var_coef is just variables long names or alias
-            if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
-                i = definition["alias"].index(var_coef)
-                variables.append(definition["variables"][i])
-                coefficients.append(definition["coefficients"][i])
-                fixed_values.append(definition["fixed_values"][i])
+            var_name, var_index = get_full_variable_specification_for_var_coef(var_coef, definition)
+            variables.append(var_name)
+            if var_index is not None:
+                coefficients.append(definition["coefficients"][var_index])
+                fixed_values.append(definition["fixed_values"][var_index])
             else:
-                variables.append(var_coef)
                 coefficients.append(VariableName(var_coef).get_alias())
                 fixed_values.append(0)
         elif isinstance(var_coef, tuple) or isinstance(var_coef, list):
+            var_name, var_index = get_full_variable_specification_for_var_coef(var_coef[0], definition)
+            variables.append(var_name)
             if len(var_coef) == 1: # coefficient name is created from variable alias
-                variables.append(var_coef[0])
                 coefficients.append(VariableName(var_coef[0]).get_alias())
                 fixed_values.append(0)
             elif len(var_coef) > 1: # coefficient names explicitly given
-                variables.append(var_coef[0])
                 coefficients.append(var_coef[1])
                 if len(var_coef) > 2: # third item is the coefficient fixed value 
                     fixed_values.append(var_coef[2])
@@ -602,7 +610,8 @@ def get_variables_coefficients_from_list(list_spec, definition={}):
                 logger.log_error("Wrong specification format for variable %s" % var_coef)
                 error = True
         elif isinstance(var_coef, dict):
-            variables.append(var_coef.keys()[0])
+            var_name, var_index = get_full_variable_specification_for_var_coef(var_coef.keys()[0], definition)
+            variables.append(var_name)
             coefficients.append(var_coef.values()[0])
             fixed_values.append(0)
         else:
