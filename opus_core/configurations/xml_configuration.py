@@ -352,7 +352,12 @@ class XMLConfiguration(object):
             else:
                 result[submodel_id] = res
                 
-        result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
+        ## filter out variable definition we won't use - to allow variables of the same alias but for different dataset
+        ## stop doing this if there are variables with unknown dataset_name
+        if None in dataset_names:
+            result['_definition_'] = all_vars
+        else:
+            result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
         
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:
