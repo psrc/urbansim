@@ -3,6 +3,7 @@
 # See opus_core/LICENSE 
 
 from opus_core.resources import Resources
+from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
@@ -104,6 +105,12 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
 
+        # It is important that during this method no variable flushing happens, since
+        # we create datasets of the same name for different purposes (new development and redevelopment)
+        # and flushing would mix them up
+        flush_variables_current = SessionConfiguration().get('flush_variables', False)
+        SessionConfiguration().put_data({'flush_variables': False})
+        
         # Code added by Jesse Ayers, MAG, 9/14/2009
         # Getting an index of parcels that have actively developing projects (those on a velocity function)
         # and making sure that new proposals are not generated for them
@@ -189,7 +196,9 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
                                                             spec_replace_module_variable_pair[1]))
             specification.replace_variables(spec_replacement)
-            
-        #parcels.flush_dataset_if_low_memory_mode()
+
+        # switch flush_variables to the original value
+        SessionConfiguration().put_data({'flush_variables': flush_variables_current})
+
         return (proposal_set, specification, coefficients)
         
