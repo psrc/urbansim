@@ -146,8 +146,14 @@ class ModelSystem(object):
     def flush_dataset(self, dataset, after_model=False):
         """Write the PRIMARY attributes of this dataset to the cache."""
         if dataset and isinstance(dataset, Dataset):
-            if after_model and len(dataset.get_attribute_names()) <= len(dataset.get_id_name()):
-                return
+            # Do not flush after model if not necessary
+            if after_model:
+                if len(dataset.get_attribute_names()) <= len(dataset.get_id_name()):
+                    return
+                if (len(dataset.get_attribute_names()) == len(dataset.get_known_attribute_names())) and \
+                                         (len(dataset.get_attributes_in_memory()) <= len(dataset.get_id_name())):
+                    dataset.delete_computed_attributes()
+                    return
             dataset.delete_computed_attributes()
             dataset.load_and_flush_dataset()
 
