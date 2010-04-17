@@ -265,7 +265,7 @@
           <argument name="package_order" type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
         <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
-        <flush_variables type="boolean">False</flush_variables>
+        <flush_variables type="boolean">True</flush_variables>
         <low_memory_run type="boolean">False</low_memory_run>
         <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
         <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
@@ -385,6 +385,103 @@
         <models type="selectable_list">
           <selectable name="opus_emme2.models.get_cache_data_into_emme2" type="selectable">False</selectable>
           <selectable name="opus_emme2.models.run_travel_model" type="selectable">False</selectable>
+          <selectable name="opus_emme2.models.run_export_macros" type="selectable">True</selectable>
+          <selectable name="opus_emme2.models.get_emme2_data_into_cache" type="selectable">True</selectable>
+        </models>
+        <years_to_run key_name="year" type="category_with_special_keys">
+          <run_description type="dictionary">
+            <year type="integer">2005</year>
+            <bank type="list">['2006_v1.0aTG']</bank>
+          </run_description>
+        </years_to_run>
+      </travel_model_configuration>
+    </scenario>
+    <scenario executable="True" name="PSRC_full_TM" type="scenario">
+      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+      <base_year type="integer">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2005</firstyear>
+        <lastyear type="integer">2006</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable name="model_template" type="selectable">False</selectable>
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="expected_sale_price_model" type="selectable">True</selectable>
+        <selectable name="development_proposal_choice_model" type="selectable">True</selectable>
+        <selectable name="building_construction_model" type="selectable">True</selectable>
+        <selectable name="modify_workers_jobs_after_moving_households" type="selectable">True</selectable>
+        <selectable name="modify_workers_jobs_after_moving_jobs" type="selectable">True</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
+        <selectable name="job_person_consistency_keeper" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="modify_workers_jobs_after_moving_households" type="selectable">True</selectable>
+        <selectable name="employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
+        </selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+        <selectable name="distribute_unplaced_mining_utilities_jobs_model" type="selectable">True</selectable>
+        <selectable name="modify_workers_jobs_after_moving_jobs" type="selectable">True</selectable>
+        <selectable name="work_at_home_choice_model" type="selectable">True</selectable>
+        <selectable name="workplace_choice_model_for_resident" type="selectable">True</selectable>
+      </models_to_run>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</argument>
+        </argument>
+        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
+        <argument name="advanced" type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+            <argument name="database_name" type="string">psrc_2000_parcel_baseyear_data</argument>
+          </baseyear_database_configuration>
+          <cache_from_database type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+              </argument>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable name="zone" type="selectable">True</selectable>
+          <selectable name="household" type="selectable">True</selectable>
+          <selectable name="building" type="selectable">True</selectable>
+          <selectable name="parcel" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="development_template" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="development_template_component" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="job" type="selectable">True</selectable>
+          <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="travel_data" type="selectable">True</selectable>
+          <selectable name="job_building_type" type="selectable">True</selectable>
+        </datasets_to_preload>
+      </advanced>
+      <travel_model_configuration type="dictionary">
+        <travel_model_base_directory type="string">baseline_travel_model_psrc_2008</travel_model_base_directory>
+        <emme2_batch_file_name type="string">MODEL1-0.BAT</emme2_batch_file_name>
+        <models type="selectable_list">
+          <selectable name="opus_emme2.models.get_cache_data_into_emme2" type="selectable">True</selectable>
+          <selectable name="opus_emme2.models.run_travel_model" type="selectable">True</selectable>
           <selectable name="opus_emme2.models.run_export_macros" type="selectable">True</selectable>
           <selectable name="opus_emme2.models.get_emme2_data_into_cache" type="selectable">True</selectable>
         </models>
