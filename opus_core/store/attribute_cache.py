@@ -247,6 +247,15 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
             }
         actual = self.storage.load_table('cities')
         self.assertDictsEqual(expected, actual)
+
+    def MASKtest_load_table_with_different_length_and_num_of_columns_between_1980_and_1981(self):
+        SimulationState().set_current_time(1981)
+        expected = {
+            'dumb_dataset_id': array([1, 2, 3, 4]),
+            'dumb_number': array([97, 101, 8, 79]),
+            }
+        actual = self.storage.load_table('dumb_datasets')
+        self.assertDictsEqual(expected, actual)
         
     def test_load_one_attribute(self):
         SimulationState().set_current_time(1980)
