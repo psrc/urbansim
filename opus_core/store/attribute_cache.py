@@ -63,20 +63,15 @@ class AttributeCache(Storage):
         column_names_for_year = {}
 
         years = self.get_years(table_name)
-        if isinstance(column_names, list):
-            columns = column_names
-        else:
-            columns = self.get_column_names(table_name, lowercase)
+        columns_names_and_years = self._get_column_names_and_years(table_name, lowercase=lowercase)        
         
-        for year in years:
-            column_names_for_year[year] = []
-            for column_name in columns:
-                column_names_for_year[year].append(column_name)
-        for year in column_names_for_year:
+        for column_name, year in columns_names_and_years:
+            if isinstance(column_names, list) and column_name not in column_names:
+                continue
             storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
-            result.update(storage.load_table(table_name, column_names=column_names_for_year[year], lowercase=lowercase))
-        return result
+            result.update(storage.load_table(table_name, column_names=column_name, lowercase=lowercase))
 
+        return result
 
     def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
         year = SimulationState().get_current_time()
@@ -248,11 +243,12 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         actual = self.storage.load_table('cities')
         self.assertDictsEqual(expected, actual)
 
-    def MASKtest_load_table_with_different_length_and_num_of_columns_between_1980_and_1981(self):
+    def test_load_table_with_different_length_and_num_of_columns_between_1980_and_1981(self):
         SimulationState().set_current_time(1981)
         expected = {
-            'dumb_dataset_id': array([1, 2, 3, 4]),
-            'dumb_number': array([97, 101, 8, 79]),
+            'dumb_dataset_id': array([1, 2, 3, 4], dtype='int32'),                                   ##attribute values read from 1981
+            'dumb_number':     array([97, 101, 8, 79], dtype='int32'),                               ##attribute values read from 1981
+            'dumb_name':       array(['ninety-seven', 'one hundred one', 'eight'], dtype='|S15')   ##attribute values read from 1980
             }
         actual = self.storage.load_table('dumb_datasets')
         self.assertDictsEqual(expected, actual)
