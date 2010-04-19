@@ -60,16 +60,13 @@ class AttributeCache(Storage):
     
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         result = {}
-        column_names_for_year = {}
-
-        years = self.get_years(table_name)
         columns_names_and_years = self._get_column_names_and_years(table_name, lowercase=lowercase)        
         
         for column_name, year in columns_names_and_years:
             if isinstance(column_names, list) and column_name not in column_names:
                 continue
             storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
-            result.update(storage.load_table(table_name, column_names=column_name, lowercase=lowercase))
+            result.update(storage.load_table(table_name, column_names=[column_name], lowercase=lowercase))
 
         return result
 
