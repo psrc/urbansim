@@ -295,7 +295,7 @@ class StorageTests(opus_unittest.OpusTestCase):
         local_test_data_path = os.path.join(
             opus_core_path, 'data', 'test_cache', '1981')
         storage = file_flt_storage(local_test_data_path)
-        expected = ['base_year', 'cities']
+        expected = ['base_year', 'cities', 'dumb_datasets']
         actual = storage.get_table_names()
         expected.sort()
         actual.sort()
