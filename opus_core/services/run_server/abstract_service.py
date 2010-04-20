@@ -4,7 +4,7 @@
 
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.services.services_tables import *
-
+from opus_core.logger import logger
 from elixir import setup_all, metadata, create_all
 
 
@@ -24,16 +24,18 @@ class AbstractService(object):
 
         try:
             server = DatabaseServer(self.server_config)
-        except:
-            raise Exception('Cannot connect to the database server that the services database is hosted on')
+        except Exception, e:
+            logger.log_error('Cannot connect to the database server that the services database is hosted on %s' % self.server_config.database_name)
+            raise e
         
         if not server.has_database(self.server_config.database_name):
             server.create_database(self.server_config.database_name)
 
         try:
             services_db = server.get_database(self.server_config.database_name)
-        except:
-            raise Exception('Cannot connect to a services database on %s'%server.get_connection_string(scrub = True))
+        except Exception, e:
+            logger.log_error('Cannot connect to a services database on %s'% server.get_connection_string(scrub = True))
+            raise e
 
         metadata.bind = services_db.engine
         setup_all()
