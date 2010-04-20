@@ -10,6 +10,7 @@ from glob import glob
 from numpy import array, dtype
 
 from opus_core.opus_error import OpusError
+from opus_core.logger import logger
 from opus_core.store.storage import Storage
 
 
@@ -167,7 +168,12 @@ class delimited_storage(Storage):
                 
                 # Cast each value to its appropriate python type.
                 for j in range(len(result[index])):
-                    result[index][j] = column_dtype.type(result[index][j])
+                    try:
+                        result[index][j] = column_dtype.type(result[index][j])
+                    except:
+                        logger.log_error("Error encountered when processing row %s for column %s of type %s: %s." % \
+                                         (j+1, available_column_names[index], column_dtype, result[index][j]) )
+                        raise
                     
                 table[available_column_names[index]] = array(result[index], dtype=column_dtype)
         
