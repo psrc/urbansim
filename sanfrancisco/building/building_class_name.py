@@ -10,7 +10,7 @@ class building_class_name(Variable):
     """The class name (residential, nonresidential) of this building. """
    
     def dependencies(self):
-        return ["_building_class_name=building.disaggregate(building_use_classification.class_name, intermediates=[building_use])"]
+        return ["_building_class_name=building.disaggregate(sanfrancisco.building_use_classification.name, intermediates=[building_use])"]
         
     def compute(self,  dataset_pool):
         return self.get_dataset().get_attribute("_building_class_name")
@@ -29,7 +29,7 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
                 "building_use_classification":{
                     "class_id":array([1,2]),
-                    "class_name":array(['residential','nonresidential']),
+                    "name":array(['apts','med']),
                     },
                 "building_use":{
                     "building_use_id":array([1,2,3,4]),
@@ -42,7 +42,8 @@ class Tests(opus_unittest.OpusTestCase):
            }
         )
         
-        should_be = array(['nonresidential','residential','nonresidential','nonresidential','residential','residential'])
+        should_be = array(['med','apts','med','med','apts','apts'])
+        print tester._get_attribute()
 
         assert(alltrue(should_be==tester._get_attribute()))
 #        test_is_close_for_variable_defined_by_this_module(self, should_be)

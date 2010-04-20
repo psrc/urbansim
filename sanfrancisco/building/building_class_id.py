@@ -29,7 +29,6 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
                 "building_use_classification":{
                     "class_id":array([1,2]),
-                    "class_name":array(['residential','nonresidential']),
                     },
                 "building_use":{
                     "building_use_id":array([1,2,3,4]),
