@@ -24,18 +24,18 @@ class AbstractService(object):
 
         try:
             server = DatabaseServer(self.server_config)
-        except Exception, e:
-            logger.log_error('Cannot connect to the database server that the services database is hosted on %s' % self.server_config.database_name)
-            raise e
+        except:
+            logger.log_error('Cannot connect to the database server that the services database is hosted on %s.' % self.server_config.database_name)
+            raise
         
         if not server.has_database(self.server_config.database_name):
             server.create_database(self.server_config.database_name)
 
         try:
             services_db = server.get_database(self.server_config.database_name)
-        except Exception, e:
-            logger.log_error('Cannot connect to a services database on %s'% server.get_connection_string(scrub = True))
-            raise e
+        except:
+            logger.log_error('Cannot connect to a services database on %s.'% server.get_connection_string(scrub = True))
+            raise
 
         metadata.bind = services_db.engine
         setup_all()
