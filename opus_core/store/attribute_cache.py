@@ -79,7 +79,10 @@ class AttributeCache(Storage):
         # Use this method only in conjunction with deleting computed attributes of the datasets:
         # dataset.delete_computed_attributes()
         year = SimulationState().get_current_time()
-        storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
+        storage_directory = os.path.join(self.get_storage_location(), '%s' % year)
+        if not os.path.exists(storage_directory):
+            return array([])
+        storage = flt_storage(storage_directory)
         tables = storage.get_table_names()
         tables = [table for table in tables if (table.endswith('.computed'))]
         deleted = array(map(lambda table: storage.delete_table(table), tables))
@@ -372,6 +375,10 @@ class AttributeCacheDeleteTests(opus_unittest.OpusTestCase):
         for table in tables_keep: 
             self.assert_(os.path.exists(self.get_table_path(year, table)))
 
-
+    def test_delete_computed_tables_if_cache_doesnt_exist(self):
+        SimulationState().set_current_time(1990)
+        res = self.storage.delete_computed_tables()
+        self.assert_(res.size == 0)
+        
 if __name__ == '__main__':
     opus_unittest.main()
