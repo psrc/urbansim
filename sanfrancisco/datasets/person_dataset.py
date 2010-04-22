@@ -6,7 +6,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class PersonDataset(UrbansimDataset):
     
-    id_name_default = ["household_id","person_id"]
+    id_name_default = ["person_id"]
     in_table_name_default = "persons"
     out_table_name_default = "persons"
     dataset_name = "person"

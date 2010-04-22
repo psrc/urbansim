@@ -4,7 +4,7 @@
 
 from urbansim.datasets.rate_dataset import RateDataset
 
-class FertilityRateDataset(RateDataset):
+class AnnualFertilityRateDataset(RateDataset):
     id_name_default = []
     dataset_name = "annual_fertility_rate"
     probability_attribute = "fertility_probability"

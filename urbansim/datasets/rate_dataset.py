@@ -63,9 +63,9 @@ class RateDataset(UrbansimDataset):
             prob[logical_and(indicator, prob < 0)] = self.get_attribute(probability_attribute)[index]
             
         if any(prob < 0):
-            logger.log_warning('There are %i %ss whose relocation probability is ' % ((prob<0).sum(), dataset.get_dataset_name()) + 
-                               'un-specified by the relocation rate dataset. ' +
-                               'Their relocation probability is set to 0.' )
+            logger.log_warning('There are %i %ss whose probability is ' % ((prob<0).sum(), dataset.get_dataset_name()) + 
+                               'un-specified by the rate dataset. ' +
+                               'Their probability is set to 0.' )
             prob[prob < 0] = 0.0
                                
         return prob

@@ -5,6 +5,7 @@
 from urbansim.models.agent_relocation_model import AgentRelocationModel
 from numpy import ones, arange
 from numpy.random import randint
+from opus_core.logger import logger
 
 class FertilityModel(AgentRelocationModel):
     """
@@ -31,6 +32,7 @@ class FertilityModel(AgentRelocationModel):
         #new_born['race_id'] 
         #new_born['relation']
         
-        person_set.add_elements(data=new_born, change_ids_if_not_unique=True) 
+        logger.log_status("Adding %s records to %s dataset" % (index.size, person_set.get_dataset_name()) )
+        person_set.add_elements(data=new_born, require_all_attributes=False, change_ids_if_not_unique=True) 
         
         

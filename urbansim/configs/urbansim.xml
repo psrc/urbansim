@@ -16,7 +16,7 @@
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">urbansim.fertility_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string"></argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">FertilityModel</name>
           </init>
@@ -42,7 +42,7 @@
           </import>
           <init type="dictionary">
             <argument name="probabilities" parser_action="quote_string" type="string">urbansim.mortality_probabilities</argument>
-            <argument name="location_id_name" parser_action="quote_string" type="string"></argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string">person_id</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
             <name name="name" type="string">MortalityModel</name>
           </init>
