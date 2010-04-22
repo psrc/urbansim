@@ -22,7 +22,7 @@ class AgentRelocationModel(Model):
                  debuglevel=0):
 
         self.model_name = model_name
-        self.location_id_name = location_id_name
+        #self.location_id_name = location_id_name
         self.debug = DebugPrinter(debuglevel)
         self.upc_sequence = None
         if probabilities is not None:

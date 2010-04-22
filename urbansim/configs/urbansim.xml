@@ -8,6 +8,58 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="fertility_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.fertility_model</class_module>
+            <class_name>FertilityModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">urbansim.fertility_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string"></argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">FertilityModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">fm_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_fertility_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">fertility_index</output>
+            <argument name="resources" type="string">fm_resources</argument>
+            <argument name="person_set" type="string">person</argument>
+            <argument name="household_set" type="string">household</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="mortality_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.mortality_model</class_module>
+            <class_name>MortalityModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="probabilities" parser_action="quote_string" type="string">urbansim.mortality_probabilities</argument>
+            <argument name="location_id_name" parser_action="quote_string" type="string"></argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">MortalityModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">mm_resources</output>
+            <argument name="rate_storage" type="string">base_cache_storage</argument>
+            <argument name="rate_table" parser_action="quote_string" type="string">annual_mortality_rates</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <output name="output" type="string">mortality_index</output>
+            <argument name="resources" type="string">mm_resources</argument>
+            <argument name="person_set" type="string">person</argument>
+            <argument name="household_set" type="string">household</argument>
+          </run>
+        </structure>
+      </model>    
      <model name="refinement_model" type="model">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
