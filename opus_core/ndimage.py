@@ -10,10 +10,16 @@
 
 from numpy import int32
 import scipy.ndimage
+from numpy import iinfo
 
 # *** ndimage.measurements functions ***
 
 def sum(input, labels=None, index=None):
+    # work around for sum() method of scipy.ndimage not allowing numpy.int64 index type
+    # this won't be needed if scipy ticket #1162 is fixed: http://projects.scipy.org/scipy/ticket/1162
+    if index is not None and getattr(index, "dtype", int32) == dtype("int64") and index.max() <= iinfo(int32).max:
+        index = index.astype(int32)
+
     _fix_dtype(input)
     _fix_dtype(labels)
     _fix_dtype(index)
