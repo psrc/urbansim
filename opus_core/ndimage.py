@@ -8,7 +8,7 @@
 # rather than int_, the native python int 32 type).
 # See comment at the end of this file for more details.
 
-from numpy import int32
+from numpy import int32, int64
 import scipy.ndimage
 from numpy import iinfo
 
@@ -17,7 +17,7 @@ from numpy import iinfo
 def sum(input, labels=None, index=None):
     # work around for sum() method of scipy.ndimage not allowing numpy.int64 index type
     # this won't be needed if scipy ticket #1162 is fixed: http://projects.scipy.org/scipy/ticket/1162
-    if index is not None and getattr(index, "dtype", int32) == dtype("int64") and index.max() <= iinfo(int32).max:
+    if index is not None and getattr(index, "dtype", int32) == int64 and index.max() <= iinfo(int32).max:
         index = index.astype(int32)
 
     _fix_dtype(input)

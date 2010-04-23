@@ -950,7 +950,7 @@ class AbstractDataset(object):
             result = array(values)
         except Exception, e:
             logger.log_error( "Unknown function or error occured evaluating " + function + ".\n" )
-            raise e
+            raise
         return result
 
     def sum_over_ids(self, ids, what):
