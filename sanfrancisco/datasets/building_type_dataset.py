@@ -7,8 +7,8 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class BuildingTypeDataset(UrbansimDataset):
     id_name_default = "building_type_id"
-    in_table_name_default = "building_types"
-    out_table_name_default = "building_types"
+    in_table_name_default = "building_type"
+    out_table_name_default = "building_type"
     dataset_name = "building_type"
     
     def get_code(self, type_id):
