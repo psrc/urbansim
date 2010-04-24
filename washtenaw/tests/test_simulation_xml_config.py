@@ -18,6 +18,8 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     def setUp(self):
         self.opus_home = os.environ["OPUS_HOME"]
         self.data_path = os.path.join(self.opus_home, 'data', 'washtenaw_parcel')
+        if not os.path.exists(self.data_path):
+            os.makedirs(self.data_path)
     
     def tearDown(self):
         runs_path = os.path.join(self.data_path, 'runs')
