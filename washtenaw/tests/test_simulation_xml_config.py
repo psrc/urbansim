@@ -26,7 +26,7 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     def tearDown(self):
         runs_path = os.path.join(self.data_path, 'runs')
         if os.path.exists(runs_path):
-            Popen( "rm -rf %s" % runs_path)
+            Popen( "rm -rf %s" % runs_path, shell=True)
     
     def test_simulation(self):
         base_year_data_path = os.path.join(self.data_path, 'base_year_data')        
