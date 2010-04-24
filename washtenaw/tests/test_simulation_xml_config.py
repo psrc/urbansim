@@ -10,6 +10,7 @@ from opus_core.tests import opus_unittest
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
+from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 
 class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     """ this integration test checks and downloads a zipped cache from semcog ftp,
@@ -17,39 +18,49 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
     """
     def setUp(self):
         self.opus_home = os.environ["OPUS_HOME"]
-        self.data_path = os.path.join(self.opus_home, 'data', 'washtenaw_parcel')
-        if not os.path.exists(self.data_path):
-            os.makedirs(self.data_path)
+        if os.environ.has_key('OPUS_DATA_PATH'):
+            self.data_path = os.path.join(os.environ['OPUS_DATA_PATH'], 'washtenaw_parcel')
+        else:
+            self.data_path = os.path.join(self.opus_home, 'data', 'washtenaw_parcel')
     
     def tearDown(self):
         runs_path = os.path.join(self.data_path, 'runs')
-        stderr = Popen( "rm -rf %s" % runs_path,
-                        stderr=PIPE ).communicate()[0]
-        if stderr:
-            raise RuntimeError( "Error when deleting runs directory %s: %s" % (runs_path, stderr) )
+        if os.path.exists(runs_path):
+            Popen( "rm -rf %s" % runs_path)
     
     def test_simulation(self):
         base_year_data_path = os.path.join(self.data_path, 'base_year_data')        
+        if not os.path.exists(base_year_data_path):
+            os.makedirs(base_year_data_path)
 
         ftp_url = os.environ["FTP_URL"]
         file_name = os.path.split(ftp_url)[1]
         ftp_user = os.environ["FTP_USERNAME"]
         ftp_password = os.environ["FTP_PASSWORD"]
+        stdout, stderr = Popen("ls -la %s" % base_year_data_path, shell=True).communicate()
+
+        #stdout, stderr = Popen("echo '%s'" % (base_year_data_path), stdout=PIPE).communicate()
+        print stdout
         
-        stderr = Popen( """
+        try:
+            Popen( """
                         cd %s; 
                         wget --timestamping %s --ftp-user=%s --ftp-password=%s;
                         rm -rf 2008;
                         unzip -o %s
                         """ % (base_year_data_path, ftp_url, ftp_user, ftp_password, file_name),
-                        stderr=PIPE ).communicate()[0]
-        if stderr:
-            raise RuntimeError( "Error when downloading and unzipping file from %s: %s" % (ftp_url, stderr) )
-                
-        run_manager = RunManager()
+                        shell = True
+                        ).communicate()
+        except:
+            print "Error when downloading and unzipping file from %s." % ftp_url
+            raise
+
+        services_db = ServicesDatabaseConfiguration( database_name = 'services',                         
+                                                     database_configuration = 'services_database_server' )
+        run_manager = RunManager(services_db)
         run_as_multiprocess = True
         xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'washtenaw_parcel.xml'))
-        for scenario_name in ['washtenaw_parcel']:
+        for scenario_name in ['washtenaw_baseline']:
             config = xml_config.get_run_configuration(scenario_name)
             insert_auto_generated_cache_directory_if_needed(config)
             base_year = config['base_year']
