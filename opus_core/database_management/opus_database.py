@@ -14,7 +14,7 @@ from opus_core.database_management.engine_handlers.sqlite import SqliteServerMan
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
                              Numeric, Float, \
-                             VARCHAR, String, CLOB, \
+                             VARCHAR, String, CLOB, Text,\
                              Boolean, DateTime
 from sqlalchemy import create_engine
 
@@ -226,9 +226,9 @@ def type_mapper(type_val):
                    "VARCHAR" : VARCHAR(255),
                    "BOOLEAN" : Boolean,
                    "TINYTEXT" : VARCHAR(255),
-                   "TEXT" : CLOB,
-                   "MEDIUMTEXT" : CLOB,
-                   "LONGTEXT": CLOB,
+                   "TEXT" : Text,
+                   "MEDIUMTEXT" : Text,
+                   "LONGTEXT": Text,
                    "DATETIME": DateTime}
     
     return filter_data[type_val]     

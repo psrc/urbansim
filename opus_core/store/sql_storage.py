@@ -2,27 +2,12 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import array, dtype
+from numpy import array, dtype, unique
 from opus_core.logger import logger
 
-try:
-    import sqlalchemy
-    from sqlalchemy import Table, Column, select, insert
-    from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean
-except ImportError:
-    sqlalchemy = None
-    
-try:
-    from sqlalchemy.databases.mysql import MSBigInteger, MSString, MSChar
-    from sqlalchemy.databases.mssql import MSString as MicrosoftString
-    from sqlalchemy.databases.postgres import PGBigInteger
-except:
-    pass
-
-try:
-    from sqlalchemy.databases.mssql import AdoMSNVarchar
-except:
-    pass    
+import sqlalchemy
+from sqlalchemy import Table, Column, select, insert
+from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.opus_database import OpusDatabase
@@ -34,10 +19,7 @@ class sql_storage(Storage):
         protocol: 'sqlite', 'mysql', 'postgres', 'oracle', 'mssql', or 'firebird'
           - A corresponding module must be installed
         """
-        if sqlalchemy is None:
-            raise ImportError('The sqlalchemy Python module must be installed '
-                'before using sql_storage. See http://www.sqlalchemy.org/')
-        
+       
         self.database_name = storage_location.database_name
         self.database_server_config = storage_location.database_server_config
         
@@ -127,8 +109,9 @@ class sql_storage(Storage):
         columns = []
         for column_name, column_data in table_data.items():
             col_type = self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)
-            
-            if column_name.find('_id') > -1 and len(column_data) == len(set(column_data)):
+
+            # TODO this may be problematic: not all columns ending with '_id' and unique are primary keys
+            if column_name.endswith('_id') and column_data.size == unique(column_data).size:
                 col = Column(column_name,col_type,primary_key = True)
                 columns.insert(0,col)
             else: 
@@ -189,6 +172,25 @@ class sql_storage(Storage):
             
         self._dispose_db(db)
         return col_names
+
+    def get_column_type_str(self, column_type, uppercase=True):
+        import re
+        if hasattr( column_type, "__visit_name__" ):  # sqlalchemy 0.6.0
+            column_type_str = column_type.__visit_name__
+        elif hasattr( column_type, "get_col_spec" ):  # sqlalchemy 0.5.8
+            try:
+                column_type_str = column_type.get_col_spec()
+            except:
+                column_type_str = str(column_type)
+            column_type_str = re.sub('\(.*\)', '', column_type_str)
+                
+        else:
+            column_type_str = str(column_type)
+
+        if uppercase and column_type_str != str(column_type):
+            column_type_str = column_type_str.upper()
+            
+        return column_type_str   
     
     def get_table_names(self):
         db = self._get_db()
@@ -206,46 +208,29 @@ class sql_storage(Storage):
             }
         
         return mapping[column_dtype.kind]
-        
+
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
+        mapping = {
+                    'BIGINT': dtype('int64'), 
+                    'INTEGER': dtype('i'),
+                    'NUMERIC': dtype('f'),
+                    'FLOAT': dtype('f'),
+                    
+                    'VARCHAR': dtype('S'),
+                    'TEXT': dtype('S'),
+                    'STRING': dtype('S'),
+                    'UNICODE': dtype('U'),
+                    
+                    'BOOLEAN': dtype('b'),
+                 }
+        
+        column_type_str = self.get_column_type_str(column_type, uppercase=True)
+        
+        if mapping.has_key(column_type_str):
+            return mapping[column_type_str]
+        else:
+            raise TypeError, 'Unrecognized column type: %s' % column_type_str        
 
-        #mysql specific column types
-        try:
-            if isinstance(column_type, MSBigInteger):
-                return dtype('int64')
-            if isinstance(column_type, MSString):
-                return dtype('S')
-            if isinstance(column_type, MSChar):
-                return dtype('S')
-        except: pass
-        
-        #mssql specific column types
-        try:
-            if isinstance(column_type, AdoMSNVarchar):
-                return dtype('S') 
-        except:
-            pass
-
-        if isinstance(column_type, PGBigInteger):
-            return dtype('int64')
-        
-        if isinstance(column_type, Integer):
-            return dtype('i')
-        
-        if isinstance(column_type, Numeric):
-            return dtype('f')
-        
-        if isinstance(column_type, Text):
-            return dtype('S')
-        
-        if isinstance(column_type, Boolean):
-            return dtype('b')
-        
-        if isinstance(column_type, MicrosoftString):
-            return dtype('S')
-        
-        raise ValueError('Unrecognized column type: %s' % column_type)
-        
     
 if sqlalchemy is None:
     if __name__ == '__main__':
@@ -475,14 +460,22 @@ else:
                     expected_numpy_type = dtype('i')
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Integer())
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(server.engine.dialect.type_descriptor(Integer))
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+
                     
                     expected_numpy_type = dtype('f')
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Float())
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(server.engine.dialect.type_descriptor(Float))
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
                     
                     expected_numpy_type = dtype('S')
                     actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(Text())
                     self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    actual_numpy_type = storage._get_numpy_dtype_from_sql_alchemy_type(server.engine.dialect.type_descriptor(Text))
+                    self.assertEqual(expected_numpy_type, actual_numpy_type)
+                    
                 except:
                     print 'ERROR: protocol %s'%server.config.protocol
                     raise            
