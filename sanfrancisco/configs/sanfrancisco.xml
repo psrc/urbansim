@@ -422,16 +422,18 @@
             <selectable name="persons" type="selectable">True</selectable>
             <selectable name="travel_data" type="selectable">True</selectable>
             <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
-            <selectable name="building_use" type="selectable">True</selectable>
-            <selectable name="building_use_classification" type="selectable">True</selectable>
+            <selectable name="activities" type="selectable">True</selectable>
+            <selectable name="building_types" type="selectable">True</selectable>
             <selectable name="urbansim_constants" type="selectable">True</selectable>
             <selectable name="target_vacancies" type="selectable">True</selectable>
             <selectable name="business_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="business_location_choice_model_specification" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
+            <!--
             <selectable name="housing_price_model_coefficients" type="selectable">True</selectable>
             <selectable name="housing_price_model_specification" type="selectable">True</selectable>
+            -->
             <selectable name="nonresidential_building_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="nonresidential_building_location_choice_model_specification" type="selectable">True</selectable>
             <selectable name="real_estate_price_model_coefficients" type="selectable">True</selectable>
@@ -450,6 +452,7 @@
             <selectable name="tracts" type="selectable">True</selectable>
             <selectable name="sectors" type="selectable">True</selectable>
             <selectable name="planning_districts" type="selectable">True</selectable>
+            <selectable name="building_types" type="selectable">True</selectable>
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
