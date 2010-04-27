@@ -19,6 +19,7 @@ class DatasetFactory(object):
     #      (dataset_name, table_name, module_name, dataset_class_name)
     # module_name and dataset_class_name may be None; if so the generic Dataset class should be used.
     exceptions = [
+        ('activity', 'activities', 'activity_dataset', 'ActivityDataset'),
         ('annual_household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
         ('annual_job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
         ('base_year', 'base_year', None, None),
