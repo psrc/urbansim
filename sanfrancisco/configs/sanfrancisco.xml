@@ -64,22 +64,71 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="Household_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="Business_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">business</argument>
+            <argument name="dataset_accounting_attribute" parser_action="quote_string" type="string">employment</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Business Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">BTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_business_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>    
       <model name="real_estate_price_model" type="model">
         <structure type="dictionary">
           <init type="dictionary">
-            <argument name="submodel_string" parser_action="quote_string" type="string">building_use_id</argument>
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(building.unit_price)</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_total_price=ln_bounded(building.structure_value+building.disaggregate(parcel.land_value))</argument>
             <argument name="filter_attribute" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
           </init>
           <run type="dictionary">
             <argument name="dataset" type="string">building</argument>
           </run>
           <prepare_for_estimate type="dictionary">
-            <argument name="filter_variable" parser_action="quote_string" type="string">building.unit_price</argument>
+            <argument name="filter_variable" parser_action="quote_string" type="string">(building.structure_value+building.disaggregate(parcel.land_value))>0</argument>
             <argument name="dataset" type="string">building</argument>
           </prepare_for_estimate>
           <estimate type="dictionary">
-            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_unit_price=ln(building.unit_price)</argument>
+            <argument config_name="outcome_attribute" name="dependent_variable" parser_action="quote_string" type="string">ln_total_price=ln_bounded(building.structure_value+building.disaggregate(parcel.land_value))</argument>
             <argument name="dataset" type="string">building</argument>
           </estimate>
         </structure>
@@ -149,7 +198,7 @@
             <argument name="submodel_string" parser_action="quote_string" type="string">business.sector_id</argument>
             <argument name="sampler" convert_blank_to_none="True" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument name="filter" convert_blank_to_none="True" type="string"/>
+            <argument name="filter" convert_blank_to_none="True" type="string"></argument>
             <argument name="run_config" type="dictionary">
               <key name="sample_size_locations" type="integer">50</key>
               <key name="compute_capacity_flag" type="string">True</key>
