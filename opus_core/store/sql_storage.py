@@ -211,11 +211,13 @@ class sql_storage(Storage):
 
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
         mapping = {
-                    'BIGINT': dtype('int64'), 
+                    'BIGINT': dtype('i8'), 
+                    'SMALLINT': dtype('i'),
                     'INTEGER': dtype('i'),
                     'NUMERIC': dtype('f'),
                     'FLOAT': dtype('f'),
                     
+                    'CHAR': dtype('S'),
                     'VARCHAR': dtype('S'),
                     'TEXT': dtype('S'),
                     'STRING': dtype('S'),
