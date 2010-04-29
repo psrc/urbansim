@@ -221,6 +221,7 @@ class sql_storage(Storage):
                     'CHAR': dtype('S'),
                     'VARCHAR': dtype('S'),
                     'TEXT': dtype('S'),
+                    'MEDIUMTEXT': dtype('S'),
                     'STRING': dtype('S'),
                     'UNICODE': dtype('U'),
                     
