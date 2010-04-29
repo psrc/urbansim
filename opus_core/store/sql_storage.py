@@ -210,9 +210,10 @@ class sql_storage(Storage):
         return mapping[column_dtype.kind]
 
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
-        mapping = {
+        specified_type_mapping = {
                     'BIGINT': dtype('i8'), 
                     'SMALLINT': dtype('i'),
+                    'TINYINT': dtype('i'),
                     'INTEGER': dtype('i'),
                     'NUMERIC': dtype('f'),
                     'FLOAT': dtype('f'),
@@ -227,14 +228,26 @@ class sql_storage(Storage):
                     
                     'BOOLEAN': dtype('b'),
                  }
-        
+        ## if a sqlalchemy type is specified in the type mapping above
         column_type_str = self.get_column_type_str(column_type, uppercase=True)
+        if specified_type_mapping.has_key(column_type_str):
+            return specified_type_mapping[column_type_str]
         
-        if mapping.has_key(column_type_str):
-            return mapping[column_type_str]
+        ## resort to default class instance checking 
+        if isinstance(column_type, Integer):
+            default_type = dtype('i')
+        elif isinstance(column_type, Float):
+            default_type = dtype('f')
+        elif isinstance(column_type, Numeric):
+            default_type = dtype('f')
+        elif isinstance(column_type, Text):
+            default_type = dtype('S')
+        elif isinstance(column_type, Boolean):
+            default_type = dtype('b')
         else:
-            raise TypeError, 'Unrecognized column type: %s' % column_type_str        
-
+            raise TypeError, 'Unrecognized column type: %s' % column_type_str
+        
+        return default_type
     
 if sqlalchemy is None:
     if __name__ == '__main__':
