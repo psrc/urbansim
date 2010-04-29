@@ -216,6 +216,7 @@ class sql_storage(Storage):
                     'INTEGER': dtype('i'),
                     'NUMERIC': dtype('f'),
                     'FLOAT': dtype('f'),
+                    'DOUBLE': dtype('f8'),
                     
                     'CHAR': dtype('S'),
                     'VARCHAR': dtype('S'),
@@ -236,7 +237,6 @@ class sql_storage(Storage):
     
 if sqlalchemy is None:
     if __name__ == '__main__':
-        from opus_core.logger import logger 
         logger.log_warning('Skipping sql_storage unit tests -- could not import the sqlalchemy module.')
     
 else:
