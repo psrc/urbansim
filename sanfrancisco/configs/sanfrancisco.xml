@@ -53,13 +53,7 @@
       <variable use="indicator" source="expression" name ="planning_district.empl_mixed" type="variable_definition">planning_district.aggregate(where(sanfrancisco.building.building_use_id==10,sanfrancisco.building.employment,0),intermediates=[parcel])</variable>
       <variable use="indicator" source="expression" name ="planning_district.empl_nonres" type="variable_definition">planning_district.aggregate(sanfrancisco.building.employment,intermediates=[parcel])</variable>
       <variable use="indicator" source="expression" name ="planning_district.district" type="variable_definition">planning_district.district</variable>
-    </expression_library><advanced type="category" followers="spatial_datasets">
-      <dataset_pool_configuration type="class">
-        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['sanfrancisco','urbansim_parcel','urbansim','opus_core']</argument>
-      </dataset_pool_configuration>
-    </advanced>
+    </expression_library>
     <available_datasets type="list">['building','parcel','zone','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
@@ -250,104 +244,6 @@
           </estimate>
         </structure>
       </model>
-      <model name="building_transition_model" type="model">
-        <structure type="dictionary">
-          <import hidden="True" name="import" type="dictionary">
-            <class_module type="string">sanfrancisco.models.building_transition_model</class_module>
-            <class_name>BuildingTransitionModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name hidden="True" name="name" type="string">BuildingTransitionModel</name>
-            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
-          </init>
-          <run type="dictionary">
-            <output hidden="True" name="output" type="string">new_building_index</output>
-            <argument name="building_set" type="string">building</argument>
-            <argument name="building_use_classification_table" type="string">building_use_classification</argument>
-            <argument name="vacancy_table" type="string">target_vacancy</argument>
-            <argument name="history_table" type="string">development_event_history</argument>
-            <argument name="year" type="string">year</argument>
-            <argument name="location_set" type="string">parcel</argument>
-            <argument name="resources" type="string">model_resources</argument>
-          </run>
-        </structure>
-      </model>
-      <model name="building_location_choice_model" type="model">
-        <estimation_config name="Estimation Configuration" parser_action="skip">
-          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
-        </estimation_config>
-        <structure type="dictionary">
-          <group_by_attribute type="list">('building_use_classification', 'name')</group_by_attribute>
-          <import name="import" type="dictionary">
-            <class_module>sanfrancisco.models.building_location_choice_model</class_module>
-            <class_name>BuildingLocationChoiceModel</class_name>
-          </import>
-          <init type="dictionary">
-            <argument name="location_set" type="string">parcel</argument>
-            <argument name="submodel_string" parser_action="quote_string" type="string">building.building_use_id</argument>
-            <argument name="capacity_string" parser_action="quote_string" type="string">UNITS_capacity</argument>
-            <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
-            <argument name="number_of_agents_string" convert_blank_to_none="True" parser_action="quote_string" type="string">sanfrancisco.parcel.UNITS</argument>
-            <argument name="number_of_units_string" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
-            <argument name="developable_maximum_unit_variable" convert_blank_to_none="True" parser_action="quote_string" type="string">UNITS_capacity</argument>
-            <argument name="developable_minimum_unit_variable" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
-            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">sanfrancisco.building.building_class_id</argument>
-            <argument name="dataset_pool" type="string">dataset_pool</argument>
-            <argument name="estimate_config" type="dictionary">
-              <key name="weights_for_simulation_string" type="string">None</key>
-            </argument>
-            <argument name="run_config" type="dictionary">
-              <key name="agent_units_string" convert_blank_to_none="True" type="string">sanfrancisco.building.building_size</key>
-            </argument>
-            <name name="name" type="string">BuildingLocationChoiceModel</name>
-          </init>
-          <prepare_for_run type="dictionary">
-            <output name="output" type="string">(specification, coefficients)</output>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
-            <argument name="coefficients_table" parser_action="quote_string" type="string">building_location_choice_model_coefficients</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">building_location_choice_model_specification</argument>
-            <name name="name" type="string">prepare_for_run</name>
-          </prepare_for_run>
-          <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'records_per_chunk':500}</argument>
-            <argument name="agent_set" type="string">building</argument>
-            <argument name="specification" type="string">specification</argument>
-            <argument name="coefficients" type="string">coefficients</argument>
-            <argument name="agents_index" type="string">new_building_index</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-          </run>
-          <prepare_for_estimate type="dictionary">
-            <output name="output" type="string">(specification, index)</output>
-            <argument name="specification_storage" type="string">base_cache_storage</argument>
-            <argument name="specification_table" parser_action="quote_string" type="string">development_location_choice_model_specification</argument>
-            <argument name="building_set" type="string">building</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument name="constants" type="string">urbansim_constant</argument>
-            <argument name="base_year" type="integer">2001</argument>
-            <argument convert_blank_to_none="True" name="buildings_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
-            <argument convert_blank_to_none="True" name="buildings_for_estimation_storage" type="string">base_cache_storage</argument>
-            <name name="name" type="string">prepare_for_estimate</name>
-          </prepare_for_estimate>
-          <estimate type="dictionary">
-            <output name="output" type="string">(coefficients, dummy)</output>
-            <argument name="specification" type="string">specification</argument>
-            <argument name="agent_set" type="string">building</argument>
-            <argument name="data_objects" type="string">datasets</argument>
-            <argument name="agents_index" type="string">index</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
-          </estimate>
-        </structure>
-        <specification type="dictionary">
-          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
-            <description type="string">No submodel</description>
-            <variable_list type="variable_list">
-              <variable_spec name=".lnlotsqft"/>
-            </variable_list>
-          </submodel>
-        </specification>
-      </model>
       <model name="process_pipeline_events" type="model">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
@@ -473,6 +369,7 @@
             <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
             <selectable name="activities" type="selectable">True</selectable>
             <selectable name="building_types" type="selectable">True</selectable>
+            <selectable name="building_type_classification" type="selectable">True</selectable>
             <selectable name="urbansim_constants" type="selectable">True</selectable>
             <selectable name="target_vacancies" type="selectable">True</selectable>
             <selectable name="business_location_choice_model_coefficients" type="selectable">True</selectable>
@@ -501,7 +398,6 @@
             <selectable name="tracts" type="selectable">True</selectable>
             <selectable name="sectors" type="selectable">True</selectable>
             <selectable name="planning_districts" type="selectable">True</selectable>
-            <selectable name="building_types" type="selectable">True</selectable>
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
@@ -523,7 +419,10 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">False</selectable>
+          <selectable name="building_type" type="selectable">True</selectable>
+          <selectable name="building_type_classification" type="selectable">True
+            <package_name type="string">sanfrancisco</package_name>
+          </selectable>
           <selectable name="parcel" type="selectable">True
           	<package_name type="string">sanfrancisco</package_name>
           </selectable>
