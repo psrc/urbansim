@@ -196,6 +196,10 @@ class ChoiceModel(ChunkModel):
         choice_indices = self.simulate_chunk()
         choice_set_ids = self.choice_set.get_id_attribute()
         choices = where(choice_indices < 0, -1, choice_set_ids[choice_indices])
+
+        #modify choices
+        agent_set.set_values_of_one_attribute(self.choice_set.dataset_name, choices, agents_index)
+
         del self.run_config["index"]
         return choices
 

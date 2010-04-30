@@ -143,8 +143,9 @@ class LocationChoiceModel(ChoiceModel):
 
         choices = ChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
 
+        ## this is done in choice_model
         #modify locations
-        agent_set.set_values_of_one_attribute(location_id_name, choices, agents_index)
+        #agent_set.set_values_of_one_attribute(location_id_name, choices, agents_index)
         
         if self.run_config.has_key("capacity"):
             del self.run_config["capacity"]

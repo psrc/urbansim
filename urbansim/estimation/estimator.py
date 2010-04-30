@@ -115,7 +115,7 @@ class Estimator(object):
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
-    def predict(self, predicted_choice_id_prefix="predicted_", predicted_choice_id_name=None):
+    def predict(self, predicted_choice_id_name, agents_index=None):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
@@ -123,7 +123,10 @@ class Estimator(object):
         if self.agents_index_for_prediction is None:
             self.agents_index_for_prediction = self.get_agent_set_index().copy()
             
-        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "_index"
+        if agents_index is None:
+            agents_index = self.agents_index_for_prediction
+            
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "agents_index"
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
 
         ### save specification and coefficients to cache (no matter the save_estimation_results flag)
@@ -148,21 +151,22 @@ class Estimator(object):
             choice_id_name = self.get_choice_set().get_id_name()[0]
             # save current locations of agents
             current_choices = agents.get_attribute(choice_id_name).copy()
-
-            if predicted_choice_id_name is None or len(predicted_choice_id_name) == 0:
-                predicted_choice_id_name = predicted_choice_id_prefix + choice_id_name
-
+            dummy_data = zeros(current_choices.size, dtype=current_choices.dtype)-1
+            agents.modify_attribute(name=choice_id_name, data=dummy_data) #reset all choices
+            
             run_year_namespace["process"] = "run"
+            run_year_namespace["agents_index"] = agents_index
             run_year_namespace["processmodel_config"] = tmp_config['models_configuration'][self.model_name]['controller']['run']
-            self.model_system.do_process(run_year_namespace)
+            new_choices = self.model_system.do_process(run_year_namespace)
             
             #self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
-            new_choices = agents.get_attribute(choice_id_name).copy()
+            #new_choices = agents.get_attribute(choice_id_name).copy()
             agents.modify_attribute(name=choice_id_name, data=current_choices)
+            dummy_data[agents_index] = new_choices
             if predicted_choice_id_name not in agents.get_known_attribute_names():
-                agents.add_primary_attribute(name=predicted_choice_id_name, data=new_choices)
+                agents.add_primary_attribute(name=predicted_choice_id_name, data=dummy_data)
             else:
-                agents.modify_attribute(name=predicted_choice_id_name, data=new_choices)
+                agents.modify_attribute(name=predicted_choice_id_name, data=dummy_data)
             logger.log_status("Predictions saved into attribute " + predicted_choice_id_name)
             return True
         except Exception, e:
@@ -172,60 +176,70 @@ class Estimator(object):
         return False
 
     def create_prediction_success_table(self, 
-                                        geography_id_expression="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
-                                        predicted_choice_id_prefix="predicted_", 
+                                        summarize_by=None, 
                                         predicted_choice_id_name=None,
+                                        predicted_choice_id_prefix="predicted_",
                                         log_to_file=None,
                                         force_predict=True):
         agents = self.get_agent_set()
         choices = self.get_choice_set()
         choice_id_name = choices.get_id_name()[0]
+        
+        if self.agents_index_for_prediction is not None:
+            agents_index = self.agents_index_for_prediction
+        else:
+            agents_index = self.get_agent_set_index()
+
         if predicted_choice_id_name is None or len(predicted_choice_id_name) == 0:
             predicted_choice_id_name = predicted_choice_id_prefix + choice_id_name
             
         if force_predict or (predicted_choice_id_name not in agents.get_known_attribute_names()):
-            if not self.predict(predicted_choice_id_prefix=predicted_choice_id_prefix, 
-                                predicted_choice_id_name=predicted_choice_id_name):
+            if not self.predict(predicted_choice_id_name=predicted_choice_id_name,
+                                agents_index=agents_index
+                                ):
+                logger.log_error("Failed to run simulation for prediction; unable to create prediction success table.")
                 return
 
         if log_to_file is not None and len(log_to_file) > 0:
             logger.enable_file_logging(log_to_file)
             
-        if self.agents_index_for_prediction is not None:
-            agents_index = self.agents_index_for_prediction
-        else:
-            agents_index = self.get_agent_set_index()
+        ## by default, compare predicted choice with observed choice
+        ## this is not feasible for location choice model, where the 
+        ## alternative set is too large to be useful
+        if summarize_by is None:
+            summarize_by = "%s.%s" % (agents.dataset_name, choice_id_name)
             
-        geography_expression_dataset_name = VariableName(geography_id_expression).get_dataset_name()
-        if geography_expression_dataset_name == choices.dataset_name:
-            geography_id = choices.compute_variables(geography_id_expression)
+        summarize_dataset_name = VariableName(summarize_by).get_dataset_name()
+        if summarize_dataset_name == choices.dataset_name:
+            summary_id = choices.compute_variables(summarize_by)
             
             chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
             predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
             chosen_choice_index = choices.get_id_index(chosen_choice_id)
             predicted_choice_index = choices.get_id_index(predicted_choice_id)
             
-            chosen_geography_id = geography_id[chosen_choice_index]
-            predicted_geography_id = geography_id[predicted_choice_index]
+            chosen_summary_id = summary_id[chosen_choice_index]
+            predicted_summary_id = summary_id[predicted_choice_index]
     
-            unique_geography_id = unique(geography_id)
-        elif geography_expression_dataset_name == agents.dataset_name:
-            chosen_geography_id = agents.compute_variables(geography_id_expression)[agents_index]
+            unique_summary_id = unique(summary_id)
+        elif summarize_dataset_name == agents.dataset_name:
+            chosen_summary_id = agents.compute_variables(summarize_by)[agents_index]
             
             chosen_choice_id = agents.get_attribute(choice_id_name).copy()
             predicted_choice_id = agents.get_attribute(predicted_choice_id_name)
             agents.modify_attribute(name=choice_id_name, data=predicted_choice_id)
-            predicted_geography_id = agents.compute_variables(geography_id_expression)[agents_index]
+            predicted_summary_id = agents.compute_variables(summarize_by)[agents_index]
             
             agents.modify_attribute(name=choice_id_name, data=chosen_choice_id)
     
-            unique_geography_id = unique( concatenate((chosen_geography_id, predicted_geography_id)) )
+            unique_summary_id = unique( concatenate((chosen_summary_id, predicted_summary_id)) )
         else:
-            logger.log_error("geography expression %s is specified for an unknown dataset" % geography_id_expression)
+            logger.log_error("summarize_by expression '%s' is specified for dataset %s, which is neither the choice_set '%s' nor the agent_set '%s'." 
+                             % (summarize_by, summarize_dataset_name, choices.dataset_name, agents.dataset_name))
             return False
             
         # observed on row, predicted on column
-        prediction_matrix = zeros( (unique_geography_id.size, unique_geography_id.size), dtype="int32" )
+        prediction_matrix = zeros( (unique_summary_id.size, unique_summary_id.size), dtype="int32" )
 
         def _convert_array_to_tab_delimited_string(an_array):
             from numpy import dtype
@@ -234,12 +248,12 @@ class Estimator(object):
             return "\t".join([str(item) for item in an_array])
         
         logger.log_status("Observed_id\tSuccess_rate\t%s" % \
-                          _convert_array_to_tab_delimited_string(unique_geography_id) )
+                          _convert_array_to_tab_delimited_string(unique_summary_id) )
         i = 0
-        success_rate = zeros( unique_geography_id.size, dtype="float32" )
-        for observed_id in unique_geography_id:
-            predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
-            prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
+        success_rate = zeros( unique_summary_id.size, dtype="float32" )
+        for observed_id in unique_summary_id:
+            predicted_id = predicted_summary_id[chosen_summary_id==observed_id]
+            prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_summary_id )
             if prediction_matrix[i].sum() > 0:
                 if prediction_matrix[i].sum() > 0:
                     success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
