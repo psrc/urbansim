@@ -1,5 +1,5 @@
 \chapter{The Models Manager}
-
+\label{chap:models-manager}
 The model manager tab\index{Model Manager tab}\index{Graphical User Interface (GUI)!Model Manager tab}
  in the GUI provides the functionality to create models of various types, configure them, 
  specify the variables to use in them, and then estimate their parameters if they have a form that 
@@ -123,57 +123,60 @@ One other note at this point is that the specification and estimation results ar
 \end{figure}
 
 
-%\section{Creating a Choice Model}
-% Replace this later, after further testing and cleanup
-%The next type of model we will create is a choice model.  This is a very common modeling application, and is used widely.  Our example for this demonstration is a model of housing type choice, which for purposes of keeping the example simple, we reduce to two alternatives: single-family housing type, or other.  It is likely that households choosing to live in single-family housing may make different trade-offs in other choices, such as travel, and car ownership.  By reducing the model to two outcomes, we create a binary choice model specification.  We always need to use one alternative as a base of comparison in choice models, so for this model we will use the other housing type as the base of comparison.  
+\section{Creating a Choice Model}
+Replace this later, after further testing and cleanup
+The next type of model we will create is a choice model.  This is a very common modeling application, and is used widely.  Our example for this demonstration is a model of housing type choice, which for purposes of keeping the example simple, we reduce to two alternatives: single-family housing type, or other.  It is likely that households choosing to live in single-family housing may make different trade-offs in other choices, such as travel, and car ownership.  By reducing the model to two outcomes, we create a binary choice model specification.  We always need to use one alternative as a base of comparison in choice models, so for this model we will use the other housing type as the base of comparison.  
 
-%Below are the configuration settings for creating a choice model of housing type.  In order to create this model for estimation purposes, we will exclude the few households that are in non-residential property types, and only keep those in multi-family, condominium, and single-family housing.  These are reflected by building type id values of 4, 12, and 19, respectively, in the seattle parcel data.  Filtering the data to include only these three values can be done with the numpy logical\_or command, but since it takes only two arguments, we need to create a nested comparison, as shown below.  Since there are three housing types represented in this data, and we want to create a binary choice outcome for simplicity, it is necessary to create a dependent variable that is 2 if the household occupies a single family house, and 1 otherwise.  In this example, since we will use the entire household table, we draw a small sample of 5\% of the agents to use in estimating the model.
+Below are the configuration settings for creating a choice model of housing type.  In order to create this model for estimation purposes, we will exclude the few households that are in non-residential property types, and only keep those in multi-family, condominium, and single-family housing.  These are reflected by building type id values of 4, 12, and 19, respectively, in the seattle parcel data.  Filtering the data to include only these three values can be done with the numpy logical\_or command, but since it takes only two arguments, we need to create a nested comparison, as shown below.  Since there are three housing types represented in this data, and we want to create a binary choice outcome for simplicity, it is necessary to create a dependent variable that is 2 if the household occupies a single family house, and 1 otherwise.  In this example, since we will use the entire household table, we draw a small sample of 5\% of the agents to use in estimating the model.
 
-%\begin{table}[htp]
-%\caption{Creating a Housing Type Choice Model}
-%\label{tab:housing-type-choice-model}
-%\begin{center}
-%\begin{tabular}{ p{1.2in}  p{1.2in} p{3.2in}  }
-%\toprule[1.5pt]
-%Configuration Entry & Node & Value \\
-%\midrule
-%Model Name & & housing\_type\_choice\_model \\
-%Choice Set & Init & [1, 2] \\
-%Choice Attribute & Init & single\_family=(household.disaggregate\\ & & (building.building\_type\_id)==19)+1 \\
-%Estimation Size Agents & Init.Estimation Config & 0.05 \\
-%Agent Set & Run, Prepare for Run, Estimate, Prepare for Estimate & household \\
-%Agent Filter & Prepare for Run & numpy.logical\_or(numpy.logical\_or(household.\\ & & %disaggregate(building.building\_type\_id)==4,household. \\ & & disaggregate(building.building\_type\_id)==12),household.\\ & & %disaggregate(building.building\_type\_id)==19) \\
-%Specification Table & Prepare for Run & housing\_type\_choice\_model\_specifications \\
-%Coefficients Table & Prepare for Run, Prepare for Estimate & housing\_type\_choice\_model\_coefficients \\
-%\bottomrule
-%\end{tabular}
-%\end{center}
-%\end{table}
+\begin{table}[htp]
+\caption{Creating a Housing Type Choice Model}
+\label{tab:housing-type-choice-model}
+\begin{center}
+\begin{tabular}{ p{1.2in}  p{1.2in} p{3.2in}  }
+\toprule[1.5pt]
+Configuration Entry & Node & Value \\
+\midrule
+Model Name & & housing\_type\_choice\_model \\
+Choice Set & Init & [1, 2] \\
+Choice Attribute & Init & single\_family=(household.disaggregate\\ & & (building.building\_type\_id)==19)+1 \\
+Estimation Size Agents & Init.Estimation Config & 0.05 \\
+Agent Set & Run, Prepare for Run, Estimate, Prepare for Estimate & household \\
+Agent Filter & Prepare for Run & numpy.logical\_or(numpy.logical\_or(household.\\ 
+& & \%disaggregate(building.building\_type\_id)==4,household. \\ 
+& & disaggregate(building.building\_type\_id)==12),household.\\ 
+& & \%disaggregate(building.building\_type\_id)==19) \\
+Specification Table & Prepare for Run & housing\_type\_choice\_model\_specifications \\
+Coefficients Table & Prepare for Run, Prepare for Estimate & housing\_type\_choice\_model\_coefficients \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
-%Figure \ref{fig:configure-choice-model} shows the housing type choice model configuration in progress.  For a binary choice model such as this, the specification of the model is quite similar to the specification of the regression model, but there are some subtle differences.  The most important one is that, as this model is implemented in Opus now, it requires at least one variable in each equation - that is - per alternative.  We typically assign the constant to alternative 1, and all other variables to alternative 2.  In a future revision of the code, the base alternative will not take any variables (this is the more standard implementation).  Figure \ref{fig:choice-model-specification} shows the initial specification of the housing type choice model, with a constant for the other housing types, and income and has\_children included in the utility specification for the single family housing alternative. 
+Figure \ref{fig:configure-choice-model} shows the housing type choice model configuration in progress.  For a binary choice model such as this, the specification of the model is quite similar to the specification of the regression model, but there are some subtle differences.  The most important one is that, as this model is implemented in Opus now, it requires at least one variable in each equation - that is - per alternative.  We typically assign the constant to alternative 1, and all other variables to alternative 2.  In a future revision of the code, the base alternative will not take any variables (this is the more standard implementation).  Figure \ref{fig:choice-model-specification} shows the initial specification of the housing type choice model, with a constant for the other housing types, and income and has\_children included in the utility specification for the single family housing alternative. 
 
-%Once the model is specified, it needs to be added to the list of models to estimate, and selected as the model to estimate, as was the case in the preceding regression model example.  Once the model has been added and the project saved, the model can be estimated with the normal right-click option on the models to estimate node.  The results are shown in Figure \ref{fig:choice-model-estimation}.
+Once the model is specified, it needs to be added to the list of models to estimate, and selected as the model to estimate, as was the case in the preceding regression model example.  Once the model has been added and the project saved, the model can be estimated with the normal right-click option on the models to estimate node.  The results are shown in Figure \ref{fig:choice-model-estimation}.
 
-%\begin{figure}[htp]
-%\begin{center}
-%\includegraphics[scale=0.35]{graphics/configure-choice-model.png}
-%\end{center}
-%\caption{Configuring the Housing Type Choice Model}
-%\label{fig:configure-choice-model}
-%\end{figure}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/configure-choice-model.png}
+\end{center}
+\caption{Configuring the Housing Type Choice Model}
+\label{fig:configure-choice-model}
+\end{figure}
 
-%\begin{figure}[htp]
-%\begin{center}
-%\includegraphics[scale=0.35]{graphics/choice-model-specification.png}
-%\end{center}
-%\caption{Specifying the Housing Type Choice Model}
-%\label{fig:choice-model-specification}
-%\end{figure}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/choice-model-specification.png}
+\end{center}
+\caption{Specifying the Housing Type Choice Model}
+\label{fig:choice-model-specification}
+\end{figure}
 
-%\begin{figure}[htp]
-%\begin{center}
-%\includegraphics[scale=0.35]{graphics/choice-model-estimation.png}
-%\end{center}
-%\caption{Estimating the Housing Type Choice Model}
-%\label{fig:choice-model-estimation}
-%\end{figure}
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[scale=0.35]{graphics/choice-model-estimation.png}
+\end{center}
+\caption{Estimating the Housing Type Choice Model}
+\label{fig:choice-model-estimation}
+\end{figure}
