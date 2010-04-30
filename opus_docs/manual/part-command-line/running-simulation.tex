@@ -145,9 +145,10 @@ If you halt a run or it fails, you can restart it at the beginning of any year.
 To restart the run with \verb|run_id| 42 at the beginning of year 2005, do:
 
 \begin{verbatim}
-python restart_run.py 42 2005
+python restart_run.py 42 2005 -p seattle_parcel
 \end{verbatim}
-from the \verb|opus_core/tools| directory. Note that the above command will delete any
+from the \verb|opus_core/tools| directory. If the services database is using sqlite, 
+\verb|-p <project_name>| argument needs to be provided. Note that the above command will delete any
 simulation cache\index{simulation cache} directories for years 2005 onward, since
 this information is no longer valid once the simulation is restarted at the
 beginning of 2005. One can suppress this behavior using the option \verb|--skip-cache-cleanup|.

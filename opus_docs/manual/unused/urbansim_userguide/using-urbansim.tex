@@ -176,7 +176,8 @@ Again, options \verb|--hostname| and \verb|--database| must be included
 if non-default values are used.  Note that the above command will delete any
 simulation cache \simulationcacheindex directories for years 2005 onward, since
 this information is no longer valid once the simulation is restarted at the
-beginning of 2005.
+beginning of 2005. If the services database is using sqlite, \verb|-p <project_name>| 
+ argument needs to be provided.  
 
 If the 2005 travel model failed and you want to restart in 2005 but not re-run
 the UrbanSim models, use the \verb|--skip-urbansim| option:
