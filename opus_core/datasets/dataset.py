@@ -107,7 +107,7 @@ class Dataset(AbstractDataset):
                 self.load_dataset(nchunks=1, attributes=[short_name])
             else:
                 self._raise_error(NameError,
-                              "Cannot find attribute '%s'." % name.get_expression())
+                              "Cannot find attribute '%s'." % attr_name.get_expression())
         elif not self.attribute_boxes[short_name].is_in_memory():
             if self.attribute_boxes[short_name].is_cached():
                 self.debug.print_debug("Loading %s.%s" % (self.get_dataset_name(), short_name), 8)
@@ -118,7 +118,7 @@ class Dataset(AbstractDataset):
                     self.load_dataset(nchunks=1, attributes=[short_name])
                 else:
                     self._raise_error(NameError,
-                                      "Cannot find attribute '%s'." % name)
+                                      "Cannot find attribute '%s'." % attr_name.get_expression())
 
         return self.attribute_boxes[short_name].get_data()
 
