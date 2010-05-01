@@ -58,8 +58,9 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
             values = dataset.get_attribute(outcome_attribute_name).copy()
             dataset.delete_one_attribute(outcome_attribute_name)
         else:
-            values = zeros(dataset.size(), float32)
-        values[index] = outcome
+            values = zeros(dataset.size(), dtype='f')
+
+        values[index] = outcome.astype(values.dtype)
         dataset.add_primary_attribute(name=outcome_attribute_name, data=values)
         self.correct_infinite_values(dataset, outcome_attribute_name, clip_all_larger_values=True)
         return outcome
