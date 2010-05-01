@@ -26,7 +26,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.filter = filter
         self.choice_attribute_name = choice_attribute_name
         self.location_id_name = location_id_name
-        ChoiceModel.__init__(self, [0, 1], choice_attribute_name=choice_attribute_name, **kwargs)
+        ChoiceModel.__init__(self, [1, 2], choice_attribute_name=choice_attribute_name, **kwargs)
         
     def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, *args, **kwargs):
         agent_set = kwargs['agent_set']
