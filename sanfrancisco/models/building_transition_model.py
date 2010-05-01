@@ -96,12 +96,12 @@ class BuildingTransitionModel( Model ):
             compute_resources.merge({"debug":self.debug})
             units_attribute         = unit_attributes[itype]
             occupied_sqft_attribute = 'occupied_sqft_of_typeclass_%s' % building_class.lower()
-            total_sqft_attribute    = 'building_sqft'
+            total_sqft_attribute    = 'where(sanfrancisco.building.building_typeclass_name==\'%s\',sanfrancisco.building.building_sqft,0)' % building_class.lower()
 
             # determine current-year vacancy rates
             building_set.compute_variables(("sanfrancisco.building." + occupied_sqft_attribute,
-                                            "sanfrancisco.building." + total_sqft_attribute), 
-                                           resources = compute_resources)
+                                            total_sqft_attribute), 
+                                            resources = compute_resources)
 
             occupied_sqft_sum   = building_set.get_attribute(occupied_sqft_attribute).sum()
             total_sqft_sum      = float( building_set.get_attribute(total_sqft_attribute).sum() )
@@ -147,16 +147,17 @@ class BuildingTransitionModel( Model ):
             mean_size = history_values_sampleset.mean()
             idx = array( [] ,dtype="int32")
             #TODO: should the 'int' in the following line be 'ceil'?
-            num_of_projects_to_select = max( 10, int( should_develop_units / mean_size ) )
+            num_of_projects_to_select = max( 10, int( should_develop_sqft / mean_size ) )
             while True:
                 idx = concatenate( ( idx, randint( 0, history_values_sampleset.size,
                                                    size=num_of_projects_to_select) ) )
                 csum = history_values_sampleset[idx].cumsum()
-                idx = idx[where( csum <= should_develop_units )]
-                if csum[-1] >= should_develop_units:
+                idx = idx[where( csum <= should_develop_sqft )]
+                if csum[-1] >= should_develop_sqft:
                     break
 
             nbuildings = idx.size
+            if nbuildings == 0: continue
             logger.log_status("idx = " + str(idx))
 
             new_building_id_end = new_building_id_start + nbuildings
