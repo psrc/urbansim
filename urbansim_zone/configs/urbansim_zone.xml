@@ -427,7 +427,7 @@
             <name name="name" type="string">RealEstateTransitionModel</name>
           </init>
           <run type="dictionary">
-            <output name="output" type="string">projects</output>
+            <output name="output" type="string">projects, _index</output>
             <argument name="realestate_dataset" type="string">building</argument>
             <argument name="year" type="string">year</argument>
             <argument name="occupied_spaces_variable" parser_action="quote_string" type="string">occupied_spaces</argument>
