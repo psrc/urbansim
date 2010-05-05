@@ -1242,9 +1242,8 @@ if __name__=="__main__":
             cm = ChoiceModel(choice_set=locations, choices = "opus_core.random_choices",
                              sampler='opus_core.samplers.weighted_sampler')
             cm.run(specification, coef, agent_set=households,
-                                 chunk_specification={'nchunks':1},
+                                 chunk_specification={'nchunks':2},
                                  debuglevel=1, 
-                                 chunk_specification = {'nchunks':2},
                                  run_config=Resources({"sample_size_locations": 10,
                                                        "export_simulation_data": True,
                                                        "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
