@@ -144,6 +144,9 @@ class ChoiceModel(ChunkModel):
         if self.compute_choice_attribute:
             agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
             
+        if (self.choice_set.get_id_name()[0] not in agent_set.get_known_attribute_names()):
+            agent_set.add_attribute(name=self.choice_set.get_id_name()[0], data=resize(array([-1]), agent_set.size()))
+            
         if self.run_config.get("demand_string", None):
             self.choice_set.add_primary_attribute(name=self.run_config.get("demand_string"),
                                           data=zeros(self.choice_set.size(), dtype="float32"))
@@ -164,6 +167,7 @@ class ChoiceModel(ChunkModel):
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.model_interaction.set_agent_set(agent_set)
+        
         self.result_choices = ChunkModel.run(self, chunk_specification, agent_set, agents_index, int32,
                                  specification=specification, coefficients=coefficients)
         return self.result_choices
@@ -247,6 +251,9 @@ class ChoiceModel(ChunkModel):
         result = self.upc_sequence.run(data, coefficients, resources=self.run_config)
         if self.compute_demand_flag:
             self.compute_demand(submodel)
+        if self.run_config.get("export_simulation_data", False):
+            self.export_simulation_data(submodel, 
+                                        self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
         return result
 
     def compute_demand(self, submodel=0):
@@ -516,7 +523,34 @@ class ChoiceModel(ChunkModel):
         """
         return arange(ichunk*chunksize, min((ichunk+1)*chunksize, max_index))
 
-
+    def get_export_simulation_file_names(self, submodel, file_name):
+        import os
+        file_name_root, file_name_ext = os.path.splitext(file_name)
+        if submodel < 0:
+            submodel = ''
+        else:
+            submodel='_submodel%s' % submodel
+        out_file_probs = "%s_probabilities%s%s" % (file_name_root, submodel, file_name_ext)
+        out_file_choices = "%s_choices%s%s" % (file_name_root, submodel, file_name_ext)
+        return (out_file_probs, out_file_choices)
+                
+    def export_simulation_data(self, submodel, file_name):
+        from numpy import concatenate
+        from misc import write_table_to_text_file
+        
+        if self.index_of_current_chunk == 0:
+            mode = 'w'
+        else:
+            mode = 'a'
+        export_file_probs, export_file_choices = self.get_export_simulation_file_names(submodel, file_name)
+        agent_ids = self.model_interaction.get_agent_ids_for_submodel(submodel)
+        probs = concatenate((agent_ids[...,newaxis], self.upc_sequence.get_probabilities()), axis=1)
+        write_table_to_text_file(export_file_probs, probs, mode=mode, delimiter='\t')
+        logger.log_status('Probabilities written into %s' % export_file_probs)
+        choice_ids = concatenate((agent_ids[...,newaxis], self.model_interaction.get_choice_ids_for_submodel(submodel)), axis=1)
+        write_table_to_text_file(export_file_choices, choice_ids, mode=mode, delimiter='\t')
+        logger.log_status('Choices written into %s' % export_file_choices)
+        
     def export_estimation_data(self, submodel, is_chosen_choice, data, coef_names, file_name, use_biogeme_data_format=False):
         from numpy import concatenate, newaxis, reshape, repeat
         import os
@@ -751,6 +785,13 @@ class ModelInteraction:
         if index is not None:
             return take(index, self.model.observations_mapping[submodel], axis=0)
 
+    def get_choice_ids_for_submodel(self, submodel):
+        ids = self.interaction_dataset.get_id_attribute_of_dataset(2)
+        return take(ids, self.model.observations_mapping[submodel], axis=0)
+        
+    def get_agent_ids_for_submodel(self, submodel):
+        return self.agent_set.get_id_attribute()[self.model.observations_mapping[submodel]]
+                                                 
     def compute_variables(self, variables=None):
         if variables is not None:
             var_list_for_this_choice_set = variables
@@ -878,11 +919,15 @@ class ModelInteraction:
         return True
     
 if __name__=="__main__":
+    import os
+    import tempfile
+    from shutil import rmtree
     from opus_core.tests import opus_unittest
     from numpy import ma, alltrue
     from scipy.ndimage import sum as ndimage_sum
     from opus_core.tests.stochastic_test_case import StochasticTestCase
     from opus_core.simulation_state import SimulationState
+    from opus_core.misc import load_table_from_text_file
 
 
     class Test(StochasticTestCase):
@@ -1169,4 +1214,45 @@ if __name__=="__main__":
             #check aggregated demand
             self.assertEqual(ma.allclose(self.demand, array([7200, 2800]) , rtol=0.1), True)
              
+        def test_run_model_and_write_simulation_data(self):
+            """
+            """
+            temp_dir = tempfile.mkdtemp(prefix='opus_choice_model_test')
+            storage = StorageFactory().get_storage('dict_storage')
+
+            household_data = {
+                'household_id': arange(100)+1,
+                'is_low_income': array(50*[0]+50*[1])
+                }
+            location_data = {
+                 'location_id': arange(500) +1,
+                 'cost': array(100*[20] + 100*[30] + 100*[50] + 200*[100])
+                 }
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
+            storage.write_table(
+                table_name = 'locations', 
+                table_data = location_data)
+            specification = EquationSpecification(variables=("household.is_low_income*location.cost",),
+                                                  coefficients=("lic",))
+            coef = Coefficients(names=("lic",), values=(0.01,))
+            # create households
+            households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+            locations = Dataset(in_storage=storage, in_table_name='locations', id_name="location_id", dataset_name="location")
+            
+            cm = ChoiceModel(choice_set=locations, choices = "opus_core.random_choices",
+                             sampler='opus_core.samplers.weighted_sampler')
+            cm.run(specification, coef, agent_set=households,
+                                 chunk_specification={'nchunks':1},
+                                 debuglevel=1, 
+                                 run_config=Resources({"sample_size_locations": 10,
+                                                       "export_simulation_data": True,
+                                                       "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
+                                 )
+            probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))
+            self.assertEqual(ma.equal(probs[0].shape, array([100, 11])), True)
+            choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))
+            self.assertEqual(ma.equal(choices[0].shape, array([100, 11])), True)
+            rmtree(temp_dir)
     opus_unittest.main()
