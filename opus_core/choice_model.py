@@ -790,7 +790,7 @@ class ModelInteraction:
         return take(ids, self.model.observations_mapping[submodel], axis=0)
         
     def get_agent_ids_for_submodel(self, submodel):
-        return self.agent_set.get_id_attribute()[self.model.observations_mapping[submodel]]
+        return self.interaction_dataset.get_id_attribute_of_dataset(1)[self.model.observations_mapping[submodel]]
                                                  
     def compute_variables(self, variables=None):
         if variables is not None:
@@ -923,7 +923,7 @@ if __name__=="__main__":
     import tempfile
     from shutil import rmtree
     from opus_core.tests import opus_unittest
-    from numpy import ma, alltrue
+    from numpy import ma, alltrue, unique
     from scipy.ndimage import sum as ndimage_sum
     from opus_core.tests.stochastic_test_case import StochasticTestCase
     from opus_core.simulation_state import SimulationState
@@ -1215,8 +1215,6 @@ if __name__=="__main__":
             self.assertEqual(ma.allclose(self.demand, array([7200, 2800]) , rtol=0.1), True)
              
         def test_run_model_and_write_simulation_data(self):
-            """
-            """
             temp_dir = tempfile.mkdtemp(prefix='opus_choice_model_test')
             storage = StorageFactory().get_storage('dict_storage')
 
@@ -1246,13 +1244,16 @@ if __name__=="__main__":
             cm.run(specification, coef, agent_set=households,
                                  chunk_specification={'nchunks':1},
                                  debuglevel=1, 
+                                 chunk_specification = {'nchunks':2},
                                  run_config=Resources({"sample_size_locations": 10,
                                                        "export_simulation_data": True,
                                                        "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
                                  )
-            probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))
-            self.assertEqual(ma.equal(probs[0].shape, array([100, 11])), True)
-            choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))
-            self.assertEqual(ma.equal(choices[0].shape, array([100, 11])), True)
+            probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))[0]
+            self.assertEqual(ma.equal(probs.shape, array([100, 11])), True)
+            self.assertEqual(unique(probs[:,0]).size == 100, True)
+            choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))[0]
+            self.assertEqual(ma.equal(choices.shape, array([100, 11])), True)
+            self.assertEqual(unique(choices[:,0]).size == 100, True)
             rmtree(temp_dir)
     opus_unittest.main()
