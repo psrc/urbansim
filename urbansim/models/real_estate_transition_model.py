@@ -43,15 +43,15 @@ class RealEstateTransitionModel(Model):
             sample_from_dataset = None,
             sample_filter="",
             reset_attribute_value={}, 
-            dataset_pool=None,  
+            dataset_pool=None,
+            append_to_realestate_dataset = False,
             table_name = "development_projects",
             dataset_name = "development_project",
             id_name = [],
             **kwargs):
-        """ 
-        
+        """         
         sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
-        ## TODO: enable arguments to discard attributes in sample_from_dataset
+        append_to_realestate_dataset - whether to append the new dataset to realestate_dataset
         """
         
         if self.target_vancy_dataset is None:
@@ -141,14 +141,14 @@ class RealEstateTransitionModel(Model):
             ## total/occupied_spaces_variable can be specified either as a universal name for all realestate 
             ## or in targe_vacancy_rate dataset for each vacancy category
             if occupied_spaces_variable in target_vacancy_for_this_year.get_known_attribute_names():
-                this_occupied_spaces_variable = target_vacancy_for_this_year[occupied_spaces_variable][index]
+                this_occupied_spaces_variable = target_vacancy_for_this_year.get_attribute(occupied_spaces_variable)[index]
 
             if total_spaces_variable in target_vacancy_for_this_year.get_known_attribute_names():
-                this_total_spaces_variable = target_vacancy_for_this_year[total_spaces_variable][index]
+                this_total_spaces_variable = target_vacancy_for_this_year.get_attribute(total_spaces_variable)[index]
             
             logger.be_quiet() #temporarily disable logging
-            realestate_dataset.compute_one_variable_with_unknown_package(this_occupied_spaces_variable, dataset_pool=dataset_pool, quiet=True)
-            realestate_dataset.compute_one_variable_with_unknown_package(this_total_spaces_variable, dataset_pool=dataset_pool, quiet=True)
+            realestate_dataset.compute_one_variable_with_unknown_package(this_occupied_spaces_variable, dataset_pool=dataset_pool)
+            realestate_dataset.compute_one_variable_with_unknown_package(this_total_spaces_variable, dataset_pool=dataset_pool)
             logger.talk()
             
             actual_num = (indicator * realestate_dataset.get_attribute(this_total_spaces_variable)).sum()
@@ -186,8 +186,10 @@ class RealEstateTransitionModel(Model):
             
         if PrettyTable is not None:
             logger.log_status("\n" + status_log.get_string())
-        project_data = {}
-        project_dataset = None
+            
+        result_data = {}
+        result_dataset = None
+        index = None
         if sampled_index.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
@@ -195,20 +197,29 @@ class RealEstateTransitionModel(Model):
             logger.log_status()
             for attribute in sample_from_dataset.get_primary_attribute_names():
                 if reset_attribute_value.has_key(attribute):
-                    project_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
+                    result_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
                 else:
-                    project_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
+                    result_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
         
             storage = StorageFactory().get_storage('dict_storage')
-            storage.write_table(table_name=table_name, table_data=project_data)
+            storage.write_table(table_name=table_name, table_data=result_data)
     
-            project_dataset = Dataset(id_name = id_name,
+            result_dataset = Dataset(id_name = id_name,
                                       in_storage = storage,
                                       in_table_name = table_name,
                                       dataset_name = dataset_name
                                       )
+            index = arange(result_dataset.size())
+            
+        if append_to_realestate_dataset:
+            if len(result_data) > 0:
+                index = realestate_dataset.add_elements(result_data, require_all_attributes=False,
+                                                        change_ids_if_not_unique=True)
+            else:
+                index = None
+            result_dataset = realestate_dataset
         
-        return project_dataset
+        return (result_dataset, index)
     
     def prepare_for_run(self, dataset_name=None, table_name=None, storage=None):
         if (storage is None) or ((table_name is None) and (dataset_name is None)):
@@ -342,7 +353,7 @@ class RETMTests(StochasticTestCase):
             )
 
         dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
-        results = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
+        results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2000,
                            occupied_spaces_variable = 'occupied_units',
                            total_spaces_variable = 'total_units',
@@ -352,6 +363,43 @@ class RETMTests(StochasticTestCase):
                            resources=self.compute_resources)
 
         self.assertEqual( results, None,
+                         "Nothing should've been added/developed" )
+        
+    def test_no_development_with_zero_target_vacancy_return_full_dataset( self ):
+        """If the target vacany ratest are 0%, then no development should occur and thus,
+        the results returned (which represents development projects) should be empty.
+        In fact anytime the target vacancy rate is strictly less than the current vacancy rate,
+        then no development should ever occur.
+        """
+
+        """specify that the target vacancies for the year 2000 should be 0% for both
+        residential and non-residential. with these constrains, no new development projects
+        should be spawned for any set of agents."""
+        self.storage.write_table(
+            table_name='target_vacancies',
+            table_data={
+                "year":array( [2000, 2000, 2000] ),
+                "building_type_id": array([1,2,4]), 
+                "occupied_units": array(['occupied_sqft', 'occupied_sqft', 'number_of_households']),
+                "total_units":    array(['non_residential_sqft', 'non_residential_sqft', 'residential_units']),
+                "target_vacancy":array( [0.0, 0, 0] ),
+                }
+            )
+
+        dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
+        results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
+                           year = 2000,
+                           occupied_spaces_variable = 'occupied_units',
+                           total_spaces_variable = 'total_units',
+                           target_attribute_name = 'target_vacancy',
+                           sample_from_dataset = self.dataset_pool.get_dataset('development_event_history'),
+                           dataset_pool=self.dataset_pool,
+                           append_to_realestate_dataset=True,
+                           resources=self.compute_resources)
+
+        self.assertEqual( results.size(), 30)
+        
+        self.assertEqual( index, None,
                          "Nothing should've been added/developed" )
 
     def test_development_with_nonzero_target_vacancy_and_equal_history( self ):
@@ -370,25 +418,24 @@ class RETMTests(StochasticTestCase):
             )
         
         dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
-        results = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
+        results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_units',
                            total_spaces_variable = 'total_units',
                            target_attribute_name = 'target_total_vacancy',
                            sample_from_dataset = self.dataset_pool.get_dataset('development_event_history'),
                            dataset_pool=self.dataset_pool,
+                           append_to_realestate_dataset=True,
                            resources=self.compute_resources)
 
-        number_of_new_residential_units = results.get_attribute( 'residential_units' ).sum()
-        self.assertEqual( number_of_new_residential_units, 3000,
-                         """Exactly 3000 residential units should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_residential_units, ) )
+        number_of_new_residential_units = results.get_attribute( 'residential_units' )[index].sum()
+        self.assertEqual( number_of_new_residential_units, 3000)
         
-        new_sqft = (results.get_attribute( 'non_residential_sqft' ) * (results.get_attribute('building_type_id')==1)).sum()
+        new_sqft = (results.get_attribute( 'non_residential_sqft' ) * (results.get_attribute('building_type_id')==1))[index].sum()
         should_be = 1000
         self.assertEqual(new_sqft, should_be)
         
-        new_sqft = (results.get_attribute( 'non_residential_sqft' ) * (results.get_attribute('building_type_id')==2)).sum()
+        new_sqft = (results.get_attribute( 'non_residential_sqft' ) * (results.get_attribute('building_type_id')==2))[index].sum()
         should_be = 0
         self.assertEqual(new_sqft, should_be)
 
@@ -408,7 +455,7 @@ class RETMTests(StochasticTestCase):
             )
         
         dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
-        results = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
+        results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_sqft',
                            total_spaces_variable = 'non_residential_sqft',
@@ -444,7 +491,7 @@ class RETMTests(StochasticTestCase):
             )
 
         dptm = RealEstateTransitionModel(target_vancy_dataset=self.dataset_pool.get_dataset('target_vacancy'))
-        results = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
+        results, index = dptm.run(realestate_dataset = self.dataset_pool.get_dataset('building'),
                            year = 2001,
                            occupied_spaces_variable = 'occupied_units',
                            total_spaces_variable = 'total_units',
