@@ -25,6 +25,7 @@ from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
 from numpy import int32, compress, float64, isnan, isinf, unique, newaxis, row_stack
 from numpy.random import permutation
+from opus_core.variables.attribute_type import AttributeType
 
 class ChoiceModel(ChunkModel):
     """
@@ -143,9 +144,18 @@ class ChoiceModel(ChunkModel):
 
         if self.compute_choice_attribute:
             agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
-            
-        if (self.choice_set.get_id_name()[0] not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=self.choice_set.get_id_name()[0], data=resize(array([-1]), agent_set.size()))
+        
+        ## add a primary attribute for choice_id_name or convert it to primary attribute
+        choice_id_name = self.choice_set.get_id_name()[0]
+        if (choice_id_name not in agent_set.get_known_attribute_names()):
+            agent_set.add_primary_attribute(name=choice_id_name, 
+                                    data=resize(array([-1]), agent_set.size()))
+        else:
+            if choice_id_name in agent_set.get_nonloaded_attribute_names():
+                agent_set.get_attribute(choice_id_name)
+            if agent_set._get_attribute_type(choice_id_name) == AttributeType.COMPUTED:
+                agent_set.attribute_boxes[choice_id_name].set_type(AttributeType.PRIMARY)
+                agent_set._add_to_primary_attribute_names(choice_id_name)
             
         if self.run_config.get("demand_string", None):
             self.choice_set.add_primary_attribute(name=self.run_config.get("demand_string"),
@@ -156,7 +166,6 @@ class ChoiceModel(ChunkModel):
 
         ## calculate cumulative supply that is compatible with demand calculation
         if self.run_config.get("supply_string", None):
-            choice_id_name = self.choice_set.get_id_name()[0]
             current_choice = agent_set.get_attribute(choice_id_name)
             agent_set.modify_attribute(choice_id_name, zeros(agents_index.size)-1, index=agents_index)
             supply = self.choice_set.compute_variables(self.run_config.get("supply_string"), dataset_pool=self.dataset_pool)
@@ -188,7 +197,8 @@ class ChoiceModel(ChunkModel):
                                       dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
         
         self.create_interaction_datasets(agent_set, agents_index, self.run_config, submodels=submodels)
-        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        ## move Choice set size log after compute_variables so it is not buried in compute_variable msg
+        #logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         index = self.model_interaction.get_choice_index()
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
@@ -211,6 +221,9 @@ class ChoiceModel(ChunkModel):
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
         self.model_interaction.compute_variables()
+        
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        
         coef = {}
         result = resize(array([-1], dtype="int32"), self.observations_mapping["index"].size)
         index = self.run_config["index"]
@@ -349,7 +362,8 @@ class ChoiceModel(ChunkModel):
                                       resources = Resources({"debug": self.debug}))
         
         self.create_interaction_datasets(agent_set, agents_index_for_estimation, estimate_config, submodels=submodels)
-        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        ## move Choice set size log after compute_variables so it is not buried in compute_variable msg
+        #logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         #self.model_interaction.set_chosen_choice(agents_index_for_estimation)
         self.model_interaction.set_chosen_choice_if_necessary(agents_index=agents_index_for_estimation)
         index = self.model_interaction.get_choice_index()
@@ -389,6 +403,9 @@ class ChoiceModel(ChunkModel):
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
         self.model_interaction.compute_variables()
+        
+        logger.log_status("Choice set size: %i" % self.get_choice_set_size())
+        
         coef = {}
         result = {}
         #index = self.estimate_config["index"]
@@ -1249,10 +1266,10 @@ if __name__=="__main__":
                                                        "simulation_data_file_name": os.path.join(temp_dir, 'sim_data.txt') })
                                  )
             probs = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_probabilities.txt'))[0]
-            self.assertEqual(ma.equal(probs.shape, array([100, 11])), True)
+            self.assert_(all(probs.shape == array([100, 11])))
             self.assertEqual(unique(probs[:,0]).size == 100, True)
             choices = load_table_from_text_file(os.path.join(temp_dir, 'sim_data_choices.txt'))[0]
-            self.assertEqual(ma.equal(choices.shape, array([100, 11])), True)
+            self.assert_(all(choices.shape == array([100, 11])))
             self.assertEqual(unique(choices[:,0]).size == 100, True)
             rmtree(temp_dir)
     opus_unittest.main()
