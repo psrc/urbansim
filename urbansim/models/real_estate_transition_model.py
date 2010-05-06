@@ -96,7 +96,7 @@ class RealEstateTransitionModel(Model):
             status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
         else:
             logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action"]))
-
+        error_log = ''
         for index in range(target_vacancy_for_this_year.size()):
             this_sampled_index = array([], dtype=int32)
             indicator = ones( realestate_dataset.size(), dtype='bool' )
@@ -149,6 +149,7 @@ class RealEstateTransitionModel(Model):
             logger.be_quiet() #temporarily disable logging
             realestate_dataset.compute_one_variable_with_unknown_package(this_occupied_spaces_variable, dataset_pool=dataset_pool)
             realestate_dataset.compute_one_variable_with_unknown_package(this_total_spaces_variable, dataset_pool=dataset_pool)
+            sample_from_dataset.compute_one_variable_with_unknown_package(this_total_spaces_variable, dataset_pool=dataset_pool)
             logger.talk()
             
             actual_num = (indicator * realestate_dataset.get_attribute(this_total_spaces_variable)).sum()
@@ -158,16 +159,19 @@ class RealEstateTransitionModel(Model):
             diff = target_num - actual_num
             if diff > 0:
                 total_spaces_in_sample_dataset = sample_from_dataset.get_attribute(this_total_spaces_variable)
-                legit_index = where(logical_and(sample_indicator, filter_indicator))[0]
-                mean_size = total_spaces_in_sample_dataset[legit_index].mean()
-                # Ensure that there are some development projects to choose from
-                num_of_projects_to_sample = max( 10, int( 0.25 * diff / mean_size ))
-                while total_spaces_in_sample_dataset[this_sampled_index].sum() < diff:
-                    lucky_index = sample_replace(legit_index, num_of_projects_to_sample)
-                    this_sampled_index = concatenate((this_sampled_index, lucky_index))
-                this_sampled_index = this_sampled_index[0:(1+searchsorted(cumsum(total_spaces_in_sample_dataset[this_sampled_index]), diff))]
-                sampled_index = concatenate((sampled_index, this_sampled_index))
-            #if diff < 0: #demolition; not yet supported
+                legit_index = where(logical_and(sample_indicator, filter_indicator) * total_spaces_in_sample_dataset > 0)[0]
+                if legit_index.size > 0:
+                    mean_size = total_spaces_in_sample_dataset[legit_index].mean()
+                    num_of_projects_to_sample = int( diff / mean_size )
+                    while total_spaces_in_sample_dataset[this_sampled_index].sum() < diff:
+                        lucky_index = sample_replace(legit_index, num_of_projects_to_sample)
+                        this_sampled_index = concatenate((this_sampled_index, lucky_index))
+                    this_sampled_index = this_sampled_index[0:(1+searchsorted(cumsum(total_spaces_in_sample_dataset[this_sampled_index]), diff))]
+                    sampled_index = concatenate((sampled_index, this_sampled_index))
+                else:
+                    error_log += "There is nothing to sample from %s and no new development will happen for" % sample_from_dataset.get_dataset_name() + \
+                              ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
+            #if diff < 0: #TODO demolition; not yet supported
             
             ##log status
             action = "0"
@@ -186,6 +190,8 @@ class RealEstateTransitionModel(Model):
             
         if PrettyTable is not None:
             logger.log_status("\n" + status_log.get_string())
+        if error_log:
+            logger.log_error(error_log)
             
         result_data = {}
         result_dataset = None
