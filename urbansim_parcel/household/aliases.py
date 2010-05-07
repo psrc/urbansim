@@ -25,4 +25,5 @@ aliases = [
    'residence_district_id = household.disaggregate(zone.district_id,intermediates=[parcel, building])',
    'residence_faz_id = household.disaggregate(zone.faz_id,intermediates=[parcel, building])',
    'residence_large_area_id = household.disaggregate(faz.large_area_id,intermediates=[zone, parcel, building])',
+   "cars_category=0*(household.cars==0)+1*(household.cars==1)+2*(household.cars==2)+3*(household.cars>=3)"
            ]
