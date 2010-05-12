@@ -385,6 +385,11 @@ class Estimator(object):
     
     def get_agent_set(self): # works only for choice models
         return self.get_model().model_interaction.interaction_dataset.get_dataset(1)
+        
+    def get_agents_for_estimation(self): # works only for choice models
+        from opus_core.datasets.dataset import DatasetSubset
+        agents = self.get_agent_set()
+        return DatasetSubset(agents, self.get_agent_set_index())
     
     def get_agent_set_index(self): # works only for choice models
         return self.get_model().model_interaction.interaction_dataset.get_index(1)
