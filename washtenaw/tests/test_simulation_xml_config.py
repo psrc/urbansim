@@ -62,14 +62,15 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
         run_manager = RunManager(services_db)
         run_as_multiprocess = True
         xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'washtenaw_parcel.xml'))
-        for scenario_name in ['washtenaw_baseline']:
+        for scenario_name in ['washtenaw_baseline_test']:
             config = xml_config.get_run_configuration(scenario_name)
             insert_auto_generated_cache_directory_if_needed(config)
-            base_year = config['base_year']
-            config['years_to_run'] = (base_year+1, base_year+4) 
+#            base_year = config['base_year']
+#            config['years_to_run'] = (base_year+1, base_year+2)
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                       configuration = config)
             run_manager.run_run(config, run_as_multiprocess = run_as_multiprocess)
+        
                        
 if __name__ == "__main__":
     opus_unittest.main()
