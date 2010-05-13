@@ -45,7 +45,7 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
         try:
             Popen( """
                         cd %s; 
-                        wget --timestamping %s --ftp-user=%s --ftp-password=%s;
+                        echo wget --timestamping %s --ftp-user=%s --ftp-password=%s;
                         rm -rf 2008;
                         unzip -o %s
                         """ % (base_year_data_path, ftp_url, ftp_user, ftp_password, file_name),
