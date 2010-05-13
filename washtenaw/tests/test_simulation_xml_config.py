@@ -37,15 +37,16 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
         file_name = os.path.split(ftp_url)[1]
         ftp_user = os.environ["FTP_USERNAME"]
         ftp_password = os.environ["FTP_PASSWORD"]
-        stdout, stderr = Popen("ls -la %s" % base_year_data_path, shell=True).communicate()
-
+        
+        #stdout, stderr = Popen("ls -la %s" % base_year_data_path, shell=True).communicate()
         #stdout, stderr = Popen("echo '%s'" % (base_year_data_path), stdout=PIPE).communicate()
-        print stdout
+        #print stdout
         
         try:
             Popen( """
                         cd %s;
                         pwd;
+                        ls -la;
                         echo wget --timestamping %s --ftp-user=%s --ftp-password=%s > /dev/null 2>&1;
                         rm -rf 2008;
                         unzip -o %s
