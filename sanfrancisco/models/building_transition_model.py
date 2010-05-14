@@ -111,13 +111,13 @@ class BuildingTransitionModel( Model ):
             vacancy_rate        = 1.0 - occupancy_rate
             vacant_sqft_sum     = vacancy_rate * total_sqft_sum
 
-            should_develop_sqft = vacant_sqft_sum < (target_vacancy_rate*total_sqft_sum)
-            logger.log_status("%s: vacancy rate: %4.2f   occupancy rate: %4.2f" 
+            should_develop_sqft = (target_vacancy_rate*total_sqft_sum) - vacant_sqft_sum
+            logger.log_status("%s: vacancy rate: %4.3f   occupancy rate: %4.3f" 
                               % (building_class, vacancy_rate, occupancy_rate))
             logger.log_status("%s: vacant: %d, should be vacant: %f, sum units: %d"
                           % (building_class, vacant_sqft_sum, target_vacancy_rate*total_sqft_sum, total_sqft_sum))
 
-            if not should_develop_sqft:
+            if should_develop_sqft <= 0:
                 logger.log_note(("Will not build any %s units, because the current vacancy of %d sqft\n"
                              + "is more than the %d sqft desired for the vacancy rate of %f.")
                             % (building_class,
@@ -135,7 +135,7 @@ class BuildingTransitionModel( Model ):
             index_sampleset = where( (history_values > 0) & (history_use_classes==building_class_id))[0]
 
             # Ensure that there are some development projects to choose from.
-            logger.log_status("shape of index_sampleset=" + str(index_sampleset.shape))
+            logger.log_status("should_develop_sqft=" + str(should_develop_sqft))
             if index_sampleset.shape[0] == 0:
                 logger.log_warning("Cannot create new buildings for building use class %s; no buildings in the event history table from which to sample."
                                    % building_class) 
@@ -155,10 +155,11 @@ class BuildingTransitionModel( Model ):
                 idx = idx[where( csum <= should_develop_sqft )]
                 if csum[-1] >= should_develop_sqft:
                     break
+            
+            logger.log_status("idx = " + str(idx))
 
             nbuildings = idx.size
             if nbuildings == 0: continue
-            logger.log_status("idx = " + str(idx))
 
             new_building_id_end = new_building_id_start + nbuildings
 
