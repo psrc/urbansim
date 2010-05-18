@@ -27,7 +27,9 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
             self.data_path = os.path.join(os.environ['OPUS_DATA_PATH'], 'san_antonio_zone')
         else:
             self.data_path = os.path.join(self.opus_home, 'data', 'san_antonio_zone')
-            
+        
+        self.xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'san_antonio_zone.xml'))
+        
         base_year_data_path = os.path.join(self.data_path, 'base_year_data')        
         if not os.path.exists(base_year_data_path):
             os.makedirs(base_year_data_path)
@@ -57,11 +59,10 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
         delete [project_name]/runs directory to free up disk space
         """
         runs_path = os.path.join(self.data_path, 'runs')
-        if os.path.exists(runs_path):
-            Popen( "rm -rf %s" % runs_path, shell=True)
+        #if os.path.exists(runs_path):
+        #    Popen( "rm -rf %s" % runs_path, shell=True)
 
     def test_estimation(self):
-        xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'san_antonio_zone.xml'))        
         for model_name in ['real_estate_price_model', 
                            'household_location_choice_model', 
                            ('employment_location_choice_model', 'home_based'),
@@ -76,7 +77,7 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
                 
             estimator = EstimationRunner(model=model_name,  
                                          model_group=group_member,
-                                         xml_configuration=xml_config,
+                                         xml_configuration=self.xml_config,
                                          configuration = None
                                          )
             estimator.estimate()
@@ -86,9 +87,8 @@ class TestSimulation(opus_unittest.OpusIntegrationTestCase):
                                                      database_configuration = 'services_database_server' )
         run_manager = RunManager(services_db)
         run_as_multiprocess = True
-        xml_config = XMLConfiguration(os.path.join(self.opus_home, 'project_configs', 'san_antonio_zone.xml'))
         for scenario_name in ['san_antonio_baseline_test']:
-            config = xml_config.get_run_configuration(scenario_name)
+            config = self.xml_config.get_run_configuration(scenario_name)
             insert_auto_generated_cache_directory_if_needed(config)
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                       configuration = config)
