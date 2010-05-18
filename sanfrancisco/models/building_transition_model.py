@@ -67,12 +67,12 @@ class BuildingTransitionModel( Model ):
         logger.log_status("building_type_id_to_class_id = " + str(building_type_id_to_class_id))
         
         # and make an column for the history table of the use classes
-        history_use_classes = zeros( (history_table.size()), dtype=int8)
-        history_uses = history_table.get_attribute("building_type_id")
+        history_type_classes = zeros( (history_table.size()), dtype=int8)
+        history_types = history_table.get_attribute("building_type_id")
         for idx in range(history_table.size()):
-            history_use_classes[idx] = building_type_id_to_class_id[history_uses[idx]]
-        logger.log_status("history_uses=" + str(history_uses))
-        logger.log_status("history_use_classes=" + str(history_use_classes))
+            history_type_classes[idx] = building_type_id_to_class_id[history_types[idx]]
+        logger.log_status("history_types=" + str(history_types))
+        logger.log_status("history_type_classes=" + str(history_type_classes))
 
         max_id = building_set.get_id_attribute().max()
         new_building_id_start = max_id + 1
@@ -131,8 +131,8 @@ class BuildingTransitionModel( Model ):
             # find sample set of qualifying buildings in the events history, 
             # e.g. where the building_type is in the correct class, and a positive 
             # number of units or sqft (or whatever) were present
-            history_values = history_table.get_attribute(units_attribute)
-            index_sampleset = where( (history_values > 0) & (history_use_classes==building_class_id))[0]
+            history_sqft = history_table.get_attribute('building_sqft')
+            index_sampleset = where( (history_sqft > 0) & (history_type_classes==building_class_id))[0]
 
             # Ensure that there are some development projects to choose from.
             logger.log_status("should_develop_sqft=" + str(should_develop_sqft))
@@ -141,17 +141,17 @@ class BuildingTransitionModel( Model ):
                                    % building_class) 
                 continue
             
-            history_values_sampleset = history_values[index_sampleset]            
-            logger.log_status("history_values_sampleset = " + str(history_values_sampleset))
+            history_sqft_sampleset = history_sqft[index_sampleset]            
+            logger.log_status("history_sqft_sampleset = " + str(history_sqft_sampleset))
 
-            mean_size = history_values_sampleset.mean()
+            mean_size = history_sqft_sampleset.mean()
             idx = array( [] ,dtype="int32")
             #TODO: should the 'int' in the following line be 'ceil'?
             num_of_projects_to_select = max( 10, int( should_develop_sqft / mean_size ) )
             while True:
-                idx = concatenate( ( idx, randint( 0, history_values_sampleset.size,
+                idx = concatenate( ( idx, randint( 0, history_sqft_sampleset.size,
                                                    size=num_of_projects_to_select) ) )
-                csum = history_values_sampleset[idx].cumsum()
+                csum = history_sqft_sampleset[idx].cumsum()
                 idx = idx[where( csum <= should_develop_sqft )]
                 if csum[-1] >= should_develop_sqft:
                     break
@@ -172,8 +172,8 @@ class BuildingTransitionModel( Model ):
             new_buildings[building_id_name] =concatenate((new_buildings[building_id_name], arange(new_building_id_start, new_building_id_end)))
             new_buildings[location_id_name] = concatenate((new_buildings[location_id_name], zeros(nbuildings)))
             new_buildings["year_built"] = concatenate((new_buildings["year_built"], year*ones(nbuildings)))
-            logger.log_status("Creating %s %s of %s %s buildings." % (history_values_sampleset[idx].sum(),
-                                                                      units_attribute, nbuildings, building_class))
+            logger.log_status("Creating %s sqft of %s %s buildings." % (history_sqft_sampleset[idx].sum(),
+                                                                      nbuildings, building_class))
             new_building_id_start = new_building_id_end + 1
             logger.log_status(new_buildings)
         building_set.add_elements(new_buildings, require_all_attributes=False)
