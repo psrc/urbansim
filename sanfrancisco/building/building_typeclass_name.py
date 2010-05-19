@@ -10,7 +10,7 @@ class building_typeclass_name(Variable):
     """The typeclass name (single, mixed, industrial, etc) of this building. """
    
     def dependencies(self):
-        return ["_building_typeclass_name=building.disaggregate(sanfrancisco.building_type_classification.name, intermediates=[building_type])"]
+        return ["_building_typeclass_name=building.disaggregate(building_type_classification.name, intermediates=[building_type])"]
         
     def compute(self,  dataset_pool):
         return self.get_dataset().get_attribute("_building_typeclass_name")
@@ -47,3 +47,6 @@ class Tests(opus_unittest.OpusTestCase):
 
         assert(alltrue(should_be==tester._get_attribute()))
 #        test_is_close_for_variable_defined_by_this_module(self, should_be)
+
+if __name__=='__main__':
+    opus_unittest.main()

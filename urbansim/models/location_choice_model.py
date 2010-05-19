@@ -2,10 +2,11 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import re
 from opus_core.resources import Resources
 from opus_core.chunk_specification import ChunkSpecification
 from numpy import zeros, array, arange, ones, float32, concatenate, where
-from numpy import int8, take, put, greater, resize
+from numpy import int8, take, put, greater, resize, intersect1d
 from scipy import ndimage
 from numpy.random import permutation
 from numpy import ma, ndarray
@@ -98,9 +99,10 @@ class LocationChoiceModel(ChoiceModel):
         #if self.location_id_string is not None:
         #    location_id = agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
 
-        location_id_name = self.choice_set.get_id_name()[0]
-        if (location_id_name not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=location_id_name, data=resize(array([-1]), agent_set.size()))
+        ## done in choice_model
+        #location_id_name = self.choice_set.get_id_name()[0]
+        #if (location_id_name not in agent_set.get_known_attribute_names()):
+        #    agent_set.add_attribute(name=location_id_name, data=resize(array([-1]), agent_set.size()))
                     
         if self.run_config.get("agent_units_string", None): # used when agents take different amount of capacity from the total capacity
             agent_set.compute_variables([self.run_config["agent_units_string"]], dataset_pool=self.dataset_pool)
@@ -236,7 +238,7 @@ class LocationChoiceModel(ChoiceModel):
             attributes = {}
             #submodels = self.model_interaction.get_submodels()
             ###TODO: it may be possible to merge this loop with sample_alternatives_by_chunk or put it in a common function
-            for submodel in submodels:
+            for submodel in submodels:                
                 agents_index_in_submodel = agents_index[self.observations_mapping[submodel]]
                 if agents_index_in_submodel.size==0:
                     continue
@@ -247,12 +249,21 @@ class LocationChoiceModel(ChoiceModel):
                     logger.log_error("There is no alternative that passes filter %s; %s agents with id %s will remain unplaced." % \
                                      (self.filter, agents_index_in_submodel.size, agent_set.get_id_attribute()[agents_index]))
                     continue
-                chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
+                
+                submodel_sampling_weights = sampling_weights
+                if isinstance(sampling_weights, str):
+                    submodel_sampling_weights = re.sub('SUBMODEL', str(submodel), sampling_weights)
+                    
+                chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
+                if type(chunk_specification) == str:
+                    chunk_specification = eval(chunk_specification)
+                chunk_specification = ChunkSpecification(chunk_specification)
                 nchunks = chunk_specification.nchunks(agents_index_in_submodel)
                 chunksize = chunk_specification.chunk_size(agents_index_in_submodel)
+                
                 interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index_in_submodel, 
                                                   choice_index, nchoices,
-                                                  weights=sampling_weights,
+                                                  weights=submodel_sampling_weights,
                                                   config=config,
                                                   nchunks=nchunks, chunksize=chunksize)
                 
@@ -281,7 +292,10 @@ class LocationChoiceModel(ChoiceModel):
                                  (self.filter, agents_index.size, agent_set.get_id_attribute()[agents_index]))
                 return #OR raise?
             
-            chunk_specification = config.get("chunk_specification_for_sampling", ChunkSpecification({"nchunks":1}))
+            chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
+            if type(chunk_specification) == str:
+                chunk_specification = eval(chunk_specification)
+            chunk_specification = ChunkSpecification(chunk_specification)            
             nchunks = chunk_specification.nchunks(agents_index)
             chunksize = chunk_specification.chunk_size(agents_index)
             interaction_dataset = self.sample_alternatives_by_chunk(agent_set, agents_index, 
@@ -308,7 +322,7 @@ class LocationChoiceModel(ChoiceModel):
         If filter is a dictionary, it chooses the one for the given submodel.
         
         """
-
+        
         if not filter:
             filter_index = arange(self.choice_set.size())
             
@@ -316,16 +330,19 @@ class LocationChoiceModel(ChoiceModel):
             filter = filter[submodel]
 
         if isinstance(filter, str):
-            filter_index = where(self.choice_set.compute_variables([filter], 
+            submodel_filter = re.sub('SUBMODEL', str(submodel), filter)
+            filter_index = where(self.choice_set.compute_variables([submodel_filter], 
                                                                    dataset_pool=self.dataset_pool))[0]
         elif isinstance(filter, ndarray):
             filter_index = filter
-
+        
         if hasattr(self, 'filter_index') and self.filter_index is not None:
-            choice_indicator = zeros(self.choice_set.size(), dtype='int32')
-            choice_indicator[self.filter_index] += 1
-            choice_indicator[filter_index] += 1
-            filter_index = where(choice_indicator == 2)[0]
+            filter_index = intersect1d(self.filter_index, filter_index)
+            ##the above WAS
+            #choice_indicator = zeros(self.choice_set.size(), dtype='int32')
+            #choice_indicator[self.filter_index] += 1
+            #choice_indicator[filter_index] += 1
+            #filter_index = where(choice_indicator == 2)[0]
                         
         return filter_index
 

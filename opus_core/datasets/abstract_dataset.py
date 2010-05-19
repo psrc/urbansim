@@ -883,7 +883,7 @@ class AbstractDataset(object):
         data = {}
         for attrname in dataset.get_primary_attribute_names():
             data[attrname] = dataset.get_attribute(attrname)
-        self.add_elements(data, require_all_attributes, change_ids_if_not_unique)
+        return self.add_elements(data, require_all_attributes, change_ids_if_not_unique)
     
     def aggregate_dataset_over_ids(self, dataset, function='sum', attribute_name=None, constant=None):
         """Aggregate atttribute (given by 'attribute_name') of the given 'dataset' over

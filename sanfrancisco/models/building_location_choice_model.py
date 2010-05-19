@@ -3,31 +3,27 @@
 # See opus_core/LICENSE
 
 from urbansim.models.building_location_choice_model import BuildingLocationChoiceModel as UrbansimBuildingLocationChoiceModel
-from urbansim.models.agent_location_choice_model_member import AgentLocationChoiceModelMember
+from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 from numpy import where, arange, concatenate, array, ones, zeros, int8
 from numpy import logical_or, logical_not
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import Resources
 from opus_core.datasets.dataset import Dataset
 
-class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
+class BuildingLocationChoiceModel(AgentLocationChoiceModel):
+    """
+    
+    """
 
-    def __init__(self, *args, **kargs):
-        UrbansimBuildingLocationChoiceModel.__init__(self, *args, **kargs)
-        self._set_filter_dictionary()
-            
-    def _set_filter_dictionary(self):
-        building_use_set = self.dataset_pool.get_dataset('building_use')
-        building_use_ids = building_use_set.get_attribute('building_use_id')
-        building_use_prefix = building_use_set.get_attribute('building_use')
-        self.filter_for_submodels = {}
-        for i in range(building_use_set.size()):
-            if self.filter is not None:
-                filter_str = "(parcel.%s_possible) * (%s)" % (building_use_prefix[i].lower(), self.filter)
-            else:
-                filter_str = "parcel.%s_possible" % building_use_prefix[i].lower()
-            self.filter_for_submodels[building_use_ids[i]] = VariableName(filter_str)
-            
+    def __init__(self, location_set, model_name=None, short_name=None,
+                 sampler="opus_core.samplers.weighted_sampler", 
+                 utilities="opus_core.linear_utilities",
+                 probabilities="opus_core.mnl_probabilities", choices="opus_core.random_choices",
+                 filter=None, submodel_string=None, location_id_string = None,
+                 run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None,
+                 variable_package = "urbansim", **kwargs):
+        pass
+    
     def get_sampling_weights(self, config, agent_set=None, **kwargs):
         weight_array = UrbansimBuildingLocationChoiceModel.get_sampling_weights(self, config, 
                                                                                 agent_set=agent_set, 

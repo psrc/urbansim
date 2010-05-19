@@ -14,6 +14,12 @@ from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import re
 
+try:
+    ## if installed, use PrettyTable module for status logging
+    from prettytable import PrettyTable
+except:
+    PrettyTable = None
+    
 class TransitionModel(Model):
     """ The generic model behind household transition model and employment transition
     model
@@ -71,7 +77,12 @@ class TransitionModel(Model):
         to_be_cloned = array([], dtype=int32)
         to_be_removed = array([], dtype=int32)
         #log header
-        logger.log_status("\t".join(column_names + ["actual", "target", "action"]))
+        if PrettyTable is not None:
+            status_log = PrettyTable()
+            status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
+        else:        
+            logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action"]))
+        error_log = ''
         for index in range(control_totals_for_this_year.size()):
             lucky_index = None
             indicator = ones( self.dataset.size(), dtype='bool' )
@@ -110,15 +121,21 @@ class TransitionModel(Model):
             if self.dataset_accounting_attribute is None:
                 actual_num = indicator.sum()
                 action_num = 0
+                diff = target_num - actual_num
                 if actual_num != target_num:
                     legit_index = where(logical_and(indicator, filter_indicator))[0]
-                    if actual_num < target_num:
-                        lucky_index = sample_replace(legit_index, target_num - actual_num)
-                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                    elif actual_num > target_num:
-                        lucky_index = sample_noreplace(legit_index, actual_num-target_num)
-                        to_be_removed = concatenate((to_be_removed, lucky_index))
-                    action_num = lucky_index.size
+                    if legit_index.size > 0:                    
+                        if actual_num < target_num:
+                            lucky_index = sample_replace(legit_index, target_num - actual_num)
+                            to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                        elif actual_num > target_num:
+                            lucky_index = sample_noreplace(legit_index, actual_num-target_num)
+                            to_be_removed = concatenate((to_be_removed, lucky_index))
+                        action_num = lucky_index.size
+                    else:
+                        error_log += "There is nothing to sample from %s and no action will happen for" % self.dataset.get_dataset_name() + \
+                                  ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
+                        
             else: 
                 ## sum accounting attribute for agents with indicator = True; 
                 ## assume dataset_accouting_attribute is a primary attribute 
@@ -126,16 +143,21 @@ class TransitionModel(Model):
                 actual_num = accounting.sum()
                 mean_size = float(actual_num) / indicator.sum()
                 action_num = 0
+                diff = target_num - actual_num
                 if actual_num != target_num:
                     legit_index = where(logical_and(indicator, filter_indicator))[0]
-                    while actual_num + action_num < target_num:
-                        lucky_index = sample_replace(legit_index, ceil((target_num - actual_num - action_num)/mean_size) )
-                        action_num += accounting[lucky_index].sum()
-                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                    while actual_num - action_num > target_num:
-                        lucky_index = sample_noreplace(legit_index, ceil((actual_num - target_num - action_num)/mean_size) )
-                        action_num += accounting[lucky_index].sum()
-                        to_be_removed = concatenate((to_be_removed, lucky_index))                
+                    if legit_index.size > 0:
+                        while actual_num + action_num < target_num:
+                            lucky_index = sample_replace(legit_index, ceil((target_num - actual_num - action_num)/mean_size) )
+                            action_num += accounting[lucky_index].sum()
+                            to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                        while actual_num - action_num > target_num:
+                            lucky_index = sample_noreplace(legit_index, ceil((actual_num - target_num - action_num)/mean_size) )
+                            action_num += accounting[lucky_index].sum()
+                            to_be_removed = concatenate((to_be_removed, lucky_index))                
+                    else:
+                        error_log += "There is nothing to sample from %s and no action will happen for " % self.dataset.get_dataset_name() + \
+                                  ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
             
             ##log status
             action = "0"
@@ -144,9 +166,17 @@ class TransitionModel(Model):
                 if actual_num > target_num: action = "-" + str(action_num)
                     
             cat = [ str(criterion[col]) for col in column_names]
-            cat += [str(actual_num), str(target_num), action]
-            logger.log_status("\t".join(cat))
+            if PrettyTable is not None:
+                status_log.add_row([criterion[col] for col in column_names] + [actual_num, target_num, diff, action])
+            else:
+                cat += [str(actual_num), str(target_num), str(diff), action]
+                logger.log_status("\t".join(cat))
 
+        if PrettyTable is not None:
+            logger.log_status("\n" + status_log.get_string())
+        if error_log:
+            logger.log_error(error_log)
+                    
         clone_data = {}
         if to_be_cloned.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows

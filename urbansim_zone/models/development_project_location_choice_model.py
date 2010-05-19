@@ -24,19 +24,6 @@ class DevelopmentProjectLocationChoiceModel(AgentLocationChoiceModel):
             return
         else:
             return AgentLocationChoiceModel.run(self, *args, **kwargs)
-
-    def apply_filter(self, filter, agent_set, agents_index, submodel=-2):
-        """ replace DDD in filter with submodel
-        """
-        
-        if (filter is not None):
-            if isinstance(filter, dict):
-                submodel_filter = filter[submodel]
-            else:
-                submodel_filter = filter
-                
-            submodel_filter = re.sub('SUBMODEL', str(submodel), submodel_filter)
-        return AgentLocationChoiceModel.apply_filter(self, submodel_filter, agent_set=agent_set, agents_index=agents_index, submodel=submodel)
         
     def prepare_for_estimate(self, specification_dict = None, 
                              specification_storage=None,

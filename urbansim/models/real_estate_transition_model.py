@@ -169,7 +169,7 @@ class RealEstateTransitionModel(Model):
                     this_sampled_index = this_sampled_index[0:(1+searchsorted(cumsum(total_spaces_in_sample_dataset[this_sampled_index]), diff))]
                     sampled_index = concatenate((sampled_index, this_sampled_index))
                 else:
-                    error_log += "There is nothing to sample from %s and no new development will happen for" % sample_from_dataset.get_dataset_name() + \
+                    error_log += "There is nothing to sample from %s and no new development will happen for " % sample_from_dataset.get_dataset_name() + \
                               ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
             #if diff < 0: #TODO demolition; not yet supported
             

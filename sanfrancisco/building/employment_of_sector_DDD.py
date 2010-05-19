@@ -15,22 +15,19 @@ class employment_of_sector_DDD(Variable):
         
     def dependencies(self):
         return ["_employment_of_sector_%s=sanfrancisco.business.is_of_sector_%s * business.employment" % (self.sector_id, self.sector_id),
-        #"_employment_of_sector_%s=building.aggregate(business._employment_of_sector_%s, function=sum)" % (self.sector_id, self.sector_id),
-    ]
+                "_employment_of_sector_%s = building.aggregate(business._employment_of_sector_%s)" % (self.sector_id, self.sector_id)
+                ]
 
     def compute(self,  dataset_pool):
-        #return self.get_dataset().get_attribute("_employment_of_sector_%s" % self.sector_id)
-        business = dataset_pool.get_dataset("business")
-        return self.get_dataset().sum_dataset_over_ids(business, constant=business.get_attribute("_employment_of_sector_%s" % self.sector_id).astype("float32"))
+        return self.get_dataset().get_attribute("_employment_of_sector_%s" % self.sector_id)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").size()
         self.do_check("x >= 0 and x <= " + str(size), values)
 
-from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
+
 from numpy import array
+from opus_core.tests import opus_unittest
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):

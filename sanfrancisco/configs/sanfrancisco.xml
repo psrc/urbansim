@@ -54,6 +54,13 @@
       <variable use="indicator" source="expression" name ="planning_district.empl_nonres" type="variable_definition">planning_district.aggregate(sanfrancisco.building.employment,intermediates=[parcel])</variable>
       <variable use="indicator" source="expression" name ="planning_district.district" type="variable_definition">planning_district.district</variable>
     </expression_library>
+    <advanced type="category" followers="spatial_datasets">
+      <dataset_pool_configuration type="class">
+        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['sanfrancisco','urbansim_parcel','urbansim','opus_core']</argument>
+      </dataset_pool_configuration>
+    </advanced>
     <available_datasets type="list">['building','parcel','zone','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
@@ -189,20 +196,27 @@
             <argument name="location_set" type="string">building</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Business Location Choice Model</argument>
             <argument name="short_name" parser_action="quote_string" type="string">BLCM</argument>
-            <argument name="submodel_string" parser_action="quote_string" type="string">business.sector_id</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">business.activity_id</argument>
             <argument name="sampler" convert_blank_to_none="True" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument name="filter" convert_blank_to_none="True" type="string"></argument>
+            <argument name="filter" parser_action="quote_string" convert_blank_to_none="True" type="string">(numpy.bitwise_and(sanfrancisco.building.activity_constraint, 2**(SUBMODEL-1)) > 0) </argument>
             <argument name="run_config" type="dictionary">
               <key name="sample_size_locations" type="integer">50</key>
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="capacity_string" type="string">building.non_residential_sqft</key>
+		      <key name="weights_for_simulation_string" type="string">(building.non_residential_sqft > business.sqft)</key>
+		      <key name="sample_alternatives_by_submodel" type="string">True</key>
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':5000}</key>
+		      <key name="compute_capacity_flag" type="string">True</key>
               <key name="number_of_agents_string" parser_action="quote_string" type="string">business.sqft</key>
               <key name="number_of_units_string" parser_action="quote_string" type="string">sanfrancisco.building.vacant_non_residential_sqft</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
               <key name="sample_size_locations" type="integer">50</key>
+		      <key name="weights_for_estimation_string" type="string">has_space_for_avg_size_business = building.non_residential_sqft > ( numpy.sum(business.sqft*(business.activity_id==SUBMODEL))/float(numpy.sum(business.activity_id==SUBMODEL)))</key>
+		      <key name="sample_alternatives_by_submodel" type="string">True</key>
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':5000}</key>
             </argument>
           </init>
           <prepare_for_run type="dictionary">
@@ -229,10 +243,8 @@
             <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">business_for_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="index_to_unplace" type="string">None</argument>
-            <argument name="portion_to_unplace" type="string">.1</argument>
             <argument name="join_datasets" type="boolean">False</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string"/>
+            <argument convert_blank_to_none="True" name="agent_filter" parser_action="quote_string" type="string"/>
           </prepare_for_estimate>
           <estimate type="dictionary">
             <output hidden="True" name="output" type="string">(coefficients, dummy)</output>
@@ -241,6 +253,104 @@
             <argument name="data_objects" type="string">datasets</argument>
             <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
             <argument hidden="True" name="specification" type="string">specification</argument>
+          </estimate>
+        </structure>
+      </model>
+      <model name="building_transition_model" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.real_estate_transition_model</class_module>
+            <class_name>RealEstateTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">RealEstateTransitionModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">_DISCARD</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="dataset_name" parser_action="quote_string" type="string">target_vacancy</argument>
+            <argument name="table_name" parser_action="quote_string" type="string">target_vacancies</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>          
+          <run type="dictionary">
+            <output name="output" type="string">building, new_building_index</output>
+            <argument name="realestate_dataset" type="string">building</argument>         
+            <argument name="year" type="string">year</argument>
+            <argument name="occupied_spaces_variable" parser_action="quote_string" type="string">occupied_spaces</argument>
+            <argument name="total_spaces_variable" parser_action="quote_string" type="string">total_spaces</argument>
+            <argument name="sample_from_dataset" type="string">development_event_history</argument>
+            <argument name="reset_attribute_value" type="string">{'parcel_id':-1}</argument>.
+            <argument name="append_to_realestate_dataset" type="string">True</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="resources" type="string">model_resources</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="building_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <import>
+            <class_module>urbansim.models.agent_location_choice_model</class_module>
+            <class_name>AgentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="model_name" type="string">"Building Location Choice Model"</argument>
+            <argument name="short_name" type="string">"BLCM"</argument>
+            <argument name="location_set" type="string">parcel</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">building.building_type_id</argument>
+            <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key name="sample_size_locations" type="integer">30</key>
+              <key name="weights_for_estimation_string" type="string">numpy.logical_and(parcel.non_residential_sqft_capacity &gt; building.non_residential_sqft, parcel.residential_units_capacity &gt; building.residential_units)</key>
+		      <!-- <key name="sample_alternatives_by_submodel" type="string">True</key> -->
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
+            </argument>
+            <argument name="run_config" type="dictionary">
+              <key name="sample_size_locations" type="integer">30</key>            
+              <key name="weights_for_simulation_string" type="string">numpy.logical_and(parcel.non_residential_sqft_capacity &gt; building.non_residential_sqft, parcel.residential_units_capacity &gt; building.residential_units)</key>
+              <key name="is_choice_overfilled_string" convert_blank_to_none="True" type="string">numpy.logical_or(parcel.non_residential_sqft_capacity &gt; parcel.aggregate(building.non_residential_sqft), parcel.residential_units_capacity &gt; parcel.aggregate(building.residential_units))</key>
+		      <!-- <key name="sample_alternatives_by_submodel" type="string">True</key> -->
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
+            </argument>
+            <name name="name" type="string">AgentLocationChoiceModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">building_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">building_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string">building</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="agents_index" type="string">new_building_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">building_location_choice_model_specification</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agent_set" type="string">building</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, dummy)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">building</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
           </estimate>
         </structure>
       </model>
@@ -326,11 +436,9 @@
         <selectable name="process_pipeline_events" type="selectable">True</selectable>
         <selectable name="real_estate_price_model" type="selectable">True</selectable>
         <selectable name="building_transition_model" type="selectable">True</selectable>
-        <selectable name="building_location_choice_model" type="selectable">True
-        	<group_members type="string">_all_</group_members>
-        </selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="business_transition_model" type="selectable">True</selectable>
+        <selectable name="building_location_choice_model" type="selectable">True</selectable>
+        <selectable name="Household_transition_model" type="selectable">True</selectable>
+        <selectable name="Business_transition_model" type="selectable">True</selectable>
         <selectable name="household_relocation_model" type="selectable">True</selectable>
         <selectable name="household_location_choice_model" type="selectable">True</selectable>
         <selectable name="business_relocation_model" type="selectable">True</selectable>
@@ -356,48 +464,46 @@
           <cache_from_database type="boolean">False</cache_from_database>
           <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
           <tables_to_cache type="selectable_list">
-            <selectable name="business" type="selectable">True</selectable>
-            <selectable name="households" type="selectable">True</selectable>
-            <selectable name="buildings" type="selectable">True</selectable>
-            <selectable name="parcels" type="selectable">True</selectable>
-            <selectable name="zones" type="selectable">True</selectable>
-            <selectable name="households_for_estimation" type="selectable">True</selectable>
-            <selectable name="business_for_estimation" type="selectable">True</selectable>
-            <selectable name="development_event_history" type="selectable">True</selectable>
-            <selectable name="persons" type="selectable">True</selectable>
-            <selectable name="travel_data" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
             <selectable name="activities" type="selectable">True</selectable>
+            <selectable name="annual_business_control_totals" type="selectable">True</selectable>
+            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
+            <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
+            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
             <selectable name="building_types" type="selectable">True</selectable>
             <selectable name="building_type_classification" type="selectable">True</selectable>
-            <selectable name="urbansim_constants" type="selectable">True</selectable>
-            <selectable name="target_vacancies" type="selectable">True</selectable>
+            <selectable name="buildings" type="selectable">True</selectable>
+            <selectable name="business" type="selectable">True</selectable>
+            <selectable name="business_for_estimation" type="selectable">True</selectable>
             <selectable name="business_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="business_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="development_event_history" type="selectable">True</selectable>
+            <selectable name="development_events_exogenous" type="selectable">True</selectable>
+            <selectable name="district14" type="selectable">True</selectable>
+            <selectable name="district24" type="selectable">True</selectable>
+            <selectable name="households" type="selectable">True</selectable>
+            <selectable name="households_for_estimation" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
-            <!--
-            <selectable name="housing_price_model_coefficients" type="selectable">True</selectable>
-            <selectable name="housing_price_model_specification" type="selectable">True</selectable>
-            -->
             <selectable name="nonresidential_building_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="nonresidential_building_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="parcels" type="selectable">True</selectable>
+            <selectable name="planning_districts" type="selectable">True</selectable>
+            <selectable name="persons" type="selectable">True</selectable>
             <selectable name="real_estate_price_model_coefficients" type="selectable">True</selectable>
             <selectable name="real_estate_price_model_specification" type="selectable">True</selectable>
             <selectable name="residential_building_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="residential_building_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-            <selectable name="annual_business_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
-            <selectable name="development_event_history" type="selectable">True</selectable>
-            <selectable name="development_events_exogenous" type="selectable">True</selectable>
-            <selectable name="district24" type="selectable">True</selectable>
-            <selectable name="district14" type="selectable">True</selectable>
-            <selectable name="tracts" type="selectable">True</selectable>
             <selectable name="sectors" type="selectable">True</selectable>
-            <selectable name="planning_districts" type="selectable">True</selectable>
+            <selectable name="target_vacancies" type="selectable">True</selectable>
+            <selectable name="tracts" type="selectable">True</selectable>
+            <selectable name="travel_data" type="selectable">True</selectable>
+            <selectable name="urbansim_constants" type="selectable">True</selectable>
+            <selectable name="zones" type="selectable">True</selectable>
+            <!--
+            <selectable name="housing_price_model_coefficients" type="selectable">True</selectable>
+            <selectable name="housing_price_model_specification" type="selectable">True</selectable>
+            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
+            -->
           </tables_to_cache>
           <tables_to_cache_nchunks type="dictionary">
             <parcels type="integer">1</parcels>
@@ -419,10 +525,7 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">True</selectable>
-          <selectable name="building_type_classification" type="selectable">True
-            <package_name type="string">sanfrancisco</package_name>
-          </selectable>
+          <selectable name="building_type" type="selectable">False</selectable>
           <selectable name="parcel" type="selectable">True
           	<package_name type="string">sanfrancisco</package_name>
           </selectable>
@@ -430,12 +533,6 @@
           	<package_name type="string">sanfrancisco</package_name>
           </selectable>
           <selectable name="person" type="selectable">True
-          	<package_name type="string">sanfrancisco</package_name>
-          </selectable>
-          <selectable name="building_use" type="selectable">True
-          	<package_name type="string">sanfrancisco</package_name>
-          </selectable>
-          <selectable name="building_use_classification" type="selectable">True
           	<package_name type="string">sanfrancisco</package_name>
           </selectable>
           <selectable name="travel_data" type="selectable">True</selectable>

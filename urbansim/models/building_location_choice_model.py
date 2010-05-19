@@ -207,7 +207,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
     def get_agents_order(self, movers):
         """Sort in descending order according to the size in order to locate larger agents first.
         """
-        return argsort(movers.get_attribute(self.units_full_name))[arange(movers.size()-1,-1,-1)]
+        return argsort(movers.get_attribute(self.units_full_name))[::-1]
 
     def choose_agents_to_move_from_overfilled_locations(self, capacity,
                                                         agent_set, agents_index, agents_locations):

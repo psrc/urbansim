@@ -9,8 +9,9 @@ from opus_core.datasets.dataset import Dataset
 from numpy import where, arange, concatenate, array, ndarray, zeros, resize
 from opus_core.resources import Resources
 from opus_core.misc import unique_values
-from numpy import ma
+from numpy import ma, intersect1d
 from opus_core.logger import logger
+import copy
 
 class AgentLocationChoiceModel(LocationChoiceModel):
     """Similar to the LocationChoiceModel. In addition, after a run it checks
@@ -26,6 +27,13 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                         filter=None, submodel_string=None, location_id_string = None,
                         run_config=None, estimate_config=None, debuglevel=0, dataset_pool=None,
                         variable_package = "urbansim", **kwargs):
+        """
+        :number_of_units_string:
+          number of units string is used to determine whether a choice is over-filled, 
+          by comparing it with number_of_agents_string in get_locations_vacancy().  
+          TODO: How does it differ from capacity_string?
+           
+        """
         if model_name is not None:
             self.model_name = model_name
         if short_name is not None:
@@ -89,24 +97,45 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                 all_choices=choices
             else:
                 all_choices[unplaced]=choices
-            unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index)
+            unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index, config=run_config)
             if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size) or (unplaced.size == (unplaced_size_before_model - self.observations_mapping['mapped_index'].size)):
                 break
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
         return all_choices
 
-    def get_movers_from_overfilled_locations(self, agent_set, agents_index):
+    def get_movers_from_overfilled_locations(self, agent_set, agents_index, config=None):
         """Returns an index (relative to agents_index) of agents that should be removed from their locations.
         """
-        agents_locations = agent_set.get_attribute_by_index(
-                self.choice_set.get_id_name()[0], agents_index)
+        id_name = self.choice_set.get_id_name()[0]
+        agents_locations = agent_set.get_attribute_by_index(id_name, agents_index)
         # check if there was an overfilling of locations
         movers = array([], dtype='int32')
 
         if self.compute_capacity_flag:
-            new_locations_vacancy = self.get_locations_vacancy(agent_set)
-            movers = self.choose_agents_to_move_from_overfilled_locations(new_locations_vacancy,
-                                                        agent_set, agents_index, agents_locations)
+            overfilled_string = config.get("is_choice_overfilled_string", None) 
+            if overfilled_string:
+                tmp_agent_set = copy.copy(agent_set)
+                overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
+                current_agents_in_overfilled_locations = intersect1d(agent_locations, overfilled_locations)
+                while current_agents_in_overfilled_locations.size > 0:
+                    for location in current_agents_in_overfilled_locations:
+                        agents_of_this_location = where(agents_locations == location)[0]
+                        if agents_of_this_location.size > 1:
+                            sampled_agents = probsample_noreplace(agents_of_this_location, 1)
+                        else:
+                            sampled_agents = agents_of_this_location
+                        movers = concatenate((movers, sampled_agents))
+                        
+                    tmp_agent_set.set_values_of_one_attribute(id_name, -1, agents_index[movers])
+                    agents_locations = tmp_agent_set.get_attribute_by_index(id_name, agents_index)
+                    self.dataset_pool.replace_dataset(tmp_agent_set.get_dataset_name(), tmp_agent_set)
+                    overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
+                    current_agents_in_overfilled_locations = intersect1d(agent_locations, overfilled_locations)
+                self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
+            else:
+                new_locations_vacancy = self.get_locations_vacancy(agent_set)
+                movers = self.choose_agents_to_move_from_overfilled_locations(new_locations_vacancy,
+                                                            agent_set, agents_index, agents_locations)
         return concatenate((movers, where(agents_locations <= 0)[0]))
 
     def get_locations_vacancy(self, agent_set):

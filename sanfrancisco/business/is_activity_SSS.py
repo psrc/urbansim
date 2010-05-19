@@ -7,22 +7,24 @@ from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 from numpy import array
     
-class is_building_use_SSS(Variable):
-    """is business of building_use SSS (cie, med, mips, pdr, retail_ent, visitor)."""
+class is_activity_SSS(Variable):
+    """
+    ## building use has been renamed to activity
+    is business of activity_name SSS (cie, med, mips, pdr, retailent, visitor).
+    """
 
-    def __init__(self, building_use):
-        self.building_use = building_use.lower()
+    def __init__(self, activity_name):
+        self.activity_name = activity_name.lower()
         Variable.__init__(self)
         
     def dependencies(self):
         return [
-               "building_use_id=business.disaggregate(building.building_use_id)",
-               "_building_use=business.disaggregate(building_use.building_use)"
-           ]
+               "sanfrancisco.business.activity_name"
+               ]
         
     def compute(self,  dataset_pool):
-        name = map(lambda x: x.lower(), self.get_dataset().get_attribute("_building_use") )
-        return  array(name) == self.building_use
+        activity_names = self.get_dataset().get_attribute("activity_name")
+        return  activity_names == self.activity_name
 
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -30,7 +32,7 @@ from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
-class Tests(opus_unittest.OpusTestCase):
+class Tests(opus_unittest.OpusTestCase):          
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
@@ -38,18 +40,18 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'business':
             {"business_id":array([1,2,3,4,5]),
-             "building_use_id":array([1,2,1,3,1]),
-#             "building_use":  strarray.array(["CIE", "mips", "cie", "pdr", "cie"]),
+             "activity_id":array([1,2,1,3,1]),
+#             "building_use":  strarray.array(["cie", "mips", "cie", "pdr", "cie"]),
              },
-            'building_use':
-            {"building_use_id":array([1,2,3]),
-             "building_use":  array(["CIE", "mips", "pdr"]),
+            'activity':
+            {"activity_id":array([1,2,3]),
+             "activity_name":  array(["cie", "mips", "pdr"]),
              },
            }
         )
         
         should_be = array([1, 0, 1, 0, 1])
-        instance_name = 'sanfrancisco.business.is_building_use_cie'
+        instance_name = 'sanfrancisco.business.is_activity_cie'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':

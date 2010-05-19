@@ -142,8 +142,9 @@ class ChoiceModel(ChunkModel):
         if agents_index==None:
             agents_index=arange(agent_set.size())
 
-        if self.compute_choice_attribute:
-            agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
+        ## compute_variables is not meaningful given it's going to be overwritten by run()
+        #if self.compute_choice_attribute:
+        #      agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
         
         ## add a primary attribute for choice_id_name or convert it to primary attribute
         choice_id_name = self.choice_set.get_id_name()[0]

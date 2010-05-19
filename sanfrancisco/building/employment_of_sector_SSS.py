@@ -25,3 +25,37 @@ class employment_of_sector_SSS(Variable):
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").size()
         self.do_check("x >= 0 and x <= " + str(size), values)
+
+from numpy import array
+from opus_core.tests import opus_unittest
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'business':
+            {"business_id":array([1,2,3,4,5]),
+             "sector_id":array([4,2,4,3,4]),
+             "building_id":array([1,1,2,2,2]),
+             "employment":array([100,20,40,30,41])
+             },
+            'building':
+            {
+             "building_id":array([1,2]),
+             },
+            'sector':
+            {"sector_id":array([1,2,3,4]),
+             "sector_name":array(["others","agr","manufactural","retail"])
+             },             
+           }
+        )
+        
+        should_be = array([100, 81])
+        instance_name = 'sanfrancisco.building.employment_of_sector_retail'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
+
+if __name__=='__main__':
+    opus_unittest.main()

@@ -2,33 +2,31 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from numpy import where, zeros
+from numpy import where, zeros, unique
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
 
-class building_size(Variable):
-    """Return size of the building, either sqft, or residential units, depending on the building type. 
-    If the value in column 'units' of the building_types table contains a substring 'sqft', it will take 
-    the 'sqft' of the buildings table as a measure of size, otherwise 'residential_units'.
+class units(Variable):
+    """Return the measure of units for the buildings, such as non_residential_sqft or residential units, depending on the the unit_name column of building types. 
+    e.g. return non_residential_sqft for buildings the unit_name of its building type is "non_residential_sqft", and residential_units for "residential_units", etc
     """
     _return_type="int32"
     
     def dependencies(self):
-        return [my_attribute_label("building_sqft"), 
-                my_attribute_label("residential_units"),
-                "unit_name=building_use.disaggregate(building_use_classification.units)",
-                "unit_name=building.disaggregate(building_use.unit_name)",  
+        return ['sanfrancisco.building_type.unit_name',
+                "unit_name=building.disaggregate(building_type.unit_name)"
                 ]
         
     def compute(self,  dataset_pool):
-        buildings = self.get_dataset()        
-        bc = dataset_pool.get_dataset("building_use_classification")
-        results = zeros(buildings.size(), dtype = self._return_type)
-        for unit_name in bc.get_attribute("units"):
-            idx = where(buildings.get_attribute('unit_name') == unit_name)[0]
-            results[idx] = buildings.get_attribute_by_index(unit_name, idx).astype(self._return_type)
+        bldg = self.get_dataset()
+        bt = dataset_pool.get_dataset("building_type")
+        results = zeros(bldg.size(), dtype = self._return_type)
+        for unit_name in unique(bt.get_attribute('unit_name')):
+            self.add_and_solve_dependencies("sanfrancisco.building.%s" % unit_name, dataset_pool)
+            is_of_this_unit_name = bldg.get_attribute('unit_name')==unit_name
+            results[is_of_this_unit_name] = bldg.get_attribute(unit_name)[is_of_this_unit_name].astype(self._return_type)
         return results
 
 from opus_core.tests import opus_unittest
@@ -43,20 +41,20 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['sanfrancisco','urbansim'],
             test_data={
-            'building_use':
+            'building_type':
             {
-                "building_use_id":array([1,2,3,4]),
+                "building_type_id":array([1,2,3,4]),
                 "class_id":array([1,2,1,2]),
                 },
-            'building_use_classification':
+            'building_type_classification':
             {
                 "class_id":array([1,2]),
                 "name": array(["nonresidential","residential"]),
-                "units":array(["building_sqft","residential_units"])                
+                "unit_name":array(["building_sqft","residential_units"])                
                 },           
             "building":{
                 'building_id': array([1, 2, 3, 4, 5]),
-                'building_use_id': array([1, 2, 3, 4, 3]),
+                'building_type_id': array([1, 2, 3, 4, 3]),
                 'building_sqft': array([1000, 200, 0, 400, 1500]),
                 'residential_units': array([0, 2, 0, 40, 5]),                
                 },
