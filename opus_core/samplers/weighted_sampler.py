@@ -15,7 +15,8 @@ from opus_core.misc import lookup
 from opus_core.logger import logger
 from opus_core.sampler import Sampler
 from opus_core.datasets.interaction_dataset import InteractionDataset
-
+from opus_core.variables.variable_name import VariableName
+            
 class weighted_sampler(Sampler):
 
     def run(self, dataset1, dataset2, index1=None, index2=None, sample_size=10, weight=None,
@@ -70,18 +71,17 @@ class weighted_sampler(Sampler):
             
         weight = local_resources.get("weight", None)
         if isinstance(weight, str):
-            try:
+            if weight in choice.get_known_attribute_names():
+                weight=choice.get_attribute(weight)
+                rank_of_weight = 1 
+            elif VariableName(weight).get_dataset_name() == choice.get_dataset_name():
                 weight=choice.compute_variables(weight, dataset_pool=dataset_pool)
                 rank_of_weight = 1
-            except:
-                """weights can be an interaction variable"""
-                try:
-                    #import pdb; pdb.set_trace()
-                    interaction_dataset = InteractionDataset(local_resources)
-                    weight=interaction_dataset.compute_variables(weight, dataset_pool=dataset_pool)
-                    rank_of_weight = 2
-                except Exception, instance:
-                    raise Exception, "Error computing weight string: %s\n%s" % (weight, instance)
+            else:
+                ## weights can be an interaction variable
+                interaction_dataset = InteractionDataset(local_resources)
+                weight=interaction_dataset.compute_variables(weight, dataset_pool=dataset_pool)
+                rank_of_weight = 2
         elif isinstance(weight, ndarray):
             rank_of_weight = weight.ndim
         elif not weight:  ## weight is None or empty string
