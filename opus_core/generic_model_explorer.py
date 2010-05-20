@@ -62,8 +62,8 @@ class GenericModelExplorer(object):
     def get_before_after_attribute(self, attribute_name):
         var_name = VariableName(attribute_name)
         ds = self._get_before_after_dataset_from_attribute(var_name)
-        return {'before': ds.get_attribute(var_name.get_alias()),
-                'after': ds.get_attribute('%s_reload__' % var_name.get_alias())}
+        return {'after': ds.get_attribute(var_name.get_alias()),
+                'before': ds.get_attribute('%s_reload__' % var_name.get_alias())}
         
     def summary_before_after(self, attribute_name):
         var_name = VariableName(attribute_name)
@@ -71,11 +71,11 @@ class GenericModelExplorer(object):
         print ''
         print 'Before model run:'
         print '================='
-        ds.summary(names=[var_name.get_alias()])
+        ds.summary(names=['%s_reload__' % var_name.get_alias()])
         print ''
         print 'After model run:'
         print '================='
-        ds.summary(names=['%s_reload__' % var_name.get_alias()])
+        ds.summary(names=[var_name.get_alias()])
         
     def model_dependencies(self):
         """Prints out variable dependencies for the model."""
@@ -90,9 +90,10 @@ class GenericModelExplorer(object):
         the model specification or an expression."""
         from opus_core.variables.dependency_query import DependencyChart
         varname = None
-        for ivar in range(len(self.get_specification().get_variable_names())):
-            if name == var:
-                varname = self.get_specification().get_variables()[ivar]
+        allvars = self.get_specification().get_variable_names()
+        for ivar in range(len(allvars)):
+            if name == allvars[ivar].get_alias():
+                varname = allvars[ivar]
                 break
         if varname is None:
             varname = VariableName(name)
@@ -103,11 +104,12 @@ class GenericModelExplorer(object):
         from opus_core.plot_functions import create_histogram, show_plots
         from matplotlib.pylab import figure
         values = self.get_before_after_attribute(attribute_name)
+        alias = VariableName(attribute_name).get_alias()
         fig = figure()
-        fig.add_subplot(11)
-        create_histogram(values['before'], main='Before', bins=bins)
-        fig.add_subplot(12)
-        create_histogram(values['after'], main='After', bins=bins)
+        fig.add_subplot(121)
+        create_histogram(values['before'], main='%s (before)' % alias, bins=bins)
+        fig.add_subplot(122)
+        create_histogram(values['after'], main='%s (after)' % alias, bins=bins)
         show_plots()
         
     def get_correlation(self, submodel=-2):

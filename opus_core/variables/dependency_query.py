@@ -34,17 +34,31 @@ class DependencyQuery:
                 spec = get_specification_for_estimation(specification_dict)
             else:
                 spec = specification
-            model_postfix = ''
+            model_prefix = ''
             if model_group is not None:
-                model_postfix = '_%s' % model_group
-            model_name = '%s%s' % (model, model_postfix)
+                model_prefix = '%s_' % model_group
+            self.model_name = '%s%s' % (model_prefix, model)
             
-            self.var_list = spec.get_distinct_long_variable_names()
+            self.var_list = spec.get_distinct_long_variable_names().tolist()
+            
+            #check other model nodes, such as agents_filter, submodel_string or filter
+            config_node_path = "model_manager/models/model[@name='%s']" % self.model
+            model_node = config._find_node(config_node_path)
+            controller = config._convert_model_to_dict(model_node)
+            addvars = []
+            addvars.append(controller.get('init', {}).get('arguments', {}).get('filter', None))
+            addvars.append(controller.get('init', {}).get('arguments', {}).get('submodel_string', None))
+            addvars.append(controller.get('init', {}).get('arguments', {}).get('choice_attribute_name', None))
+            addvars.append(controller.get('prepare_for_run', {}).get('arguments', {}).get('agent_filter', None))
+            for var in addvars:
+                if isinstance(var, str):
+                    self.var_list.append(eval(var)) # eval because these entries are in double quotes, e.g. "'attribute'"
+                    
             self.var_tree = []
             l = []
             for var in self.var_list:
                 l.append((var, []))
-            self.var_tree.append((model_name, l))
+            self.var_tree.append((self.model_name, l))
         else:
             # this is meant to be for all models but is not working yet
             #self.config = config.get_run_configuration(scenario_name)
@@ -101,14 +115,14 @@ class DependencyQuery:
             name = self.model
         if group is None:
             group = self.model_group
-        model_postfix = ''
+        model_prefix = ''
         if group is not None:
-            model_postfix = '_%s' % group
+            model_prefix = '%s_' % group
         def find(f, seq):
             for item in seq:
                 if f(item):
                     return item
-        model = find(lambda x: x[0] == '%s%s' % (name, model_postfix), self.var_tree)
+        model = find(lambda x: x[0] == '%s%s' % (model_prefix, name), self.var_tree)
         if model == None:
             raise "Model " + name + " not found."
         else:
@@ -207,11 +221,15 @@ class DependencyChart:
     #print out a model's depndencies
     def print_model_dependencies(self):
         tree = self.query.model_tree()
+        print '\nDependencies for model: %s' % self.query.model_name
+        print '==============================='
         self._print_dependencies(tree)
 
     def print_dependencies(self, name):
         """Prints out dependencies of one variable."""
         tree = self.query.vars_tree([name])
+        print '\nDependencies for variable: %s' % name
+        print '==============================='
         self._print_dependencies(tree)
         
     def _print_dependencies(self, tree):
@@ -223,8 +241,9 @@ class DependencyChart:
             print ''
             print 'Dataset: ', k
             print '------------------'
-            for var in vars:
-                print '\t', var.get_short_name()
+            uvars = elim_dups(map(lambda x: x.get_short_name(), vars))
+            for var in uvars:
+                print '\t', var
 #Utility Funcs
 
 #removes the leaves of a tree constructed of tuples and lists.
@@ -273,12 +292,10 @@ def elim_dups(xs, f=None):
             if x in ret: continue
             ret.append(x)
     else:
-        test_list = []
         for x in xs:
             v = f(x)
             if v in test_list: continue
             ret.append(x)
-            test_list.append(v)
     return ret
 
 def groupBy(xs, f):

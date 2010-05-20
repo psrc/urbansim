@@ -143,8 +143,10 @@ class ChoiceModel(ChunkModel):
             agents_index=arange(agent_set.size())
 
         ## compute_variables is not meaningful given it's going to be overwritten by run()
-        #if self.compute_choice_attribute:
-        #      agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
+        ## (HS) but we need it in cases when doesn't exist and is added as primary attribute,
+        ## e.g. cars_category in auto-ownership model. 
+        if self.compute_choice_attribute:
+              agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
         
         ## add a primary attribute for choice_id_name or convert it to primary attribute
         choice_id_name = self.choice_set.get_id_name()[0]
@@ -232,6 +234,7 @@ class ChoiceModel(ChunkModel):
         for submodel in self.model_interaction.get_submodels():
             self.model_interaction.prepare_data_for_simulation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
+            self.coefficient_names[submodel] = self.model_interaction.get_variable_names_for_simulation(submodel)
             self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, self.observations_mapping[submodel].size), 5)
             self.increment_current_status_piece()
             if self.model_interaction.is_there_data(submodel): # observations for this submodel available
@@ -927,6 +930,9 @@ class ModelInteraction:
         
     def get_variable_names(self, submodel):
         return self.submodel_coefficients[submodel].get_variable_names_from_alt()
+        
+    def get_variable_names_for_simulation(self, submodel):
+        return array(self.submodel_coefficients[submodel].get_variable_names())
         
     def get_coefficient_fixed_values(self, submodel):
         return self.specified_coefficients.specification.get_coefficient_fixed_values_for_submodel(submodel)

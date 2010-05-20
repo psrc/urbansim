@@ -288,7 +288,8 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
             dialog.show_graph('temp.png', variable['name'])
             dialog.show()
         except InvocationException:
-            dialog.show_error_message()
+            #dialog.show_error_message()
+            chart.print_dependencies(str(variable['definition']))
 
     def _show_right_click_menu(self, point):
         ''' handler for the when users right click on table variables_table '''
