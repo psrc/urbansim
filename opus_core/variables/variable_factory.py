@@ -53,6 +53,8 @@ class VariableFactory(object):
             if package_name is None:
                 e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
                 if e is not None:
+                    if e == variable_name.get_expression(): # it is a primary attribute
+                        return None
                     v = VariableName(e)
                     return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
             # not in the expression library - next look in the appropriate 'aliases' file, if one is present

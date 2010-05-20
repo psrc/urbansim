@@ -11,6 +11,7 @@ from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
 from numpy import where, array
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_core.model import get_specification_for_estimation
 
 import os, sys
 from optparse import OptionParser
@@ -18,32 +19,58 @@ from optparse import OptionParser
 from opus_core.third_party.pydot import Dot, Edge, Node
 
 class DependencyQuery:
-    def __init__(self, config):
+    def __init__(self, config, model=None, model_group=None, specification=None, scenario_name=None):
         self.factory = VariableFactory()
 
         lib = config.get_expression_library()
         self.factory.set_expression_library(lib)
 
+        self.model = model
+        self.model_group = model_group
+        
+        if model is not None:
+            if specification is None:
+                specification_dict = config.get_estimation_specification(model, model_group)
+                spec = get_specification_for_estimation(specification_dict)
+            else:
+                spec = specification
+            model_postfix = ''
+            if model_group is not None:
+                model_postfix = '_%s' % model_group
+            model_name = '%s%s' % (model, model_postfix)
+            
+            self.var_list = spec.get_distinct_long_variable_names()
+            self.var_tree = []
+            l = []
+            for var in self.var_list:
+                l.append((var, []))
+            self.var_tree.append((model_name, l))
+        else:
+            # this is meant to be for all models but is not working yet
+            #self.config = config.get_run_configuration(scenario_name)
+            self.var_list = []
+            self.var_tree = []
+            
         #TODO: there seems to be an issue with the (xml)dictionary approach -there can be
         # multiple, indexed, submodels. This only seems to retrieve the first
 
         #this collects all the variables models depend on
-        self.var_tree = []
-        self.var_list = []
-        #TODO: if we update to ElementTree 1.3, use
-        # model_manager/model_system//specification/[@type='submodel']/variables
-        for x in config._find_node('model_manager/models//specification'):
-            l = []
-            for y in x:
-                if y.get('type') == 'submodel':
-                    t = y.find('variable_list')
-                    if len(t) > 0:
-                        for z in config._convert_variable_list_to_data(t[0]):
-                            for k in lib.keys():
-                                if k[1] == z:
-                                    l.append((lib[k], []))
-                                    self.var_list.append(lib[k])
-            self.var_tree.append((x, l))
+        #self.var_tree = []
+#        self.var_list = []
+#        #TODO: if we update to ElementTree 1.3, use
+#        # model_manager/model_system//specification/[@type='submodel']/variables
+#        for x in config._find_node('model_manager/models//specification'):
+#            l = []
+#            for y in x:
+#                if y.get('type') == 'submodel':
+#                    t = y.find('variable_list')
+#                    if len(t) > 0:
+#                        for z in config._convert_variable_list_to_data(t[0]):
+#                            for k in lib.keys():
+#                                if k[1] == z:
+#                                    l.append((lib[k], []))
+#                                    self.var_list.append(lib[k])
+#            self.var_tree.append((x, l))
 
     #given a name, return an instance of Variable
     def get_var(self, name):
@@ -65,29 +92,36 @@ class DependencyQuery:
         try:
             return self.factory.get_variable(var, create_fake_dataset(dataset), quiet=True)
         except LookupError:
-            print "LOOKUP ERROR: " + name
+            #print "LOOKUP ERROR: " + name
             return None
 
     #given a name, returns the tree with the model at the root, and the vars it depends on as leaves
-    def get_model_vars(self, name):
+    def get_model_vars(self, name=None, group=None):
+        if name is None:
+            name = self.model
+        if group is None:
+            group = self.model_group
+        model_postfix = ''
+        if group is not None:
+            model_postfix = '_%s' % group
         def find(f, seq):
             for item in seq:
                 if f(item):
                     return item
-        model = find(lambda x: x[0] == name, self.var_tree)
+        model = find(lambda x: x[0] == '%s%s' % (name, model_postfix), self.var_tree)
         if model == None:
             raise "Model " + name + " not found."
         else:
             return model
 
     # returns a list of VariableNames a model depends on
-    def get_model_var_list(self, name):
+    def get_model_var_list(self, name, group=None):
         ret = []
         def rec(xs):
             for x in xs:
                 ret.append(VariableName(x[0]))
                 rec(x[1])
-        rec(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name)[1])))
+        rec(map(self.get_dep_tree_from_name, extract_leaves(self.get_model_vars(name, group)[1])))
         return elim_dups(ret)
 
     #get a dependency tree for a variable given its name
@@ -110,10 +144,10 @@ class DependencyQuery:
 
     def all_models_tree(self):
         return map(self.get_dep_tree_from_name, extract_leaves(self.var_tree)) \
-             + map(lambda x: (x[0],x[1],"model"), self.var_tree)
+             + map(lambda x,y: (x, y,"model"), self.var_tree.iteritems())
 
-    def model_tree(self, name):
-        model = self.get_model_vars(name)
+    def model_tree(self):
+        model = self.get_model_vars()
         return map(self.get_dep_tree_from_name, extract_leaves(model[1])) \
                 + [(model[0], model[1],"model")]
 
@@ -121,13 +155,13 @@ class DependencyQuery:
         return map(self.get_dep_tree_from_name, extract_leaves(vl))
 
 class DependencyChart:
-    def __init__(self, config):
-        self.query = DependencyQuery(config)
+    def __init__(self, config, **kwargs):
+        self.query = DependencyQuery(config, **kwargs)
 
     def graph_variable(self, out, var, lr=True, dpi=60):
         self.graph_tree(var if out == None else out, self.query.vars_tree([var]), lr, dpi)
     def graph_model(self, out, model, lr=True, dpi=60):
-        self.graph_tree(model if out == None else out, self.query.model_tree(model), lr, dpi)
+        self.graph_tree(model if out == None else out, self.query.model_tree(), lr, dpi)
     def graph_all(self, out, lr=True, dpi=60):
         self.graph_tree(out, self.query.all_models_tree(), lr, dpi)
 
@@ -155,8 +189,8 @@ class DependencyChart:
         dot.write_png(fi + ".png")
 
     #return latex-formatted table of a model's depndencies
-    def model_table(self, model):
-        vs = groupBy(self.query.get_model_var_list(model), lambda x: x.get_dataset_name())
+    def model_table_latex(self, model, group=None):
+        vs = groupBy(self.query.get_model_var_list(model, group), lambda x: x.get_dataset_name())
         ret = []
         for k in vs:
             if k == None: continue
@@ -169,7 +203,28 @@ class DependencyChart:
             ret.append("\\end{tabular}")
             ret.append("")
         return '\n'.join(ret)
+        
+    #print out a model's depndencies
+    def print_model_dependencies(self):
+        tree = self.query.model_tree()
+        self._print_dependencies(tree)
 
+    def print_dependencies(self, name):
+        """Prints out dependencies of one variable."""
+        tree = self.query.vars_tree([name])
+        self._print_dependencies(tree)
+        
+    def _print_dependencies(self, tree):
+        leaves = elim_dups(extract_leaves_using_primary_key(tree))
+        leaves_v = map(lambda x: VariableName(x), leaves)
+        vs = groupBy(leaves_v, lambda x: x.get_dataset_name())
+        for k, vars in vs.iteritems():
+            if k == None: continue
+            print ''
+            print 'Dataset: ', k
+            print '------------------'
+            for var in vars:
+                print '\t', var.get_short_name()
 #Utility Funcs
 
 #removes the leaves of a tree constructed of tuples and lists.
@@ -195,6 +250,17 @@ def extract_leaves(inp):
                     ret.append(x[0])
                 else:
                     process(x[1])
+    process(inp)
+    return ret
+
+def extract_leaves_using_primary_key(inp):
+    ret = []
+    def process(xs):
+        for x in xs:
+            if len(x) == 2:
+                process(x[1])
+            elif x[2] == 'primary':
+                ret.append(x[0])
     process(inp)
     return ret
 
@@ -268,8 +334,12 @@ if __name__ == '__main__':
                       help="variable for which you want to chart dependencies")
     parser.add_option("-m", "--model", dest="model", default=None,
                       help="model for which you want to chart dependencies")
+    parser.add_option("--group", dest="model_group", default = None,
+                               action="store", help="name of the model group")
     parser.add_option("-o", "--output", dest="output", default=None,
                       help="output image")
+    parser.add_option("-p",  dest="stdout",default=False, action="store_true",
+                      help='print results into stdout')
     parser.add_option("-l", "--latex", dest="latex", default=None,
                       help="latex output file")
 
@@ -278,19 +348,24 @@ if __name__ == '__main__':
     if options.xml_configuration == None:
         raise "Requires an xml configuration argument."
 
-    chart = DependencyChart(XMLConfiguration(options.xml_configuration))
+    chart = DependencyChart(XMLConfiguration(options.xml_configuration), model=options.model, model_group=options.model_group)
     #print chart.model_table(options.model)
     #temp = chart.query.vars_tree(chart.query.var_list)
     #print pretty_tree(chart.query.all_models_tree())
 
-    auto = AutogenVariableFactory("(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)")
-    auto._analyze_tree(auto._expr_parsetree)
-    auto._analyze_dataset_names()
-    print(auto._generate_compute_method())
+    #auto = AutogenVariableFactory("(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)")
+    #auto._analyze_tree(auto._expr_parsetree)
+    #auto._analyze_dataset_names()
+    #print(auto._generate_compute_method())
 
-    if options.latex != None:
+    if options.stdout:
+        if options.model != None:
+            chart.print_model_dependencies()
+        else:
+            chart.print_dependencies(options.variable)
+    elif options.latex != None:
         if options.model == None: raise "latex output requires specification of model"
-        write_file(options.latex, chart.model_table(options.model))
+        write_file_latex(options.latex, chart.model_table_latex(options.model, options.model_group))
     elif options.variable != None:
         chart.graph_variable(options.output, options.variable)
     elif options.model != None:

@@ -399,7 +399,25 @@ class Dataset(AbstractDataset):
                 table_name=table_name+".computed",
                 table_data=values_computed,
                 )
-            
+         
+    def copy_attribute_by_reload(self, name, dataset_pool=None):
+        """Reloads (or recomputes) attribute 'name' from storage and connects it to self as 
+            an additional attribute with the postfix '_reload__'. This can be useful 
+            in cases when an attribute in memory was modified by a model and 
+            one wants to compare it to previous values.
+        """
+        dummy_ds = Dataset(self.resources)
+        if not isinstance(name, VariableName):
+            attr_name = VariableName(name)
+        else:
+            attr_name = name
+        dummy_ds.compute_variables(attr_name, dataset_pool=dataset_pool)
+        new_name = "%s_reload__" % attr_name.get_alias()
+        metadata = AttributeType.PRIMARY
+        if not attr_name.get_alias() in self.get_primary_attribute_names():
+            metadata = AttributeType.COMPUTED
+        self.add_attribute(data=dummy_ds.get_attribute(attr_name), name=new_name, metadata=metadata)
+        
     @staticmethod
     def chunk_columns(storage, table_name, column_names=Storage.ALL_COLUMNS, nchunks=1):
         """Returns a nested list of columns using column_names as input. 
@@ -934,6 +952,36 @@ class DatasetTests(opus_unittest.OpusTestCase):
         # flush one attribute
         ds.flush_attribute("float64attr")
         self.assertEqual(12+3+6+18, ds.itemsize_in_memory())
+        
+    def test_copy_attribute_by_reload(self):
+        # tests the function copy_attribute_by_reload
+        from numpy import log
+        in_storage = StorageFactory().get_storage('dict_storage')
+
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+            }
+        )
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        ds.load_dataset()
+        # change the values of 'attr'
+        ds.modify_attribute(name='attr', data=array([110, 150, 20]))
+        expr = 'ln_attr = ln(dataset.attr)'
+        ds.compute_variables([expr])
+        ds.copy_attribute_by_reload('attr')
+        # should have an additional attribute with the original values
+        self.assertEqual(len(ds.get_primary_attribute_names()), 3)
+        self.assertEqual(ma.allequal(ds.get_attribute('attr'), array([110, 150, 20])), True)
+        self.assertEqual(ma.allequal(ds.get_attribute('attr_reload__'), array([100,200,300])), True)
+
+        # do the reload for a computed attribute
+        ds.copy_attribute_by_reload(expr)
+        self.assertEqual(len(ds.get_computed_attribute_names()), 2)
+        self.assertEqual(ma.allclose(ds.get_attribute('ln_attr'), log(array([110, 150, 20]))), True)
+        self.assertEqual(ma.allclose(ds.get_attribute('ln_attr_reload__'), log(array([100,200,300]))), True)
         
 if __name__ == '__main__':
     opus_unittest.main()

@@ -158,7 +158,7 @@ class ModelSystem(object):
             dataset.load_and_flush_dataset()
 
     def flush_datasets_after_model(self, resources):
-        if resources['flush_variables']:
+        if resources.get('flush_variables', False):
             AttributeCache().delete_computed_tables()
             # this will also delete computed attributes
             datasets_to_cache = SessionConfiguration().get_dataset_pool().datasets_in_pool().keys()

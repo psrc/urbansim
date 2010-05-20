@@ -99,13 +99,13 @@ class RegressionModel(ChunkModel):
         return result
 
     def run_chunk (self, index, dataset, specification, coefficients):
-        specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
+        self.specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
         compute_resources = Resources({"debug":self.debug})
-        submodels = specified_coefficients.get_submodels()
+        submodels = self.specified_coefficients.get_submodels()
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, dataset, index,
                                       dataset_pool=self.dataset_pool, resources = compute_resources)
-        variables = specified_coefficients.get_full_variable_names_without_constants()
+        variables = self.specified_coefficients.get_full_variable_names_without_constants()
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
         dataset.compute_variables(variables, dataset_pool = self.dataset_pool, resources = compute_resources)
@@ -113,13 +113,14 @@ class RegressionModel(ChunkModel):
         coef = {}
         outcome=self.initial_values[index].copy()
         for submodel in submodels:
-            coef[submodel] = SpecifiedCoefficientsFor1Submodel(specified_coefficients,submodel)
+            coef[submodel] = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients,submodel)
+            self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]
             self.debug.print_debug("Compute regression for submodel " +str(submodel),4)
             self.increment_current_status_piece()
-            data[submodel] = dataset.create_regression_data(coef[submodel],
+            self.data[submodel] = dataset.create_regression_data(coef[submodel],
                                                                 index = index[self.observations_mapping[submodel]])
-            nan_index = where(isnan(data[submodel]))[1]
-            inf_index = where(isinf(data[submodel]))[1]
+            nan_index = where(isnan(self.data[submodel]))[1]
+            inf_index = where(isinf(self.data[submodel]))[1]
             if nan_index.size > 0:
                 nan_var_index = unique(nan_index)
                 raise ValueError, "NaN(Not A Number) is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[nan_var_index]
@@ -127,9 +128,9 @@ class RegressionModel(ChunkModel):
                 inf_var_index = unique(inf_index)
                 raise ValueError, "Inf is returned from variable %s; check the model specification table and/or attribute values used in the computation for the variable." % coef[submodel].get_variable_names()[inf_var_index]
             
-            if (data[submodel].shape[0] > 0) and (data[submodel].size > 0): # observations for this submodel available
+            if (self.data[submodel].shape[0] > 0) and (self.data[submodel].size > 0): # observations for this submodel available
                 outcome[self.observations_mapping[submodel]] = \
-                    self.regression.run(data[submodel], coef[submodel].get_coefficient_values()[0,:],
+                    self.regression.run(self.data[submodel], coef[submodel].get_coefficient_values()[0,:],
                         resources=self.run_config).astype(outcome.dtype)
         return outcome
 
@@ -326,6 +327,9 @@ class RegressionModel(ChunkModel):
         
     def _get_status_piece_description(self):
         return "%s %s" % (ChunkModel._get_status_piece_description(self), self.get_status_for_gui().get_current_piece_description())
+    
+    def get_specified_coefficients(self):
+        return self.specified_coefficients
     
 from numpy import ma
 from opus_core.tests import opus_unittest

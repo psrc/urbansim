@@ -833,6 +833,10 @@ class XMLConfiguration(object):
                 model_dict['import'] = {model_module: model_classname}
             else: # just put it in the dict
                 model_dict[subnode.tag] = self._convert_node_to_data(subnode)
+                
+        dependencies = node.find('dependencies')
+        if dependencies is not None:
+            self._add_to_dict(dependencies, model_dict)
         return model_dict
 
     def _convert_dictionary_with_special_keys_to_data(self, node):
