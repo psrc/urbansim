@@ -100,3 +100,5 @@ class EstimationRunner(Estimator):
         """
         plot_utility_diagnose('util_submodel_%s' % submodel)
 
+    def get_model_name(self):
+        return (self.estimated_model, self.model_group)

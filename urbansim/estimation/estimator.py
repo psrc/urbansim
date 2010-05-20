@@ -16,9 +16,10 @@ from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.generic_model_explorer import GenericModelExplorer
 from urbansim.model_coordinators.model_system import ModelSystem
 
-class Estimator(object):
+class Estimator(GenericModelExplorer):
     def __init__(self, config=None, save_estimation_results=False):
         if 'cache_directory' not in config or config['cache_directory'] is None:
             raise KeyError("The cache directory must be specified in the "
@@ -361,67 +362,13 @@ class Estimator(object):
 #                else:
 #                    self.specification = self.model_system.vardict[key]
 
-    def get_data(self, coefficient, submodel=-2):
-        return self.get_model().get_data(coefficient, submodel)
-
-    def get_coefficient_names(self, submodel=-2):
-        return self.get_model().get_coefficient_names(submodel)
-
-    def get_data_as_dataset(self, submodel=-2):
-        return self.get_model().get_data_as_dataset(submodel)
-
-    def get_model(self):
-        return self.model_system.run_year_namespace["model"]
         
-    def get_choice_set(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_dataset.get_dataset(2)
+    def get_agents_for_estimation(self): 
+        return self.get_active_agent_set()
+            
+    def get_specification(self):
+        return self.specification
     
-    def get_choice_set_index(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_dataset.get_index(2)
-        
-    def get_choice_set_index_for_submodel(self, submodel): # works only for choice models
-        index = self.get_choice_set_index()
-        return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
-    
-    def get_agent_set(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_dataset.get_dataset(1)
-        
-    def get_agents_for_estimation(self): # works only for choice models
-        from opus_core.datasets.dataset import DatasetSubset
-        agents = self.get_agent_set()
-        return DatasetSubset(agents, self.get_agent_set_index())
-    
-    def get_agent_set_index(self): # works only for choice models
-        return self.get_model().model_interaction.interaction_dataset.get_index(1)
-        
-    def get_agent_set_index_for_submodel(self, submodel):
-        model = self.get_model()
-        return model.observations_mapping[submodel]
-    
-    def plot_correlation(self, submodel=-2):
-        ds = self.get_data_as_dataset(submodel)
-        attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
-        ds.correlation_matrix(attrs)
-        ds.correlation_image(attrs)
-        #for information on matplot styles: http://matplotlib.sourceforge.net/tutorial.html
-        #particularly useful information on this webpage on "Interactive navigation" using "toolbar2"
-        
-    def plot_choice_set(self):
-        choice_set = self.get_choice_set()
-        result = zeros(choice_set.size(), dtype='int16')
-        result[unique_values(self.get_choice_set_index().ravel())] = 1
-        choice_set.add_attribute(name='__sampled_for_estimation__', data=result)
-        choice_set.plot_map('__sampled_for_estimation__', background=-1)
-        choice_set.delete_one_attribute('__sampled_for_estimation__')
-        
-    def plot_choice_set_attribute(self, name):
-        choice_set = self.get_choice_set()
-        filter_var = ones(choice_set.size(), dtype='int16')
-        filter_var[unique_values(self.get_choice_set_index().ravel())] = 0
-        choice_set.add_attribute(name='__choice_set_filter_for_estimation__', data=filter_var)
-        choice_set.plot_map(name, filter='__choice_set_filter_for_estimation__')
-        choice_set.delete_one_attribute('__choice_set_filter_for_estimation__')
-        
     def cleanup(self, remove_cache=True):
         """Use this only if you don't want to reestimate."""
         self.simulation_state.remove_singleton(delete_cache=remove_cache)

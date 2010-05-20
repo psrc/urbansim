@@ -19,7 +19,7 @@ class EstimationOptionGroup:
         self.parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default = None,
                                action="store", help="Full path to an XML configuration file. One of the options -s and -x should be given, otherwise the specification is taken from cache.")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
-                               help="Opus path to Python module defining a configuration in dictionary format. One of the options -s and -x must be given.")
+                               help="Opus path to Python module defining a configuration in dictionary format. One of the options -c and -x must be given.")
         self.parser.add_option("--save-results", dest="save_results", default=False, action="store_true", 
                                help="Results will be saved in the output configuration (if given) and in the cache")
         self.parser.add_option("--group", dest="model_group", default = None,
