@@ -166,10 +166,10 @@ class TransitionModel(Model):
                 if actual_num > target_num: action = "-" + str(action_num)
                     
             cat = [ str(criterion[col]) for col in column_names]
+            cat += [str(actual_num), str(target_num), str(diff), action]
             if PrettyTable is not None:
-                status_log.add_row([criterion[col] for col in column_names] + [actual_num, target_num, diff, action])
+                status_log.add_row(cat)
             else:
-                cat += [str(actual_num), str(target_num), str(diff), action]
                 logger.log_status("\t".join(cat))
 
         if PrettyTable is not None:
