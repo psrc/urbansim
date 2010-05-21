@@ -183,9 +183,8 @@ class RealEstateTransitionModel(Model):
             cat += [str(actual_num), str(target_num), str(diff), action]
             
             if PrettyTable is not None:
-                status_log.add_row([criterion[col] for col in column_names] + [actual_num, target_num, diff, action])
-            else:
-                cat += [str(actual_num), str(target_num), str(diff), action]
+                status_log.add_row(cat)
+            else:                
                 logger.log_status("\t".join(cat))
             
         if PrettyTable is not None:
@@ -195,7 +194,7 @@ class RealEstateTransitionModel(Model):
             
         result_data = {}
         result_dataset = None
-        index = None
+        index = array([], dtype='int32')
         if sampled_index.size > 0:
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
@@ -220,9 +219,7 @@ class RealEstateTransitionModel(Model):
         if append_to_realestate_dataset:
             if len(result_data) > 0:
                 index = realestate_dataset.add_elements(result_data, require_all_attributes=False,
-                                                        change_ids_if_not_unique=True)
-            else:
-                index = None
+                                                        change_ids_if_not_unique=True)                
             result_dataset = realestate_dataset
         
         return (result_dataset, index)
@@ -405,7 +402,7 @@ class RETMTests(StochasticTestCase):
 
         self.assertEqual( results.size(), 30)
         
-        self.assertEqual( index, None,
+        self.assertEqual( index.size, 0,
                          "Nothing should've been added/developed" )
 
     def test_development_with_nonzero_target_vacancy_and_equal_history( self ):
