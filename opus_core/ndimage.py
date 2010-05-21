@@ -21,8 +21,10 @@ def sum(input, labels=None, index=None):
         index = index.astype(int32)
 
     _fix_dtype(input)
-    _fix_dtype(labels)
-    _fix_dtype(index)
+    if labels is not None:
+        _fix_dtype(labels)
+    if index is not None:
+        _fix_dtype(index)
     return scipy.ndimage.sum(input, labels, index)
 
 def mean(input, labels=None, index=None):

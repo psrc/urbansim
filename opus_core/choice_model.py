@@ -269,7 +269,7 @@ class ChoiceModel(ChunkModel):
         if self.compute_demand_flag:
             self.compute_demand(submodel)
         if self.run_config.get("export_simulation_data", False):
-            self.export_simulation_data(submodel, 
+            self.export_probabilities(submodel, 
                                         self.run_config.get("simulation_data_file_name", './choice_model_data.txt'))
         return result
 
@@ -425,7 +425,7 @@ class ChoiceModel(ChunkModel):
                 #if index <> None:
                     #    self.estimate_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
                 # remove not used choices
-                is_submodel_chosen_choice = self.model_interaction.get_chosen_choice_for_submodel_and_update_data(submodel)
+                is_submodel_chosen_choice = self.model_interaction.set_chosen_choice_for_submodel_and_update_data(submodel)
                 self.estimate_config["chosen_choice"] = is_submodel_chosen_choice
                 self.estimate_config.merge({"coefficient_names":self.coefficient_names[submodel]})
                 self.estimate_config.merge({"specified_coefficients": coef[submodel]})
@@ -555,8 +555,15 @@ class ChoiceModel(ChunkModel):
         out_file_choices = "%s_choices%s%s" % (file_name_root, submodel, file_name_ext)
         return (out_file_probs, out_file_choices)
                 
-    def export_simulation_data(self, submodel, file_name):
-        from numpy import concatenate
+    def get_probabilities_and_choices(self, submodel):
+        agent_ids = self.model_interaction.get_agent_ids_for_submodel(submodel)
+        probs = concatenate((agent_ids[...,newaxis], self.upc_sequence.get_probabilities()), axis=1)
+        choice_ids = concatenate((agent_ids[...,newaxis], self.model_interaction.get_choice_ids_for_submodel(submodel)), axis=1)
+        return (probs, choice_ids)
+        
+    def export_probabilities(self, submodel, file_name):
+        """Export the current probabilities into a file.
+        """
         from misc import write_table_to_text_file
         
         if self.index_of_current_chunk == 0:
@@ -564,16 +571,16 @@ class ChoiceModel(ChunkModel):
         else:
             mode = 'a'
         export_file_probs, export_file_choices = self.get_export_simulation_file_names(submodel, file_name)
-        agent_ids = self.model_interaction.get_agent_ids_for_submodel(submodel)
-        probs = concatenate((agent_ids[...,newaxis], self.upc_sequence.get_probabilities()), axis=1)
+        probs, choice_ids = self.get_probabilities_and_choices(submodel)
+        logger.start_block('Exporting probabilities (%s x %s) into %s' % (probs.shape[0], probs.shape[1], export_file_probs))
         write_table_to_text_file(export_file_probs, probs, mode=mode, delimiter='\t')
-        logger.log_status('Probabilities written into %s' % export_file_probs)
-        choice_ids = concatenate((agent_ids[...,newaxis], self.model_interaction.get_choice_ids_for_submodel(submodel)), axis=1)
+        logger.end_block()
+        logger.start_block('Exporting choices into %s' % export_file_choices)
         write_table_to_text_file(export_file_choices, choice_ids, mode=mode, delimiter='\t')
-        logger.log_status('Choices written into %s' % export_file_choices)
+        logger.end_block()
         
     def export_estimation_data(self, submodel, is_chosen_choice, data, coef_names, file_name, use_biogeme_data_format=False):
-        from numpy import concatenate, newaxis, reshape, repeat
+        from numpy import reshape, repeat
         import os
         delimiter = '\t'
         if use_biogeme_data_format:
@@ -643,6 +650,7 @@ class ChoiceModel(ChunkModel):
 
         fh.flush()
         fh.close
+        print 'Data written into %s' % out_file
 
     def get_agents_order(self, agents):
         return permutation(agents.size())
@@ -772,6 +780,7 @@ class ModelInteraction:
         self.data = {}
         self.specified_coefficients = None
         self.chosen_choice = None
+        self.chosen_choice_per_submodel = {}
         self.submodel_coefficients = {}
         
     def set_agent_set(self, agent_set):
@@ -807,8 +816,9 @@ class ModelInteraction:
             return take(index, self.model.observations_mapping[submodel], axis=0)
 
     def get_choice_ids_for_submodel(self, submodel):
-        ids = self.interaction_dataset.get_id_attribute_of_dataset(2)
-        return take(ids, self.model.observations_mapping[submodel], axis=0)
+        index = self.get_choice_index_for_submodel(submodel)
+        if index is not None:
+            return self.interaction_dataset.get_id_attribute_of_dataset(2)[index]
         
     def get_agent_ids_for_submodel(self, submodel):
         return self.interaction_dataset.get_id_attribute_of_dataset(1)[self.model.observations_mapping[submodel]]
@@ -839,7 +849,25 @@ class ModelInteraction:
         self.data[submodel] = self.interaction_dataset.create_logit_data_from_beta_alt(
                                                                   self.submodel_coefficients[submodel], 
                                                                   index=self.model.observations_mapping[submodel])
-            
+           
+    def convert_data_from_estimation_to_simulation_format(self, submodel):
+        from numpy import repeat, newaxis, sort, reshape
+        from opus_core.ndimage import sum as ndimage_sum
+        coef = self.submodel_coefficients[submodel]
+        data = self.data[submodel]
+        nvar = coef.get_coefficient_values().shape[1]
+        if data.shape[2] == nvar: return data # no difference
+        labels = repeat(coef.get_coefmap_alt()[newaxis,...]+1, data.shape[1], axis=0)
+        for i in range(1, labels.shape[0]):
+            labels[i,:] = labels[i,:] + i*nvar
+        index = repeat(unique(coef.get_coefmap_alt())[newaxis,...]+1, data.shape[1], axis=0)
+        for i in range(1, index.shape[0]):
+            index[i,:] = index[i,:] + i*nvar
+        data_sim = zeros((data.shape[0], data.shape[1], nvar), dtype=data.dtype)
+        for i in range(data_sim.shape[0]):
+            data_sim[i,:,:] = reshape(array(ndimage_sum(data[i,:,:], labels, index=index)), index.shape)
+        return data_sim
+    
     def get_submodel_coefficients(self, submodel):
         return self.submodel_coefficients[submodel]
         
@@ -909,7 +937,7 @@ class ModelInteraction:
 
         return chosen_choice
 
-    def get_chosen_choice_for_submodel_and_update_data(self, submodel):
+    def set_chosen_choice_for_submodel_and_update_data(self, submodel):
         chosen_choice = self.get_chosen_choice()
         is_submodel_chosen_choice = take(chosen_choice, indices=self.model.observations_mapping[submodel],
                                                                                             axis=0)
@@ -922,9 +950,12 @@ class ModelInteraction:
         if False in where_not_remove:
             is_submodel_chosen_choice = compress(where_not_remove, is_submodel_chosen_choice, axis=0)
             self.remove_rows_from_data(where_not_remove, submodel)
-
+        self.chosen_choice_per_submodel[submodel] = is_submodel_chosen_choice
         return is_submodel_chosen_choice
     
+    def get_chosen_choice_for_submodel(self, submodel):
+        return self.chosen_choice_per_submodel[submodel]
+        
     def get_coefficient_names(self, submodel):
         return self.submodel_coefficients[submodel].get_coefficient_names_from_alt()
         

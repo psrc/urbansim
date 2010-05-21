@@ -34,7 +34,7 @@ class SpecifiedCoefficients(object):
                 coefficient names in the array 'coefficient_names'. It is used for estimation.
         beta_se_alt - standard errors of the coefficients. Array of the same shape as beta_alt.
         coefmap_alt - 2D array.  It maps coefficient names to variable names: for each submodel j
-                coefficient_names[i,j] correspond to variable_names[coefmap_alt[i,j].
+                coefficient_names[i,j] correspond to variable_names[coefmap_alt[i,j]].
         other_measures_alt - like other_measures but the dictionary values are in the same form as beta_alt.
     """
     # name of variable that is considered as a constant

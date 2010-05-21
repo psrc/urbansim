@@ -69,4 +69,3 @@ if __name__ == '__main__':
 
     explorer.run()
     ex = explorer
-    ds = ex.model_dependencies()

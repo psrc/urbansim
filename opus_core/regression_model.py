@@ -316,6 +316,23 @@ class RegressionModel(ChunkModel):
             logger.log_status('Predicted values saved as %s (for the %s dataset)' % (predicted_attribute_name, dataset.get_dataset_name()))
             logger.log_status('Residuals saved as %s (for the %s dataset)' % (predicted_error_attribute_name, dataset.get_dataset_name()))
         
+    def export_estimation_data(self, submodel=-2, file_name='./estimation_data_regression.txt', delimiter = '\t'):
+        import os
+        from numpy import newaxis
+        data = concatenate((self.outcome[submodel][...,newaxis], self.get_all_data(submodel=submodel)), axis=1)
+        header = ['outcome'] + self.get_coefficient_names(submodel).tolist()
+        nrows = data.shape[0]
+        file_name_root, file_name_ext = os.path.splitext(file_name)
+        out_file = "%s_submodel_%s.txt" % (file_name_root, submodel)
+        fh = open(out_file,'w')
+        fh.write(delimiter.join(header) + '\n')   #file header
+        for row in range(nrows):
+            line = [str(x) for x in data[row,]]
+            fh.write(delimiter.join(line) + '\n')
+        fh.flush()
+        fh.close
+        print 'Data written into %s' % out_file
+        
     def run_after_estimation(self, *args, **kwargs):
         return self.run(*args, **kwargs)
             

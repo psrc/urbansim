@@ -99,7 +99,7 @@ class GenericModelExplorer(object):
             varname = VariableName(name)
         chart = DependencyChart(self.xml_configuration)
         chart.print_dependencies(varname.get_expression())
-        
+                    
     def plot_histogram_before_after(self, attribute_name, bins=None):
         from opus_core.plot_functions import create_histogram, show_plots
         from matplotlib.pylab import figure

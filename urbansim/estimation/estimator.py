@@ -374,6 +374,24 @@ class Estimator(GenericModelExplorer):
         self.simulation_state.remove_singleton(delete_cache=remove_cache)
         SessionConfiguration().remove_singleton()
 
+    def export_estimation_data(self, submodel=-2, filename='./estimation_data.txt', wide=True, **kwargs):
+        """Exports estimation data into file. For choice models, 'wide' controls if it is in a wide format 
+        (such as biogeme format, i.e. one row per observation), or in a long format (i.e. each alternative 
+        has one row per observation).
+        """
+        from opus_core.choice_model import ChoiceModel
+        model = self.get_model()
+        if isinstance(model, ChoiceModel):
+            data = model.model_interaction.convert_data_from_estimation_to_simulation_format(submodel)
+            model.export_estimation_data(submodel, 
+                                         model.model_interaction.get_chosen_choice_for_submodel(submodel),
+                                         data, 
+                                         array(model.model_interaction.submodel_coefficients[submodel].get_variable_names()), 
+                                         file_name=filename, use_biogeme_data_format=wide, **kwargs)
+        else: # regression data
+            model.export_estimation_data(submodel, file_name=filename, **kwargs)
+        
+        
 def update_controller_by_specification_from_module(run_configuration, model_name, specification_module):
     controller = run_configuration["models_configuration"][model_name]["controller"]
     controller["import"][specification_module] = "specification as spec"

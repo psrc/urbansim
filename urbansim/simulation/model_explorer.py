@@ -11,6 +11,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.generic_model_explorer import GenericModelExplorer
 from urbansim.model_coordinators.model_system import ModelSystem
+from opus_core.choice_model import ChoiceModel
 
 
 class ModelExplorer(GenericModelExplorer):
@@ -70,3 +71,17 @@ class ModelExplorer(GenericModelExplorer):
     def get_specification(self):
         return self.get_model().get_specified_coefficients().specification
     
+    def get_probabilities(self, submodel=-2):
+        model = self.get_model()
+        if isinstance(model, ChoiceModel):
+            return model.get_probabilities_and_choices(submodel)
+        print '\nMethod is implemented only for ChoiceModels.\n'
+
+    def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
+        """Export probabilities and choices into a file."""
+        
+        model = self.get_model()
+        if isinstance(model, ChoiceModel):
+            model.export_probabilities(submodel, file_name=filename)
+        else:
+            print '\nMethod is implemented only for ChoiceModels.\n'
