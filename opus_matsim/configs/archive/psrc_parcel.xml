@@ -172,20 +172,20 @@
         <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable copyable="True" type="selectable" name="model_template">False</selectable>
-        <selectable type="selectable" name="prescheduled_events">True</selectable>
-        <selectable type="selectable" name="real_estate_price_model">False</selectable>
-        <selectable type="selectable" name="expected_sale_price_model">False</selectable>
-        <selectable type="selectable" name="development_proposal_choice_model">False</selectable>
-        <selectable type="selectable" name="building_construction_model">False</selectable>
-        <selectable type="selectable" name="household_transition_model">False</selectable>
-        <selectable type="selectable" name="employment_transition_model">False</selectable>
-        <selectable type="selectable" name="household_relocation_model">False</selectable>
-        <selectable type="selectable" name="household_location_choice_model">False</selectable>
-        <selectable type="selectable" name="employment_relocation_model">False</selectable>
-        <selectable type="selectable" name="employment_location_choice_model">False<group_members type="string">non_home_based</group_members>
+        <selectable copyable="True" type="model_choice" name="model_template">False</selectable>
+        <selectable type="model_choice" name="prescheduled_events">True</selectable>
+        <selectable type="model_choice" name="real_estate_price_model">False</selectable>
+        <selectable type="model_choice" name="expected_sale_price_model">False</selectable>
+        <selectable type="model_choice" name="development_proposal_choice_model">False</selectable>
+        <selectable type="model_choice" name="building_construction_model">False</selectable>
+        <selectable type="model_choice" name="household_transition_model">False</selectable>
+        <selectable type="model_choice" name="employment_transition_model">False</selectable>
+        <selectable type="model_choice" name="household_relocation_model">False</selectable>
+        <selectable type="model_choice" name="household_location_choice_model">False</selectable>
+        <selectable type="model_choice" name="employment_relocation_model">False</selectable>
+        <selectable type="model_choice" name="employment_location_choice_model">False<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable type="selectable" name="distribute_unplaced_jobs_model">False</selectable>
+        <selectable type="model_choice" name="distribute_unplaced_jobs_model">False</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">

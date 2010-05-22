@@ -58,7 +58,7 @@
         <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable type="selectable" name="prescheduled_events">True</selectable>
+        <selectable type="model_choice" name="prescheduled_events">True</selectable>
       </models_to_run>
       <cache_directory type="directory">seattle_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">

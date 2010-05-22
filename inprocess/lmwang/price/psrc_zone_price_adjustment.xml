@@ -115,21 +115,21 @@
   <scenario_manager followers="debuglevel,base_year,cache_directory">
     <scenario copyable="True" executable="True" name="psrc_zone_baseline" type="scenario">
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="development_project_transition_model" type="selectable">False</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
-        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
-        <selectable name="household_transition_model" type="selectable">False</selectable>
-        <selectable name="employment_transition_model" type="selectable">False</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable type="selectable" name="household_location_choice_model_nl">False</selectable>
-        <selectable name="employment_relocation_model" type="selectable">False</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">False
+        <selectable name="real_estate_price_model" type="model_choice">True</selectable>
+        <selectable name="development_project_transition_model" type="model_choice">False</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="model_choice">False</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="model_choice">False</selectable>
+        <selectable name="add_projects_to_buildings" type="model_choice">False</selectable>
+        <selectable name="household_transition_model" type="model_choice">False</selectable>
+        <selectable name="employment_transition_model" type="model_choice">False</selectable>
+        <selectable name="household_relocation_model" type="model_choice">True</selectable>
+        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
+        <selectable type="model_choice" name="household_location_choice_model_nl">False</selectable>
+        <selectable name="employment_relocation_model" type="model_choice">False</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">False
           <group_members type="string">_all_</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
       </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
       <base_year type="integer">2000</base_year>

@@ -9,9 +9,9 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">True</selectable>
-        <selectable name="opus_matsim.models.run_travel_model" type="selectable">True</selectable>
-        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">True</selectable>
+        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="model_choice">True</selectable>
+        <selectable name="opus_matsim.models.run_travel_model" type="model_choice">True</selectable>
+        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="model_choice">True</selectable>
       </models>
       <sampling_rate type="float">0.01</sampling_rate>
       <matsim_config_filename type="file">matsim_config/seattle_matsim_0.xml</matsim_config_filename>
@@ -31,19 +31,19 @@
         <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="prescheduled_events" type="selectable">True</selectable>
-        <selectable name="real_estate_price_model" type="selectable">False</selectable>
-        <selectable name="expected_sale_price_model" type="selectable">False</selectable>
-        <selectable name="development_proposal_choice_model" type="selectable">False</selectable>
-        <selectable name="building_construction_model" type="selectable">False</selectable>
-        <selectable name="employment_transition_model" type="selectable">False</selectable>
-        <selectable name="household_transition_model" type="selectable">False</selectable>
-        <selectable name="household_relocation_model" type="selectable">False</selectable>
-        <selectable name="household_location_choice_model" type="selectable">False</selectable>
-        <selectable name="employment_relocation_model" type="selectable">False</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
+        <selectable name="prescheduled_events" type="model_choice">True</selectable>
+        <selectable name="real_estate_price_model" type="model_choice">False</selectable>
+        <selectable name="expected_sale_price_model" type="model_choice">False</selectable>
+        <selectable name="development_proposal_choice_model" type="model_choice">False</selectable>
+        <selectable name="building_construction_model" type="model_choice">False</selectable>
+        <selectable name="employment_transition_model" type="model_choice">False</selectable>
+        <selectable name="household_transition_model" type="model_choice">False</selectable>
+        <selectable name="household_relocation_model" type="model_choice">False</selectable>
+        <selectable name="household_location_choice_model" type="model_choice">False</selectable>
+        <selectable name="employment_relocation_model" type="model_choice">False</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="model_choice">False</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>

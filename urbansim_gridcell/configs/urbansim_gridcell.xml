@@ -1094,25 +1094,25 @@
       </data>
       <model_system type="category">
         <models_to_run config_name="models" type="selectable_list">
-          <selectable name="prescheduled_events" type="selectable">True</selectable>
-          <selectable name="events_coordinator" type="selectable">True</selectable>
-          <selectable name="residential_land_share_model" type="selectable">True</selectable>
-          <selectable name="land_price_model" type="selectable">True</selectable>
-          <selectable name="development_project_transition_model" type="selectable">True</selectable>
-          <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
-          <selectable name="commercial_development_project_location_choice_model" type="selectable">True</selectable>
-          <selectable name="industrial_development_project_location_choice_model" type="selectable">True</selectable>
-          <selectable name="development_event_transition_model" type="selectable">True</selectable>
-          <selectable name="events_coordinator_1" return_value="events_coordinator" type="selectable">True</selectable>
-          <selectable name="residential_land_share_model" type="selectable">True</selectable>
-          <selectable name="household_transition_model" type="selectable">True</selectable>
-          <selectable name="employment_transition_model" type="selectable">True</selectable>
-          <selectable name="household_relocation_model" type="selectable">True</selectable>
-          <selectable name="household_location_choice_model" type="selectable">True</selectable>
-          <selectable name="employment_relocation_model" type="selectable">True</selectable>
-          <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">_all_</group_members>
+          <selectable name="prescheduled_events" type="model_choice">True</selectable>
+          <selectable name="events_coordinator" type="model_choice">True</selectable>
+          <selectable name="residential_land_share_model" type="model_choice">True</selectable>
+          <selectable name="land_price_model" type="model_choice">True</selectable>
+          <selectable name="development_project_transition_model" type="model_choice">True</selectable>
+          <selectable name="residential_development_project_location_choice_model" type="model_choice">True</selectable>
+          <selectable name="commercial_development_project_location_choice_model" type="model_choice">True</selectable>
+          <selectable name="industrial_development_project_location_choice_model" type="model_choice">True</selectable>
+          <selectable name="development_event_transition_model" type="model_choice">True</selectable>
+          <selectable name="events_coordinator_1" return_value="events_coordinator" type="model_choice">True</selectable>
+          <selectable name="residential_land_share_model" type="model_choice">True</selectable>
+          <selectable name="household_transition_model" type="model_choice">True</selectable>
+          <selectable name="employment_transition_model" type="model_choice">True</selectable>
+          <selectable name="household_relocation_model" type="model_choice">True</selectable>
+          <selectable name="household_location_choice_model" type="model_choice">True</selectable>
+          <selectable name="employment_relocation_model" type="model_choice">True</selectable>
+          <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
           </selectable>
-          <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+          <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
         </models_to_run>
         <others type="category">
           <base_year type="integer">1980</base_year>

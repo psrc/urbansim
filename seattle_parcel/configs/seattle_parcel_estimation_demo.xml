@@ -367,19 +367,19 @@
         <lastyear type="integer">2002</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="model_template" type="selectable">False</selectable>
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="expected_sale_price_model" type="selectable">True</selectable>
-        <selectable name="development_proposal_choice_model" type="selectable">True</selectable>
-        <selectable name="building_construction_model" type="selectable">True</selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">non_home_based</group_members>
+        <selectable name="model_template" type="model_choice">False</selectable>
+        <selectable name="real_estate_price_model" type="model_choice">True</selectable>
+        <selectable name="expected_sale_price_model" type="model_choice">True</selectable>
+        <selectable name="development_proposal_choice_model" type="model_choice">True</selectable>
+        <selectable name="building_construction_model" type="model_choice">True</selectable>
+        <selectable name="household_transition_model" type="model_choice">True</selectable>
+        <selectable name="employment_transition_model" type="model_choice">True</selectable>
+        <selectable name="household_relocation_model" type="model_choice">True</selectable>
+        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
+        <selectable name="employment_relocation_model" type="model_choice">True</selectable>
+        <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">

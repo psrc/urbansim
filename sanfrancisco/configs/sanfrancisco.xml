@@ -433,16 +433,16 @@
         <lastyear type="integer">2005</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="process_pipeline_events" type="selectable">True</selectable>
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="building_transition_model" type="selectable">True</selectable>
-        <selectable name="building_location_choice_model" type="selectable">True</selectable>
-        <selectable name="Household_transition_model" type="selectable">True</selectable>
-        <selectable name="Business_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="business_relocation_model" type="selectable">True</selectable>
-        <selectable name="business_location_choice_model" type="selectable">True</selectable>
+        <selectable name="process_pipeline_events" type="model_choice">True</selectable>
+        <selectable name="real_estate_price_model" type="model_choice">True</selectable>
+        <selectable name="building_transition_model" type="model_choice">True</selectable>
+        <selectable name="building_location_choice_model" type="model_choice">True</selectable>
+        <selectable name="Household_transition_model" type="model_choice">True</selectable>
+        <selectable name="Business_transition_model" type="model_choice">True</selectable>
+        <selectable name="household_relocation_model" type="model_choice">True</selectable>
+        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
+        <selectable name="business_relocation_model" type="model_choice">True</selectable>
+        <selectable name="business_location_choice_model" type="model_choice">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">sanfrancisco/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
