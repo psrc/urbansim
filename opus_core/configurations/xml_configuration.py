@@ -708,7 +708,7 @@ class XMLConfiguration(object):
             return ''
         elif type_name=='db_connection_hook':
             return node.text
-        elif type_name == 'selectable':
+        elif type_name in ['selectable', 'model_choice']:
             return self._convert_selectable_to_data(node)
 #        elif type_name=='model_choice':
 #            return self._convert_custom_type_to_data(node, "Skip")
