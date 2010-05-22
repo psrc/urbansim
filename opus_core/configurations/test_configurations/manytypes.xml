@@ -41,8 +41,8 @@
      <a name="don't choose me" type="selectable">False</a>
     </selectable_list>
     <models_to_run type="selectable_list">
-      <selectable type="model_choice" name="real_estate_price_model">True</selectable>
-      <selectable type="model_choice" name="airplane_model">False</selectable>
+      <selectable type="selectable" name="real_estate_price_model">True</selectable>
+      <selectable type="selectable" name="airplane_model">False</selectable>
     </models_to_run>
     <mytables type="selectable_list">
       <selectable type="selectable" name="gridcells">True</selectable>
