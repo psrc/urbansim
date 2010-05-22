@@ -100,7 +100,7 @@
         <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
         <argument name="tables_to_cache" type="selectable_list">
           <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
-          <selectable name="annual_household_control_totals" typetype="model_choice"e</selectable>
+          <selectable name="annual_household_control_totals" type="model_choice">True</selectable>
           <selectable name="buildings" type="selectable">True</selectable>
           <selectable name="building_types" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>
