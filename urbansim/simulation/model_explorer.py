@@ -41,17 +41,10 @@ class ModelExplorer(GenericModelExplorer):
         self.config = Resources(config)
         self.xml_configuration = xml_configuration
         
-        cache = False
         if cache_directory is None:
-            cache_directory = self.config['creating_baseyear_cache_configuration'].cache_directory_root
-            cache = True
+            cache_directory = config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy
         self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory)
-        
-        if cache:
-            self.config['cache_directory'] = self.simulation_state.get_cache_directory()
-            CacheFltData().run(self.config)
-        else:
-            self.config['cache_directory'] = cache_directory
+        self.config['cache_directory'] = cache_directory
         
         SessionConfiguration(new_instance=True,
                              package_order=self.config['dataset_pool_configuration'].package_order,

@@ -92,8 +92,11 @@ class GenericModelExplorer(object):
         varname = None
         allvars = self.get_specification().get_variable_names()
         for ivar in range(len(allvars)):
-            if name == allvars[ivar].get_alias():
-                varname = allvars[ivar]
+            thisvar = allvars[ivar]
+            if not isinstance(thisvar, VariableName):
+                thisvar = VariableName(thisvar)
+            if name == thisvar.get_alias():
+                varname = thisvar
                 break
         if varname is None:
             varname = VariableName(name)
