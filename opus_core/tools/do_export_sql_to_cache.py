@@ -4,9 +4,7 @@
 
 import os
 import sys
-
 from optparse import OptionParser
-
 from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.sql_storage import sql_storage
@@ -65,7 +63,7 @@ if __name__ == '__main__':
                          in_storage=AttributeCache())
 
     if table_name == 'ALL':
-        print 'caching all...'
+        logger.log_status('Caching all tables in database...')
         lst = input_storage.get_table_names()
         for i in lst:
             ExportStorage().export_dataset(
@@ -76,7 +74,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     logger.start_block("Exporting table '%s' to year %s of cache located at %s..." %
-                   (table_name, cache_year, attribute_cache_directory))
+                       (table_name, cache_year, attribute_cache_directory))
     try:
         ExportStorage().export_dataset(
             dataset_name = table_name,

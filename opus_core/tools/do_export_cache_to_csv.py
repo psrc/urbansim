@@ -4,9 +4,7 @@
 
 import os
 import sys
-
 from optparse import OptionParser
-
 from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.flt_storage import flt_storage
