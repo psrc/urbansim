@@ -351,7 +351,7 @@
             <argument name="current_year" type="string">year</argument>
             <argument field_identifier="Control Total Attribute" name="control_total_attribute" parser_action="quote_string" type="string"/>
             <argument field_identifier="Year Attribute" name="year_attribute" parser_action="quote_string" type="string">year</argument>
-            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument field_identifier="Capacity Attribute" convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
           </run>
           <prepare_for_run type="dictionary">
