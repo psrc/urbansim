@@ -189,6 +189,7 @@
         </specification>
       </model>
       <model name="employment_location_choice_model" type="model">
+        <dependencies type="list">['employment_relocation_model']</dependencies>
         <specification type="dictionary">
           <submodel_group name="home_based" type="submodel_group">
             <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
@@ -209,6 +210,74 @@
         </specification>
       </model>
       <model name="household_location_choice_model" type="model">
+        <dependencies type="list">['household_relocation_model']</dependencies>
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <output hidden="True" name="output" type="string">(coefficients, _)</output>
+            <argument name="agent_set" type="string">household</argument>
+            <argument hidden="True" name="agents_index" type="string">_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">_specification</argument>
+          </estimate>
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" name="name" type="string">HouseholdLocationChoiceModel</name>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_wesml_mnl_estimation</argument>
+            <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">vacant_residential_units</argument>
+            <argument name="estimation_weight_string" parser_action="quote_string" type="string">residential_units</argument>
+            <argument name="number_of_units_string" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
+            <argument name="number_of_agents_string" convert_blank_to_none="True" parser_action="quote_string" type="string"></argument>
+            <argument name="location_id_string" parser_action="quote_string" type="string">building_id</argument>
+            <argument name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
+            <argument name="estimation_size_agents" type="float">0.5</argument>
+            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 7})</argument>
+            <argument name="estimate_config" type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_parcel</argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_estimate</name>
+            <output hidden="True" name="output" type="string">(_specification, _index)</output>
+            <argument name="agent_set" type="string">household</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="index_to_unplace" type="string">None</argument>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">.1</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</argument>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" name="name" type="string">prepare_for_run</name>
+            <output hidden="True" name="output" type="string">(_specification, _coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="agent_set" type="string">household</argument>
+            <argument hidden="True" name="agents_index" type="string">hrm_index</argument>
+            <argument name="chunk_specification" type="string">None</argument>
+            <!--<argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>!-->
+            <argument hidden="True" name="coefficients" type="string">_coefficients</argument>
+            <argument hidden="True" name="data_objects" type="string">datasets</argument>
+            <argument hidden="True" name="debuglevel" type="string">debuglevel</argument>
+            <argument hidden="True" name="specification" type="string">_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
         <specification type="dictionary">
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
             <description type="string">No submodel</description>
