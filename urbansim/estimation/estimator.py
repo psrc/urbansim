@@ -126,7 +126,8 @@ class Estimator(GenericModelExplorer):
             
         if agents_index is None:
             agents_index = self.agents_index_for_prediction
-            
+        
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['coefficients'] = "coeff_est"
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "agents_index"
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
 
@@ -156,6 +157,7 @@ class Estimator(GenericModelExplorer):
             agents.modify_attribute(name=choice_id_name, data=dummy_data) #reset all choices
             
             run_year_namespace["process"] = "run"
+            run_year_namespace["coeff_est"] = self.coefficients
             run_year_namespace["agents_index"] = agents_index
             run_year_namespace["processmodel_config"] = tmp_config['models_configuration'][self.model_name]['controller']['run']
             new_choices = self.model_system.do_process(run_year_namespace)
