@@ -4,6 +4,10 @@
     <description type="string">Sample Seattle project</description>
     <project_name hidden="True" type="string">seattle_parcel</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <expression_library type="dictionary">
+    <variable use="model variable" source="expression" name="household_x_building.gcdacbd_1person" type="variable_definition">(household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)</variable>
+    <variable use="model variable" source="expression" name="household_x_building.workers_ln_emp_30min_hbw_drive_alone"  type="variable_definition">household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))</variable>
+    </expression_library>
     <dataset_pool_configuration type="class">
       <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
       <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
@@ -283,6 +287,8 @@
             <description type="string">No submodel</description>
             <variable_list type="variable_list">
               <variable_spec name="building.ln_residential_units"/>
+              <variable_spec name="household_x_building.gcdacbd_1person"/>
+              <variable_spec name="household_x_building.workers_ln_emp_30min_hbw_drive_alone"/>
             </variable_list>
           </submodel>
         </specification>
