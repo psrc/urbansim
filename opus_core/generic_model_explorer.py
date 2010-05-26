@@ -102,7 +102,13 @@ class GenericModelExplorer(object):
             varname = VariableName(name)
         chart = DependencyChart(self.xml_configuration)
         chart.print_dependencies(varname.get_expression())
-                    
+              
+    def compute_expression(self, attribute_name):
+        var_name = VariableName(attribute_name)
+        dataset_name = var_name.get_dataset_name()
+        ds = self.get_dataset(dataset_name)
+        return ds.compute_variables([var_name], dataset_pool=self.model_system.run_year_namespace["dataset_pool"])
+        
     def plot_histogram_before_after(self, attribute_name, bins=None):
         from opus_core.plot_functions import create_histogram, show_plots
         from matplotlib.pylab import figure

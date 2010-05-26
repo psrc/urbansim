@@ -818,7 +818,7 @@ class ModelInteraction:
     def get_choice_ids_for_submodel(self, submodel):
         index = self.get_choice_index_for_submodel(submodel)
         if index is not None:
-            return self.interaction_dataset.get_id_attribute_of_dataset(2)[index]
+            return self.interaction_dataset.get_dataset(2).get_id_attribute()[index]
         
     def get_agent_ids_for_submodel(self, submodel):
         return self.interaction_dataset.get_id_attribute_of_dataset(1)[self.model.observations_mapping[submodel]]
