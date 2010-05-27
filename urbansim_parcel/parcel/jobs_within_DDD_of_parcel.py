@@ -20,6 +20,7 @@ class jobs_within_DDD_of_parcel(Variable):
     def dependencies(self):
         return [my_attribute_label("x_coord_sp"),
                 my_attribute_label("y_coord_sp"),
+                "urbansim_parcel.job.parcel_id"
                 ]
 
     def compute(self, dataset_pool):
@@ -50,8 +51,14 @@ class Tests(opus_unittest.OpusTestCase):
                 "y_coord_sp": array([1,   1,    1 ]),
             },
             'job':
-            {"job_id":array([1,2,3,4,5,6,7]),
-             "parcel_id":array([1,2,2,2,2,1,3]),
+            {
+                "job_id":array([1,2,3,4,5,6,7]),
+                "building_id":array([1,2,3,4,5,6,7]),
+             },
+            'building':
+            {
+                "building_id":array([1,2,3,4,5,6,7]),
+                "parcel_id":array([1,2,2,2,2,1,3]),
              },
         })
         should_be = array([6, 7, 5])
