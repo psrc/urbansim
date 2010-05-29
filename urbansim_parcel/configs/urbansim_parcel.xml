@@ -265,6 +265,7 @@
         </structure>
       </model>
       <model name="employment_location_choice_model" type="model">
+        <dependencies type="list">['employment_relocation_model']</dependencies>
         <structure type="dictionary">
           <estimate type="dictionary">
             <argument name="agent_set" type="string">job</argument>
@@ -471,6 +472,7 @@
         </structure>
       </model>
       <model name="building_construction_model" type="model">
+        <dependencies type="list">['real_estate_price_model', "expected_sale_price_model", "development_proposal_choice_model"]</dependencies>
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
             <class_module type="string">urbansim_parcel.models.building_construction_model</class_module>
@@ -488,6 +490,7 @@
         </structure>
       </model>
       <model name="household_location_choice_model" type="model">
+        <dependencies type="list">['household_relocation_model']</dependencies>
         <structure type="dictionary">
           <estimate type="dictionary">
             <output hidden="True" name="output" type="string">(coefficients, _)</output>
@@ -601,7 +604,7 @@
           <run type="dictionary">
             <argument name="agent_set" type="string">person</argument>
             <argument name="agents_index" type="string">_index</argument>
-	    <argument name="choose_job_only_in_residence_zone" type="string">False</argument>
+      <argument name="choose_job_only_in_residence_zone" type="string">False</argument>
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="coefficients" type="string">coefficients</argument>
             <argument name="data_objects" type="string">datasets</argument>
@@ -639,30 +642,30 @@
           <init type="dictionary">
             <name name="name" type="string">WorkplaceChoiceModel</name>
             <argument name="location_set" type="string">job</argument>
-		    <argument name="model_name" parser_action="quote_string" type="string">Non-home-based Workplace Choice Model for residents</argument>
-		    <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
-		    <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-		    <argument name="submodel_string" type="string">None</argument>
-		    <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
-		    <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
-	        <argument name="run_config" type="dictionary">
-		      <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
-		      <key name="sample_size_locations" type="integer">30</key>
-		      <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
-		      <key name="compute_capacity_flag" type="string">True</key>
-		      <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
-		      <key name="lottery_max_iterations" type="integer">10</key>
-		      <key name="number_of_units_string" type="string">(job.building_type==2).astype(int32)</key>
-		      <key name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
-		    </argument>
-	        <argument name="estimate_config" type="dictionary">
-		      <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
-		      <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
-		      <key name="sample_size_locations" type="integer">30</key>
-		      <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
-		      <key name="compute_capacity_flag" type="string">True</key>
-		      <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
-	        </argument>
+        <argument name="model_name" parser_action="quote_string" type="string">Non-home-based Workplace Choice Model for residents</argument>
+        <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
+        <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+        <argument name="submodel_string" type="string">None</argument>
+        <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
+        <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
+          <argument name="run_config" type="dictionary">
+          <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
+          <key name="sample_size_locations" type="integer">30</key>
+          <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+          <key name="compute_capacity_flag" type="string">True</key>
+          <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+          <key name="lottery_max_iterations" type="integer">10</key>
+          <key name="number_of_units_string" type="string">(job.building_type==2).astype(int32)</key>
+          <key name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
+        </argument>
+          <argument name="estimate_config" type="dictionary">
+          <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
+          <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
+          <key name="sample_size_locations" type="integer">30</key>
+          <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+          <key name="compute_capacity_flag" type="string">True</key>
+          <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+          </argument>
         </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
@@ -686,7 +689,7 @@
             <argument name="agent_set" type="string">person</argument>
             <argument name="household_set" type="string">household</argument>
             <argument name="join_datasets" type="string">True</argument>
-	        <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_non_home_based_worker_with_job</argument>
+          <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.person.is_non_home_based_worker_with_job</argument>
             <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
             <argument name="agents_for_estimation_table" parser_action="quote_string" type="string">persons_for_estimation</argument>
             <argument name="households_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
