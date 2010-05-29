@@ -83,7 +83,7 @@
           </run>
         </structure>
     </model>
-	</models>
+  </models>
     <templates hidden="True" name="Model Templates" parser_action="skip">
       <model_template name="simple_model">
         <structure type="dictionary">
@@ -237,7 +237,9 @@
         <specification type="dictionary">
           <submodel hidden="Children" name="Submodel" submodel_id="-2" type="submodel">
             <description type="string">A sample submodel. In order to estimate the model, please add at least one variable.</description>
-            <variable_list type="variable_list"/>
+            <variable_list type="variable_list">
+                <variable_spec name="constant"/>
+            </variable_list>
           </submodel>
         </specification>
         <estimation_config name="Estimation Configuration" parser_action="skip">

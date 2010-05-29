@@ -65,13 +65,16 @@ class ModelExplorer(GenericModelExplorer):
         return self.get_model().get_specified_coefficients().specification
     
     def get_probabilities(self, submodel=-2):
+        """Return a tuple of probabilities and choices, see ChoiceModel.get_probabilities_and_choices.
+        Works only for the ChoiceModel class.
+        """
         model = self.get_model()
         if isinstance(model, ChoiceModel):
             return model.get_probabilities_and_choices(submodel)
         print '\nMethod is implemented only for ChoiceModels.\n'
 
     def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
-        """Export probabilities and choices into a file."""
+        """Export probabilities and choices into a file. Works only for the ChoiceModel class"""
         
         model = self.get_model()
         if isinstance(model, ChoiceModel):
