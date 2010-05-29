@@ -400,13 +400,14 @@ class Dataset(AbstractDataset):
                 table_data=values_computed,
                 )
          
-    def copy_attribute_by_reload(self, name, dataset_pool=None):
+    def copy_attribute_by_reload(self, name, storage=None, **kwargs):
         """Reloads (or recomputes) attribute 'name' from storage and connects it to self as 
             an additional attribute with the postfix '_reload__'. This can be useful 
             in cases when an attribute in memory was modified by a model and 
             one wants to compare it to previous values.
         """
-        dummy_ds = Dataset(self.resources)
+        dataset_pool = DatasetPool(storage=storage, **kwargs)
+        dummy_ds = dataset_pool.get_dataset(self.get_dataset_name())
         if not isinstance(name, VariableName):
             attr_name = VariableName(name)
         else:
@@ -961,24 +962,24 @@ class DatasetTests(opus_unittest.OpusTestCase):
         in_storage.write_table(
             'tests',
             {
-                'id':array([1,2,3]),
+                'test_id':array([1,2,3]),
                 'attr':array([100,200,300]),
             }
         )
-        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='test_id', dataset_name='test')
         ds.load_dataset()
         # change the values of 'attr'
         ds.modify_attribute(name='attr', data=array([110, 150, 20]))
-        expr = 'ln_attr = ln(dataset.attr)'
+        expr = 'ln_attr = ln(test.attr)'
         ds.compute_variables([expr])
-        ds.copy_attribute_by_reload('attr')
+        ds.copy_attribute_by_reload('attr', storage=in_storage)
         # should have an additional attribute with the original values
         self.assertEqual(len(ds.get_primary_attribute_names()), 3)
         self.assertEqual(ma.allequal(ds.get_attribute('attr'), array([110, 150, 20])), True)
         self.assertEqual(ma.allequal(ds.get_attribute('attr_reload__'), array([100,200,300])), True)
 
         # do the reload for a computed attribute
-        ds.copy_attribute_by_reload(expr)
+        ds.copy_attribute_by_reload(expr, storage=in_storage)
         self.assertEqual(len(ds.get_computed_attribute_names()), 2)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr'), log(array([110, 150, 20]))), True)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr_reload__'), log(array([100,200,300]))), True)

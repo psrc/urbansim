@@ -132,7 +132,7 @@ class Model(ModelComponent):
         some data and coefficient names respectively. data is a 2D array where columns correspond to
         the coefficient names. If is3d is True, data is 3D array where the second dimension
         correspond to coefficient names. It returns data for the given submodel and coefficient name.
-        Meant to be used for analyzing estimation data."""
+        Meant to be used for data exploration (see GenericDataExplorer)."""
         data = self.get_all_data(submodel)
         names = self.get_coefficient_names(submodel)
         if (names is not None) and (coefficient in names) and (data is not None):

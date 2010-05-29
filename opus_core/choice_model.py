@@ -556,9 +556,17 @@ class ChoiceModel(ChunkModel):
         return (out_file_probs, out_file_choices)
                 
     def get_probabilities_and_choices(self, submodel):
+        """Return a tuple of probabilities (2d array, first column are the agent ids, remaining columns
+        are probabilities for each choice) and choices (2d array of [possibly sampled] choice ids, 
+                                                        where the first column are the agent ids)."""
+        from numpy import argsort
         agent_ids = self.model_interaction.get_agent_ids_for_submodel(submodel)
         probs = concatenate((agent_ids[...,newaxis], self.upc_sequence.get_probabilities()), axis=1)
         choice_ids = concatenate((agent_ids[...,newaxis], self.model_interaction.get_choice_ids_for_submodel(submodel)), axis=1)
+        # sort results
+        order_idx = argsort(agent_ids)
+        probs = probs[order_idx,:]
+        choice_ids = choice_ids[order_idx,:]
         return (probs, choice_ids)
         
     def export_probabilities(self, submodel, file_name):
@@ -731,7 +739,7 @@ class ChoiceModel(ChunkModel):
         return ChunkModel.get_data(self, coefficient, submodel, is3d=True)
 
     def get_data_as_dataset(self, submodel=-2):
-        """Like get_all_data, but the retuning value is a InteractionDataset containing attributes that
+        """Like get_all_data, but the returning value is an InteractionDataset containing attributes that
         correspond to the data columns. Their names are coefficient names."""
         all_data = self.get_all_data(submodel)
         if all_data is None:

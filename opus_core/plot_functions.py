@@ -40,8 +40,8 @@ def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g')
         maxi = values.size
     if bins is None:
         bins = values.size
-    width_par = (maxi-mini)/bins
-    bar(arange(mini, maxi, step = (maxi-mini)/bins), values, width=width_par, color='g')
+    width_par = 1.*(maxi-mini)/bins
+    bar(arange(mini, maxi, step = 1.*(maxi-mini)/bins), values, width=width_par, color='g')
     xticks(arange(mini, maxi, step = (maxi-mini)/bins).tolist())
     title(main)
     Axis = axis()
