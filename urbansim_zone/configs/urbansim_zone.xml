@@ -615,28 +615,24 @@
             <description type="string">Commercial</description>
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
-              <variable_spec name=".cbd_time"/>
             </variable_list>
           </submodel>
           <submodel followers="submodel" hidden="Children" name="governmental" submodel_id="2" type="submodel">
             <description type="string">Governmental</description>
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
-              <variable_spec name=".cbd_time"/>
             </variable_list>
           </submodel>
           <submodel followers="submodel" hidden="Children" name="industrial" submodel_id="3" type="submodel">
             <description type="string">Industrial</description>
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
-              <variable_spec name=".cbd_time"/>
             </variable_list>
           </submodel>
           <submodel followers="submodel" hidden="Children" name="residential" submodel_id="4" type="submodel">
             <description type="string">Residential</description>
             <variable_list type="variable_list">
               <variable_spec name="constant"/>
-              <variable_spec name=".cbd_time"/>
             </variable_list>
           </submodel>
         </specification>
@@ -664,20 +660,20 @@
   <scenario_manager>
     <scenario executable="True" name="urbansim_zone_baseline" setexpanded="True" type="scenario">
       <models_to_run type="selectable_list">
-        <selectable name="real_estate_price_model" type="model_choice">True</selectable>
-        <selectable name="development_project_transition_model" type="model_choice">False</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="model_choice">False</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="model_choice">False</selectable>
-        <selectable name="add_projects_to_buildings" type="model_choice">False</selectable>
-        <selectable name="household_transition_model" type="model_choice">True</selectable>
-        <selectable name="employment_transition_model" type="model_choice">True</selectable>
-        <selectable name="household_relocation_model" type="model_choice">True</selectable>
-        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="employment_relocation_model" type="model_choice">True</selectable>
-        <selectable name="employment_location_choice_model" type="model_choice">True
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="development_project_transition_model" type="selectable">False</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>
+        <selectable name="employment_transition_model" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="employment_relocation_model" type="selectable">True</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">True
           <group_members type="string">_all_</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
       </models_to_run>
       <scenario_database_configuration type="string"/>
       <others type="category">
