@@ -75,7 +75,7 @@ class XmlController_Scenarios(XmlController):
 
         if node.get('executable') == 'True':
             menu.addAction(self.actRunScenario)
-        elif node.get('type') == 'model_choice':
+        elif node.get('type') in ['selectable', 'model_choice']:
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
         elif node.tag == 'models_to_run': # special case of a selectable list
