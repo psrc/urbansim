@@ -43,6 +43,7 @@ class RealEstateTransitionModel(Model):
             sample_from_dataset = None,
             sample_filter="",
             reset_attribute_value={}, 
+            year_built = 'year_built',
             dataset_pool=None,
             append_to_realestate_dataset = False,
             table_name = "development_projects",
@@ -199,7 +200,7 @@ class RealEstateTransitionModel(Model):
             ### ideally duplicate_rows() is all needed to add newly cloned rows
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
             ##realestate_dataset.duplicate_rows(sampled_index)
-            logger.log_status()
+            result_data.setdefault(year_built, resize(year, sampled_index.size).astype('int32'))
             for attribute in sample_from_dataset.get_primary_attribute_names():
                 if reset_attribute_value.has_key(attribute):
                     result_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
