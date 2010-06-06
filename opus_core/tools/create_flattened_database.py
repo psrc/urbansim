@@ -2,12 +2,11 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import sys
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.misc import get_config_from_opus_path
 from opus_core.database_management.flatten_scenario_database_chain \
     import FlattenScenarioDatabaseChain
 from opus_core.database_management.configurations.scenario_database_configuration import ScenarioDatabaseConfiguration
-from opus_core.misc import get_config_from_opus_path
 from opus_core.configurations.xml_configuration import XMLConfiguration
 
 class CreateFlattenedDatabaseOptionGroup(GenericOptionGroup):
