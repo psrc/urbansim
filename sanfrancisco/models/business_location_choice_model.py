@@ -4,10 +4,7 @@
 
 from opus_core.resources import Resources
 from urbansim.models.location_choice_model import LocationChoiceModel
-from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
-from opus_core.variables.variable_name import VariableName
-from numpy import arange, where, ones, int32
-from numpy import take, int8, bool8, unique
+from numpy import arange, where, ones
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.logger import logger
 from opus_core.datasets.dataset import Dataset
