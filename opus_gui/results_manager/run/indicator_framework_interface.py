@@ -6,11 +6,12 @@
 from opus_gui.results_manager.run.indicator_framework.maker.source_data import SourceData
 from opus_gui.results_manager.run.indicator_framework.representations.indicator import Indicator
 from opus_gui.results_manager.run.indicator_framework.representations.computed_indicator import ComputedIndicator
+from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-
-from opus_gui.general_manager.general_manager_functions import get_available_indicator_nodes
 from opus_core.configurations.xml_configuration import get_variable_dataset_and_name
+
+from opus_core.variables.variable_name import VariableName, is_anonymous_autogen_name
 
 class IndicatorFrameworkInterface:
     def __init__(self, project):
@@ -62,9 +63,11 @@ class IndicatorFrameworkInterface:
             else:
                 raise Exception('Could not find an indicator %s for dataset %s'\
                                  %(indicator_name, dataset_name))
-
+            
         # Make sure that expressions are prepended by their names
-        if attribute.find('=') == -1 and source == 'expression':
+        # WAS the line below, but it fails if the expression includes an argument like 'function=mean'
+        #if attribute.find('=') == -1 and source == 'expression':
+        if is_anonymous_autogen_name(VariableName(attribute).get_short_name()):
             attribute = str(indicator_name) + '='+ attribute
 
         new_indicator = Indicator(name = indicator_name,
