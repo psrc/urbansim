@@ -136,11 +136,14 @@ class TravelModelOutput(object):
                 file_name = "%s_one_matrix.txt" % matrix_name
             file_contents = self._get_emme2_data_from_file(join(bank_path, file_name))
             
-            travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), name=attribute_name)
-            for line in file_contents:
-                from_zone_id, to_zone_id, value = str.split(line)
-                zone_index = travel_data_set.get_index_by_origin_and_destination_ids(from_zone_id, to_zone_id)
-                travel_data_set.set_values_of_one_attribute(attribute=attribute_name, values=float(value), index=zone_index)
+            travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
+                                                  name=attribute_name)
+            odv = array([line.split() for line in file_contents], dtype=float32)
+            travel_data_set.set_values_of_one_attribute_with_od_pairs(attribute=attribute_name,
+                                                                      values=odv[:,2],
+                                                                      O=odv[:,0].astype('int32'),
+                                                                      D=odv[:,1].astype('int32')
+                                                                      )
         finally:
             logger.end_block()
             
