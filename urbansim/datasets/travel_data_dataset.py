@@ -38,15 +38,15 @@ class TravelDataDataset(UrbansimDataset):
         
         return results
 
-    def set_values_of_one_attribute_with_od_pairs(self, name, values, O, D, fill=0):
-        """set attribute "name" of travel_data with a 2d array (matrix) index by [O, D].
+    def set_values_of_one_attribute_with_od_pairs(self, attribute, values, O, D, fill=0):
+        """set travel_data attribute with a 2d array (matrix) index by [O, D].
         o-d pairs appearing in travel_data ids, but not specified in O and D arguments, are filled with 'fill' (0)
         o-p pairs not appearing in travel_data ids, but specified in O and D arguments, are ignored
                 
         This provides similar function as: 
         
         index = travel_data.get_index_by_origin_and_destination_ids(O, D)
-        travel_data.set_values_of_one_attribute(attribute=name, values=values)
+        travel_data.set_values_of_one_attribute(attribute=attribute, values=values)
         
         but is more efficient when the O, D and values arrays are large in size.
         """
@@ -59,11 +59,11 @@ class TravelDataDataset(UrbansimDataset):
         matrix = fill * ones((nrows, ncols), dtype=values.dtype)
         matrix.put(indices=O * ncols + D, values = values)              
         
-        if name not in self.get_attribute_names():
-            self.add_primary_attribute(fill * ones(self.size(), dtype=values.dtype), name)
+        if attribute not in self.get_attribute_names():
+            self.add_primary_attribute(fill * ones(self.size(), dtype=values.dtype), attribute)
         
         results = matrix[oids, dids]
-        self.set_values_of_one_attribute(name, results)
+        self.set_values_of_one_attribute(attribute, results)
     
     def get_od_pair_index_not_in_dataset(self, O, D):
         """Return indices to O (D) from whose elements an od pair is not included in the travel data
