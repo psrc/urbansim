@@ -3,8 +3,9 @@
 # See opus_core/LICENSE 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.logger import logger
-from numpy import logical_and, ndarray, isscalar, where
-
+from numpy import logical_and, logical_or, isscalar, where, ones
+from numpy import unique, setdiff1d, zeros_like 
+        
 class TravelDataDataset(UrbansimDataset):
     """Dataset containing O-D matrices"""
 
@@ -27,7 +28,6 @@ class TravelDataDataset(UrbansimDataset):
     def get_attribute_as_matrix(self, name, fill=0):
         """return attribute "name" of travel_data as a 2d array, index by (from_zone_id, to_zone_id)
         """
-        from numpy import ones
         
         name_attribute = self.get_attribute(name)
         rows = self.get_attribute(self.origin_id_name)
@@ -37,12 +37,38 @@ class TravelDataDataset(UrbansimDataset):
         results.put(indices=rows * results.shape[1] + cols, values = name_attribute)
         
         return results
+
+    def set_values_of_one_attribute_with_od_pairs(self, name, values, O, D, fill=0):
+        """set attribute "name" of travel_data with a 2d array (matrix) index by [O, D].
+        o-d pairs appearing in travel_data ids, but not specified in O and D arguments, are filled with 'fill' (0)
+        o-p pairs not appearing in travel_data ids, but specified in O and D arguments, are ignored
+                
+        This provides similar function as: 
+        
+        index = travel_data.get_index_by_origin_and_destination_ids(O, D)
+        travel_data.set_values_of_one_attribute(attribute=name, values=values)
+        
+        but is more efficient when the O, D and values arrays are large in size.
+        """
+        assert O.shape == D.shape == values.shape
+        
+        oids = self.get_attribute(self.origin_id_name)
+        dids = self.get_attribute(self.destination_id_name)
+        nrows = max(O.max(), oids.max()) + 1
+        ncols = max(D.max(), dids.max()) + 1
+        matrix = fill * ones((nrows, ncols), dtype=values.dtype)
+        matrix.put(indices=O * ncols + D, values = values)              
+        
+        if name not in self.get_attribute_names():
+            self.add_primary_attribute(fill * ones(self.size(), dtype=values.dtype), name)
+        
+        results = matrix[oids, dids]
+        self.set_values_of_one_attribute(name, results)
     
     def get_od_pair_index_not_in_dataset(self, O, D):
         """Return indices to O (D) from whose elements an od pair is not included in the travel data
         see unittest for an example
         """
-        from numpy import unique1d, setdiff1d, zeros_like, logical_and, logical_or, where
         
         assert O.shape == D.shape
         
@@ -55,7 +81,7 @@ class TravelDataDataset(UrbansimDataset):
 
         ODpair = O * multiplier + D
         idpair = origin_ids * multiplier + destination_ids
-        missing_pairs = setdiff1d( unique1d(ODpair), unique1d(idpair) )
+        missing_pairs = setdiff1d( unique(ODpair), unique(idpair) )
 
         results = zeros_like(D)
         for pair in missing_pairs:
@@ -149,6 +175,27 @@ class Test(opus_unittest.OpusTestCase):
                            [0,-21.0,    0,  0,  0,-24.0]])
         self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
         self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+
+    def test_set_values_of_one_attribute_with_od_pairs(self):
+        O = array([1,       1,    1,     2,     2,     2,     5,     5])
+        D = array([1,       2,    5,     1,     2,     5,     1,     5])
+        values=array([-5.0, -8.0, -11.0,-14.0, -17.0, -20.0, -23.0, -26.0])
+        should_be = array([-5.0, -8.0, -11.0,-14.0, -17.0, -20.0, -23.0, -26.0])
+        self.travel_data.set_values_of_one_attribute_with_od_pairs('attr_x', values, O, D)
+        result = self.travel_data.get_attribute('attr_x')
+        self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        
+        ## o-d pairs appearing in id, but not specified in O and D arguments are filled with 'fill' (0)
+        ## o-p pairs not appearing in id, but specified in O and D arguments are ignored
+        O = array([1,       1,    1,            2,     2,     5,  5,     5,  6])
+        D = array([1,       2,    5,            2,     5,     1,  2,     5,  0])
+        values=array([-5.0, -8.0, -11.0,     -17.0, -20.0, -23.0,-99.0,-26.0,-999])
+        should_be = array([-5.0, -8.0, -11.0,  0.0, -17.0, -20.0, -23.0, -26.0])
+        self.travel_data.set_values_of_one_attribute_with_od_pairs('attr_x', values, O, D)
+        result = self.travel_data.get_attribute('attr_x')
+        self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))        
         
     def test_get_od_pair_index_not_in_dataset_1d(self):
         O = array([-1, 1, 1, 7, 5, 5, 5, 3,  2])
