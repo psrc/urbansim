@@ -99,6 +99,10 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             available_idx = where(logical_and(existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_tentative,
                                               existing_proposal_set_parent.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_not_available))[0]
             existing_proposal_set = DatasetSubset(existing_proposal_set_parent, available_idx)
+            # Code updated by Hanyi Li, MAG 6/8/2010
+            # Replacing the cached 'development_project_proposal' dataset with
+            # the filtered dataset 'existing_proposal_set'
+            dataset_pool.replace_dataset(existing_proposal_set_parent.get_dataset_name(), existing_proposal_set)
         except:
             existing_proposal_set = None
         
@@ -123,13 +127,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 else:
                     parcel_filter_for_new_development = parcel_filter_for_new_development[parcel_filter_for_new_development.find('=')+1:].lstrip()
                     filter = 'flter = numpy.logical_and(parcel.number_of_agents(development_project_proposal) == 0, %s)' % parcel_filter_for_new_development
-                index11 = where(parcels.compute_variables(filter))[0]
-                somelst = []
-                for i in index11:
-                    if i in parcels_with_proposals_idx:
-                        continue
-                    somelst.append(i)
-                index1 = array(somelst)
+                index1 = where(parcels.compute_variables(filter))[0]
+
         else:
             if parcel_filter_for_new_development is not None:
                 index1 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
