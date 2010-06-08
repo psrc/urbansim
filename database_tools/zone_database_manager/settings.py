@@ -9,7 +9,7 @@ CAMELOT_ATTACHMENTS = ''
 CAMELOT_MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 
 REPOSITORY = 'repository'
-ENGINE = lambda:'sqlite:///simple_zone.db'
+ENGINE = lambda:'sqlite:///zone.db'
 
 def setup_model():
     #import camelot.model
