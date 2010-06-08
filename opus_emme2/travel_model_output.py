@@ -139,11 +139,14 @@ class TravelModelOutput(object):
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), 
                                                   name=attribute_name)
             odv = array([line.split() for line in file_contents], dtype=float32)
-            travel_data_set.set_values_of_one_attribute_with_od_pairs(attribute=attribute_name,
-                                                                      values=odv[:,2],
-                                                                      O=odv[:,0].astype('int32'),
-                                                                      D=odv[:,1].astype('int32')
-                                                                      )
+            if odv.size == 0:
+                logger.log_error("Skipped exporting travel_data attribute %s: No data is exported from EMME matrix." % attribute_name)
+            else:            
+                travel_data_set.set_values_of_one_attribute_with_od_pairs(attribute=attribute_name,
+                                                                          values=odv[:,2],
+                                                                          O=odv[:,0].astype('int32'),
+                                                                          D=odv[:,1].astype('int32')
+                                                                          )
         finally:
             logger.end_block()
             
