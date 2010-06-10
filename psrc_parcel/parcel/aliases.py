@@ -7,4 +7,5 @@
 
 aliases = [
        "is_redevelopable=(parcel.number_of_agents(building)>0)*(urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1)*(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean)>30)",       
+       "total_price=parcel.land_value+parcel.aggregate(building.improvement_value)"
            ]
