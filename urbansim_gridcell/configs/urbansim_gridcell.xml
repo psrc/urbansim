@@ -1149,7 +1149,7 @@
         <model_system type="string">urbansim.model_coordinators.model_system</model_system>
         <debuglevel type="integer">4</debuglevel>
         <flush_variables type="boolean">False</flush_variables>
-        <seed type="integer">0</seed>
+        <seed type="integer" convert_blank_to_none="True">None</seed>
         <chunk_specification type="dictionary">
           <nchunks type="integer">1</nchunks>
         </chunk_specification>

@@ -98,7 +98,7 @@ class RemoteRunSet(RemoteRun):
         if run_id_file is None:
             config = get_config_from_opus_path(configuration_path)
             self.number_of_runs = config.get("number_of_runs", 1)
-            root_seed = config.get("seed", 1)
+            root_seed = config.get("seed", None)
             seed(root_seed)
             # generate different seed for each run (each seed contains 1 number)
             seed_array = randint(1,2**30, self.number_of_runs)

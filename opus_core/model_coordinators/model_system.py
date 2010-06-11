@@ -29,6 +29,8 @@ from opus_core.file_utilities import get_resources_from_file
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.variables.variable_factory import VariableFactory
 
+NO_SEED = None
+
 class ModelSystem(object):
     """
     Uses the information in configuration to run/estimate a set of models for given set of years.
@@ -103,7 +105,7 @@ class ModelSystem(object):
                     resources["flush_variables"] = False
 
                 debuglevel = resources.get("debuglevel", 0)
-                seed_values = resources.get('seed', 0)
+                seed_values = resources.get('seed', NO_SEED)
 
                 logger.log_status("random seed = %s" % str(seed_values))
                 seed(seed_values)
@@ -457,7 +459,7 @@ class ModelSystem(object):
         start_year = resources["years"][0]
         end_year = resources["years"][-1]
         nyears = end_year - start_year + 1
-        root_seed = resources.get("seed", 0)
+        root_seed = resources.get("seed", NO_SEED)
         seed(root_seed)
         seed_array = randint(1,2**30, nyears)
         logger.log_status("Running simulation for years %d thru %d" % (start_year, end_year))

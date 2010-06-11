@@ -4,9 +4,9 @@
 
 from opus_core.session_configuration import SessionConfiguration
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from numpy import array, where, int32, float32, ones, zeros, setdiff1d
+from numpy import where, ones, zeros, setdiff1d
 from numpy import logical_and, reshape, apply_along_axis, maximum
-from numpy.random import normal, seed
+from numpy.random import normal
 from opus_core.logger import logger
 import re
 

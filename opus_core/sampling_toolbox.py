@@ -493,23 +493,3 @@ def normalize(weight_array):
 def nonzerocounts(source_array):
     """return counts of nonzero elements in source_array"""
     return source_array.nonzero()[0].size
-
-#class RandomSeed(object):
-#    """A singlton to keep random seeds"""
-#    _instance = None
-#
-#    def __new__(cls, *args, **kwargs):
-#        if not cls._instance:
-#            cls._instance = super(RandomSeed, cls).__new__(
-#                               cls, *args, **kwargs)
-#            cls._instance._seed = (0, 0)
-#        return cls._instance
-#
-#    def get_seed(self):
-#        return self._seed
-#
-#    def set_seed(self,random_seed):
-#        self._seed = random_seed
-#
-#    def reset_seed(self):
-#        self._seed = (0, 0)

@@ -6,7 +6,7 @@
 #############################################################
 #DEFINE indicators
 #############################################################
-from opus_gui.results_manager.run.indicator_framework.maker.indicator import Indicator
+from opus_gui.results_manager.run.indicator_framework.representations.indicator import Indicator
 
 indicators = {
    'zone_population':Indicator( 

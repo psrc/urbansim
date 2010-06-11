@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<opus_project>
+﻿<opus_project>
   <xml_version>2.0</xml_version>
   <general>
     <project_name type="string">eugene_zone</project_name>
@@ -34,7 +33,7 @@
         <firstyear type="integer">1980</firstyear>
         <lastyear type="integer">1980</lastyear>
       </years>
-      <seed type="integer">1</seed>
+      <seed type="integer" convert_blank_to_none="True">1</seed>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <selectable name="pseudo_building" type="selectable">True</selectable>
         <selectable name="zone" type="selectable">True</selectable>

@@ -83,7 +83,7 @@ if __name__ == "__main__":
     number_of_runs = config.get("number_of_runs", 1)
     number_of_runs_in_parallel = min(config.get("parallel_runs", 1), number_of_runs)
     # generate seeds for multiple runs
-    root_seed = config.get("seed", 1)
+    root_seed = config.get("seed", None)
     seed(root_seed)
     # generate different seed for each run (each seed contains 1 number)
     seed_array = randint(1,2**30, number_of_runs)

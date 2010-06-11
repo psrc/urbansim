@@ -538,7 +538,7 @@ values are defaults set by our system):
 {
     'datasets_to_cache_after_each_model':[],
     'flush_variables': False,
-    'seed':0,
+    'seed':None,
     'debuglevel':0
 }
 \end{verbatim}
@@ -556,10 +556,9 @@ cache \simulationcacheindex, regardless to what dataset the variables belong to.
 Nevertheless, it increases the run-time considerably.
 
 Entry \verb|'seed'| specifies the seed of the random number generator that is set at
-the beginning of each simulated year. It is passed to the \module{numpy} \numpyindex
-function \method{seed()} and therefore it should be a tuple with two integer
-values. If both values are 0, the function generates a pseudo-random seed
-from the current time.
+the beginning of each simulated year. It is passed to the \module{numpy} 
+function \method{seed()}. If it is None, the function reads data from /dev/urandom or 
+seeds from the clock.  See seed() in numpy.random module for more details.
 
 \verb|'debuglevel'| controls the amount of output information.
 

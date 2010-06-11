@@ -96,23 +96,5 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
         #TODO write unittest for stratifiedsample
         pass
 
-#    def test_random_seed(self):
-#        RandomSeed().set_seed((7,9))
-#        seed(7,9)
-#        def t(min, max, j):
-#            seeds = RandomSeed().get_seed()
-#            seed(seeds[0], seeds[1])
-#            random_seed = get_seed()
-#            return (randint(min, max, j), random_seed)
-#
-#        j = 10
-#        min, max = (1, 100)
-#        my_random_seed = get_seed()
-#        r1 = randint(min, max, j)
-#        time.sleep(1)
-#        r2, t_random_seed = t(min, max, j)
-#        self.assertEqual(my_random_seed, t_random_seed, msg="random_seed set is not equal to result of get_seed()")
-#        assert alltrue(equal(r1, r2))
-
 if __name__ == "__main__":
     opus_unittest.main()

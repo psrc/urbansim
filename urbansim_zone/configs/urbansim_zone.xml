@@ -656,6 +656,21 @@
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
   </model_manager>
+  <scenario_manager>
+    <scenario executable="True" name="urbansim_zone_baseline" setexpanded="True" type="scenario">
+      <advanced type="category">
+        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <debuglevel type="integer">4</debuglevel>
+        <flush_variables type="boolean">False</flush_variables>
+        <seed type="integer" convert_blank_to_none="True">None</seed>
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['urbansim_zone', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+      </advanced>    
+    </scenario>
+  </scenario_manager>    
   <!--
   <scenario_manager>
     <scenario executable="True" name="urbansim_zone_baseline" setexpanded="True" type="scenario">
@@ -692,7 +707,7 @@
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-	  <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
+	      <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"/>
         </argument>
         <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
         <argument name="tables_to_cache" type="selectable_list">

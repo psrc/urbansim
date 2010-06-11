@@ -230,7 +230,7 @@ class GeneralConfiguration(Configuration):
             'years':(2001, 2030),
             'debuglevel':debuglevel,
             'flush_variables':False,
-            'seed':0,#(0,0),
+            'seed':None,#(0,0),
             'chunk_specification':{ # Default value
                 'nchunks':1,
                 },
