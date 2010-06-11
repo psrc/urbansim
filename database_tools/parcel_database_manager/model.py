@@ -369,8 +369,7 @@ class EmploymentSector(Entity):
         
 class Faz(Entity):
     using_options(tablename='fazes')
-    id = Field(Integer, primary_key=True)
-    faz_id = Field(Integer)
+    id = Field(Integer, primary_key=True, colname='faz_id')
     large_area = ManyToOne('LargeArea', colname='large_area_id')
     
     class Admin(EntityAdmin):
