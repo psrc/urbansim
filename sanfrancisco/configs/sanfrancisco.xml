@@ -85,7 +85,7 @@
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
-	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+	        <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
       </model>
@@ -107,7 +107,8 @@
             <argument name="control_total_table" parser_action="quote_string" type="string">annual_business_control_totals</argument>
             <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
-          <run type="dictionary">
+          <run type="dictionary">            
+            <output hidden="True" name="output" type="string">brm_index</output>
             <argument name="year" type="string">year</argument>
             <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
@@ -300,6 +301,7 @@
             <argument name="short_name" type="string">"BLCM"</argument>
             <argument name="location_set" type="string">parcel</argument>
             <argument name="submodel_string" parser_action="quote_string" type="string">building.building_type_id</argument>
+            <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices_from_index</argument>
             <argument name="filter" convert_blank_to_none="True" parser_action="quote_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="estimate_config" type="dictionary">
@@ -310,10 +312,14 @@
 		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
             </argument>
             <argument name="run_config" type="dictionary">
-              <key name="sample_size_locations" type="integer">30</key>            
+              <key name="sample_size_locations" type="integer">30</key>
               <key name="weights_for_simulation_string" type="string">numpy.logical_and(parcel.non_residential_sqft_capacity &gt; building.non_residential_sqft, parcel.residential_units_capacity &gt; building.residential_units)</key>
               <key name="is_choice_overfilled_string" convert_blank_to_none="True" type="string">numpy.logical_or(parcel.non_residential_sqft_capacity &gt; parcel.aggregate(building.non_residential_sqft), parcel.residential_units_capacity &gt; parcel.aggregate(building.residential_units))</key>
-		      <!-- <key name="sample_alternatives_by_submodel" type="string">True</key> -->
+		      <!--
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string">parcel.parcel_id>0</key>              
+              <key name="sample_alternatives_by_submodel" type="string">True</key>
+              -->
 		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
             </argument>
             <name name="name" type="string">AgentLocationChoiceModel</name>
@@ -433,16 +439,16 @@
         <lastyear type="integer">2005</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <selectable name="process_pipeline_events" type="model_choice">True</selectable>
-        <selectable name="real_estate_price_model" type="model_choice">True</selectable>
-        <selectable name="building_transition_model" type="model_choice">True</selectable>
-        <selectable name="building_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="Household_transition_model" type="model_choice">True</selectable>
-        <selectable name="Business_transition_model" type="model_choice">True</selectable>
-        <selectable name="household_relocation_model" type="model_choice">True</selectable>
-        <selectable name="household_location_choice_model" type="model_choice">True</selectable>
-        <selectable name="business_relocation_model" type="model_choice">True</selectable>
-        <selectable name="business_location_choice_model" type="model_choice">True</selectable>
+        <selectable name="process_pipeline_events" type="selectable">True</selectable>
+        <selectable name="real_estate_price_model" type="selectable">True</selectable>
+        <selectable name="building_transition_model" type="selectable">True</selectable>
+        <selectable name="building_location_choice_model" type="selectable">True</selectable>
+        <selectable name="Household_transition_model" type="selectable">True</selectable>
+        <selectable name="Business_transition_model" type="selectable">True</selectable>
+        <selectable name="household_relocation_model" type="selectable">True</selectable>
+        <selectable name="household_location_choice_model" type="selectable">True</selectable>
+        <selectable name="business_relocation_model" type="selectable">True</selectable>
+        <selectable name="business_location_choice_model" type="selectable">True</selectable>
       </models_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory">sanfrancisco/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
