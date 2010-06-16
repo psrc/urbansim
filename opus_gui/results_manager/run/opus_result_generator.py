@@ -61,7 +61,9 @@ class OpusResultGenerator(object):
 
         source_data = self.interface.get_source_data(
                              source_data_name = self.source_data_name,
-                             years = self.years)
+                             years = self.years,
+                             cache_directory = self.cache_directory
+        )
 
         self.cache_directory = source_data.cache_directory
 

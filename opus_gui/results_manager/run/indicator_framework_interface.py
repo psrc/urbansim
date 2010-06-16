@@ -31,11 +31,14 @@ class IndicatorFrameworkInterface:
         dataset_pool_configuration = DatasetPoolConfiguration(package_order)
         return dataset_pool_configuration
 
-    def get_source_data(self, source_data_name, years):
-        run_node = self.project.find('results_manager/simulation_runs/run', name=source_data_name)
-        # run_id = run_node.find('run_id').text
-        run_id = run_node.get('run_id')
-        cache_directory = run_node.find('cache_directory').text
+    def get_source_data(self, source_data_name, years, cache_directory=None):
+        if source_data_name is not None:
+            run_node = self.project.find('results_manager/simulation_runs/run', name=source_data_name)
+            # run_id = run_node.find('run_id').text
+            run_id = run_node.get('run_id')
+            cache_directory = run_node.find('cache_directory').text
+        elif cache_directory is not None:
+            run_id = -1
 
         dataset_pool_configuration = self._get_dataset_pool_configuration()
 
