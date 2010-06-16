@@ -1147,55 +1147,66 @@ class AbstractDataset(object):
         v1, v2 = self._scatter(name_x, name_y, npoints)
         plot_scatter(v1, v2, name_x, name_y, main, **kwargs)
         
-    def r_histogram(self, name, main="", prob=1, breaks=None, file=None, pdf=True):
-        """Create a histogram of the attribute given by 'name'. 
-        If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
-            (if 'pdf' is False).
-        rpy module required.
+    def r_histogram(self, name, main="", prob=1, breaks=None, file=None, device='png'):
+        """Create a histogram of the attribute given by 'name', including density line, using R. 
+        If 'file' is given, the plot is outputed into the file of type given by 'device' ('pdf', 'png', etc.)
+        rpy2 module required.
         """
-        from rpy import r
+        import rpy2.robjects as robjects
+ 
+        r = robjects.r
+
         if breaks is None:
             breaks = "Sturges"
         if file:
-            if pdf:
-                r.pdf(file)
-            else:
-                r.postscript(file)
-        r.hist(self.get_attribute(name),breaks=breaks, main=main, xlab=name, prob=prob)
-        r.lines(r.density(self.get_attribute(name)))
-        if file:
-            r.dev_off()
+            rcode = '%s("%s")' % (device, file)
+            r(rcode)
+        else:
+            r.X11()
 
-    def r_scatter(self, name_x, name_y, main="", npoints=None, file=None, pdf=True):
-        """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
-        'npoints' controls the number of points in the plot. If it is None, all points are plotted, otherwise they are selected randomly.
-        If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
-            (if 'pdf' is False).
-        rpy module required.
+        rvalues = robjects.FloatVector(self.get_attribute(name))
+        r.hist(rvalues, breaks=breaks, main=main, xlab=name, prob=prob)
+        r.lines(r.density(rvalues))
+        if file:
+            r['dev.off']()
+
+    def r_scatter(self, name_x, name_y, main="", npoints=None, file=None, device='png'):
+        """Using R, create a scatter plot of the attributes given by 'name_x' (x-axis) 
+         and 'name_y' (y-axis) and display its correlation coefficient.
+        'npoints' controls the number of points in the plot. If it is None, all points are plotted, 
+        otherwise they are selected randomly.
+        If 'file' is given, the plot is outputed into a file of type given by 'device'. ('pdf', 'png', etc.)
+        rpy2 module required.
         """
-        from rpy import r
+        import rpy2.robjects as robjects
+        r = robjects.r
         v1, v2 = self._scatter(name_x, name_y, npoints)
         if file:
-            if pdf:
-                r.pdf(file)
-            else:
-                r.postscript(file)
-        r.plot(v1,v2, main=main,
-            xlab=name_x, ylab=name_y)
+            rcode = '%s("%s")' % (device, file)
+            r(rcode)
+        else:
+            r.X11()
+        xvalues = robjects.FloatVector(v1)
+        yvalues = robjects.FloatVector(v2)
+        r.plot(xvalues, yvalues, main=main, xlab=name_x, ylab=name_y)
         if file:
-            r.dev_off()
+            r['dev.off']()
             
-    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, white_background=True, file=None, pdf=True, coordinate_system=None):
-        """ Plots a 2D image of attribute given by 'name'. rpy module and R library 'fields'
+    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, white_background=True, 
+                file=None, device='png', coordinate_system=None):
+        """ Plots a 2D image of attribute given by 'name'. rpy2 module and R library 'fields'
             required. The dataset must have a method 'get_2d_attribute' defined that returns
             a 2D array that is to be plotted. If min_value/max_value are given, all values
             that are smaller/larger than these values are set to min_value/max_value.
             If white_background is True, as white background is considered the minimum value of the array.
-            If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
-            (if 'pdf' is False).
+            If 'file' is given, the plot is outputed into a file of type given by 'device'. ('pdf', 'png', etc.)
             If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names 
             that define the x and y axis, respectively.
         """
+        import rpy2.robjects as robjects
+        from rpy2.robjects.packages import importr
+        r = robjects.r
+        
         tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)
         nonmaskedmin = ma.minimum(tdata)
         if max_value == None:
@@ -1213,22 +1224,25 @@ class AbstractDataset(object):
             data[i,idx] = tdata[i,:]
         xlen = data.shape[0]
         ylen = data.shape[1]
-        from rpy import r
-        r.library("fields")
+        
+        fields = importr("fields")
+
         if file:
-            if pdf:
-                r.pdf(file)
-            else:
-                r.postscript(file)
+            rcode = '%s("%s")' % (device, file)
+            r(rcode)
+        else:
+            r.X11()
         if white_background:
             color = r.c('white', r.rainbow(150)[20:150])
         else:
             color = r.rainbow(150)[20:150]
-        r.image_plot(z=data, x=r.seq(1,xlen), y=r.seq(1,ylen),
+        rdata = r.matrix(robjects.FloatVector(data), nrow=xlen)
+        #TODO: this does not work yet
+        fields.image_plot(z=rdata, x=r.seq(1,xlen), y=r.seq(1,ylen),
                 xlab=xlab, ylab=ylab, main=main, sub=name,
                 col=color)
         if file:
-            r.dev_off()
+            r['dev.off']()
 
     def stringToList(self, string):
         list = string.split(',')
