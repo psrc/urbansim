@@ -5,9 +5,8 @@
 from numpy import array, int32
 from numpy import arange
 from numpy import ma
-
+from opus_core.logger import logger
 from opus_core.datasets.abstract_dataset import AbstractDataset
-
 from opus_core.misc import all_in_list
 from opus_core.misc import get_distinct_list
 from opus_core.variables.attribute_box import AttributeBox
@@ -461,7 +460,72 @@ class Dataset(AbstractDataset):
         index=self.get_id_index(ids)
         new = DatasetSubset(self, index)
         return new
+
+### some helper methods and shorthands
+    def __getitem__(self, attr):
+        """ dataset[attr]
+        """
+        return self.get_attribute(attr)
+
+    def __setitem__(self, attr, values):
+        """ dataset[attr] = values
+        """
+        self.set_values_of_one_attribute(attribute=attr, values=values)
+
+    def __getattribute__(self, attr):
+        """ enable accessing dataset attribute through ``data.attr``; adopted from numpy.core.records.py
+        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources
+        """
+        try:
+            return object.__getattribute__(self, attr)
+        except AttributeError: # attr must be a dataset attribute
+            return self.get_attribute(attr)
     
+    def __setattr__(self, attr, val):
+        """ enable setting dataset attribute through ``data.attr=val``; adopted from numpy.core.records.py
+        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources        
+        """
+        
+        try:
+            attr_names = AbstractDataset.__getattribute__(self, 'attribute_boxes').keys() 
+        except:
+            attr_names = []
+    
+        newattr = attr not in self.__dict__
+        try:
+            ret = object.__setattr__(self, attr, val)
+        except:
+            # if there is an exception, first check whether it's an attribute          
+            if attr not in attr_names:
+                exctype, value = sys.exc_info()[:2]
+                raise exctype, value
+        else:
+            # __setattr__ works
+            if attr not in attr_names:
+                # attr is not a dataset attribute
+                return ret
+            
+            # attr is a dataset attribute
+            if newattr:
+                # attr is added as an class attribute, but it is supposed to be a dataset attribute
+                try:
+                    object.__delattr__(self, attr)
+                except:
+                    return ret
+            else:
+                # attr is a Dataset class attribute that has the same name as
+                # an attribute of dataset
+                logger.log_warning("%s exists as an attribute of Dataset class and an attribute of attribute_boxes; "  % attr + \
+                                   "if you want to access attribute_boxes, use dataset[attr] or dataset.get_attribute(attr) instead.")
+                return ret
+                
+        if attr not in attr_names:
+            #TODO: add attr to dataset attribute?
+            raise AttributeError, "dataset %s has no attribute %s" % (self.dataset_name, attr)
+        
+        ret = self.set_values_of_one_attribute(attr, val)
+        return ret
+       
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
     def __init__(self, parent, index):
@@ -541,6 +605,42 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(set(ds.get_known_attribute_names()),
                          set(['id','attr','attr2','attr2_times_2']))
 
+    def test_access_attributes(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+                'attr2':array([11,22,33]),
+                }
+            )
+        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
+        self.assertTrue(all(ds['attr'] == array([100,200,300])))
+        self.assertTrue(all(ds.attr == array([100,200,300])))
+        self.assertTrue(all(ds.get_attribute('attr') == array([100,200,300])))
+
+        self.assertTrue(all(ds['attr'][0:2] == array([100,200])))
+        self.assertTrue(all(ds.attr[0:2] == array([100,200])))
+        self.assertTrue(all(ds.get_attribute('attr')[0:2] == array([100,200])))
+                
+        ds['attr2'] = array([111,222,333])
+        self.assertTrue(all(ds['attr2'] == array([111,222,333])))
+        ds.attr2 = array([1111,2222,3333])
+        self.assertTrue(all(ds['attr2'] == array([1111,2222,3333])))
+        ds.set_values_of_one_attribute('attr2', array([11111,22222,33333]))
+        self.assertTrue(all(ds['attr2'] == array([11111,22222,33333])))        
+
+        ds['attr2'][ds['id']>=2] = array([20000, 30000])
+        self.assertTrue(all(ds['attr2'] == array([11111,20000,30000])))
+        ds.attr2[ds.id<=2] = array([10000, 21000])
+        self.assertTrue(all(ds['attr2'] == array([10000,21000,30000])))
+        ds.set_values_of_one_attribute(attribute='attr2', values=20002, index=ds.get_attribute('id')==2)
+        self.assertTrue(all(ds['attr2'] == array([10000,20002,30000])))
+        ds['attr2'][(ds['id']==2) | (ds['id']==1) ] = array([10001, 20003])
+        self.assertTrue(all(ds['attr2'] == array([10001,20003,30000])))
+        
     def test_get_attribute_names(self):
         storage = StorageFactory().get_storage('dict_storage')
 
