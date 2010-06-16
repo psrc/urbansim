@@ -8,7 +8,7 @@ import os
 
 from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any, abs
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
-from numpy import compress, transpose, logical_and, ma, isscalar
+from numpy import compress, transpose, logical_and, ma, isscalar, asarray
 from scipy import ndimage
 from numpy.random import randint
 from numpy import ma
@@ -1149,11 +1149,12 @@ class AbstractDataset(object):
         
     def r_histogram(self, name, main="", prob=1, breaks=None, file=None, device='png'):
         """Create a histogram of the attribute given by 'name', including density line, using R. 
-        If 'file' is given, the plot is outputed into the file of type given by 'device' ('pdf', 'png', etc.)
+        If 'file' is given, the plot is outputed into a file of type given by 'device' ('pdf', 'png', etc.)
         rpy2 module required.
         """
         import rpy2.robjects as robjects
- 
+        import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
+
         r = robjects.r
 
         if breaks is None:
@@ -1164,9 +1165,9 @@ class AbstractDataset(object):
         else:
             r.X11()
 
-        rvalues = robjects.FloatVector(self.get_attribute(name))
-        r.hist(rvalues, breaks=breaks, main=main, xlab=name, prob=prob)
-        r.lines(r.density(rvalues))
+        values = self.get_attribute(name)
+        r.hist(values, breaks=breaks, main=main, xlab=name, prob=prob)
+        r.lines(r.density(values))
         if file:
             r['dev.off']()
 
@@ -1179,6 +1180,8 @@ class AbstractDataset(object):
         rpy2 module required.
         """
         import rpy2.robjects as robjects
+        import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
+
         r = robjects.r
         v1, v2 = self._scatter(name_x, name_y, npoints)
         if file:
@@ -1186,9 +1189,7 @@ class AbstractDataset(object):
             r(rcode)
         else:
             r.X11()
-        xvalues = robjects.FloatVector(v1)
-        yvalues = robjects.FloatVector(v2)
-        r.plot(xvalues, yvalues, main=main, xlab=name_x, ylab=name_y)
+        r.plot(v1, v2, main=main, xlab=name_x, ylab=name_y)
         if file:
             r['dev.off']()
             
@@ -1205,6 +1206,7 @@ class AbstractDataset(object):
         """
         import rpy2.robjects as robjects
         from rpy2.robjects.packages import importr
+        import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
         r = robjects.r
         
         tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)
@@ -1236,9 +1238,8 @@ class AbstractDataset(object):
             color = r.c('white', r.rainbow(150)[20:150])
         else:
             color = r.rainbow(150)[20:150]
-        rdata = r.matrix(robjects.FloatVector(data), nrow=xlen)
-        #TODO: this does not work yet
-        fields.image_plot(z=rdata, x=r.seq(1,xlen), y=r.seq(1,ylen),
+
+        fields.image_plot(z=data, x=r.seq(1,xlen), y=r.seq(1,ylen),
                 xlab=xlab, ylab=ylab, main=main, sub=name,
                 col=color)
         if file:
@@ -1603,40 +1604,50 @@ class AbstractDataset(object):
         else:
             show()
 
-    def r_correlation_image(self, names, file=None, pdf=True):
+    def r_correlation_image(self, names, file=None, device='png'):
         """ Creates an image of the correlation matrix for attributes given by names. 
-        If 'file' is given, the plot is outputed into the file, either PDF (if pdf is True) or postscript (if pdf is False).
-        rpy package and R library fields required. 
+        If 'file' is given, the plot is outputed into a file of type given by 'device' ('pdf', 'png', etc.)
+        rpy2 package and R library fields required. 
         """
+        import rpy2.robjects as robjects
+        from rpy2.robjects.packages import importr
+        import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
+        r = robjects.r
+        
         tdata = self.correlation_matrix(names)
         data = zeros(tdata.shape, dtype=float32)
         idx = arange(tdata.shape[1]-1,-1,-1)
         for i in range(data.shape[0]):
             data[i,idx] = tdata[i,:]
         xlen = data.shape[0]
-        from rpy import r
-        r.library("fields")
-        if file:
-            if pdf:
-                r.pdf(file)
-            else:
-                r.postscript(file)
-        color = r.rainbow(150)[110:0:-1]
-        seq = arange(xlen)
-        r.image_plot(z=data, x=seq, y=seq, col=color, xlab='', ylab='', xaxt='n', yaxt='n', zlim=[0,1])
-        inv_seq = arange(xlen-1, -1, -1)
-        r.text(r.rep(0, xlen), inv_seq, names, cex=0.7)
-        r.text(seq, r.rep(xlen-1, xlen), names, srt=270, cex=0.7)
-        if file:
-            r.dev_off()
 
-    def correlation_image(self, names):
+        fields = importr("fields")
+
+        if file:
+            rcode = '%s("%s")' % (device, file)
+            r(rcode)
+        else:
+            r.X11()
+        color = asarray(r.rainbow(150))[arange(110, 0,  -1)]
+        seq = arange(xlen)
+        fields.image_plot(z=data, x=seq, y=seq, col=color, xlab='', ylab='', xaxt='n', yaxt='n', 
+                          zlim=array([min(0, data.min()), max(1, data.max())]))
+        inv_seq = arange(xlen-1, -1, -1)
+        r.text(r.rep(0, xlen), inv_seq, names, cex=0.7, pos=4, offset=0)
+        r.text(seq, r.rep(xlen-1, xlen), names, srt=270, cex=0.7, pos=4, offset=0)
+        if file:
+            r['dev.off']()
+
+    def correlation_image(self, names, useR=False, **kwargs):
         """ Creates an image of the correlation matrix for attributes given by names. 
         It uses the matplot library.
         """
-        from opus_core.plot_functions import plot_matplot
-        data = abs(self.correlation_matrix(names))
-        plot_matplot(data, xlabels = names, ylabels=names)
+        if useR:
+            self.r_correlation_image(names, **kwargs)
+        else:
+            from opus_core.plot_functions import plot_matplot
+            data = abs(self.correlation_matrix(names))
+            plot_matplot(data, xlabels = names, ylabels=names, **kwargs)
         
     ##################################################################################
     ## Other methods

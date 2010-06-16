@@ -176,12 +176,12 @@ class GenericModelExplorer(object):
         """
         raise NotImplementedError('get_model_name')
         
-    def plot_correlation(self, submodel=-2):
+    def plot_correlation(self, submodel=-2, useR=False, **kwargs):
         """Plot correlations between all variables of the model data (for given submodel).
         Works only for ChoiceModel and RegressionModel"""
         ds = self.get_data_as_dataset(submodel)
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
-        ds.correlation_image(attrs)
+        ds.correlation_image(attrs, useR=useR, **kwargs)
         
     def plot_choice_set(self):
         """Plot map of the sampled choice set."""
