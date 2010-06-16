@@ -129,7 +129,7 @@ visualizations += visualizer.visualize(
     computed_indicators = computed_indicators,
     visualization_type = 'dataset_table',
     output_type = 'csv',
-    exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
+    exclude_condition = 'urbansim.zone.population<100', #this accepts any opus expression
     name = 'dataset_table',
     )
 
