@@ -307,13 +307,13 @@
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
               <key name="sample_size_locations" type="integer">30</key>
-              <key name="weights_for_estimation_string" type="string">numpy.logical_and(parcel.non_residential_sqft_capacity &gt; building.non_residential_sqft, parcel.residential_units_capacity &gt; building.residential_units)</key>
+              <key name="weights_for_estimation_string" type="string">numpy.logical_and(sanfrancisco.parcel.remaining_non_residential_sqft_capacity &gt; building.non_residential_sqft, sanfrancisco.parcel.remaining_residential_units_capacity &gt; building.residential_units)</key>
 		      <!-- <key name="sample_alternatives_by_submodel" type="string">True</key> -->
 		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
             </argument>
             <argument name="run_config" type="dictionary">
               <key name="sample_size_locations" type="integer">30</key>
-              <key name="weights_for_simulation_string" type="string">numpy.logical_and(parcel.non_residential_sqft_capacity &gt; building.non_residential_sqft, parcel.residential_units_capacity &gt; building.residential_units)</key>
+              <key name="weights_for_simulation_string" type="string">numpy.logical_and(sanfrancisco.parcel.remaining_non_residential_sqft_capacity &gt; building.non_residential_sqft, sanfrancisco.parcel.remaining_residential_units_capacity &gt; building.residential_units)</key>
               <key name="is_choice_overfilled_string" convert_blank_to_none="True" type="string">numpy.logical_or(parcel.non_residential_sqft_capacity &gt; parcel.aggregate(building.non_residential_sqft), parcel.residential_units_capacity &gt; parcel.aggregate(building.residential_units))</key>
 		      <!--
               <key name="compute_capacity_flag" type="string">True</key>

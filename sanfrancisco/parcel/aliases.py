@@ -15,4 +15,6 @@ aliases = [
        "housing_value = safe_array_divide((parcel.land_val + parcel.struc_val), sanfrancisco.parcel.residential_units)",
        "lot_sqft_per_unit = safe_array_divide(parcel.lot_sf, parcel.residential_units)",
        "residential_units = parcel.aggregate(building.residential_units)",
+       "remaining_non_residential_sqft_capacity = parcel.non_residential_sqft_capacity - parcel.aggregate(building.non_residential_sqft)",
+       "remaining_residential_units_capacity = parcel.residential_units_capacity - parcel.aggregate(building.residential_units)",
            ]
