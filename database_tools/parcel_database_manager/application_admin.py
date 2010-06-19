@@ -51,7 +51,7 @@ class MyApplicationAdmin(ApplicationAdmin):
         #self.register(AnnualEmploymentControlTotal, AnnualEmploymentControlTotal.Admin)
         #self.register(AnnualRelocationRatesForHousehold, AnnualRelocationRatesForHousehold.Admin)
         return [Section('Scenario Tables',
-                        Icon('tango/24x24/apps/system-users.png'),
+                        Icon('tango/22x22/apps/system-users.png'),
                         items = [ 
                             AnnualHouseholdControlTotal, 
                             AnnualEmploymentControlTotal,
@@ -67,7 +67,7 @@ class MyApplicationAdmin(ApplicationAdmin):
                             VelocityFunction
                             ]),
                 Section('Base Year Data Core Tables',
-                        Icon('tango/24x24/categories/preferences-system.png'),
+                        Icon('tango/22x22/categories/preferences-system.png'),
                         items = [
                             Building,
                             Household,
@@ -79,7 +79,7 @@ class MyApplicationAdmin(ApplicationAdmin):
                             Zone
                         ]),
                 Section('Base Year Data Lookup Tables',
-                        Icon('tango/24x24/categories/preferences-system.png'),
+                        Icon('tango/22x22/categories/preferences-system.png'),
                         items = [
                             BuildingSqftPerJob,
                             BuildingType,
