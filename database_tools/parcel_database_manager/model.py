@@ -762,3 +762,4 @@ class Zone(Entity):
                                 county_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 faz_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1)
                                 )
+                                
