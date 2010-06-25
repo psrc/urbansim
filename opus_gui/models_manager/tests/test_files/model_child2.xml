@@ -1,0 +1,22 @@
+<opus_project>
+  <general>
+    <parent type="file">model_parent2.xml</parent>
+  </general>
+  <model_manager>
+    <model name="model">
+      <submodel name="local node" submodel_id="1">
+        <description type="string">purely local submodel</description>
+        <variable_list>
+          <variable_spec name="local1"/>
+          <variable_spec name="local2"/>
+        </variable_list>
+      </submodel>
+      <submodel name="shadow node" submodel_id="2" inherit_parent_values="False">
+        <description type="string">this node doesn't inherit from its parent</description>
+        <variable_list>
+          <variable_spec name="shadow3"/>
+       </variable_list>
+      </submodel>
+    </model>
+  </model_manager>
+</opus_project>

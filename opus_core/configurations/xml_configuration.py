@@ -525,6 +525,8 @@ class XMLConfiguration(object):
         # All child nodes of the parent_node with the same node id as child nodes of local_node are
         # also merged. Other child nodes are added to the local_node.
         # print 'merging nodes (p>c): %s -> %s' %(parent_node, local_node)
+        if local_node.get('inherit_parent_values') == 'False':
+            return
         for name, value in parent_node.items():
             if name != 'inherited' and not name in local_node.attrib:
                 local_node.set(name, value)

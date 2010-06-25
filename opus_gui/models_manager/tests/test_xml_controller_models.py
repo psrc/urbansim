@@ -52,3 +52,17 @@ class TestXmlControllerModels(OpusGUITestCase):
         # make sure only one node was added
         self.assertEqual(len(p.findall('model_manager/model/submodel')), 4)
 
+    def test_remove_variables_from_specification(self):
+        filename = os.path.join(self.get_test_data_dir(__file__), 'model_child2.xml')
+        p = MockupOpusProject()
+        p.open(filename)
+        xml = etree.tostring(p._root_node)
+        manager = MockupManager(xml='', manager_node_path='model_manager', opus_project=p)
+        controller = xcm.XmlController_Models(manager)
+        shadowing_node = p.find('model_manager/model/submodel', name='shadow node')
+        self.assert_(shadowing_node.get('inherit_parent_values') == 'False')
+        self.assertEqual(len(shadowing_node.findall('variable_list/variable_spec')), 1)
+ 
+#from opus_core.tests import opus_unittest
+#if __name__ == "__main__":
+#    opus_unittest.main()

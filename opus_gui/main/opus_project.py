@@ -211,6 +211,8 @@ class OpusProject(object):
 
         localize_parents(node.getparent())
         localize_children(node)
+        if node.tag == 'specification' or node.tag == 'submodel':
+            node.set('inherit_parent_values', "False")
 
     def same_node_id(self, node1, node2, only_nodes = False):
         '''
