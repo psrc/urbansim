@@ -65,7 +65,7 @@ class ModelSystem(object):
         self.simulation_state.set_low_memory_run(resources.get("low_memory_mode", False))
         self.run_year_namespace = {}
 
-        if resources['cache_directory'] is not None:
+        if resources.get('cache_directory', None) is not None:
             self.simulation_state.set_cache_directory(resources['cache_directory'])
 
         if 'expression_library' in resources:
@@ -507,7 +507,7 @@ class ModelSystem(object):
             '%s' % class_path, resources, delete_temp_dir=False, run_in_background=run_in_background)
         self._notify_stopped()
 
-    def run_in_same_process(self, resources, class_path='opus_core.model_coordinators.model_system'):
+    def run_in_same_process(self, resources, **kwargs):
         resources = Resources(resources)
         if resources['cache_directory'] is not None:
             cache_directory = resources['cache_directory']
@@ -519,7 +519,7 @@ class ModelSystem(object):
         resources['cache_directory'] = cache_directory
 
         self._notify_started()
-        RunModelSystem(model_system = self, resources = resources)
+        RunModelSystem(model_system = self, resources = resources, **kwargs)
         self._notify_stopped()
 
     def construct_arguments_from_config(self, config):
