@@ -83,33 +83,43 @@ def show_plots():
     from matplotlib.pylab import show
     show()
     
-def plot_values_as_boxplot_r(values_dict, filename=None, logy=False):
+def plot_values_as_boxplot_r(values_dict, filename=None, logy=False, device='png'):
     """Create a set of boxplots (using R), one plot per variable in values_dict (dictionary of 
     varible name and values (1- or 2-D array)), one box per row.
     If filename is given, the plot goes into that file as pdf. If 'logy' is  True, the y-axis
     is plotted on the log scale.
     """
-    from rpy import r
+    import rpy2.robjects as robjects
+
+    r = robjects.r
+    
     logstring = ''
     if logy:
         logstring='y'
         
-    if filename is not None:
-        r.pdf(file=filename)
-
+    if filename:
+        rcode = '%s("%s")' % (device, filename)
+        r(rcode)
+    else:
+        r.X11()
+        
     for var, values in values_dict.iteritems():
         plot_one_boxplot_r(values, var, logstring)
 
-    if filename is not None:
-        r.dev_off()
+    if filename:
+        r['dev.off']()
             
 def plot_one_boxplot_r(values, main="", logstring=""):
-    from rpy import r
+    import rpy2.robjects as robjects
+    import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
+    from numpy import array
+
+    r = robjects.r
     if values.ndim == 1:
         v = resize(values, (1, values.size))
     else:
         v = values
-    r.boxplot(v[0,:], xlim=[0,v.shape[0]+1], ylim=r.c(values.min(), values.max()), range=0, log=logstring,
+    r.boxplot(v[0,:], xlim=array([0,v.shape[0]+1]), ylim=array([values.min(), values.max()]), range=0, log=logstring,
               main=main)
     for i in range(1, v.shape[0]):
         r.boxplot(v[i,:], at=i, add=True, range=0, log=logstring)

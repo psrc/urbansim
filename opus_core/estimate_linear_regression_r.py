@@ -3,14 +3,15 @@
 # See opus_core/LICENSE
 
 from opus_core.estimation_procedure import EstimationProcedure
-from rpy import r, set_default_mode, NO_CONVERSION, BASIC_CONVERSION
-from numpy import array, zeros, float32, swapaxes
+import rpy2.robjects as robjects
+import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
+from numpy import array, zeros, float32, swapaxes, asarray, arange, asmatrix
 from numpy import sqrt, log
 from opus_core.logger import logger
 from opus_core.misc import check_dimensions
 
 class estimate_linear_regression_r(EstimationProcedure):
-    """    Class for estimating linear regression using the R function lm (rpy required).        
+    """    Class for estimating linear regression using the R function lm (rpy2 required).        
     """
     def run(self, data, regression=None, resources=None):
         """
@@ -20,6 +21,7 @@ class estimate_linear_regression_r(EstimationProcedure):
             it can be created by Dataset.create_regression_data_for_estimation(...).
         Return the modified coefficients.
         """
+        r = robjects.r
         if data.ndim < 2:
             raise StandardError, "Argument 'data' must be a 2D numpy array."
         tags = ["estimate", "result"]
@@ -44,47 +46,32 @@ class estimate_linear_regression_r(EstimationProcedure):
             expression = "y ~ x.1"
 
         coef_names = resources.get("coefficient_names",  nvar*[])
-        # Rpy doesn't like float32, but is okay with float64
-        outcome = resources["outcome"].astype("float64")
-        set_default_mode(NO_CONVERSION)
-        
-        # Rpy doesn't like float32, but is okay with float64
-        data_for_r = data.astype("float64")
-        d = r.data_frame(x=data_for_r,y=outcome)
+        d = robjects.DataFrame({'x': data, 'y': resources["outcome"]})
         
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)
         model = r(expression)
         fit = r.lm(model, data=d)
-        
-        # Begin, for AIC
-        # WARNING: Make sure this code appears just after the call to r.lm.
-        #          If it appears after the call to r.summary, the call to
-        #          r.AIC will crash
-        set_default_mode(BASIC_CONVERSION)
         aic = r.AIC(fit)
-        set_default_mode(NO_CONVERSION)
-        # End, for AIC
-        
-        summary = r.summary(fit)
-        summary[0]=expression
-        
-        #r.print_(summary)
-        set_default_mode(BASIC_CONVERSION)
-        
+        s = r.summary(fit)
+                
         # r.summary(fit)['coefficients'] is a 2D array of the following structure:
         # [ [estimate, standard error, t-value, p-value], ...]
         # To get an array of the estimates for all the variables, slice off the first column:
-        estimates = r.summary(fit)['coefficients'][:,0]
+        
+        coefidx = arange(len(list(s)))[asarray(r.names(s)) == "coefficients"]
+        estimates = asmatrix(list(s)[coefidx])[:,0]
         if estimates.size < nvar+1:
             logger.log_warning('There was an error in estimating the model. Possibly singularities found.')
             return {"estimators":zeros(nvar+1), "standard_errors":zeros(nvar+1)}
  
         # To get an array of the standard errors for all of the variables, slice off the second column:
-        standard_errors = r.summary(fit)['coefficients'][:,1]
+        standard_errors = asmatrix(list(s)[coefidx])[:,1]
         
-        Rsquared = r.summary(fit)['r.squared']
-        Rsquared_adj = r.summary(fit)['adj.r.squared']
+        rsqidx = arange(len(list(s)))[asarray(r.names(s)) == "r.squared"]
+        Rsquared = asarray(list(s)[rsqidx])[0]
+        rsqaidx = arange(len(list(s)))[asarray(r.names(s)) == "adj.r.squared"]
+        Rsquared_adj = asarray(list(s)[rsqaidx])[0]
         
         tvalues = estimates/standard_errors
         result = {"estimators":estimates, "standard_errors":standard_errors,
