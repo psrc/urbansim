@@ -83,6 +83,7 @@ class Building(Entity):
     building_type = ManyToOne('BuildingType', colname='building_type_id')
     improvement_value = Field(Integer)
     land_area = Field(Integer)
+    total_building_sqft = Field(Integer)
     non_residential_sqft = Field(Integer)
     residential_units = Field(Integer)
     sqft_per_unit = Field(Integer)
@@ -90,7 +91,8 @@ class Building(Entity):
     stories = Field(Integer)
     tax_exempt = Field(Integer)
     parcel = ManyToOne('Parcel', colname='parcel_id')
-
+    parcel_local = ManyToOne('Parcel', colname='parcel_local_id')
+    
     class Admin(EntityAdmin):
         verbose_name='Building'
         list_display=[
@@ -99,26 +101,30 @@ class Building(Entity):
             'building_type_id',
             'improvement_value',
             'land_area',
+            'total_building_sqft',
             'non_residential_sqft',
             'residential_units',
             'sqft_per_unit',
             'year_built',
             'stories',
             'tax_exempt',
-            'parcel_id'
+            'parcel_id',
+            'parcel_local_id'
             ]
         field_attributes = dict(building_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 building_quality_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 building_type_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 improvement_value=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 land_area=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
+                                total_building_sqft=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 non_residential_sqft=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 residential_units=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 sqft_per_unit=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 year_built=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1950, maximum=2050),
                                 stories=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1, maximum=150),
                                 tax_exempt=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=0, maximum=1),
-                                parcel_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1)
+                                parcel_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
+                                parcel_local_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1)
                                 )
             
 class BuildingSqftPerJob(Entity):
@@ -559,7 +565,7 @@ class LargeArea(Entity):
 class Parcel(Entity):
     using_options(tablename='parcels')
     id = Field(Integer, primary_key=True, colname='parcel_id')
-    parcel_id_local = Field(String(20)) #Store assessors key to merge other data
+    parcel_local_id = Field(String(10), index=True) #Store assessors key to merge other data
     land_value = Field(Integer)
     parcel_sqft = Field(Integer)
     plan_type = ManyToOne('PlanType', colname='plan_type_id')
@@ -568,13 +574,13 @@ class Parcel(Entity):
     tax_exempt_flag = Field(Integer)
     county = ManyToOne('County', colname='county_id')
     zone = ManyToOne('Zone', colname='zone_id')
-    census_block_id = Field(String(20))
+    census_tract_block = Field(String(20))
     
     class Admin(EntityAdmin):
         verbose_name='Parcel'
         list_display=[
             'parcel_id',
-            'parcel_id_local',
+            'parcel_local_id',
             'land_value',
             'parcel_sqft',
             'plan_type_id',
@@ -584,7 +590,7 @@ class Parcel(Entity):
 #            'city',
             'county_id',
             'zone_id',
-            'census_block_id'
+            'census_tract_block'
             ]
         field_attributes = dict(parcel_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 land_value=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
@@ -595,7 +601,6 @@ class Parcel(Entity):
                                 tax_exempt_flag=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=0, maximum=1),
                                 county_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
                                 zone_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1),
-                                census_block_id=dict(delegate=delegates.IntegerDelegate, calculator=False, minimum=1)
                                 )
             
 class PlanType(Entity): #Needed for zones?
