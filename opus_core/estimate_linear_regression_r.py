@@ -109,7 +109,7 @@ from numpy import array, resize
 class Tests(opus_unittest.OpusTestCase):
     """ Unit tests for opus_core.estimate_linear_regression_r
     """
-    def test_estimation_one_var(self):
+    def skip_test_estimation_one_var(self):
         """ Test a regression estimation for a model with one independent variable
         """
         
