@@ -45,7 +45,6 @@ class estimate_linear_regression_r(EstimationProcedure):
         else:
             expression = "y ~ x.1"
 
-        coef_names = resources.get("coefficient_names",  nvar*[])
         d = robjects.DataFrame({'x': data, 'y': resources["outcome"]})
         
         for i in range(2,nvar+1):
@@ -110,7 +109,7 @@ from numpy import array, resize
 class Tests(opus_unittest.OpusTestCase):
     """ Unit tests for opus_core.estimate_linear_regression_r
     """
-    def skip_test_estimation_one_var(self):
+    def test_estimation_one_var(self):
         """ Test a regression estimation for a model with one independent variable
         """
         

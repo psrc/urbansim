@@ -16,10 +16,13 @@ class OpusPackage(object):
     name = None
 
     # May over-ride following names in child class:
-    required_external_packages = ['numpy>=1.0.4', 'matplotlib>=0.91.2', 'sqlalchemy>=0.4.5', 'scipy>=0.7']
-    required_opus_packages = [] 
+    required_external_packages = ['numpy>=1.3.0', 'scipy>=0.7.1', 'sqlalchemy>=0.5.6', 
+                                    'lxml>=2.2.2', 'Elixir>=0.6.1']
+    required_opus_packages = []
 
-    optional_external_packages = ['MySQL-python>=1.2.2', 'Numeric>=23.8', 'rpy>=0.4.6']
+    optional_external_packages = ['PyQt>=4.4.4', 'MySQL-python>=1.2.2', 'matplotlib>=0.99', 
+                                  'Mapnik>=0.6.0', 'dbfpy', 'pil>=1.1.6', 
+                                  'rpy2>=2.1.3']
     optional_opus_packages = []
     
     required_included_file_types = ['*.pdf','*.html','*.png']
