@@ -371,7 +371,7 @@
             <argument name="agent_set" type="string">job</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="location_set" type="string">building</argument>
-            <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_or(job.sector_id==1, job.sector_id==9))</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_or(job.sector_id==1, job.sector_id==9)</argument>
           </run>
         </structure>
       </model>      
