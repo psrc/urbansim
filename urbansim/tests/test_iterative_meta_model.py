@@ -50,7 +50,8 @@ class IterativeMetaModelTests(opus_unittest.OpusTestCase):
                                   'name': 'IterativeMetaModel'},
                          'run': {'arguments': {
                                     'year': 'year',
-                                    'condition': "'alldata.aggregate_all(numpy.logical_not(household.age_of_head > 70)) == 0'",
+                                    #'condition': "'alldata.aggregate_all(numpy.logical_not(household.age_of_head > 70)) == 0'",
+                                    'condition': "'household.age_of_head > 70'",
                                 }
                          }
                     }

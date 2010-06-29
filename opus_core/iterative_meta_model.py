@@ -2,10 +2,12 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+from numpy import alltrue
 from opus_core.model import Model
 from opus_core.model_coordinators.model_system import ModelSystem
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
+from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 
 class IterativeMetaModel(Model):
@@ -35,9 +37,8 @@ class IterativeMetaModel(Model):
     def run(self, year, condition=None, max_iter=10):
         """
         'year' is the current year of the simulation.
-        'condition' is an expression. It should be defined on the dataset 'alldata' and thus result in
-        exactly one value, usually False or True. The method iterates over the given models until 
-        the condition results in True. 
+        'condition' should be a boolean expression defined on any dataset.
+        The method iterates over the given models until all values of the expression are True. 
         'max_iter' gives the maximum number of iterations to run, if 'condition' is not fulfilled.
         If it is None, there is no limit and thus, the condition must be fulfilled in order to terminate.
         If 'condition' is None, the set of models is run only once.
@@ -46,20 +47,22 @@ class IterativeMetaModel(Model):
         if condition is None:
             return self.model_system.run_in_same_process(self.config)
         dataset_pool = SessionConfiguration().get_dataset_pool()
-        alldata = dataset_pool.get_dataset('alldata')
-        condition_value = alldata.compute_variables(condition, dataset_pool=dataset_pool)
+        variable_name = VariableName(condition)
+        dataset = dataset_pool.get_dataset(variable_name.get_dataset_name())
+        condition_value = dataset.compute_variables(variable_name, dataset_pool=dataset_pool)
         result = None
         iter = 1
-        while not condition_value:
+        while not alltrue(condition_value):
             result = self.model_system.run_in_same_process(self.config)
             if max_iter is None or iter > max_iter:
                 break
             iter = iter + 1
             # force to recompute the condition
-            alldata.delete_computed_attributes()
-            condition_value = alldata.compute_variables(condition, 
+            dataset = SessionConfiguration().get_dataset_pool().get_dataset(variable_name.get_dataset_name())
+            dataset.delete_computed_attributes()
+            condition_value = dataset.compute_variables(variable_name, 
                                                         dataset_pool=SessionConfiguration().get_dataset_pool())
-        if not condition_value:
+        if not alltrue(condition_value):
             logger.log_status('%s did not converge. Maximum number of iterations (%s) reached.' % (self.model_name, max_iter))
         else:
             logger.log_status('%s converged in %s iterations.' % (self.model_name, iter-1))  
