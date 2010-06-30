@@ -1,0 +1,322 @@
+>>> print classexpr
+class autogenvar0 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "zone.aggregate(gridcell.my_variable)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return zone.aggregate(gridcell.my_variable)
+
+>>> print classexpr
+class autogenvar1 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myvar = myregion.aggregate_all(myzone.my_variable)" 
+    def compute(self, dataset_pool): 
+        myregion = DummyDataset(self, "myregion", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        myvar = myregion.aggregate_all(myzone.my_variable)
+        return myvar
+
+>>> print classexpr
+class autogenvar2 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myvar = myregion.aggregate_all(myzone.my_variable, function=mean)" 
+    def compute(self, dataset_pool): 
+        myregion = DummyDataset(self, "myregion", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        mean = DummyName() 
+        mean.name = "mean" 
+        myvar = myregion.aggregate_all(myzone.my_variable, function=mean)
+        return myvar
+
+>>> print classexpr
+class autogenvar3 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myvar = myregion.aggregate_all(myzone.my_variable, function=sum)" 
+    def compute(self, dataset_pool): 
+        myregion = DummyDataset(self, "myregion", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        sum = DummyName() 
+        sum.name = "sum" 
+        myvar = myregion.aggregate_all(myzone.my_variable, function=sum)
+        return myvar
+
+>>> print classexpr
+class autogenvar4 (Variable): 
+    def dependencies(self): 
+        return ["opus_core.tests.a_test_variable"]
+    def name(self): 
+        return "zone.aggregate(opus_core.tests.a_test_variable)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        opus_core = DummyName 
+        opus_core.tests = DummyDataset(self, "tests", dataset_pool) 
+        opus_core.tests.a_test_variable = DummyName() 
+        opus_core.tests.a_test_variable.name = ("opus_core", "tests", "a_test_variable") 
+        return zone.aggregate(opus_core.tests.a_test_variable)
+
+>>> print classexpr
+class autogenvar5 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myfaz.aggregate(myzone.my_variable, function=mean)" 
+    def compute(self, dataset_pool): 
+        myfaz = DummyDataset(self, "myfaz", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        mean = DummyName() 
+        mean.name = "mean" 
+        return myfaz.aggregate(myzone.my_variable, function=mean)
+
+>>> print classexpr
+class autogenvar6 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "zone.aggregate(gridcell.my_variable)**2" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return zone.aggregate(gridcell.my_variable)**2
+
+>>> print classexpr
+class autogenvar7 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "(zone.aggregate(gridcell.my_variable)**2).astype(float32)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return (zone.aggregate(gridcell.my_variable)**2).astype(float32)
+
+>>> print classexpr
+class autogenvar8 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myfaz.aggregate(myzone.my_variable, function=sum)" 
+    def compute(self, dataset_pool): 
+        myfaz = DummyDataset(self, "myfaz", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        sum = DummyName() 
+        sum.name = "sum" 
+        return myfaz.aggregate(myzone.my_variable, function=sum)
+
+>>> print classexpr
+class autogenvar9 (Variable): 
+    def dependencies(self): 
+        return ["myfaz.aggregate(myzone.my_variable)"]
+    def name(self): 
+        return "myfazdistr.aggregate(myzone.my_variable, intermediates=[myfaz])" 
+    def compute(self, dataset_pool): 
+        myfazdistr = DummyDataset(self, "myfazdistr", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        myfaz = DummyName() 
+        myfaz.name = "myfaz" 
+        return myfazdistr.aggregate(myzone.my_variable, intermediates=[myfaz])
+
+>>> print classexpr
+class autogenvar10 (Variable): 
+    def dependencies(self): 
+        return ["myzone.my_variable"]
+    def name(self): 
+        return "myfaz.aggregate(myzone.my_variable)" 
+    def compute(self, dataset_pool): 
+        myfaz = DummyDataset(self, "myfaz", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        return myfaz.aggregate(myzone.my_variable)
+
+>>> print classexpr
+class autogenvar11 (Variable): 
+    def dependencies(self): 
+        return ["myfazdistr.aggregate(myzone.my_variable,intermediates=[myfaz],function=sum)"]
+    def name(self): 
+        return "myneighborhood.aggregate(myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)" 
+    def compute(self, dataset_pool): 
+        myneighborhood = DummyDataset(self, "myneighborhood", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        myfaz = DummyName() 
+        myfaz.name = "myfaz" 
+        sum = DummyName() 
+        sum.name = "sum" 
+        myfazdistr = DummyName() 
+        myfazdistr.name = "myfazdistr" 
+        return myneighborhood.aggregate(myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)
+
+>>> print classexpr
+class autogenvar12 (Variable): 
+    def dependencies(self): 
+        return ["myfaz.aggregate(myzone.my_variable,function=sum)"]
+    def name(self): 
+        return "myfazdistr.aggregate(myzone.my_variable,intermediates=[myfaz],function=sum)" 
+    def compute(self, dataset_pool): 
+        myfazdistr = DummyDataset(self, "myfazdistr", dataset_pool) 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myzone.my_variable = DummyName() 
+        myzone.my_variable.name = ("myzone", "my_variable") 
+        myfaz = DummyName() 
+        myfaz.name = "myfaz" 
+        sum = DummyName() 
+        sum.name = "sum" 
+        return myfazdistr.aggregate(myzone.my_variable,intermediates=[myfaz],function=sum)
+
+>>> print classexpr
+class autogenvar13 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "zone.aggregate(gridcell.my_variable).astype(float32)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return zone.aggregate(gridcell.my_variable).astype(float32)
+
+>>> print classexpr
+class autogenvar14 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "zone.aggregate(gridcell.my_variable).astype(float32)**2" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return zone.aggregate(gridcell.my_variable).astype(float32)**2
+
+>>> print classexpr
+class autogenvar15 (Variable): 
+    def dependencies(self): 
+        return ["myfaz.my_variable"]
+    def name(self): 
+        return "myzone.disaggregate(myfaz.my_variable)" 
+    def compute(self, dataset_pool): 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myfaz = DummyDataset(self, "myfaz", dataset_pool) 
+        myfaz.my_variable = DummyName() 
+        myfaz.my_variable.name = ("myfaz", "my_variable") 
+        return myzone.disaggregate(myfaz.my_variable)
+
+>>> print classexpr
+class autogenvar16 (Variable): 
+    def dependencies(self): 
+        return ["myfaz.disaggregate(myfazdistr.my_variable)", "myfaz.fazsqft"]
+    def name(self): 
+        return "myzone.disaggregate(myfaz.fazsqft) * myzone.disaggregate(myfazdistr.my_variable, intermediates=[myfaz])" 
+    def compute(self, dataset_pool): 
+        myzone = DummyDataset(self, "myzone", dataset_pool) 
+        myfazdistr = DummyDataset(self, "myfazdistr", dataset_pool) 
+        myfazdistr.my_variable = DummyName() 
+        myfazdistr.my_variable.name = ("myfazdistr", "my_variable") 
+        myfaz = DummyDataset(self, "myfaz", dataset_pool) 
+        myfaz.fazsqft = DummyName() 
+        myfaz.fazsqft.name = ("myfaz", "fazsqft") 
+        myfaz.name = "myfaz" 
+        return myzone.disaggregate(myfaz.fazsqft) * myzone.disaggregate(myfazdistr.my_variable, intermediates=[myfaz])
+ 
+ 
+ 
+ 
+ >>> print classexpr
+class autogenvar0 (Variable): 
+    def dependencies(self): 
+        return ["household.income", "household.income"]
+    def name(self): 
+        return "household.income*zone.aggregate(household.income, function=mean)" 
+    def compute(self, dataset_pool): 
+        household = DummyDataset(self, "household", dataset_pool) 
+        household.income = self.get_dataset().get_attribute("income") 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        household.income = DummyName() 
+        household.income.name = ("household", "income") 
+        mean = DummyName() 
+        mean.name = "mean" 
+        return household.income*zone.aggregate(household.income, function=mean)
+
+>>> print classexpr
+class autogenvar0 (Variable): 
+    def dependencies(self): 
+        return ["gridcell.my_variable"]
+    def name(self): 
+        return "zone.aggregate(gridcell.my_variable)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        gridcell = DummyDataset(self, "gridcell", dataset_pool) 
+        gridcell.my_variable = DummyName() 
+        gridcell.my_variable.name = ("gridcell", "my_variable") 
+        return zone.aggregate(gridcell.my_variable)
+
+        
+alternatives:
+- rewrite tree
+- always do expression version of aggregate/disaggregate
+- figure out some fancy stepping to get around rebinding problem
+
+
+
+
+
+ 
+>>> print classexpr
+class autogenvar4 (Variable): 
+    def dependencies(self): 
+        return ["tests.a_test_variable"]
+    def name(self): 
+        return "zone.aggregate(opus_core.tests.a_test_variable)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        tests = DummyDataset(self, "tests", dataset_pool) 
+        tests.a_test_variable = DummyName() 
+        tests.a_test_variable.name = ("tests", "a_test_variable") 
+        return zone.aggregate(tests.a_test_variable)
+
+>>> 
+
+>>> print classexpr
+class autogenvar4 (Variable): 
+    def dependencies(self): 
+        return ["opus_core.tests.a_test_variable"]
+    def name(self): 
+        return "zone.aggregate(opus_core.tests.a_test_variable)" 
+    def compute(self, dataset_pool): 
+        zone = DummyDataset(self, "zone", dataset_pool) 
+        opus_core = DummyName 
+        opus_core.tests = DummyDataset(self, "tests", dataset_pool) 
+        opus_core.tests.a_test_variable = DummyName() 
+        opus_core.tests.a_test_variable.name = ("opus_core", "tests", "a_test_variable") 
+        return zone.aggregate(opus_core.tests.a_test_variable)
+
+>>> 
