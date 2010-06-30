@@ -1,6 +1,16 @@
-# Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE
+#
+# UrbanSim software. Copyright (C) 2005-2008 University of Washington
+#
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+#
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
@@ -21,7 +31,7 @@ class land_cover_type_SSS_within_footprint(Variable):
         return [my_attribute_label(self.land_cover_types)]
 
     def compute(self, dataset_pool):
-        constants = dataset_pool.get_dataset('constant')
+        constants = dataset_pool.get_dataset('constants')
         footprint = constants["FOOTPRINT"]
         lct = ma.filled(self.get_dataset().get_2d_attribute(self.land_cover_types), 0)
         temp = equal(lct, constants[self.lct_type.upper()])

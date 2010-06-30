@@ -1,11 +1,21 @@
-# Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE
+#
+# Opus software. Copyright (C) 2005-2008 University of Washington
+#
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+#
 
 from opus_core.choice_model import ChoiceModel
-from opus_core.specified_coefficients import SpecifiedCoefficientsFor1Submodel
+from opus_core.specified_coefficients import SpecifiedCoefficients, SpecifiedCoefficientsFor1Submodel
+from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.variables.variable_name import VariableName
-from opus_core.datasets.interaction_dataset import InteractionDataset
 from numpy import indices, int16, array, ones, put, repeat, arange, zeros
 from numpy import float32, where, log, int8
 from opus_core.logger import logger
@@ -33,27 +43,29 @@ class LandCoverChangeModel(ChoiceModel):
             data_objects=None, run_config=None, debuglevel=0):
         self.lct_probabilities = {}
         for ichoice in range(self.choice_set.size()):
-            probname = "probabilities_" + str(self.choice_set.get_id_attribute()[ichoice])
+            probname = "probs_" + str(self.choice_set.get_id_attribute()[ichoice])
             if  probname not in agent_set.get_known_attribute_names():
                 agent_set.add_attribute(name=probname, data=zeros(agent_set.size(), dtype=float32))
         result = ChoiceModel.run(self,specification, coefficients, agent_set,
                 agents_index=agents_index, chunk_specification=chunk_specification,
                 data_objects=data_objects, run_config=run_config,
                 debuglevel=debuglevel)
+        ## next four lines creates recoded lct (shifts index)....
         changed_idx = where(result>0)[0]
         if agents_index is None:
             agents_index = arange(agent_set.size())
         agent_set.modify_attribute(data=result[changed_idx].astype(int8),
                                     name=self.choice_attribute_name.get_alias(),
-                                    index=agents_index[changed_idx])
+                                    index=agents_index[changed_idx]) ## <-------------- lct recode occurs here
         agent_set.compute_variables("biocomplexity.land_cover.lct_recoded")
         return result
 
-    def run_chunk(self, index, agent_set, *args, **kwargs):
-        result = ChoiceModel.run_chunk(self, index, agent_set, *args, **kwargs)
+    def run_chunk(self, index, agent_set, *args, **kwargs): # **kwargs hold EquationSpecification and Coefficients objects
+        result = ChoiceModel.run_chunk(self, index, agent_set, *args, **kwargs) ## choice_model.py, Ln 159
         # store probabilities
+#        logger.log_status("choice set size: %s" % self.choice_set.size())
         for ichoice in range(self.choice_set.size()):
-            probname = "probabilities_" + str(self.choice_set.get_id_attribute()[ichoice])
+            probname = "probs_" + str(self.choice_set.get_id_attribute()[ichoice])
             try: # because some problem (need to investigate it)
                 agent_set.modify_attribute(name=probname, data=self.get_probabilities()[:,ichoice], index=index)
             except:
@@ -93,51 +105,29 @@ class LandCoverChangeModel(ChoiceModel):
             agent_set_year1.delete_one_attribute(new_submodel_string)
         return self.coefficients, results[1]
 
-    def create_interaction_dataset(self, agent_set, agents_index, config,
-                                         submodels=[1], **kwargs):
+    def get_choice_index_for_estimation(self, agent_set, agents_index=None,
+                                         agent_subset=None, submodels=[1]):
         # need to work on this - return indicies of filtered choices
-        if config is not None and config.get("estimate", False):
-            nchoices = self.get_choice_set_size()
-            index = (-1*ones((agents_index.size, nchoices))).astype("int32")
-            self.chosen_choice = zeros((agents_index.size,), dtype="int32")
-            for submodel in submodels:
-                if self.observations_mapping[submodel].size > 0:
-                    eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
-                    idx = self.choice_set.get_id_index(eqs)
-                    for i in arange(idx.size):
-                        index[self.observations_mapping[submodel],i] = idx[i]
-                    selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
-                                                                 agents_index[self.observations_mapping[submodel]])
-                    self.chosen_choice[self.observations_mapping[submodel]] = \
-                           self.choice_set.get_id_index(selchoice)
-            interaction_dataset=InteractionDataset(dataset1=agent_set, dataset2=self.choice_set,
-                                                   index1=agents_index, index2=index)
-            self.model_interaction.interaction_dataset = interaction_dataset
-            self.model_interaction.set_chosen_choice(agents_index, self.chosen_choice)
-        return ChoiceModel.create_interaction_dataset(self, agent_set,
-                                                      agents_index, config, **kwargs)
-
-#    def get_choice_index_for_estimation(self, agent_set, agents_index=None,
-#                                         agent_subset=None, submodels=[1]):
-#        # need to work on this - return indicies of filtered choices
-#        nchoices = self.get_choice_set_size()
-#        index = (-1*ones((agents_index.size, nchoices))).astype("int32")
-#        self.chosen_choice = zeros((agents_index.size,), dtype="int32")
-#        for submodel in submodels:
-#            if self.observations_mapping[submodel].size > 0:
-#                eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
-#                idx = self.choice_set.get_id_index(eqs)
-#                for i in arange(idx.size):
-#                    index[self.observations_mapping[submodel],i] = idx[i]
-#                selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
-#                                                             agents_index[self.observations_mapping[submodel]])
-#                self.chosen_choice[self.observations_mapping[submodel]] = \
-#                       self.choice_set.get_id_index(selchoice)
-#        return index
+        nchoices = self.get_choice_set_size()
+        index = (-1*ones((agents_index.size, nchoices))).astype("int32")
+        self.selected_choice = zeros((agents_index.size,), dtype="int32")
+        for submodel in submodels:
+            if self.observations_mapping[submodel].size > 0:
+                eqs = self.specification.get_equations_for_submodel(submodel).astype(int16)
+                idx = self.choice_set.get_id_index(eqs)
+                for i in arange(idx.size):
+                    index[self.observations_mapping[submodel],i] = idx[i]
+                selchoice = agent_set.get_attribute_by_index(self.choice_attribute_name,
+                                                             agents_index[self.observations_mapping[submodel]])
+                self.selected_choice[self.observations_mapping[submodel]] = \
+                       self.choice_set.get_id_index(selchoice)
+        return index
 
     def get_calibration_constants(self, agent_set1, agent_set2, agents_index):
         if agents_index is None:
             agents_index = arange(agent_set1.size())
+
+        self.specified_coefficients = self.get_specified_coefficients() # used to pull coefficients used in estimation
         submodels = self.specified_coefficients.get_submodels()
         choices = self.choice_set.get_id_attribute()
         result = zeros((len(submodels),len(choices)), dtype=float32)
@@ -153,7 +143,11 @@ class LandCoverChangeModel(ChoiceModel):
             all_agents_choices = all_agents_choices2[all_agents_choices1 == submodels[isubmodel]]
             agents_choices = all_agents_choices2[agents_in_subset_idx]
             for ichoice in range(len(choices)):
-                if ichoice in spec_coef.get_equations_index():
+                if ichoice in spec_coef.get_equations_index(): ## returns full set of choices  - leave 
+                    ## uncommented if line 464-5 in spec_coeffs.py are uncommented
+                    ## comment and uncomment subsequent if..then in lines 464-5 are commented
+                    ## because we want only those corresponding to choices in spec.py - see following line 
+#                if ichoice in spec_coef.get_non_zero_equations(): ## new method to pull only those submodels specified by spec.py file
                     n = where(agents_choices == choices[ichoice])[0].size
                     if n > 0:
                         m = where(all_agents_choices == choices[ichoice])[0].size
@@ -175,6 +169,7 @@ class LandCoverChangeModel(ChoiceModel):
 
     def get_probabilities(self):
         result = zeros((self.observations_mapping["index"].size,self.choice_set.size()), dtype=float32)
+        self.specified_coefficients = self.get_specified_coefficients() # used to pull coefficients used in estimation
         for submodel in self.lct_probabilities.keys():
             coef = SpecifiedCoefficientsFor1Submodel(self.specified_coefficients,submodel)
             index = coef.get_equations_index()

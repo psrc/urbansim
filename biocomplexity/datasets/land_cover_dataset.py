@@ -1,11 +1,24 @@
-# Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE 
+#
+# UrbanSim software. Copyright (C) 2005-2008 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from numpy import indices, logical_not, where, logical_or
-from numpy import ma
+from numpy import ma, int32
+from biocomplexity.examples.lccm_runner_sample import LccmConfiguration
+from opus_core.resources import Resources
 import os
+import gc
 
 class LandCoverDataset(UrbansimDataset):
     """Set of land covers."""
@@ -21,22 +34,43 @@ class LandCoverDataset(UrbansimDataset):
     
     def __init__(self, *args, **kwargs):
         UrbansimDataset.__init__(self, *args, **kwargs)
+        self.mask = None
+    
+    def get_header(self):
         # get header of the first attribute
         for name in [self.partition_name, self._id_names]:
             try:
-                self.header = self.get_attribute_header(name)
+#                self.header = self.get_attribute_header(name) # 1. original 
+                self.header = self._get_flt_file_header(name) # 2. updated - added on 18 jun 09 by mm
+                print "pulled header from %s" % name
             except:
-                self.header = None    
+                self.header = None
             if self.header and ("relative_x" not in self.get_primary_attribute_names()):
                 # add x and y
-                xy2d = indices((int(self.header["nrows"]), int(self.header["ncols"])))
+                xy2d = indices((int(self.header["nrows"]), int(self.header["ncols"])), dtype=int32)
                 x = xy2d[0].ravel()
                 y = xy2d[1].ravel()
-                self.add_attribute(name="relative_x", data=x)
-                self.add_attribute(name="relative_y", data=y)
+                self.add_attribute(name="relative_x", data=x, metadata=1)
+                self.add_attribute(name="relative_y", data=y, metadata=1)
+                del xy2d
+                del x
+                del y
                 break
-        self.mask = None
         
+    def _get_flt_file_header(self, attribute): # added on 18 jun 09 by mm
+        storage = self.resources.get("in_storage", None)
+        if storage:
+            directory = storage._base_directory
+            table_name = self.resources.get("in_table_name", None)
+            if table_name:
+                header_file_name = os.path.join(directory, table_name, attribute + ".hdr")
+                header_records = {}
+                for record in file(header_file_name):
+                    recdata = record.split()
+                    header_records[recdata[0]] = recdata[1]
+                return header_records
+        return None
+    
     def get_2d_attribute(self, attribute):
         return UrbansimDataset.get_2d_attribute(self, attribute=attribute)
     
