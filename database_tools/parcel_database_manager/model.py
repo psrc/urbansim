@@ -147,7 +147,7 @@ class BuildingType(Entity):
     id = Field(Integer, primary_key=True, colname='building_type_id')
     is_residential = Field(Integer)
     building_type_name = Field(String(20))
-    building_type_description = Field(String(20))
+    building_type_description = Field(String(50))
     unit_name = Field(String(20))
     generic_building_type_id = Field(Integer)
     generic_building_type_name = Field(String(20))
