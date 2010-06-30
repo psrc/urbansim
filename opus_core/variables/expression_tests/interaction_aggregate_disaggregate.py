@@ -113,7 +113,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [4.5, 9], [90, 180], [2250, 4500] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply")
      
-    def skip_test_interaction_set_aggregate_and_multiply2(self):
+    def test_interaction_set_aggregate_and_multiply2(self):
         # Similar to test_interaction_set_aggregate_and_multiply, except that it uses test_location_x_test_agent
         expr = "test_location.aggregate(gridcell.my_variable) * test_agent.income"
         storage = StorageFactory().get_storage('dict_storage')
@@ -249,7 +249,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [4, 8, 4, 8], [80, 160, 80, 160], [2000, 4000, 2000, 4000] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply")
 
-    def skip_test_interaction_set_disaggregate_and_multiply2(self):
+    def test_interaction_set_disaggregate_and_multiply2(self):
         # Similar to test_interaction_set_disaggregate_and_multiply, except that it uses test_location_x_test_agent
         expr = "test_location.disaggregate(myfaz.my_variable) * test_agent.income"
         storage = StorageFactory().get_storage('dict_storage')
@@ -365,7 +365,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [2, 1, 1], [40, 20, 20], [1000, 500, 500] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_number_of_agents_and_multiply")
        
-    def skip_test_interaction_set_number_of_agents_and_multiply2(self):
+    def test_interaction_set_number_of_agents_and_multiply2(self):
         # Similar to test_interaction_set_number_of_agents_and_multiply, except that it uses test_location_x_test_agent
         expr = "test_agent.income * test_location.number_of_agents(myjob)"
         storage = StorageFactory().get_storage('dict_storage')

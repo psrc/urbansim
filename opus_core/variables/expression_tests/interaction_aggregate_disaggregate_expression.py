@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [45, 90], [45, 90], [45, 90] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_aggregate")
      
-    def skip_test_interaction_set_aggregate2(self):
+    def test_interaction_set_aggregate2(self):
         # Similar to test_interaction_set_aggregate, except that it uses test_location_x_test_agent
         expr = "test_location.aggregate(10.0*gridcell.my_variable)"
         storage = StorageFactory().get_storage('dict_storage')
@@ -115,7 +115,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [45, 90], [900, 1800], [22500, 45000] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply")
      
-    def skip_test_interaction_set_aggregate_and_multiply2(self):
+    def test_interaction_set_aggregate_and_multiply2(self):
         # Similar to test_interaction_set_aggregate_and_multiply, except that it uses test_location_x_test_agent
         expr = "test_location.aggregate(10.0*gridcell.my_variable) * test_agent.income"
         storage = StorageFactory().get_storage('dict_storage')
@@ -184,7 +184,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [40, 80, 40, 80], [40, 80, 40, 80], [40, 80, 40, 80] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate")
        
-    def skip_test_interaction_set_disaggregate2(self):
+    def test_interaction_set_disaggregate2(self):
         # Similar to test_interaction_set_disaggregate, except that it uses test_location_x_test_agent
         expr = "test_location.disaggregate(10.*myfaz.my_variable)"
         storage = StorageFactory().get_storage('dict_storage')
@@ -251,7 +251,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [40, 80, 40, 80], [800, 1600, 800, 1600], [20000, 40000, 20000, 40000] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in interaction_set_disaggregate_and_multiply")
 
-    def skip_test_interaction_set_disaggregate_and_multiply2(self):
+    def test_interaction_set_disaggregate_and_multiply2(self):
         # Similar to test_interaction_set_disaggregate_and_multiply, except that it uses test_location_x_test_agent
         expr = "test_location.disaggregate(10.0*myfaz.my_variable) * test_agent.income"
         storage = StorageFactory().get_storage('dict_storage')

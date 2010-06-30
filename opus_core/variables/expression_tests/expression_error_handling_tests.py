@@ -64,7 +64,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('zone', zone_dataset)
         self.assertRaises(ValueError, zone_dataset.compute_variables, [expr], dataset_pool=dataset_pool)
         
-    def skip_test_aggregate_two_datasets(self):
+    def test_aggregate_two_datasets(self):
         # test aggregating an expression involving two different datasets (error should be caught in parse)
         expr = 'myfazdistr.aggregate(myzone.my_variable + myfaz.id2, intermediates=[myfaz])'
         storage = StorageFactory().get_storage('dict_storage')
