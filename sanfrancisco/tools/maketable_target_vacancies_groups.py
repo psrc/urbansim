@@ -42,9 +42,10 @@ for unit_name in unique(btclass.get_attribute('grouping_id')):
     
 #===============================================================================
 #    y=a*sin(bx+c)+d
-# treat vacancy like a sine function. Constants (b, c) are crafted so there are 58 months between each peak
+# treat vacancy like a sine function. Constants (b, c) are crafted so there are 64 months between each peak
 # last peak was late 2007.
 # amp (a) denotes the amplitude of each cycle, while the base (d) signifies the center of the Function.
+#http://www.nber.org/cycles.html
 #===============================================================================
     
     for yr in range(2010,2036):
@@ -60,23 +61,18 @@ for unit_name in unique(btclass.get_attribute('grouping_id')):
         elif unit_name ==4: #res
             amp=4*.01
             base=.05
+            rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"residential_units","number_of_households",float(unit_name)))
+            print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
         elif unit_name ==5: #visit
             amp=10*.01
             base=.3        
         elif unit_name ==6: #mixed
             amp=5*.01
             base=.2        
-       
-        if  unit_name==4: #res
-            rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"residential_units","number_of_households",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
-            
-            #pass
-        elif unit_name ==6: #mixed
             rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
             print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
-            #pass
-        elif unit_name in(1,2,3,5): #nonres
+
+        if unit_name in(1,2,3,5): #nonres
             rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"non_residential_sqft","occupied_sqft",float(unit_name)))
             print "%s\t%s\t%f\t%s\t%d" %("occupied_sqft","non_residential_sqft",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
             #pass
