@@ -1,0 +1,3 @@
+remove code for expressions with just an attribute name (no package)
+
+problem with exponentiation

@@ -510,3 +510,39 @@ FULLY_QUALIFIED_VARIABLE_REPLACEMENT =  \
                          (token.STRING, "attribute"))))))))))))))))),
                          (token.RPAR, ')')))    
     
+SUBPATTERN_FULLY_QUALIFIED_VARIABLE_WITH_CAST =  \
+    (symbol.power,
+     (symbol.atom, (token.NAME, ['package'])),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, ['dataset'])),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, ['shortname'])),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, 'astype')),
+     (symbol.trailer,
+      (token.LPAR, '('),
+       (symbol.arglist,
+        (symbol.argument,
+         (symbol.test,
+          _or_test_subtree(
+           (symbol.and_test,
+            (symbol.not_test,
+             (symbol.comparison,
+              (symbol.expr,
+               (symbol.xor_expr,
+                (symbol.and_expr,
+                 (symbol.shift_expr,
+                  (symbol.arith_expr,
+                   (symbol.term,
+                    (symbol.factor,
+                     (symbol.power,
+                      (symbol.atom,
+                       (token.NAME, ['type']))))))))))))))))),
+      (token.RPAR, ')')),
+     ['?', (token.DOUBLESTAR, '**')],
+     ['?', (symbol.factor, (symbol.power, (symbol.atom, (token.NUMBER, ['exponent']))))])
+
+    

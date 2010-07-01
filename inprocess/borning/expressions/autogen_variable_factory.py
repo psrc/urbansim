@@ -186,7 +186,7 @@ class AutogenVariableFactory(object):
     # make Variable and all of the functions in opus_core.variables.functions available in
     # the new class.  In particular writers of expressions have access to the functions in opus_core.variables.functions
     def _generate_new_variable(self):
-        self._transformed_parsetree = self._transform_tree(self._original_parsetree)
+        self._transformed_parsetree = self._transform(self._original_parsetree)
         self._analyze_dataset_names()
         classname = autogenvar_prefix + str(self._autogen_counter)
         AutogenVariableFactory._autogen_counter = self._autogen_counter+1
@@ -199,9 +199,10 @@ class AutogenVariableFactory(object):
         # Return a tuple consisting of the name of the new class and the new class
         return (classname, locals()[classname])
     
-    def _transform_tree(self, tree):
+    def _transform(self, tree):
         # Descend through the parse tree 'tree' and return a new tree, replacing attribute and other references with the
         # appropriate expressions.  As a side effect, add the dependents of parse tree 'tree' to 'dependents'. 
+        #
         # If tree isn't a tuple, we're at a leaf -- no dependents in that case
         if type(tree) is not TupleType:
             return tree
@@ -255,7 +256,7 @@ class AutogenVariableFactory(object):
             return tree[0:1] + self._transform_arguments(tree[1:])
         # otherwise recursively transform the elements of the tuple (the first element is
         # an integer identifying the production in the grammar; this always gets returned unaltered)
-        return tuple(map(self._transform_tree, tree))
+        return tuple(map(self._transform, tree))
 
     def _analyze_method_call(self, receiver, method, args):
         if method=='number_of_agents':
@@ -409,7 +410,7 @@ class AutogenVariableFactory(object):
                 raise ValueError, "more than two dataset names in expression -- dataset names found: %s" % str(self._dataset_names)
             
 
-    # Analyze the arguments for a function or method call, and return the tranformed tree.  This is a separate method from _transform_tree
+    # Analyze the arguments for a function or method call, and return the tranformed tree.  This is a separate method from _transform
     # because we need to treat the keywords in keyword arguments properly and not think they are variable names.
     # Precondition: there is at least one arg in the tuple
     def _transform_arguments(self, args):
@@ -418,9 +419,9 @@ class AutogenVariableFactory(object):
             # if part2 exists then part1 is the corresponding keyword - just discard part1
             # otherwise part1 is the argument itself
             if 'part2' in vars:
-                arg1 = (self._transform_tree(vars['part2']) ,)
+                arg1 = (self._transform(vars['part2']) ,)
             else:
-                arg1 = (self._transform_tree(vars['part1']) ,)
+                arg1 = (self._transform(vars['part1']) ,)
         else:
             raise StandardError, 'internal error - problem analyzing arguments in expression'
         if len(args)>1:
