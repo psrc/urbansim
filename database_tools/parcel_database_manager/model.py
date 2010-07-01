@@ -1,3 +1,6 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010 University of California, Berkeley
+# See opus_core/LICENSE
 
 import camelot.types
 from camelot.model import metadata, Entity, Field, ManyToOne, OneToMany, Integer, String, Float, using_options

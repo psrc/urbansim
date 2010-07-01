@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010 University of California, Berkeley
+# See opus_core/LICENSE
+
 import logging
 import os
 from sqlalchemy import *

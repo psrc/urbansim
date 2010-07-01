@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2010 University of California, Berkeley
+# See opus_core/LICENSE
+
 from camelot.view.art import Icon
 from camelot.admin.application_admin import ApplicationAdmin
 from camelot.admin.section import Section
