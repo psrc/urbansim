@@ -78,8 +78,8 @@ for unit_name in unique(btclass.get_attribute('grouping_id')): #needs to be defi
         elif unit_name ==6: #mixed
             amp=5*.01
             base=.2           
-            rows.append((base+amp*math.sin((period*yr-2258.125221)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((period*yr-2258.125221)),unit_name,yr)
+            rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
+            print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((period*yr-phase)),unit_name,yr)
 
         if unit_name in(1,2,3,5): #nonres
             rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"non_residential_sqft","occupied_sqft",float(unit_name)))
