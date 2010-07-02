@@ -49,10 +49,19 @@ targetvacancies = Dataset(in_storage = storage,in_table_name = 'target_vacancies
 #===============================================================================
 
 #Solving for c at maximum
-#10=10*sin(phaseshift*peak+c)
+# 10 = 10 * sin(phaseshift * peak + c)
+#<=> 1=1*sin(phaseshift * peak + c)
+#<=> asin(1)= phaseshift * peak + c
+#<=> 1.57 = 1.125346622 * 2007 + c
+#<=> c = -2258.125221
+
 econcycle=67 #months
 peak=2007
-period=(2*math.pi)/(econcycle/12.)
+
+#for each cycle (2pi) x economic cycle years pass.
+period=(2*math.pi)/(econcycle/12.) 
+
+#use to shift the peak relative to the calendar year
 phase=math.asin(1)-(period*peak)
 
 rows = []
