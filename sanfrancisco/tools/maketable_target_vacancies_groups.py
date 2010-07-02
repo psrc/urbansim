@@ -9,6 +9,8 @@ import pyodbc
 from adodbapi.adodbapi import Cursor
 import math
 from compiler.ast import Function
+
+
 #set up target connection
 conn=pyodbc.connect('DRIVER={MySQL ODBC 5.1 Driver};DATABASE=baseyear_2009_scenario_baseline;UID=urbansim;PWD=urbansim')
 cursor = conn.cursor()
@@ -25,7 +27,7 @@ cursor.execute('CREATE TABLE target_vacancies '
         year int, \
         total_spaces varchar(50), \
         occupied_spaces varchar(50), \
-        building_group_id tinyint)')
+        building_group_id tinyint)')      #this variable needs to be defined in aliases.py
         #building_type_id tinyint)')
 conn.commit()
 
@@ -37,8 +39,6 @@ bt = Dataset(in_storage = storage,in_table_name = 'building_types',id_name='buil
 btclass= Dataset(in_storage = storage,in_table_name = 'building_type_classification',id_name='class_id',dataset_name='building_type_classification')
 targetvacancies = Dataset(in_storage = storage,in_table_name = 'target_vacancies',id_name='target_vacancies_id',dataset_name='target_vacancies')
 
-rows = []
-for unit_name in unique(btclass.get_attribute('grouping_id')):
     
 #===============================================================================
 #    y=a*sin(bx+c)+d
@@ -47,34 +47,43 @@ for unit_name in unique(btclass.get_attribute('grouping_id')):
 # amp (a) denotes the amplitude of each cycle, while the base (d) signifies the center of the Function.
 #http://www.nber.org/cycles.html
 #===============================================================================
-    
-    for yr in range(2010,2036):
+
+#Solving for c at maximum
+#10=10*sin(phaseshift*peak+c)
+econcycle=67 #months
+peak=2007
+period=(2*math.pi)/(econcycle/12.)
+phase=math.asin(1)-(period*peak)
+
+rows = []
+for unit_name in unique(btclass.get_attribute('grouping_id')): #needs to be defined in building_type_classification
+    for yr in range(2001,2036):
         if unit_name ==3:   #office
-            amp=10*.01
-            base=.20
+            amp=2.5*.01
+            base=.06
         elif unit_name ==2: #inst
             amp=3*.01
-            base=.2
+            base=.15
         elif unit_name ==1: #comm
             amp=3*.01
             base=.06
         elif unit_name ==4: #res
-            amp=4*.01
-            base=.05
-            rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"residential_units","number_of_households",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
+            amp=2*.01
+            base=.04
+            rows.append((base+amp*math.sin((period*yr-2258.125221)),float(yr),"residential_units","number_of_households",float(unit_name)))
+            print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((period*yr-2258.125221)),unit_name,yr)
         elif unit_name ==5: #visit
             amp=10*.01
             base=.3        
         elif unit_name ==6: #mixed
             amp=5*.01
-            base=.2        
-            rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
+            base=.2           
+            rows.append((base+amp*math.sin((period*yr-2258.125221)),float(yr),"total_mixed_spaces","occupied_mixed_spaces",float(unit_name)))
+            print "%s\t%s\t%f\t%s\t%d" %("occupied_mixed_spaces","total_mixed_spaces",base+amp*math.sin((period*yr-2258.125221)),unit_name,yr)
 
         if unit_name in(1,2,3,5): #nonres
-            rows.append((base+amp*math.sin((1.125346622*yr-2258.125221)),float(yr),"non_residential_sqft","occupied_sqft",float(unit_name)))
-            print "%s\t%s\t%f\t%s\t%d" %("occupied_sqft","non_residential_sqft",base+amp*math.sin((1.125346622*yr-2258.125221)),unit_name,yr)
+            rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"non_residential_sqft","occupied_sqft",float(unit_name)))
+            print "%s\t%s\t%f\t%s\t%d" %("occupied_sqft","non_residential_sqft",base+amp*math.sin((period*yr-phase)),unit_name,yr)
             #pass
 #print rows
 #rows.append([.1,2004,'a','b',1])
