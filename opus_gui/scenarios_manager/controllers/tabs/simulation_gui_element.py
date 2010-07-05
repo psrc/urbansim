@@ -162,7 +162,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         # Get available batches
         batch_nodes = get_available_batch_nodes(self.project)
         for batch_node in batch_nodes:
-            self.cboOptionalIndicatorBatch.addItem(batch_node.tag)
+            self.cboOptionalIndicatorBatch.addItem(batch_node.get('name'))
 
     def setup_run_name_line_edit(self):
         run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
