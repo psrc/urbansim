@@ -94,7 +94,7 @@ class Building(Entity):
     stories = Field(Integer)
     tax_exempt = Field(Integer)
     parcel = ManyToOne('Parcel', colname='parcel_id')
-    parcel_local = ManyToOne('Parcel', colname='parcel_local_id')
+    parcel_local_id = Field(Integer)#ManyToOne('Parcel', colname='parcel_local_id')
     
     class Admin(EntityAdmin):
         verbose_name='Building'
@@ -590,7 +590,7 @@ class Parcel(Entity):
             'centroid_x',
             'centroid_y',
             'tax_exempt_flag',
-#            'city',
+            # 'city',
             'county_id',
             'zone_id',
             'census_tract_block'
