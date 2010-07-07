@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE 
+
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 from numpy import array, arange
