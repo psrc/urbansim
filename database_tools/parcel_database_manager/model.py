@@ -150,7 +150,7 @@ class BuildingType(Entity):
     id = Field(Integer, primary_key=True, colname='building_type_id')
     is_residential = Field(Integer)
     building_type_name = Field(String(20))
-    building_type_description = Field(String(50))
+    building_type_description = Field(String(200))
     unit_name = Field(String(20))
     generic_building_type_id = Field(Integer)
     generic_building_type_name = Field(String(20))
@@ -568,7 +568,7 @@ class LargeArea(Entity):
 class Parcel(Entity):
     using_options(tablename='parcels')
     id = Field(Integer, primary_key=True, colname='parcel_id')
-    parcel_local_id = Field(String(10), index=True) #Store assessors key to merge other data
+    parcel_local_id = Field(Integer, index=True) #Store assessors key to merge other data
     land_value = Field(Integer)
     parcel_sqft = Field(Integer)
     plan_type = ManyToOne('PlanType', colname='plan_type_id')
