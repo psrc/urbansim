@@ -217,7 +217,7 @@
               <key name="sample_size_locations" type="integer">50</key>
 		      <key name="weights_for_estimation_string" type="string">has_space_for_avg_size_business = building.non_residential_sqft > ( numpy.sum(business.sqft*(business.activity_id==SUBMODEL))/float(numpy.sum(business.activity_id==SUBMODEL)))</key>
 		      <key name="sample_alternatives_by_submodel" type="string">True</key>
-		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':5000}</key>
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':1000}</key>
             </argument>
           </init>
           <prepare_for_run type="dictionary">
