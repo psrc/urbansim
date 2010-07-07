@@ -13,7 +13,25 @@
     </advanced>
     </general>
   <model_manager>
-    <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models"/><templates hidden="True" parser_action="skip" name="Model Templates"/><travel_model_configuration type="dictionary">
+    <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models">
+       <model name="prescheduled_events" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.process_prescheduled_development_events</class_module>
+            <class_name>ProcessPrescheduledDevelopmentEvents</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ProcessPrescheduledDevelopmentEvents</name>
+          </init>
+          <run type="dictionary">
+            <output name="output" type="string">development_events</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+          </run>
+        </structure>
+      </model>
+    </models>
+    <templates hidden="True" parser_action="skip" name="Model Templates"/>
+    <travel_model_configuration type="dictionary">
       <models type="selectable_list">
         <selectable type="selectable" name="opus_matsim.models.get_cache_data_into_matsim">True</selectable>
         <selectable type="selectable" name="opus_matsim.tests.run_dummy_travel_model">True</selectable>
