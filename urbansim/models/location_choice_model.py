@@ -7,7 +7,7 @@ from opus_core.resources import Resources
 from opus_core.chunk_specification import ChunkSpecification
 from numpy import zeros, array, arange, ones, float32, concatenate, where
 from numpy import int8, take, put, greater, resize, intersect1d
-from scipy import ndimage
+from opus_core import ndimage
 from numpy.random import permutation
 from numpy import ma, ndarray
 from opus_core.sampler_factory import SamplerFactory
