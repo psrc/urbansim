@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.misc import DebugPrinter, remove_from_array, get_distinct_names, unique_values
+from opus_core.misc import DebugPrinter, remove_from_array, get_distinct_names, unique
 from opus_core.datasets.dataset import DatasetSubset
 from urbansim.models.employment_transition_model import get_array_without_non_placed_agents
 from numpy import arange, array, where, int8, zeros, ones, compress, logical_and, resize
@@ -207,7 +207,7 @@ class HouseholdTransitionModel(Model):
                 bins = self.control_totals_for_this_year.get_attribute(attr)
                 if bins.size == 0:
                     continue
-                unique_bins = unique_values(bins)
+                unique_bins = unique(bins)
                 max_of_attr = unique_bins.max()
                 self.arrays_from_categories[attr] = zeros((max_of_attr+1,))
                 self.arrays_from_categories[attr][unique_bins] = unique_bins

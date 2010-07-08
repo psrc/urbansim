@@ -4,7 +4,7 @@
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.storage_factory import StorageFactory
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.variables.attribute_type import AttributeType
 from numpy import arange, where, concatenate, resize
 
@@ -26,7 +26,7 @@ def create_from_proposals_and_template_components(proposal_dataset,
     proposal_ids = proposal_dataset.get_id_attribute()
     template_ids = proposal_dataset.get_attribute("template_id")
     template_ids_in_components = template_component_dataset.get_attribute("template_id")
-    utemplate_ids_in_components = unique_values(template_ids_in_components)
+    utemplate_ids_in_components = unique(template_ids_in_components)
     component_ids = template_component_dataset.get_id_attribute()
     proposal_ids_in_comp = array([], dtype="int32")
     component_ids_in_comp = array([], dtype="int32")

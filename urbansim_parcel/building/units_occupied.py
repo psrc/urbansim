@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from variable_functions import my_attribute_label
 from numpy import zeros
 
@@ -25,7 +25,7 @@ class units_occupied(Variable):
         buildings = self.get_dataset()
         results = zeros(buildings.size(), dtype=self._return_type)
         ##TODO: these dummy values are used when the businesses and households tables aren't ready
-        for unit_name in unique_values(dataset_pool.get_dataset("building_type").get_attribute("unit_name")):
+        for unit_name in unique(dataset_pool.get_dataset("building_type").get_attribute("unit_name")):
             #should not count parcel_sqft
             if unit_name == "parcel_sqft":continue
             matched = buildings.get_attribute("unit_name") == unit_name

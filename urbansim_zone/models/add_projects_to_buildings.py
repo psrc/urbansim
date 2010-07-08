@@ -4,8 +4,8 @@
 
 from opus_core.model import Model
 from opus_core.logger import logger
-from opus_core.misc import digits
-from numpy import column_stack, row_stack, where, unique
+from opus_core.misc import digits, unique
+from numpy import column_stack, row_stack, where
 from numpy import ones, logical_and, logical_not, all
 from scipy import ndimage
 

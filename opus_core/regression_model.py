@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import DebugPrinter
+from opus_core.misc import DebugPrinter, unique
 from opus_core.regression_model_factory import RegressionModelFactory
 from opus_core.specified_coefficients import SpecifiedCoefficients, SpecifiedCoefficientsFor1Submodel
 from opus_core.resources import Resources
@@ -16,7 +16,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.model import prepare_specification_and_coefficients, get_specification_for_estimation
 from opus_core.logger import logger
 from numpy import arange, zeros, float32, ndarray, array, where, inf, concatenate
-from numpy import isinf, isnan, unique
+from numpy import isinf, isnan
 from time import time
 
 class RegressionModel(ChunkModel):

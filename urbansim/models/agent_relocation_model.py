@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import DebugPrinter, unique
 from opus_core.upc_factory import UPCFactory
 from opus_core.resources import Resources
 from opus_core.model import Model
@@ -50,7 +50,7 @@ class AgentRelocationModel(Model):
             movers_indices = array([], dtype='int32')
         # add unplaced agents
         unplaced_agents = where(agent_set.get_attribute(self.location_id_name) <= 0)[0]
-        movers_indices = unique_values(concatenate((movers_indices, unplaced_agents)))
+        movers_indices = unique(concatenate((movers_indices, unplaced_agents)))
         self.debug.print_debug("Number of movers: " + str(movers_indices.size), 2)
         return movers_indices
 

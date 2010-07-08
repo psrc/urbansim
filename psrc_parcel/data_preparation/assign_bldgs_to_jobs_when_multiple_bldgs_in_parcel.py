@@ -10,7 +10,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.model import Model
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
@@ -87,7 +87,7 @@ class AssignBuildingsToJobs:
                                                                      dataset_pool=dataset_pool)
         
         # assign buildings to governmental jobs randomly
-        unique_parcels = unique_values(parcel_ids[job_index_governmental])
+        unique_parcels = unique(parcel_ids[job_index_governmental])
         logger.log_status("Placing governmental jobs ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs[is_governmental] == parcel)[0]
@@ -106,7 +106,7 @@ class AssignBuildingsToJobs:
         job_index_non_home_based = where(logical_and(is_now_considered, logical_or(building_types == 2, building_types == 3)))[0]
                                     
         # assign buildings to non_home_based jobs based on available space
-        unique_parcels = unique_values(parcel_ids[job_index_non_home_based])
+        unique_parcels = unique(parcel_ids[job_index_non_home_based])
         job_building_types = job_dataset.compute_variables(["bldgs_building_type_id = job.disaggregate(building.building_type_id)"], 
                                                            dataset_pool=dataset_pool)
         where_valid_jbt = where(logical_and(job_building_types>0, logical_or(building_types == 2, building_types==3)))[0]
@@ -114,7 +114,7 @@ class AssignBuildingsToJobs:
         available_building_types= building_type_dataset.get_id_attribute()
         idx_available_bt = building_type_dataset.get_id_index(available_building_types)
         sectors = job_dataset.get_attribute("sector_id")
-        unique_sectors = unique_values(sectors)
+        unique_sectors = unique(sectors)
         sector_bt_distribution = zeros((unique_sectors.size, building_type_dataset.size()), dtype="float32")
         
         jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
@@ -205,7 +205,7 @@ class AssignBuildingsToJobs:
                                                            dataset_pool=dataset_pool))
         is_now_considered = logical_and(parcel_ids > 0, building_ids <= 0)
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
-        unique_parcels = unique_values(parcel_ids[job_index_non_home_based_unplaced])
+        unique_parcels = unique(parcel_ids[job_index_non_home_based_unplaced])
         imputed_sqft = 0
         logger.log_status("Try to reclassify non-home-based jobs (excluding governemtal jobs) ...")
         for parcel in unique_parcels:
@@ -253,7 +253,7 @@ class AssignBuildingsToJobs:
         logger.log_status("Additionaly, %s non home based jobs were placed due to imputed sqft." % \
                                                 (building_ids[job_index_non_home_based_unplaced]>0).sum())
         # home_based jobs
-        unique_parcels = unique_values(parcel_ids[job_index_home_based])
+        unique_parcels = unique(parcel_ids[job_index_home_based])
         capacity_in_buildings = building_dataset.compute_variables([
                           "urbansim_parcel.building.vacant_home_based_job_space"],
                              dataset_pool=dataset_pool)

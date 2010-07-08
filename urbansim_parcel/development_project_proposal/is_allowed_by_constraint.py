@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import bool8, zeros, bool8, logical_and, where
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 
 class is_allowed_by_constraint(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints,
@@ -36,13 +36,13 @@ class is_allowed_by_constraint(Variable):
         i_sort = parcels.development_constraints['index'].argsort()
         #i_sort_sort = i_sort.argsort()
         parcel_index = parcels.development_constraints['index'][i_sort].searchsorted(parcel_index)
-        constraint_types = unique_values(constraints.get_attribute("constraint_type"))
+        constraint_types = unique(constraints.get_attribute("constraint_type"))
         templates.compute_variables(map(lambda x: "%s.%s" % (self.template_opus_path, x), constraint_types), dataset_pool)
         template_ids = templates.get_id_attribute()
         generic_land_use_type_ids = templates.get_attribute("generic_land_use_type_id")
         proposal_template_ids = proposals.get_attribute("template_id")
         results = zeros(proposals.size(), dtype=bool8)
-        unique_templates = unique_values(proposal_template_ids)
+        unique_templates = unique(proposal_template_ids)
         for this_template_id in unique_templates:
             i_template = templates.get_id_index(this_template_id)
             fit_indicator = (proposal_template_ids == this_template_id )

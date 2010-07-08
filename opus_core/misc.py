@@ -12,7 +12,7 @@ import sys
 import tempfile
 
 from opus_core.logger import logger
-from numpy import ma
+from numpy import ma, array
 from scipy.ndimage import standard_deviation
 from inspect import getmembers, ismethod
 
@@ -383,21 +383,54 @@ def sample(population, k, probabilities=None):
         raise StandardError, "Something is wrong with the probabilities."
     return population[choices]
 
-def unique(arr):
-    """Return an array of unique elements.
+def unique(arr, return_index=False, **kwargs):
+    """ wrapper for numpy.unique and numpy.unique1d for different version of numpy
     """
-    from numpy import array, reshape, where, concatenate
+    import numpy
+    ver = numpy.__version__ 
+    if ver < '1.3.0':
+        f = numpy.unique1d
+        return f(arr, retindx=return_index, **kwargs)[::-1]
+    elif ver < '1.4.0':
+        f = numpy.unique1d
+    else:
+        f = numpy.unique
+    return f(arr, return_index=return_index, **kwargs)
 
-    new_array = reshape(array(arr[0]), (1,arr.shape[1]))
-    if arr.shape[0] > 1:
-        for item in arr[1:]:
-            s = new_array.sum(axis=1)
-            w = where(s == arr.shape[1])[0]
-            if w.size <= 0:
-                new_array = concatenate((new_array,reshape(item, (1,arr.shape[1]))))
+def uniquend(arr):
+    """Returns unique elements of arr; works with n-dimension array
+    """
+#    from numpy import array, reshape, where, concatenate
+#
+#    new_array = reshape(array(arr[0]), (1,arr.shape[1]))
+#    if arr.shape[0] > 1:
+#        for item in arr[1:]:
+#            s = new_array.sum(axis=1)
+#            w = where(s == arr.shape[1])[0]
+#            if w.size <= 0:
+#                new_array = concatenate((new_array,reshape(item, (1,arr.shape[1]))))
+#    if arr.ndim == 1:
+#        return reshape(new_array,(arr.size,))
+#    return new_array
+
+##   LW: was above, which I think is incorrect:
+#from numpy.randon import randint
+#arr=randint(0, 3, size=100) 
+#arr.resize((50,2))
+#unique(arr)
+#>>>array([[2, 0]])  #depending on the values of b, sometimes unique gives correct results by chance
+
     if arr.ndim == 1:
-        return reshape(new_array,(arr.size,))
-    return new_array
+        return unique(arr)
+    
+    d = {}
+    for element in arr:
+        k = totuple(element)
+        if k not in d.keys():
+            d[k] = 1
+        else:
+            d[k] += 1
+    return array(d.keys())
 
 def has_this_method(object, method_name):
     """Does this object have a method named method_name?"""
@@ -407,8 +440,7 @@ def has_this_method(object, method_name):
 
 def all_in_list(list1, list2):
     """ Return 1 if all elements of list1 are contained in list2, otherwise 0."""
-    a = map(lambda x: x in list2, list1)
-    return not (0 in a)
+    return set(list1) <= set(list2)
 
 def do_id_mapping(recarray, fieldname):
     return do_id_mapping_dict_from_array(recarray.field(fieldname))
@@ -515,62 +547,69 @@ def is_masked_array(a):
     test it directly.)"""
     ma_array_type = type(ma.array([3]))
     return isinstance(a, ma_array_type)
+def unique_values(arr, return_index=False, **kwargs):
+    import warnings
+    warnings.warn("opus_core.misc.unique_values is deprecated; use opus_core.misc.unique instead.", DeprecationWarning)
+    return unique(arr, return_index=return_index, **kwargs)
 
-def unique_values(input_array, sort_values=True):
-    """return unique elements of input_array
-    input_array - a sortable numpy array or list object
-    """
-    from numpy import array, ndarray, sort, where
-    import copy
-    if isinstance(input_array, ndarray):
-        if input_array.ndim <> 1:
-            input_array = input_array.ravel()
-            raise RuntimeWarning, "input_array is converted into a rank-1 array"
-    elif not isinstance(input_array, list):
-        raise TypeError, "input_array must be of type ndarray or list."
-
-    n = len(input_array)
-    if n == 0:
-        return array([], dtype='int32')
-
-    t = copy.copy(input_array)
-    try:
-        t.sort()
-    except TypeError:
-        del t
-        raise RuntimeError, "input_array is not sortable; unique_values fails."
-    else:
-        assert n > 0
-        last = t[0]
-        lasti = i = 1
-        while i < n:
-            if t[i] != last:
-                t[lasti] = last = t[i]
-                lasti += 1
-            i += 1
-    if sort_values:
-        return t[:lasti]
-    else:
-        if isinstance(input_array, ndarray):
-            unsorted_index = [where(input_array==v)[0][0] for v in t[:lasti]]
-            unsorted_index.sort()
-            return input_array[unsorted_index]
-        else:
-            unsorted_index = [input_array.index(v) for v in t[:lasti]]
-            unsorted_index.sort()
-            return [input_array[n] for n in unsorted_index]
+#def unique_values(input_array, sort_values=True):
+#    """return unique elements of input_array
+#    input_array - a sortable numpy array or list object
+#    """
+#    from numpy import array, ndarray, sort, where
+#    import copy
+#    if isinstance(input_array, ndarray):
+#        if input_array.ndim <> 1:
+#            input_array = input_array.ravel()
+#            raise RuntimeWarning, "input_array is converted into a rank-1 array"
+#    elif not isinstance(input_array, list):
+#        raise TypeError, "input_array must be of type ndarray or list."
+#
+#    n = len(input_array)
+#    if n == 0:
+#        return array([], dtype='int32')
+#
+#    t = copy.copy(input_array)
+#    try:
+#        t.sort()
+#    except TypeError:
+#        del t
+#        raise RuntimeError, "input_array is not sortable; unique_values fails."
+#    else:
+#        assert n > 0
+#        last = t[0]
+#        lasti = i = 1
+#        while i < n:
+#            if t[i] != last:
+#                t[lasti] = last = t[i]
+#                lasti += 1
+#            i += 1
+#    if sort_values:
+#        return t[:lasti]
+#    else:
+#        if isinstance(input_array, ndarray):
+#            unsorted_index = [where(input_array==v)[0][0] for v in t[:lasti]]
+#            unsorted_index.sort()
+#            return input_array[unsorted_index]
+#        else:
+#            unsorted_index = [input_array.index(v) for v in t[:lasti]]
+#            unsorted_index.sort()
+#            return [input_array[n] for n in unsorted_index]
        
 def ismember(ar1, ar2) :
     """Return a Boolean 1-d array of the length of ar1 which is True whenever that 
     element is contained in ar2 and False when it is not.
     (The numpy function setmember1d claims to do the same but works only on ar1 with unique values.) 
     """
-    from numpy import sort
-    a = sort(ar2)
+    import numpy
+    if numpy.__version__ >= '1.4.0':
+        return numpy.in1d(ar1, ar2)
+    
+    a = numpy.sort(ar2)
     il = a.searchsorted(ar1, side='left')
     ir = a.searchsorted(ar1, side='right')
     return ir != il
-
+    
 def get_host_name():
     """Get the host name of this computer in a platform-independent manner."""
     fullname = socket.gethostname()
@@ -806,9 +845,14 @@ def lookup(subarray, fullarray, index_if_not_found=-1):
     index_unsorted = index_all[index_argsort][index_sorted]
     index_unsorted[not_equal(fullarray[index_unsorted], subarray)] = index_if_not_found
     return index_unsorted
+ 
+def totuple(arr):
+    """
+    equivalent of tolist() for ndarray    
+    """
+    return tuple(map(totuple, arr)) if arr.ndim>1 else tuple(arr)
 
 from opus_core.tests import opus_unittest
-import shutil
 import opus_core
 
 class MiscellaneousTests(opus_unittest.OpusTestCase):
@@ -1058,15 +1102,15 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             else:
                 self.assert_(os.path.exists(path))
 
-    def test_unique_values(self):
-        from numpy import array, ma
-
-        a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
-        self.assertEqual(ma.allequal(unique_values(a), array([0.01, 0.08, 0.1, 0.2, 0.5])), True)
-        self.assertEqual(ma.allequal(unique_values(a, sort_values=False), array([0.01, 0.1, 0.2, 0.5, 0.08])), True)
-        b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
-        self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
-        self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
+#    def test_unique_values(self):
+#        from numpy import array, ma
+#
+#        a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
+#        self.assertEqual(ma.allequal(unique_values(a), array([0.01, 0.08, 0.1, 0.2, 0.5])), True)
+#        self.assertEqual(ma.allequal(unique_values(a, sort_values=False), array([0.01, 0.1, 0.2, 0.5, 0.08])), True)
+#        b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
+#        self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
+#        self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
         
     def test_get_dataset_from_tab_storage(self):
         import opus_core
@@ -1137,6 +1181,42 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         b = array([0, 3, 2, 9, 7, 10])
         expected = array([-1, 4, 2, 1, 3, -1])
         self.assert_(alltrue(lookup(b, a)==expected))
+
+    def test_totuple(self):
+        a = array([1, 2, 3, 5, 7, 9])
+        result = totuple(a)
+        self.assertEqual(result, (1,2,3,5,7,9))
+
+        a = array([[1, 2], [3, 5], [7,9]])
+        result = totuple(a)
+        self.assertEqual(result, ((1,2),(3,5),(7,9)))
+
+        a = array([[[1, 2], [3, 5]], [[7, 9], [4, 6]]])
+        result = totuple(a)
+        self.assertEqual(result, (((1,2),(3,5)),((7,9), (4,6))))
+            
+    def test_uniquend(self):
+        from numpy.random import randint
+             
+        b = randint(0, 5, size=100)
+        result = uniquend(b)
+        self.assertTrue( all([i in b for i in result]) )
+        self.assertTrue( all([i in result for i in b]) )
+        self.assertTrue( set(b) == set(result) )
+        
+        b = randint(0, 3, size=100)
+        b.resize((50,2))
+        result = uniquend(b)
+        self.assertTrue( all([i in b for i in result]) )
+        self.assertTrue( all([i in result for i in b]) )
+        self.assertTrue( set(totuple(b)) == set(totuple(result)) )
+        
+        b = randint(0, 2, size=54)
+        b.resize((9,3,2))
+        result = uniquend(b)
+        self.assertTrue( all([i in b for i in result]) )
+        self.assertTrue( all([i in result for i in b]) )
+        self.assertTrue( set(totuple(b)) == set(totuple(result)) )
         
 if __name__ == "__main__":
     opus_unittest.main()

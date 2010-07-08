@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import DebugPrinter, unique
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from opus_core.model import Model
 from numpy import where, ones, zeros, array, int32, concatenate #@UnresolvedImport
@@ -24,7 +24,7 @@ class DevelopmentEventTransitionModel(Model):
             grid_ids_by_project_type[project_type] = array([], dtype=int32)
             if projects[project_type] <> None:
                 grid_ids_by_project_type[project_type] = projects[project_type].get_attribute(location_id_name)
-            grid_ids_for_any_project = unique_values(concatenate((grid_ids_for_any_project, 
+            grid_ids_for_any_project = unique(concatenate((grid_ids_for_any_project, 
                                                                   grid_ids_by_project_type[project_type])))
         grid_ids_for_any_project = grid_ids_for_any_project[where(grid_ids_for_any_project>0)]
         if not len(grid_ids_for_any_project): return

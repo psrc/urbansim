@@ -4,7 +4,7 @@
 
 from numpy import where, clip
 from scipy.ndimage import sum as ndimage_sum
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 
 class RollbackGridcellsFromBuildings(object):
     """Uses the buildings and baseyear's gridcell dataset
@@ -27,7 +27,7 @@ class RollbackGridcellsFromBuildings(object):
         """Unroll the values for this field.
         """
         grid_ids = buildings.get_attribute('grid_id')[bldgs_idx]
-        unique_grid_ids = unique_values(grid_ids)
+        unique_grid_ids = unique(grid_ids)
         grid_idx = gridcells.get_id_index(unique_grid_ids)
         attr_values = gridcells.get_attribute_by_index(attr_name, grid_idx)
         buildings.compute_variables("urbansim.%s.%s" % (buildings.get_dataset_name(), attr_name), 

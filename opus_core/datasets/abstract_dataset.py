@@ -21,7 +21,7 @@ from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.attribute_box import AttributeBox
 from opus_core.resources import Resources
 from opus_core.specified_coefficients import update_constants
-from opus_core.misc import unique_values, unique
+from opus_core.misc import uniquend
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
@@ -200,10 +200,7 @@ class AbstractDataset(object):
             self.attribute_boxes[attr].set_data(concatenate((old_data, new_data)))
         # check if ids are unique
         ids = self.get_id_attribute()
-        if ids.ndim == 1:
-            unique_ids = unique_values(ids)
-        else:
-            unique_ids = unique(ids)
+        unique_ids = uniquend(ids)
         if unique_ids.size <> ids.size:
             #change ids to be unique
             if change_ids_if_not_unique:

@@ -8,7 +8,7 @@ from numpy import ndarray, zeros, sometrue, ones, concatenate
 from scipy.ndimage import sum as ndimage_sum
 from numpy import ma
 from opus_core.random_choices_from_index import random_choices_from_index
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.logger import logger
 from numpy.random import permutation
 
@@ -46,7 +46,7 @@ class lottery_choices(Choices):
         index = resources.get("index", None)
         if index is None:
             index = arange(ncap)
-        unique_index = unique_values(index.ravel())
+        unique_index = unique(index.ravel())
 
         if index.ndim <= 1:
             index = index.reshape((1,index.size))

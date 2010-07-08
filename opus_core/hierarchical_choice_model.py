@@ -3,9 +3,8 @@
 # See opus_core/LICENSE
 
 from numpy import zeros, concatenate, array, where, ndarray, sort, ones, all
+from opus_core.misc import unique
 from opus_core.choice_model import ChoiceModel
-from opus_core.resources import Resources
-from opus_core.misc import unique_values
 from opus_core.samplers.constants import NO_STRATUM_ID
 
 class HierarchicalChoiceModel(ChoiceModel):
@@ -214,7 +213,7 @@ def create_3D_tree_structure_from_stratum(stratum, nested_structure):
 def create_nested_structure_from_list(stratum, choice_set, sampler_size=None, valid_strata_larger_than=None):
     nested_structure = {}
     values = choice_set.get_id_attribute()
-    unique_v = sort(unique_values(stratum))
+    unique_v = sort(unique(stratum))
     if valid_strata_larger_than is not None:
         unique_v = unique_v[where(unique_v>valid_strata_larger_than)]
     count=1

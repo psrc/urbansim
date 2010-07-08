@@ -5,7 +5,7 @@
 from opus_core.resources import Resources
 from numpy import where, zeros, array, arange, ones, ma, resize
 from scipy.ndimage import sum as ndimage_sum
-from opus_core.misc import DebugPrinter, sample, unique_values
+from opus_core.misc import DebugPrinter, sample, unique
 from opus_core.sampling_toolbox import probsample_replace
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.model import Model
@@ -61,7 +61,7 @@ class ScalingJobsModel(Model):
         agent_set.set_values_of_one_attribute(location_id_name, 
                                               resize(array([-1.0]), jobsubset.size()), agents_index)
         sector_ids = jobsubset.get_attribute("sector_id")
-        sectors = unique_values(sector_ids)
+        sectors = unique(sector_ids)
         counts = ndimage_sum(ones((jobsubset.size(),)), labels=sector_ids.astype('int32'), index=sectors.astype('int32'))
         if sectors.size <=1 :
             counts = array([counts])

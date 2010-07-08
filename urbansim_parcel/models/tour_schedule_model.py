@@ -21,7 +21,7 @@ class TourScheduleModel(Model):
         
         sampled_tour_id = sample_replace(tour_set.get_id_attribute()[tour_index],
                                         person_index.size,
-                                        return_indices=False)
+                                        return_index=False)
         if 'tour_id' in person_set.get_known_attribute_names():
             person_set.set_values_of_one_attribute('tour_id', sampled_tour_id,
                                                    person_index)

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from numpy import where, ones, logical_and, array, median, resize
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
@@ -43,8 +43,8 @@ def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximu
     buildings._compute_if_needed("urbansim_parcel.building.zone_id", dataset_pool=dataset_pool)
     building_zones = buildings.get_attribute("zone_id")
     building_types = buildings.get_attribute("building_type_id")
-    unique_zones = unique_values(building_zones)
-    unique_types = unique_values(building_types)
+    unique_zones = unique(building_zones)
+    unique_types = unique(building_types)
     result_zone = []
     result_bt = []
     result_sqft = []

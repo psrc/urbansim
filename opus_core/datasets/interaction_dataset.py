@@ -4,14 +4,13 @@
 
 from opus_core.resources import Resources
 from opus_core.misc import take_choices, do_id_mapping_dict_from_array
-from opus_core.misc import DebugPrinter, get_distinct_list
+from opus_core.misc import DebugPrinter, get_distinct_list, unique
 
 from opus_core.datasets.dataset import Dataset
 from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable import get_dependency_datasets
 from opus_core.storage_factory import StorageFactory
-from opus_core.misc import unique_values
 from opus_core.logger import logger
 from numpy import array, repeat, ndarray, reshape
 from numpy import indices, zeros, float32, asarray, arange
@@ -379,8 +378,8 @@ class InteractionDataset(Dataset):
         except:    # in case it fails due to memory allocation error
             logger.log_warning("Not enough memory. Deleting not used attributes.",
                                 tags=["memory", "logit"])
-            self.dataset1.unload_not_used_attributes(unique_values(variables))
-            self.dataset2.unload_not_used_attributes(unique_values(variables))
+            self.dataset1.unload_not_used_attributes(unique(variables))
+            self.dataset2.unload_not_used_attributes(unique(variables))
             collect()
             x = zeros(data_shape, dtype=float32)
 

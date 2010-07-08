@@ -4,9 +4,9 @@
 
 from opus_core.logger import logger
 from opus_core.model import Model
-from opus_core.misc import ncumsum
+from opus_core.misc import ncumsum, unique
 from numpy.random import random
-from numpy import searchsorted, unique, where, ones, allclose
+from numpy import searchsorted, where, ones, allclose
 from opus_core.sampling_toolbox import normalize
                 
 class MonteCarloAssignmentModel(Model):

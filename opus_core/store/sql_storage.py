@@ -2,7 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from numpy import array, dtype, unique
+from numpy import array, dtype
+from opus_core.misc import unique
 from opus_core.logger import logger
 
 import sqlalchemy

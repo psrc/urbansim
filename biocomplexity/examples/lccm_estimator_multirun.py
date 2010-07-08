@@ -17,7 +17,6 @@ import os
 
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.variables.variable_name import VariableName
-from opus_core.misc import unique_values
 
 class LCCMEstimatorMultiRun(Estimator):
     def __init__(self, **kargs):

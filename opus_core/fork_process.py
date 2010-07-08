@@ -71,7 +71,8 @@ class ForkProcess(object):
                 
         finally:
             if not run_in_background and delete_temp_dir:
-                self.cleanup()
+                pass
+                #self.cleanup()
     
     def wait(self):
         if self.popen is not None:

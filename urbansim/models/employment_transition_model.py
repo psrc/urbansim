@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import DebugPrinter, unique
 from opus_core.model import Model
 from numpy import arange, array, where, zeros, ones, compress, concatenate, resize
 from numpy import logical_not, int8, int32
@@ -67,7 +67,7 @@ class EmploymentTransitionModel(Model):
         
     def _do_run_for_this_year(self, job_set):
         building_type = job_set.get_attribute("building_type")
-        sectors = unique_values(self.control_totals_for_this_year.get_attribute("sector_id"))
+        sectors = unique(self.control_totals_for_this_year.get_attribute("sector_id"))
         self._compute_sector_variables(sectors, job_set)
         for sector in sectors:
             isector = where(self.control_totals_for_this_year.get_attribute("sector_id") == sector)[0]

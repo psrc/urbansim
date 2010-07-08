@@ -19,22 +19,22 @@ from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
 from numpy import sometrue, where, equal, not_equal, ndarray
 from numpy import reshape, sort, searchsorted, repeat, argsort
 from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, unique1d
-from opus_core.misc import ncumsum, unique_values, is_masked_array
+from opus_core.misc import ncumsum, unique, is_masked_array
 from opus_core.logger import logger
 from numpy.random import uniform, randint, random
 
-def sample_replace(source_array, size, return_indices=False):
+def sample_replace(source_array, size, return_index=False):
     """Equal probability sampling; with-replacement case
-    if return_indices is True, return indices to source_array,
+    if return_index is True, return indices to source_array,
     otherwise, return elements in source_array
     """
     min = 0; max = source_array.size
-    if return_indices:
+    if return_index:
         return randint(min,max,size)
     else:
         return source_array[randint(min,max,size)]
 
-def sample_noreplace(source_array, size, return_indices=False):
+def sample_noreplace(source_array, size, return_index=False):
     """equal probability sampling; without replacement case.
     Using numpy functions, efficient for large array"""
     if not isinstance(source_array, ndarray):
@@ -47,9 +47,9 @@ def sample_noreplace(source_array, size, return_indices=False):
     if n == 0:
         return source_array
     prob_array = resize(array([1.0/n], dtype = float32), n)  #fake a equal probability array to use probsample_noreplace
-    return probsample_noreplace(source_array, size, prob_array, return_indices=return_indices)
+    return probsample_noreplace(source_array, size, prob_array, return_index=return_index)
 
-def probsample_replace(source_array, size, prob_array, return_indices=False):
+def probsample_replace(source_array, size, prob_array, return_index=False):
     """Unequal probability sampling; with replacement case.
     Using numpy searchsorted function, suitable for large array"""
     if not isinstance(source_array, ndarray):
@@ -59,7 +59,7 @@ def probsample_replace(source_array, size, prob_array, return_indices=False):
             raise TypeError, "source_array must be of type ndarray"
 
     if prob_array is None:
-        return sample_replace(source_array,size, return_indices=return_indices)
+        return sample_replace(source_array,size, return_index=return_index)
 
     if prob_array.sum() == 0:
         raise ValueError, "there aren't non-zero weights in prob_array"
@@ -68,17 +68,17 @@ def probsample_replace(source_array, size, prob_array, return_indices=False):
 
     sample_prob = uniform(0, 1, size)
     sampled_index = searchsorted(cum_prob, sample_prob)
-    if return_indices:
+    if return_index:
         return sampled_index
     else:
         return source_array[sampled_index]
 
 def probsample_noreplace(source_array, sample_size, prob_array=None,
-                          exclude_index=None, return_indices=False):
+                          exclude_index=None, return_index=False):
     """generate non-repeat random 1d samples from source_array of sample_size, excluding
     indices appeared in exclude_index.
 
-    return indices to source_array if return_indices is true.
+    return indices to source_array if return_index is true.
 
     source_array - the source array to sample from
     sample_size - scalar representing the sample size
@@ -100,9 +100,9 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
         logger.log_warning("There are less or equal indices (%s) in source_array than the sample_size (%s). Use probsample_replace. " %
               (pop_size, sample_size))
         #sample_size = max
-        return probsample_replace(source_array, sample_size, prob_array=prob_array, return_indices=return_indices)
+        return probsample_replace(source_array, sample_size, prob_array=prob_array, return_index=return_index)
     elif pop_size == sample_size:
-        if return_indices:
+        if return_index:
             return arange(source_array.size)
         else:
             return source_array
@@ -112,7 +112,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
         return array([], dtype='i')
     
     if prob_array is None:
-        return sample_noreplace(source_array, sample_size, return_indices=return_indices)
+        return sample_noreplace(source_array, sample_size, return_index=return_index)
 
     if not isinstance(prob_array, ndarray):
         try:
@@ -134,9 +134,9 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
     if prob_array_size < sample_size:
         logger.log_warning("There are less or equal non-zero weight (%s) in prob_array than the sample_size (%s). Use probsample_replace. " %
               (prob_array_size, sample_size))
-        return probsample_replace(source_array, sample_size, prob_array=p_array, return_indices=return_indices)
+        return probsample_replace(source_array, sample_size, prob_array=p_array, return_index=return_index)
     elif prob_array_size == sample_size:
-        if return_indices:
+        if return_index:
             return where(prob_array>0)[0]
         else:
             return source_array[prob_array>0]
@@ -177,7 +177,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
         #import pdb; pdb.set_trace()
         sampled_index = concatenate((sampled_index, valid_index))
         if valid_index.size == to_be_sampled:
-            if return_indices:
+            if return_index:
                 return sampled_index
             else:
                 return source_array[sampled_index]
@@ -195,7 +195,7 @@ def stratifiedsample(source_array, strata_array,
                      sample_size=1,
                      sample_rate=None, min_size=1,
                      weight_array=None, replace=False,
-                     return_indices=False):
+                     return_index=False):
     """stratified sampling from source_array,
 
     min_size works with sampling_rate,
@@ -248,13 +248,13 @@ def stratifiedsample(source_array, strata_array,
                                         (sampled_index,
                                          probsample_replace(indices_in_stratum, stratum_sample_size, prob_array)
                                          ))
-    if return_indices:
+    if return_index:
         return sampled_index
     else:
         return source_array[sampled_index]
 
 def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
-                  replace=False, return_indices=False):
+                  replace=False, return_index=False):
     """generate non-repeat random 2d samples from source_array of sample_size, not including
     indices appeared in exclude_index; sample column by column, more efficient when there are more
     rows than columns in sample_size.
@@ -338,7 +338,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
         for j in range(columns):
             sampled_choiceset_index[:,j] = probsample_replace(arange(source_array_size), rows, p_array)
 
-    if return_indices:
+    if return_index:
         return sampled_choiceset_index
     else:
         return source_array[sampled_choiceset_index]

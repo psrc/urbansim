@@ -10,8 +10,7 @@ from urbansim.models.agent_location_choice_model_member import AgentLocationChoi
 from urbansim.models.location_choice_model import LocationChoiceModel
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from urbansim.datasets.building_dataset import BuildingCreator
-from opus_core.misc import clip_to_zero_if_needed
-from opus_core.misc import unique_values
+from opus_core.misc import clip_to_zero_if_needed, unique
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_and, int32
@@ -217,7 +216,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
             return array([], dtype='int32')
         index_valid_agents_locations = where(agents_locations > 0)[0]
         valid_agents_locations = agents_locations[index_valid_agents_locations].astype("int32")
-        unique_locations = unique_values(valid_agents_locations).astype("int32")
+        unique_locations = unique(valid_agents_locations).astype("int32")
         index_consider_capacity = self.choice_set.get_id_index(unique_locations)
         capacity_of_affected_locations = capacity[index_consider_capacity]
         overfilled = where(capacity_of_affected_locations < 0)[0]
@@ -265,7 +264,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
                 #self.dataset_pool.get_dataset("urbansim_constant")["recent_years"])
                 #idx = sample_noreplace(agents_index, ntounplace)
                 tmp = randint(0, agents_index.size, ntounplace)
-                utmp = unique_values(tmp)
+                utmp = unique(tmp)
                 idx = agents_index[utmp]
                 logger.log_status("Unplace %s buildings." % utmp.size)
                 if  (mod_id_name not in agent_set.get_known_attribute_names()):

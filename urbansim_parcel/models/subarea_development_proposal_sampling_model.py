@@ -4,7 +4,7 @@
 
 from numpy import logical_and, where, logical_not, array, concatenate
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 
@@ -31,7 +31,7 @@ class SubareaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSampling
         
         regions = self.proposal_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
 
-        unique_regions = unique_values(regions)
+        unique_regions = unique(regions)
         original_status = self.proposal_set.get_attribute("status_id").copy()
         bldgs_regions = buildings.get_attribute(self.subarea_id_name)
         for area_index in range(unique_regions.size):

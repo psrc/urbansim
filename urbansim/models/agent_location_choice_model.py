@@ -8,7 +8,7 @@ from opus_core.sampling_toolbox import probsample_noreplace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from numpy import where, arange, concatenate, array, ndarray, zeros, resize
 from opus_core.resources import Resources
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import ma, intersect1d
 from opus_core.logger import logger
 import copy
@@ -157,7 +157,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             return array([], dtype='int32')
         index_valid_agents_locations = where(agents_locations > 0)[0]
         valid_agents_locations = agents_locations[index_valid_agents_locations]
-        index_consider_capacity = unique_values(self.choice_set.get_id_index(valid_agents_locations))
+        index_consider_capacity = unique(self.choice_set.get_id_index(valid_agents_locations))
         capacity_of_affected_locations = capacity[index_consider_capacity]
         overfilled = where(capacity_of_affected_locations < 0)[0]
         movers = array([], dtype='int32')

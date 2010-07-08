@@ -27,7 +27,7 @@ from opus.urbansim.storage_creator import StorageCreator
 from opus.urbansim.store.scenario_database import DbConnection
 from opus.core.dataset import DataSet, AttributeMetaData, DataSubset
 from opus.core.resources import Resources
-from opus.core.sampling_functions import sample_choice, unique_values
+from opus.core.sampling_functions import sample_choice
 from numarray.random_array import seed, permutation
 from opus.core.opusnumarray import sum
 from numarray import arange, where, concatenate, zeros, Float32

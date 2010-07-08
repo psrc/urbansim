@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import arange, array, where, logical_and, concatenate
 from numpy import zeros, ones, compress, resize
 from numpy import logical_not, int8, int32
@@ -24,10 +24,10 @@ class SubareaEmploymentTransitionModel(EmploymentTransitionModel):
         self._do_initialize_for_run(job_set, job_building_types, data_objects)
         subarea_ids = control_totals.get_attribute(self.subarea_id_name)
         jobs_subarea_ids = job_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
-        unique_subareas = unique_values(subarea_ids)
+        unique_subareas = unique(subarea_ids)
         is_year = control_totals.get_attribute("year")==year
         all_jobs_index = arange(job_set.size())
-        sectors = unique_values(control_totals.get_attribute("sector_id")[is_year])
+        sectors = unique(control_totals.get_attribute("sector_id")[is_year])
         self._compute_sector_variables(sectors, job_set)
         for area in unique_subareas:
             idx = where(logical_and(is_year, subarea_ids == area))[0]

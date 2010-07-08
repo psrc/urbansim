@@ -10,7 +10,7 @@ from opus_core.model import get_specification_for_estimation
 from numpy import array, arange, where, ones, concatenate, logical_and
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.logger import logger
 
 class WorkAtHomeChoiceModel(ChoiceModel):
@@ -67,7 +67,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
             self.job_set.compute_variables("urbansim_parcel.job.zone_id")
             agent_zone_ids = agent_set.get_attribute_by_index('zone_id', at_home_worker_index)
             job_zone_ids = self.job_set.get_attribute_by_index('zone_id', jobs_set_index)
-            unique_zones = unique_values(job_zone_ids)
+            unique_zones = unique(job_zone_ids)
             assigned_worker_index = array([], dtype="int32")
             assigned_job_index = array([], dtype="int32")
             for this_zone in unique_zones:
@@ -80,7 +80,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                 assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
 
         ## each worker can only be assigned to 1 job
-        #assert assigned_worker_index.size == unique_values(assigned_worker_index).size
+        #assert assigned_worker_index.size == unique(assigned_worker_index).size
         agent_set.set_values_of_one_attribute(self.job_set.get_id_name()[0], 
                                               self.job_set.get_id_attribute()[assigned_job_index], 
                                               index=assigned_worker_index)

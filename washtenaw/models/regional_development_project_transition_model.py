@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.logger import logger
 from numpy import arange, array, where
 from opus_core.datasets.dataset import DatasetSubset
@@ -20,7 +20,7 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
              location_set, resources=None):
         large_area_ids = vacancy_table.get_attribute("large_area_id")
         locations_large_area_ids = location_set.compute_variables("washtenaw.%s.large_area_id" % location_set.get_dataset_name())
-        unique_large_areas = unique_values(large_area_ids)
+        unique_large_areas = unique(large_area_ids)
         self._compute_vacancy_variables(location_set, 
                                         model_configuration['development_project_types'], 
                                         resources)

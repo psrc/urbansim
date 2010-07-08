@@ -10,7 +10,7 @@ from matplotlib.pylab import *
 from numpy import *
 from opus_core.bhhh_mnl_estimation import *
 from opus_core.resources import Resources
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from urbansim.constrain_choices import constrain_choices
 
 program_start = time.clock()
@@ -48,7 +48,7 @@ sql = 'select commune_id from probabilities'
 Cursor.execute(sql)
 probability_index = reshape(array(Cursor.fetchall()),(-1,alts))-1
 idx = reshape(array(Cursor.fetchall()),(-1,)).astype(Int)
-unique = unique_values(idx)
+unique = unique(idx)
 #print unique[0:200]
 #print 'shape.unique:',unique.shape
 

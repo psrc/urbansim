@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import arange, logical_and, logical_or, alltrue
 from numpy import reshape, repeat, ones, zeros, where
 from numpy import maximum, minimum
@@ -67,17 +67,17 @@ class ParcelDataset(UrbansimDataset):
         if consider_constraints_as_rules:
             generic_types = dataset_pool.get_dataset('generic_land_use_type')
             all_types = generic_types.get_id_attribute()
-            all_unique_constraint_types = unique_values(constraint_types)
+            all_unique_constraint_types = unique(constraint_types)
             
         constraint_minimum = constraints.get_attribute("minimum")
         constraint_maximum = constraints.get_attribute("maximum")
         type_constraint_max = {}
         #initialize results, set max to the max value found in constraints for each type
-        for type_id in unique_values(type_ids):
+        for type_id in unique(type_ids):
             w_this_type = where(type_ids == type_id)
             self.development_constraints[type_id] = {}
             type_constraint_max[type_id] = {}
-            for constraint_type in unique_values(constraint_types[w_this_type]):
+            for constraint_type in unique(constraint_types[w_this_type]):
                 if consider_constraints_as_rules:
                     self.development_constraints[type_id].update({ constraint_type : -2*ones((index.size,2), dtype="float32") })
                 else:

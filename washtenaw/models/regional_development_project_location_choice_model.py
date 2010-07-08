@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from numpy import arange, logical_and, where, zeros
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from opus_core.logger import logger
 from urbansim.models.development_project_location_choice_model import DevelopmentProjectLocationChoiceModel
@@ -82,7 +82,7 @@ class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCh
                                                   dataset_pool=self.dataset_pool)
         self.choice_set.compute_variables(["washtenaw.%s.%s" % (self.choice_set.get_dataset_name(), self.large_area_id_name)],
                                                   dataset_pool=self.dataset_pool)
-        unique_large_areas = unique_values(large_areas[agents_index])
+        unique_large_areas = unique(large_areas[agents_index])
         cond_array = zeros(agent_set.size(), dtype="bool8")
         cond_array[agents_index] = True
         for area in unique_large_areas:

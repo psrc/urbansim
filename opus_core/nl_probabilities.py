@@ -3,11 +3,10 @@
 # See opus_core/LICENSE
 
 #
-from numpy import exp, reshape, where, arange, array, newaxis, sum, zeros, log, ones, inf
-from numpy import ma
+from numpy import exp, reshape, where, arange, sum, zeros, log, ones, inf
+from opus_core.misc import unique
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
-from opus_core.misc import unique_values
 from opus_core.logger import logger
 
 class nl_probabilities(Probabilities):
@@ -61,7 +60,7 @@ class nl_probabilities(Probabilities):
         if (util_min < self._computable_range[0]) or (util_max > self._computable_range[1]):
             # shift utilities to zero (maximum is at zero)
             to_be_transformed=where((utils < self._computable_range[0]) + (utils > self._computable_range[1]))
-            to_be_transformed=unique_values(to_be_transformed[0])
+            to_be_transformed=unique(to_be_transformed[0])
             for idx in arange(to_be_transformed.size):
                 i = to_be_transformed[idx]
                 this_max = utils[i,:].max()
@@ -109,7 +108,7 @@ class nl_probabilities(Probabilities):
                     exponentiated_utility_logsum = exponentiated_utility.copy()
                     for j in where_chosen_alt_in_this_nest:
                         exponentiated_utility_logsum[altsidx[0][j],1:] = exponentiated_utility[altsidx[0][j],1:]/sampling_rate[nest]
-                    agent_idx_where_chosen_alt_not_in_this_nest = unique_values(altsidx[0][where_chosen_alt_not_in_this_nest])
+                    agent_idx_where_chosen_alt_not_in_this_nest = unique(altsidx[0][where_chosen_alt_not_in_this_nest])
                     exponentiated_utility_logsum[agent_idx_where_chosen_alt_not_in_this_nest,:] = exponentiated_utility[agent_idx_where_chosen_alt_not_in_this_nest,:]/sampling_rate[nest]
                     sum_exponentiated_utility_logsum = sum(exponentiated_utility_logsum, axis=1, dtype="float64")
                 else:

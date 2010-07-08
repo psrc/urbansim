@@ -5,9 +5,9 @@
 #
 from numpy import exp, reshape, where, arange, array, newaxis, sum
 from numpy import ma
+from opus_core.misc import unique
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
-from opus_core.misc import unique_values
 from opus_core.logger import logger
 
 class mnl_probabilities(Probabilities):
@@ -28,7 +28,7 @@ class mnl_probabilities(Probabilities):
         if (util_min < self.computable_range[0]) or (util_max > self.computable_range[1]):
             # shift utilities to zero (maximum is at zero)
             to_be_transformed=where((utilities < self.computable_range[0]) + (utilities > self.computable_range[1]))
-            to_be_transformed=unique_values(to_be_transformed[0])
+            to_be_transformed=unique(to_be_transformed[0])
             for idx in arange(to_be_transformed.size):
                 i = to_be_transformed[idx]
                 this_max = utilities[i,:].max()

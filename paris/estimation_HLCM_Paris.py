@@ -16,7 +16,7 @@ from urbansim.estimation.estimator import Estimator
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from numpy.random import seed
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import arange, where, array, float32, concatenate
 from time import time, localtime, strftime
 from opus_core.session_configuration import SessionConfiguration
@@ -27,7 +27,7 @@ from opus_core.store.attribute_cache import AttributeCache
 
 def compute_lambda(nbs):
         com_dept_id = nbs.get_attribute("dept")
-        depts = unique_values(com_dept_id)
+        depts = unique(com_dept_id)
         unitsvac9 = []
         unitssec9 = []
         units9=[]

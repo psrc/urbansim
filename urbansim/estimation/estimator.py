@@ -4,13 +4,13 @@
 
 import copy
 from scipy import ndimage
-from numpy import absolute, array, where, take, zeros, ones, unique, concatenate
+from numpy import absolute, array, where, take, zeros, ones, concatenate
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_core.coefficients import Coefficients
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
-from opus_core.misc import load_table_from_text_file, unique_values
+from opus_core.misc import load_table_from_text_file, unique
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory

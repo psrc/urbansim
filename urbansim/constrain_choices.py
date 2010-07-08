@@ -4,7 +4,7 @@
 from numpy import ndarray, arange, array, reshape, zeros, where, repeat, logical_and
 from numpy import ma
 from scipy.ndimage import sum as ndimage_sum
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from urbansim.lottery_choices import lottery_choices
 from opus_core.logger import logger
 
@@ -42,7 +42,7 @@ class constrain_choices(object):
         resources.merge({"index":index})
 
         flat_index = index.ravel()
-        unique_index = unique_values(flat_index)
+        unique_index = unique(flat_index)
         l = flat_index + 1
         demand = array(ndimage_sum(probability.ravel(), labels=l, index=arange(nsupply)+1))
 

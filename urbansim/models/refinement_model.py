@@ -8,9 +8,9 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import numpy
-from numpy import unique, logical_and, ones, zeros, concatenate
+from numpy import logical_and, ones, zeros, concatenate
 from numpy import where, histogram, round_, sort, array
-from opus_core.misc import safe_array_divide
+from opus_core.misc import safe_array_divide, unique
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger

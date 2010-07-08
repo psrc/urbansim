@@ -9,7 +9,7 @@ from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.misc import unique_values, DebugPrinter
+from opus_core.misc import unique, DebugPrinter
 from opus_core.logger import logger
 from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones
 
@@ -187,7 +187,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
         has_constraint_dataset = False
 
     if has_constraint_dataset:
-        constraint_types = unique_values(constraints.get_attribute("constraint_type"))  #unit_per_acre, far etc
+        constraint_types = unique(constraints.get_attribute("constraint_type"))  #unit_per_acre, far etc
         development_template_dataset.compute_variables(map(lambda x: "%s.%s" % (template_opus_path, x), constraint_types), dataset_pool)
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 

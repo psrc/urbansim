@@ -5,7 +5,7 @@
 from numpy import where, concatenate, arange, rint
 from opus_core.choice_model import ChoiceModel
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.sampling_toolbox import sample_noreplace
 
 class AgentRelocationChoiceModel(ChoiceModel):
@@ -35,6 +35,6 @@ class AgentRelocationChoiceModel(ChoiceModel):
         unplaced_agents = agents_index[agent_set.get_attribute_by_index(self.location_id_name, agents_index) <= 0]
         logger.log_status("%s agents selected by the logit model; %s agents without %s." % 
                           (movers_indices.size, unplaced_agents.size, self.location_id_name))
-        movers_indices = unique_values(concatenate((movers_indices, unplaced_agents)))
+        movers_indices = unique(concatenate((movers_indices, unplaced_agents)))
         logger.log_status("Number of movers: " + str(movers_indices.size))
         return movers_indices

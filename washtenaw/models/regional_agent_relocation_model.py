@@ -4,7 +4,7 @@
 
 from numpy import arange, zeros, logical_and, where, array, concatenate
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from urbansim.models.agent_relocation_model import AgentRelocationModel
 from opus_core.datasets.dataset import DatasetSubset
 
@@ -18,7 +18,7 @@ class RegionalAgentRelocationModel(AgentRelocationModel):
         large_areas = agent_set.get_attribute(self.large_area_id_name)
         valid_large_area = where(large_areas > 0)[0]
         if valid_large_area.size > 0:
-            unique_large_areas = unique_values(large_areas[valid_large_area])
+            unique_large_areas = unique(large_areas[valid_large_area])
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[valid_large_area] = True
             result = array([], dtype="int32")

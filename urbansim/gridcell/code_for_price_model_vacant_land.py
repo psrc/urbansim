@@ -3,7 +3,6 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from opus_core.misc import unique_values
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
 from numpy import where, ones

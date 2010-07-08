@@ -10,7 +10,7 @@ from opus_core.model import get_specification_for_estimation
 from numpy import array, arange, where, ones, concatenate
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.logger import logger
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel

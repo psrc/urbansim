@@ -118,7 +118,7 @@ class weighted_sampler(Sampler):
                 replace = True
             sampled_index = prob2dsample( index2, sample_size=(index1.size, J),
                                         prob_array=prob, exclude_index=chosen_choice_index_to_index2,
-                                        replace=replace, return_indices=True )
+                                        replace=replace, return_index=True )
             #return index2[sampled_index]
 
         if rank_of_weight == 2:
@@ -134,7 +134,7 @@ class weighted_sampler(Sampler):
                 #exclude_index passed to probsample_noreplace needs to be indexed to index2
                 sampled_index[i,:] = probsample_noreplace( index2, sample_size=J, prob_array=i_prob,
                                                      exclude_index=chosen_choice_index_to_index2[i],
-                                                     return_indices=True )
+                                                     return_index=True )
         sampling_prob = take(prob, sampled_index)
         sampled_index = index2[sampled_index]
         is_chosen_choice = zeros(sampled_index.shape, dtype="bool")

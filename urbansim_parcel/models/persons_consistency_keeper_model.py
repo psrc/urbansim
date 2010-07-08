@@ -69,7 +69,7 @@ class PersonDatasetConsistencyKeeperModel(Model):
 
                 #TODO: make this code works more robustly: above code depends on Household transition model
                 #assigning new households with ids larger than max_id. Code below is extremely SLOW.
-                #unique_persons_hh_ids = unique_values(person_hh_id_array)
+                #unique_persons_hh_ids = unique(person_hh_id_array)
                 #workers = main_dataset.get_attribute("workers")
                 #hh_indices = arange(main_dataset.size())
 

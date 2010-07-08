@@ -6,7 +6,7 @@ from numpy import arange, zeros, logical_and, where, array, ones, ma, resize
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
 from opus_core.resources import Resources
-from opus_core.misc import DebugPrinter, sample, unique_values
+from opus_core.misc import DebugPrinter, sample, unique
 from opus_core.sampling_toolbox import probsample_replace
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.model import Model
@@ -29,7 +29,7 @@ class SubareaScalingJobsModel(ScalingJobsModel):
         location_region = location_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]
         if valid_region.size > 0:
-            unique_regions = unique_values(regions[agents_index][valid_region])
+            unique_regions = unique(regions[agents_index][valid_region])
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[agents_index[valid_region]] = True
             for area in unique_regions:

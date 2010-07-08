@@ -6,7 +6,7 @@ from numpy import array, concatenate, where, ones, logical_and, logical_not, ara
 from numpy.random import randint
 from opus_core.model import Model
 from opus_core.datasets.dataset import DatasetSubset, Dataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
 from urbansim.models.subarea_employment_transition_model import SubareaEmploymentTransitionModel
@@ -69,7 +69,7 @@ class EmploymentEventsModel(Model):
     
     def create_control_totals(self, employment_events, jobs, year):
         all_sectors = employment_events.get_attribute('sector_id')
-        unique_sectors = unique_values(all_sectors)
+        unique_sectors = unique(all_sectors)
         for sector_id in unique_sectors:
             self.location_dataset.compute_variables(
                     ['number_of_hb_jobs_of_sector_%s = %s.aggregate(urbansim.job.is_in_employment_sector_%s_home_based, [building])' % 
@@ -157,7 +157,7 @@ class EmploymentEventsModel(Model):
         
     def place_jobs_into_buildings(self, employment_events, jobs, job_index):
         all_sectors = employment_events.get_attribute('sector_id')
-        unique_sectors = unique_values(all_sectors)
+        unique_sectors = unique(all_sectors)
         for sector_id in unique_sectors:
             jobs.compute_variables(['urbansim.job.is_in_employment_sector_%s_home_based' % sector_id,
                                     'urbansim.job.is_in_employment_sector_%s_non_home_based' % sector_id,

@@ -2,7 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import ematch, do_id_mapping_dict_from_array, unique_values, create_combination_indices
+from opus_core.misc import ematch, do_id_mapping_dict_from_array, create_combination_indices
+from opus_core.misc import unique
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import asarray, repeat, reshape, zeros, float32, int16, ones, where, array
@@ -507,7 +508,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
     def get_distinct_coefficient_names(self):
         flatmap = self.get_coefficient_mapping().ravel()
         flatmap = flatmap[where(flatmap>=0)]
-        coef_idx = unique_values(flatmap)
+        coef_idx = unique(flatmap)
         return self.parent.get_coefficient_names()[coef_idx]
 
     def get_distinct_coefficient_values(self):
@@ -526,7 +527,7 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
         coefmap = self.get_coefficient_mapping()
         coefmapflat = coefmap.ravel()
         coefmapflat = coefmapflat[where(coefmapflat>=0)]
-        coef_idx = unique_values(coefmapflat)
+        coef_idx = unique(coefmapflat)
         result = map(lambda x: values[coefmap==x][0], coef_idx)
         return array(result)
 

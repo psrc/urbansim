@@ -3,7 +3,8 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from numpy import unique, zeros
+from numpy import zeros
+from opus_core.misc import unique
 
 class unit_capacity(Variable):
     """ return parcel's unit_capacity for given buildings according to their unit_capacity_name  

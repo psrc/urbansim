@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import zeros, float32, array
 from numpy import ma
 from opus_core.logger import logger
@@ -30,7 +30,7 @@ class trip_weighted_average_logsum_hbw_am_from_residence(Variable):
         zones = dataset_pool.get_dataset('zone')
         zone_id = hhs.get_attribute("zone_id")
         income_break = hhs.get_attribute("logsum_income_break")
-        unique_income_breaks = unique_values(income_break)
+        unique_income_breaks = unique(income_break)
         self.add_and_solve_dependencies(
             ["psrc.zone.trip_weighted_average_logsum_hbw_am_income_" + str(i) for i in unique_income_breaks],
             dataset_pool=dataset_pool

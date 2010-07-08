@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import array, zeros, int16, int8, ones, take, arange
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
@@ -26,7 +26,7 @@ class LargeAreaDataset(UrbansimDataset):
                 (self.get_id_name()[0] not in fazset.get_primary_attribute_names()):
                 raise StandardError, "Given FazDataset does not contain " + self.get_id_name()[0]
             large_area_ids = fazset.get_attribute(self.get_id_name()[0])
-            unique_ids = unique_values(large_area_ids[large_area_ids >=0])
+            unique_ids = unique(large_area_ids[large_area_ids >=0])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])
         self._create_id_mapping_array()
 

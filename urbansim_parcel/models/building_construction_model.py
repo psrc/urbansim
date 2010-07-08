@@ -5,7 +5,7 @@
 from opus_core.model import Model
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.join_attribute_modification_model import JoinAttributeModificationModel
@@ -60,11 +60,11 @@ class BuildingConstructionModel(Model):
 #                                  'building_type.disaggregate(generic_building_type.unit_name)'], dataset_pool=dataset_pool)
         unit_names = building_type_set.get_attribute("unit_name")
         # get unique values of the involved generic building types and unique unit names
-        unique_building_types = unique_values(building_type_id)
+        unique_building_types = unique(building_type_id)
         index_in_building_types = building_type_set.get_id_index(unique_building_types)
         unit_names = unit_names[index_in_building_types]
         is_residential = building_type_set.get_attribute("is_residential")[index_in_building_types]==1
-        unique_unit_names = unique_values(unit_names)
+        unique_unit_names = unique(unit_names)
         
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
@@ -129,7 +129,7 @@ class BuildingConstructionModel(Model):
                 unit_name = 'residential_units'
             component_index = where(building_type_id == this_building_type)[0]
             parcel_ids_in_components = proposal_component_set.get_attribute_by_index("parcel_id", component_index)
-            unique_parcels = unique_values(parcel_ids_in_components)
+            unique_parcels = unique(parcel_ids_in_components)
             # iterate over involved parcels
             for parcel_id in unique_parcels:
                 pidx = component_index[parcel_ids_in_components==parcel_id]

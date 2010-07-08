@@ -4,7 +4,7 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
 
 class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
@@ -34,7 +34,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         valid_region = where(regions[agents_index] > 0)[0]
 # this loop handles subarea_id_name households        
         if valid_region.size > 0:
-            unique_regions = unique_values(regions[agents_index][valid_region])
+            unique_regions = unique(regions[agents_index][valid_region])
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[agents_index[valid_region]] = True
             for area in unique_regions:

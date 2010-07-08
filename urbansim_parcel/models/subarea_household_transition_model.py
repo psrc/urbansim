@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 from numpy import arange, array, where, logical_and, concatenate
-from opus_core.misc import get_distinct_names, unique_values
+from opus_core.misc import get_distinct_names, unique
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
@@ -34,7 +34,7 @@ class SubareaHouseholdTransitionModel(HouseholdTransitionModel):
         region_ids = control_totals.get_attribute(self.subarea_id_name)
         households_region_ids = household_set.compute_one_variable_with_unknown_package(variable_name="%s" % (self.subarea_id_name), dataset_pool=self.dataset_pool)
 
-        unique_regions = unique_values(region_ids)
+        unique_regions = unique(region_ids)
         is_year = control_totals.get_attribute("year")==year
         all_households_index = arange(household_set.size())
         for area in unique_regions:

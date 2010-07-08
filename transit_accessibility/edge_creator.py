@@ -6,7 +6,7 @@ import os
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import where, array, arange, int64, int32
 from opus_core.storage_factory import StorageFactory
 
@@ -20,7 +20,7 @@ class EdgeCreator(object):
         
         n = dataset.size()
         trip_ids = dataset.get_attribute("stop_id")
-        unique_trip_ids = unique_values(trip_ids)
+        unique_trip_ids = unique(trip_ids)
         source_list = list()
         target_list = list()
         time_list = list()

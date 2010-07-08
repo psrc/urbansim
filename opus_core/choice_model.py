@@ -14,7 +14,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.upc_factory import UPCFactory
 from opus_core.sampler_factory import SamplerFactory
 from opus_core.model_component_creator import ModelComponentCreator
-from opus_core.misc import DebugPrinter
+from opus_core.misc import DebugPrinter, unique
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.chunk_model import ChunkModel
 from opus_core.chunk_specification import ChunkSpecification
@@ -23,7 +23,7 @@ from opus_core.model import get_specification_for_estimation, prepare_specificat
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
-from numpy import int32, compress, float64, isnan, isinf, unique, newaxis, row_stack
+from numpy import int32, compress, float64, isnan, isinf, newaxis, row_stack
 from numpy.random import permutation
 from opus_core.variables.attribute_type import AttributeType
 
@@ -986,11 +986,11 @@ if __name__=="__main__":
     import tempfile
     from shutil import rmtree
     from opus_core.tests import opus_unittest
-    from numpy import ma, alltrue, unique
+    from numpy import ma, alltrue
     from scipy.ndimage import sum as ndimage_sum
     from opus_core.tests.stochastic_test_case import StochasticTestCase
     from opus_core.simulation_state import SimulationState
-    from opus_core.misc import load_table_from_text_file
+    from opus_core.misc import load_table_from_text_file, unique
 
 
     class Test(StochasticTestCase):

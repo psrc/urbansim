@@ -5,7 +5,7 @@
 from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from numpy import array, reshape, concatenate, ones, arange, exp, newaxis, eye
-from numpy import size, unique, where, zeros, empty, dot, transpose, repeat
+from numpy import size, where, zeros, empty, dot, transpose, repeat
 from numpy.linalg import inv
 
 class abstract_iv_residual(Variable):

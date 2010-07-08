@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.logger import logger
 from numpy import array, bool8, logical_not, all, ones, where
 import networkx
@@ -127,7 +127,7 @@ def list_dijkstra(G,source,target=None):
     """
     if type(target) != list:
         target = [target]
-    unique_size = len(unique_values(target))
+    unique_size = len(unique(target))
     
     Dist = {}  # dictionary of final distances
     Paths = {source:[source]}  # dictionary of paths

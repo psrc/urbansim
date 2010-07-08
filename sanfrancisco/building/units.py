@@ -2,7 +2,8 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from numpy import where, zeros, unique
+from numpy import where, zeros
+from opus_core.misc import unique
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label

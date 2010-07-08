@@ -41,7 +41,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
 #            matsim_flag = zeros(persons_size, dtype='int32')
 #            sampled_person_index = sample_noreplace( arange(persons_size), 
 #                                                     int(sampling_rate * persons_size), 
-#                                                     return_indices=True )
+#                                                     return_index=True )
 #            matsim_flag[sampled_person_index] = 1
 #            persons.add_attribute(matsim_flag, 'matsim_flag', metadata=AttributeType.PRIMARY)
 #            persons.flush_attribute('matsim_flag')

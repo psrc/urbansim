@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import array, zeros, int16, int8, ones, take, arange
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
@@ -27,7 +27,7 @@ class CountyDataset(UrbansimDataset):
                 raise StandardError, "Given gridcellset does not contain " + self.get_id_name()[0]
             large_area_ids = gridcellset.get_attribute(self.get_id_name()[0])
             idx = large_area_ids >=0
-            unique_ids = unique_values(large_area_ids[idx])
+            unique_ids = unique(large_area_ids[idx])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])
         self._create_id_mapping_array()
 

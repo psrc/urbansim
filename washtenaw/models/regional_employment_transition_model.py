@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import arange, array, where, logical_and, concatenate
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import DatasetSubset
@@ -23,10 +23,10 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
         self._do_initialize_for_run(job_set, job_building_types, data_objects)
         large_area_ids = control_totals.get_attribute("large_area_id")
         jobs_large_area_ids = job_set.compute_variables("washtenaw.job.large_area_id")
-        unique_large_areas = unique_values(large_area_ids)
+        unique_large_areas = unique(large_area_ids)
         is_year = control_totals.get_attribute("year")==year
         all_jobs_index = arange(job_set.size())
-        sectors = unique_values(control_totals.get_attribute("sector_id")[is_year])
+        sectors = unique(control_totals.get_attribute("sector_id")[is_year])
         self._compute_sector_variables(sectors, job_set)
         for area in unique_large_areas:
             idx = where(logical_and(is_year, large_area_ids == area))[0]

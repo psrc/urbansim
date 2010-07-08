@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.misc import create_string_list, get_distinct_names, flatten_list
-from opus_core.misc import ematch, unique_values
+from opus_core.misc import ematch, unique
 from opus_core.store.storage import Storage
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
@@ -391,7 +391,7 @@ class Coefficients(object):
                     info_header = info
                 info_header = string.replace(info_header, "_", "\_")
                 tex_file.write(info_header)
-                for submodel in unique_values(self.get_submodels()):
+                for submodel in unique(self.get_submodels()):
                     value = self.other_info[submodel][info]
                     if  (0 == value) or (abs(value) >= .1) or len(string.split("%s"%value,".")[1]) < 5:
                         tex_file.write("& $ %.4f $" % value)

@@ -10,7 +10,6 @@ from urbansim.estimation.estimator import Estimator
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from numpy.random import seed
-from opus_core.misc import unique_values, safe_array_divide
 from numpy import arange, where, array, float32, concatenate, ones, zeros
 from time import time, localtime, strftime
 from opus_core.datasets.dataset import Dataset

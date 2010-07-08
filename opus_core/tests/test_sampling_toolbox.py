@@ -29,7 +29,7 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
 
     def test_sample_replace(self):
         start_time = time.time()
-        sample = sample_replace(self.all, self.size, return_indices=True)
+        sample = sample_replace(self.all, self.size, return_index=True)
         logger.log_status("sample_replace %s from %s items array in " % (self.size,self.n) + str(time.time() - start_time) + " sec")
         self.assertEqual(sample.size, self.size, msg ="sample size not equal to size parameter")
         assert isinstance(sample, ndarray), "sample is not of type ndarray"
@@ -38,7 +38,7 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
 
     def test_sample_noreplace(self):
         start_time = time.time()
-        sample = sample_noreplace(self.all, self.size, return_indices=True)
+        sample = sample_noreplace(self.all, self.size, return_index=True)
         logger.log_status("sample_noreplace %s from %s items array in " % (self.size,self.n) + str(time.time() - start_time) + " sec")
         self.assertEqual(sample.size, self.size, msg ="sample size not equal to size parameter")
         assert isinstance(sample, ndarray), "sample is not of type ndarray"
@@ -48,7 +48,7 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
 
     def test_probsample_replace(self):
         start_time = time.time()
-        sample = probsample_replace(self.all, self.size, self.prob, return_indices=True)
+        sample = probsample_replace(self.all, self.size, self.prob, return_index=True)
         logger.log_status("probsample_replace %s from %s items array in " % (self.size,self.n) + str(time.time() - start_time) + " sec")
         self.assertEqual(sample.size, self.size, msg ="sample size not equal to size parameter")
         assert isinstance(sample, ndarray), "sample is not of type ndarray"
@@ -58,7 +58,7 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
 
     def test_probsample_noreplace(self):
         start_time = time.time()
-        sample = probsample_noreplace(self.all, self.size, self.prob, return_indices=True)
+        sample = probsample_noreplace(self.all, self.size, self.prob, return_index=True)
         logger.log_status("probsample_noreplace %s from %s items array in " % (self.size,self.n) + str(time.time() - start_time) + " sec")
         self.assertEqual(sample.size, self.size, msg ="sample size not equal to size parameter")
         assert isinstance(sample, ndarray), "sample is not of type ndarray"
@@ -69,7 +69,7 @@ class SampleToolboxTest(opus_unittest.OpusTestCase):
 
     def test_prob2dsample(self):
         start_time = time.time()
-        sample = prob2dsample(self.all, self.sample_size, self.prob, return_indices=True)
+        sample = prob2dsample(self.all, self.sample_size, self.prob, return_index=True)
         logger.log_status("prob2dsample (%s, %s) items array in " % self.sample_size + str(time.time() - start_time) + " sec")
         self.assertEqual(sample.shape, self.sample_size, msg ="sample size not equal to sample size parameter")
         assert isinstance(sample, ndarray), "sample is not of type ndarray"

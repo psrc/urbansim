@@ -6,7 +6,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from numpy import array, allclose
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 
 class FazPersonsDataset(UrbansimDataset):
     
@@ -19,7 +19,7 @@ class FazPersonsDataset(UrbansimDataset):
         fazes, households = self._try_load_datasets(**kwargs)
         if fazes is not None:
             faz_id = fazes.get_id_attribute()
-            persons = unique_values( households.get_attribute("persons") )
+            persons = unique( households.get_attribute("persons") )
             combine_array = array( [[x, y]  for x in faz_id for y in persons] )
             storage = StorageFactory().get_storage('dict_storage')        
             storage.write_table(table_name=self.in_table_name_default,

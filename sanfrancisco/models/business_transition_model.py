@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import DebugPrinter, unique
 from opus_core.model import Model
 from numpy import arange, array, where, int8, zeros, ones, compress, int32, concatenate
 from numpy import logical_not, cumsum
@@ -32,7 +32,7 @@ class BusinessTransitionModel(Model):
         else:
             control_totals.get_attribute("total_number_of_jobs")
         idx = where(control_totals.get_attribute("year")==year)
-        sectors = unique_values(control_totals.get_attribute_by_index("sector_id", idx))
+        sectors = unique(control_totals.get_attribute_by_index("sector_id", idx))
         self.max_id = business_set.get_id_attribute().max()
         business_size = business_set.size()
         self.new_businesses = {self.location_id_name:array([], dtype='int32'), 

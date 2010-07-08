@@ -4,9 +4,10 @@
 
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
-from opus_core.misc import safe_array_divide, unique_values
+from opus_core.misc import safe_array_divide
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from numpy import allclose, alltrue, zeros, median, newaxis, concatenate, where
+from opus_core.misc import unique
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 
@@ -123,7 +124,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
                 by_value = by
 
             if show_values is None or show_values == {}:
-                show_values = unique_values(by_value)
+                show_values = unique(by_value)
 
             assert(by_value.size==data_array.size)
 
@@ -154,7 +155,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
 
 def define_submarket(choice_set, submarket_id_expression, compute_variables=[], filter=None):
     submarket_ids = choice_set.compute_variables("submarket_id=" + submarket_id_expression)
-    unique_submarket_ids = unique_values(submarket_ids)
+    unique_submarket_ids = unique(submarket_ids)
     storage = StorageFactory().get_storage('dict_storage')
     storage.write_table(table_name='submarkets', table_data={'submarket_id':unique_submarket_ids})
     submarkets = Dataset(in_storage=storage,

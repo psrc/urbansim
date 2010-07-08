@@ -6,8 +6,8 @@ from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import where, arange, take, ones, concatenate, searchsorted
-from numpy import newaxis, ndarray, zeros, array, rank, float32
-from opus_core.misc import unique_values, lookup
+from numpy import newaxis, ndarray, zeros, array, rank, float32 
+from opus_core.misc import lookup, unique
 from opus_core.samplers.constants import *
 from opus_core.sampling_toolbox import prob2dsample, probsample_noreplace, normalize
 from opus_core.sampling_toolbox import nonzerocounts
@@ -127,7 +127,7 @@ class stratified_sampler(Sampler):
         chosen_stratum = ones(chosen_choice_index.size, dtype="int32") * NO_STRATUM_ID
         chosen_stratum[where(chosen_choice_index!=-1)] = stratum[chosen_choice_index[where(chosen_choice_index!=-1)]]
         selectable_strata = stratum[index2]
-        unique_strata = unique_values(selectable_strata)
+        unique_strata = unique(selectable_strata)
         unique_strata = unique_strata[where(unique_strata!=NO_STRATUM_ID)]
 
 #        if rank_of_weight == 2:
@@ -225,7 +225,7 @@ class stratified_sampler(Sampler):
 
             this_sampled_index = prob2dsample( index2, sample_size=(index1.size, this_size),
                                                       prob_array=this_prob, exclude_index=chosen_choice_index,
-                                                      replace=replace, return_indices=True )
+                                                      replace=replace, return_index=True )
             sampled_index = concatenate( (sampled_index,
                                           this_sampled_index),
                                           axis=1)
@@ -279,7 +279,7 @@ class stratified_sampler(Sampler):
                 #exclude_index passed to probsample_noreplace needs to be indexed to index2
                 this_sampled_index = probsample_noreplace( index2, sample_size=this_size,
                                                           prob_array=this_prob, exclude_index=chosen_choice_index[i],
-                                                          return_indices=True )
+                                                          return_index=True )
                 sampled_index[i,j:j+this_size] = this_sampled_index
 
                 self._sampling_probability[i,j:j+this_size] = this_prob[this_sampled_index]

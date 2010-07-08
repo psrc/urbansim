@@ -3,8 +3,9 @@
 # See opus_core/LICENSE 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.logger import logger
+from opus_core.misc import unique
 from numpy import logical_and, logical_or, isscalar, where, ones
-from numpy import unique, setdiff1d, zeros_like 
+from numpy import setdiff1d, zeros_like 
         
 class TravelDataDataset(UrbansimDataset):
     """Dataset containing O-D matrices"""

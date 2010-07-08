@@ -4,7 +4,7 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
 
 class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
@@ -21,7 +21,7 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                                                   dataset_pool=self.dataset_pool)
         valid_large_area = where(large_areas[agents_index] > 0)[0]
         if valid_large_area.size > 0:
-            unique_large_areas = unique_values(large_areas[agents_index][valid_large_area])
+            unique_large_areas = unique(large_areas[agents_index][valid_large_area])
             cond_array = zeros(agent_set.size(), dtype="bool8")
             cond_array[agents_index[valid_large_area]] = True
             for area in unique_large_areas:

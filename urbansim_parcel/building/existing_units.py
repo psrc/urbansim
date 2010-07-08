@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import zeros, logical_not
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 
 class existing_units(Variable):
     """total number of units (residential_units or sqft, defined in building_types) """

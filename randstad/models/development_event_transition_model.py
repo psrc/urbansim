@@ -5,8 +5,7 @@
 from numpy import where, ones, zeros, array, int32, int16
 
 from opus_core.model import Model
-from opus_core.misc import DebugPrinter
-from opus_core.misc import unique_values
+from opus_core.misc import DebugPrinter, unique
 from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 
@@ -33,7 +32,7 @@ class DevelopmentEventTransitionModel(Model):
         grid_ids_for_project = array([], dtype=int32)
         if developments <> None:
             grid_ids_for_project = developments.get_attribute("grid_id")
-        grid_ids_for_project = unique_values(grid_ids_for_project)
+        grid_ids_for_project = unique(grid_ids_for_project)
         grid_ids_for_project = grid_ids_for_project[where(grid_ids_for_project>0)]
         
         if len(grid_ids_for_project)==0: return

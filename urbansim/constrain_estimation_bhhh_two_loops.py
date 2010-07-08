@@ -8,7 +8,7 @@ from numpy import zeros,float32,where,reshape,newaxis,absolute
 from numpy import concatenate, ones, any, arange, repeat
 from numpy import array, ma, mean, median, min
 from scipy.ndimage import standard_deviation
-from opus_core.misc import corr, unique_values, safe_array_divide
+from opus_core.misc import corr, unique, safe_array_divide
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.variables.variable import ln
 from opus_core.bhhh_mnl_estimation import bhhh_mnl_estimation
@@ -108,8 +108,8 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
             sdratio_matrix = sdratio[index]
             ## debug info
             from numpy import histogram 
-            from opus_core.misc import unique_values
-            cc = histogram(index.ravel(), unique_values(index.ravel()))[0]
+            from opus_core.misc import unique
+            cc = histogram(index.ravel(), unique(index.ravel()))[0]
             logger.log_status( "=================================================================")
             logger.log_status( "Probability min: %s, max: %s" % (probability.min(), probability.max()) )
             logger.log_status( "Demand min: %s, max: %s" % (demand.min(), demand.max()) )
@@ -296,7 +296,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
 
     def compute_prob_correlation(self, pij, ptij, phij, index, resources):
         chosen_choice_dummy = resources['chosen_choice']
-        indices = unique_values(index.ravel())
+        indices = unique(index.ravel())
         correlation = None
         for j in indices:
             w = where(index == j)

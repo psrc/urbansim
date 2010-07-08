@@ -5,7 +5,8 @@
 from opus_core.variables.variable import Variable
 from opus_core.variables.variable_name import VariableName
 from numpy import where, repeat, ones, float32, resize, array
-from numpy import ma, zeros, unique, arange, logical_and, searchsorted
+from numpy import ma, zeros, arange, logical_and, searchsorted
+from opus_core.misc import unique
 from urbansim.functions import attribute_label
 from opus_core.logger import logger
 from scipy import ndimage

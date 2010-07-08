@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.variables.variable import Variable
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import sqrt, arange, array, logical_or
 from numpy import ma
 from opus_core.logger import logger

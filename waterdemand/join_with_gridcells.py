@@ -24,11 +24,11 @@ consumption = ConsumptionDataset(in_storage = storage, in_table_name=consumption
 
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from numpy import array
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 
 consumption_grid_id = consumption.get_attribute("grid_id")
 years = consumption.get_attribute("billyear")
-distinct_years = unique_values(years)
+distinct_years = unique(years)
 
 import os
 from numpy import where, zeros, arange

@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import DebugPrinter, unique
 from opus_core.model import Model
 from numpy import arange, array, where, int8, zeros, ones, compress, int32, concatenate
 from numpy import logical_not
@@ -28,7 +28,7 @@ class BusinessTransitionModel(Model):
         business_id_name = business_set.get_id_name()[0]
         control_totals.get_attribute("total_number_of_businesses")
         idx = where(control_totals.get_attribute("year")==year)
-        sectors = unique_values(control_totals.get_attribute_by_index("building_use_id", idx))
+        sectors = unique(control_totals.get_attribute_by_index("building_use_id", idx))
         max_id = business_set.get_id_attribute().max()
         business_size = business_set.size()
         new_businesses = {self.location_id_name:array([], dtype='int32'),

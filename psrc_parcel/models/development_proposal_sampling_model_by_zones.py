@@ -4,7 +4,7 @@
 
 from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array, ones
 from opus_core.logger import logger
-from opus_core.misc import clip_to_zero_if_needed, unique_values
+from opus_core.misc import clip_to_zero_if_needed, unique
 from opus_core.simulation_state import SimulationState
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 from opus_core.datasets.dataset import DatasetSubset
@@ -25,7 +25,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.type["non_residential"] = True
                 
         target_vacancies = self.dataset_pool.get_dataset('target_vacancy')
-        tv_building_types = unique_values(target_vacancies.get_attribute('building_type_id'))
+        tv_building_types = unique(target_vacancies.get_attribute('building_type_id'))
         
         bts = self.dataset_pool.get_dataset('building_type')
         all_building_types = bts.get_id_attribute()

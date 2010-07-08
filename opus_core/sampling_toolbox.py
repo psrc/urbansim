@@ -2,29 +2,27 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import os,sys
-import copy
 import numpy
 from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
-from numpy import sometrue, where, equal, not_equal, ndarray, clip
-from numpy import reshape, sort, searchsorted, repeat, argsort
-from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, unique1d
-from opus_core.misc import ncumsum, unique_values, is_masked_array
+from numpy import where, equal, ndarray, clip, sort, searchsorted, cumsum
+from numpy import float32, float64, newaxis, rank, take, ma, argmax
+from numpy import logical_not
+from opus_core.misc import ncumsum, is_masked_array, unique, ismember
 from opus_core.logger import logger
 from numpy.random import uniform, randint
 
-def sample_replace(source_array, size, return_indices=False):
+def sample_replace(source_array, size, return_index=False):
     """Equal probability sampling; with-replacement case
-    if return_indices is True, return indices to source_array,
+    if return_index is True, return indices to source_array,
     otherwise, return elements in source_array
     """
     min = 0; max = source_array.size
-    if return_indices:
+    if return_index:
         return randint(min,max,size)
     else:
         return source_array[randint(min,max,size)]
 
-def sample_noreplace(source_array, size, return_indices=False):
+def sample_noreplace(source_array, size, return_index=False):
     """equal probability sampling; without replacement case.
     Using numpy functions, efficient for large array"""
     if not isinstance(source_array, ndarray):
@@ -35,11 +33,14 @@ def sample_noreplace(source_array, size, return_indices=False):
     
     n = source_array.size
     if n == 0:
-        return source_array
+        if return_index:
+            return array([], dtype='i')
+        else:
+            return array([], dtype=source_array.dtype)
     prob_array = resize(array([1.0/n], dtype = float32), n)  #fake a equal probability array to use probsample_noreplace
-    return probsample_noreplace(source_array, size, prob_array, return_indices=return_indices)
+    return probsample_noreplace(source_array, size, prob_array, return_index=return_index)
 
-def probsample_replace(source_array, size, prob_array, return_indices=False):
+def probsample_replace(source_array, size, prob_array, return_index=False):
     """Unequal probability sampling; with replacement case.
     Using numpy searchsorted function, suitable for large array"""
     if not isinstance(source_array, ndarray):
@@ -49,144 +50,102 @@ def probsample_replace(source_array, size, prob_array, return_indices=False):
             raise TypeError, "source_array must be of type ndarray"
 
     if prob_array is None:
-        return sample_replace(source_array,size, return_indices=return_indices)
+        return sample_replace(source_array,size, return_index=return_index)
 
     if prob_array.sum() == 0:
         raise ValueError, "there aren't non-zero weights in prob_array"
 
-    cum_prob = ncumsum(prob_array)
+    cum_prob = cumsum(prob_array, dtype='float64')
 
-    sample_prob = uniform(0, 1, size)
+    sample_prob = uniform(0, cum_prob[-1], size)
     sampled_index = searchsorted(cum_prob, sample_prob)
     sampled_index = sampled_index.astype('int32')
-    if return_indices:
+    # due to precision problems, searchsorted could return index = cum_prob.size
+    sampled_index = clip(sampled_index, 0, cum_prob.size-1) 
+    
+    if return_index:
         return sampled_index
     else:
         return source_array[sampled_index]
 
 def probsample_noreplace(source_array, sample_size, prob_array=None,
-                          exclude_index=None, return_indices=False):
+                         exclude_element=None, exclude_index=None, return_index=False):
     """generate non-repeat random 1d samples from source_array of sample_size, excluding
     indices appeared in exclude_index.
 
-    return indices to source_array if return_indices is true.
+    return indices to source_array if return_index is true.
 
     source_array - the source array to sample from
     sample_size - scalar representing the sample size
     prob_array - the array used to weight sample
+    exclude_element - array representing elements should not appear in resulted array
     exclude_index - array representing indices should not appear in resulted array,
                     which can be used, for example, to exclude current choice from sampling,
                     indexed to source_array
     """
-
-    if not isinstance(source_array, ndarray):
-        try:
-            source_array = asarray(source_array)
-        except:
-            raise TypeError, "source_array must be of type ndarray"
-
-    pop_size = source_array.size
-
-    if pop_size < sample_size:
-        logger.log_warning("There are less or equal indices (%s) in source_array than the sample_size (%s). Use probsample_replace. " %
-              (pop_size, sample_size))
-        #sample_size = max
-        return probsample_replace(source_array, sample_size, prob_array=prob_array, return_indices=return_indices)
-    elif pop_size == sample_size:
-        if return_indices:
-            return arange(source_array.size)
-        else:
-            return source_array
-
     if sample_size <= 0:
         #logger.log_warning("sample_size is %s. Nothing is sampled." % sample_size)
-        return array([], dtype='i')
-    
-    if prob_array is None:
-        return sample_noreplace(source_array, sample_size, return_indices=return_indices)
-
-    if not isinstance(prob_array, ndarray):
-        try:
-            prob_array = asarray(prob_array)
-        except:
-            raise TypeError, "prob_array must be of type ndarray"
-
-    p_array = prob_array.astype(float64) # creates a copy (not just a pointer)
-
-    p_array_sum = p_array.sum()
-    if not ma.allclose(p_array_sum, 1.0):
-        p_array = p_array / p_array_sum
-        if abs(1.0 - p_array_sum) > 0.01:
-            # print this message only if it is a serious difference
-            logger.log_warning("prob_array doesn't sum up to 1, and is normalized. Sum: %s" % p_array_sum)
-
-    #import pdb; pdb.set_trace()
-    prob_array_size = nonzerocounts(prob_array)
-    if prob_array_size < sample_size:
-        logger.log_warning("There are less or equal non-zero weight (%s) in prob_array than the sample_size (%s). Use probsample_replace. " %
-              (prob_array_size, sample_size))
-        return probsample_replace(source_array, sample_size, prob_array=p_array, return_indices=return_indices)
-    elif prob_array_size == sample_size:
-        if return_indices:
-            return where(prob_array>0)[0]
+        if return_index:
+            return array([], dtype='i')
         else:
-            return source_array[prob_array>0]
+            return array([], dtype=source_array.dtype)
+            
+    if prob_array is None:
+        return sample_replace(source_array,sample_size, return_index=return_index)
+    else:
+        #make a copy of prob_array so we won't change its original value in the sampling process
+        prob_array2 = prob_array.copy()
+        if exclude_element is not None:
+            prob_array2[ismember(source_array, exclude_element)] = 0.0
+            
+        if exclude_index is not None:
+            index_range = arange(source_array.size, dtype="i")
+            if isinstance(exclude_index, numpy.ndarray):
+                exclude_index = exclude_index[ismember(exclude_index, index_range)]
+                prob_array2[exclude_index] = 0.0
+            elif (exclude_index in index_range):
+                prob_array2[exclude_index] = 0.0
+        
+        nzc = nonzerocounts(prob_array2)
+        if nzc == 0:
+            raise ValueError, "The weight array contains no non-zero elements. Check the weight used for sampling."
+        if nzc < sample_size:
+            logger.log_warning("The weight array contains %s non-zero elements, less than the sample_size %s. Use probsample_replace. " %
+                  (nzc, sample_size))
+            #sample_size = max
+            return probsample_replace(source_array, sample_size, prob_array=prob_array2, return_index=return_index)
+        elif nzc == sample_size:
+            nonzeroindex = prob_array2.nonzero()[0]
+            if return_index:
+                return nonzeroindex
+            else:
+                return source_array[nonzeroindex]
 
-    totalmass = 1.0
     to_be_sampled = sample_size
     sampled_index = array([], dtype='i')  #initialize sampled_index
-
-    if exclude_index is not None:
-        try:
-            totalmass -= asarray(p_array[exclude_index]).sum()
-            p_array[exclude_index] = 0
-        except IndexError:
-            logger.log_warning("The exclude_index (%s) is not in prob array" % (exclude_index))
-            #raise IndexError, "Having problem to apply exclude_index values"
-
-    cum_prob = ncumsum(p_array/p_array.sum()) * totalmass
-    if not ma.allclose(cum_prob[-1], totalmass):
-        raise ValueError, "prob_array doesn't sum up to 1 even after normalization"
-
     while True:
-        sample_prob = uniform(0, totalmass, to_be_sampled).astype(float32)
-        proposed_index = searchsorted(cum_prob, sample_prob) #, 0, cum_prob.size-1)
-        proposed_index = clip(proposed_index, 0, cum_prob.size-1) # due to precision problems
-#         dup_indicator = find_duplicates_self(proposed_index)
-#         valid_index = proposed_index[dup_indicator==0]
-#         sampled_index = concatenate((sampled_index, source_array[valid_index]))
-
-#         if not sometrue(dup_indicator):
-#             return sampled_index
-        i = 0
-        if numpy.__version__ >= '1.2.0':
-        ## numpy.unique1d in version 1.2.0 has reversed the return, changed [0]->[1]
-            i = 1
-        uniqueidx = unique1d(proposed_index, True)[i]
-        valid_index = proposed_index[sort(uniqueidx)]
-        #valid_index = unique_values(proposed_index)
-        #import pdb; pdb.set_trace()
+        proposed_index = probsample_replace(source_array, to_be_sampled, prob_array2, return_index=True)
+        valid_index = unique(proposed_index, return_index=False)
+        #assert all( logical_not(ismember(valid_index, sampled_index)) )
+        #valid_index = valid_index[logical_not(ismember(valid_index, sampled_index))]  #this should not be necessary because we control the prob_array        
         sampled_index = concatenate((sampled_index, valid_index))
-        if valid_index.size == to_be_sampled:
-            if return_indices:
+        
+        to_be_sampled -= valid_index.size
+        if to_be_sampled == 0:
+            if return_index:
                 return sampled_index
             else:
                 return source_array[sampled_index]
 
-        totalmass -= asarray(p_array[valid_index]).sum()
-        p_array[valid_index] = 0
-
-        cum_prob = ncumsum(p_array/p_array.sum()) * totalmass
-        assert ma.allclose(totalmass, cum_prob[-1])
-        to_be_sampled -= valid_index.size
-
-    #return source_array[sampled_index]
-
+        prob_array2[proposed_index] = 0.0
+        nzc = nonzerocounts(prob_array2)
+        assert nzc > 0 #given that we have checked and made sure nonzerocounts(prob_array2)>size, it should not run out before we have enough non-repeat samples
+        
 def stratifiedsample(source_array, strata_array,
                      sample_size=1,
                      sample_rate=None, min_size=1,
                      weight_array=None, replace=False,
-                     return_indices=False):
+                     return_index=False):
     """stratified sampling from source_array,
 
     min_size works with sampling_rate,
@@ -194,7 +153,7 @@ def stratifiedsample(source_array, strata_array,
     """
 
     sampled_index = array([], dtype='int32')
-    unique_strata = unique_values(strata_array)
+    unique_strata = unique(strata_array)
     for this_stratum in unique_strata:
         indices_in_stratum = where(equal(strata_array, this_stratum))[0]
         counts = len(indices_in_stratum)
@@ -239,13 +198,13 @@ def stratifiedsample(source_array, strata_array,
                                         (sampled_index,
                                          probsample_replace(indices_in_stratum, stratum_sample_size, prob_array)
                                          ))
-    if return_indices:
+    if return_index:
         return sampled_index
     else:
         return source_array[sampled_index]
 
 def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
-                  replace=False, return_indices=False):
+                  replace=False, return_index=False):
     """generate non-repeat random 2d samples from source_array of sample_size, not including
     indices appeared in exclude_index; sample column by column, more efficient when there are more
     rows than columns in sample_size.
@@ -329,7 +288,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
         for j in range(columns):
             sampled_choiceset_index[:,j] = probsample_replace(arange(source_array_size), rows, p_array)
 
-    if return_indices:
+    if return_index:
         return sampled_choiceset_index
     else:
         return source_array[sampled_choiceset_index]
@@ -414,41 +373,6 @@ def find_duplicates_others(source_array, other_array):
 #    if duplicate_indicator.ndim > source_array_rank:
 #        reshape(duplicate_indicator, shape=(src_array.size,))
     return duplicate_indicator
-
-#def unique_values(input_array):
-#    """return unique elements of input_array
-#    input_array - a sortable numpy array or list object
-#    """
-#
-#    logger.log_warning("Depricated: unique_values has been moved to opus_core.misc!")
-#    return False
-#    if isinstance(input_array, ndarray):
-#        if input_array.ndim <> 1:
-#            input_array = input_array.ravel()
-#            raise RuntimeWarning, "input_array is converted into a rank-1 array"
-#    elif not isinstance(input_array, list):
-#        raise TypeError, "input_array must be of type numpy array or list"
-#
-#    n = len(input_array)
-#    if n == 0:
-#        return array([], dtype='int32')
-#
-#    t = copy.copy(input_array)
-#    try:
-#        t.sort()
-#    except TypeError:
-#        del t
-#        raise RuntimeError, "input_array is not sortable; unique_values fails."
-#    else:
-#        assert n > 0
-#        last = t[0]
-#        lasti = i = 1
-#        while i < n:
-#            if t[i] != last:
-#                t[lasti] = last = t[i]
-#                lasti += 1
-#            i += 1
-#    return t[:lasti]
 
 def normalize(weight_array):
     """Normalize a weight_array of either 1 or 2 dimensions"""

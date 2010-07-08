@@ -4,7 +4,7 @@
 
 from numpy import array, logical_and, logical_or, zeros, where, arange, ones
 from urbansim.models.events_coordinator_and_storing import EventsCoordinatorAndStoring
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.model import Model
 from opus_core.logger import logger
 

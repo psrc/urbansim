@@ -5,8 +5,7 @@
 from opus_core.resources import Resources
 from opus_core.store.storage import Storage
 from numpy import asarray, array, where, ndarray, ones, concatenate, maximum, resize, logical_and
-from opus_core.misc import ematch
-from opus_core.misc import unique_values
+from opus_core.misc import ematch, unique
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 import sys
@@ -265,13 +264,13 @@ class EquationSpecification(object):
         return self.coefficients
 
     def get_distinct_coefficient_names(self):
-        return unique_values(self.coefficients)
+        return unique(self.coefficients)
 
     def get_distinct_variable_names(self):
-        return unique_values(self.get_variable_names())
+        return unique(self.get_variable_names())
 
     def get_distinct_long_variable_names(self):
-        return unique_values(self.get_long_variable_names())
+        return unique(self.get_long_variable_names())
 
     def get_equations(self):
         return self.equations
@@ -298,14 +297,14 @@ class EquationSpecification(object):
         
     def get_nequations(self):
         if self.get_equations().size > 0:
-            return unique_values(self.get_equations()).size
+            return unique(self.get_equations()).size
         return 1
 
     def get_number_of_distinct_variables(self):
         return self.get_distinct_variable_names().size
 
     def get_distinct_submodels(self):
-        return unique_values(self.get_submodels())
+        return unique(self.get_submodels())
 
     def get_nsubmodels(self):
         return maximum(1, self.get_distinct_submodels().size)
@@ -324,7 +323,7 @@ class EquationSpecification(object):
         
     def get_distinct_values_of_other_field(self, name):
         values = self.get_other_field(name)
-        return unique_values(values)
+        return unique(values)
         
     def set_variable_prefix(self, prefix):
         self.variables = tuple(map(lambda name: VariableName(prefix + name),
@@ -345,7 +344,7 @@ class EquationSpecification(object):
 
     def get_equations_for_submodel(self, submodel):
         idx = self.get_indices_for_submodel(submodel)
-        return unique_values(self.get_equations()[idx])
+        return unique(self.get_equations()[idx])
 
     def get_table_summary(self, submodel_default=-2, equation_default=-2):
         first_row = ['Submodel', 'Equation', 'Coefficient Name', 'Variable']

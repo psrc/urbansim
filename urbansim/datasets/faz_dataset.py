@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from numpy import array, zeros, int16, int8, int32, ones, take, arange
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
@@ -28,7 +28,7 @@ class FazDataset(UrbansimDataset):
             if (self.get_id_name()[0] not in zoneset.get_known_attribute_names()):
                 raise StandardError, "Given ZoneDataset does not contain " + self.get_id_name()[0]
             fazids = zoneset.get_attribute(self.get_id_name()[0])
-            unique_ids = unique_values(fazids[fazids >=0])
+            unique_ids = unique(fazids[fazids >=0])
             self._add_id_attribute(data=unique_ids, name=self.get_id_name()[0])
         self._create_id_mapping_array()
 
@@ -40,7 +40,7 @@ class FazDataset(UrbansimDataset):
         max_age = 120
         n = self.size()
         hh_age = agents.get_attribute(age_name).astype(int16)
-        ages = unique_values(hh_age)
+        ages = unique(hh_age)
         self.same_age_table = zeros((ages.size, n), dtype=int32)
         self.same_age_table_mapping = {}
         faz_ids = agents.get_attribute(self.get_id_name()[0])
@@ -63,7 +63,7 @@ class FazDataset(UrbansimDataset):
         max_sector = agents.get_attribute(sector_field_name).max()
         n = self.size()
         sectors = agents.get_attribute(sector_field_name).astype(int16)
-        unique_sectors = unique_values(sectors)
+        unique_sectors = unique(sectors)
         self.same_job_sector_table = zeros((unique_sectors.size, n), dtype=int32)
         self.same_job_sector_table_mapping = {}
         faz_ids = agents.get_attribute(self.get_id_name()[0])

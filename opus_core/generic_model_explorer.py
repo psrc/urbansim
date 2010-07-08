@@ -4,7 +4,7 @@
 
 
 from numpy import zeros, take, ones
-from opus_core.misc import unique_values
+from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
 
@@ -187,7 +187,7 @@ class GenericModelExplorer(object):
         """Plot map of the sampled choice set."""
         choice_set = self.get_choice_set()
         result = zeros(choice_set.size(), dtype='int16')
-        result[unique_values(self.get_choice_set_index().ravel())] = 1
+        result[unique(self.get_choice_set_index().ravel())] = 1
         dummy_attribute_name = '__sampled_choice_set__'
         choice_set.add_attribute(name=dummy_attribute_name, data=result)
         choice_set.plot_map(dummy_attribute_name, background=-1)
@@ -197,7 +197,7 @@ class GenericModelExplorer(object):
         """Plot map of the given attribute for the sampled choice set."""
         choice_set = self.get_choice_set()
         filter_var = ones(choice_set.size(), dtype='int16')
-        filter_var[unique_values(self.get_choice_set_index().ravel())] = 0
+        filter_var[unique(self.get_choice_set_index().ravel())] = 0
         dummy_attribute_name = '__sampled_choice_set_filter__'
         choice_set.add_attribute(name=dummy_attribute_name, data=filter_var)
         choice_set.plot_map(name, filter=dummy_attribute_name)

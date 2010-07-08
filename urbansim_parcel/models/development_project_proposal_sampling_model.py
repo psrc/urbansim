@@ -5,7 +5,6 @@
 from opus_core.resources import Resources
 from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.datasets.dataset import Dataset, DatasetSubset
-from opus_core.misc import unique_values
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue
@@ -179,7 +178,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 n = minimum(idx.size, n)
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
                                                 prob_array=(self.weight[idx]/float(self.weight[idx].sum())),                                                                
-                                                exclude_index=None, return_indices=True)
+                                                exclude_index=None, return_index=True)
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]])
                 self.weight[idx[sampled_proposal_indexes]] = 0
 
