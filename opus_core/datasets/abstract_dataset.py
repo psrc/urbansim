@@ -2146,13 +2146,14 @@ class AbstractDataset(object):
         if conditions:
             condition_attributes, condition_values = conditions.keys(), conditions.values()
             
-        from numpy import ndarray, array, logical_and, where, in1d
+        from numpy import ndarray, array, logical_and, where
+        from opus_core.misc import ismember
         if not isinstance(condition_values, ndarray):
             condition_values = array(condition_values)
             
         result = ones(self.size(), dtype='bool')
         for attr, value in zip(condition_attributes, condition_values):
-            result = logical_and(result, in1d(self.get_attribute(attr), value))
+            result = logical_and(result, ismember(self.get_attribute(attr), value))
         if return_index:
             return where(result)[0]
         else:
