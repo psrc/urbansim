@@ -96,10 +96,10 @@ class NewProjectDynamicDialog(QDialog, Ui_NewProjectDynamicDialog):
         if data_type  in ['integer', 'float']:
             if data_type == 'integer':
                 widget = QtGui.QSpinBox()
-                widget.setMaximum(sys.maxint)
+                widget.setMaximum(2**31-1)
             else:
                 widget = QtGui.QDoubleSpinBox()
-                widget.setMaximum(2**64)
+                widget.setMaximum(2**64-1)
             widget.setMinimum(-widget.maximum())
 
             try:

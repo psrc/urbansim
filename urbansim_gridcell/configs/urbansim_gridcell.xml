@@ -1008,6 +1008,14 @@
       </model>
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
+    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</cache_directory>
+      <base_year type="integer" field_identifier="Base Year">1980</base_year>
+      <years type="tuple">
+        <firstyear type="integer" field_identifier="Base Year">1980</firstyear>
+        <lastyear type="integer" field_identifier="Base Year">1980</lastyear>
+      </years>
+    </estimation_config>
   </model_manager>
   <scenario_manager>
     <scenario name="default_scenario" type="scenario">
@@ -1022,10 +1030,17 @@
           <argument name="database_name" type="string"/>
         </baseyear_database>
         <cache_configuration type="category">
-          <cache_directory type="string"/>
+          <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</cache_directory>
           <creating_baseyear_cache_configuration type="class">
             <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
             <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+	        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory"  field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">[Project Name]/runs</argument>
+    	    <argument name="cache_from_database" type="boolean">False</argument>
+	        <argument name="baseyear_cache" type="class">
+	          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+	          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+	          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"  field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</argument>
+	        </argument>
             <argument name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</argument>
             <argument name="tables_to_cache" type="selectable_list">
               <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
@@ -1115,10 +1130,10 @@
           <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
         </models_to_run>
         <others type="category">
-          <base_year type="integer">1980</base_year>
+          <base_year type="integer" field_identifier="Base Year">1980</base_year>
           <years_to_run config_name="years" type="tuple">
-            <firstyear type="integer">1981</firstyear>
-            <lastyear type="integer">1982</lastyear>
+            <firstyear type="integer" field_identifier="First Year of Simulation">1981</firstyear>
+            <lastyear type="integer" field_identifier="Last Year of Simulation">1982</lastyear>
           </years_to_run>
         </others>
       </model_system>
