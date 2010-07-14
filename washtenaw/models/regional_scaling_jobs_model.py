@@ -10,7 +10,8 @@ from urbansim.models.scaling_jobs_model import ScalingJobsModel
 
 class RegionalScalingJobsModel(ScalingJobsModel):
     """Run the urbansim ScalingJobsModel separately for each large area."""
-    model_name = "Regional Scaling Jobs Model" 
+    model_name = "Regional Scaling Jobs Model"
+    model_short_name = "RSJM"  
     large_area_id_name = "large_area_id"
     
     def run(self, location_set, agent_set, agents_index=None, data_objects=None, **kwargs):
@@ -27,13 +28,13 @@ class RegionalScalingJobsModel(ScalingJobsModel):
             for area in unique_large_areas:
                 new_index = where(logical_and(cond_array, large_areas == area))[0]
                 self.filter = "%s.%s == %s" % (location_set.get_dataset_name(), self.large_area_id_name, area)
-                logger.log_status("SJM for area %s" % area)
+                logger.log_status("%s for area %s" % (self.model_short_name, area))
                 ScalingJobsModel.run(self, location_set, agent_set, agents_index=new_index, **kwargs)
 
         no_large_area = where(large_areas[agents_index] <= 0)[0]
         if no_large_area.size > 0: # run the model for jobs that don't have assigned large_area
             self.filter = None
-            logger.log_status("SJM for jobs with no area assigned")
+            logger.log_status("%s for jobs with no area assigned" % self.model_short_name)
             choices = ScalingJobsModel.run(self, location_set, agent_set, agents_index=agents_index[no_large_area], **kwargs)
             where_valid_choice = where(choices > 0)[0]
             choices_index = location_set.get_id_index(choices[where_valid_choice])
