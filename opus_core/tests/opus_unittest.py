@@ -55,7 +55,17 @@ class OpusAbstractTestCase(OriginalTestCase):
         difference_message = self._get_difference(first, second)
         if difference_message is None:
             self.fail('Dictionaries should not be equal, but are: %s.' % first)
+            
+    def assertArraysEqual(self, first, second, *args, **kwargs):
+        """
+        Assert that these two numpy arrays are equal.
+        """
+        self.assert_(isinstance(first, ndarray), *args, **kwargs)
+        self.assert_(isinstance(second, ndarray), *args, **kwargs)
         
+        if not all(first == second):
+            self.fail('Arrays are different: %s vs %s.' % (first, second))
+
     def _get_difference(self, first, second):
         """
         Are the type, structure, and contents of first and second the same?
