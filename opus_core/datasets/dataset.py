@@ -1083,33 +1083,6 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(len(ds.get_computed_attribute_names()), 2)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr'), log(array([110, 150, 20]))), True)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr_reload__'), log(array([100,200,300]))), True)
-
-    def test_get_index_by_condition(self):
-        storage = StorageFactory().get_storage('dict_storage')
-
-        storage.write_table(table_name='dataset1',
-            table_data = {
-                'id1':array([1,2,3,4,5]),
-                'attr1':array([100, 36, 100, 21, 100]),
-                'attr2':array([1, 2, 1, 7, 100]),
-                'attr3':array(["ab", "cd", "XXX", "efg", "ZZZ"]),
-                'attr4':array([100, 200, 300, 150, 250])
-                }
-            )
-
-        ds1 = Dataset(in_storage=storage, in_table_name='dataset1', id_name='id1')
-        
-        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2', 'attr3'], condition_values=[100, 1, 'XXX'])
-        self.assertEqual(result, array([2]), msg="Error in get_index_by_condition")
-        
-        result = ds1.get_index_by_condition(conditions = dict(zip(['attr1','attr2', 'attr3'], [100, 1, 'XXX'])))
-        self.assertEqual(result, array([2]), msg="Error in get_index_by_condition")
-        
-        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2'], condition_values=[100, 1])
-        self.assertTrue(all(result==array([0, 2])), msg="Error in get_index_by_condition")
-
-        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2'], condition_values=[[100,100], [1,100]])
-        self.assertTrue(all(result==array([0, 2, 4])), msg="Error in get_index_by_condition")
                 
 if __name__ == '__main__':
     opus_unittest.main()
