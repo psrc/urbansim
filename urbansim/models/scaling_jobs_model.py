@@ -4,7 +4,7 @@
 
 from opus_core.resources import Resources
 from numpy import where, zeros, array, arange, ones, ma, resize
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.misc import DebugPrinter, sample, unique
 from opus_core.sampling_toolbox import probsample_replace
 from opus_core.datasets.dataset import DatasetSubset
@@ -18,16 +18,30 @@ class ScalingJobsModel(Model):
     the scalable jobs of different sectors.
     """
     model_name = "Scaling Jobs Model"
+    model_short_name = "SJM"
     variable_package = "urbansim"
     
-    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', filter = None, debuglevel=0,
-                 dataset_pool=None):
+    def __init__(self, group_member=None, 
+                 agents_grouping_attribute = 'job.building_type', 
+                 filter = None, 
+                 model_name=None,
+                 model_short_name=None,
+                 variable_package=None,
+                 dataset_pool=None,
+                 debuglevel=0):
         self.group_member = group_member
         if self.group_member:
             self.group_member.set_agents_grouping_attribute(agents_grouping_attribute)
         self.filter = filter
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
         self.debug = DebugPrinter(debuglevel)
+        
+        if model_name is not None:
+            self.model_name = model_name
+        if model_short_name is not None:
+            self.model_short_name = model_short_name
+        if variable_package is not None:
+            self.variable_package = variable_package
      
     def run(self, location_set, agent_set, agents_index=None, data_objects=None,
             resources=None, **kwargs):

@@ -472,59 +472,59 @@ class Dataset(AbstractDataset):
         """
         self.set_values_of_one_attribute(attribute=attr, values=values)
 
-    def __getattribute__(self, attr):
-        """ enable accessing dataset attribute through ``data.attr``; adopted from numpy.core.records.py
-        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources
-        """
-        try:
-            return object.__getattribute__(self, attr)
-        except AttributeError: # attr must be a dataset attribute
-            return self.get_attribute(attr)
-    
-    def __setattr__(self, attr, val):
-        """ enable setting dataset attribute through ``data.attr=val``; adopted from numpy.core.records.py
-        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources        
-        """
-        
-        try:
-            attr_names = AbstractDataset.__getattribute__(self, 'attribute_boxes').keys() 
-        except:
-            attr_names = []
-    
-        newattr = attr not in self.__dict__
-        try:
-            ret = object.__setattr__(self, attr, val)
-        except:
-            # if there is an exception, first check whether it's an attribute          
-            if attr not in attr_names:
-                exctype, value = sys.exc_info()[:2]
-                raise exctype, value
-        else:
-            # __setattr__ works
-            if attr not in attr_names:
-                # attr is not a dataset attribute
-                return ret
-            
-            # attr is a dataset attribute
-            if newattr:
-                # attr is added as an class attribute, but it is supposed to be a dataset attribute
-                try:
-                    object.__delattr__(self, attr)
-                except:
-                    return ret
-            else:
-                # attr is a Dataset class attribute that has the same name as
-                # an attribute of dataset
-                logger.log_warning("%s exists as an attribute of Dataset class and an attribute of attribute_boxes; "  % attr + \
-                                   "if you want to access attribute_boxes, use dataset[attr] or dataset.get_attribute(attr) instead.")
-                return ret
-                
-        if attr not in attr_names:
-            #TODO: add attr to dataset attribute?
-            raise AttributeError, "dataset %s has no attribute %s" % (self.dataset_name, attr)
-        
-        ret = self.set_values_of_one_attribute(attr, val)
-        return ret
+#    def __getattribute__(self, attr):
+#        """ enable accessing dataset attribute through ``data.attr``; adopted from numpy.core.records.py
+#        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources
+#        """
+#
+#        try:
+#            return object.__getattribute__(self, attr)
+#        except AttributeError: # attr must be a dataset attribute
+#            return self.get_attribute(attr)
+#    
+#    def __setattr__(self, attr, val):
+#        """ enable setting dataset attribute through ``data.attr=val``; adopted from numpy.core.records.py
+#        check the results carefully, because it may be confused with a class attribute, e.g. dataset.resources        
+#        """
+#        
+#        try:
+#            attr_names = AbstractDataset.__getattribute__(self, 'attribute_boxes').keys() 
+#        except:
+#            attr_names = []
+#        #check whether it is a newattr before we do anything
+#        newattr = attr not in self.__dict__
+#        try:
+#            ret = object.__setattr__(self, attr, val)
+#        except:
+#            # if there is an exception, first check whether it's an attribute          
+#            if attr not in attr_names:
+#                exctype, value = sys.exc_info()[:2]
+#                raise exctype, value
+#        else:
+#            # __setattr__ works
+#            if attr not in attr_names:
+#                # attr is not a dataset attribute
+#                return ret
+#            
+#            # attr is a dataset attribute
+#            if newattr:
+#                # attr is added as an class attribute, but it is supposed to be a dataset attribute
+#                try:
+#                    object.__delattr__(self, attr)
+#                except:
+#                    return ret
+#            else:
+#                # attr is a Dataset class attribute that has the same name as
+#                # an attribute of dataset
+#                logger.log_warning("%s exists as an attribute of Dataset class and an attribute of attribute_boxes; "  % attr + \
+#                                   "if you want to access attribute_boxes, use dataset[attr] or dataset.get_attribute(attr) instead.")
+#                return ret
+#                
+#        if attr not in attr_names:
+#            raise AttributeError, "dataset %s has no attribute %s" % (self.dataset_name, attr)
+#        
+#        ret = self.set_values_of_one_attribute(attr, val)
+#        return ret
        
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
@@ -605,7 +605,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(set(ds.get_known_attribute_names()),
                          set(['id','attr','attr2','attr2_times_2']))
 
-    def test_access_attributes(self):
+    def Mtest_access_attributes(self):
         storage = StorageFactory().get_storage('dict_storage')
 
         storage.write_table(
@@ -1083,6 +1083,33 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(len(ds.get_computed_attribute_names()), 2)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr'), log(array([110, 150, 20]))), True)
         self.assertEqual(ma.allclose(ds.get_attribute('ln_attr_reload__'), log(array([100,200,300]))), True)
+
+    def test_get_index_by_condition(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='dataset1',
+            table_data = {
+                'id1':array([1,2,3,4,5]),
+                'attr1':array([100, 36, 100, 21, 100]),
+                'attr2':array([1, 2, 1, 7, 100]),
+                'attr3':array(["ab", "cd", "XXX", "efg", "ZZZ"]),
+                'attr4':array([100, 200, 300, 150, 250])
+                }
+            )
+
+        ds1 = Dataset(in_storage=storage, in_table_name='dataset1', id_name='id1')
         
+        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2', 'attr3'], condition_values=[100, 1, 'XXX'])
+        self.assertEqual(result, array([2]), msg="Error in get_index_by_condition")
+        
+        result = ds1.get_index_by_condition(conditions = dict(zip(['attr1','attr2', 'attr3'], [100, 1, 'XXX'])))
+        self.assertEqual(result, array([2]), msg="Error in get_index_by_condition")
+        
+        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2'], condition_values=[100, 1])
+        self.assertTrue(all(result==array([0, 2])), msg="Error in get_index_by_condition")
+
+        result = ds1.get_index_by_condition(condition_attributes=['attr1','attr2'], condition_values=[[100,100], [1,100]])
+        self.assertTrue(all(result==array([0, 2, 4])), msg="Error in get_index_by_condition")
+                
 if __name__ == '__main__':
     opus_unittest.main()

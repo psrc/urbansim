@@ -7,7 +7,7 @@ from numpy import zeros, logical_not
 from opus_core.misc import unique
 
 class existing_units(Variable):
-    """total number of units (residential_units or sqft, defined in building_types) """
+    """total number of units (residential_units or sqft, depending whether the building is_residential or not) """
     _return_type = "int32"
     
     def dependencies(self):

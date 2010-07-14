@@ -32,7 +32,8 @@ class TransitionModel(Model):
                  dataset_accounting_attribute=None,
                  control_total_dataset=None, 
                  model_name=None, 
-                 model_short_name=None):
+                 model_short_name=None,
+                 **kwargs):
         self.dataset = dataset
         self.dataset_accounting_attribute = dataset_accounting_attribute
         self.control_totals = control_total_dataset
@@ -56,7 +57,7 @@ class TransitionModel(Model):
         this_year_index = where(self.control_totals.get_attribute('year')==year)[0]
         control_totals_for_this_year = DatasetSubset(self.control_totals, this_year_index)
         column_names = list(set( self.control_totals.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] ))
-        column_names.sort()
+        column_names.sort(reverse=True)
         column_values = dict([ (name, control_totals_for_this_year.get_attribute(name)) for name in column_names + [target_attribute_name]])
         
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))

@@ -383,6 +383,18 @@ def sample(population, k, probabilities=None):
         raise StandardError, "Something is wrong with the probabilities."
     return population[choices]
 
+def intersect1d(ar1, ar2, **kwargs):
+    """ wrapper for numpy.intersect1d and numpy.intersect1d_nu for different version of numpy
+    """
+    import numpy
+    ver = numpy.__version__ 
+    if ver < '1.4.0':
+        f = numpy.intersect1d_nu
+        return f(ar1, ar2)
+    else:
+        f = numpy.intersect1d
+        return f(ar1, ar2, **kwargs)
+
 def unique(arr, return_index=False, **kwargs):
     """ wrapper for numpy.unique and numpy.unique1d for different version of numpy
     """

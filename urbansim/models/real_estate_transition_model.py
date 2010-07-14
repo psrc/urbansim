@@ -6,13 +6,14 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
-from numpy import array, where, ones, zeros, setdiff1d, logical_and
+from numpy import array, where, ones, zeros, logical_and
 from numpy import arange, concatenate, resize, int32, float64, searchsorted, cumsum
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
+from opus_core.misc import ismember
 import re
 
 try:
@@ -69,7 +70,7 @@ class RealEstateTransitionModel(Model):
         target_vacancy_for_this_year = DatasetSubset(self.target_vancy_dataset, this_year_index)
         
         column_names = list(set( self.target_vancy_dataset.get_known_attribute_names() ) - set( [ target_attribute_name, occupied_spaces_variable, total_spaces_variable, 'year', '_hidden_id_'] ))
-        column_names.sort()
+        column_names.sort(reverse=True)
         column_values = dict([ (name, target_vacancy_for_this_year.get_attribute(name)) for name in column_names + [target_attribute_name]])
         
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
@@ -108,7 +109,7 @@ class RealEstateTransitionModel(Model):
                     dataset_attribute = realestate_dataset.get_attribute(attribute)
                     sample_attribute = sample_from_dataset.get_attribute(attribute)
                 else:
-                    raise ValueError, "attribute %s used in control total dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
+                    raise ValueError, "attribute %s used in target vacancy dataset can not be found in dataset %s" % (attribute, realestate_dataset.get_dataset_name())
                 
                 if attribute + '_min' in column_names:
                     amin = target_vacancy_for_this_year.get_attribute(attribute+'_min')[index] 
@@ -128,12 +129,8 @@ class RealEstateTransitionModel(Model):
                     if aval == -1:
                         continue
                     elif aval == -2:  ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
-                        complement_values = setdiff1d( dataset_attribute, column_values[attribute] )
-                        has_one_of_the_complement_value = zeros(dataset_attribute.size, dtype='bool')
-                        for value in complement_values:
-                            has_one_of_the_complement_value += dataset_attribute == value
-                        indicator *= has_one_of_the_complement_value
-                        ##TODO sample_indicator:
+                        indicator *= logical_not(ismember(dataset_attribute, column_values[attribute]))
+                        sample_indicator *= logical_not(ismember(sample_attribute, column_values[attribute]))
                     else:
                         indicator *= dataset_attribute == aval
                         sample_indicator *= sample_attribute == aval
