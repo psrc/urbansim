@@ -54,8 +54,16 @@ for bt in observed_shares.keys()[1:len(observed_shares.keys())]:
     sampled_share_var = sampled_share_var + " + %s * (urbansim.building.building_type_id == %s)" % (sampled_shares[bt], bt)
                    
 aliases = [
+           "dummy_id=building.building_type_id * 100 + building.disaggregate(faz.large_area_id, intermediates=[zone, parcel])",
        observed_share_var,
        sampled_share_var,
        "wesml_sampling_correction_variable = safe_array_divide(psrc_parcel.building.observed_building_type_share, psrc_parcel.building.sampled_building_type_share)",
        "district_id = building.disaggregate(zone.district_id, intermediates=[parcel])",
+       "city_id = building.disaggregate(parcel.city_id)",
+      "number_of_home_based_jobs = building.aggregate(job.home_based_status==1)",
+      "number_of_non_home_based_jobs = building.aggregate(job.home_based_status==0)",
+      "total_home_based_job_space = urbansim_parcel.building.total_home_based_job_space",
+      "total_non_home_based_job_space = psrc_parcel.building.job_capacity_computed_if_necessary",
+      "vacant_home_based_job_space = clip_to_zero(psrc_parcel.building.total_home_based_job_space - psrc_parcel.building.number_of_home_based_jobs)",
+      "vacant_non_home_based_job_space = clip_to_zero(psrc_parcel.building.total_non_home_based_job_space - psrc_parcel.building.number_of_non_home_based_jobs)",
            ]
