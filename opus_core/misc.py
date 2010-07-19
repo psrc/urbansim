@@ -400,15 +400,15 @@ def unique(arr, return_index=False, **kwargs):
     """
     import numpy
     ver = numpy.__version__ 
-    if ver < '1.2.0':
+    if ver < '1.2.0':  #numpy 1.0 and 1.1 don't accept extra argument
         f = numpy.unique1d
         return f(arr, return_index=return_index)[::-1]
-    elif ver < '1.3.0':
+    elif ver < '1.3.0': #numpy 1.2+ accepts return_inverse argument
         f = numpy.unique1d
         return f(arr, return_index=return_index, **kwargs)[::-1]
-    elif ver < '1.4.0':
+    elif ver < '1.4.0': #numpy 1.3 reverses the order of outputs from unique1d
         f = numpy.unique1d
-    else:
+    else:               #unique1d is deprecated in numpy 1.4+, use unique instead
         f = numpy.unique
     return f(arr, return_index=return_index, **kwargs)
 
