@@ -400,7 +400,7 @@ def unique(arr, return_index=False, **kwargs):
     """
     import numpy
     ver = numpy.__version__ 
-    if ver < '1.2.0':  #numpy 1.0 and 1.1 don't accept extra argument
+    if ver < '1.2.0':   #numpy 1.0 and 1.1 don't accept extra argument
         f = numpy.unique1d
         return f(arr, return_index=return_index)[::-1]
     elif ver < '1.3.0': #numpy 1.2+ accepts return_inverse argument
@@ -1117,15 +1117,17 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             else:
                 self.assert_(os.path.exists(path))
 
-#    def test_unique_values(self):
-#        from numpy import array, ma
-#
-#        a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
-#        self.assertEqual(ma.allequal(unique_values(a), array([0.01, 0.08, 0.1, 0.2, 0.5])), True)
-#        self.assertEqual(ma.allequal(unique_values(a, sort_values=False), array([0.01, 0.1, 0.2, 0.5, 0.08])), True)
-#        b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
-#        self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
-#        self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
+    def test_unique(self):
+        from numpy import array
+
+        a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
+        self.assertArraysEqual(unique(a), array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        self.assertArraysEqual(unique(a, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        self.assertArraysEqual(unique(a, return_index=True)[1], array([0, 6, 1, 3, 5]))
+        b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
+        self.assertArraysEqual(unique(b), array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        self.assertArraysEqual(unique(b, return_index=True)[0], array([0.01, 0.08, 0.1, 0.2, 0.5]))
+        self.assertArraysEqual(unique(b, return_index=True)[1], array([0, 6, 1, 3, 5]))
         
     def test_get_dataset_from_tab_storage(self):
         import opus_core
