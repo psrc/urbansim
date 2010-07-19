@@ -2,10 +2,18 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-# various functions to manipulate parsetrees
+# helper functions for autogen_variable_factory
 
 import symbol, token
 from types import TupleType
+
+
+# return a string in quotes, or else 'None' 
+def quote(name):
+    return 'None' if name is None else "'%s'" % name
+
+
+# various functions to manipulate parsetrees
 
 def parsetree_to_string(parsetree):
     """function that takes a parse tree and turns it back into Python source code"""
@@ -46,6 +54,10 @@ from opus_core.tests import opus_unittest
 import parser
 
 class Tests(opus_unittest.OpusTestCase):
+    
+    def test_quote(self):
+        self.assertEqual(quote('squid'), "'squid'")
+        self.assertEqual(quote(None), 'None')
 
     # Parse some expressions, turn them back into strings, and see if each is equal to the original
     # Note that the result won't have spaces unless they are needed, so in each case we use an 

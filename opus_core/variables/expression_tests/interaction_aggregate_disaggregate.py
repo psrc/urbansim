@@ -146,6 +146,32 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [4.5, 90, 2250], [9, 180, 4500] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply2")
      
+    def test_interaction_set_aggregate_and_multiply_same_var(self):
+        # Test doing an aggregate on an interaction set component and using the result in a multiply operation
+        # with the same variable.  This is similar to test_interaction_set_aggregate except that we multiply 
+        # by the same variable.
+        expr = "test_agent.income*test_location.aggregate(test_agent.income)"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='test_agents', 
+            table_data={'id': array([1, 2, 3]), 'location_id':array([1,2,2]), 'income': array([1, 20, 50])}
+            )
+        storage.write_table(
+            table_name='test_locations',
+            table_data={
+                'location_id':array([1,2])
+                }
+            )
+        location_dataset = Dataset(in_storage=storage, in_table_name='test_locations', id_name="location_id", dataset_name="test_location")
+        dataset_pool = DatasetPool(package_order=['opus_core'], storage=storage)
+        dataset_pool._add_dataset('test_location', location_dataset)
+        test_agent_x_test_location = dataset_pool.get_dataset('test_agent_x_test_location')
+        result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
+        # test_agent.income is [1, 20, 50]
+        # test_location.aggregate(test_agent.income) is [1, 70]
+        should_be = array([ [1, 70], [20, 1400], [50, 3500] ])
+        self.assert_(ma.allclose(result, should_be, rtol=1e-6))
+
     def test_interaction_set_disaggregate(self):
         # Test doing a disaggregate on an interaction set component.  The interaction set is 
         # test_agent_x_test_location, and test_location will be disaggregated from faz.  

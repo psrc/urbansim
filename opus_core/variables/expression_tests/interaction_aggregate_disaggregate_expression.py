@@ -148,6 +148,31 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([ [45, 900, 22500], [90, 1800, 45000] ])
         self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_interaction_set_aggregate_and_multiply2")
      
+    def test_interaction_set_aggregate_and_multiply_same_expr(self):
+        # Test doing an aggregate on an interaction set component and using the result in a multiply operation
+        # with the same expression.
+        expr = "(test_agent.income+1)*test_location.aggregate(test_agent.income+1)"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='test_agents', 
+            table_data={'id': array([1, 2, 3]), 'location_id':array([1,2,2]), 'income': array([1, 20, 50])}
+            )
+        storage.write_table(
+            table_name='test_locations',
+            table_data={
+                'location_id':array([1,2])
+                }
+            )
+        location_dataset = Dataset(in_storage=storage, in_table_name='test_locations', id_name="location_id", dataset_name="test_location")
+        dataset_pool = DatasetPool(package_order=['opus_core'], storage=storage)
+        dataset_pool._add_dataset('test_location', location_dataset)
+        test_agent_x_test_location = dataset_pool.get_dataset('test_agent_x_test_location')
+        result = test_agent_x_test_location.compute_variables(expr, dataset_pool=dataset_pool)
+        # test_agent.income+1 is [2, 21, 51]
+        # test_location.aggregate(test_agent.income+1) is [2, 72]
+        should_be = array([ [2*2, 2*72], [21*2, 21*72], [51*2, 51*72] ])
+        self.assert_(ma.allclose(result, should_be, rtol=1e-6))
+
     def test_interaction_set_disaggregate(self):
         # Test doing a disaggregate on an interaction set component.  The interaction set is 
         # test_agent_x_test_location, and test_location will be disaggregated from faz.  

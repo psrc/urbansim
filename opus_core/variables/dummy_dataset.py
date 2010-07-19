@@ -17,65 +17,46 @@ class DummyDataset(object):
         self._name = name
         self._dataset_pool = dataset_pool
 
-    def aggregate(self, aggr_var, intermediates=[], function=None):
+    def aggregate(self, base_pkg, base_dataset, base_attribute, intermediates, function):
         dataset = self._get_dataset()
-        if len(aggr_var.name)==2:
-            (base_dataset, base_attribute) = aggr_var.name
-            base_pkg = None
-        else:
-            (base_pkg, base_dataset, base_attribute) = aggr_var.name
-        if function is None:
-            function_name = None
-        else:
-            function_name = function.name
         if intermediates==[]:
             aggregated_dataset = base_dataset
             dependent_attribute = base_attribute
         else:
-            intermediate_names = map(lambda n: n.name, intermediates)
-            expr = make_aggregation_call('aggregate', base_pkg, base_dataset, base_attribute, function_name, intermediate_names)
-            aggregated_dataset = intermediates[-1].name
+            expr = make_aggregation_call('aggregate', base_pkg, base_dataset, base_attribute, function, intermediates)
+            aggregated_dataset = intermediates[-1]
             dependent_attribute = VariableName(expr).get_alias()
         ds = self._dataset_pool.get_dataset(aggregated_dataset)
         ds.compute_one_variable_with_unknown_package(dataset.get_id_name()[0], dataset_pool=self._dataset_pool)
         if function is None:
             result = dataset.aggregate_dataset_over_ids(ds, attribute_name=dependent_attribute)
         else:
-            result = dataset.aggregate_dataset_over_ids(ds, function=function_name, attribute_name=dependent_attribute)
+            result = dataset.aggregate_dataset_over_ids(ds, function=function, attribute_name=dependent_attribute)
         self._var.add_and_solve_dependencies([ds._get_attribute_box(dataset.get_id_name()[0])], dataset_pool=self._dataset_pool)
         return self._coerce_result(result, dataset)
 
-    def aggregate_all(self, aggr_var, function=None):
+    def aggregate_all(self, pkg, aggregated_dataset, dependent_attribute, intermediates, function):
+        # note that pkg and intermediates are ignored
         dataset = self._var.get_dataset()
         # unlike the other aggregation/disaggregation functions, aggregate_all can't be used on the
         # component of an interaction set (the modelers said this doesn't make sense)
         if dataset.get_dataset_name()!=self._name:
             raise ValueError, 'mismatched dataset names for aggregate_all (perhaps trying to use aggregate_all on the component of an interaction set?)'
-        if len(aggr_var.name)==2:
-            (aggregated_dataset, dependent_attribute) = aggr_var.name
-        else:
-            (pkg, aggregated_dataset, dependent_attribute) = aggr_var.name
-            # note that pkg is ignored
         ds = self._dataset_pool.get_dataset(aggregated_dataset)
         if function is None:
             return array(ds.aggregate_all(attribute_name=dependent_attribute))
         else:
-            return array(ds.aggregate_all(function=function.name, attribute_name=dependent_attribute))
+            return array(ds.aggregate_all(function=function, attribute_name=dependent_attribute))
 
-    def disaggregate(self, aggr_var, intermediates=[]):
+    def disaggregate(self, base_pkg, base_dataset, base_attribute, intermediates, function):
+        # function is ignored
         dataset = self._get_dataset()
-        if len(aggr_var.name)==2:
-            (base_dataset, base_attribute) = aggr_var.name
-            base_pkg = None
-        else:
-            (base_pkg, base_dataset, base_attribute) = aggr_var.name
         if intermediates==[]:
             disaggregated_dataset = base_dataset
             dependent_attribute = base_attribute
         else:
-            intermediate_names = map(lambda n: n.name, intermediates)
-            expr = make_aggregation_call('disaggregate', base_pkg, base_dataset, base_attribute, None, intermediate_names)
-            disaggregated_dataset = intermediates[-1].name
+            expr = make_aggregation_call('disaggregate', base_pkg, base_dataset, base_attribute, None, intermediates)
+            disaggregated_dataset = intermediates[-1]
             dependent_attribute = VariableName(expr).get_alias()
         ds = self._dataset_pool.get_dataset(disaggregated_dataset)
         dataset.compute_one_variable_with_unknown_package(ds.get_id_name()[0], dataset_pool=self._dataset_pool)
@@ -85,7 +66,7 @@ class DummyDataset(object):
     
     def number_of_agents(self, agent_name):
         dataset = self._get_dataset()
-        agents = self._dataset_pool.get_dataset(agent_name.name)
+        agents = self._dataset_pool.get_dataset(agent_name)
         id_name = dataset.get_id_name()[0]
         if id_name not in agents.get_attribute_names(): # attribute not loaded yet
             agents.compute_one_variable_with_unknown_package(id_name, dataset_pool=self._dataset_pool)
@@ -97,7 +78,7 @@ class DummyDataset(object):
         dataset = self._get_dataset()
         if not isinstance(dataset, InteractionDataset):
             raise StandardError, "The method 'agent_times_choice' must be called for an interaction dataset."
-        result, dependencies = dataset.match_agent_attribute_to_choice(attribute_name.name, dataset_pool=self._dataset_pool)
+        result, dependencies = dataset.match_agent_attribute_to_choice(attribute_name, dataset_pool=self._dataset_pool)
         self._var.add_and_solve_dependencies(dependencies, dataset_pool=self._dataset_pool)
         return result
         

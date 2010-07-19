@@ -29,10 +29,6 @@ class VariableName(object):
     # the corresponding classes.
     _autogen_classes = {}
     
-    # TEMPORARY VARIABLE - used while expression compiler rewrite is in progress
-    # TODO: remove this when rewrite is complete
-    use_inprocess_compiler = False
-
     def __init__(self, expression):
         self._expression = expression
         # squished is a copy of the expression with whitespace removed
@@ -42,12 +38,7 @@ class VariableName(object):
         self._squished_expression = squished
         if squished not in self._cache:
             # put the import here to avoid a circular import at the top level
-            # from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
-            # TODO: remove this when expression compiler rewrite is complete
-            if self.use_inprocess_compiler:
-                from inprocess.borning.expressions.autogen_variable_factory import AutogenVariableFactory
-            else:
-                from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
+            from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
             t = AutogenVariableFactory(expression).generate_variable_name_tuple()
             self._cache[squished] = t
         (package_name, dataset_names, short_name, alias, autogen_class) = self._cache[squished]

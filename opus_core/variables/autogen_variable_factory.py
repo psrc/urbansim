@@ -2,8 +2,14 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-# Note: even if PyDev complains that some of these imports are unused, generally they ARE
-# in fact used when executing the generated code.
+# Compiler for expressions (also recognizes ordinary variables).  
+
+# Debugging suggestion: put a breakpoint on the statement exec(classexpr)
+# and in the debugger say 'print classexpr'
+# to see the class that is being automatically generated, properly formatted.
+
+# Note regarding imports: even if PyDev complains that some of these imports are unused, 
+# generally they ARE in fact used when executing the generated code.
 import parser
 from types import TupleType
 from opus_core.variables.variable import Variable
@@ -12,7 +18,7 @@ from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.variables.variable_name import VariableName, autogenvar_prefix
 from opus_core.variables.dummy_name import DummyName
 from opus_core.variables.dummy_dataset import DummyDataset, make_aggregation_call
-from opus_core.variables.parsetree_functions import parsetree_to_string, parsetree_substitute
+from opus_core.variables.autogen_helper_functions import quote, parsetree_to_string, parsetree_substitute
 from opus_core.variables.parsetree_matcher import match
 from opus_core.variables.parsetree_patterns import *
 
@@ -43,7 +49,7 @@ class AutogenVariableFactory(object):
     def __init__(self, expr):
         # expr is a string that is the expression being compiled into a variable
         self._expr = expr
-        (tree, alias) = self._parse_expr()
+        (tree, alias) = self._parse_expr(expr)
         # expr_parsetree is a Python parse tree for self._expr
         self._expr_parsetree = tree
         # alias is either None, or a string that is the alias for the expression
@@ -60,8 +66,7 @@ class AutogenVariableFactory(object):
         # For interaction sets, from the expression we can determine the names of the component
         # datasets (n1 and n2).  The name of the interaction set will be either n1_x_n2 or n2_x_n1,
         # but we just determine the tuple (n1,n2) rather than trying to determine
-        # that the dataset name is n1_x_n2 or n2_x_n1.  (Actually it's almost certainly n1_x_n2, if 
-        # n1 is used first in the expression, but we don't try to guess.)
+        # that the dataset name is n1_x_n2 or n2_x_n1.
         self._dataset_names = ()
         # dependents is a set of dependents for expr.  Each element in 'dependents' 
         #     is a tuple (package,dataset,shortname).  For attributes named with just the
@@ -72,9 +77,7 @@ class AutogenVariableFactory(object):
         #     be None, and dataset will be the name of either the first or second component dataset.
         #     The other case of dataset_qualified attributes is for a variable to be aggregated.
         self._dependents = set()
-        # literals is a set of strings that should be compiled as literals, so that the expression
-        # will evaluate correctly.  
-        self._literals = set()
+        # _special_dataset_receivers is a set of receivers for number_of_agents and agents_times_choice methods
         self._special_dataset_receivers = set()
         # aggregation_calls is a set of calls to aggregation/disaggregation methods.
         #     Each element of aggregation_calls is a tuple 
@@ -119,29 +122,24 @@ class AutogenVariableFactory(object):
         (short_name, autogen_class) = self._generate_new_variable()
         return (None, self._dataset_names, short_name, self._alias, autogen_class)
     
-    def get_parsetree(self):
-        return self._expr_parsetree
-
-    def _parse_expr(self):
-        # Parse self._expr and return the parsetree and alias.
-        # If self._expr is just an expression, then alias will be None.
-        # If self._expr is an assignment v=ex then alias will be v, and
-        # expr_parsetree will be the parsetree for expr.
+    def _parse_expr(self, expr):
+        # Parse expr and return the parsetree and alias.
+        # If expr is just an expression, then alias will be None.
+        # If expr is an assignment v=e then alias will be v, and
+        # expr_parsetree will be the parsetree for e.
         # If the parse raises a syntax error, just let that be handled
-        # by the regular error handler.
+        # by the regular Python compiler's error handler.
         # Raise an exception if the expression doesn't match either an expression
         # or a statement (this would happen if the expression consists of multiple
-        # statements, which parses correctly).
-        # First try parsing self._expr as a single expression (no assignment).
-        # If self._expr is an assignment, this will raise an exception.
-        full_tree = parser.ast2tuple(parser.suite(self._expr))
+        # statements, which parses correctly so wouldn't be caught by the Python compiler).
+        full_tree = parser.ast2tuple(parser.suite(expr))
         same, vars = match(FULL_TREE_EXPRESSION, full_tree)
         if same:
             return (vars['expr'], None)
         same, vars = match(FULL_TREE_ASSIGNMENT, full_tree)
         if same:
             return (vars['expr'], vars['alias'])
-        raise ValueError, "invalid expression (perhaps multiple statements?): " + self._expr
+        raise ValueError, "invalid expression (perhaps multiple statements?): " + expr
     
     # loooong comment regarding the _generate_variable method that follows:
     # generate a new class for a variable to compute the value of self._expr 
@@ -182,6 +180,14 @@ class AutogenVariableFactory(object):
     # get the value of the population attribute, we use the short version of the name -- its value
     # should already have been computed.
     #
+    # If the expression includes a call to aggregate, disaggregate, number_of_agents, or agent_times_choice,
+    # the call is rewritten to quote the arguments to aggregate etc as strings.  For example,
+    #    zone.aggregate(household.income, intermediates=[building,parcel], function=mean)
+    # is rewritten to
+    #    zone.aggregate((None, "household", "income"), ["building", "parcel"], "mean")
+    # where building will be an instance of DummyDataset (which defines aggregate). 
+    # The parsetree fragments to be rewritten are stored in the dictionary _parsetree_replacements
+    #
     # There are some subtleties regarding environments.  The new class is defined in the module
     # in which this class (AutogenVariableFactory) is defined, and the new name will be bound in
     # locals.  The compute() method has access to the globals in this environment (i.e. the 
@@ -203,9 +209,8 @@ class AutogenVariableFactory(object):
         return (classname, locals()[classname])
     
     def _analyze_tree(self, tree):
-        # add the dependents of parse tree 'tree' to 'dependents', and any variables that are to
-        # be bound to a string of the same name to 'literals'. 
-        # if tree isn't a tuple, we're at a leaf -- no dependents in that case
+        # add the dependents of parse tree 'tree' to 'dependents'
+        # base case - if tree isn't a tuple, we're at a leaf -- no dependents in that case
         if type(tree) is not TupleType:
             return
         # if tree matches the fully qualified variable subpattern, then add that variable as the dependent
@@ -274,14 +279,32 @@ class AutogenVariableFactory(object):
         if not same:
             raise ValueError, "syntax error for number_of_agents function call"
         self._special_dataset_receivers.add(receiver)
-        self._literals.add(vars['agent'])
-        
+        # 'call' is a string representing the new number_of_agents call.  Parse it, extract the args, and then add a replacement to
+        # parsetree_replacements for the old args.  We want to replace just the args and not the entire call to number_of_agents,
+        # since the way Python represents parsetrees the whole tree may include astype and exponentiation calls, and it's simpler
+        # to just replace the args part. 
+        call = "%s.%s(%s)" % (receiver, method, quote(vars['agent']))
+        (newtree,_) = self._parse_expr(call)
+        s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
+        if not s:
+            raise StandardError, 'internal error - problem generating new number_of_agents expression'
+        self._parsetree_replacements[args] = v['args']
+       
     def _analyze_agent_times_choice_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_AGENT_TIMES_CHOICE, args)
         if not same:
             raise ValueError, "syntax error for agent_times_choice function call"
         self._special_dataset_receivers.add(receiver)
-        self._literals.add(vars['attribute'])
+        # 'call' is a string representing the new agent_times_choice call.  Parse it, extract the args, and then add a replacement to
+        # parsetree_replacements for the old args.  We want to replace just the args and not the entire call to agent_times_choice,
+        # since the way Python represents parsetrees the whole tree may include astype and exponentiation calls, and it's simpler
+        # to just replace the args part. 
+        call = "%s.%s(%s)" % (receiver, method, quote(vars['attribute']))
+        (newtree,_) = self._parse_expr(call)
+        s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
+        if not s:
+            raise StandardError, 'internal error - problem generating new number_of_agents expression'
+        self._parsetree_replacements[args] = v['args']
 
     def _analyze_aggregation_method_call(self, receiver, method, args):
         same, vars = match(SUBPATTERN_AGGREGATION, args)
@@ -313,38 +336,52 @@ class AutogenVariableFactory(object):
                 if dataset is None:
                     raise ValueError, "syntax error for aggregation method call - could not determine dataset for variable being aggregated"
                 attr = newvar.get_short_name()
-                replacements = {'dataset': dataset, 'attribute': attr}
-                newvar_tree = parsetree_substitute(DATASET_QUALIFIED_VARIABLE_TEMPLATE, replacements)
-                self._parsetree_replacements[subexpr] = newvar_tree
+                # TODO DELETE BELOW:
+#                replacements = {'dataset': dataset, 'attribute': attr}
+#                newvar_tree = parsetree_substitute(DATASET_QUALIFIED_VARIABLE_TEMPLATE, replacements)
+#                self._parsetree_replacements[subexpr] = newvar_tree
         if 'intermediates' in arg_dict:
             # make sure that it really is a list
             s, v = match(SUBPATTERN_LIST_ARG, arg_dict['intermediates'])
             if not s:
                 raise ValueError, "syntax error for aggregation method call (list of intermediate datasets not a list?)"
-            intermediates = self._extract_names(arg_dict['intermediates'])
-            self._literals.update(intermediates)
+            intermediates = tuple(self._extract_names(arg_dict['intermediates']))
         else:
             intermediates = ()
         if 'function' in arg_dict:
+            # bind fcn to a string that is the name of the function, or to the string "None"
             s,v = match(SUBPATTERN_NAME_ARG, arg_dict['function'])
             if not s:
                 raise ValueError, "syntax error for aggregation method call (problem with the function argument in the call)"
-            op = v['name']
-            self._literals.add(op)
+            fcn = v['name']
         else:
-            op = None
-        self._aggregation_calls.add( (receiver, method, pkg, dataset, attr, intermediates, op) )
+            fcn = None
+        self._aggregation_calls.add( (receiver, method, pkg, dataset, attr, intermediates, fcn) )
+        quoted_intermediates = "" if len(intermediates)==0 else quote(intermediates[0])
+        for n in intermediates[1:]:
+            quoted_intermediates = quoted_intermediates + ', ' + quote(n)
+        # 'call' is a string representing the new aggregation call.  Parse it, extract the args, and then add a replacement to
+        # parsetree_replacements for the old args.  We want to replace just the args and not the entire call to aggregate,
+        # since the way Python represents parsetrees the whole tree may include astype and exponentiation calls, and it's simpler
+        # to just replace the args part. 
+        call = "%s.%s(%s, %s,%s, [%s], %s)" % (receiver, method, quote(pkg), quote(dataset), quote(attr),  quoted_intermediates, quote(fcn))
+        (newtree,_) = self._parse_expr(call)
+        s, v = match(FULL_EXPRESSION_METHOD_CALL, newtree)
+        if not s:
+            raise StandardError, 'internal error - problem generating new aggregation expression'
+        self._parsetree_replacements[args] = v['args']
 
-    # extract all the names from tree and return them in a tuple
+    # extract all the names from tree and return them in a list
     def _extract_names(self, tree):
         same, vars = match(SUBPATTERN_NAME, tree)
         if same:
-            return (vars['name'],)
+            return [ vars['name'] ]
         else:
-            ans = ()
+            ans = []
             for sub in tree[1:]:
-                ans = ans + self._extract_names(sub)
+                ans.extend(self._extract_names(sub))
             return ans
+
 
     # Extract arguments from parse tree pieces.
     # arg_pattern_names is a list of names of the arguments that
@@ -493,43 +530,15 @@ class AutogenVariableFactory(object):
                     compute_method = compute_method + 8*' ' + '%s.%s = DummyDataset(self, "%s", dataset_pool) \n' % (pkg, ds, ds)
                     already_generated.add( (pkg,ds) )
                 compute_method = compute_method + 8*' ' + '%s.%s.%s = %s \n' % (pkg, ds, short, getter)
-        # generate bindings for aggregation variables
+        # generate bindings for receivers of aggregate and disaggregate methods
         for receiver, method, pkg, aggregated_dataset, aggregated_attr, intermediates, op in self._aggregation_calls:
             if (None,receiver) not in already_generated:
                 compute_method = compute_method + 8*' ' + '%s = DummyDataset(self, "%s", dataset_pool) \n' % (receiver, receiver)
                 already_generated.add( (None,receiver) )
-            if pkg is None:
-                if (None,aggregated_dataset) not in already_generated:
-                    compute_method = compute_method + 8*' ' + '%s = DummyDataset(self, "%s", dataset_pool) \n' % (aggregated_dataset, aggregated_dataset)
-                    already_generated.add( (None,aggregated_dataset) )
-                if (aggregated_dataset,aggregated_attr) not in already_generated:
-                    compute_method = compute_method + 8*' ' + '%s.%s = DummyName() \n' % (aggregated_dataset, aggregated_attr)
-                    already_generated.add( (aggregated_dataset,aggregated_attr) )
-                compute_method = compute_method + 8*' ' + '%s.%s.name = ("%s", "%s") \n' % \
-                    (aggregated_dataset, aggregated_attr, aggregated_dataset, aggregated_attr)
-            else:
-                if pkg not in already_generated:
-                    compute_method = compute_method + 8*' ' + '%s = DummyName \n' % pkg
-                    already_generated.add(pkg)
-                if (pkg,aggregated_dataset) not in already_generated:
-                    compute_method = compute_method + 8*' ' + '%s.%s = DummyDataset(self, "%s", dataset_pool) \n' % (pkg, aggregated_dataset, aggregated_dataset)
-                    already_generated.add( (pkg,aggregated_dataset) )
-                if (pkg,aggregated_dataset,aggregated_attr) not in already_generated:
-                    compute_method = compute_method + 8*' ' + '%s.%s.%s = DummyName() \n' % (pkg, aggregated_dataset, aggregated_attr)
-                    already_generated.add( (pkg,aggregated_dataset,aggregated_attr) )
-                compute_method = compute_method + 8*' ' + '%s.%s.%s.name = ("%s", "%s", "%s") \n' % \
-                        (pkg, aggregated_dataset, aggregated_attr, pkg, aggregated_dataset, aggregated_attr)
         for receiver in self._special_dataset_receivers:
             if (None,receiver) not in already_generated:
                 compute_method = compute_method + 8*' ' + '%s = DummyDataset(self, "%s", dataset_pool) \n' % (receiver, receiver)
                 already_generated.add( (None,receiver) )
-        # generate bindings for literals if needed
-        for lit in self._literals:
-            if (None,lit) not in already_generated:
-                compute_method = compute_method + 8*' ' + lit + ' = DummyName() \n'
-                # don't really need this, but it will make the method more robust if we add some other code late that uses already_generated
-                already_generated.add( (None,lit) )
-            compute_method = compute_method + 8*' ' + '%s.name = "%s" \n' % (lit, lit)
         # If we need to replace parts of the parse tree, do the replacements, and turn the parse tree
         # back into a string to generate the method.  Otherwise just use the original expression.
         # (We could always turn the tree back into a string I guess ...)
