@@ -1,7 +1,0 @@
-<opus_project>
-  <xml_version>1.0</xml_version>
-  <general>
-    <description type="string">Test UrbanSim project</description>
-    <project_name type="string" hidden="true">test</project_name>
-  </general>
-</opus_project>
