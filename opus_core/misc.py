@@ -400,9 +400,12 @@ def unique(arr, return_index=False, **kwargs):
     """
     import numpy
     ver = numpy.__version__ 
-    if ver < '1.3.0':
+    if ver < '1.2.0':
         f = numpy.unique1d
-        return f(arr, retindx=return_index, **kwargs)[::-1]
+        return f(arr, return_index=return_index)[::-1]
+    elif ver < '1.3.0':
+        f = numpy.unique1d
+        return f(arr, return_index=return_index, **kwargs)[::-1]
     elif ver < '1.4.0':
         f = numpy.unique1d
     else:
