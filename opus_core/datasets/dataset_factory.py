@@ -8,8 +8,8 @@ from opus_core.class_factory import ClassFactory
 class DatasetFactory(object):
     """Conventions for dataset, module, class, and table names of datasets:
         - a dataset name is all lower case with '_', such as 'my_grizzly_bear'
-        - the corresponding dataset is implemented in a module 'my_grizzly_bears.py'
-        - the input data for this dataset is in table 'my_grizzly_bears'
+        - the corresponding dataset is implemented in a module 'my_grizzly_bear_dataset.py'
+        - the input data for this dataset is in table 'my_grizzly_bear'
         - the dataset class is called 'MyGrizzlyBearDataset'
     Any exceptions to this convention should be listed in the 'exceptions' list to allow
     dataset names, tables, modules, and classes to be determined.
@@ -18,7 +18,36 @@ class DatasetFactory(object):
     # The exceptions list is a list of tuples
     #      (dataset_name, table_name, module_name, dataset_class_name)
     # module_name and dataset_class_name may be None; if so the generic Dataset class should be used.
+    # As long as the deprecated values are supported (i.e. plural for table names), any table name
+    # that ends with 's' must be included in exceptions. 
     exceptions = [
+        ('annual_household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
+        ('annual_job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
+        ('base_year', 'base_year', None, None),
+        ('business', 'business', 'business_dataset', 'BusinessDataset'),
+        ('business_relocation_rate', 'annual_relocation_rates_for_business', 'business_relocation_rate_dataset', 'BusinessRelocationRateDataset'),
+        ('commercial_development_location_choice_model_specification', 'commercial_development_location_choice_model_specification', None, None),
+        ('commercial_employment_location_choice_model_specification', 'commercial_employment_location_choice_model_specification', None, None),
+        ('development_group', 'development_type_groups', 'development_group_dataset', 'DevelopmentGroupDataset'),
+        ('employment_control_total', 'annual_employment_control_totals', 'employment_control_total_dataset', 'EmploymentControlTotalDataset'),
+        ('employment_adhoc_sector_group', 'employment_adhoc_sector_groups', 'employment_sector_group_dataset', 'EmploymentSectorGroupDataset'),
+        ('home_based_employment_location_choice_model_specification', 'home_based_employment_location_choice_model_specification', None, None),
+        ('home_based_status', 'home_based_status', 'home_based_status_dataset', 'HomeBasedStatusDataset'),
+        ('household_characteristic', 'household_characteristics_for_ht', 'household_characteristic_dataset', 'HouseholdCharacteristicDataset'), 
+        ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
+        ('household_location_choice_model_specification', 'household_location_choice_model_specification', None, None),
+        ('industrial_development_location_choice_model_specification', 'industrial_development_location_choice_model_specification', None, None),
+        ('industrial_employment_location_choice_model_specification', 'industrial_employment_location_choice_model_specification', None, None),
+        ('land_price_model_specification', 'land_price_model_specification', None, None),
+        ('non_home_based_employment_location_choice_model_specification', 'non_home_based_employment_location_choice_model_specification', None, None),
+        ('race', 'race_names', 'race_dataset', 'RaceDataset'), 
+        ('real_estate_price_model_specification', 'real_estate_price_model_specification', None, None),
+        ('residential_development_location_choice_model_specification', 'residential_development_location_choice_model_specification', None, None),
+        ('residential_land_share_model_specification', 'residential_land_share_model_specification', None, None),
+        ('scenario_information', 'scenario_information', None, None),
+        ]
+
+    exceptions_deprecated = [
         ('activity', 'activities', 'activity_dataset', 'ActivityDataset'),
         ('annual_household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
         ('annual_job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
@@ -60,7 +89,7 @@ class DatasetFactory(object):
                     arguments={}, debug=0):
         """If the conventions in the class comment are followed or if the dataset name is
         appropriately listed in 'exceptions', this method returns a Dataset object,
-        such as MyGrizzlyBearSet for the given package and subdirectory.
+        such as MyGrizzlyBearDataset for the given package and subdirectory.
         'arguments' is a dictionary with keyword arguments passed to the dataset constructor.
         """
         (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
@@ -101,12 +130,11 @@ class DatasetFactory(object):
             from opus_core.resources import Resources
             
             resources = Resources( kwargs.get('arguments', {}) )
-            (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
             if use_hidden_id:
                 id_name_default = []
             else:
                 id_name_default = "%s_id" % dataset_name
-                
+            (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)   
             ## set table_name and id_name_default as default values in resources (arguments)
             resources.merge_with_defaults({'dataset_name':dataset_name,
                                            'in_table_name': table_name,
@@ -116,23 +144,39 @@ class DatasetFactory(object):
             try:
                 dataset = Dataset(resources=resources)
             except:
-                logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
-                raise
+                # try to create a dataset using deprecated values
+                (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset_deprecated(dataset_name)
+                resources = Resources( kwargs.get('arguments', {}) )
+                resources.merge_with_defaults({'dataset_name':dataset_name,
+                                           'in_table_name': table_name,
+                                           'out_table_name': table_name,
+                                           'id_name': id_name_default
+                                       })
+                try:
+                    dataset = Dataset(resources=resources)
+                except:
+                    logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
+                    raise
+                logger.log_warning("Dataset %s was created using deprecated table name - using plural will not be supported in the future." % dataset_name) 
         return dataset
     
     def dataset_name_for_table(self, table_name):
         """
-        Return the dataset name for this table, e.g. 'gridcell' for table 'gridcells'.
-        If the table name is in 'exceptions', return the appropriate dataset name; otherwise
-        just remove the final 's' from the table_name.  Note that just removing the final 's'
-        won't work for words like 'cities', so these need to be in 'exceptions'.
+        Return the dataset name for this table.
+        If the table name is in 'exceptions', return the appropriate dataset name.
+        As long as deprecated table names are supported (i.e. plural of dataset name), any table name
+        that ends with 's' must be included in exceptions. 
         """
         for t in DatasetFactory.exceptions:
             if t[1]==table_name:
                 return t[0]
-        if not table_name.endswith('s'):
-            raise ValueError, "table name %s doesn't end with 's' and not listed in 'exceptions' -- couldn't determine dataset name" % table_name
-        return table_name[:-1]
+        for t in DatasetFactory.exceptions_deprecated:
+            if t[1]==table_name:
+                return t[0]
+        if table_name.endswith('s'):
+            logger.log_warning("Table %s: Use singular for table names - using plural is deprecated." % table_name)  
+            return table_name[:-1]
+        return table_name
      
     def compose_interaction_dataset_name(self, dataset1_name, dataset2_name):
         """Return a tuple with the module name and dataset name for an interaction dataset, given the dataset names
@@ -175,10 +219,24 @@ class DatasetFactory(object):
     def _table_module_class_names_for_dataset(self, dataset_name):
         """
         Return a tuple consisting of the table name, the module name, and the class name for this dataset, e.g.
-        ('development_events', 'development_event_dataset', 'DevelopmentEventDataset') for dataset 'development_event'.
+        ('development_event', 'development_event_dataset', 'DevelopmentEventDataset') for dataset 'development_event'.
         """
         # first check the exceptions
         for t in DatasetFactory.exceptions:
+            if t[0]==dataset_name:
+                return t[1:]
+        module_name = dataset_name + '_dataset'
+        split_names = dataset_name.split('_')
+        class_name = "".join(map(lambda name: name.capitalize(), split_names)) + "Dataset"
+        return (dataset_name, module_name, class_name)
+    
+    def _table_module_class_names_for_dataset_deprecated(self, dataset_name):
+        """
+        Return a tuple consisting of the table name, the module name, and the class name for this dataset, e.g.
+        ('development_events', 'development_event_dataset', 'DevelopmentEventDataset') for dataset 'development_event'.
+        """
+        # first check the exceptions
+        for t in DatasetFactory.exceptions_deprecated:
             if t[0]==dataset_name:
                 return t[1:]
         table_name = dataset_name + 's'
@@ -195,8 +253,8 @@ from opus_core.storage_factory import StorageFactory
 class DatasetFactoryTests(opus_unittest.OpusTestCase):
     def test_translations(self):
         factory = DatasetFactory()
-        self.assertEqual(factory._table_module_class_names_for_dataset('gridcell'), ('gridcells','gridcell_dataset', 'GridcellDataset'))
-        self.assertEqual(factory._table_module_class_names_for_dataset('development_event'), ('development_events','development_event_dataset', 'DevelopmentEventDataset'))
+        self.assertEqual(factory._table_module_class_names_for_dataset('gridcell'), ('gridcell','gridcell_dataset', 'GridcellDataset'))
+        self.assertEqual(factory._table_module_class_names_for_dataset('development_event'), ('development_event','development_event_dataset', 'DevelopmentEventDataset'))
         self.assertEqual(factory.dataset_name_for_table('gridcells'), 'gridcell')
         self.assertEqual(factory.dataset_name_for_table('cities'), 'city')
         self.assertEqual(factory.compose_interaction_dataset_name('gridcell', 'household'), ('gridcell_dataset_x_household_dataset', 'GridcellDataHouseholdDataset'))
