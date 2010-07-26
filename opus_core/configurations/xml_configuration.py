@@ -849,12 +849,18 @@ class XMLConfiguration(object):
         # and is deleted from the second-level dictionary.
         # See the unit tests for an example - that may make it clearer what this does.
         key_name = node.get('key_name')
+        key_value = node.get('key_value', 'UnlIkElY_nAmE')
         result = {}
         for child in node:
             d = self._convert_node_to_data(child)
             k = d[key_name]
             del d[key_name]
-            result[k] = d
+            if d.has_key(key_value):
+                v = d[key_value]
+                del d[key_value]
+                result[k] = v
+            else:
+                result[k] = d
         return result
 
     def _convert_class_to_data(self, node):

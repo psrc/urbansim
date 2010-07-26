@@ -171,9 +171,12 @@ class ChoiceModel(ChunkModel):
         if self.run_config.get("supply_string", None):
             current_choice = agent_set.get_attribute(choice_id_name)
             agent_set.modify_attribute(choice_id_name, zeros(agents_index.size)-1, index=agents_index)
-            supply = self.choice_set.compute_variables(self.run_config.get("supply_string"), dataset_pool=self.dataset_pool)
-            self.choice_set.add_primary_attribute(name=VariableName(self.run_config.get("supply_string")).get_alias(),
-                                                  data=supply)
+            supply_varaible_name = VariableName(self.run_config.get("supply_string"))
+            supply_alias = supply_varaible_name.get_alias()
+            if supply_alias in self.choice_set.get_primary_attribute_names():
+                self.choice_set.delete_one_attribute(supply_alias)
+            supply = self.choice_set.compute_variables(supply_varaible_name, dataset_pool=self.dataset_pool)
+            self.choice_set.add_primary_attribute(name=supply_alias, data=supply)
             agent_set.modify_attribute(choice_id_name, current_choice)
 
         if data_objects is not None:

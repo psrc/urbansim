@@ -170,29 +170,31 @@ from opus_core.storage_factory import StorageFactory
 
 
 class Test(opus_unittest.OpusTestCase):
-    storage = StorageFactory().get_storage('dict_storage')
-
-    storage.write_table(table_name='households',
-        table_data={
-            'household_id': arange(10)+1,
-            'grid_id': arange(-1, 9, 1)+1,
-            'lucky':array([1,0,1, 0,1,1, 1,1,0, 0])
-            }
-        )
-
-    storage.write_table(table_name='gridcells',
-        table_data={
-            'grid_id': arange(15)+1,
-            'filter':array([0,1,1, 1,1,1, 1,1,1, 0,1,0, 1,1,1]),
-            'weight':array([0.1,9,15, 2,5,1, 6,2.1,.3, 4,3,1, 10,8,7])
-            }
-        )
-
-    #create households
-    households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
-
-    # create gridcells
-    gridcells = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name="gridcell")
+    
+    def setUp(self):
+        storage = StorageFactory().get_storage('dict_storage')
+    
+        storage.write_table(table_name='households',
+            table_data={
+                'household_id': arange(10)+1,
+                'grid_id': arange(-1, 9, 1)+1,
+                'lucky':array([1,0,1, 0,1,1, 1,1,0, 0])
+                }
+            )
+    
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'grid_id': arange(15)+1,
+                'filter':array([0,1,1, 1,1,1, 1,1,1, 0,1,0, 1,1,1]),
+                'weight':array([0.1,9,15, 2,5,1, 6,2.1,.3, 4,3,1, 10,8,7])
+                }
+            )
+    
+        #create households
+        self.households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
+    
+        # create gridcells
+        self.gridcells = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name="gridcell")
 
 
     def test_1d_weight_array(self):

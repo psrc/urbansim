@@ -3,14 +3,12 @@
   <general>
     <description type="string">PSRC Parcel Project</description>
     <project_name hidden="True" type="string">psrc_parcel</project_name>
-    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
-    <advanced type="category">
-      <dataset_pool_configuration type="class">
-        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['psrc_parcel','urbansim_parcel','urbansim','opus_core']</argument>
-      </dataset_pool_configuration>
-    </advanced>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>    
+    <dataset_pool_configuration type="class">
+      <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+      <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['psrc_parcel','urbansim_parcel','urbansim','opus_core']</argument>
+    </dataset_pool_configuration>
     <available_datasets type="list">['building','parcel','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
@@ -87,6 +85,7 @@
         <selectable name="opus_emme2.models.run_export_macros" type="selectable">True</selectable>
         <selectable name="opus_emme2.models.get_emme2_data_into_cache" type="selectable">True</selectable>
       </models>
+      <!-- put below in scenaios that needs to run travel_model
       <years_to_run key_name="year" type="category_with_special_keys">
         <run_description type="dictionary">
           <year type="integer">2000</year>
@@ -118,6 +117,7 @@
           <bank type="list">['2030_06']</bank>
         </run_description>
       </years_to_run>
+      -->
     </travel_model_configuration>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <save_estimation_results type="boolean">False</save_estimation_results>
