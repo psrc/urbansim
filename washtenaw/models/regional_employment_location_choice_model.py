@@ -30,7 +30,7 @@ class RegionalEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
                 EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=new_index, **kwargs)
         agent_index_no_large_area = agents_index[ large_areas[agents_index] <= 0 ]
-        if no_large_area.size > 0: # run the ELCM for jobs that don't have assigned large_area
+        if agent_index_no_large_area.size > 0: # run the ELCM for jobs that don't have assigned large_area
             self.filter = None
             logger.log_status("ELCM for jobs with no area assigned")
             choices = EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
