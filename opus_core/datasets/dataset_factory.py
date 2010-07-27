@@ -157,7 +157,8 @@ class DatasetFactory(object):
                 except:
                     logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
                     raise
-                logger.log_warning("Dataset %s was created using deprecated table name - using plural will not be supported in the future." % dataset_name) 
+                #TODO: uncomment this warning when we change to singular
+                #logger.log_warning("Dataset %s was created using deprecated table name - using plural will not be supported in the future." % dataset_name) 
         return dataset
     
     def dataset_name_for_table(self, table_name):
@@ -174,7 +175,8 @@ class DatasetFactory(object):
             if t[1]==table_name:
                 return t[0]
         if table_name.endswith('s'):
-            logger.log_warning("Table %s: Use singular for table names - using plural is deprecated." % table_name)  
+            #TODO: uncomment this warning when we change to singular
+            #logger.log_warning("Table %s: Use singular for table names - using plural is deprecated." % table_name)  
             return table_name[:-1]
         return table_name
      
