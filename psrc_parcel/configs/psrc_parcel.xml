@@ -130,7 +130,7 @@
       <dataset_pool_configuration type="class">
         <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
         <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-        <argument name="package_order" type="list">['seattle_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        <argument name="package_order" type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
       </dataset_pool_configuration>
       <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
       <low_memory_mode type="boolean">False</low_memory_mode>
