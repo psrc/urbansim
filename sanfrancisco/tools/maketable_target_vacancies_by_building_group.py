@@ -54,9 +54,10 @@ targetvacancies = Dataset(in_storage = storage,in_table_name = 'target_vacancies
     
 #===============================================================================
 #    y=a*sin(bx+c)+d
-# treat vacancy like a sine function. Constants (b, c) are crafted so there are 64 months between each peak
-# last peak was late 2007.
-# amp (a) denotes the amplitude of each cycle, while the base (d) signifies the center of the Function.
+# treat vacancy like a sine function. Constants (b, c) are crafted so there are 
+# 67 months between each peak. last peak was late 2007.
+# amp (a) denotes the amplitude of each cycle, while the base (d) signifies the
+# center of the Function.
 #http://www.nber.org/cycles.html
 #===============================================================================
 
@@ -68,7 +69,7 @@ targetvacancies = Dataset(in_storage = storage,in_table_name = 'target_vacancies
 #<=> c = -2258.125221
 
 econcycle=67 #months in economic cycle
-peak=2007   # peak year
+peak=2007.75   # peak year (late 2007)
 
 #for each cycle (2pi) x economic cycle years pass.
 period=(2*math.pi)/(econcycle/12.) 
@@ -94,6 +95,10 @@ for unit_name in unique(btclass.get_attribute('grouping_id')): #needs to be defi
         elif unit_name ==4: #res
             amp=2*.01
             base=.04
+        
+        #note how different units are used for different building types. These in turn need
+        #to be defined in the aliases.py files.
+        
             rows.append((base+amp*math.sin((period*yr-phase)),float(yr),"residential_units","number_of_households",float(unit_name)))
             print "%s\t%s\t%f\t%s\t%d" %("number_of_households","residential_units",base+amp*math.sin((period*yr-phase)),unit_name,yr)
         elif unit_name ==6: #mixed
