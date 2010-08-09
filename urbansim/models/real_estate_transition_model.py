@@ -6,7 +6,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
-from numpy import array, where, ones, zeros, logical_and
+from numpy import array, where, ones, zeros, logical_and, logical_not
 from numpy import arange, concatenate, resize, int32, float64, searchsorted, cumsum
 from opus_core.model import Model
 from opus_core.logger import logger
