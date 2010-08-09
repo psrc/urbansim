@@ -116,7 +116,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             if overfilled_string:
                 tmp_agent_set = copy.copy(agent_set)
                 overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
-                current_agents_in_overfilled_locations = intersect1d(agent_locations, overfilled_locations)
+                current_agents_in_overfilled_locations = intersect1d(agents_locations, overfilled_locations)
                 while current_agents_in_overfilled_locations.size > 0:
                     for location in current_agents_in_overfilled_locations:
                         agents_of_this_location = where(agents_locations == location)[0]
@@ -130,7 +130,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                     agents_locations = tmp_agent_set.get_attribute_by_index(id_name, agents_index)
                     self.dataset_pool.replace_dataset(tmp_agent_set.get_dataset_name(), tmp_agent_set)
                     overfilled_locations = where(self.choice_set.compute_variables(overfilled_string, self.dataset_pool))[0]
-                    current_agents_in_overfilled_locations = intersect1d(agent_locations, overfilled_locations)
+                    current_agents_in_overfilled_locations = intersect1d(agents_locations, overfilled_locations)
                 self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
             else:
                 new_locations_vacancy = self.get_locations_vacancy(agent_set)
