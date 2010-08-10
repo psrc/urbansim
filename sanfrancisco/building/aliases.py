@@ -5,6 +5,7 @@
 aliases = [
        "activity_constraint = building.disaggregate(parcel.activity_constraint)",
        "building_class_id=building.disaggregate(building_type_classification.class_id, intermediates=[building_type])",
+       "building_group_id=building.disaggregate(building_type_classification.grouping_id, intermediates=[building_type])",
        "building_class_name=building.disaggregate(building_type_classification.name, intermediates=[building_type])",
        "building_sqft_per_unit=safe_array_divide(building.building_sqft, building.residential_units)",
        "employment = building.aggregate(business.employment)",
@@ -23,4 +24,7 @@ aliases = [
        "vacant_residential_units=clip_to_zero(sanfrancisco.building.residential_units - sanfrancisco.building.number_of_households)",
        "vacant_residential_units_without_clip=sanfrancisco.building.residential_units - sanfrancisco.building.number_of_households",
        "zone_id=building.disaggregate(parcel.zone_id)",
-           ]
+      #dupe "building_class_id = building.disaggregrate(building_type.class_id)",
+       "occupied_mixed_spaces = sanfrancisco.building.occupied_sqft + safe_array_divide(sanfrancisco.building.number_of_households, (building.residential_units).astype('float')) * building.residential_sqft",
+       "total_mixed_spaces = building.non_residential_sqft + building.residential_sqft",    
+       ]
