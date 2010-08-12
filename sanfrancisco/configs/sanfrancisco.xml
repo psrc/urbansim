@@ -230,7 +230,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="agent_set" type="string">business</argument>
-            <argument hidden="True" name="agents_index" type="string">brm_index</argument>
+            <argument hidden="True" name="agents_index" convert_blank_to_none="True" type="string">brm_index</argument>
             <argument hidden="True" name="specification" type="string">specification</argument>
             <argument hidden="True" name="coefficients" type="string">coefficients</argument>
             <argument hidden="True" name="data_objects" type="string">datasets</argument>
