@@ -30,7 +30,7 @@ class ProcessPipelineEvents(Model):
         max_building_id = building_dataset.get_id_attribute().max()
         new_buildings = {}        
         new_buildings["building_id"] = max_building_id + arange(1, scheduled_index.size+1)
-        attained_attributes = ['parcel_id', 'residential_units', 'building_sqft', 'building_use_id', 'blklot']
+        attained_attributes = ['parcel_id', 'residential_units', 'building_sqft', 'non_residential_sqft','building_type_id', 'blklot']
         for attribute in attained_attributes:
             new_buildings[attribute] = scheduled_development_events.get_attribute(attribute)
         
