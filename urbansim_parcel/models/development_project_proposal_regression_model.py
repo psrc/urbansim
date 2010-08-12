@@ -183,7 +183,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                      index=demolished_buildings_index )
                 logger.end_block()
         
-            if existing_proposal_set is not None: # add existing proposals to the created ones
+            if existing_proposal_set is not None and existing_proposal_set.size() > 0: # add existing proposals to the created ones
                 proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
         else:
             proposal_set = existing_proposal_set
