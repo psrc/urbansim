@@ -8,6 +8,7 @@ class TargetVacancyDataset(UrbansimTargetVacancyDataset):
     """Set of target vacancies."""
 
     id_name_default = ["year", "large_area_id"]
+    target_attribute_name = 'target_vacancy_rate'
     
         
         

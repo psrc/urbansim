@@ -228,7 +228,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                                 return_index=False)
 
                 self.consider_proposals(sampled_proposal_indexes)
-                
+                self.weight[sampled_proposal_indexes] = 0
                 #sample_size = 1
                 #sampled_proposal_index = probsample_noreplace(available_indexes, sample_size, 
                                                                 #prob_array=self.weight[available_indexes],
@@ -339,58 +339,58 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     is_proposal_rejected[ sites == sites[i]] = True
         
     def consider_proposal(self, proposal_index, force_accepting=False):
-            this_site = self.proposal_set["parcel_id"][proposal_index]            
-            building_indexes = array([], dtype='i')
-            demolished_spaces = defaultdict(int)
-            if self.proposal_set["is_redevelopment"][proposal_index]:  #redevelopment proposal
-                building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
-                for building_index in building_indexes:
-                    column_value = tuple(self.realestate_dataset.column_values[building_index,:].tolist())
-                    demolished_spaces[column_value] += self.realestate_dataset.total_spaces[building_index]
+        this_site = self.proposal_set["parcel_id"][proposal_index]            
+        building_indexes = array([], dtype='i')
+        demolished_spaces = defaultdict(int)
+        if self.proposal_set["is_redevelopment"][proposal_index]:  #redevelopment proposal
+            building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
+            for building_index in building_indexes:
+                column_value = tuple(self.realestate_dataset.column_values[building_index,:].tolist())
+                demolished_spaces[column_value] += self.realestate_dataset.total_spaces[building_index]
 
-            component_indexes = where(self.proposal_component_set['proposal_id']==self.proposal_set['proposal_id'][proposal_index])[0]
-            proposed_spaces = defaultdict(int) 
-            #[(self.proposal_component_set.column_values[component_index,:], self.proposal_component_set.total_spaces[component_indexes])]            
-            for component_index in component_indexes:
-                column_value = tuple(self.proposal_component_set.column_values[component_index,:].tolist())
-                proposed_spaces[column_value] += self.proposal_component_set.total_spaces[component_index]
-            
-            ## skip this proposal if the proposal has no components that are needed to reach vacancy target
-            if not force_accepting and all([ self._is_target_reached(key) 
-                     or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
-                     for key in proposed_spaces.keys() ]):
-                return False
-            
-            # accept this proposal
-            for key, value in demolished_spaces.items():
-                if key not in self.accounting:
-                    if key not in self.logging:
-                        self.logging[key] = defaultdict(int)
-                    self.logging[key]["demolished_spaces"] += value
-                else:
-                    self.accounting[key]["demolished_spaces"] += value 
-                    ##TODO we may want to re-activate sampling of proposals if new total spaces is below target spaces 
-                    ##because of demolished buildings 
-            
-            for key, value in proposed_spaces.items():
-                if key not in self.accounting:
-                    if key not in self.logging:
-                        self.logging[key] = defaultdict(int)
-                    self.logging[key]["proposed_spaces"] += value
-                else:
-                    self.accounting[key]["proposed_spaces"] += value
-                    if self._is_target_reached(key):  ## disable sampling from proposals
-                        component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
-                        proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
-                        self.weight[proposal_indexes] = 0.0
-                                         
-            if building_indexes.size > 0: self.demolished_buildings.extend(building_indexes.tolist())
-            self.accepted_proposals.append(proposal_index)
-            
-            # don't consider proposals for this site in future sampling
-            self.weight[proposal_index] = 0.0
-            self.weight[self.proposal_set["parcel_id"] == this_site] = 0.0
-            return True
+        component_indexes = where(self.proposal_component_set['proposal_id']==self.proposal_set['proposal_id'][proposal_index])[0]
+        proposed_spaces = defaultdict(int) 
+        #[(self.proposal_component_set.column_values[component_index,:], self.proposal_component_set.total_spaces[component_indexes])]            
+        for component_index in component_indexes:
+            column_value = tuple(self.proposal_component_set.column_values[component_index,:].tolist())
+            proposed_spaces[column_value] += self.proposal_component_set.total_spaces[component_index]
+        
+        ## skip this proposal if the proposal has no components that are needed to reach vacancy target
+        if not force_accepting and all([ self._is_target_reached(key) 
+                 or (proposed_spaces.get(key,0) - demolished_spaces.get(key,0) <= 0)  ## 
+                 for key in proposed_spaces.keys() ]):
+            return False
+        
+        # accept this proposal
+        for key, value in demolished_spaces.items():
+            if key not in self.accounting:
+                if key not in self.logging:
+                    self.logging[key] = defaultdict(int)
+                self.logging[key]["demolished_spaces"] += value
+            else:
+                self.accounting[key]["demolished_spaces"] += value 
+                ##TODO we may want to re-activate sampling of proposals if new total spaces is below target spaces 
+                ##because of demolished buildings 
+        
+        for key, value in proposed_spaces.items():
+            if key not in self.accounting:
+                if key not in self.logging:
+                    self.logging[key] = defaultdict(int)
+                self.logging[key]["proposed_spaces"] += value
+            else:
+                self.accounting[key]["proposed_spaces"] += value
+                if self._is_target_reached(key):  ## disable sampling from proposals
+                    component_indexes = self.get_index_by_condition(self.proposal_component_set.column_values, key)
+                    proposal_indexes = self.proposal_set.get_id_index( unique(self.proposal_component_set['proposal_id'][component_indexes]) )
+                    self.weight[proposal_indexes] = 0.0
+                                     
+        if building_indexes.size > 0: self.demolished_buildings.extend(building_indexes.tolist())
+        self.accepted_proposals.append(proposal_index)
+        
+        # don't consider proposals for this site in future sampling
+        self.weight[proposal_index] = 0.0
+        self.weight[self.proposal_set["parcel_id"] == this_site] = 0.0
+        return True
     
     def _is_target_reached(self, column_value=()):
         if column_value:

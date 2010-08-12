@@ -17,5 +17,5 @@ aliases = [
    "demolition_cost = development_project_proposal.disaggregate(urbansim_parcel.parcel.demolition_cost) * development_project_proposal.is_redevelopment",
    "faz_id = development_project_proposal.disaggregate(zone.faz_id, intermediates=[zone])",
    "zone_id = development_project_proposal.disaggregate(parcel.zone_id)",
-   "large_area_id = development_project_proposal.disaggregate(parcel.large_area_id)",
+   "large_area_id = development_project_proposal.disaggregate(urbansim_parcel.parcel.large_area_id)",
     ]

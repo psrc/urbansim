@@ -10,4 +10,5 @@ aliases = [
       "total_non_home_based_job_space = urbansim_parcel.building.total_non_home_based_job_space",
       "vacant_home_based_job_space = urbansim_parcel.building.vacant_home_based_job_space",
       "vacant_non_home_based_job_space = urbansim_parcel.building.vacant_non_home_based_job_space",
+      "large_area_id = building.disaggregate(parcel.large_area_id)",
            ]
