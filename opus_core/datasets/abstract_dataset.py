@@ -9,7 +9,8 @@ import os
 from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any, abs
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
 from numpy import compress, transpose, logical_and, ma, isscalar, asarray
-from scipy import ndimage
+#from scipy import ndimage  ## use opus_core.ndimage instead
+from opus_core import ndimage
 from numpy.random import randint
 from numpy import ma
 
@@ -27,7 +28,6 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
-import opus_core.ndimage
 
 class DataElement(object):
     """Represents one individual of the Dataset object. It is created by the method
@@ -942,10 +942,12 @@ class AbstractDataset(object):
             # formerly: values = eval("ndimage."+function+"(filled_what, labels=ids, index=myids)")
             # f is the function from ndimage
             # f = getattr(ndimage, function)
-            f = getattr(opus_core.ndimage, function)
+            f = getattr(ndimage, function)
             values = f(*[filled_what], **{'labels': ids_local, 'index': myids})
-            result = array(values)
-        except Exception, e:
+            if isscalar(values):
+                values = [values]
+            result = asarray(values)
+        except:
             logger.log_error( "Unknown function or error occured evaluating " + function + ".\n" )
             raise
         return result
@@ -1020,9 +1022,12 @@ class AbstractDataset(object):
             filled_what = what
         try:
             sum_value = eval("ndimage."+function+"(filled_what, labels=ones(self.size(), dtype='int16'), index=[1])")
-            result = array([sum_value])
+            if isscalar(sum_value):
+                sum_value = [sum_value]
+            result = asarray(sum_value)
         except:
-            raise StandardError, "Unknown function " + function + " or error occured during evaluation."
+            logger.log_error( "Unknown function or error occured evaluating " + function + ".\n" )
+            raise
         return result
 
     def categorize(self, attribute_name, bins):

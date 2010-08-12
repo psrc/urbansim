@@ -8,7 +8,7 @@
 # rather than int_, the native python int 32 type).
 # See comment at the end of this file for more details.
 
-from numpy import int32, int64
+from numpy import int32, int64, ndarray
 import scipy.ndimage
 import numpy
 
@@ -234,7 +234,7 @@ def correlate(input, weights, output=None, mode='reflect', cval=0.0, origin=0):
 # *** private functions (to fix dtype) ***
 
 def _fix_dtype(a):
-    if a.dtype == int32:
+    if isinstance(a, ndarray) and a.dtype == int32:
         a.dtype = int32
 
 
