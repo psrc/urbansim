@@ -1,7 +1,7 @@
-python C:\opus\src\opus_core\tools\create_baseyear_cache.py ^
+c:\python26\python.exe C:\opus\src\opus_core\tools\create_baseyear_cache.py ^
 ::--configuration-path=sanfrancisco.configs.baseline ^
---database-name=sanfrancisco_baseyear ^
---xml-configuration=sanfrancisco/configs/sanfrancisco.xml ^
---scenario_name=sanfrancisco_baseline ^
---cache-directory=C:\opus\data\sanfrancisco\base_year_data ^
+--database-name=baseyear_2009_scenario_baseline ^
+--xml-configuration=C:\opus\project_configs/sanfrancisco.xml ^
+--scenario_name=sanfrancisco_baseline2009 ^
+--cache-directory=C:\opus\data\sanfrancisco\baseyear_2009_scenario_baseline ^
 --database-configuration=estimation_database_server
