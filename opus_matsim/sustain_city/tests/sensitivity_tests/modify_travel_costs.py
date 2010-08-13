@@ -38,8 +38,8 @@ class ModifyTravelCosts(AbstractTravelModel):
             logger.log_status("Prepare copying pre-calculated MATSim travel data to OPUS_HOME tmp directory.")
             self.copy_pre_calculated_MATSim_travel_costs()
             logger.log_status("Modifying travel costs.")
-            #self.modify_travel_costs()                  # comment out for base scenario
-            #logger.log_status("Finished modifying...")  # comment out for base scenario
+            self.modify_travel_costs()                  # comment out for base scenario
+            logger.log_status("Finished modifying...")  # comment out for base scenario
         # use modified travel data for all following runs
         else:
             logger.log_status("Travel data was modified before. So there is nothing to do...")
@@ -89,26 +89,25 @@ class ModifyTravelCosts(AbstractTravelModel):
         low_travel_cost = '3.47'
         high_travel_cost = '1689.19'
         
-        #index_from_zone = 0
-        #index_to_zone = 1
-        #index_travel_costs = 2
-        
         logger.log_status("Set cbd to %s" %cbd)
         logger.log_status("Preferential zone with travel cost = 3.47 is set to: %s" % preferential_zone)
         logger.log_status("The travel costs of other zones is set to %s" % high_travel_cost)
         
         travel_data = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
         if not self.travel_data_exsists(travel_data):
-            print 'Travel data not found! %s' % travel_data
-            sys.exit()
+            raise StandardError('Travel data not found! %s' % travel_data)
             
         in_file = open(travel_data, 'r')
         str_list = []
         # read header of travel data to get the indices of the colums (from_zone, to_zone, single_vehicle_travel_cost)
         line = in_file.readline()
         # init indices
-        get_indices = GetIndices()
-        index_from_zone, index_to_zone, index_travel_costs, number_of_colums = get_indices.get_travel_costs_indices(line)
+        get_indices = GetIndices(line)
+        index_from_zone = get_indices.get_from_zone_index()
+        index_to_zone   = get_indices.get_to_zone_index()
+        index_travel_costs = get_indices.get_single_vehicle_to_work_travel_cost_index()
+        number_of_colums = get_indices.get_number_of_colums()
+        
         
         # prepare header line for the output file
         row = line.split(',')
@@ -134,7 +133,7 @@ class ModifyTravelCosts(AbstractTravelModel):
                     # append modified row to the new travel data content
                     str_list.append( row[index_from_zone] +','+ row[index_to_zone] +','+ row[index_travel_costs] +'\n')
                 
-                # if its th cbd itself don't change anything
+                # if its the cbd itself don't change anything
                 elif (row[index_from_zone] == cbd) and (row[index_to_zone] == cbd):
                     # append unmodified row to the new travel data content
                     str_list.append( line )

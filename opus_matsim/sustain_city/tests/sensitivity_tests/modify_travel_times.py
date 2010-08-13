@@ -78,20 +78,26 @@ class ModifyTravelTimes(AbstractTravelModel):
         GetTestTravelDataIntoCache().run(self.config, year)
         
     def modify_travel_time(self):
-        """ Modifies the travel times from zone to zone.
+        """ Modifies the travel times to the cbd. The preferered zone (20)
+            gets minimum travel times, all other zones get high travel times.
+            
+            @old version
+            Modifies the travel times from zone to zone.
             For zone 20 the travel times to all other zones is set to min_travel_time.
             For all other zones the trvel time will be set on 31min if the origin travel time
             is less than 30min, otherwise it's not modified.
         """
         
+        # using default cbd 
+        cbd = 129
         # set the preferred zone
-        preferential_zone = '20'
-        
+        preferential_zone = 20
         # set travel times for the preferered zone and other zones
         min_travel_time = '0.40'    # time in minutes
         # max_travel_time = '121.02'  # time in minutes
         travel_time_border = 30.0   # time in minutes
         offset = 2.0                # time in minutes
+        
         
         logger.log_status("Preferential zone with travel time = 40msec is set to: %s" % preferential_zone)
         logger.log_status("The travel time border of other zones is set to %f" % travel_time_border)
@@ -99,7 +105,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         
         travel_data = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp", "travel_data.csv" )
         if not self.travel_data_exsists(travel_data):
-            sys.exit()
+            raise StandardError('Travel data not found! %s' % travel_data)
             
         travel_cost_list = self.get_travel_cost_matrix()
             
@@ -127,20 +133,42 @@ class ModifyTravelTimes(AbstractTravelModel):
             row = line.split(',')
             # consistency check
             if len(row) != number_of_colums:
-                print 'Error in number of colums: %s' %row
-                sys.exit()
+                raise StandardError('Error in number of colums: %s' %row)
                 
             from_zone_id = int(row[index_from_zone].strip('\r\n'))
             to_zone_id = int(row[index_to_zone].strip('\r\n'))
             travel_cost_value = travel_cost_list[from_zone_id][to_zone_id]
+            travel_times_value = float(row[index_travel_times].strip('\r\n'))
             
-            # travel time from zone 20 to other zone or from other zone to zone 20 is set to 40sec.
-            if (row[index_from_zone].strip('\r\n') == preferential_zone) or (row[index_to_zone].strip('\r\n') == preferential_zone):
-                row[index_travel_times] = min_travel_time
-                # travel time from/to zone other than 20 is set to 31min if the travel time was originally lower than 30min
-            elif float(row[index_travel_times].strip('\r\n')) <= travel_time_border:
-                    row[index_travel_times] = str(travel_time_border + offset)
-
+            # new version (compute travel times from/to cbd. If preferential zone occurs set min travel times.
+            # otherwise check if the travel times of other zones from/to cbd is lower than 30min than set it to travel times higher than 30min)
+            # get all zones from and to cbd
+            if( from_zone_id == cbd ) or (to_zone_id == cbd ):
+                # if its the the preferaential zone and the cbd set minimum travel times
+                if ((from_zone_id == preferential_zone) and (to_zone_id == cbd)) or\
+                   ((from_zone_id == cbd) and (to_zone_id == preferential_zone)):
+                    row[index_travel_times] = min_travel_time
+                
+                # if its the cbd itself don't change anything
+                elif (from_zone_id == cbd) and (to_zone_id == cbd):
+                    pass
+                
+                # if zone form/to cbd is other then the preferential zone set the travel times 
+                # higher than 30min (when the travel times are lower than 30min)
+                elif ((from_zone_id != preferential_zone) and (to_zone_id == cbd)) or\
+                     ((from_zone_id == cbd) and (to_zone_id != preferential_zone)):
+                    if travel_times_value <= travel_time_border:
+                        row[index_travel_times] = str(travel_time_border + offset)
+            
+            #old version (Set travel times from preferential zone to all other zone to min travel times. For all other zones set travel times
+            # higher than 30min if they have less than 30min)
+            ## travel time from zone 20 to other zone or from other zone to zone 20 is set to 40sec.
+            #if (from_zone_id == preferential_zone) or (to_zone_id == preferential_zone):
+            #    row[index_travel_times] = min_travel_time
+            #    # travel time from/to zone other than 20 is set to 30min+offset if the travel time was originally lower than 30min
+            #elif travel_times_value <= travel_time_border:
+            #    row[index_travel_times] = str(travel_time_border + offset)
+        
             # append modified row to the new travel data content
             str_list.append( row[index_from_zone].strip('\r\n') +','+ row[index_to_zone].strip('\r\n') +','+ row[index_travel_times].strip('\r\n') + ',' + str(travel_cost_value) +'\r\n')
 
