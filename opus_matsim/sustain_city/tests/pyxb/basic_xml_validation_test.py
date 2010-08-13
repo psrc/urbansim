@@ -3,18 +3,17 @@
 # See opus_core/LICENSE
 
 import os, sys
-from opus_core.tests import opus_unittest
 from lxml import etree
 import opus_matsim.sustain_city.tests as test_path
 import opus_matsim.sustain_city.tests.pyxb as pyxb_test
 from opus_core.logger import logger
 import shutil
 
-class Basic_XSD_Validation(opus_unittest.OpusTestCase):
+class Basic_XSD_Validation(object):
     """ This test validates the generated xml MATSim configuration while using pyxb's own validation process.
     """
     
-    def setUp(self, config_path=None, config_file_name=None, xsd_file_name=None):
+    def __init__(self, config_path=None, config_file_name=None, xsd_file_name=None):
         print "Entering setup"
         
         logger.log_status('Validation test of genereated MATSim configuration via xsd...')
@@ -79,7 +78,8 @@ class Basic_XSD_Validation(opus_unittest.OpusTestCase):
         if result: logger.log_status("Valid XML")
         else: logger.log_status("Invalid XML")
 
-        self.assertEqual(result, True)
+        #self.assertEqual(result, True)
+        self.tearDown()
                 
         logger.log_status("Leaving test run")
         
@@ -99,4 +99,5 @@ class Basic_XSD_Validation(opus_unittest.OpusTestCase):
         shutil.copy(source, self.matsim_config_file)
         
 if __name__ == "__main__":
-    opus_unittest.main()
+    basic_validation = Basic_XSD_Validation()
+    basic_validation.test_run()

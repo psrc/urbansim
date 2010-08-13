@@ -4,18 +4,17 @@
 
 import os
 from opus_core.logger import logger
-from opus_core.tests import opus_unittest
 import opus_matsim.sustain_city.tests as test_path
 import tempfile
 from shutil import rmtree
 from opus_matsim.sustain_city.tests.common.extract_zip_file import ExtractZipFile
 import shutil
 
-class MATSimTestRun(opus_unittest.OpusTestCase):
+class MATSimTestRun(object):
     ''' This test shows if UrbanSim can start MATSim.
         
     ''' 
-    def setUp(self):
+    def __init__(self):
         print "entering setUp"
         
         logger.log_status('Running MATSim test... ')
@@ -60,9 +59,7 @@ class MATSimTestRun(opus_unittest.OpusTestCase):
         
         cmd_result = os.system(cmd)
         if cmd_result != 0:
-            error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
-            logger.log_error(error_msg)
-            raise StandardError(error_msg)  
+            raise StandardError("Matsim Run failed. Code returned by cmd was %d" % (cmd_result))  
         elif cmd_result == 0:
             logger.log_status("MATSim returned exit code: %i " % cmd_result)
             logger.log_status('Successfuly tested:')
@@ -70,7 +67,9 @@ class MATSimTestRun(opus_unittest.OpusTestCase):
             logger.log_status('- Validation of MATSim config file via MATSim')
             logger.log_status('- Successfuly started MATSim')
 
-        self.assert_(cmd_result == 0) # 0 means successful  
+        #self.assert_(cmd_result == 0) # 0 means successful
+        
+        self.tearDown()
 
         print "leaving test_run"
         
@@ -110,4 +109,5 @@ class MATSimTestRun(opus_unittest.OpusTestCase):
         shutil.copy(source, self.matsim_config_full)
          
 if __name__ == '__main__':
-    opus_unittest.main()
+    matsim_test = MATSimTestRun()
+    matsim_test.test_run()
