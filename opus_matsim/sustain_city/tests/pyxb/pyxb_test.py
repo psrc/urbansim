@@ -3,17 +3,16 @@
 # See opus_core/LICENSE
 
 import os
-from opus_core.tests import opus_unittest
 from opus_matsim.sustain_city.models.pyxb_xml_parser import update_xml_parser
 import opus_matsim.sustain_city.tests.pyxb as pyxb_path
 from opus_core.logger import logger
 
-class PyXBTest(opus_unittest.OpusTestCase):
+class PyXBTest(object):
     ''' Testing automatic generation of the PyXB binding class.
         The PyXB binding class is needed to create the MATSim configuration via a xsd.
     '''
     
-    def setUp(self):
+    def __init__(self):
         print "Entering setup"
         
         logger.log_status('Testing automatic generation of the PyXB binding class.')
@@ -34,4 +33,5 @@ class PyXBTest(opus_unittest.OpusTestCase):
         print "Leaving test run"
         
 if __name__ == "__main__":
-    opus_unittest.main()
+    pyxb_test = PyXBTest()
+    pyxb_test.test_run()
