@@ -10,33 +10,55 @@ class abstract_absolute_SSS_difference_from_DDD(Variable):
     """An abstract class that makes it easy to provide this functionality
     for an arbitrary geography dataset.  Returns the
     difference of variable SSS (current year - baseyear)."""
-
-    def __init__(self, dataset_name, variable_name, year, package_name='urbansim'):
-        self._package_name = package_name
-        self._dataset_name = dataset_name
+    
+    default_package_order = ["urbansim", "opus_core"]
+    
+    def __init__(self, variable_name, year, dataset_name=None, package_name=None):
         self._variable_name = variable_name
         self._year = year
+        self._package_name = package_name
+        self._dataset_name = dataset_name
         Variable.__init__(self)
     
     def dependencies(self):
-        return ["%s.%s.%s" % (self._package_name, self._dataset_name, self._variable_name)]
+        if self._package_name and self._dataset_name:
+            return ["%s.%s.%s" % (self._package_name, self._dataset_name, self._variable_name)]
+        else:
+            return []
 
-    def compute(self, dataset_pool):
+    def _compute_current_and_lag_values(self, dataset_pool):
+        dataset = self.get_dataset()
         current_year = SimulationState().get_current_time()
         lag = current_year - self._year
-        lag_variable_name = '%s.%s.%s_lag%s' % (
-            self._package_name,
-            self._dataset_name,
-            self._variable_name, 
-            lag)
         
-        dataset = self.get_dataset()
-        current_values = dataset.get_attribute(self._variable_name) 
-        dataset.compute_variables([lag_variable_name], 
-                                  dataset_pool=dataset_pool)
-        lag_values = dataset.get_attribute(lag_variable_name)
-        values = current_values - lag_values
-        return values
+        if not self._dataset_name:
+            self._dataset_name = dataset.get_dataset_name()
+        
+        if self._package_name:
+            lag_variable_name = '%s.%s.%s_lag%s' % (
+                self._package_name,
+                self._dataset_name,
+                self._variable_name, 
+                lag)
+            
+            current_values = dataset.compute_variables(self._variable_name) 
+            lag_values = dataset.compute_variables(lag_variable_name, 
+                                                   dataset_pool=dataset_pool)
+        else:
+            package_order = dataset_pool.get_package_order() or self.default_package_order
+            current_values = dataset.compute_one_variable_with_unknown_package(self._variable_name, 
+                                                                               dataset_pool=dataset_pool,
+                                                                               package_order=package_order)
+            lag_values = dataset.compute_one_variable_with_unknown_package( "%s_lag%s" % (self._variable_name, lag), 
+                                                                            dataset_pool=dataset_pool,
+                                                                            package_order=package_order)
+        return (current_values, lag_values)        
+    
+    def compute(self, dataset_pool):
+        current_values, lag_values = self._compute_current_and_lag_values(dataset_pool)
+        
+        results = current_values - lag_values
+        return results
 
 
 from opus_core.tests import opus_unittest
@@ -58,6 +80,9 @@ class TestFactory(object):
     your geography dataset by generating a test class, as shown at the end of
     this file.  This avoids duplicating this code in each derived variable
     module."""
+    def __init__(self, package_name='urbansim'):
+        self.package_name = package_name
+        
     def get_test_case_for_dataset(self, dataset_name, table_name, id_name):
         """Return a test case class customized for this dataset."""
         class __MyTests(opus_unittest.OpusTestCase):
@@ -127,7 +152,7 @@ class TestFactory(object):
                 dataset_pool_2002 = DatasetPool(package_order=['urbansim'],
                                                 storage=attribute_cache)
                 dataset = dataset_pool_2002.get_dataset(self._dataset_name)
-                variable_name = 'urbansim.%s.absolute_population_difference_from_2000' % self._dataset_name
+                variable_name = '%s.%s.absolute_population_difference_from_2000' % (self._package_name, self._dataset_name)
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2002)
                 pop_2002 = dataset.get_attribute(variable_name)
@@ -153,12 +178,13 @@ class TestFactory(object):
                 dataset_pool_2000 = DatasetPool(package_order=['urbansim'],
                                                 storage=attribute_cache)
                 dataset = dataset_pool_2000.get_dataset(self._dataset_name)
-                variable_name = 'urbansim.%s.absolute_population_difference_from_2000' % self._dataset_name
+                variable_name = '%s.%s.absolute_population_difference_from_2000' % (self._package_name, self._dataset_name)
                 dataset.compute_variables([variable_name],
                                           dataset_pool=dataset_pool_2000)
                 pop_2000 = dataset.get_attribute(variable_name)
                 self.assert_(ma.allequal(pop_2000, array([0,0,0])))
-                
+        
+        __MyTests._package_name = self.package_name
         __MyTests._dataset_name = dataset_name
         __MyTests._table_name = table_name
         __MyTests._id_name = id_name

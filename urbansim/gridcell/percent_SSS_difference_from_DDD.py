@@ -9,9 +9,11 @@ from urbansim.abstract_variables.abstract_percent_SSS_difference_from_DDD \
 
 class percent_SSS_difference_from_DDD(abstract_percent_SSS_difference_from_DDD):
     """difference of variable SSS (current year - baseyear)"""
+    
     def __init__(self, *args, **kwargs):
-        abstract_percent_SSS_difference_from_DDD.__init__(self, 'gridcell', *args, **kwargs)
-
+        abstract_percent_SSS_difference_from_DDD.__init__(self, *args,
+                                                          dataset_name='gridcell',
+                                                          package_name='urbansim')
 
 from opus_core.tests import opus_unittest
 from urbansim.abstract_variables.abstract_percent_SSS_difference_from_DDD import TestFactory

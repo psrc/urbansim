@@ -4,43 +4,23 @@
 
 
 from numpy import float32
-
+from opus_core.misc import safe_array_divide
 from opus_core.variables.variable import Variable
 from opus_core.simulation_state import SimulationState
+from abstract_absolute_SSS_difference_from_DDD import abstract_absolute_SSS_difference_from_DDD
 
 
-class abstract_percent_SSS_difference_from_DDD(Variable):
+class abstract_percent_SSS_difference_from_DDD(abstract_absolute_SSS_difference_from_DDD):
     """An abstract class that makes it easy to provide this functionality
     for an arbitrary geography dataset.  Returns the
     difference of variable SSS (current year - year DDD)"""
 
     _return_type = "float32"
 
-    def __init__(self, dataset_name, variable_name, year, package_name='urbansim'):
-        self._package_name = package_name
-        self._dataset_name = dataset_name
-        self._variable_name = variable_name
-        self._year = year
-        Variable.__init__(self)
-
-    def dependencies(self):
-        return ["%s.%s.%s" % (self._package_name, self._dataset_name, self._variable_name)]
-
     def compute(self, dataset_pool):
-        current_year = SimulationState().get_current_time()
-        lag = current_year - self._year
-        lag_variable_name = '%s.%s.%s_lag%s' % (
-                                                self._package_name,
-                                                self._dataset_name,
-                                                self._variable_name,
-                                                lag)
-
-        dataset = self.get_dataset()
-        current_values = dataset.get_attribute(self._variable_name)
-        dataset.compute_variables([lag_variable_name],
-                                  dataset_pool=dataset_pool)
-        lag_values = dataset.get_attribute(lag_variable_name)
-        values = 100 * ((current_values - lag_values).astype(float32) / lag_values)
+        current_values, lag_values = self._compute_current_and_lag_values(dataset_pool)      
+        
+        values = 100 * (current_values - lag_values) / lag_values.astype(float32)
         return values
 
 
@@ -64,6 +44,9 @@ class TestFactory(object):
     your geography dataset by generating a test class, as shown at the end of
     this file.  This avoids duplicating this code in each derived variable
     module."""
+    def __init__(self, package_name='urbansim'):
+        self.package_name = package_name
+    
     def get_test_case_for_dataset(self, dataset_name, table_name, id_name):
         """Return a test case class customized for this dataset."""
         class __MyTests(opus_unittest.OpusTestCase):
@@ -135,7 +118,7 @@ class TestFactory(object):
                 dataset_pool_2002 = DatasetPool(package_order=['urbansim'],
                                                 storage=attribute_cache)
                 dataset = dataset_pool_2002.get_dataset(self._dataset_name)
-                variable_name = 'urbansim.%s.percent_population_difference_from_2000' % self._dataset_name
+                variable_name = '%s.%s.percent_population_difference_from_2000' % (self._package_name, self._dataset_name)
                 dataset.compute_variables([variable_name],
                                        dataset_pool=dataset_pool_2002)
                 pop_2002 = dataset.get_attribute(variable_name)
@@ -162,12 +145,13 @@ class TestFactory(object):
                 dataset_pool_2000 = DatasetPool(package_order=['urbansim'],
                                                 storage=attribute_cache)
                 dataset = dataset_pool_2000.get_dataset(self._dataset_name)
-                variable_name = 'urbansim.%s.percent_population_difference_from_2000' % self._dataset_name
+                variable_name = '%s.%s.percent_population_difference_from_2000' % (self._package_name, self._dataset_name)
                 dataset.compute_variables([variable_name],
                                        dataset_pool=dataset_pool_2000)
                 pop_2000 = dataset.get_attribute(variable_name)
                 self.assert_(ma.allequal(pop_2000, array([0,0,0])))
-
+                
+        __MyTests._package_name = self.package_name
         __MyTests._dataset_name = dataset_name
         __MyTests._table_name = table_name
         __MyTests._id_name = id_name

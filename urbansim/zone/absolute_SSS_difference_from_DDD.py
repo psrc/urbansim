@@ -8,10 +8,7 @@ from urbansim.abstract_variables.abstract_absolute_SSS_difference_from_DDD \
 
 class absolute_SSS_difference_from_DDD(abstract_absolute_SSS_difference_from_DDD):
     """difference of variable SSS (current year - baseyear)"""
-
-    def __init__(self, *args, **kwargs):
-        abstract_absolute_SSS_difference_from_DDD.__init__(self, 'zone', *args, **kwargs)
-
+    pass
 
 from opus_core.tests import opus_unittest
 from urbansim.abstract_variables.abstract_absolute_SSS_difference_from_DDD import TestFactory
