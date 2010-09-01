@@ -27,5 +27,12 @@ aliases = [
        "zone_id=building.disaggregate(parcel.zone_id)",
       #dupe "building_class_id = building.disaggregrate(building_type.class_id)",
        "occupied_mixed_spaces = sanfrancisco.building.occupied_sqft + safe_array_divide(sanfrancisco.building.number_of_households, (building.residential_units).astype('float')) * building.residential_sqft",
-       "total_mixed_spaces = building.non_residential_sqft + building.residential_sqft",    
-       ]
+       "total_mixed_spaces = building.non_residential_sqft + building.residential_sqft",
+       "is_placed_type = (sanfrancisco.building.building_type_id < 3)+" +
+                        "(sanfrancisco.building.building_type_id == 5)+" +
+                        "(sanfrancisco.building.building_type_id == 7)+" +
+                        "(sanfrancisco.building.building_type_id == 8)+" +
+                        "(sanfrancisco.building.building_type_id == 9)+" +
+                        "(sanfrancisco.building.building_type_id == 13)+" +
+                        "(sanfrancisco.building.building_type_id == 14)"
+]
