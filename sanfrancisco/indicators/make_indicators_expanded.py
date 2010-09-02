@@ -9,15 +9,12 @@
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core.source_data import SourceData
-from numpy import arange
-from opus_core.indicator_framework.image_types.matplotlib_map import Map
-from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
 from opus_core.indicator_framework.image_types.table import Table
-from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
-from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
-import csv,os
+from opus_core.logger import logger
+from time import time,localtime,strftime,sleep
+import csv,os,sys
 
 def make_topsheet(cache_directory):
     """ Run the indicators for the LU topsheet
@@ -220,7 +217,7 @@ def make_topsheet(cache_directory):
 def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
     """ This spits out the indicators for a multiyear workbook and then combines them 
         into a single file, cache_directory/alldata.csv
-        You can then copy this a copy of the LandUseOutputs_template.xls and see some basic
+        You can then copy this a copy of the MultiyearLU_template.xls and see some basic
           performance/troubleshooting graphs for the various submodels.
     """
     
@@ -284,12 +281,50 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_count_unplaced_BLCMspec=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.parcel_id<0,sanfrancisco.building.is_placed_type>0),1,0))',
         'bldg_count_unplaced_noBLCMspec=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.parcel_id<0,sanfrancisco.building.is_placed_type==0),1,0))',
     
-        # households
+        # household counts
         'hhld_count_sz1=alldata.aggregate_all(where(household.household_size==1,1,0))',
         'hhld_count_sz2=alldata.aggregate_all(where(household.household_size==2,1,0))',
         'hhld_count_sz34=alldata.aggregate_all(where(numpy.logical_or(household.household_size==3,household.household_size==4),1,0))',
         'hhld_count_sz56=alldata.aggregate_all(where(numpy.logical_or(household.household_size==5,household.household_size==6),1,0))',
         'hhld_count_sz7=alldata.aggregate_all(where(household.household_size>=7,1,0))',
+        
+        # business counts
+        'jobs_count_sect1=alldata.aggregate_all(where(business.sector_id==1,business.employment,0))',
+        'jobs_count_sect2=alldata.aggregate_all(where(business.sector_id==2,business.employment,0))',
+        'jobs_count_sect3=alldata.aggregate_all(where(business.sector_id==3,business.employment,0))',
+        'jobs_count_sect4=alldata.aggregate_all(where(business.sector_id==4,business.employment,0))',
+        'jobs_count_sect5=alldata.aggregate_all(where(business.sector_id==5,business.employment,0))',
+        'jobs_count_sect6=alldata.aggregate_all(where(business.sector_id==6,business.employment,0))',
+        'jobs_count_sect7=alldata.aggregate_all(where(business.sector_id==7,business.employment,0))',
+        'jobs_count_sect8=alldata.aggregate_all(where(business.sector_id==8,business.employment,0))',
+        'jobs_count_sect9=alldata.aggregate_all(where(business.sector_id==9,business.employment,0))',
+        'jobs_count_sect10=alldata.aggregate_all(where(business.sector_id==10,business.employment,0))',
+        'jobs_count_sect11=alldata.aggregate_all(where(business.sector_id==11,business.employment,0))',
+        
+        # unplaced businesses, how full are buildings?  overall nonres sqft totals
+        'business_count_unplaced=alldata.aggregate_all(where(business.building_id<1,1,0))',
+        'bldg_count_overfullbiz=alldata.aggregate_all(where(sanfrancisco.building.occupied_sqft>building.non_residential_sqft,1,0))',
+        'bldg_count_partialfullbiz=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.occupied_sqft<building.non_residential_sqft,'+
+                                                                                'sanfrancisco.building.occupied_sqft>0),1,0))',
+        'bldg_count_vacantbiz=alldata.aggregate_all(where(numpy.logical_and(building.non_residential_sqft>0,'+
+                                                                           'sanfrancisco.building.occupied_sqft==0),1,0))',
+        # these are covered above for building_groups
+        'bldg_nonres_sqft_total=alldata.aggregate_all(building.non_residential_sqft)',
+        'bldg_nonres_sqft_occ=alldata.aggregate_all(sanfrancisco.building.occupied_sqft)',
+        'bldg_nonres_sqft_vacant=alldata.aggregate_all(building.non_residential_sqft)-alldata.aggregate_all(sanfrancisco.building.occupied_sqft)',
+
+        # unplaced households, how full are buildings?  overall hhunit totals
+        'hhld_count_unplaced=alldata.aggregate_all(where(household.building_id<1,1,0))',
+        'hhld_count_overfullhh=alldata.aggregate_all(where(sanfrancisco.building.number_of_households>building.residential_units,1,0))',
+        'hhld_count_partialfullhh=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.number_of_households<building.residential_units,'+
+                                                                                'sanfrancisco.building.number_of_households>0),1,0))',
+        'hhld_count_vacanthh=alldata.aggregate_all(where(numpy.logical_and(building.residential_units>0,'+
+                                                                          'sanfrancisco.building.number_of_households==0),1,0))',
+        # these are covered above for building_groups
+        'hhld_res_unit_total=alldata.aggregate_all(building.residential_units)',
+        'hhld_res_unit_occ=alldata.aggregate_all(sanfrancisco.building.number_of_households)',
+        'hhld_res_unit_vacant=alldata.aggregate_all(building.residential_units)-alldata.aggregate_all(sanfrancisco.building.number_of_households)',
+
     ]
 
     
@@ -343,12 +378,19 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
 
 if __name__ == '__main__':
 
+    # takes 9.5 mins.  :p
+    starttime = time()
+    logger.log_note(strftime("%x %X", localtime(starttime)) + ": Starting")
+    
     cache_directory=r'C:\opus\data\sanfrancisco\runs\run_5.2010_09_01_11_02'
 
     make_multiyear_workbook(cache_directory=cache_directory,
                             yearstart=2010,
                             yearend=2029)
     make_topsheet(cache_directory)
+
+    endtime = time()
+    logger.log_note(strftime("%x %X", localtime(endtime)) + " Completed. Total time: " + str((endtime-starttime)/60.0) + " mins")
 
 
 #===============================================================================
