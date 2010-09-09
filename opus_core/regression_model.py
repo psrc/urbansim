@@ -215,7 +215,8 @@ class RegressionModel(ChunkModel):
         submodels = specified_coefficients.get_submodels()
         self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, dataset, estimation_idx,
-                                      dataset_pool=self.dataset_pool, resources = compute_resources)
+                                      dataset_pool=self.dataset_pool, resources = compute_resources,
+                                      submodel_size_max=self.estimate_config.get('submodel_size_max', None))
         variables = specified_coefficients.get_full_variable_names_without_constants()
         self.debug.print_debug("Compute variables ...",4)
         self.increment_current_status_piece()
@@ -392,6 +393,37 @@ class RegressionModelTests(opus_unittest.OpusTestCase):
                      msg = "Error in getting data from regression model with multiple submodels.")
         d = model.get_data_as_dataset(2)
         self.assert_(ma.allequal(ds.get_attribute("attr1")[1:3], d.get_attribute("ba1")),
+                     msg = "Error in getting data from regression model with multiple submodels.")
+
+    def test_estimation_with_restricted_submodel_size(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(
+            table_name='dataset',
+            table_data={
+                "id":array([1,2,3,4,5,6,7,8,9,10]),
+                "attr1":array([4,7,2,1,5,4,5,3,2,1]),
+                "attr2":array([6.8,2.6,0,1,0,4.3,2.1,6,8,7,]),
+                "submodel_id": array([1,2,2,1,1,1,2,1,1,1]),
+                "outcome": array([0,1,0,1,1,1,0,0,1,1])
+                }
+            )
+
+        ds = Dataset(in_storage=storage, in_table_name='dataset', id_name="id")
+        specification_2subm = EquationSpecification(
+                          variables=array(["constant", "attr2", "constant", "attr1"]),
+                          coefficients=array(["constant", "ba2", "constant", "ba1"]),
+                          submodels = array([1,1,2,2]))
+
+        model = RegressionModel(submodel_string="submodel_id", estimate_config={'submodel_size_max': 5})
+        model.estimate(specification_2subm, ds, "outcome", procedure='opus_core.estimate_linear_regression')
+
+        data_attr1 = model.get_data("ba1", 1)
+        self.assert_(data_attr1 == None, msg = "Error in getting data from regression model with multiple submodels.")
+        data_attr1 = model.get_data("ba2", 1)
+        self.assert_(data_attr1.size == 5, msg = "Error in sub-sampling data in regression model.")
+        data_attr1 = model.get_data("ba1", 2)
+        self.assert_(ma.allequal(ds.get_attribute("attr1")[array([1, 2, 6])], data_attr1),
                      msg = "Error in getting data from regression model with multiple submodels.")
 
 

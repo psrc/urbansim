@@ -366,7 +366,8 @@ class ChoiceModel(ChunkModel):
         self.map_agents_to_submodels(submodels, self.submodel_string, agent_set,
                                       agents_index_for_estimation,
                                       dataset_pool = self.dataset_pool,
-                                      resources = Resources({"debug": self.debug}))
+                                      resources = Resources({"debug": self.debug}),
+                                      submodel_size_max=self.estimate_config.get('submodel_size_max', None))
         
         self.create_interaction_datasets(agent_set, agents_index_for_estimation, estimate_config, submodels=submodels)
         ## move Choice set size log after compute_variables so it is not buried in compute_variable msg

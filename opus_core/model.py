@@ -5,13 +5,14 @@
 import sys
 import time
 
-from numpy import array, where, arange, zeros
+from numpy import array, where, arange, zeros, sort
 from inspect import getmembers, isroutine
 from opus_core.model_component import ModelComponent
 from opus_core.logger import logger
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.status_for_gui import StatusForGui
+from opus_core.sampling_toolbox import sample_noreplace
 
 class Model(ModelComponent):
     """The base class for all Opus models.
@@ -85,7 +86,7 @@ class Model(ModelComponent):
                                 tags=["model", "model-check"])
 
     def map_agents_to_submodels(self, submodels, submodel_string, agent_set, agents_index,
-                                 dataset_pool=None, resources=None):
+                                 dataset_pool=None, resources=None, submodel_size_max=None):
         """ Creates a class attribute self.observations_mapping which is a dictionary
         where each entry corresponds to one submodel. It contains indices
         of agents (within agents_index) that belong to that submodel.
@@ -95,6 +96,8 @@ class Model(ModelComponent):
         'submodels' is a list of submodels to be considered.
         'submodel_string' specifies the name of attribute/variable that distinguishes submodels.
         'resources' are passed to the computation of variable 'submodel_string'.
+        'submodel_size_max' determines the maximum size of a submodel. If the actual size exceeds this number,
+        agents are randomly sampled so that the submodel size matches this number.
         """
         self.observations_mapping = {} # maps to which submodel each observation belongs to
         nsubmodels = len(submodels)
@@ -109,6 +112,11 @@ class Model(ModelComponent):
                 for submodel in submodels: #mapping agents to submodels
                     w = where(agent_set.get_attribute_by_index(submodel_string,
                                                                agents_index) == submodel)[0]
+                    if submodel_size_max is not None and submodel_size_max < w.size:
+                        # sub-sample from submodel
+                        wnew = sample_noreplace(w, submodel_size_max)
+                        logger.log_status('Number of records in submodel %s reduced from %s to %s.' % (submodel, w.size, wnew.size))
+                        w = sort(wnew)
                     self.observations_mapping[submodel] = w
         else: # no submodel distinction
             self.observations_mapping[-2] = arange(agents_index.size)
