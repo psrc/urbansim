@@ -1160,7 +1160,10 @@ estimation can be controlled by an entry \verb|'estimation_size_agents'| in
 \verb|estimate_config| which should have a value between $0$ and $1$. It gives
 the portion of \verb|agents_index| (or \verb|agent_set| if \verb|agents_index|
 is not given) that will be used in the estimation. The indices are then
-randomly sampled. The \verb|agent_set| should contain an attribute of the same
+randomly sampled. In addition, an entry \verb|'submodel_size_max'| of 
+\verb|estimate_config| controls the maximum number of records within each submodel.
+If a submodel is larger that this number, records are randomly sampled to meet this threshold. 
+The \verb|agent_set| should contain an attribute of the same
 name as the unique identifier of the class attribute \verb|choice_set|. Its
 values determine the current choices of the agents.
 
