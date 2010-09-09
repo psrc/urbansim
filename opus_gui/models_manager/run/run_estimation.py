@@ -6,7 +6,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import QThread, SIGNAL, QString
 
-import os, time
+import os, time, gc
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
 from urbansim.estimation.estimation_runner import EstimationRunner
@@ -131,6 +131,8 @@ class OpusEstimation(object):
             self.errorCallback(errorInfo)
         if statusfile is not None:
             os.remove(statusfile)
+        del self.er
+        gc.collect()
         self.finishedCallback(succeeded)
 
     def _compute_progress(self):
