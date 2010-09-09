@@ -1287,7 +1287,9 @@ In addition to \verb|index|, the number of dataset members entering the
 estimation can be controlled by an entry \verb|'estimation_size_agents'| in
 \verb|estimate_config| which should have a value between $0$ and $1$. It gives
 the portion of \verb|index| that will be used in the estimation. If it is less than 1, 
-the indices are randomly sampled.
+the indices are randomly sampled. In addition, an entry \verb|'submodel_size_max'| of 
+\verb|estimate_config| controls the maximum number of records within each submodel.
+If a submodel is larger that this number, records are randomly sampled to meet this threshold.
 
 The method invokes computation of variables given in the specification as well
 as of the outcome attribute. For each submodel, it creates the corresponding
