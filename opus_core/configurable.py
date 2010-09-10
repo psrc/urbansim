@@ -10,7 +10,7 @@ class Configurable(object):
     """
     
     def __new__(cls, *args, **kwargs):
-        an_instance = object.__new__(cls)
+        an_instance = object.__new__(cls, *args, **kwargs)
         default_config = Configuration(an_instance.get_configuration())["init"]
         config = None
         if "model_configuration" in kwargs.keys():
