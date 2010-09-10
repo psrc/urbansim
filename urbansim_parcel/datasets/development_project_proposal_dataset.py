@@ -107,6 +107,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 filter_attribute=None,
                                                 consider_constraints_as_rules=True,
                                                 template_opus_path="urbansim_parcel.development_template",
+                                                proposed_units_variable="urbansim_parcel.development_project_proposal.units_proposed",
                                                 dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
@@ -241,8 +242,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     proposals = _subset_by_filter(proposals)
 
     # eliminate proposals with zero units_proposed
-    units_proposed = proposals.compute_variables(["urbansim_parcel.development_project_proposal.units_proposed"],
-                                                 dataset_pool = dataset_pool)
+    units_proposed = proposals.compute_variables([proposed_units_variable], dataset_pool = dataset_pool)
     where_up_greater_zero = where(units_proposed > 0)[0]
     if where_up_greater_zero.size > 0:
         proposals.subset_by_index(where_up_greater_zero, flush_attributes_if_not_loaded=False)

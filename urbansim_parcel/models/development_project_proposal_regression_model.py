@@ -86,7 +86,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                         parcel_filter_for_new_development=None, 
                         parcel_filter_for_redevelopment=None, 
                         template_filter=None,
-                        spec_replace_module_variable_pair=None, 
+                        spec_replace_module_variable_pair=None,
+                        proposed_units_variable="urbansim_parcel.development_project_proposal.units_proposed",
                         **kwargs):
         """create development project proposal dataset from parcels and development templates.
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
@@ -151,6 +152,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                               filter_attribute=self.filter,
                                                               parcel_index = index1,
                                                               template_index = index2,
+                                                              proposed_units_variable=proposed_units_variable,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None) )
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
@@ -173,6 +175,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                                   filter_attribute=self.filter,
                                                                   parcel_index = where(is_redevelopment)[0],
                                                                   template_index = index2,
+                                                                  proposed_units_variable=proposed_units_variable,
                                                                   dataset_pool=dataset_pool,
                                                                   resources = kwargs.get("resources", None))
                 

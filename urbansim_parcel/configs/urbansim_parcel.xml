@@ -461,6 +461,7 @@
             <argument hidden="True" name="coefficients_storage" type="string">base_cache_storage</argument>
             <argument name="coefficients_table" parser_action="quote_string" type="string">real_estate_price_model_coefficients</argument>
             <argument hidden="True" name="spec_replace_module_variable_pair" type="string">('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')</argument>
+            <argument hidden="False" name="proposed_units_variable" type="string" parser_action="quote_string">psrc_parcel.development_project_proposal.minimum_1DU_per_legal_lot_yield</argument>
             <argument hidden="True" name="dataset_pool" type="string">dataset_pool</argument>
             <output hidden="True" name="output" type="string">(development_project_proposal, specification, coefficients)</output>
           </prepare_for_run>
@@ -666,21 +667,21 @@
             <name name="name" type="string">WorkplaceChoiceModel</name>
             <argument name="location_set" type="string">job</argument>
             <argument name="model_name" parser_action="quote_string" type="string">Non-home-based Workplace Choice Model for residents</argument>
-	        <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
-	        <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-	        <argument name="submodel_string" type="string">None</argument>
-	        <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
-	        <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
+          <argument name="short_name" parser_action="quote_string" type="string">NHBWCM</argument>
+          <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+          <argument name="submodel_string" type="string">None</argument>
+          <argument name="filter" parser_action="quote_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</argument>
+          <argument name="location_id_string" parser_action="quote_string" type="string">job_id</argument>
             <argument name="run_config" type="dictionary">
-	          <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
-	          <key name="sample_size_locations" type="integer">30</key>
-	          <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
-	          <key name="compute_capacity_flag" type="string">True</key>
-	          <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
-	          <key name="lottery_max_iterations" type="integer">10</key>
-	          <key name="number_of_units_string" type="string">(job.building_type==2).astype(int32)</key>
-	          <key name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
-	      </argument>
+            <key name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</key>
+            <key name="sample_size_locations" type="integer">30</key>
+            <key name="weights_for_estimation_string" type="string">is_placed_job=(urbansim_parcel.job.zone_id &gt; 0).astype(int32)</key>
+            <key name="compute_capacity_flag" type="string">True</key>
+            <key name="capacity_string" type="string">urbansim_parcel.job.is_untaken_non_home_based_job</key>
+            <key name="lottery_max_iterations" type="integer">10</key>
+            <key name="number_of_units_string" type="string">(job.building_type==2).astype(int32)</key>
+            <key name="number_of_agents_string" type="string">job.number_of_agents(person)</key>
+        </argument>
           <argument name="estimate_config" type="dictionary">
           <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
           <key name="sampler" type="string">opus_core.samplers.weighted_sampler</key>
@@ -816,7 +817,7 @@
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
         <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
         <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory"  field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">[Project Name]/runs</argument>
-	    <argument name="cache_from_database" type="boolean">False</argument>
+      <argument name="cache_from_database" type="boolean">False</argument>
         <argument name="baseyear_cache" type="class">
           <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
