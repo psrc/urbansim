@@ -60,7 +60,7 @@ class Variable(object):
     def __new__(cls, *args, **kwargs):
         """Setup to automatically log the running time of the compute method."""
         
-        an_instance = object.__new__(cls, *args, **kwargs)
+        an_instance = object.__new__(cls)
         compute_method = an_instance.compute_with_dependencies
 
         def logged_method (*req_args, **opt_args):
