@@ -304,13 +304,16 @@ Windows operating system, open a command shell, and type the following:
 
 \begin{verbatim}
 python -i c:\opus\src\urbansim\tools\start_estimation.py 
--x c:\opus\project_configs\seattle_parcel.xml -m real_estate_price_model
+-x c:\opus\project_configs\seattle_parcel_default.xml -m real_estate_price_model
 \end{verbatim}
 (Put this command in one single line or with proper continuation
 mark for respective operation system.)
 
-Depending on exactly what the specification is, the result
-would look something like the lsting below:
+Note that this assumes that your Opus packages are installed in the directory \verb|c:\opus|. 
+Also note that the argument of the \verb|-x| option must be given as an absolute path.  
+
+Depending on exactly what the specification is, the result of the call 
+would look something like the listing below:
 \\
 
 \begin{verbatim}
@@ -320,36 +323,32 @@ would look something like the lsting below:
 
     Estimate regression for submodel 28
     Number of observations: 1155
-    R-Squared:             0.0096657786478383297
-    Adjusted R-Squared:    0.0079464484024351911
-    Suggested |t-value| >  2.6555330204981247
+    R-Squared:             0.00277863388614
+    Adjusted R-Squared:    0.0010473467922
+    Suggested |t-value| >  2.6555330205
     -----------------------------------------------
-    Coeff_names estimate        SE      t-values
-      constant   3.14716        0.284388         11.0665
-      lnempden  0.0471131       0.014493         3.25074
-     lngcdacbd  0.244395        0.089292         2.73703
+    Coeff_names	estimate	SE	t-values
+       constant	 3.44533	0.307501	 11.2043
+       lnempden	0.0281543	0.0176717	 1.59318
+      lngcdacbd	 0.15989	0.0943748	 1.69421
     ===============================================
 
     Estimate regression for submodel 30
     Number of observations: 456
-    R-Squared:             0.23620022093023421
-    Adjusted R-Squared:    0.22253042622652475
-    Suggested |t-value| >  2.4743671533372704
+    R-Squared:             0.0678509575502
+    Adjusted R-Squared:    0.0595835602779
+    Suggested |t-value| >  2.47436715334
     -----------------------------------------------
-    Coeff_names estimate        SE      t-values
-      constant  -10.6226         31.7798        -0.334255
-    hbwavgtmda  -0.0372783      0.0168999       -2.20582
-    ln_bldgage  -0.0340602      0.0220903       -1.54186
-     ln_invfar  0.266353        0.0347524        7.66431
-     lnemp20tw  -0.0295508      0.0280097       -1.05502
-     lnemp30da   1.37285         2.38156        0.576451
-     lngcdacbd  -0.494537       0.219013        -2.25803
-        lnsqft  -0.119418       0.0256662       -4.65272
-       lnunits  0.206834        0.0271091        7.62969
+    Coeff_names	estimate	SE	t-values
+       constant	 5.11381	0.300789	 17.0014
+     hbwavgtmda	-0.0317135	0.0170671	-1.85817
+     ln_bldgage	-0.0357089	0.0241143	-1.48082
+      lnemp20tw	-0.0332016	0.0194084	-1.71068
+        lnunits	0.0773904	0.0249748	 3.09874
     ===============================================
 
-Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): 
-completed...0.9 sec
+    Estimating Real Estate Price Model (from urbansim.models.real_estate_price_model): 
+    completed...3.2 sec
 \end{verbatim}
 
 Since the model was estimated in interactive mode, using the
@@ -416,20 +415,16 @@ like so:
 
 \begin{verbatim}
 >>> ds30.summary()
-Attribute name	mean       sd	       sum            min             max
--------------------------------------------------------------------------
-lnemp20tw       8.96      1.57     4087.51        5.86363       12.1193
-lnemp30da      13.21      0.01     6024.29       13.1266        13.2164
-ln_bldgage      3.08      1.41     1404.12       -0.287682       4.60517
-ln_invfar       0.23      1.09      104.191      -2.44127        4.56796
-lngcdacbd       2.84      0.22     1292.87        2.36556        3.29027
-hbwavgtmda     13.15      1.8      5995.99       10.1786        18.0341
-lnunits         1.08      1.47      492.089       0              5.63121
-lnsqft          9.74      1.17     4440.23        6.42972       14.1835
+Attribute name	    mean	      sd	      sum	    min	    max
+-------------------------------------------------------------------
+ lnemp20tw	    8.94	    1.61	  4075.61	5.02388		12.2689
+hbwavgtmda	   13.15	     1.8	  5995.99	10.1786		18.0341
+   lnunits	    1.08	    1.47	  492.089	      0		5.63121
+ln_bldgage	    3.08	    1.41	  1404.12 -0.287682		4.60517
 
-Size: 456  records
-identifiers: 
-         id  in range  1 - 456
+Size: 456 records
+identifiers:
+  id in range 1-456
 \end{verbatim}
 
 
@@ -439,7 +434,7 @@ it, as shown in Figure \ref{fig:histogram-lnsqft}:
 \\
 
 \begin{verbatim}
->>> ds30 = plot_histogram('lnsqft')
+>>> ds30.plot_histogram('ln_bldgage')
 \end{verbatim}
 
 \begin{figure}[htp]
