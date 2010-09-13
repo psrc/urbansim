@@ -66,8 +66,13 @@ def get_built_in_variable_nodes():
     to any particular dataset.
     The list of built in variables is hard coded at this point, but may change in the future.
     '''
-    constant_node = etree.Element('variable', {'type': 'variable_definition', 'name': 'constant'})
-    return [constant_node,]
+    return [get_built_in_constant_node(),]
+
+def get_built_in_constant_node():
+    '''
+    Get a constant node.
+    '''
+    return etree.Element('variable', {'type': 'variable_definition', 'name': 'constant'})
 
 def get_indicator_nodes_per_dataset(project):
     '''

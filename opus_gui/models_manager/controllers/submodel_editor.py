@@ -12,7 +12,7 @@ from PyQt4 import QtGui, QtCore
 from opus_gui.util.convenience import create_qt_action
 from opus_core.configurations.xml_configuration import get_variable_name
 from opus_gui.util.convenience import dictionary_to_menu, hide_widget_on_value_change
-from opus_gui.general_manager.general_manager_functions import get_built_in_variable_nodes
+from opus_gui.general_manager.general_manager_functions import get_built_in_variable_nodes, get_built_in_constant_node
 from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
 
 from opus_gui.util.icon_library import IconLibrary
@@ -346,7 +346,8 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
                 available_variable_nodes.extend(variable_nodes)
         else:
             available_variable_nodes = variable_nodes_per_dataset[dataset_filter]
-
+        available_variable_nodes.append(get_built_in_constant_node())
+        
         # filter already selected variables and show the list of available variables
         not_selected_variables = [var_node for var_node in available_variable_nodes if
                                   not var_node.get('name') in selected_variable_names]
