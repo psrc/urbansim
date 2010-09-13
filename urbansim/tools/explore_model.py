@@ -10,7 +10,7 @@ from urbansim.simulation.model_explorer import ModelExplorer
 
 class ModelExplorerOptionGroup:
     def __init__(self, usage="python %prog [options] ", 
-                 description="Runs the given model for the given year, using data from given directory. Options -m, -y and -d are mandatory. Furthermore, either -c or -x must be given."):
+                 description="Runs the given model for the given year, using data from given directory. Options -y and -d are mandatory. Furthermore, either -c or -x must be given."):
             
         self.parser = OptionParser(usage=usage, description=description)
         self.parser.add_option("-m", "--model", dest="model_name", default = None,
@@ -37,8 +37,6 @@ if __name__ == '__main__':
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    if options.model_name is None:
-        raise StandardError, "Model name (argument -m) must be given."
     if options.year is None:
         raise StandardError, "Year (argument -y) must be given."
     if options.cache_directory is None:

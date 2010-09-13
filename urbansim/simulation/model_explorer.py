@@ -27,13 +27,16 @@ class ModelExplorer(GenericModelExplorer):
         else:
             config = Configuration(configuration)
             
-        dependent_models = config['models_configuration'][model]['controller'].get('dependencies', [])
-        config['models'] = dependent_models
-        if model_group is None:
-            config['models'] = config['models'] + [{model: ["run"]}]
+        if model is not None:
+            dependent_models = config['models_configuration'][model]['controller'].get('dependencies', [])
+            config['models'] = dependent_models
+            if model_group is None:
+                config['models'] = config['models'] + [{model: ["run"]}]
+            else:
+                config['models'] = config['models'] + [{model: {"group_members": [{model_group: ["run"]}]}}]
         else:
-            config['models'] = config['models'] + [{model: {"group_members": [{model_group: ["run"]}]}}]
-        
+            config['models'] = []
+            
         config['years'] = [year, year]
         config["datasets_to_cache_after_each_model"]=[]
         config['flush_variables'] = False

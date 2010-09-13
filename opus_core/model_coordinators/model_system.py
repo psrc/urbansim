@@ -85,10 +85,6 @@ class ModelSystem(object):
                 models = resources.get("models", [])
                 models_in_years = resources.get("models_in_year",  {})
 
-                if (len(models) <=0) and (len(models_in_years.keys()) <= 0):
-                    logger.log_status("No models specified. Nothing to be run.")
-                    return
-
                 resources.check_obligatory_keys(["years"])
 
                 years = resources["years"]
@@ -215,6 +211,7 @@ class ModelSystem(object):
                 ### TODO: There has got to be a better way!
                 model_resources = Resources(datasets)
                 n_models, model_group_members_to_run = self.get_number_of_models_and_model_group_members_to_run(models, models_configuration)
+                self.run_year_namespace = locals()
                 #==========
                 # Run the models.
                 #==========
