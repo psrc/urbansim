@@ -10,8 +10,6 @@
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core.source_data import SourceData
 from opus_core.indicator_framework.image_types.table import Table
-from opus_core.indicator_framework.image_types.mapnik_map import Map
-from opus_gui.results_manager.run.indicator_framework.visualizer.visualizers.mapnik_animated_map import MapnikAnimation
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 from opus_core.logger import logger
@@ -241,6 +239,8 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_comm=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==1,sanfrancisco.building.non_residential_sqft,0))-' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==1,sanfrancisco.building.occupied_sqft,0)))/' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==1,sanfrancisco.building.non_residential_sqft,0))',
+        'bldg_count_totunit_comm=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==1,sanfrancisco.building.residential_units,0))',
+
         # institutional
         'bldg_count_inst=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,1,0))',
         'bldg_occsqft_inst=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,sanfrancisco.building.occupied_sqft,0))',
@@ -248,6 +248,8 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_inst=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,sanfrancisco.building.non_residential_sqft,0))-' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,sanfrancisco.building.occupied_sqft,0)))/' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,sanfrancisco.building.non_residential_sqft,0))',
+        'bldg_count_totunit_inst=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==2,sanfrancisco.building.residential_units,0))',
+
         # office
         'bldg_count_offc=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,1,0))',
         'bldg_occsqft_offc=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,sanfrancisco.building.occupied_sqft,0))',
@@ -255,6 +257,8 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_offc=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,sanfrancisco.building.non_residential_sqft,0))-' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,sanfrancisco.building.occupied_sqft,0)))/' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,sanfrancisco.building.non_residential_sqft,0))',
+        'bldg_count_totunit_offc=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==3,sanfrancisco.building.residential_units,0))',
+
         # residential
         'bldg_count_res=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,1,0))',
         'bldg_occunit_res=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,sanfrancisco.building.number_of_households,0))',
@@ -262,6 +266,7 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_res=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,sanfrancisco.building.residential_units,0))-' + 
                           'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,sanfrancisco.building.number_of_households,0)))/' + 
                           'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,sanfrancisco.building.residential_units,0))',
+        'bldg_count_totsqft_res=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==4,sanfrancisco.building.non_residential_sqft,0))',
 
         # res in non-res group buildings
         'bldg_count_reso=alldata.aggregate_all(where(sanfrancisco.building.building_group_id!=4,1,0))',
@@ -270,7 +275,7 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_reso=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id!=4,sanfrancisco.building.residential_units,0))-' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id!=4,sanfrancisco.building.number_of_households,0)))/' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id!=4,sanfrancisco.building.residential_units,0))',
-
+        'bldg_count_totsqft_ores=alldata.aggregate_all(where(sanfrancisco.building.building_group_id!=4,sanfrancisco.building.non_residential_sqft,0))',
     
         # visitor
         'bldg_count_vis=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==5,1,0))',
@@ -279,6 +284,7 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_vis=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==5,sanfrancisco.building.non_residential_sqft,0))-' + 
                           'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==5,sanfrancisco.building.occupied_sqft,0)))/' + 
                           'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==5,sanfrancisco.building.non_residential_sqft,0))',
+        'bldg_count_totunit_vis=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==5,sanfrancisco.building.residential_units,0))',
     
         # mixed
         'bldg_count_mix=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==6,1,0))',
@@ -287,6 +293,8 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         'bldg_vacrate_mix=(alldata.aggregate_all(where(sanfrancisco.building.building_group_id==6,sanfrancisco.building.non_residential_sqft,0))-' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==6,sanfrancisco.building.occupied_sqft,0)))/' + 
                            'alldata.aggregate_all(where(sanfrancisco.building.building_group_id==6,sanfrancisco.building.non_residential_sqft,0))',
+        'bldg_count_totunit_mix=alldata.aggregate_all(where(sanfrancisco.building.building_group_id==6,sanfrancisco.building.residential_units,0))',
+                           
         # unplaced buildings
         'bldg_count_unplaced=alldata.aggregate_all(where(sanfrancisco.building.parcel_id<0,1,0))',
         'bldg_count_unplaced_BLCMspec=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.parcel_id<0,sanfrancisco.building.is_placed_type>0),1,0))',
@@ -385,12 +393,6 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
     
 
 def make_zone_dbfs(cache_directory):
-     #  Map( 
-     #  source_data = source_data,
-     #  dataset_name = 'zone',
-     #  attribute = 'urbansim.zone.population',
-     #  years = [1980], 
-     #  ),
     xmlconfig = XMLConfiguration(filename="sanfrancisco.xml", 
                                  default_directory=r'C:\opus\project_configs',
                                  is_parent=False)
@@ -423,15 +425,18 @@ def make_zone_dbfs(cache_directory):
       "pwac_exp=sanfrancisco.zone.exp_travel_time_weighted_access_by_population",
       "pwac_lrt=sanfrancisco.zone.lrt_travel_time_weighted_access_by_population",
       "pwac_bart=sanfrancisco.zone.bart_travel_time_weighted_access_by_population",
+      "pwac_hwy=sanfrancisco.zone.hwy_travel_time_weighted_access_by_population",
       "ewac_bus=sanfrancisco.zone.bus_travel_time_weighted_access_to_employment",
       "ewac_exp=sanfrancisco.zone.exp_travel_time_weighted_access_to_employment",
       "ewac_lrt=sanfrancisco.zone.lrt_travel_time_weighted_access_to_employment",
       "ewac_bart=sanfrancisco.zone.bart_travel_time_weighted_access_to_employment",
-      "ttpw_bus=sanfrancisco.zone.bus_travel_time_to_946",
-      "ttpw_exp=sanfrancisco.zone.exp_travel_time_to_946",
-      "ttpw_lrt=sanfrancisco.zone.lrt_travel_time_to_946",
-      "ttpw_bart=sanfrancisco.zone.bart_travel_time_to_946",
-      "d2powell=sanfrancisco.zone.dist_travel_time_to_946"
+      "ewac_hwy=sanfrancisco.zone.hwy_travel_time_weighted_access_to_employment",
+      "ttpw_bus=sanfrancisco.zone.bus_travel_time_to_751",
+      "ttpw_exp=sanfrancisco.zone.exp_travel_time_to_751",
+      "ttpw_lrt=sanfrancisco.zone.lrt_travel_time_to_751",
+      "ttpw_bart=sanfrancisco.zone.bart_travel_time_to_751",
+      "ttpw_hwy=sanfrancisco.zone.hwy_travel_time_to_751",      
+      "d2powell=sanfrancisco.zone.dist_travel_time_to_751"
     ])
 
     zonedbf_indicators = [ DatasetTable(
@@ -446,16 +451,6 @@ def make_zone_dbfs(cache_directory):
                                          display_error_box = False,
                                          show_results = False)
 
-#class Map(AbstractIndicator):
-#
-#    def __init__(self, source_data, dataset_name, 
-#                 attribute = None, 
-#                 years = None, operation = None, name = None,
-#                 scale = None,
-#                 storage_location = None):
-
-# maybe make an indicator that just has one line per year, and then postprocess by reading those files
-# and aggregating by year?  Or do a DataTable indicator...
 
 if __name__ == '__main__':
 
@@ -463,13 +458,13 @@ if __name__ == '__main__':
     starttime = time()
     logger.log_note(strftime("%x %X", localtime(starttime)) + ": Starting")
     
-    cache_directory=r'C:\opus\data\sanfrancisco\runs\run_10.2010_09_04_18_02'
+    cache_directory=r'C:\opus\data\sanfrancisco\runs\run_46.2010_09_06_12_00'
 
     make_multiyear_workbook(cache_directory=cache_directory,
-                            yearstart=2010,
-                            yearend=2035)
+                             yearstart=2010,
+                             yearend=2035)
     make_topsheet(cache_directory)
-    # make_zone_dbfs(cache_directory)
+    make_zone_dbfs(cache_directory)
 
     endtime = time()
     logger.log_note(strftime("%x %X", localtime(endtime)) + " Completed. Total time: " + str((endtime-starttime)/60.0) + " mins")
