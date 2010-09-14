@@ -120,6 +120,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             year = current_year
         this_year_index = where(target_vacancy['year']==year)[0]
         target_vacancy_for_this_year = DatasetSubset(target_vacancy, this_year_index)
+        if target_vacancy_for_this_year.size() == 0:
+            raise IOError, 'No target vacancy defined for year %s.' % year
         
         ## current_target_vacancy.target_attribute_name = 'target_vacancy_rate'
         ## each column provides a category for which a target vacancy is specified
