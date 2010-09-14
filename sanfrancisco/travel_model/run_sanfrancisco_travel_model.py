@@ -23,14 +23,13 @@ class RunSanfranciscoTravelModel(RunTravelModel):
     SUBDIR_LANDUSE_INPUTS           = "LandUseInputs"
     RUN_BATCH                       = "runmodel.bat"
     RUN_DISPATCH                    = "runmodel.jset"
-    DISPATCH                        = r"X:\champ\util\bin\dispatch.bat"
+    DISPATCH                        = r"Y:\champ\util\bin\dispatch.bat"
     CLUSTER_MACHINE                 = "taraval"
 
-    def run(self, config, year, *args, **kwargs):
+    def run(self, myconfig={}, year=2001):
         """Runs the travel model, using appropriate info from config. 
         """
-        
-        tm_config   = config["travel_model_configuration"]
+        tm_config   = myconfig["travel_model_configuration"]
         
         # verify that the base directory exists and there's a runmodel.bat in it, or we're a nogo
         base_dir    = tm_config['travel_model_base_directory']    
@@ -46,6 +45,12 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         run_dir     = os.path.join(base_dir, tm_config[year]['year_dir'])
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
+	    
+        # if the final skims are already there, then abort -- this has run already
+        if os.path.exists(os.path.join(run_dir, "finalTRNWLWAM.h5")):
+            logger.log_status("Final skims found in %s, skipping travel model" % run_dir)
+            return
+        
         runinputs_dir = os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS)
         if not os.path.exists(runinputs_dir):
             os.makedirs(runinputs_dir)
@@ -386,20 +391,26 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         batfile             = "runPopSyn.bat"
         shutil.copy2(os.path.join(tm_config['popsyn_srcdir'], batfile), dest_dir)
         
-        # run the TazDataProcessor
-        cmd         = os.path.join(dest_dir, batfile)
-        logger.start_block("Running [%s]" % (cmd))
-        popsynproc = subprocess.Popen( cmd, cwd = dest_dir, stdout=subprocess.PIPE ) 
-        for line in popsynproc.stdout:
-            logger.log_status(line.strip('\r\n'))
-        popsynret  = popsynproc.wait()
-        logger.log_status("Returned %d" % (popsynret))
-        if popsynret != 0: raise StandardError, "Population Synthesizer exited with bad return code"
+        # run the Population Synthesizer
+        sfsampfile = os.path.join(dest_outputsdir, "syntheticPop", "sfsamp.txt")
+        if os.path.exists(sfsampfile):
+            logger.log_status("Synthesized population file %s exists -- skipping creation!" % sfsampfile)
+        else:
+            cmd         = os.path.join(dest_dir, batfile)
+            logger.start_block("Running [%s]" % (cmd))
+            popsynproc = subprocess.Popen( cmd, cwd = dest_dir, stdout=subprocess.PIPE ) 
+            for line in popsynproc.stdout:
+                logger.log_status(line.strip('\r\n'))
+            popsynret  = popsynproc.wait()
+            logger.log_status("Returned %d" % (popsynret))
+            if popsynret != 0: raise StandardError, "Population Synthesizer exited with bad return code"
+
+        # put the output files in place
+        shutil.copy2(sfsampfile, os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS))
+
         logger.end_block()
         
-        # put the output files in place
-        shutil.copy2(os.path.join(dest_outputsdir, "syntheticPop", "sfsamp.txt"), 
-                     os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS))
+
 
     def _updateConfigPaths(self, configfile, regexlist, doubleBackslash=True):
         """ Updates the given configfile with the given regex dictionary.

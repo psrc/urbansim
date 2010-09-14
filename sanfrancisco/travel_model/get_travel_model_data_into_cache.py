@@ -61,7 +61,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
               "bart":[],          "exp":[] \
             }
         
-        skims   = SkimUtil(run_dir, useTempTrn = True, timeperiods=[2], trnskims=["WLW", "WMW", "WBW", "WPW"])
+        skims   = SkimUtil(run_dir, useTempTrn = True, timeperiods=[2], trnskims=["WLW", "WMW", "WBW", "WPW"], skimprefix="final")
         maxTAZ  = min(skims.getMaxTAZnum(), maxTAZ)
         modes   = dict((v,k) for k,v in TRIPMODE.iteritems())
         logger.log_status("Opened and read Skims")
@@ -71,54 +71,51 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
                 return_data["from_zone_id"].append(otaz)
                 return_data["to_zone_id"].append(dtaz)
                 
+                if otaz == dtaz: 
+                    nonmott = skims.getTripTravelTime(tripmode=modes["Walk"], segdir=1,
+                                                      otaz=otaz, dtaz=dtaz,
+                                                      timeperiod=2)
+                
                 # auto 
-                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["DA"],
-                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
-                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
-                                                              purpose=1, totalstops=1, 
-                                                              todepart=2, tddepart=4)
-                if d > 0:   return_data["dist"].append(d)
-                else:       return_data["dist"].append(MISSING_VALUE)
-                if t > 0:   return_data["hwy"].append(t)
-                else:       return_data["hwy"].append(MISSING_VALUE)
+                d = skims.getTripTravelDist(tripmode=modes["DA"],
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if d > 0:           return_data["dist"].append(d)
+                else:               return_data["dist"].append(MISSING_VALUE)
+                
+                t = skims.getTripTravelTime(tripmode=modes["DA"], segdir=1,
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if t > 0:           return_data["hwy"].append(t)
+                else:               return_data["hwy"].append(MISSING_VALUE)
                 
                 # WLW
-                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToLocal"],
-                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
-                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
-                                                              purpose=1, totalstops=1, 
-                                                              todepart=2, tddepart=4)
-                if t > 0:   return_data["bus"].append(t)
-                else:       return_data["bus"].append(MISSING_VALUE)
+                t = skims.getTripTravelTime(tripmode=modes["WalkToLocal"], segdir=1,
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if t > 0:           return_data["bus"].append(t)
+                elif otaz==dtaz:    return_data["bus"].append(nonmott)
+                else:               return_data["bus"].append(MISSING_VALUE)
                 
                 # WMW
-                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToMUNI"], 
-                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
-                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
-                                                              purpose=1, totalstops=1,
-                                                              todepart=2, tddepart=4)
-                if t > 0:   return_data["lrt"].append(t)
-                else:       return_data["lrt"].append(MISSING_VALUE)
+                t = skims.getTripTravelTime(tripmode=modes["WalkToMUNI"], segdir=1,
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if t > 0:           return_data["lrt"].append(t)
+                elif otaz==dtaz:    return_data["lrt"].append(nonmott)
+                else:               return_data["lrt"].append(MISSING_VALUE)
 
                 # WBW
-                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToBART"], 
-                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
-                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
-                                                              purpose=1, totalstops=1,
-                                                              todepart=2, tddepart=4)
-                if t > 0:   return_data["bart"].append(t)
-                else:       return_data["bart"].append(MISSING_VALUE)
+                t = skims.getTripTravelTime(tripmode=modes["WalkToBART"], segdir=1,
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if t > 0:           return_data["bart"].append(t)
+                elif otaz==dtaz:    return_data["bart"].append(nonmott)
+                else:               return_data["bart"].append(MISSING_VALUE)
                 
                 # WPW
-                (d,t,f, opc, trippkcst) = skims.getTravelAttr(tripmode=modes["WalkToPremium"],
-                                                              segdir=1, otaz=otaz, dtaz=dtaz, timeperiod=2,
-                                                              lasttimeperiod=2, curr_seg=1, paysToPark=0,
-                                                              purpose=1, totalstops=1,
-                                                              todepart=2, tddepart=4)
-                if t > 0:   return_data["exp"].append(t)
-                else:       return_data["exp"].append(MISSING_VALUE)
+                t = skims.getTripTravelTime(tripmode=modes["WalkToPremium"], segdir=1,
+                                            otaz=otaz, dtaz=dtaz, timeperiod=2)
+                if t > 0:           return_data["exp"].append(t)
+                elif otaz==dtaz:    return_data["exp"].append(nonmott)
+                else:               return_data["exp"].append(MISSING_VALUE)
                 
-            if otaz % 100 == 0: logger.log_status("Completed all destionations for otaz up to %d" % (otaz))
+            if otaz % 100 == 0: logger.log_status("Completed all destinations for otaz up to %d" % (otaz))
 
         # convert to numpy array        
         for item, value in return_data.iteritems():
