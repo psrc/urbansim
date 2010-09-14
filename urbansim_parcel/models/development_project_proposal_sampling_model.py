@@ -118,6 +118,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # vacancy rates are specified region wide:
             current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
+        if current_target_vacancy.size() == 0:
+            raise IOError, 'No target vacancy defined for year %s.' % current_year
+        
         self.existing_units = {}   #total existing units by land_use type
         self.occupied_units = {}   #total occupied units by land_use type
         self.proposed_units = {}   #total proposed units by land_use type
