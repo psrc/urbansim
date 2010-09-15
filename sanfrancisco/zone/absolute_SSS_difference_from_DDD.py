@@ -8,4 +8,6 @@ from urbansim.abstract_variables.abstract_absolute_SSS_difference_from_DDD \
 
 class absolute_SSS_difference_from_DDD(abstract_absolute_SSS_difference_from_DDD):
     """difference of variable SSS (current year - baseyear)"""
-    pass
+    
+    def __init__(self, variable_name, year):
+        abstract_absolute_SSS_difference_from_DDD.__init__(self, 'zone', variable_name, year, 'sanfrancisco')

@@ -2,11 +2,13 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-
+from numpy import isnan, isinf
 from urbansim.abstract_variables.abstract_percent_SSS_difference_from_DDD \
     import abstract_percent_SSS_difference_from_DDD
 
 
 class percent_SSS_difference_from_DDD(abstract_percent_SSS_difference_from_DDD):
     """percent difference of variable SSS (current year - baseyear)"""
-    pass
+    def __init__(self, variable_name, year):
+        abstract_percent_SSS_difference_from_DDD.__init__(self, 'zone', variable_name, year, 'sanfrancisco')
+
