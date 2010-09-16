@@ -45,7 +45,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         run_dir     = os.path.join(base_dir, tm_config[year]['year_dir'])
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
-	    
+        
         # if the final skims are already there, then abort -- this has run already
         if os.path.exists(os.path.join(run_dir, "finalTRNWLWAM.h5")):
             logger.log_status("Final skims found in %s, skipping travel model" % run_dir)
