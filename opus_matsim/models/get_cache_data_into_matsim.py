@@ -85,6 +85,10 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
              show_results = False)
         
         ### "FACILITIES"
+        # yyyy There is a problem here (and at other places) if the table headers do not exist under exactly the same name.  
+        # For the _id, this is probably not a problem, since these are fairly strongly typed in the table definitions.  The other
+        # headers are, however, free form, and it could be, for example, "x_coord" or "xx" or "x100" or whatever.  There should
+        # be, minimally, something that checks that fields exist under these names.  kai, sep'10
         export_indicators = [
             DatasetTable(
                 attributes = [
