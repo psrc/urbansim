@@ -9,8 +9,8 @@ from urbansim.abstract_variables.abstract_percent_SSS_difference_from_DDD_max_DD
 
 class percent_SSS_difference_from_DDD_max_DDD(abstract_percent_SSS_difference_from_DDD_max_DDD):
     """percent difference of variable SSS (current year - baseyear)"""
-    def __init__(self, variable_name, year, maximum_value):
-        abstract_percent_SSS_difference_from_DDD_max_DDD.__init__(self, 'zone', variable_name, year, maximum_value, 'sanfrancisco')
+    ## no code needed, but we do need the class present in the dataset directory
+    pass
 
 
 from opus_core.tests import opus_unittest
