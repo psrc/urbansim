@@ -19,6 +19,7 @@ class StartRunOptionGroup(object):
     """
 
     config = XMLConfiguration("opus_matsim/configs/seattle_parcel.xml").get_run_configuration("Seattle_baseline")
+#    config = XMLConfiguration("opus_matsim/configs/psrc_parcel.xml").get_run_configuration("PSRC_baseline")
     
     insert_auto_generated_cache_directory_if_needed(config)
  

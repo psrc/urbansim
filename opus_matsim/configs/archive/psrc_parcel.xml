@@ -160,6 +160,7 @@
       		<year type="integer">2001</year>
       	</run_description>
       </years_to_run>
+	            <sampling_rate type="float">0.01</sampling_rate>
       <matsim_config_filename type="file">configs/psrc_matsim.xml</matsim_config_filename>
  </travel_model_configuration>
   </model_manager>
