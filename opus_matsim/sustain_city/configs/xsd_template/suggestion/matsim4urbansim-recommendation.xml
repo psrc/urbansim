@@ -1,0 +1,51 @@
+
+	<travel_model_configuration type="dictionary">
+		<models type="selectable_list">
+			<selectable 
+				name="opus_matsim.sustain_city.models.get_cache_data_into_matsim" 
+				type="selectable">False</selectable>
+			<selectable 
+				name="opus_matsim.sustain_city.models.run_dummy_travel_model" 
+				type="selectable">False</selectable>
+			<selectable name="opus_matsim.sustain_city.models.run_travel_model" 
+				type="selectable">False</selectable>
+			<selectable 
+				name="opus_matsim.sustain_city.models.get_matsim_data_into_cache" 
+				type="selectable">True</selectable>
+		</models>
+		
+		<matsim4urbansim type="dictionary">
+			<!-- 	parameters that are needed on both ends -->
+			<sampling_rate type="float">0.01</sampling_rate>
+			<temp_directory type="string">/opus_matsim/tmp/</temp_directory>
+		</matsim4urbansim>
+		
+		<!-- MATSim config parameter -->
+		<matsim_config type="dictionary">
+			<!--  	parameters that are needed to configure matsim, but are ignored on the urbansim side -->
+			<common type="dictionary">
+				<!-- network -->
+				<matsim_network_file type="file">
+					data/psrc/network/psrc.xml.gz</matsim_network_file>
+				<!-- controler -->
+				<first_iteration type="integer">0</first_iteration>
+				<last_iteration type="integer">3</last_iteration>
+				<!-- planCalcScore -->
+				<activityType_0 type="string">home</activityType_0>
+				<activityType_1 type="string">work</activityType_1>
+			</common>
+			<timemutator>
+				<mutationrange="7200"/>
+			</timemutator>
+		</matsim_config>
+		<!-- End MATSim config parameter -->
+		
+		<years_to_run key_name="year" type="category_with_special_keys">
+			<run_description type="dictionary">
+				<year type="integer">2001</year>
+			</run_description>
+			<run_description type="dictionary">
+				<year type="integer">2002</year>
+			</run_description>
+		</years_to_run>
+	</travel_model_configuration>

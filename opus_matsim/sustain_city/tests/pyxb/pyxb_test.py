@@ -13,7 +13,7 @@ class PyXBTest(object):
     '''
     
     def __init__(self):
-        print "Entering setup"
+        logger.log_status("Entering setup")
         
         logger.log_status('Testing automatic generation of the PyXB binding class.')
         logger.log_status('The PyXB binding class is needed to create the MATSim configuration via a xsd.')
@@ -22,15 +22,16 @@ class PyXBTest(object):
         self.binding_class_destination = pyxb_path.__path__[0]
         # point to test xsd
         self.xsd_file = os.path.join( self.binding_class_destination, 'test_xsd.xsd')
-        print "Leaving setup"
+        logger.log_status("Leaving setup")
         
     def test_run(self):
-        print "Entering test run"
-        print "Creating a new binding class"
+        logger.log_status("Entering test run")
+        
+        logger.log_status( "Creating a new binding class" )
         # starts creating a new binding class
-        return_code = update_xml_parser.UpdateBindingClass().run( self.xsd_file, self.binding_class_destination, True )
-        # self.assertTrue(return_code == True)
-        print "Leaving test run"
+        return_code = update_xml_parser.UpdateBindingClass().run( self.xsd_file, self.binding_class_destination, None, True )
+        self.assertTrue(return_code == 1)
+        logger.log_status( "Leaving test run" )
         
 if __name__ == "__main__":
     pyxb_test = PyXBTest()

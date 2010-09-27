@@ -19,6 +19,9 @@ class StartRunOptionGroup(object):
     # get program arguments from the command line
     program_arguments = sys.argv[1:]
     
+    # default parameters are:
+    # --config=opus_matsim/sustain_city/configs/seattle_parcel_prescheduled_events.xml 
+    # --executable=Seattle_baseline
     parser = optparse.OptionParser()
     parser.add_option("-c", "--config", dest="config_file_name", action="store", type="string",
                       help="Name of file containing urbansim config")
@@ -45,25 +48,5 @@ class StartRunOptionGroup(object):
     #except: pass
     
     run_manager.run_run(config, run_as_multiprocess = True )
-    
 
-'''from opus_core.tests import opus_unittest
-class StartRunOptionGroupTest(opus_unittest.OpusTestCase):
-    def __init__(self):
-        print "entering __init__"
-        
-    def setUp(self):
-        print "entering setUp"
-        
-    def test_run(self):
-        print "entering test_run"
-        
-    def tearDown(self):
-        print "entering tearDown"
-        
-    def cleanup_test_run(self):
-        print "entering cleanup_test_run"'''
-       
-"""if __name__ == '__main__':
-    opus_unittest.main()"""
         

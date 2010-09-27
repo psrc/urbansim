@@ -19,7 +19,8 @@ class Basic_XSD_Validation(object):
         logger.log_status('Validation test of genereated MATSim configuration via xsd...')
         
         # xml destination
-        self.matsim_config_file = self.matsim_config_path = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config", "test_matsim_config.xml")
+        self.matsim_config_file = self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config", "test_matsim_config.xml")
+        
         # create xml config file (only possible if pyxb is installed) ...
         # from opus_matsim.sustain_city.tests.pyxb.create_MATSim_config import Create_MATSim_Config
         # config_creator = Create_MATSim_Config(config_path, config_file_name, self.matsim_config_file)
@@ -28,8 +29,8 @@ class Basic_XSD_Validation(object):
         #    sys.exit()
         
         # ... therefore we are copying a matsim confing file
-        logger.log_note('Since PyXB is needed to create the MATSim configuration, an exsisting configuration file will be used for this test.')
-        logger.log_note('If the automatic generation of the MATSim configuration is desierd, please enable "Create_MATSim_Config" and disable "self.copy_matsim_config()" function in this test class.')
+        logger.log_note('An exsisting configuration file will be used for this test, since PyXB needed to be installed to create the MATSim configuration.')
+        # If the automatic generation of the MATSim configuration is desierd, please enable "Create_MATSim_Config" and disable "self.copy_matsim_config()" function in this test class.
         self.copy_matsim_config()
         
         self.config_path = config_path

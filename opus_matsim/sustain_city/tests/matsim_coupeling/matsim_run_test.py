@@ -91,14 +91,15 @@ class MATSimTestRun(object):
        
         return matsim_files_source
     
-    def create_MATSim_config(self):
-        ''' Creates the MATSim config file via pyxb
-        '''
-        from opus_matsim.sustain_city.tests.pyxb.create_MATSim_config import Create_MATSim_Config
-        
-        config_creator = Create_MATSim_Config(None, None, self.matsim_config_full)
-        if not config_creator.build_xml_config():
-            raise StandardError("Problems while creating MATSim config file...")
+    # not used anymore, moved Create_MATSim_Config into archive folder
+    #def create_MATSim_config(self):
+    #    ''' Creates the MATSim config file via pyxb
+    #    '''
+    #    from opus_matsim.sustain_city.tests.pyxb.create_MATSim_config import Create_MATSim_Config
+    #    
+    #    config_creator = Create_MATSim_Config(None, None, self.matsim_config_full)
+    #    if not config_creator.build_xml_config():
+    #        raise StandardError("Problems while creating MATSim config file...")
         
     def copy_matsim_config(self):
         

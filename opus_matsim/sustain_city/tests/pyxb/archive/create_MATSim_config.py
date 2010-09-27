@@ -25,10 +25,10 @@ class Create_MATSim_Config(object):
             self.config_name = 'test_urbansim_config.xml'
         self.matsim_config_location = destination
         if self.matsim_config_location == None:
-            self.matsim_config_path = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
-            if not self.test_path( self.matsim_config_path ):
+            self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
+            if not self.test_path( self.matsim_config_destination ):
                 return False
-            self.matsim_config_location = os.path.join( self.matsim_config_path, "test_matsim_config.xml")
+            self.matsim_config_location = os.path.join( self.matsim_config_destination, "test_matsim_config.xml")
         
         self.config_location = os.path.join( self.config_path, self.config_name)
         print "Loding test config file: %s" % self.config_location
