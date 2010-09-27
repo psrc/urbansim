@@ -178,6 +178,14 @@ class VariableEditor(QDialog, Ui_VariableEditor):
             self._name_warning('The name "constant" is a reserved keyword.\n'
                                'Please choose another name')
             return
+        if self.variable['name'].strip() == 'None':
+            self._name_warning('The name "None" is a reserved keyword.\n'
+                               'Please choose another name')
+            return
+        if self.variable['name'].strip() == '':
+            self._name_warning('The variable must have a name.\n'
+                               'Please enter a name')
+            return
         # if the user changed the variable name we need to make sure it's unique
         if self.original_variable['name'] != self.variable['name']:
             for dataset, taken_name in self.existing_variables:
