@@ -255,7 +255,8 @@ class Converter(object):
         for variable_node in general.findall("expression_library/*[@type='variable_definition']"):
             self.tag_name_fix(variable_node, 'variable')
             if 'dataset' in variable_node.attrib:
-                name = variable_node.get('name')
+                #name = variable_node.get('name')
+                name = variable_node.tag
                 dataset = variable_node.get('dataset') or ''
 #                if name == 'constant':
 #                    # delete "constant" variables -- they are now built-in
