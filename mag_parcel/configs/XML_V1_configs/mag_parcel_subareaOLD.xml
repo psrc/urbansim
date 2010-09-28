@@ -1,0 +1,811 @@
+<opus_project>
+  <xml_version>1.0</xml_version>
+  <general>
+    <description type="string">Sample MAG Parcel project</description>
+    <project_name hidden="True" type="string">mag_parcel_subarea</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <expression_library type="dictionary">
+      <art300 dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_arterial_in_gridcell&lt;300</art300>
+      <ln_bldgage dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean))).astype(float32)</ln_bldgage>
+      <lnsqft dataset="parcel" source="expression" type="variable_definition" use="both">(ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</lnsqft>
+      <lnsqftunit dataset="parcel" source="expression" type="variable_definition" use="both">(ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</lnsqftunit>
+      <lnlotsqft dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.parcel_sqft)).astype(float32)</lnlotsqft>
+      <lnunits dataset="parcel" source="expression" type="variable_definition" use="both">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</lnunits>
+      <lnlotsqftunit dataset="parcel" source="expression" type="variable_definition" use="both">(ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</lnlotsqftunit>
+      <far dataset="parcel" source="expression" type="variable_definition" use="both">(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
+      <ln_invfar dataset="parcel" source="expression" type="variable_definition" use="both">ln(safe_array_divide(parcel.parcel_sqft,(urbansim_parcel.parcel.building_sqft).astype(float32)))</ln_invfar>
+      <lngcdacbd dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell&lt;200</lngcdacbd>
+      <lnemp30da dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
+      <lnemp20da dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
+      <lnemp10da dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
+      <lnemp30tw dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp30tw>
+      <lnemp20tw dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp20tw>
+      <lnemp10wa dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp10wa>
+      <lnemp20wa dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp20wa>
+      <lnavginc dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.average_income))).astype(float32)</lnavginc>
+      <lnempden dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
+      <lnpopden dataset="parcel" source="expression" type="variable_definition" use="both">(ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
+      <inugb dataset="parcel" source="expression" type="variable_definition" use="both">parcel.is_inside_urban_growth_boundary==True</inugb>
+      <is_pre_1940 dataset="parcel" source="expression" type="variable_definition" use="both">parcel.aggregate(numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) &lt; 1940</is_pre_1940>
+      <existing_units dataset="parcel" source="Python class" type="variable_definition" use="both">urbansim_parcel.parcel.existing_units</existing_units>
+      <unit_price dataset="parcel" source="expression" type="variable_definition" use="both">(urbansim_parcel.parcel.unit_price).astype(float32)</unit_price>
+      <number_of_jobs dataset="parcel" followers="art600,hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">parcel.aggregate(urbansim_parcel.building.number_of_jobs)</number_of_jobs>
+      <lnpopden_bldg dataset="building" followers="art600,hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(parcel.disaggregate(urbansim_parcel.zone.population_per_acre)))).astype(float32)</lnpopden_bldg>
+      <art5000 dataset="parcel" followers="art600,hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_arterial_in_gridcell&lt;5000</art5000>
+      <ln_distance_to_hwy dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln(psrc.parcel.distance_to_highway_in_gridcell)</ln_distance_to_hwy>
+      <distance_to_hwy dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">(psrc.parcel.distance_to_highway_in_gridcell).astype(float32)</distance_to_hwy>
+      <distance_to_ramp dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">(psrc.parcel.distance_to_ramp_in_gridcell).astype(float32)</distance_to_ramp>
+      <ln_distance_to_ramp dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln(psrc.parcel.distance_to_ramp_in_gridcell)</ln_distance_to_ramp>
+      <ramp25000 dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell&lt;25000</ramp25000>
+      <ln_distance_to_arterial dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln(psrc.parcel.distance_to_arterial_in_gridcell)</ln_distance_to_arterial>
+      <ln_unit_price dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln((urbansim_parcel.parcel.unit_price).astype(float32)).astype(float32)</ln_unit_price>
+      <ln_land_value dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln((parcel.land_value).astype(float32))</ln_land_value>
+      <landvalue dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">(parcel.land_value).astype(float32)</landvalue>
+      <aaadistance_to_arterial dataset="parcel" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="Python class" type="variable_definition" use="both">psrc.parcel.distance_to_arterial_in_gridcell</aaadistance_to_arterial>
+      <weight dataset="building" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">(mag_parcel.building.observed_building_type_share).astype(float32)</weight>
+      <weight_sampled dataset="building" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">(mag_parcel.building.sampled_building_type_share).astype(float32)</weight_sampled>
+      <correct_weight dataset="building" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">safe_array_divide(mag_parcel.building.observed_building_type_share, mag_parcel.building.sampled_building_type_share)</correct_weight>
+      <ln_test dataset="building" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln_bounded(building.disaggregate(urbansim.gridcell.sector_1_employment_within_walking_distance))</ln_test>
+      <test dataset="household_x_building" followers="hwy1000,distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln_bounded(household.income - ((urbansim_parcel.building.unit_price/10.) * urbansim_parcel.building.building_sqft_per_unit))</test>
+      <hwy600 dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
+      <hwy2000 dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_highway_in_gridcell&lt;2000</hwy2000>
+      <hwy5000 dataset="parcel" followers="distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_highway_in_gridcell&lt;5000</hwy5000>
+      <bldgsqft dataset="parcel" followers="distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">urbansim_parcel.parcel.building_sqft</bldgsqft>
+      <hwy10000 dataset="parcel" followers="distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="model variable">psrc.parcel.distance_to_highway_in_gridcell&lt;10000</hwy10000>
+      <ln_num_retail_jobs dataset="parcel" followers="distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="expression" type="variable_definition" use="both">ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_1))</ln_num_retail_jobs>
+      <ln_distance_to_highway dataset="parcel" followers="distance_to_highway,is_commercial_building,is_industrial_building,is_mfh_building,is_mixed_use_building,is_near_art,is_near_highway,is_office_building,is_sfh_building,is_unit_price_le_0" source="Python class" type="variable_definition" use="both">ln(psrc.parcel.distance_to_highway_in_gridcell)</ln_distance_to_highway>
+      <lnpopden_bldg dataset="building" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(parcel.disaggregate(urbansim_parcel.zone.population_per_acre)))).astype(float32)</lnpopden_bldg>
+      <number_of_households dataset="building" source="expression" type="variable_definition" use="both">building.number_of_agents(household)</number_of_households>
+      <residential_units_bldg dataset="building" source="primary attribute" type="variable_definition" use="both">building.residential_units</residential_units_bldg>
+      <vacant_residential_units dataset="building" source="Python class" type="variable_definition" use="both">urbansim_parcel.building.vacant_residential_units</vacant_residential_units>
+      <true_number_residential_units dataset="building" source="expression" type="variable_definition" use="both">(urbansim_parcel.building.residential_units - urbansim_parcel.building.number_of_households)</true_number_residential_units>
+      <ramp300 dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell&lt;300</ramp300>
+      <ramp600 dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell&lt;600</ramp600>
+      <ramp2000_greater dataset="parcel" source="expression" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell&gt;2000</ramp2000_greater>
+      <ramp1200xxx dataset="parcel" source="Python class" type="variable_definition" use="both">psrc.parcel.distance_to_ramp_in_gridcell</ramp1200xxx>
+      <vacant_residential_units_by_zone dataset="zone" source="expression" type="variable_definition" use="both">zone.aggregate(parcel.aggregate(urbansim_parcel.building.vacant_residential_units))</vacant_residential_units_by_zone>
+      <number_of_buildings_by_zone dataset="zone" source="expression" type="variable_definition" use="both">zone.aggregate(parcel.number_of_agents(building))</number_of_buildings_by_zone>
+      <total_number_of_vacant_residential_units dataset="alldata" source="expression" type="variable_definition" use="both">alldata.aggregate_all(urbansim_parcel.building.vacant_residential_units)</total_number_of_vacant_residential_units>
+      <total_unplaced_households dataset="alldata" source="expression" type="variable_definition" use="both">alldata.aggregate_all(household.building_id &lt; 0)</total_unplaced_households>
+      <jobs_per_acre dataset="zone" source="expression" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs / (zone.aggregate(parcel.parcel_sqft) / 43560.0)</jobs_per_acre>
+      <average_income dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.average_income</average_income>
+      <number_of_persons dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.population</number_of_persons>
+      <number_of_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs</number_of_jobs_zone>
+      <number_of_jobs_parcel dataset="parcel" source="expression" type="variable_definition" use="both">parcel.aggregate(urbansim_parcel.building.number_of_jobs)</number_of_jobs_parcel>
+      <number_of_households_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_households</number_of_households_zone>
+      <number_construction_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_7</number_construction_jobs_zone>
+      <number_work_at_home_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_6</number_work_at_home_jobs_zone>
+      <number_other_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_5</number_other_jobs_zone>
+      <number_public_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_4</number_public_jobs_zone>
+      <number_industrial_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_3</number_industrial_jobs_zone>
+      <number_office_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_2</number_office_jobs_zone>
+      <number_retail_jobs_zone dataset="zone" source="Python class" type="variable_definition" use="both">urbansim_parcel.zone.number_of_jobs_of_sector_1</number_retail_jobs_zone>
+      <NHB_ELCM_is_commercial_building dataset="building" source="Python class" type="variable_definition" use="both">urbansim.building.is_commercial</NHB_ELCM_is_commercial_building>
+      <NHB_ELCM_is_industrial_building dataset="building" source="Python class" type="variable_definition" use="both">urbansim.building.is_industrial</NHB_ELCM_is_industrial_building>
+      <NHB_ELCM_is_office_building dataset="building" source="Python class" type="variable_definition" use="both">urbansim.building.is_office</NHB_ELCM_is_office_building>
+      <NHB_ELCM_is_near_highway dataset="building" source="expression" type="variable_definition" use="both">building.disaggregate(psrc.parcel.is_near_highway_in_gridcell)</NHB_ELCM_is_near_highway>
+      <NHB_ELCM_is_near_art dataset="building" source="expression" type="variable_definition" use="both">building.disaggregate(psrc.parcel.is_near_arterial_in_gridcell)</NHB_ELCM_is_near_art>
+      <NHB_ELCM_is_mixed_use_building dataset="building" source="Python class" type="variable_definition" use="both">urbansim.building.is_mixed_use</NHB_ELCM_is_mixed_use_building>
+      <NHB_ELCM_ln_unit_price_trunc dataset="building" source="expression" type="variable_definition" use="both">ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))</NHB_ELCM_ln_unit_price_trunc>
+      <NHB_ELCM_ln_zone_empden_7 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_7)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_7>
+      <NHB_ELCM_ln_zone_empden_5 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_5)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_5>
+      <NHB_ELCM_ln_zone_empden_4 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_4)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_4>
+      <NHB_ELCM_ln_zone_empden_3 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_3)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_3>
+      <NHB_ELCM_ln_zone_empden_2 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_2)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_2>
+      <NHB_ELCM_ln_zone_empden_1 dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_1)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</NHB_ELCM_ln_zone_empden_1>
+      <NHB_ELCM_lnempden dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))</NHB_ELCM_lnempden>
+      <NHB_ELCM_lnavginc dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.average_income))</NHB_ELCM_lnavginc>
+      <NHB_ELCM_lnsqft dataset="building" source="expression" type="variable_definition" use="both">ln(urbansim_parcel.building.building_sqft)</NHB_ELCM_lnsqft>
+      <NHB_ELCM_lnpopden dataset="building" source="expression" type="variable_definition" use="both">ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))</NHB_ELCM_lnpopden>
+      <NHB_ELCM_unit_price dataset="building" source="Python class" type="variable_definition" use="both">urbansim_parcel.building.unit_price</NHB_ELCM_unit_price>
+      <NHB_ELCM_ln_unit_price dataset="building" source="expression" type="variable_definition" use="model variable">ln(urbansim_parcel.building.unit_price)</NHB_ELCM_ln_unit_price>
+      <HLCM_lnpopden_bldg dataset="building" source="expression" type="variable_definition" use="model variable">(ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</HLCM_lnpopden_bldg>
+      <HLCM_one_pers_non_sfr dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.persons &lt; 2) * numpy.logical_not(urbansim.building.is_single_family_residential)</HLCM_one_pers_non_sfr>
+      <HLCM_ln_inc_x_is_mfr dataset="household_x_building" source="expression" type="variable_definition" use="model variable">ln(household.income) * urbansim.building.is_multi_family_residential</HLCM_ln_inc_x_is_mfr>
+      <HLCM_bldgsqft_per_unit dataset="building" source="primary attribute" type="variable_definition" use="model variable">building.sqft_per_unit</HLCM_bldgsqft_per_unit>
+      <HLCM_ln_residential_units dataset="building" source="expression" type="variable_definition" use="model variable">ln_bounded(building.residential_units)</HLCM_ln_residential_units>
+      <HLCM_has_children_x_is_single_family_residential dataset="household_x_building" source="expression" type="variable_definition" use="both">(household.children &gt; 0) * urbansim.building.is_single_family_residential</HLCM_has_children_x_is_single_family_residential>
+      <HLCM_ln_empden_zone_1 dataset="building" source="expression" type="variable_definition" use="model variable">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_of_sector_1)/building.disaggregate(zone.aggregate(parcel.parcel_sqft)/43560.0))</HLCM_ln_empden_zone_1>
+      <HLCM_ln_unit_price_trunc dataset="building" source="expression" type="variable_definition" use="model variable">ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price&lt;1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))</HLCM_ln_unit_price_trunc>
+      <HLCM_is_young_x_percent_young_households_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_young * building.disaggregate(psrc_parcel.parcel.percent_young_households_within_walking_distance)</HLCM_is_young_x_percent_young_households_within_walking_distance>
+      <HLCM_is_high_income_x_ln_sqft_per_unit dataset="household_x_building" source="expression" type="variable_definition" use="model variable">urbansim.household.is_high_income * ln(psrc_parcel.building.sqft_per_unit)</HLCM_is_high_income_x_ln_sqft_per_unit>
+      <HLCM_has_children_x_percent_households_with_children_within_walking_distance dataset="household_x_building" source="expression" type="variable_definition" use="model variable">(household.children &gt; 0) * building.disaggregate(psrc_parcel.parcel.percent_households_with_children_within_walking_distance)</HLCM_has_children_x_percent_households_with_children_within_walking_distance>
+      <HLCM_is_near_highway dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.is_near_highway_in_gridcell)</HLCM_is_near_highway>
+      <HLCM_is_near_art dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.is_near_arterial_in_gridcell)</HLCM_is_near_art>
+      <HLCM_distance_to_art dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell)</HLCM_distance_to_art>
+      <HLCM_distance_to_highway dataset="building" source="expression" type="variable_definition" use="both">building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell)</HLCM_distance_to_highway>
+      <HLCM_ln_bldage dataset="building" source="expression" type="variable_definition" use="model variable">ln(urbansim_parcel.building.age_masked)</HLCM_ln_bldage>
+      <HLCM_avg_unit_price dataset="building" source="expression" type="variable_definition" use="model variable">building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price,function=mean,intermediates=[parcel]))</HLCM_avg_unit_price>
+    </expression_library>
+      <dataset_pool_configuration hidden="True" type="class">
+        <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['mag_parcel','urbansim_parcel','urbansim','opus_core','psrc']</package_order>
+      </dataset_pool_configuration>
+    <available_datasets type="list">['building','parcel','zone','raz','large_area','gridcell','city','county','alldata','zip_code','development_project_proposal','household']</available_datasets>
+  </general>
+  <results_manager>
+    <Indicator_batches setexpanded="True" type="group">
+      <zone_indicators type="indicator_batch">
+        <job_sector_indicators type="batch_visualization">
+          <indicators hidden="True" type="string">['number_retail_jobs_zone', 'number_construction_jobs_zone', 'number_work_at_home_jobs_zone', 'number_other_jobs_zone', 'number_public_jobs_zone', 'number_industrial_jobs_zone', 'number_office_jobs_zone', 'number_of_jobs_zone']</indicators>
+          <output_type hidden="True" type="string">tab</output_type>
+          <output_style hidden="True" type="string">1</output_style>
+          <dataset_name hidden="True" type="string">zone</dataset_name>
+          <visualization_type hidden="True" type="string">tab</visualization_type>
+        </job_sector_indicators>
+        <population_jobs_indicators type="batch_visualization">
+          <indicators hidden="True" type="string">['population_per_acre', 'jobs_per_acre', 'average_income', 'number_of_persons', 'number_of_jobs_zone', 'number_of_households_zone']</indicators>
+          <output_type hidden="True" type="string">tab</output_type>
+          <output_style hidden="True" type="string">1</output_style>
+          <dataset_name hidden="True" type="string">zone</dataset_name>
+          <visualization_type hidden="True" type="string">tab</visualization_type>
+        </population_jobs_indicators>
+      </zone_indicators>
+    </Indicator_batches>
+    <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
+      <base_year_data type="source_data">
+        <run_id hidden="True" type="integer">1</run_id>
+        <scenario_name hidden="True" type="string" />
+        <run_name hidden="True" type="string">base_year_data</run_name>
+        <cache_directory hidden="True" type="string">c:\opus\data\mag_parcel_subarea\base_year_data</cache_directory>
+        <start_year hidden="True" type="string">2005</start_year>
+        <end_year hidden="True" type="integer">2005</end_year>
+      </base_year_data>
+    </Simulation_runs>
+  </results_manager>
+  <model_manager>
+    <model_system setexpanded="True" type="model_system">
+      <estimation_config type="configuration">
+        <save_estimation_results choices="True|False" type="boolean">False</save_estimation_results>
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_parcel/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <Class_name hidden="True" type="string">EstimationDatabaseConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</Class_path>
+          <database_name type="string">mag_2000_parcel_baseyear_data</database_name>
+        </estimation_database_configuration>
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['mag_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">2005</base_year>
+        <years type="tuple">
+          <firstyear type="integer">2005</firstyear>
+          <lastyear type="integer">2005</lastyear>
+        </years>
+      </estimation_config>
+      <real_estate_price_model copyable="True" type="model">
+        <structure type="dictionary">
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.real_estate_price_model</module>
+            <classname>RealEstatePriceModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">RealEstatePriceModel</name>
+            <submodel_string type="quoted_string">land_use_type_id</submodel_string>
+            <dependent_variable config_name="outcome_attribute" type="quoted_string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</dependent_variable>
+            <filter_attribute type="quoted_string">numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)</filter_attribute>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <estimate_config type="string">Resources({'save_predicted_values_and_errors': True})</estimate_config>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">real_estate_price_model_coefficients</coefficients_table>
+            <output hidden="True" type="string">(specification, coefficients)</output>
+          </prepare_for_run>
+          <run type="dictionary">
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
+            <dataset type="string">parcel</dataset>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <run_config type="string">Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':3, 'outlier_is_greater_than': 7})</run_config>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" type="string">prepare_for_estimate</name>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
+            <filter_variable type="quoted_string">numpy.logical_and(numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;10, urbansim_parcel.parcel.unit_price&lt;1500), urbansim_parcel.parcel.existing_units&gt;100)</filter_variable>
+            <dataset type="string">parcel</dataset>
+            <threshold type="integer">0</threshold>
+            <output hidden="True" type="string">(specification, index)</output>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <specification hidden="True" type="string">specification</specification>
+            <dependent_variable config_name="outcome_attribute" type="quoted_string">ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</dependent_variable>
+            <dataset type="string">parcel</dataset>
+            <index hidden="True" type="string">index</index>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
+            <output hidden="True" type="string">(coefficients, dummy)</output>
+          </estimate>
+        </structure>
+        <specification type="dictionary">
+          <single_family_residential type="submodel">
+            <description type="string">Single-Family Residential</description>
+            <submodel_id type="integer">1</submodel_id>
+            <variables type="variable_list">constant,lnavginc,ln_bldgage,lnlotsqftunit,lnpopden</variables>
+          </single_family_residential>
+          <multi_family_residential type="submodel">
+            <description type="string">Multi-Family Residential</description>
+            <submodel_id type="integer">2</submodel_id>
+            <variables type="variable_list">constant,ln_invfar,ln_bldgage,lnavginc,lnlotsqftunit</variables>
+          </multi_family_residential>
+          <retail type="submodel">
+            <description type="string">Retail</description>
+            <submodel_id type="integer">3</submodel_id>
+            <variables type="variable_list">constant,ln_invfar,ln_distance_to_arterial,ln_num_retail_jobs,ln_bldgage</variables>
+          </retail>
+          <industrial type="submodel">
+            <description type="string">Industrial</description>
+            <submodel_id type="integer">4</submodel_id>
+            <variables type="variable_list">constant,ln_bldgage,ln_invfar,lnempden</variables>
+          </industrial>
+          <office type="submodel">
+            <description type="string">Office</description>
+            <submodel_id type="integer">5</submodel_id>
+            <variables type="variable_list">constant,ln_bldgage,lnempden,ln_invfar,far,ln_distance_to_hwy</variables>
+          </office>
+          <public type="submodel">
+            <description type="string">Public</description>
+            <submodel_id type="integer">9</submodel_id>
+            <variables type="variable_list">constant,ln_bldgage,lnsqft,lnunits,lnavginc</variables>
+          </public>
+          <other type="submodel">
+            <description type="string">Other</description>
+            <submodel_id type="integer">10</submodel_id>
+            <variables type="variable_list">constant,lnavginc</variables>
+          </other>
+        </specification>
+      </real_estate_price_model>
+      <expected_sale_price_model copyable="True" type="model">
+        <structure type="dictionary">
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim_parcel.models.development_project_proposal_regression_model</module>
+            <classname>DevelopmentProjectProposalRegressionModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">DevelopmentProjectProposalRegressionModel</name>
+            <submodel_string type="quoted_string">land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)</submodel_string>
+            <filter_attribute type="quoted_string">urbansim_parcel.development_project_proposal.is_size_fit</filter_attribute>
+            <outcome_attribute_name type="quoted_string">ln_unit_price_expected</outcome_attribute_name>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <parcel_filter_for_new_development type="quoted_string">has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0</parcel_filter_for_new_development>
+            <parcel_filter_for_redevelopment type="quoted_string" />
+            <specification_storage hidden="True" type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
+            <coefficients_storage hidden="True" type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">real_estate_price_model_coefficients</coefficients_table>
+            <spec_replace_module_variable_pair hidden="True" type="string">('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')</spec_replace_module_variable_pair>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <output hidden="True" type="string">(development_project_proposal, specification, coefficients)</output>
+          </prepare_for_run>
+          <run type="dictionary">
+            <specification hidden="True" type="string">specification</specification>
+            <coefficients hidden="True" type="string">coefficients</coefficients>
+            <dataset type="string">development_project_proposal</dataset>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <output hidden="True" type="string">development_project_proposal</output>
+          </run>
+        </structure>
+      </expected_sale_price_model>
+      <subarea_employment_transition_model copyable="True" type="model">
+        <structure type="dictionary">
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.subarea_employment_transition_model</module>
+            <classname>SubareaEmploymentTransitionModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaEmploymentTransitionModel</name>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <location_id_name type="quoted_string">building_id</location_id_name>
+            <subarea_id_name type="quoted_string">raz_id</subarea_id_name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <output hidden="True" type="string">control_totals</output>
+            <storage type="string">base_cache_storage</storage>
+          </prepare_for_run>
+          <run type="dictionary">
+            <control_totals type="string">control_totals</control_totals>
+            <job_building_types type="string">job_building_type</job_building_types>
+            <job_set type="string">job</job_set>
+            <year type="string">year</year>
+          </run>
+        </structure>
+      </subarea_employment_transition_model>
+      <subarea_development_proposal_sampling_model copyable="True" type="model">
+        <structure type="dictionary">
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim_parcel.models.subarea_development_proposal_sampling_model</module>
+            <classname>SubareaDevelopmentProposalSamplingModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaDevelopmentProposalSamplingModel</name>
+            <proposal_set type="string">development_project_proposal</proposal_set>
+            <subarea_id_name type="quoted_string">raz_id</subarea_id_name>
+            <weight_string type="quoted_string">exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)</weight_string>
+            <filter_attribute parser_action="blank_to_None" type="string" />
+          </init>
+          <run type="dictionary">
+            <n type="integer">500</n>
+            <output hidden="True" type="string">(development_project_proposal, demolished_buildings)</output>
+          </run>
+        </structure>
+      </subarea_development_proposal_sampling_model>
+      <subarea_household_location_choice_model copyable="True" type="model">
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <output hidden="True" type="string">(coefficients, _)</output>
+            <agent_set type="string">household</agent_set>
+            <agents_index hidden="True" type="string">_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
+          </estimate>
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.subarea_household_location_choice_model</module>
+            <classname>SubareaHouseholdLocationChoiceModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaHouseholdLocationChoiceModel</name>
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <subarea_id_name type="quoted_string">raz_id</subarea_id_name>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
+            <estimation_weight_string type="quoted_string">residential_units</estimation_weight_string>
+            <number_of_units_string type="quoted_string">residential_units</number_of_units_string>
+            <number_of_agents_string type="quoted_string">number_of_households</number_of_agents_string>
+            <location_id_string type="quoted_string">building_id</location_id_string>
+            <submodel_string type="quoted_string">urbansim.household.income_category</submodel_string>
+            <estimation_size_agents type="float">0.5</estimation_size_agents>
+            <filter type="quoted_string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</filter>
+            <run_config type="string">Resources({'lottery_max_iterations': 7, 'aaaa': 'bbbb',})</run_config>
+            <estimate_config type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</estimate_config>
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" type="string">prepare_for_estimate</name>
+            <output hidden="True" type="string">(_specification, _index)</output>
+            <agent_set type="string">household</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <index_to_unplace type="string">None</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <portion_to_unplace type="string">.1</portion_to_unplace>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</filter>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <output hidden="True" type="string">(_specification, _coefficients)</output>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+          </prepare_for_run>
+          <run type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index hidden="True" type="string">hrm_index</agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients hidden="True" type="string">_coefficients</coefficients>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
+            <maximum_runs type="integer">10</maximum_runs>
+          </run>
+        </structure>
+      </subarea_household_location_choice_model>
+      <subarea_household_transition_model type="model">
+        <structure type="dictionary">
+          <import type="dictionary">
+            <module>urbansim.models.subarea_household_transition_model</module>
+            <classname>SubareaHouseholdTransitionModel</classname>
+          </import>
+          <init type="dictionary">
+            <name type="string">SubareaHouseholdTransitionModel</name>
+            <location_id_name type="string">'building_id'</location_id_name>
+            <subarea_id_name type="quoted_string">raz_id</subarea_id_name>
+            <debuglevel type="string">debuglevel</debuglevel>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output type="string">(control_totals, characteristics)</output>
+            <name type="string">prepare_for_run</name>
+            <storage type="string">base_cache_storage</storage>
+          </prepare_for_run>
+          <run type="dictionary">
+            <characteristics type="string">characteristics</characteristics>
+            <household_set type="string">household</household_set>
+            <control_totals parser_action="blank_to_None" type="string">control_totals</control_totals>
+            <year type="string">year</year>
+          </run>
+        </structure>
+      </subarea_household_transition_model>
+      <subarea_employment_location_choice_model copyable="True" type="model">
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index hidden="True" type="string">index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
+            <output hidden="True" type="string">(coefficients, _)</output>
+          </estimate>
+          <group_by_attribute type="tuple">
+            <grouping_table type="string">job_building_type</grouping_table>
+            <grouping_column type="string">name</grouping_column>
+          </group_by_attribute>
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.subarea_employment_location_choice_model</module>
+            <classname>SubareaEmploymentLocationChoiceModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaEmploymentLocationChoiceModel</name>
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_mnl_estimation</estimation>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <subarea_id_name type="quoted_string">raz_id</subarea_id_name>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_SSS_job_space</capacity_string>
+            <estimation_weight_string type="quoted_string">vacant_SSS_job_space</estimation_weight_string>
+            <filter type="quoted_string">building.non_residential_sqft</filter>
+            <estimation_size_agents type="float">1.0</estimation_size_agents>
+            <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+            <number_of_units_string type="quoted_string">total_SSS_job_space</number_of_units_string>
+            <run_config type="dictionary">
+              <agent_units_string parser_action="blank_to_None" type="string" />
+              <lottery_max_iterations type="integer">10</lottery_max_iterations>
+            </run_config>
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" type="string">prepare_for_estimate</name>
+            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+            <output hidden="True" type="string">(specification, index)</output>
+            <agent_set type="string">job</agent_set>
+            <index_to_unplace parser_action="blank_to_None" type="string">erm_index</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">jobs_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter>
+            <models_to_run parser_action="skip" type="list">['employment_relocation_model']</models_to_run>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <output hidden="True" type="string">(specification, coefficients)</output>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
+          </prepare_for_run>
+          <run type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index hidden="True" type="string">erm_index</agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string">coefficients</coefficients>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
+            <maximum_runs type="integer">3</maximum_runs>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <home_based type="dictionary">
+            <submodel copyable="True" type="submodel">
+              <description type="string">No submodel</description>
+              <submodel_id type="integer">-2</submodel_id>
+              <variables type="variable_list">unit_price</variables>
+            </submodel>
+          </home_based>
+          <non_home_based type="dictionary">
+            <submodel copyable="True" type="submodel">
+              <description type="string">No submodel</description>
+              <submodel_id type="integer">-2</submodel_id>
+              <variables type="variable_list">NHB_ELCM_is_commercial_building, NHB_ELCM_is_industrial_building, NHB_ELCM_is_near_art, NHB_ELCM_is_near_highway, NHB_ELCM_is_office_building, NHB_ELCM_ln_unit_price_trunc, NHB_ELCM_lnavginc, NHB_ELCM_lnempden, NHB_ELCM_lnpopden, NHB_ELCM_lnsqft</variables>
+            </submodel>
+          </non_home_based>
+        </specification>
+      </subarea_employment_location_choice_model>
+      <subarea_employment_location_choice_model_spillover copyable="True" type="model">
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index hidden="True" type="string">index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
+            <output hidden="True" type="string">(coefficients, _)</output>
+          </estimate>
+          <group_by_attribute type="tuple">
+            <grouping_table type="string">job_building_type</grouping_table>
+            <grouping_column type="string">name</grouping_column>
+          </group_by_attribute>
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.subarea_employment_location_choice_model</module>
+            <classname>SubareaEmploymentLocationChoiceModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaEmploymentLocationChoiceModel</name>
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_mnl_estimation</estimation>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <subarea_id_name type="quoted_string">mpa_id</subarea_id_name>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_SSS_job_space</capacity_string>
+            <estimation_weight_string type="quoted_string">vacant_SSS_job_space</estimation_weight_string>
+            <filter type="quoted_string">building.non_residential_sqft</filter>
+            <estimation_size_agents type="float">1.0</estimation_size_agents>
+            <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+            <number_of_units_string type="quoted_string">total_SSS_job_space</number_of_units_string>
+            <run_config type="dictionary">
+              <agent_units_string parser_action="blank_to_None" type="string" />
+              <lottery_max_iterations type="integer">10</lottery_max_iterations>
+            </run_config>
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" type="string">prepare_for_estimate</name>
+            <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+            <output hidden="True" type="string">(specification, index)</output>
+            <agent_set type="string">job</agent_set>
+            <index_to_unplace parser_action="blank_to_None" type="string">erm_index</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">jobs_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter>
+            <models_to_run parser_action="skip" type="list">['employment_relocation_model']</models_to_run>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <output hidden="True" type="string">(specification, coefficients)</output>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
+          </prepare_for_run>
+          <run type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index hidden="True" parser_action="blank_to_None" type="string" />
+            <agents_filter type="quoted_string">job.building_id&lt;1</agents_filter>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string">coefficients</coefficients>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">specification</specification>
+            <maximum_runs type="integer">3</maximum_runs>
+          </run>
+        </structure>
+        <specification type="dictionary">
+          <home_based type="dictionary">
+            <submodel copyable="True" type="submodel">
+              <description type="string">No submodel</description>
+              <submodel_id type="integer">-2</submodel_id>
+              <variables type="variable_list">unit_price</variables>
+            </submodel>
+          </home_based>
+          <non_home_based type="dictionary">
+            <submodel copyable="True" type="submodel">
+              <description type="string">No submodel</description>
+              <submodel_id type="integer">-2</submodel_id>
+              <variables type="variable_list">NHB_ELCM_is_commercial_building, NHB_ELCM_is_industrial_building, NHB_ELCM_is_near_art, NHB_ELCM_is_near_highway, NHB_ELCM_is_office_building, NHB_ELCM_ln_unit_price_trunc, NHB_ELCM_lnavginc, NHB_ELCM_lnempden, NHB_ELCM_lnpopden, NHB_ELCM_lnsqft</variables>
+            </submodel>
+          </non_home_based>
+        </specification>
+      </subarea_employment_location_choice_model_spillover>
+      <subarea_household_location_choice_model_spillover copyable="True" type="model">
+        <structure type="dictionary">
+          <estimate type="dictionary">
+            <output hidden="True" type="string">(coefficients, _)</output>
+            <agent_set type="string">household</agent_set>
+            <agents_index hidden="True" type="string">_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
+          </estimate>
+          <import hidden="True" type="dictionary">
+            <module type="string">urbansim.models.subarea_household_location_choice_model</module>
+            <classname>SubareaHouseholdLocationChoiceModel</classname>
+          </import>
+          <init type="dictionary">
+            <name hidden="True" type="string">SubareaHouseholdLocationChoiceModel</name>
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
+            <dataset_pool hidden="True" type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <subarea_id_name type="quoted_string">mpa_id</subarea_id_name>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
+            <estimation_weight_string type="quoted_string">residential_units</estimation_weight_string>
+            <number_of_units_string type="quoted_string">residential_units</number_of_units_string>
+            <number_of_agents_string type="quoted_string">number_of_households</number_of_agents_string>
+            <location_id_string type="quoted_string">building_id</location_id_string>
+            <submodel_string type="quoted_string">urbansim.household.income_category</submodel_string>
+            <estimation_size_agents type="float">0.5</estimation_size_agents>
+            <filter type="quoted_string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</filter>
+            <run_config type="string">Resources({'lottery_max_iterations': 7, 'aaaa': 'bbbb',})</run_config>
+            <estimate_config type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</estimate_config>
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name hidden="True" type="string">prepare_for_estimate</name>
+            <output hidden="True" type="string">(_specification, _index)</output>
+            <agent_set type="string">household</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <index_to_unplace type="string">None</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <portion_to_unplace type="string">.1</portion_to_unplace>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</filter>
+          </prepare_for_estimate>
+          <prepare_for_run type="dictionary">
+            <name hidden="True" type="string">prepare_for_run</name>
+            <output hidden="True" type="string">(_specification, _coefficients)</output>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+          </prepare_for_run>
+          <run type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index hidden="True" parser_action="blank_to_None" type="string" />
+            <agents_filter type="quoted_string">household.building_id&lt;1</agents_filter>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients hidden="True" type="string">_coefficients</coefficients>
+            <data_objects hidden="True" type="string">datasets</data_objects>
+            <debuglevel hidden="True" type="string">debuglevel</debuglevel>
+            <specification hidden="True" type="string">_specification</specification>
+            <maximum_runs type="integer">10</maximum_runs>
+          </run>
+        </structure>
+      </subarea_household_location_choice_model_spillover>
+    </model_system>
+  </model_manager>
+  <scenario_manager>
+    <mag_baseline copyable="True" executable="True" type="scenario">
+      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+      <base_year type="integer">2005</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2006</firstyear>
+        <lastyear type="integer">2007</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <real_estate_price_model choices="Run|Skip" type="model_choice">Run</real_estate_price_model>
+        <expected_sale_price_model choices="Run|Skip" type="model_choice">Run</expected_sale_price_model>
+        <subarea_development_proposal_sampling_model choices="Run|Skip" type="model_choice">Run</subarea_development_proposal_sampling_model>
+        <building_construction_model choices="Run|Skip" type="model_choice">Run</building_construction_model>
+        <subarea_employment_transition_model choices="Run|Skip" type="model_choice">Skip</subarea_employment_transition_model>
+        <subarea_household_transition_model choices="Run|Skip" type="model_choice">Run</subarea_household_transition_model>
+        <household_relocation_model choices="Run|Skip" type="model_choice">Run</household_relocation_model>
+        <subarea_household_location_choice_model choices="Run|Skip" type="model_choice">Run</subarea_household_location_choice_model>
+        <employment_relocation_model choices="Run|Skip" type="model_choice">Skip</employment_relocation_model>
+        <subarea_employment_location_choice_model choices="Run|Skip" type="model_choice">Skip<group_members type="string">non_home_based</group_members>
+        </subarea_employment_location_choice_model>
+      </models_to_run>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_parcel_subarea/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <Class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">mag_parcel_subarea/runs</scenario_runs_directory>
+        <baseyear_cache type="class">
+          <Class_name hidden="True" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">mag_parcel_subarea/base_year_data</existing_cache_to_copy>
+        </baseyear_cache>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <advanced type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <Class_name hidden="True" type="string">ScenarioDatabaseConfiguration</Class_name>
+            <Class_path hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</Class_path>
+            <database_name type="string">mag_2000_parcel_baseyear_data</database_name>
+          </baseyear_database_configuration>
+          <cache_from_database choices="True|False" type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+          <tables_to_cache type="selectable_list">
+            <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+            <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+            <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
+            <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
+            <building_sqft_per_job choices="Cache|Skip" type="table">Cache</building_sqft_per_job>
+            <building_types choices="Cache|Skip" type="table">Cache</building_types>
+            <buildings choices="Cache|Skip" type="table">Cache</buildings>
+            <cities choices="Cache|Skip" type="table">Cache</cities>
+            <constant_taz_columns choices="Cache|Skip" type="table">Cache</constant_taz_columns>
+            <counties choices="Cache|Skip" type="table">Cache</counties>
+            <demolition_cost_per_sqft choices="Cache|Skip" type="table">Cache</demolition_cost_per_sqft>
+            <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
+            <development_template_components choices="Cache|Skip" type="table">Cache</development_template_components>
+            <development_templates choices="Cache|Skip" type="table">Cache</development_templates>
+            <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+            <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+            <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+            <fazes choices="Cache|Skip" type="table">Cache</fazes>
+            <generic_land_use_types choices="Cache|Skip" type="table">Cache</generic_land_use_types>
+            <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
+            <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+            <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+            <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+            <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+            <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+            <households choices="Cache|Skip" type="table">Cache</households>
+            <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+            <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+            <jobs choices="Cache|Skip" type="table">Cache</jobs>
+            <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
+            <land_use_types choices="Cache|Skip" type="table">Cache</land_use_types>
+            <large_areas choices="Cache|Skip" type="table">Cache</large_areas>
+            <non_home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_coefficients>
+            <non_home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</non_home_based_employment_location_choice_model_specification>
+            <parcels choices="Cache|Skip" type="table">Cache</parcels>
+            <persons choices="Cache|Skip" type="table">Cache</persons>
+            <real_estate_price_model_coefficients choices="Cache|Skip" type="table">Cache</real_estate_price_model_coefficients>
+            <real_estate_price_model_specification choices="Cache|Skip" type="table">Cache</real_estate_price_model_specification>
+            <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+            <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+            <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+            <zones choices="Cache|Skip" type="table">Cache</zones>
+          </tables_to_cache>
+          <tables_to_cache_nchunks type="dictionary">
+            <parcels type="integer">1</parcels>
+          </tables_to_cache_nchunks>
+        </advanced>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <Class_name hidden="True" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['mag_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_cache_after_each_model type="list">['parcel','building','household','job','development_project_proposal_component','development_project_proposal','travel_data']</datasets_to_cache_after_each_model>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <zone choices="Load|Skip" type="dataset">Load</zone>
+          <household choices="Load|Skip" type="dataset">Load</household>
+          <building choices="Load|Skip" type="dataset">Load</building>
+          <parcel choices="Load|Skip" type="dataset">Load<package_name type="string">urbansim_parcel</package_name>
+          </parcel>
+          <development_template choices="Load|Skip" type="dataset">Load<package_name type="string">urbansim_parcel</package_name>
+          </development_template>
+          <development_template_component choices="Load|Skip" type="dataset">Load<package_name type="string">urbansim_parcel</package_name>
+          </development_template_component>
+          <job choices="Load|Skip" type="dataset">Load</job>
+          <building_type choices="Load|Skip" type="dataset">Load<package_name type="string">urbansim_parcel</package_name>
+          </building_type>
+          <travel_data choices="Load|Skip" type="dataset">Load</travel_data>
+          <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+        </datasets_to_preload>
+      </advanced>
+    </mag_baseline>
+  </scenario_manager>
+</opus_project>
