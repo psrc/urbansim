@@ -140,7 +140,7 @@ class MapnikAnimation(MapnikMap):
         
         table_name = dataset_name+'_animated_map_'+str(min(year_list))+'_'+indicator_name
         animation_file_name = str(os.path.join(self.storage_location,table_name+'.'+self.get_file_extension()))
-        os.system('gm convert -delay 100 %s -loop 0 %s' % (' '.join(map_file_list), animation_file_name))
+        os.system('convert -delay 100 %s -loop 0 %s' % (' '.join(map_file_list), animation_file_name))
 
         # delete intermediate png files
         for i in range(map_file_list.__len__()):
