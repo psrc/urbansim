@@ -6,6 +6,21 @@
   </general>
   <model_manager>
     <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models">
+<!--        <model name="prescheduled_events" type="model"> -->
+<!--         <structure type="dictionary"> -->
+<!--           <import name="import" type="dictionary"> -->
+<!--             <class_module>urbansim.models.process_prescheduled_development_events</class_module> -->
+<!--             <class_name>ProcessPrescheduledDevelopmentEvents</class_name> -->
+<!--           </import> -->
+<!--           <init type="dictionary"> -->
+<!--             <name name="name" type="string">ProcessPrescheduledDevelopmentEvents</name> -->
+<!--           </init> -->
+<!--           <run type="dictionary"> -->
+<!--             <output name="output" type="string">development_events</output> -->
+<!--             <argument name="storage" type="string">base_cache_storage</argument> -->
+<!--           </run> -->
+<!--         </structure> -->
+<!--       </model> -->
     </models>
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <travel_model_configuration type="dictionary">
@@ -32,7 +47,8 @@
         <lastyear type="integer">2001</lastyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
-        <!--<selectable name="real_estate_price_model" type="model_choice">False</selectable>
+<!--         <selectable name="prescheduled_events" type="model_choice">True</selectable> -->
+        <selectable name="real_estate_price_model" type="model_choice">False</selectable>
         <selectable name="expected_sale_price_model" type="model_choice">False</selectable>
         <selectable name="development_proposal_choice_model" type="model_choice">False</selectable>
         <selectable name="building_construction_model" type="model_choice">False</selectable>
@@ -43,7 +59,7 @@
         <selectable name="employment_relocation_model" type="model_choice">False</selectable>
         <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">non_home_based</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="model_choice">False</selectable>-->
+        <selectable name="distribute_unplaced_jobs_model" type="model_choice">False</selectable>
       </models_to_run>
     </scenario>
   </scenario_manager>
