@@ -64,7 +64,7 @@ class UpdateBindingClass(object):
                     logger.log_status("Creating archive folder %s" % archive_folder)
                     os.mkdir(archive_folder)
                 # create subfolder
-                datetime = time.strftime("%Y_%m_%d-%H:%M:%S", time.gmtime())
+                datetime = time.strftime("%Y_%m_%d_%H-%M-%S", time.gmtime())
                 subfolder = os.path.join(archive_folder, datetime)
                 os.mkdir(subfolder)
                 destination = os.path.join(subfolder, self.output_pyxb_package_file)
