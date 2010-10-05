@@ -4,4 +4,5 @@
 
 aliases = [
            "building_type_id = household.disaggregate(building.building_type_id)",
+           "large_area_id = household.disaggregate(faz.large_area_id, intermediates=[zone,parcel,building])",
            ]
