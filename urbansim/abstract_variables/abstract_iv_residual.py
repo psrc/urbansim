@@ -12,7 +12,7 @@ class abstract_iv_residual(Variable):
     """"""
     p = "to_be_specified_in_full_qualified_variable_name" # dependent variable in 1st stage IV regression
     iv = "to_be_specified_in_full_qualified_variable_name" # IV
-    filter = "to_be_specified_in_full_qualified_variable_name" #filter deciding which records are inclued in IV regression
+    filter = "to_be_specified_in_full_qualified_variable_name" #filter deciding which records are included in IV regression
 
     def dependencies(self):
         return [
@@ -23,7 +23,7 @@ class abstract_iv_residual(Variable):
 
     def compute(self,  dataset_pool):
         ds = self.get_dataset()
-        filter = ds.get_attribute(self._get_alias(self.filter)) 
+        filter = ds.get_attribute(self._get_alias(self.filter))
         # dependent variable - price
         y = ds.get_attribute_as_column(self._get_alias(self.p))[filter, :]
         # independent variables - in vector
@@ -42,35 +42,4 @@ class abstract_iv_residual(Variable):
     def _get_alias(self, expression):
         return VariableName(expression).get_alias()
 
-
-### stochastic unittests
-#from opus_core.tests import opus_unittest
-#from numpy import array, int32, arange
-#from numpy.random import uniform, normal
-#from opus_core.tests.utils.variable_tester import VariableTester
-
-#class Tests(opus_unittest.OpusTestCase):
-    #        def test_my_inputs(self):
-        #            beta = [-10, 15]
-        #            n = 20
-        #            z = uniform(-1, 1, n)
-        #            r = normal(scale=0.01, size=n)
-        #            y = beta[0] + beta[1] * z + r
-
-#            tester = VariableTester(
-#                __file__,
-#                package_order=['urbansim_parcel', 'urbansim'],
-#                test_data={
-#                'parcel':
-    #                    {
-    #                        "parcel_id":        arange(n)+1, 
-    #                        "unit_price":       y,
-    #                        "iv": z,
-    #                    },
-    #                })
-    #            should_be = r
-
-#            tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
-
-#if __name__=='__main__':
-    #        opus_unittest.main()
+# Unit test in urbansim_parce/building/price_residual

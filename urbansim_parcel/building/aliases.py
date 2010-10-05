@@ -1,6 +1,6 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
-# See opus_core/LICENSE 
+# See opus_core/LICENSE
 
 # this is a test of the expression alias file
 # one of the aliases uses a primary attribute in the expression, the other a variable
@@ -24,7 +24,8 @@ aliases = [
    "unit_price = building.disaggregate(urbansim_parcel.parcel.unit_price)",
    "price_per_unit = building.disaggregate(urbansim_parcel.parcel.unit_price) * urbansim_parcel.building.building_sqft_per_unit",
     #"avg_price_per_unit_in_zone = building.disaggregate(zone.aggregate(urbansim_parcel.building.price_per_unit * urbansim_parcel.building.is_residential) / zone.aggregate(urbansim_parcel.building.is_residential),intermediates=[parcel] )",
-   "avg_price_per_unit_in_zone = building.disaggregate(zone.aggregate(urbansim_parcel.building.price_per_unit, function=mean, intermediates=[parcel]) )",
+   #"avg_price_per_unit_in_zone = building.disaggregate(zone.aggregate(urbansim_parcel.building.price_per_unit, function=mean, intermediates=[parcel]) )",
+   "avg_price_per_unit_in_zone = building.disaggregate(zone.aggregate(urbansim_parcel.building.price_per_unit, function=sum, intermediates=[parcel])/zone.aggregate(parcel.number_of_agents(building)))",
    "avg_price_per_sqft_in_zone = building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price, function=mean, intermediates=[parcel]) )",
    "avg_price_per_sqft_in_faz  = building.disaggregate( faz.aggregate(urbansim_parcel.building.unit_price, function=mean, intermediates=[parcel, zone]) )",
    "grid_id = building.disaggregate(parcel.grid_id)",
@@ -40,4 +41,4 @@ aliases = [
 
 for group in ['retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
     aliases.append("number_of_jobs_of_sector_group_%s = building.aggregate(urbansim.job.is_in_employment_sector_group_%s)" % (group, group))
-    
+
