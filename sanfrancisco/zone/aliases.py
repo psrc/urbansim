@@ -8,12 +8,12 @@
 aliases = [
    "average_income=zone.aggregate(household.income, intermediates=[building,parcel], function=mean)",
    "employment = sanfrancisco.zone.aggregate_employment_from_building",
-   "employment_of_sector_cie = zone.aggregate(sanfrancisco.building.employment_of_sector_cie, intermediates=[parcel])",
-   "employment_of_sector_med = zone.aggregate(sanfrancisco.building.employment_of_sector_med, intermediates=[parcel])",
-   "employment_of_sector_mips = zone.aggregate(sanfrancisco.building.employment_of_sector_mips, intermediates=[parcel])",
-   "employment_of_sector_pdr = zone.aggregate(sanfrancisco.building.employment_of_sector_pdr, intermediates=[parcel])",   
-   "employment_of_sector_visitor = zone.aggregate(sanfrancisco.building.employment_of_sector_visitor, intermediates=[parcel])",
-   "employment_of_sector_retailent = zone.aggregate(sanfrancisco.building.employment_of_sector_retailent, intermediates=[parcel])",
+   "employment_of_activity_cie = zone.aggregate(where(sanfrancisco.business.activity=='CIE',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
+   "employment_of_activity_med = zone.aggregate(where(sanfrancisco.business.activity=='MED',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
+   "employment_of_activity_mips = zone.aggregate(where(sanfrancisco.business.activity=='MIPS',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
+   "employment_of_activity_pdr = zone.aggregate(where(sanfrancisco.business.activity=='PDR',sanfrancisco.business.employment,0), intermediates=[building, parcel])",   
+   "employment_of_activity_visitor = zone.aggregate(where(sanfrancisco.business.activity=='VISITOR',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
+   "employment_of_activity_retailent = zone.aggregate(where(sanfrancisco.business.activity=='RETAIL/ENT',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
    "number_of_households=zone.aggregate(sanfrancisco.building.number_of_households, intermediates=[parcel])",
    "population=zone.aggregate(sanfrancisco.building.population, intermediates=[parcel])",
    ]
