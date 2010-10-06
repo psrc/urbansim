@@ -22,9 +22,9 @@ class Tests(opus_unittest.OpusTestCase):
 
     def test_my_inputs(self):
         seed(1)
-        beta = [-10, 15]
+        beta = [10, 15]
         n = 20
-        z = uniform(-1, 1, n)
+        z = uniform(0.1, 2, n)
         r = normal(scale=0.01, size=n)
         y = beta[0] + beta[1] * z + r
 
