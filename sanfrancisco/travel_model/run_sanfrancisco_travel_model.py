@@ -21,7 +21,6 @@ class RunSanfranciscoTravelModel(RunTravelModel):
     SUBDIR_TAZ_DATA_PROCESSOR       = "TazDataProcessor"
     SUBDIR_POPULATION_SYNTHESIZER   = "PopSyn"
     SUBDIR_LANDUSE_INPUTS           = "LandUseInputs"
-    RUN_BATCH                       = "runmodel.bat"
     RUN_DISPATCH                    = "runmodel.jset"
     DISPATCH                        = r"Y:\champ\util\bin\dispatch.bat"
     CLUSTER_MACHINE                 = "taraval"
@@ -31,16 +30,16 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         """
         tm_config   = myconfig["travel_model_configuration"]
         
-        # verify that the base directory exists and there's a runmodel.bat in it, or we're a nogo
+        # verify that the base directory exists and there's a runbatch in it, or we're a nogo
         base_dir    = tm_config['travel_model_base_directory']    
         if not os.path.exists(base_dir):
             raise StandardError, \
-                "Travel model base directory '%s' must exist with a standard %s" % (base_dir, self.RUN_BATCH)
+                "Travel model base directory '%s' must exist with standard %s" % (base_dir, tm_config[year]["RUNBATCH"])
                  
-        src_runmodelfile = os.path.join(base_dir, self.RUN_BATCH)
+        src_runmodelfile = os.path.join(base_dir, tm_config[year]["RUNBATCH"])
         if not os.path.exists(src_runmodelfile):
             raise StandardError, \
-                "Travel model base directory '%s' must exist with a standard %s" % (base_dir, self.RUN_BATCH)            
+                "Travel model base directory '%s' must exist with a standard %s" % (base_dir, tm_config[year]["RUNBATCH"])            
         
         run_dir     = os.path.join(base_dir, tm_config[year]['year_dir'])
         if not os.path.exists(run_dir):
@@ -59,16 +58,29 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         self._run_TazDataProcessor(tm_config, year, run_dir)
         self._run_PopSyn(tm_config, year, run_dir)
         
+        config_regexlist = [ \
+          [r"(set LANDUSE=)(\S*)",    r"\1.\%s" % (self.SUBDIR_LANDUSE_INPUTS)],
+        ]
+        
+        print tm_config[year]
+        # if these are specified in the config use them
+        for varname in ["BASEDEMAND", "MTCDEMAND", "NETWORKS"]:
+            if varname in tm_config[year]:
+                config_regexlist.append([r"(?P<set>set %s=)\S*[ ]*$" % varname, 
+                                         r"\g<set>"+tm_config[year][varname].replace('\\','\\\\')])
+        
+        # but these remain the default... just using the one in the file and subbing the year
+        config_regexlist.append([r"(?P<set>set (BASEDEMAND|MTCDEMAND|NETWORKS)=\S*)(\d\d\d\d)[ ]*$", r"\g<set>" + str(year)])
+        logger.log_status("config_regexlist=" + str(config_regexlist))
+
         # make the run
         shutil.copy2(src_runmodelfile, run_dir)
-        self._updateConfigPaths( os.path.join(run_dir, self.RUN_BATCH),
-         [ [r"(set LANDUSE\s*=\s*)(\S*)",    r"\1.\%s" % (self.SUBDIR_LANDUSE_INPUTS)],
-           [r"(?P<set>set (BASEDEMAND|MTCDEMAND|NETWORKS)\s*=\s*\S*)(\d\d\d\d)[ ]*$", r"\g<set>" + str(year)]
-         ], doubleBackslash=False)
+        self._updateConfigPaths( os.path.join(run_dir, tm_config[year]["RUNBATCH"]), config_regexlist, 
+                                 doubleBackslash=False)
         
         # dispatcher to taraval, where models start
         outfile = open( os.path.join(run_dir, self.RUN_DISPATCH), 'w')
-        outfile.write("%s\n" % (self.RUN_BATCH))
+        outfile.write("%s\n" % (tm_config[year]["RUNBATCH"]))
         outfile.close()
         
         # run it!
