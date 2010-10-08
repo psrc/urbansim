@@ -16,4 +16,12 @@ aliases = [
    "employment_of_activity_retailent = zone.aggregate(where(sanfrancisco.business.activity=='RETAIL/ENT',sanfrancisco.business.employment,0), intermediates=[building, parcel])",
    "number_of_households=zone.aggregate(sanfrancisco.building.number_of_households, intermediates=[parcel])",
    "population=zone.aggregate(sanfrancisco.building.population, intermediates=[parcel])",
+   "hhincq1 = zone.aggregate(sanfrancisco.household.in_income_quartile_1, intermediates=[parcel])",
+   "hhincq2 = zone.aggregate(sanfrancisco.household.in_income_quartile_2, intermediates=[parcel])",
+   "hhincq3 = zone.aggregate(sanfrancisco.household.in_income_quartile_3, intermediates=[parcel])",
+   "hhincq4 = zone.aggregate(sanfrancisco.household.in_income_quartile_4, intermediates=[parcel])",
+   "avgincq1 = safe_array_divide(zone.aggregate(where(sanfrancisco.household.in_income_quartile_1,household.income,0),intermediates=[parcel]),hhincq1)",
+   "avgincq2 = safe_array_divide(zone.aggregate(where(sanfrancisco.household.in_income_quartile_2,household.income,0),intermediates=[parcel]),hhincq2)",
+   "avgincq3 = safe_array_divide(zone.aggregate(where(sanfrancisco.household.in_income_quartile_3,household.income,0),intermediates=[parcel]),hhincq3)",
+   "avgincq4 = safe_array_divide(zone.aggregate(where(sanfrancisco.household.in_income_quartile_4,household.income,0),intermediates=[parcel]),hhincq4)",
    ]
