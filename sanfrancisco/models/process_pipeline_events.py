@@ -5,7 +5,7 @@
 from opus_core.model import Model
 from opus_core.logger import logger
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
-from numpy import where, arange, ones
+from numpy import where, arange, ones, sum, logical_and
 
 class ProcessPipelineEvents(Model):
     """Process any pre-scheduled development events.
@@ -13,7 +13,8 @@ class ProcessPipelineEvents(Model):
     """
     model_name = "ProcessPipelineEvents"
     
-    def run (self, building_dataset, year, storage, in_table="development_events_exogenous",
+    def run (self, building_dataset, year, storage, event_filter=None, 
+             in_table="development_events_exogenous",
              out_table="development_events_exogenous"):
 
         if not storage.has_table(in_table):
@@ -24,7 +25,12 @@ class ProcessPipelineEvents(Model):
                                                      in_table_name=in_table, 
                                                      out_table_name=out_table,
                                                      id_name='event_id')
-        scheduled_index = where(scheduled_development_events.get_attribute("scheduled_year")==year)[0]
+        if event_filter:
+            filter_values = scheduled_development_events.compute_variables(event_filter)
+            scheduled_index = where(logical_and(scheduled_development_events.get_attribute("scheduled_year")==year,
+                                                filter_values>0))[0]            
+        else:
+            scheduled_index = where(scheduled_development_events.get_attribute("scheduled_year")==year)[0]
         scheduled_development_events.subset_by_index(scheduled_index,flush_attributes_if_not_loaded=False)
         
         max_building_id = building_dataset.get_id_attribute().max()
