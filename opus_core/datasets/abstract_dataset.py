@@ -1127,13 +1127,16 @@ class AbstractDataset(object):
     ## Plotting methods
     ##################################################################################
     
-    def plot_histogram(self, name, main="", filled_value=0.0, bins=None):
+    def plot_histogram(self, name, index=None, main="", filled_value=0.0, bins=None):
         """Plot a histogram of an attribute values given be name.
         If the attribute is a mask array, the masked values will be filled with 
         'filled_value'. Number of bins can be given by 'bins'.
         """
         from opus_core.plot_functions import plot_histogram
-        values = ma.filled(self.get_attribute(name), filled_value)
+        if index is not None:
+            values = ma.filled(self.get_attribute_by_index(name, index), filled_value)
+        else:
+            values = ma.filled(self.get_attribute(name), filled_value)
         plot_histogram(values, main=main, xlabel=name, bins=bins)
 
     def compute_and_plot_histogram(self, name, dataset_pool=None, **kwargs):
@@ -1149,7 +1152,7 @@ class AbstractDataset(object):
         v1, v2 = self._scatter(name_x, name_y, npoints)
         plot_scatter(v1, v2, name_x, name_y, main, **kwargs)
         
-    def r_histogram(self, name, main="", prob=1, breaks=None, file=None, device='png'):
+    def r_histogram(self, name, index=None, main="", prob=1, breaks=None, file=None, device='png'):
         """Create a histogram of the attribute given by 'name', including density line, using R. 
         If 'file' is given, the plot is outputed into a file of type given by 'device' ('pdf', 'png', etc.)
         rpy2 module required.
@@ -1167,7 +1170,10 @@ class AbstractDataset(object):
         else:
             r.X11()
 
-        values = self.get_attribute(name)
+        if index is not None:
+            values = self.get_attribute_by_index(name, index)
+        else:
+            values = self.get_attribute(name)
         r.hist(values, breaks=breaks, main=main, xlab=name, prob=prob)
         r.lines(r.density(values))
         if file:
