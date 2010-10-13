@@ -28,7 +28,7 @@ class options(object):
                      ],
                      ['']
                     ]
-    xml_configuration = '/workspace/opus_home/project_configs/psrc_parcel_test.xml'
+    xml_configuration = '/workspace/opus/project_configs/psrc_parcel_test.xml'
     scenario_name = 'psrc_baseline_test'
     year = 2001
     agent_set = 'household'
@@ -42,9 +42,9 @@ if __name__ == '__main__':
     xmlconfig = XMLConfiguration(options.xml_configuration)
     ## training data (start_estimation)
     training_data = []
-    for hierarchy in options.meta_models:
+    for h, hierarchy in enumerate(options.meta_models):
         model_data = []
-        for model_name in hierarchy:
+        for i, model_name in enumerate(hierarchy):
             estimator = EstimationRunner(model=model_name, 
                                          specification_module=None, 
                                          xml_configuration=xmlconfig, 
@@ -81,6 +81,22 @@ if __name__ == '__main__':
                                'estimation_results':estimation_results,
                                'model_name':model_name
                                })
+
+            if options.market_share[h][i]:
+                ms_expression = options.market_share[h][i]
+                ms_variablename = VariableName(ms_expression)
+        
+                dataset_name = ms_variablename.get_dataset_name()
+                dataset_pool=model_system.run_year_namespace["dataset_pool"]
+                ds = model_system.run_year_namespace[dataset_name] or model_system.run_year_namespace['datasets'][dataset_name]
+                id_name = ds.get_id_name()[0]
+                ds.compute_variables([ms_variablename], dataset_pool=dataset_pool)
+                ms = ds.get_multiple_attributes([id_name, ms_variablename.get_alias()])
+                
+                market_ids = m.choice_set.compute_one_variable_with_unknown_package( id_name, dataset_pool=dataset_pool)
+                market_ids_2d = market_ids[m.model_interaction.get_choice_index()]
+                model_data[i].update({'market_id':market_ids_2d, 'market_share':ms})
+
         training_data.append(model_data)
         
     config = xmlconfig.get_run_configuration(options.scenario_name)
