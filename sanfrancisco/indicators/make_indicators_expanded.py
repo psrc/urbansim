@@ -323,9 +323,9 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         # unplaced businesses, how full are buildings?  overall nonres sqft totals
         'business_count_unplaced=alldata.aggregate_all(where(business.building_id<1,1,0))',
         'bldg_count_overfullbiz=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.occupied_sqft>building.non_residential_sqft,'+
-									      'building.non_residential_sqft>0),1,0))',
+                                          'building.non_residential_sqft>0),1,0))',
         'bldg_count_overfullbiz0=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.occupied_sqft>building.non_residential_sqft,'+
-									      'building.non_residential_sqft==0),1,0))',
+                                          'building.non_residential_sqft==0),1,0))',
         'bldg_count_partialfullbiz=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.occupied_sqft<building.non_residential_sqft,'+
                                                                                 'sanfrancisco.building.occupied_sqft>0),1,0))',
         'bldg_count_vacantbiz=alldata.aggregate_all(where(numpy.logical_and(building.non_residential_sqft>0,'+
@@ -338,9 +338,9 @@ def make_multiyear_workbook(cache_directory, yearstart=2010, yearend=2035):
         # unplaced households, how full are buildings?  overall hhunit totals
         'hhld_count_unplaced=alldata.aggregate_all(where(household.building_id<1,1,0))',
         'hhld_count_overfullhh=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.number_of_households>building.residential_units,'+
-	                                                                    'building.residential_units>0),1,0))',
+                                                                        'building.residential_units>0),1,0))',
         'hhld_count_overfullhh0=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.number_of_households>building.residential_units,'+
-	                                                                    'building.residential_units==0),1,0))',
+                                                                        'building.residential_units==0),1,0))',
         'hhld_count_partialfullhh=alldata.aggregate_all(where(numpy.logical_and(sanfrancisco.building.number_of_households<building.residential_units,'+
                                                                                 'sanfrancisco.building.number_of_households>0),1,0))',
         'hhld_count_vacanthh=alldata.aggregate_all(where(numpy.logical_and(building.residential_units>0,'+
