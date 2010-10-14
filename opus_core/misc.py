@@ -532,20 +532,8 @@ def corr(var_array, *var_arrays):
     except:
         raise ValueError, "Input variable arrays must have the same number of observations"
 
-    Z = zeros(X.shape).astype('float32')
-    nobs, nvar = X.shape
-
-    for col in range(nvar):
-        mean = X[:,col].mean()
-        sd = standard_deviation(X[:,col])
-        sd = sd * ((nobs-1)/float(nobs))**.5
-        #from numpy import power
-        #sd = power(sum(power((X[:,col] - mean),2)) / nobs, .5)
-        Z[:,col] = (X[:,col] - mean) / sd
-
-    R = dot(transpose(Z), Z) / nobs
-
-    return R
+    from scipy.stats import corrcoef
+    return corrcoef(X)
 
 def quantile(values, probs):
     """Return quantiles of given probability from the values. 'values' and probs are numpys.

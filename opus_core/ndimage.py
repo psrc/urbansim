@@ -8,8 +8,8 @@
 # rather than int_, the native python int 32 type).
 # See comment at the end of this file for more details.
 
-from numpy import int32, int64, ndarray
-import scipy.ndimage
+from numpy import int32, int64, ndarray, ones, array
+import scipy, scipy.ndimage
 import numpy
 
 # *** ndimage.measurements functions ***
@@ -25,12 +25,16 @@ def sum(input, labels=None, index=None):
         _fix_dtype(labels)
     if index is not None:
         _fix_dtype(index)
+    if index is not None and (labels is None or len(labels) ==0):
+        return scipy.ndimage.sum(input, labels=None, index=index) * ones(array(len(index)))
     return scipy.ndimage.sum(input, labels, index)
 
 def mean(input, labels=None, index=None):
     _fix_dtype(input)
     _fix_dtype(labels)
     _fix_dtype(index)
+    if index is not None and (labels is None or len(labels) ==0):
+        return scipy.ndimage.mean(input, labels=None, index=index) * ones(array(len(index)))
     return scipy.ndimage.mean(input, labels, index)
 
 def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_positions=False):
@@ -290,6 +294,47 @@ class ndimageTests(opus_unittest.OpusTestCase):
         index = None
         expected = 5.0
         self.assert_(all(median(input, labels=labels, index=index)==expected))
+
+    def test_empty_array_zero_identity_error1(self):
+        """test fix for scipy 0.8.0
+        """
+        from numpy import array, all, int64, int32
+        input = array([],dtype=int32)
+        labels=array([], dtype=int32)
+        index = None
+        expected = 0
+        results = sum(input, labels=labels, index=index)
+        self.assert_(all(results==expected))
+
+    def test_empty_array_zero_identity_error2(self):
+        """ test fix for scipy 0.8.0
+        """
+        from numpy import array, all, int64, int32
+        input = array([],dtype=int32)
+        labels=array([], dtype=int32)
+        index = array([1,2,3],dtype=int32)
+        expected = array([0, 0, 0], dtype=int32)
+        results = sum(input, labels=labels, index=index)
+        self.assert_(all(results==expected))
+        self.assert_(len(results)==len(expected))
+        
+        index = [1,2,3]
+        expected = array([0, 0, 0], dtype=int32)
+        results = sum(input, labels=labels, index=index)
+        self.assert_(all(results==expected))
+        self.assert_(len(results)==len(expected))
+        
+
+    def MASKED_test_empty_array_memory_error(self):
+        """ weird error introduced in scipy 0.8.0
+        """
+        from numpy import array, all, int64, int32
+        input = array([], dtype=int64)
+        labels=array([])  ## default to float64
+        print labels.dtype
+        index = array([1,2,3])
+        expected = 0
+        self.assert_(all(sum(input, labels=labels, index=index)==expected))
                 
 if __name__ == "__main__":
     opus_unittest.main()
