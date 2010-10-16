@@ -50,7 +50,7 @@ else:
                 ':',     # dotted line
                 '.',     # points
                 '+',     # plus symbols
-                'x'     # cross symbols 
+                'x',     # cross symbols 
                 ',',     # pixels
                 'o',     # circle symbols
                 '^',     # triangle up symbols

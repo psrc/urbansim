@@ -17,11 +17,12 @@ class SourceData(object):
     def __init__(self, 
                  dataset_pool_configuration,
                  cache_directory, 
-                 name,
-                 run_id,
+                 name = '',
+                 run_id = -1,
                  comparison_cache_directory = '',
                  years = [],
-                 run_description = ''):
+                 run_description = '',
+                 project_name = ''):
         
         self.dataset_pool_configuration = dataset_pool_configuration
         self.years = years            
@@ -30,6 +31,7 @@ class SourceData(object):
         self.run_description = run_description       
         self.name = name  
         self.run_id = run_id
+        self.project_name = project_name
             
         self._check_integrity()
         

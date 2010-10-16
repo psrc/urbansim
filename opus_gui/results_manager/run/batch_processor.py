@@ -145,7 +145,7 @@ class BatchProcessor(object):
             errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the batch processor')
             self.errorCallback(errorInfo)
 
-        self.finishedCallback(succeeded)
+        if self.finishedCallback: self.finishedCallback(succeeded)
 
     def get_visualizations(self):
         return self.visualizations

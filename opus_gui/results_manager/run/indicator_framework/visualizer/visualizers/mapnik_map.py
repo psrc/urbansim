@@ -24,12 +24,12 @@ class MapnikMap(Visualization):
                  mapnik_bucket_colors = None,
                  mapnik_bucket_ranges = None,
                  mapnik_bucket_labels = None,
-                 mapnik_resolution = None,
-                 mapnik_page_dims = None,
-                 mapnik_map_lower_left = None,
-                 mapnik_map_upper_right = None,
-                 mapnik_legend_lower_left = None,
-                 mapnik_legend_upper_right = None):
+                 mapnik_resolution = 96,
+                 mapnik_page_dims = '8.5,5.5',
+                 mapnik_map_lower_left = '0.5,0.5',
+                 mapnik_map_upper_right = '6.0,5.0',
+                 mapnik_legend_lower_left = '6.5,0.5',
+                 mapnik_legend_upper_right = '8.0,5.0'):
         self.name = name
         if storage_location is None:
             storage_location = indicator_directory
@@ -64,7 +64,7 @@ class MapnikMap(Visualization):
         
         #TODO: eliminate this example indicator stuff
         example_indicator = computed_indicators[indicators_to_visualize[0]]
-        source_data = example_indicator.source_data        
+        source_data = example_indicator.source_data      
         dataset_to_attribute_map = {}
         
         package_order = source_data.get_package_order()
@@ -139,7 +139,8 @@ class MapnikMap(Visualization):
                              map_lower_left = self.map_lower_left,
                              map_upper_right = self.map_upper_right,
                              legend_lower_left = self.legend_lower_left,
-                             legend_upper_right = self.legend_upper_right
+                             legend_upper_right = self.legend_upper_right,
+                             project_name = source_data.project_name
                              #filter = where(table_data[computed_name] != -1)
                              #filter = 'urbansim.gridcell.is_fully_in_water'                                 
                         )

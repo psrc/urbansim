@@ -52,14 +52,13 @@ class IndicatorResults(object):
         
         #load previously computed indicators
         indicator_dirs = []
-        for i in indicators:
-            if i.write_to_file:
-                dir = i.get_storage_location()
+        for i in indicators.values():
+                #if i.write_to_file:
+                dir = i.storage_location
                 if not dir in indicator_dirs:
                     indicator_dirs.append(dir)
-            
         indicators = []
-        for dir in indicator_dirs: 
+        for dir in indicator_dirs:
             try:
                 indicators += self.data_manager.import_indicators(
                                  indicator_directory = dir)

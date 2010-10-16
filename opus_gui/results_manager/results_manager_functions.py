@@ -13,7 +13,7 @@ from opus_gui.main.controllers.instance_handlers import get_manager_instance,\
     update_mainwindow_savestate
 import os
 
-def get_batch_configuration(project, batch_name):
+def get_batch_configuration(project, batch_name, vis_name=None):
     '''
     Get the configuration for a batch as a tuple formated like:
      (visualization_type, dataset_name, child_node_value_mappings)
@@ -32,6 +32,7 @@ def get_batch_configuration(project, batch_name):
     visualizations = []
 
     for viz_node in batch_node.findall('batch_visualization'):
+        if vis_name and viz_node.get('name') != vis_name: continue
         viz_type = viz_node.find('visualization_type').text
         dataset_name = viz_node.find('dataset_name').text
         # assemble a dict containing all <settings>, <visualization_type> and <output_type>
