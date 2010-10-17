@@ -1264,7 +1264,7 @@ class AbstractDataset(object):
                  max_value=None, file=None, my_title="", filter=None, background=None,
                  color_list=None, range_list=None, label_list=None, is_animation=False,
                  year=None, resolution=None, page_dims=None, map_lower_left=None, 
-                 map_upper_right=None, legend_lower_left=None, legend_upper_right=None):
+                 map_upper_right=None, legend_lower_left=None, legend_upper_right=None, project_name=None):
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
@@ -1322,7 +1322,8 @@ class AbstractDataset(object):
         if data_path is None:
             data_path = os.path.join(os.environ.get('OPUS_HOME'), 'data')
         
-        shapefile_dir = os.path.join(data_path, os.environ['OPUSPROJECTNAME'], 'shapefiles') # OPUSPROJECTNAME is only defined when this function is called by the GUI
+        if not project_name: project_name = os.environ['OPUSPROJECTNAME'] # OPUSPROJECTNAME is only defined when this function is called by the GUI
+        shapefile_dir = os.path.join(data_path, project_name, 'shapefiles') 
         storage_for_dbf = dbf_storage(storage_location=shapefile_dir)
         # create the MASTER dbf if it does not exist (the resulting MASTER file is much larger than it would have been if created manually)
         master_dbf_filepath = os.path.join(shapefile_dir,'MASTER_'+self.dataset_name+'.dbf')

@@ -58,7 +58,9 @@ class Map(AbstractIndicator):
         file_path = self.get_file_path(year = year) 
 
         dataset = self._get_dataset(year)
-        dataset.plot_map(dataset_name=self.dataset_name, name=attribute_alias,
+        #dataset_name=self.dataset_name, 
+        dataset.plot_map( \
+                 name=attribute_alias,
                  my_title=title, file=file_path,
                  filter='urbansim.gridcell.is_fully_in_water',
                  min_value=min_value, max_value=max_value)
