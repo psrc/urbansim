@@ -1,0 +1,84 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">Configuration for a model that updates HH control totals using growth income factor</description>
+    <parent type="file">psrc_parcel/configs/psrc_parcel.xml</parent>
+  </general>
+  <model_manager inherit_parent_values="False">
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary" inherit_parent_values="False">
+        <model name="hh_control_totals_with_income_growth" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary" hidden="True">
+            <class_module>psrc_parcel.data_preparation.hh_control_totals_with_income_growth</class_module>
+            <class_name>HHControlTotalsWithIncomeGrowth</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string" hidden="True">HHControlTotalsWithIncomeGrowth</name>
+            <argument name="income_growth_factor" type="string">1</argument>
+            <argument name="debuglevel" type="string" hidden="True">debuglevel</argument>
+          </init>
+          <prepare_for_run type="dictionary" hidden="True">
+            <output name="output" type="string">(control_totals, characteristics)</output>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="base_storage" type="string">base_cache_storage</argument>
+            <argument name="run_storage" type="string">cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary" hidden="True">
+            <argument name="characteristics" type="string">characteristics</argument>
+            <argument name="household_set" type="string">household</argument>
+            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+     </models>
+  </model_manager>
+  <scenario_manager inherit_parent_values="False">
+    <scenario executable="True" name="update control totals" type="scenario">
+      <base_year type="integer" field_identifier="Base Year">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+          <firstyear type="integer">2001</firstyear>
+          <lastyear type="integer">2002</lastyear>
+      </years_to_run>
+    
+    <models_to_run config_name="models" type="selectable_list">
+      <selectable name="hh_control_totals_with_income_growth" type="model_choice">True</selectable>
+    </models_to_run>
+    <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/hhcc_base_year_data</argument>
+        </argument>
+        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
+        <argument name="advanced" type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+            <argument name="database_name" type="string">psrc_2000_parcel_baseyear_data</argument>
+          </baseyear_database_configuration>
+          <cache_from_database type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+        </argument>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable name="household" type="selectable">True</selectable>
+        </datasets_to_preload>
+      </advanced>
+   </scenario>
+  </scenario_manager>
+</opus_project>
