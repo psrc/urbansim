@@ -119,7 +119,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         # Code added by Jesse Ayers, MAG, 9/14/2009
         # Getting an index of parcels that have actively developing projects (those on a velocity function)
         # and making sure that new proposals are not generated for them
-        if existing_proposal_set:
+        if existing_proposal_set and existing_proposal_set.size()>0:
             parcels_with_proposals = existing_proposal_set.get_attribute('parcel_id')
             parcels_with_proposals_idx = parcels.get_id_index(parcels_with_proposals)
             if parcel_filter_for_new_development is not None:
