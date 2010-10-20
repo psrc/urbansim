@@ -24,13 +24,13 @@ class options(object):
                    ]
     market_share = [['market_share=large_area.aggregate(building.residential_units)',
                      'market_share=building_type.aggregate(building.residential_units)',
-                     ''
+                     'market_share=car.number_of_agents(household)'
                      ],
                      ['']
                     ]
     xml_configuration = '/workspace/opus/project_configs/psrc_parcel_test.xml'
     scenario_name = 'psrc_baseline_test'
-    year = 2001
+    year = 2000
     agent_set = 'household'
     sample_size = 5000 #for regularization
     agents_index = None
@@ -64,8 +64,12 @@ if __name__ == '__main__':
             assert len(submodels) == 1
             submodel = submodels[0]
             
-            m.get_all_data(submodel).shape
-            data = m.get_all_data(submodel)
+            #m.get_all_data(submodel).shape
+            #data = m.get_all_data(submodel)
+            mi = m.model_interaction
+            data = mi.interaction_dataset.create_logit_data(mi.submodel_coefficients[submodel],
+                                                            index=m.observations_mapping[submodel])
+
             is_chosen = m.model_interaction.get_chosen_choice()
             index_chosen = where(is_chosen)[1]
             assert index_chosen.size == data.shape[0]
