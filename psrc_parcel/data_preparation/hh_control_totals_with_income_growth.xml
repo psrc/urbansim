@@ -38,7 +38,8 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string" hidden="True">HHControlTotalsWithIncomeGrowth</name>
-            <argument name="income_growth_factor" type="string">1</argument>
+            <argument name="income_growth_factor" type="string">1.02</argument>
+            <argument name="base_year" type="string">base_year</argument>
             <argument name="debuglevel" type="string" hidden="True">debuglevel</argument>
           </init>
           <prepare_for_run type="dictionary" hidden="True">
