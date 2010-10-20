@@ -68,7 +68,15 @@ class InteractionDataset(Dataset):
         else:
             attr_name = name
         alias = attr_name.get_alias()
+        dataset_name = attr_name.get_dataset_name()
         if not (alias in self.get_attribute_names()):
+            if dataset_name == self.get_dataset(1).dataset_name:
+                index = self.get_2d_index_of_dataset1()
+                return self.get_dataset(1).get_attribute_by_index(attr_name, index)
+            if dataset_name == self.get_dataset(2).dataset_name:
+                index = self.get_2d_index()
+                return self.get_dataset(2).get_attribute_by_index(attr_name, index)
+            
             if alias in self.get_dataset(1).get_known_attribute_names():
                 index = self.get_2d_index_of_dataset1()
                 return self.get_dataset(1).get_attribute_by_index(attr_name, index)

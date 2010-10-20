@@ -511,9 +511,9 @@ class AutogenVariableFactory(object):
         for pkg, ds, short in self._dependents:
             # if the dataset name ends in self._constant_suffix, get the dataset out of the dataset pool; otherwise it is self.get_dataset()
             if ds is not None and ds.endswith(self._constant_suffix):
-                getter = 'dataset_pool.get_dataset("%s").get_attribute("%s")' % (ds,short)
+                getter = 'dataset_pool.get_dataset("%s").get_attribute("%s.%s")' % (ds,ds,short)
             else:
-                getter = 'self.get_dataset().get_attribute("%s")' % short
+                getter = 'self.get_dataset().get_attribute("%s.%s")' % (ds,short)
             if ds is None:
                 # the dependent is an unqualified attribute name
                 compute_method = compute_method + 8*' ' + '%s = %s \n' % (short, getter)
