@@ -114,7 +114,7 @@
         </tool>
       </tool_group>
     </tool_library>
-    <path_to_tool_modules>data_manager.run.tools</path_to_tool_modules>
+    <path_to_tool_modules>opus_gui.data_manager.run.tools</path_to_tool_modules>
   </data_manager>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">

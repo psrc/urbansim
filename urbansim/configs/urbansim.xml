@@ -520,6 +520,15 @@
             <param name="opus_table_name" param_type="string" required="True">ALL</param>
           </params>
         </tool>
+        <tool name="csv_data_to_opus_tool">
+          <class_module>csv_data_to_opus</class_module>
+          <params>
+            <param name="csv_data_path" param_type="dir_path" required="True"/>
+            <param name="csv_table_name" param_type="string" required="True"/>
+            <param name="opus_data_directory" param_type="dir_path" required="True"/>
+            <param name="opus_data_year" param_type="string" required="True"/>
+          </params>
+        </tool>        
       </tool_group>
       <tool_group name="data_conversion_tools" setexpanded="True">
         <tool name="raw_sql_query_tool">
@@ -668,7 +677,7 @@
         </tool_config>
       </tool_set>
     </tool_sets>
-    <path_to_tool_modules>data_manager.run.tools</path_to_tool_modules>
+    <path_to_tool_modules>opus_gui.data_manager.run.tools</path_to_tool_modules>
   </data_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
