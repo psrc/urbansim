@@ -610,32 +610,6 @@
             <name name="name" type="string">prepare_for_estimate</name>
           </prepare_for_estimate>
         </structure>
-        <specification type="dictionary">
-          <submodel followers="submodel" hidden="Children" name="commercial" submodel_id="1" type="submodel">
-            <description type="string">Commercial</description>
-            <variable_list type="variable_list">
-              <variable_spec name="constant"/>
-            </variable_list>
-          </submodel>
-          <submodel followers="submodel" hidden="Children" name="governmental" submodel_id="2" type="submodel">
-            <description type="string">Governmental</description>
-            <variable_list type="variable_list">
-              <variable_spec name="constant"/>
-            </variable_list>
-          </submodel>
-          <submodel followers="submodel" hidden="Children" name="industrial" submodel_id="3" type="submodel">
-            <description type="string">Industrial</description>
-            <variable_list type="variable_list">
-              <variable_spec name="constant"/>
-            </variable_list>
-          </submodel>
-          <submodel followers="submodel" hidden="Children" name="residential" submodel_id="4" type="submodel">
-            <description type="string">Residential</description>
-            <variable_list type="variable_list">
-              <variable_spec name="constant"/>
-            </variable_list>
-          </submodel>
-        </specification>
       </model>
       <model name="add_projects_to_buildings" type="model">
         <structure type="dictionary">
