@@ -22,11 +22,13 @@ class HHControlTotalsWithIncomeGrowth(HouseholdTransitionModel):
         HouseholdTransitionModel.run(self, year, household_set, control_totals, *args, **kwargs)
         
     def _update_household_set(self, household_set):
+        household_set['income'] = self.orig_income
         self.control_totals.load_and_flush_dataset()
         return None
 
     def _do_initialize_for_run(self, household_set):
         new_income = household_set['income']*(self.income_growth_factor**self.factor_exponent)
+        self.orig_income = household_set['income'].copy()
         household_set['income'] = new_income
         HouseholdTransitionModel._do_initialize_for_run(self, household_set)
         if not "total_number_of_households_orig" in self.control_totals.get_known_attribute_names():
