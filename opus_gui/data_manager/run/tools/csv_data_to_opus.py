@@ -48,10 +48,10 @@ def opusRun(progressCB,logCB,params):
             out_storage = output_storage)
 
 def opusHelp():
-    help = 'This tool will get a table from a SQL database and export it to the OPUS cache format.\n' \
+    help = 'This tool will get a table in csv format and export it to the OPUS cache format.\n' \
            '\n' \
+           'csv_data_path: full path to the csv data directory\n' \
+           'csv_table_name: the name of the table to be exported\n' \
            'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
-           'opus_data_year: the year to which the data should be exported (2000)\n' \
-           'database_name: the name of the database (or PostgreSQL schema) that contains the table\n' \
-           'table_name: the name of the table to be exported\n'
+           'opus_data_year: the year to which the data should be exported (2000)\n' 
     return help
