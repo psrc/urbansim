@@ -134,7 +134,7 @@ class TransitionModel(Model):
                             to_be_removed = concatenate((to_be_removed, lucky_index))
                         action_num = lucky_index.size
                     else:
-                        error_log += "There is nothing to sample from %s and no action will happen for" % self.dataset.get_dataset_name() + \
+                        error_log += "There is nothing to sample from %s and no action will happen for " % self.dataset.get_dataset_name() + \
                                   ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
                         
             else: 
