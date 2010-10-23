@@ -82,6 +82,11 @@ class RateDataset(UrbansimDataset):
                 dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
     
     def get_probability_attribute_name(self):
+        if type(self.probability_attribute) in (list, tuple):
+            primary_attribute_names = self.get_primary_attribute_names()
+            probability_attribute_names = [name for name in self.probability_attribute 
+                                           if name in primary_attribute_names]
+            return probability_attribute_names[0]
         return self.probability_attribute
 
     def sample_rates(self, n=100, cache_storage=None, multiplicator=1):

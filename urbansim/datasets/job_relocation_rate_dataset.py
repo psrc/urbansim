@@ -8,7 +8,8 @@ class JobRelocationRateDataset(RateDataset):
 
     id_name_default = ["sector_id"]
     dataset_name = "annual_job_relocation_rate"
-    probability_attribute = "job_relocation_probability"
+    ## to make the probability_attribute_name back-ward compatible
+    probability_attribute = ["probability_of_relocating", "job_relocation_probability"]
     in_table_name_default = "annual_relocation_rates_for_jobs"
     out_table_name_default = "annual_relocation_rates_for_jobs"
 
