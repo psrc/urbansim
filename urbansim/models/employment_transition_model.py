@@ -7,7 +7,7 @@ from opus_core.misc import DebugPrinter, unique
 from opus_core.model import Model
 from numpy import arange, array, where, zeros, ones, compress, concatenate, resize
 from numpy import logical_not, int8, int32
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory

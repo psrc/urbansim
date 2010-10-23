@@ -8,7 +8,7 @@ from opus_core.datasets.dataset import DatasetSubset
 from urbansim.models.employment_transition_model import get_array_without_non_placed_agents
 from numpy import arange, array, where, int8, zeros, ones, compress, logical_and, resize
 from numpy import indices, bool8, int32, float32, reshape, clip, take, logical_not, argsort, concatenate
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_replace, sample_noreplace, probsample_replace
 from opus_core.storage_factory import StorageFactory
 from opus_core.model import Model

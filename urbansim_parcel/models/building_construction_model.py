@@ -85,7 +85,7 @@ class BuildingConstructionModel(Model):
             percent_of_development_this_year = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.percent_of_development_this_year"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
-            percent_of_development_this_year = resize(array([100], dtype="int32"), proposal_component_set.size())
+            percent_of_development_this_year = resize(array([100], dtype="int32"), int(proposal_component_set.size()))
                     
         # amount to be built
         to_be_built = proposal_component_set.compute_variables([
@@ -199,7 +199,7 @@ class BuildingConstructionModel(Model):
             ## TODO: need to be reviewed, probably by Hana
             ## changed from proposal_component_set to development_proposal_set
             ## so it will have the same shape as is_delayed_or_active
-            cummulative_amount_of_development = resize(array([100], dtype="int32"), development_proposal_set.size())
+            cummulative_amount_of_development = resize(array([100], dtype="int32"), int(development_proposal_set.size()))
         will_be_delayed = cummulative_amount_of_development < 100
         velocity_idx = where(logical_and(is_delayed_or_active, will_be_delayed))[0]
         if velocity_idx.size > 0:
