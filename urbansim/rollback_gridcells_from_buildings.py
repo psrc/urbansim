@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from numpy import where, clip
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.misc import unique
 
 class RollbackGridcellsFromBuildings(object):
