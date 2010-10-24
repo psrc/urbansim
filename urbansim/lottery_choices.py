@@ -5,7 +5,7 @@
 from opus_core.choices import Choices
 from numpy import where, array, compress, arange, logical_not
 from numpy import ndarray, zeros, sometrue, ones, concatenate
-from opus.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from numpy import ma
 from opus_core.random_choices_from_index import random_choices_from_index
 from opus_core.misc import unique
