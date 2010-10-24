@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 from opus_core.variables.variable import Variable
 from numpy import zeros, where
-from scipy import ndimage
+from opus_core import ndimage
 
 class total_value_per_sqft(Variable):
     

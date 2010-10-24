@@ -7,7 +7,7 @@ from numpy import ndarray,float32
 from numpy import where,reshape
 from numpy import concatenate,logical_and, ones, any, arange, repeat
 from numpy import array, ma
-from scipy.ndimage import standard_deviation
+from opus_core.ndimage import standard_deviation
 from numpy.mlab import mean,median,min
 from opus_core.variables.variable import ln
 from opus_core.bhhh_mnl_estimation import bhhh_mnl_estimation

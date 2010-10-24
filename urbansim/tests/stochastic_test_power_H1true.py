@@ -5,7 +5,7 @@
 if __name__=="__main__":
     from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
     from numpy import concatenate
-    from scipy.ndimage import standard_deviation
+    from opus_core.ndimage import standard_deviation
     from numpy.random import seed
     
     from opus_core.tests import opus_unittest

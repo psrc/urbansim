@@ -991,7 +991,7 @@ if __name__=="__main__":
     from shutil import rmtree
     from opus_core.tests import opus_unittest
     from numpy import ma, alltrue
-    from scipy.ndimage import sum as ndimage_sum
+    from opus_core.ndimage import sum as ndimage_sum
     from opus_core.tests.stochastic_test_case import StochasticTestCase
     from opus_core.simulation_state import SimulationState
     from opus_core.misc import load_table_from_text_file, unique

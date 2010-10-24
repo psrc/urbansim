@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import arange, array, where, zeros, ones, logical_and, reshape, concatenate, clip, indices
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from copy import copy
 from urbansim.models.household_transition_model import HouseholdTransitionModel
 

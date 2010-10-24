@@ -12,8 +12,8 @@ import sys
 import tempfile
 
 from opus_core.logger import logger
-from numpy import ma, array
-from scipy.ndimage import standard_deviation
+from numpy import ma, array, ndarray
+from opus_core.ndimage import sum, standard_deviation
 from inspect import getmembers, ismethod
 
 
@@ -780,8 +780,7 @@ def ndsum(input, labels, index=None):
     print result
     >>> (array([13, 3, 5, 6]), (array([0, 0, 1, 1]), array([1, 3, 0, 2])) )
     """
-    from numpy import array, ndarray
-    from scipy.ndimage import sum
+
     if labels is None or not isinstance(labels, ndarray):
         return sum(input, labels=labels, index=index)
     

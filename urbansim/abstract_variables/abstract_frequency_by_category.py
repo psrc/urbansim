@@ -9,7 +9,7 @@ from numpy import ma, zeros, arange, logical_and, searchsorted
 from opus_core.misc import unique
 from urbansim.functions import attribute_label
 from opus_core.logger import logger
-from scipy import ndimage
+from opus_core import ndimage
 
 class abstract_frequency_by_category(Variable):
     """abstract variable for interaction variables that given counts of agents 

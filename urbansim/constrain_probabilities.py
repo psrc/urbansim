@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 from numpy import ndarray, arange, array, reshape, zeros, where, repeat, logical_and
 from numpy import ma
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
 from opus_core.mnl_probabilities import mnl_probabilities
 from opus_core.probabilities import Probabilities

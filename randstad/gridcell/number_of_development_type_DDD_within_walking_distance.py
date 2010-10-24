@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from scipy.ndimage import correlate
+from opus_core.ndimage import correlate
 from numpy import ma
 
 class number_of_development_type_DDD_within_walking_distance(Variable):

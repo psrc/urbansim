@@ -5,7 +5,7 @@
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from numpy import array
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class vehicle_miles_traveled(Variable):
     """

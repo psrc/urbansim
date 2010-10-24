@@ -4,7 +4,7 @@
 
 from numpy import array, ones, arange, argsort
 from urbansim.lottery_choices import lottery_choices
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class first_agent_first_choices(lottery_choices):
     """The same as lottery_choices but only one agent per choice is allowed.

@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import power, float32, array
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class travel_time_weighted_access_to_employment_hbw_am_walk(Variable):
     """sum of number of jobs in zone j divided by travel time from zone i to j,

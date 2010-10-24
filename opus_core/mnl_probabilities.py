@@ -6,7 +6,7 @@
 from numpy import exp, reshape, where, arange, array, newaxis, sum
 from numpy import ma
 from opus_core.misc import unique
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.probabilities import Probabilities
 from opus_core.logger import logger
 

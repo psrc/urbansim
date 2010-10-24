@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import copy
-from scipy import ndimage
+from opus_core import ndimage
 from numpy import absolute, array, where, take, zeros, ones, concatenate
 from opus_core.logger import logger
 from opus_core.resources import Resources

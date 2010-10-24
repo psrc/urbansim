@@ -4,7 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from numpy import power, float32, array
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 
 class generalized_cost_weighted_access_to_population_hbw_am_transit_walk(Variable):
     """sum of number of jobs in zone j divided by generalized cost from zone i to j,

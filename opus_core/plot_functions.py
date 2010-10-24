@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import arange
-from scipy.ndimage import histogram
+from opus_core.ndimage import histogram
 
 def create_histogram(values, main="", xlabel="", bins=None):
     """Plot a histogram of values which is a numpy array.

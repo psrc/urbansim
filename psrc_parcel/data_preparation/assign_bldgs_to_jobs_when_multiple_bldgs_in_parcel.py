@@ -5,7 +5,7 @@
 import os
 from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor, maximum, int32, logical_not, logical_or
 from numpy.random import seed
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace

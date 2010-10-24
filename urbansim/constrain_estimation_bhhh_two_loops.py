@@ -7,7 +7,7 @@ from opus_core.logger import logger
 from numpy import zeros,float32,where,reshape,newaxis,absolute
 from numpy import concatenate, ones, any, arange, repeat
 from numpy import array, ma, mean, median, min
-from scipy.ndimage import standard_deviation
+from opus_core.ndimage import standard_deviation
 from opus_core.misc import corr, unique, safe_array_divide
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.variables.variable import ln

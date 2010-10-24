@@ -5,7 +5,7 @@
 from urbansim.functions import attribute_label
 from opus_core.variables.variable import Variable
 from numpy import array, where, float32
-from scipy.ndimage import sum as ndimage_sum
+from opus_core.ndimage import sum as ndimage_sum
 from psrc.opus_package_info import package
 from opus_core.logger import logger
 from opus_core.misc import safe_array_divide

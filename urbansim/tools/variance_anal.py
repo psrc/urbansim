@@ -4,7 +4,7 @@
 
 from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 from numpy import array, concatenate, sqrt, float32, logical_and
-from scipy.ndimage import standard_deviation
+from opus_core.ndimage import standard_deviation
 from matplotlib.pylab import plot, show
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.control_total_dataset import ControlTotalDataset

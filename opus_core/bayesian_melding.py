@@ -7,7 +7,7 @@
 import os
 import gc
 from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_, argsort, resize, average
-from scipy import ndimage
+from opus_core import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
 from opus_core.variables.variable_name import VariableName

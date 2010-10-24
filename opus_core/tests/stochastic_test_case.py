@@ -8,7 +8,7 @@ from opus_core.tests import opus_unittest
 from time import localtime, strftime
 
 from numpy import zeros, sqrt, log, float32, sum, array, arange, reshape
-from scipy.ndimage import variance
+from opus_core.ndimage import variance
 from numpy import ma
 
 from opus_core.variables.variable import ln

@@ -16,7 +16,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.model import Model
-from scipy import ndimage
+from opus_core import ndimage
 
 class DevelopmentProjectProposalSamplingModel(Model):
 

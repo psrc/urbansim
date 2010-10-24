@@ -3,7 +3,7 @@
 # See opus_core/LICENSE 
 
 from numpy import where, array
-from scipy import ndimage
+from opus_core import ndimage
 from opus_core.variables.variable import Variable
 
 class hh_adults_mean_age(Variable):
