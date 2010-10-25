@@ -7,7 +7,7 @@ from numpy import array, zeros, int8, arange
 from opus_core.logger import logger
 
 class SimpleDataCompare(opus_unittest.OpusTestCase):
-    """ This test validates the generated xml MATSim configuration while using pyxb's own validation process.
+    """ This test validates 
     """
     
     def setUp(self):

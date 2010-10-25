@@ -34,7 +34,7 @@ class Tests(object):#(opus_unittest.OpusTestCase):
         print "entering setUp"
         
         logger.log_status(' This test compares the execution time of two different scenarios \
-                           (or same scenarios but with a different konfiguration).')
+                           (or same scenarios but with a different configuration).')
         
         self.scenario = None
         self.elapsed_time_sceanario = None

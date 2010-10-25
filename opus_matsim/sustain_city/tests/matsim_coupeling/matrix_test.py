@@ -31,7 +31,7 @@ class MatrixTest(opus_unittest.OpusTestCase):
     def test_run(self):
         print "Entering test run"
         
-        # This test loads an exising travel data as a TravelDataSet (numpy array)
+        # This test loads an exsing travel data as a TravelDataSet (numpy array)
         # and accesses single (pre-known) values to validate the conversion process
         # (numpy array into standard python list).
         #

@@ -34,7 +34,7 @@ class MATSimTestRun(object):
         # since pyxb need to be installed this method will be disabled for standard tests ...
         # self.create_MATSim_config()
         
-        # ... therefore we are coping an exsisting MATSim config file.
+        # ... therefore we are coping an existing MATSim config file.
         self.copy_matsim_config()
         
         print "leaving setUp"
@@ -62,10 +62,10 @@ class MATSimTestRun(object):
             raise StandardError("Matsim Run failed. Code returned by cmd was %d" % (cmd_result))  
         elif cmd_result == 0:
             logger.log_status("MATSim returned exit code: %i " % cmd_result)
-            logger.log_status('Successfuly tested:')
+            logger.log_status('Successfully tested:')
             logger.log_status('- Creation of MATSim config file via PyXB')
             logger.log_status('- Validation of MATSim config file via MATSim')
-            logger.log_status('- Successfuly started MATSim')
+            logger.log_status('- Successfully started MATSim')
 
         #self.assert_(cmd_result == 0) # 0 means successful
         
