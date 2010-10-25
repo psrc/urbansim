@@ -12,7 +12,7 @@ class workerDDD_employment_of_group_retail_accessible_from_work_to_home_drive_al
 
     def __init__(self, worker):
         self.agent_resource = "household.aggregate((person.worker%s==1).astype(int32)*(person.disaggregate(tour.arr_time - tour.dep_time - 15)))" % worker
-        self.agent_zone_id = "worker%s_workplace_zone_id = household.aggregate((person.worker%s == 1).astype(int32) * urbansim_parcel.person.workplace_zone_id )" % (worker, worker)
+        self.agent_zone_id = "worker%s_workplace_zone_id = household.aggregate((person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id ).astype(int32)" % (worker, worker)
         self.choice_zone_id = 'urbansim_parcel.building.zone_id'
         self.travel_data_attribute = 'travel_data.am_single_vehicle_to_work_travel_time'
         self.travel_data_attribute_default_value = 999
