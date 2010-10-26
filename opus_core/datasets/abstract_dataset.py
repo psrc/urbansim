@@ -1037,22 +1037,25 @@ class AbstractDataset(object):
         values = self.get_attribute(attribute_name)
         return searchsorted(bins, values)
     
-    def correlation_matrix(self, names):
+    def correlation_matrix(self, names, index=None):
         #This method does not work.
         """Computes a correlation matrix for attributes given by the list 'names'."""
         if not names:
             return None
-        v = self.get_attribute(names[0]).ravel()
+        v = self.get_attribute(names[0])
+        if index is None:
+            index = arange(self.size())
+        v = v[index].ravel() # ravel for the case if data are 2d
         evalstr = "corr(v"
         for i in range(1,len(names)):
             name = names[i]
-            evalstr= evalstr + ", self.get_attribute('%s').ravel()" % name # ravel function for the case if data are 2d
+            evalstr= evalstr + ", self.get_attribute('%s')[index].ravel()" % name 
         evalstr=evalstr+")"
         return eval(evalstr)
 
-    def correlation_coefficient(self, name1, name2):
+    def correlation_coefficient(self, name1, name2, index=None):
         """Computes correlation coefficient between 2 attributes given by name1 and name2."""
-        R = self.correlation_matrix([name1,name2])
+        R = self.correlation_matrix([name1,name2], index=index)
         return R[0,1]
     
     def get_data_type(self, attribute, default_type=None):
@@ -1143,13 +1146,13 @@ class AbstractDataset(object):
         self.compute_variables(name, dataset_pool=dataset_pool)
         self.plot_histogram(name, **kwargs)
         
-    def plot_scatter(self, name_x, name_y, main="", npoints=None, **kwargs):
+    def plot_scatter(self, name_x, name_y, index=None, main="", npoints=None, **kwargs):
         """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
         'npoints' controls the number of points in the plot. If it is None, all points are plotted, otherwise they are selected randomly.
         The plot is created using matplotlib.
         """
         from opus_core.plot_functions import plot_scatter
-        v1, v2 = self._scatter(name_x, name_y, npoints)
+        v1, v2 = self._scatter(name_x, name_y, index=index, npoints=npoints)
         plot_scatter(v1, v2, name_x, name_y, main, **kwargs)
         
     def r_histogram(self, name, index=None, main="", prob=1, breaks=None, file=None, device='png'):
@@ -1179,7 +1182,7 @@ class AbstractDataset(object):
         if file:
             r['dev.off']()
 
-    def r_scatter(self, name_x, name_y, main="", npoints=None, file=None, device='png'):
+    def r_scatter(self, name_x, name_y, index=None, main="", npoints=None, file=None, device='png'):
         """Using R, create a scatter plot of the attributes given by 'name_x' (x-axis) 
          and 'name_y' (y-axis) and display its correlation coefficient.
         'npoints' controls the number of points in the plot. If it is None, all points are plotted, 
@@ -1191,7 +1194,7 @@ class AbstractDataset(object):
         import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
 
         r = robjects.r
-        v1, v2 = self._scatter(name_x, name_y, npoints)
+        v1, v2 = self._scatter(name_x, name_y, index, npoints)
         if file:
             rcode = '%s("%s")' % (device, file)
             r(rcode)
@@ -2031,15 +2034,18 @@ class AbstractDataset(object):
 
 
         
-    def _scatter(self, name_x, name_y, npoints=None):
-        reg = self.correlation_coefficient(name_x, name_y)
+    def _scatter(self, name_x, name_y, index=None, npoints=None):
+        reg = self.correlation_coefficient(name_x, name_y, index=index)
         logger.log_status("Correlation coefficient: ", reg)
         v1 = self.get_attribute(name_x)
         v2 = self.get_attribute(name_y)
-        if (npoints <> None) and (npoints < self.size()):
-            index = randint(0,self.size(), size=npoints)
+        if index is not None:
             v1 = v1[index]
             v2 = v2[index]
+        if (npoints <> None) and (npoints < v1.size()):
+            rindex = randint(0, v1.size(), size=npoints)
+            v1 = v1[rindex]
+            v2 = v2[rindex]
         return (v1, v2)
     
     def create_regression_data(self, coefficients, index=None, const = 1,
