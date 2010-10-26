@@ -97,7 +97,7 @@ class AbstractIndicator(object):
                 if not os.path.exists(year_dir):
                     raise IntegrityError('Year %i does not exist in comparison cache directory %s'%
                                          (year, self.source_data.comparison_cache_directory))
-                    
+                 
         '''package does not exist'''
         for attribute in self.attributes:
             if attribute != '':
@@ -414,7 +414,8 @@ class AbstractIndicator(object):
             results = dataset.size()
             
         elif operation == 'percent_change':
-            baseyear_values = self._get_indicator(2000, 
+            base_year = self._get_base_year_for_change_operation()
+            baseyear_values = self._get_indicator(base_year, 
                                                   attributes=[attribute],
                                                   wrap = False)
             numerator = ( values - baseyear_values) * 100
@@ -423,14 +424,21 @@ class AbstractIndicator(object):
             results = ma.filled( numerator / denominator )
             
         elif operation == 'change':
-            baseyear_values = self._get_indicator(2000, 
+            base_year = self._get_base_year_for_change_operation()
+            baseyear_values = self._get_indicator(base_year, 
                                                   attributes=[attribute],
                                                   wrap = False)
             results = values - baseyear_values
             
         return results
 
-
+    def _get_base_year_for_change_operation(self):
+        base_year = self.source_data.base_year
+        if base_year is None:
+            raise StandardError, 'Base year must be set in the source data when using a change operation.'
+        logger.log_status('Using base year', base_year)
+        return base_year
+    
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
         

@@ -19,11 +19,15 @@ class SourceData(object):
                  cache_directory, 
                  comparison_cache_directory = '',
                  years = [],
+                 base_year = None,
                  run_description = '',
                  check_integrity = True):
         
         self.dataset_pool_configuration = dataset_pool_configuration
-        self.years = years            
+        self.years = years
+        self.base_year = base_year
+        if self.base_year is None and len(years) > 0:
+            self.base_year = min(years)    
         self.cache_directory = cache_directory
         self.comparison_cache_directory = comparison_cache_directory
         self.run_description = run_description         
@@ -97,8 +101,13 @@ class SourceData(object):
                 year_dir = os.path.join(self.comparison_cache_directory, repr(year))
                 if not os.path.exists(year_dir):
                     raise IntegrityError('Year %i does not exist in comparison cache directory %s'%
-                                         (year, self.comparison_cache_directory))
-    
+                                         (year, self.comparison_cache_directory))       
+        if self.base_year is not None:
+            year_dir = os.path.join(self.cache_directory, repr(self.base_year))
+            if not os.path.exists(year_dir):
+                raise IntegrityError('Base year %i does not exist in cache directory %s'%
+                                     (self.base_year, self.cache_directory))
+            
 from opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
 
 
