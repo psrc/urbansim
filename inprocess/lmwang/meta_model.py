@@ -28,6 +28,10 @@ class options(object):
                      ],
                      ['']
                     ]
+    #CLASSIFICATION = 1
+    #RATING = 2
+    #REGRESSION = 3
+    choice_type = [['CLASSIFICATION', 'CLASSIFICATION', 'CLASSIFICATION'], ['CLASSIFICATION']]
     xml_configuration = '/workspace/opus/project_configs/psrc_parcel_test.xml'
     scenario_name = 'psrc_baseline_test'
     year = 2000
@@ -83,7 +87,8 @@ if __name__ == '__main__':
                                'index_chosen':index_chosen,
                                'variable_names':variable_names,
                                'estimation_results':estimation_results,
-                               'model_name':model_name
+                               'model_name':model_name,
+                               'choice_type':options.choice_type[h][i]
                                })
 
             if options.market_share[h][i]:
@@ -139,7 +144,9 @@ if __name__ == '__main__':
             
             data = m.get_all_data(submodel)
             model_data.append({'data':data, 
-                               'model_name':model_name})
+                               'model_name':model_name,
+                               'choice_type':options.choice_type[h][i]
+                              })
             
             if options.market_share[h][i]:
                 ms_expression = options.market_share[h][i]
@@ -161,6 +168,7 @@ if __name__ == '__main__':
     ## pickle file   
     pickle_file = open(options.pickle_filename, 'w+b')
     cPickle.dump({'training_data': training_data,
-                  'population_data': population_data
+                  'population_data': population_data,
+                  'choice_type': options.choice_type
                  }, file=pickle_file)
     pickle_file.close()
