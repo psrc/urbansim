@@ -974,18 +974,17 @@ class AbstractDataset(object):
         """
         return self.attribute_sum(name)/self.size()
 
-    def summary(self, names=[], resources=None, output=logger):
+    def summary(self, names=[], resources=None, output=logger, unload_after_each_attribute=False):
         """Print a summary of the attributes given in the list 'names' to 'output'.
         'output' should be a file or file-like object; the default is the logger.
         If names is an empty list, display summary for all primary attributes
         plus all computed attributes.
+        If unload_after_each_attribute is True, each attributes that is not in memory and is not computed
+        will be unloaded from memory right after its processing. 
         """
+        attr_in_memory = self.get_attributes_in_memory()
         if not names:
-            names = self.get_attribute_names()
-            for name in self.get_primary_attribute_names():
-                if name not in names:
-                    names.append(name)
-            self.load_dataset_if_not_loaded(attributes=names)
+            names = self.get_known_attribute_names()
         output.write("%25s\t%8s\t%8s\t%9s\t%7s\t%7s\n" %("Attribute name", "mean", "sd", "sum", "min", "max"))
         output.write("%94s\n" % (94*("-")))
         if (not isinstance(names, list)) and (not isinstance(names, tuple)):
@@ -994,11 +993,13 @@ class AbstractDataset(object):
             item_name = VariableName(item)
             short_name = item_name.get_alias()
             if short_name not in self.get_id_name():
+                computed = False
                 if not (short_name in self.get_attribute_names()):
                     if short_name in self._primary_attribute_names:
                         self.load_dataset(attributes=[short_name])
                     else:
                         self.compute_variables([item], resources=resources)
+                        computed = True
                 if self.get_data_type(item).char <> 'S':
                     s = self.attribute_sum(short_name)
                     values = self.get_attribute(short_name)
@@ -1007,6 +1008,9 @@ class AbstractDataset(object):
                     else:
                         output.write("%25s\t%8s\t%8s\t%9g\t%7g\t%7g\n" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
                                                                            s, values.min(), values.max()))
+                if unload_after_each_attribute and (not computed) and (short_name not in attr_in_memory):
+                    self.unload_one_attribute(short_name)
+                    
         output.write("\nSize: %d records\n" % self.size())
         if self.size()>0:
             output.write("identifiers:\n")

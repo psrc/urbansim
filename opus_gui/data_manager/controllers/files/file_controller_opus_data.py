@@ -68,7 +68,7 @@ class FileController_OpusData(FileController):
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Grab the summary data
         buffer = StringIO()
-        data.summary(output=buffer)
+        data.summary(output=buffer, unload_after_each_attribute=True)
         strng = buffer.getvalue()
         buffer.close()
         textBrowser = QTextBrowser()
