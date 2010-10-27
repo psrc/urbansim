@@ -32,7 +32,7 @@ class Tests(opus_unittest.OpusTestCase):
                      sss:array([1.1, 2.2, 3.3, 4.4])}            
                  }
         )
-        instance_name = "sanfrancisco.zone.%s_to_%s" % (sss, ddd)
+        instance_name = "urbansim.zone.%s_to_%s" % (sss, ddd)
         tester.test_is_close_for_family_variable(self, should_be, instance_name)
 
     def test_to_1(self):
