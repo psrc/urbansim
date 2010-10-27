@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import arange
-from opus_core.ndimage import histogram
+from scipy.ndimage import histogram
 
 def create_histogram(values, main="", xlabel="", bins=None):
     """Plot a histogram of values which is a numpy array.
@@ -83,43 +83,33 @@ def show_plots():
     from matplotlib.pylab import show
     show()
     
-def plot_values_as_boxplot_r(values_dict, filename=None, logy=False, device='png'):
+def plot_values_as_boxplot_r(values_dict, filename=None, logy=False):
     """Create a set of boxplots (using R), one plot per variable in values_dict (dictionary of 
     varible name and values (1- or 2-D array)), one box per row.
     If filename is given, the plot goes into that file as pdf. If 'logy' is  True, the y-axis
     is plotted on the log scale.
     """
-    import rpy2.robjects as robjects
-
-    r = robjects.r
-    
+    from rpy import r
     logstring = ''
     if logy:
         logstring='y'
         
-    if filename:
-        rcode = '%s("%s")' % (device, filename)
-        r(rcode)
-    else:
-        r.X11()
-        
+    if filename is not None:
+        r.pdf(file=filename)
+
     for var, values in values_dict.iteritems():
         plot_one_boxplot_r(values, var, logstring)
 
-    if filename:
-        r['dev.off']()
+    if filename is not None:
+        r.dev_off()
             
 def plot_one_boxplot_r(values, main="", logstring=""):
-    import rpy2.robjects as robjects
-    import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
-    from numpy import array
-
-    r = robjects.r
+    from rpy import r
     if values.ndim == 1:
         v = resize(values, (1, values.size))
     else:
         v = values
-    r.boxplot(v[0,:], xlim=array([0,v.shape[0]+1]), ylim=array([values.min(), values.max()]), range=0, log=logstring,
+    r.boxplot(v[0,:], xlim=[0,v.shape[0]+1], ylim=r.c(values.min(), values.max()), range=0, log=logstring,
               main=main)
     for i in range(1, v.shape[0]):
         r.boxplot(v[i,:], at=i, add=True, range=0, log=logstring)
