@@ -1,0 +1,61 @@
+<opus_project>
+	<xml_version>2.0</xml_version>
+	<general>
+		<description type="string">PSRC measurements</description>
+		<parent type="file">psrc_parcel/configs/psrc_parcel.xml</parent>
+	</general>
+	<model_manager>
+		<templates hidden="True" name="Model Templates" parser_action="skip"/>
+		<travel_model_configuration type="dictionary">
+			<models type="selectable_list">
+				<selectable 
+					name="opus_matsim.sustain_city.tests.psrc_measurements.models.get_cache_data_into_matism_psrc_test" 
+					type="selectable">True</selectable>
+				<selectable 
+					name="opus_matsim.sustain_city.tests.psrc_measurements.models.run_matsim_psrc_test" 
+					type="selectable">True</selectable>
+				<selectable 
+					name="opus_matsim.sustain_city.tests.psrc_measurements.models.get_matism_data_into_cache_psrc_test" 
+					type="selectable">True</selectable>
+			</models>
+			
+			<matsim4urbansim type="dictionary">
+				<!-- 	parameters that are needed on both ends -->
+				<sampling_rate type="float">1.0</sampling_rate>
+				<temp_directory type="string">/opus_matsim/tmp/</temp_directory>
+			</matsim4urbansim>
+			
+			<!-- MATSim config parameter -->
+			<matsim_config type="dictionary">
+				<!--  	parameters that are needed to configure matsim, but are ignored on the urbansim side -->
+				<common type="dictionary">
+					<!-- network -->
+					<matsim_network_file type="file">data/psrc/network/psrc.xml.gz</matsim_network_file>
+					<!-- controler -->
+					<first_iteration type="integer">0</first_iteration>
+					<last_iteration type="integer">1</last_iteration>
+					<!-- planCalcScore -->
+					<activityType_0 type="string">home</activityType_0>
+					<activityType_1 type="string">work</activityType_1>
+				</common>
+			</matsim_config>
+			<!-- End MATSim config parameter -->
+
+			<years_to_run key_name="year" type="category_with_special_keys">
+				<run_description type="dictionary">
+					<year type="integer">2001</year>
+				</run_description>
+			</years_to_run>
+		</travel_model_configuration>	
+		</model_manager>
+	<scenario_manager>
+		<scenario executable="True" name="PSRC_baseline" type="scenario">
+			<years_to_run config_name="years" type="tuple">
+				<firstyear type="integer">2001</firstyear>
+				<lastyear type="integer">2001</lastyear>
+			</years_to_run>
+			<models_to_run config_name="models" type="selectable_list">
+			</models_to_run>
+		</scenario>
+	</scenario_manager>
+</opus_project>

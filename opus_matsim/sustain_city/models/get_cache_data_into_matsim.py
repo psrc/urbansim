@@ -50,49 +50,54 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
             try: os.mkdir( output_root )
             except: pass
         
-        output_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
-        if not os.path.exists( output_directory ):
-            try: os.mkdir(output_directory)
+        self.output_directory = os.path.join( output_root, "tmp" )
+        if not os.path.exists( self.output_directory ):
+            try: os.mkdir(self.output_directory)
             except: pass
         
-        ### PERSONS
-        export_indicators = [
-            DatasetTable(
-                attributes = [
+        ### PERSONS ###############################
+        
+        self.dataset_table_persons = DatasetTable(
+                attributes = [ # TODO: ADD HOME XY-COORDINATES AND WORK XY_COORDINATES
                     'parcel_id_home = person.disaggregate(parcel.parcel_id, intermediates=[building,household])',
                     'parcel_id_work = person.disaggregate(parcel.parcel_id, intermediates=[building,job])',
                     ],
                 dataset_name = 'person',
-#                exclude_condition = 'person.matsim_flag==0',
-                storage_location = output_directory,
+#               exclude_condition = 'person.matsim_flag==0',
+                storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',
                 name = 'exported_indicators',
                 )
-        ]
-        # This is (I assume) executing the export
+        
+        export_indicators_persons = [ self.dataset_table_persons ]
+        
+        # executing the export persons
         IndicatorFactory().create_indicators(
-             indicators = export_indicators,
+             indicators = export_indicators_persons,
              display_error_box = False, 
              show_results = False)
         
-        ### "FACILITIES"
-        export_indicators = [
-            DatasetTable(
+        ### "FACILITIES" ###############################
+        
+        self.dataset_table_parcels = DatasetTable(
                 attributes = [
                     'parcel.x_coord_sp',
                     'parcel.y_coord_sp',
                     'parcel.zone_id',
                     ],
                 dataset_name = 'parcel',
-                storage_location = output_directory,
+                storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',
                 name = 'exported_indicators',
                 )
-        ]
+        
+        export_indicators_parcels = [ self.dataset_table_parcels ]
+        
+        # executing the export parcels
         IndicatorFactory().create_indicators(
-             indicators = export_indicators,
+             indicators = export_indicators_parcels,
              display_error_box = False, 
              show_results = False)
                 
@@ -100,10 +105,8 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         
 
 
-# the following is needed, since it is called as "main" from the framework ...  
+# called from opus via main! 
 if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file
     parser = OptionParser()

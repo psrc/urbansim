@@ -2,35 +2,39 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
+import time, os
+from opus_matsim.sustain_city.models.run_travel_model import RunTravelModel
 from opus_core.logger import logger
 from opus_core.resources import Resources
-from travel_model.models.abstract_travel_model import AbstractTravelModel
-import os
 from opus_matsim.sustain_city.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
-class RunTravelModel(AbstractTravelModel):
-    """Run the travel model.
-    """
+class RunMATSimPsrcTest(RunTravelModel):
+
+
     def __init__(self):
-        """Constructor
-        """
-        self.matsim_config_destination = None  # path to generated matsim config xml
-        self.matsim_config_name = None  # matsim config xml name
-        self.matsim_config_full = None  # concatination of matsim config path and name
-
-    def run(self, config, year):
-        """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
-        is correctly set and the matsim tarfile was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
-        be problems with the java version.
-        """
-
-        logger.start_block("Starting RunTravelModel.run(...)")
+        RunTravelModel.__init__(self)
         
-        self.setUp( config )
+    def run(self, config, year):
+
+        # execute the MATSim config generation
+        self.start_time = time.time()
+        self.setUp( config )    # setup location
         
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
-        config_obj.marschall()
+        config_obj.marschall()  # generation process
+        self.end_time = time.time()        
         
+        # store reults in logfile
+        self.dump_results(config, 
+                          int ( os.path.getsize(self.matsim_config_full)), 
+                          int ( self.end_time-self.start_time ))
+        
+        # run MATSim 
+        # MATSim measures the following values:
+        # 1) duration to read the UrbanSim input (parcel- and person table, config)
+        # 2) size of MATSim output (travel_data, otheer outputs)
+        # 3) duration to write all outputs
+        # all measurements are stored in the same logfile
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
                 'opus_home': os.environ['OPUS_HOME'],
                 'vmargs': "-Xmx2000m",
@@ -43,23 +47,26 @@ class RunTravelModel(AbstractTravelModel):
         cmd_result = os.system(cmd)
         if cmd_result != 0:
             error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
-            logger.log_error(error_msg)
-            logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the opus_matsim root,")
-            logger.log_error("  which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         
-        logger.end_block()
+    def dump_results(self, config, config_file, duration):
         
-    def setUp(self, config):
-        """ create MATSim config data
-        """
-        self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
-        if not os.path.exists(self.matsim_config_destination):
-            try: os.mkdir(self.matsim_config_destination)
-            except: pass
-        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
-        self.matsim_config_full = os.path.join( self.matsim_config_destination, self.matsim_config_name  )
-
+        logger.log_status('Loging results...')
+        
+        file = config['psrc_logfile']
+        
+        # append measurements to log file
+        file_object = open( file , 'a') 
+        
+        file_object.write('Size of matsim config in bytes:%i\n'%config_file) 
+        file_object.write('Size of matsim config in Mbytes:%f\n'%(config_file/(1024.0**2))) 
+        file_object.write('Duration writing config in seconds:%f\n'%duration) 
+        file_object.write('\n') 
+        
+        file_object.flush()
+        if not file_object.closed:
+            file_object.close()
+        
 # called from opus via main!
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -70,8 +77,8 @@ if __name__ == "__main__":
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
     (options, args) = parser.parse_args()
-
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
     logger.enable_memory_logging()
-    RunTravelModel().run(resources, options.year)    
+    RunMATSimPsrcTest().run(resources, options.year)  
+        

@@ -126,7 +126,7 @@ class RunDummyTravelModel():
         
         logger.end_block()
 
-# called from the framework via main!
+# called from opus via main!
 if __name__ == "__main__":
     logger.enable_memory_logging()
     RunDummyTravelModel().run()    
