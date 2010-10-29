@@ -39,7 +39,7 @@ class RunMATSimPsrcTest(RunTravelModel):
                 'opus_home': os.environ['OPUS_HOME'],
                 'vmargs': "-Xmx2000m",
                 'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
-                'javaclass': "playground.run.Matsim4Urbansim",
+                'javaclass': "playground.tnicolai.urbansim.MATSim4UrbanSimMeasurement",
                 'matsim_config_file': self.matsim_config_full } 
         
         logger.log_status('Running command %s' % cmd ) 
@@ -58,8 +58,7 @@ class RunMATSimPsrcTest(RunTravelModel):
         # append measurements to log file
         file_object = open( file , 'a') 
         
-        file_object.write('Size of matsim config in bytes:%i\n'%config_file) 
-        file_object.write('Size of matsim config in Mbytes:%f\n'%(config_file/(1024.0**2))) 
+        file_object.write('Size of matsim config in MBytes:%f\n'%(config_file/(1024.0**2))) 
         file_object.write('Duration writing config in seconds:%f\n'%duration) 
         file_object.write('\n') 
         

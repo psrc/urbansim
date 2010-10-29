@@ -39,10 +39,8 @@ class GetCacheDataIntoMatsimPsrcTest(GetCacheDataIntoMatsim):
         # append measurements to log file
         file_object = open( file , 'a') 
         
-        file_object.write('Size of person table in bytes:%i\n'%person_file)
-        file_object.write('Size of person table in Mbytes:%f\n'%(person_file/(1024.0**2))) 
-        file_object.write('Size of parcel table in bytes:%i\n'%parcel_file) 
-        file_object.write('Size of parcel table in Mbytes:%f\n'%(parcel_file/(1024.0**2))) 
+        file_object.write('Size of person table in MBytes:%f\n'%(person_file/(1024.0**2))) 
+        file_object.write('Size of parcel table in MBytes:%f\n'%(parcel_file/(1024.0**2))) 
         file_object.write('Duration writing tables in seconds:%f\n'%duration) 
         file_object.write('\n')
         

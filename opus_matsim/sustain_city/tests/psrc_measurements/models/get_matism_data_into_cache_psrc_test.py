@@ -36,8 +36,7 @@ class GetMatsimDataIntoCachePsrcTest(GetMatsimDataIntoCache):
         # append measurements to log file
         file_object = open( file , 'a') 
         
-        file_object.write('Size of travel data in bytes:%i\n'%travel_data)
-        file_object.write('Size of travel data in Mbytes:%f\n'%(travel_data/(1024.0**2)))
+        file_object.write('Size of travel data in MBytes:%f\n'%(travel_data/(1024.0**2)))
         file_object.write('Duration reading and joning travel data in seconds:%f\n'%duration) 
         file_object.write('\n')
         
