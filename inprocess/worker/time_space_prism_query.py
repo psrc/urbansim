@@ -42,6 +42,7 @@ class time_space_prism_query(Variable):
         
         #zone_ids = zones.get_id_attribute()
         zone_ids = unique(travel_data["from_zone_id"])
+        print dir(dataset)
         results = zeros((dataset.size(), zone_ids.max()+1), dtype='bool')        
         for zone in zone_ids:
             tmp_zone = zone * ones(from_zone.shape, dtype="int32")
@@ -53,7 +54,6 @@ class time_space_prism_query(Variable):
 #        if missing_pairs_index[0].size > 0:
 #            results[missing_pairs_index] = self.default_value
 #            logger.log_warning("zone pairs at index %s are not in travel data; value set to %s." % ( str(missing_pairs_index), self.default_value) )
-
         return results
 
 from opus_core.tests import opus_unittest
@@ -64,7 +64,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 #class Tests(opus_unittest.OpusTestCase):
 class Tests(object):
     def setUp(self):
-        cache_path = "/workspace/urbansim_cache/asu"
+        cache_path = "/workspace/opus/data/asu"
         self.variable_name = opus_path_for_variable_from_module_path(__file__)
         storage = file_flt_storage(cache_path)
         table_names = storage.get_table_names()
@@ -77,7 +77,8 @@ class Tests(object):
         dataset_name = self.variable_name.split('.')[-2]
         dataset = self.dataset_pool.get_dataset(dataset_name)
         results = dataset.compute_variables(self.variable_name, dataset_pool=self.dataset_pool)
-        #print results
+
+        #print results.sum(0), self.variable_name
 
 if __name__=='__main__':
     #opus_unittest.main()

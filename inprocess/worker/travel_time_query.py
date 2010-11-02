@@ -58,7 +58,7 @@ from opus_core.datasets.dataset_pool import DatasetPool
 #class Tests(opus_unittest.OpusTestCase):
 class Tests(object):
     def setUp(self):
-        cache_path = "/workspace/urbansim_cache/asu"
+        cache_path = "/workspace/opus/data/asu"
         self.variable_name = opus_path_for_variable_from_module_path(__file__)
         storage = file_flt_storage(cache_path)
         table_names = storage.get_table_names()
