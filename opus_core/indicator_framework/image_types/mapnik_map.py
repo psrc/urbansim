@@ -15,12 +15,13 @@ class Map(AbstractIndicator):
                  years = None, operation = None, name = None,
                  scale = None,
                  storage_location = None,
-                 project_name = None):
+                 project_name = None, **kwargs):
         AbstractIndicator.__init__(self, source_data, dataset_name, 
                                    [attribute], years, operation, name,
                                    storage_location)
         self.scale = scale
         self.project_name = project_name
+        self.map_args = kwargs
 
     def is_single_year_indicator_image_type(self):
         return True
@@ -59,7 +60,7 @@ class Map(AbstractIndicator):
         dataset.plot_map(name=attribute_alias,
                  my_title=title, file=file_path,
                  min_value=min_value, max_value=max_value,
-                 project_name=self.project_name)
+                 project_name=self.project_name, **self.map_args)
         
         return file_path
 

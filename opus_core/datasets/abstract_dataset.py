@@ -1410,7 +1410,17 @@ class AbstractDataset(object):
             min_val = attrib_arr.min()
         num_buckets = color_list.__len__()
 
-        if (useDefaultValues or range_list == ['linear_scale']):
+        if (range_list == ['equal_percentage_scale']):
+            from numpy import sort
+            sortedAttribs = sort(attrib_arr,kind='quicksort')
+            bucket_size = sortedAttribs.__len__() / num_buckets
+            # create buckets with 100/num_buckets percent of data elements in each
+            range_list = []
+            range_list.append(str(min_val))
+            for i in range(1,num_buckets):
+                range_list.append(str(sortedAttribs[i * bucket_size]))
+            range_list.append(str(max_val)) 
+        elif (useDefaultValues or range_list == ['linear_scale']):
             # convert min_val and max_val to floats
             min_val *= 1.0
             max_val*= 1.0
@@ -1421,16 +1431,6 @@ class AbstractDataset(object):
             for i in range(1,num_buckets):
                 range_list.append(str("%.2f" % (min_val + i * bucket_range)))
             range_list.append(str("%.2f" % max_val))
-        elif (range_list == ['equal_percentage_scale']):
-            from numpy import sort
-            sortedAttribs = sort(attrib_arr,kind='quicksort')
-            bucket_size = sortedAttribs.__len__() / num_buckets
-            # create buckets with 100/num_buckets percent of data elements in each
-            range_list = []
-            range_list.append(str(min_val))
-            for i in range(1,num_buckets):
-                range_list.append(str(sortedAttribs[i * bucket_size]))
-            range_list.append(str(max_val)) 
         else:
             if range_list[0].upper() == 'MIN':
                 range_list[0] = (str("%.2f" % min_val))
