@@ -1270,8 +1270,9 @@ class AbstractDataset(object):
     def plot_map(self, name=None, main="", xlab="x", ylab="y", min_value=None,
                  max_value=None, file=None, my_title="", filter=None, background=None,
                  color_list=None, range_list=None, label_list=None, is_animation=False,
-                 year=None, resolution=None, page_dims=None, map_lower_left=None, 
-                 map_upper_right=None, legend_lower_left=None, legend_upper_right=None, project_name=None):
+                 year=None, resolution=96, page_dims='8.5,5.5', map_lower_left='0.5,0.5', 
+                 map_upper_right='6.0,5.0', legend_lower_left='6.5,0.5', legend_upper_right='6.9,5.0', 
+                 project_name=None):
         """
         Draws a vector-based map using shapefiles. Mapnik is required and can be downloaded at http://www.mapnik.org/
         Arguements:
@@ -1418,7 +1419,7 @@ class AbstractDataset(object):
             range_list.append(str("%.2f" % min_val))
             bucket_range = (max_val - min_val) / num_buckets
             for i in range(1,num_buckets):
-                range_list.append(str("%.2f" % (i * bucket_range)))
+                range_list.append(str("%.2f" % (min_val + i * bucket_range)))
             range_list.append(str("%.2f" % max_val))
         elif (range_list == ['equal_percentage_scale']):
             from numpy import sort

@@ -14,11 +14,13 @@ class Map(AbstractIndicator):
                  attribute = None, 
                  years = None, operation = None, name = None,
                  scale = None,
-                 storage_location = None):
+                 storage_location = None,
+                 project_name = None):
         AbstractIndicator.__init__(self, source_data, dataset_name, 
                                    [attribute], years, operation, name,
                                    storage_location)
         self.scale = scale
+        self.project_name = project_name
 
     def is_single_year_indicator_image_type(self):
         return True
@@ -56,8 +58,8 @@ class Map(AbstractIndicator):
         dataset = self._get_dataset(year)
         dataset.plot_map(name=attribute_alias,
                  my_title=title, file=file_path,
-                 filter='urbansim.gridcell.is_fully_in_water',
-                 min_value=min_value, max_value=max_value)
+                 min_value=min_value, max_value=max_value,
+                 project_name=self.project_name)
         
         return file_path
 
