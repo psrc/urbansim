@@ -27,7 +27,8 @@ class MonteCarloAssignmentModel(Model):
         """
         assert id_name1 in individual_dataset.get_known_attribute_names()
         if id_name2 not in individual_dataset.get_known_attribute_names():           
-            individual_dataset.add_primary_attribute(-1*ones(individual_dataset.size()), id_name2)
+            individual_dataset.add_primary_attribute(-1*ones(individual_dataset.size(), dtype=fraction_dataset.get_attribute(id_name2).dtype), 
+                                                     id_name2)
         fraction_id1 = fraction_dataset.get_attribute(id_name1)
         individual_id1 = individual_dataset.get_attribute(id_name1)
         unique_ids = unique(fraction_id1)
