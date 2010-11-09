@@ -89,8 +89,8 @@ class ExportUrbansimDataToOpenamos(AbstractTravelModel):
                              'partim=person.disaggregate(synthetic_person.partim)',
                              'selfemp=person.disaggregate(synthetic_person.selfemp)',
                              'wkhome=person.disaggregate(synthetic_person.wkhome)',
-                             'wtaz=person.disaggregate(synthetic_person.wtaz)',
-                             'schtaz=person.disaggregate(synthetic_person.schtaz)'
+                             'person.wtaz',
+                             'person.schtaz'
                              ]
         
         persons.compute_variables(persons_variables)
