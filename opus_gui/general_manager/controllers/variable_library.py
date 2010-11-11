@@ -21,6 +21,7 @@ from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.util.convenience import create_qt_action, get_unique_name
 from opus_gui.util.icon_library import IconLibrary
 
+from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.dependency_query import DependencyChart
 from opus_gui.general_manager.controllers.dependency_viewer import DependencyViewer
 from opus_core.third_party.pydot import InvocationException
@@ -393,6 +394,12 @@ class VariableLibrary(QDialog, Ui_VariableLibrary):
         self.group_progress.setVisible(True)
         self.variables_table.setEnabled(False) # disable selecting variables during run
         self.group_progress.setTitle('Validating %d variables...' % len(selected_rows))
+        
+        # Set the expression library in VariableFactory to the variables for this configuration.
+        # We need to get this from the VariablesTableModel rather than from the xml configuration
+        # since newly added variables may not yet have been saved to the xml configuration but we
+        # still want to check them.
+        VariableFactory().set_expression_library(self.model.get_variables_dict())
 
         # Batch process the selected variables
         variables = [self.model.variables[i] for i in selected_rows]

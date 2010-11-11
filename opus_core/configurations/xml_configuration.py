@@ -1337,6 +1337,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                      ('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2',
                      ('test_agent', 'income_times_10_ds_qualified'): '5*test_agent.income_times_2',
                      ('test_agent', 'income_times_10_using_primary'): '10*test_agent.income',
+                     ('test_agent', 'income_times_20_using_lib'): '2*test_agent.income_times_10_using_primary',
                      ('test_agent', 'income_less_than'): 'def income_less_than(i): return test_agent.income<i',
                      ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)',
                      ('parcel', 'bsqft'): 'urbansim_parcel.parcel.building_sqft',
@@ -1363,9 +1364,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         result5 = dataset.compute_variables(["test_agent.income_times_10"])
         result6 = dataset.compute_variables(["test_agent.income_times_10_ds_qualified"])
         result7 = dataset.compute_variables(["test_agent.income_times_10_using_primary"])
+        result8 = dataset.compute_variables(["test_agent.income_times_20_using_lib"])
         self.assert_(ma.allclose(result5, array([10, 50, 100]), rtol=1e-6))
         self.assert_(ma.allclose(result6, array([10, 50, 100]), rtol=1e-6))
         self.assert_(ma.allclose(result7, array([10, 50, 100]), rtol=1e-6))
+        self.assert_(ma.allclose(result8, array([20, 100, 200]), rtol=1e-6))
         # Test that the expression library is set correctly for estimation and run configurations.
         est = config.get_estimation_configuration()
         self.assertEqual(est['expression_library'], lib_should_be)

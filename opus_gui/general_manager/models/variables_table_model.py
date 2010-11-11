@@ -391,3 +391,13 @@ class VariablesTableModel(QAbstractTableModel):
     def get_variable_names_in_dataset(self, dataset_name):
         '''return a list ([str,]) of the variable names in a given dataset'''
         return [var['name'] for var in self.variables if var['dataset'] == dataset_name]
+    
+    def get_variables_dict(self):
+        '''return a dictionary of variables, where the keys are (dataset, variable_name) and the
+        values are the defining expression for all variables in the model'''
+        d = {}
+        for var in self.variables:
+            d[(var['dataset'], var['name'])] = var['definition']
+        return d
+
+
