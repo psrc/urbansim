@@ -457,10 +457,15 @@ class ModelSystem(object):
         end_year = resources["years"][-1]
         nyears = end_year - start_year + 1
         root_seed = resources.get("seed", NO_SEED)
-        seed(root_seed)
-        seed_array = randint(1,2**30, nyears)
+        if resources.get('_seed_dictionary_', None) is not None:
+            # This is added by the RunManager to ensure reproducibility including restarted runs 
+            seed_dict = resources.get('_seed_dictionary_')
+            seed_array = array(map(lambda year : seed_dict[year], range(start_year, end_year+1)))
+        else:
+            seed(root_seed)
+            seed_array = randint(1,2**30, nyears)
         logger.log_status("Running simulation for years %d thru %d" % (start_year, end_year))
-        logger.log_status("Root seed: %s" % root_seed)
+        logger.log_status("Simulation root seed: %s" % root_seed)
 
         self._run_each_year_as_separate_process(start_year, end_year, seed_array, resources)
 

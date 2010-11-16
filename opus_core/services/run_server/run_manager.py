@@ -4,7 +4,7 @@
 
 import os, pickle, shutil, datetime
 from time import localtime, strftime
-
+from numpy.random import seed, randint
 from opus_core.logger import logger
 from opus_core.fork_process import ForkProcess
 from opus_core.configuration import Configuration
@@ -13,6 +13,8 @@ from opus_core.database_management.database_server import DatabaseServer
 from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.abstract_service import AbstractService
+
+NO_SEED = None
 
 class RunManager(AbstractService):
     """An abstraction representing a simulation manager that automatically logs
@@ -102,6 +104,7 @@ class RunManager(AbstractService):
             if 'base_year' not in run_resources:
                 run_resources['base_year'] = run_resources['years'][0] - 1
 
+            self._create_seed_dictionary(run_resources)
 #            model_system.run_in_same_process(run_resources)
             if run_as_multiprocess:
                 model_system.run_multiprocess(run_resources)
@@ -218,6 +221,22 @@ class RunManager(AbstractService):
 
         return resources
 
+    def _create_seed_dictionary(self, resources):
+        """Create a dictionary of seeds (one dict item per year) and add it to the resources under the name
+        '_seed_dictionary_'. That way one can reproduce results also for simulations that are restarted.
+        """
+        root_seed = resources.get("seed", NO_SEED)
+        seed(root_seed)
+        start_year = resources["years"][0]
+        end_year = resources["years"][-1]
+        seed_array = randint(1,2**30, end_year - start_year + 1)
+        seed_dict = {}
+        i = 0
+        for year in range(start_year, end_year+1):
+            seed_dict[year] = seed_array[i]
+            i = i + 1
+        resources['_seed_dictionary_'] = seed_dict
+        
     ######## DATABASE OPERATIONS ###########
 
     def get_resources_for_run_id_from_history(self, run_id, filter_by_status = False):
