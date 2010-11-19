@@ -38,7 +38,7 @@ class Tests(opus_unittest.OpusTestCase):
             'person_trip':
             {
             'person_trip_id':    array([ 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12]),
-            'income_bracket':    array([101,11,21,201,31,31,101,11,201,21,31,31]),
+            'income_break':    array([101,11,21,201,31,31,101,11,201,21,31,31]),
             'mode_id'       :    array([  7, 9, 7, 99, 7,99,  0,99, 0, 7,99, 7]),
             'time_period'   :    array([  1, 3, 4,100, 4, 9,  0, 9, 0, 2,100,3]),
             },
