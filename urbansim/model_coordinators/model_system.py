@@ -39,9 +39,11 @@ class ModelSystem(CoreModelSystem):
                     
             if ('travel_model_configuration' in resources) and (not resources.get('skip_travel_model', False)):
                 # tnicolai add start year to travel model config
+                logger.log_status('Triggering travelmodel')
                 tmc = resources['travel_model_configuration']
                 tmc['start_year'] = start_year # end tnicolai
                 self._run_travel_models_in_separate_processes(resources['travel_model_configuration'], year, resources)
+                logger.log_status('Leaving travelmodel')
 
             if 'post_year_configuration' in resources:
                 self._run_travel_models_in_separate_processes(resources['post_year_configuration'], year, resources)
