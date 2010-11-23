@@ -20,6 +20,11 @@ class GetMatsimDataIntoCachePsrcTest(GetMatsimDataIntoCache):
         travel_data = os.path.join( self.input_directory, 
                                     self.table_name + '.csv')
         
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         # store results in logfile
         self.dump_results(config, 
                           int( os.path.getsize(travel_data) ),

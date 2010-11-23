@@ -15,8 +15,8 @@ class StartRunOptionGroup(object):
     def __init__(self):
         logger.start_block("Starting UrbanSim")
         
-        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/psrc_test.xml' ).get_run_configuration( 'PSRC_baseline' )
-        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/seattle_parcel_test.xml' ).get_run_configuration( 'Seattle_baseline' )
+        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/psrc_test.xml' ).get_run_configuration( 'accra_baseline' )
+        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/seattle_parcel_test.xml' ).get_run_configuration( 'Seattle_baseline' )
         
         # add result dictionary to config, where all measurements are stored
         self.config['psrc_logfile'] = self.create_logfile()

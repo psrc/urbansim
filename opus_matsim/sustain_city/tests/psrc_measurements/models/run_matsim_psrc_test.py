@@ -22,7 +22,12 @@ class RunMATSimPsrcTest(RunTravelModel):
         
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
         config_obj.marschall()  # generation process
-        self.end_time = time.time()        
+        self.end_time = time.time()
+        
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass        
         
         # store reults in logfile
         self.dump_results(config, 
@@ -37,7 +42,7 @@ class RunMATSimPsrcTest(RunTravelModel):
         # all measurements are stored in the same logfile
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
                 'opus_home': os.environ['OPUS_HOME'],
-                'vmargs': "-Xmx2000m",
+                'vmargs': "-Xmx2500m",
                 'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
                 'javaclass': "playground.tnicolai.urbansim.MATSim4UrbanSimMeasurement",
                 'matsim_config_file': self.matsim_config_full } 

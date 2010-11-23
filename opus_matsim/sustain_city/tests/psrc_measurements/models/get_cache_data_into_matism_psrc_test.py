@@ -24,6 +24,11 @@ class GetCacheDataIntoMatsimPsrcTest(GetCacheDataIntoMatsim):
         parcel_file = os.path.join( self.output_directory, 
                                     self.dataset_table_parcels.get_file_name(year, suppress_extension_addition=True) ) + '.' + extension
         
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         # store results in logfile
         self.dump_results(config, 
                           int( os.path.getsize(person_file) ),

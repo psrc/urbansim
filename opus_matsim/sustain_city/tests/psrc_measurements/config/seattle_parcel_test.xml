@@ -15,7 +15,7 @@
         <selectable name="opus_matsim.sustain_city.tests.psrc_measurements.models.get_matism_data_into_cache_psrc_test" type="selectable">True</selectable>
       </models>
       <matsim4urbansim type="dictionary">
-        <sampling_rate type="float">0.01</sampling_rate>
+        <sampling_rate type="float">1</sampling_rate>
         <temp_directory type="string">/opus_matsim/tmp/</temp_directory>
       </matsim4urbansim>
       <matsim_config type="dictionary">
@@ -44,7 +44,7 @@
         <selectable name="expected_sale_price_model" type="model_choice">False</selectable>
         <selectable name="development_proposal_choice_model" type="model_choice">False</selectable>
         <selectable name="building_construction_model" type="model_choice">False</selectable>
-        <selectable name="household_transition_model" type="model_choice">True</selectable>
+        <selectable name="household_transition_model" type="model_choice">False</selectable>
         <selectable name="employment_transition_model" type="model_choice">False</selectable>
         <selectable name="household_relocation_model" type="model_choice">False</selectable>
         <selectable name="household_location_choice_model" type="model_choice">False</selectable>
