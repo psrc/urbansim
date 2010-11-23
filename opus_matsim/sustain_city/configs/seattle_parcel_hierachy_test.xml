@@ -50,7 +50,8 @@
 					<year type="integer">2001</year>
 				</run_description>
 			</years_to_run>
-		</travel_model_configuration>	</model_manager>
+		</travel_model_configuration>	
+	</model_manager>
 	<scenario_manager>
 		<scenario executable="True" name="Seattle_baseline" type="scenario">
 			<years_to_run config_name="years" type="tuple">
