@@ -107,11 +107,11 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         if not os.path.exists(dest_inputdir): os.makedirs(dest_inputdir)
 
         # copy over data files from the source data directory
+        tmprocdatadir       = tm_config['tazdataprocessor_datadir'].replace("%YEAR%", str(year))
         sfzonesfile         = "sfzones%d.csv" % (year)
         tazkeyfile          = "TazKey.csv"
-        shutil.copy2(os.path.join(tm_config['tazdataprocessor_datadir'], sfzonesfile),  dest_inputdir)
-        shutil.copy2(os.path.join(tm_config['tazdataprocessor_srcdir'],"input","TazKey_UrbanSim.csv"), 
-                     os.path.join(dest_inputdir,tazkeyfile))
+        shutil.copy2(os.path.join(tmprocdatadir,"input", "p2009", sfzonesfile),  dest_inputdir)
+        shutil.copy2(os.path.join(tmprocdatadir,"input", tazkeyfile), dest_inputdir)
         
         # copy over controls files
         dest_controlsdir = os.path.join(dest_dir, "controls")
@@ -131,11 +131,23 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         self._updateConfigPaths(controlsfile, 
          [ [r"(tazkey\s*=\s*)(\S*)",   r"\1input\%s" % tazkeyfile ],
            [r"(sfzones\s*=\s*)(\S*)",  r"\1input\%s" % sfzonesfile],
-           [r"(zmast\s*=\s*)(\S*)",    r"\1"+os.path.join(tm_config['tazdataprocessor_datadir'],zmastfile)],
-           [r"(azlos\s*=\s*)(\S*)",    r"\1"+os.path.join(tm_config['tazdataprocessor_datadir'],azlosfile)],
-           [r"(enroll\s*=\s*)(\S*)",   r"\1"+os.path.join(tm_config['tazdataprocessor_datadir'],enrollfile)],
-           [r"(baseyear\s*=\s*)(\S*)", r"\1"+os.path.join(tm_config['tazdataprocessor_srcdir'],"input",baseyearfile)]
+           [r"(zmast\s*=\s*)(\S*)",    r"\1"+os.path.join(tmprocdatadir,"input","p2009",zmastfile)],
+           [r"(azlos\s*=\s*)(\S*)",    r"\1"+os.path.join(tmprocdatadir,"input","p2009",azlosfile)],
+           [r"(enroll\s*=\s*)(\S*)",   r"\1"+os.path.join(tmprocdatadir,"input","p2009",enrollfile)],
+           [r"(baseyear\s*=\s*)(\S*)", r"\1"+os.path.join(tmprocdatadir,"input",baseyearfile)]
          ])
+        logger.log_status("Updating TazKey file %s" % tazkeyfile)
+        self._updateConfigPaths(os.path.join(dest_inputdir, tazkeyfile),
+                                [["0,zmast,HHINCQ1",  "0,sfzones,HHINCQ1"],
+                                 ["0,zmast,HHINCQ2",  "0,sfzones,HHINCQ2"],
+                                 ["0,zmast,HHINCQ3",  "0,sfzones,HHINCQ3"],
+                                 ["0,zmast,HHINCQ4",  "0,sfzones,HHINCQ4"],
+                                 ["0,zmast,AVGINCQ1", "0,sfzones,AVGINCQ1"],
+                                 ["0,zmast,AVGINCQ2", "0,sfzones,AVGINCQ2"],
+                                 ["0,zmast,AVGINCQ3", "0,sfzones,AVGINCQ3"],
+                                 ["0,zmast,AVGINCQ4", "0,sfzones,AVGINCQ4"],
+                                 ["0,zmast,AVGHHINC",  "0,sfzones,AVGHHINC"]
+                                 ])
         
         # update the sfzones file
         shutil.move(os.path.join(dest_inputdir,sfzonesfile), os.path.join(dest_inputdir,sfzonesfile+".bak"))
@@ -161,9 +173,9 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         # clean the Allocate_nhb.csv file.  This should really be fixed in the TazDataProcessor
         self._clean_allocate_nhb(os.path.join(dest_dir, "Allocate_nhb.csv"))
         # postprocess the tazdata.dbf.  This should be done more cleanly also
-        self._postprocessTazdata(os.path.join(dest_dir, "tazdata.dbf"),
-                                 os.path.join(tm_config['tazdataprocessor_srcdir'], "tazdataAppend_UrbanSim.dbf"),
-                                 os.path.join(dest_dir, "tazdata.dat"))
+        # self._postprocessTazdata(os.path.join(dest_dir, "tazdata.dbf"),
+        #                          os.path.join(tm_config['tazdataprocessor_srcdir'], "tazdataAppend_UrbanSim.dbf"),
+        #                          os.path.join(dest_dir, "tazdata.dat"))
         
         # put the output files in place
         outputfiles = ["tazdata.dbf", 
@@ -306,18 +318,17 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         src_columns     = line.strip().split(",")
         try:
             indexcolnum     = src_columns.index(indexcolname)
-            popcolnum       = src_columns.index("POP")
         except:
             logger.log_error("Column named %s not found in %s" % (indexcolname, src_csv))
             raise StandardError, "Column named %s not found in %s" % (indexcolname, src_csv)
         
-        #try:
-        #    popcolnum       = src_columns.index("POP")
-        #    gqpopcolnum     = src_columns.index("GQPOP")
-        #    hhpopcolnum     = src_columns.index("HHPOP")
-        #except:
-        #    logger.log_error("Column named POP,GQPOP or HHPOP not found in %s" % (src_csv))
-        #    raise StandardError, "Column named POP,GQPOP or HHPOP not found in %s" % (src_csv)
+        try:
+            popcolnum       = src_columns.index("POP")
+            gqpopcolnum     = src_columns.index("GQPOP")
+            hhpopcolnum     = src_columns.index("HHPOP")
+        except:
+            logger.log_error("Column named POP,GQPOP or HHPOP not found in %s" % (src_csv))
+            raise StandardError, "Column named POP,GQPOP or HHPOP not found in %s" % (src_csv)
 
         overwrite_colset    = []
         new_colset          = []
@@ -357,7 +368,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
             
             # alas, this isn't generic
             # replace POP with HHPOP + GQPOP
-            # cols[popcolnum] = cols[gqcolnum] + cols[hhpopcolnum]
+            cols[popcolnum] = "%d" % int(float(cols[gqpopcolnum]) + float(cols[hhpopcolnum]))
             
             outfile.write(",".join(cols) + "\n")
         infile.close()
@@ -365,7 +376,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
 
     def _run_PopSyn(self, tm_config, year, run_dir):
         """ Gets the inputs all setup and then runs the Population Synthesizer.
-        """
+        """        
         # update sfzones.csv with the landusemodel output
         dest_dir = os.path.join(run_dir, self.SUBDIR_POPULATION_SYNTHESIZER)
         if not os.path.exists(dest_dir): os.makedirs(dest_dir)
@@ -418,7 +429,7 @@ class RunSanfranciscoTravelModel(RunTravelModel):
             if popsynret != 0: raise StandardError, "Population Synthesizer exited with bad return code"
 
         # put the output files in place
-        shutil.copy2(sfsampfile, os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS))
+        shutil.move(sfsampfile, os.path.join(run_dir, self.SUBDIR_LANDUSE_INPUTS))
 
         logger.end_block()
         
