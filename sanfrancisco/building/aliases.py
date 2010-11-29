@@ -26,6 +26,7 @@ aliases = [
        "vacant_residential_units_without_clip=sanfrancisco.building.residential_units - sanfrancisco.building.number_of_households",
        "zone_id=building.disaggregate(parcel.zone_id)",
       #dupe "building_class_id = building.disaggregrate(building_type.class_id)",
+       "tprice=building.structure_value+building.disaggregate(parcel.land_value)",
        "occupied_mixed_spaces = sanfrancisco.building.occupied_sqft + safe_array_divide(sanfrancisco.building.number_of_households, (building.residential_units).astype('float')) * building.residential_sqft",
        "total_mixed_spaces = building.non_residential_sqft + building.residential_sqft",
        "is_placed_type = (sanfrancisco.building.building_type_id < 3)+" +
