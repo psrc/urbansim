@@ -306,13 +306,14 @@
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
-              <key name="sample_size_locations" type="integer">30</key>
+              <key name="sample_size_locations" type="integer">60</key>
               <key name="weights_for_estimation_string" type="string">numpy.logical_and(sanfrancisco.parcel.remaining_non_residential_sqft_capacity &gt; building.non_residential_sqft, sanfrancisco.parcel.remaining_residential_units_capacity &gt; building.residential_units)</key>
 		      <!-- <key name="sample_alternatives_by_submodel" type="string">True</key> -->
 		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
             </argument>
+            <argument name="debuglevel" type="integer">1</argument>
             <argument name="run_config" type="dictionary">
-              <key name="sample_size_locations" type="integer">30</key>
+              <key name="sample_size_locations" type="integer">60</key>
               <key name="weights_for_simulation_string" type="string">numpy.logical_and(sanfrancisco.parcel.remaining_non_residential_sqft_capacity &gt; building.non_residential_sqft, sanfrancisco.parcel.remaining_residential_units_capacity &gt; building.residential_units)</key>
               <key name="is_choice_overfilled_string" convert_blank_to_none="True" type="string">numpy.logical_or(parcel.non_residential_sqft_capacity &gt; parcel.aggregate(building.non_residential_sqft), parcel.residential_units_capacity &gt; parcel.aggregate(building.residential_units))</key>
 		      <!--
@@ -320,7 +321,7 @@
               <key name="capacity_string" type="string">parcel.parcel_id>0</key>              
               <key name="sample_alternatives_by_submodel" type="string">True</key>
               -->
-		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':500}</key>
+		      <key name="chunk_specification_for_sampling" type="string">{'records_per_chunk':50}</key>
             </argument>
             <name name="name" type="string">AgentLocationChoiceModel</name>
           </init>
@@ -338,7 +339,7 @@
             <argument name="coefficients" type="string">coefficients</argument>
             <argument name="agents_index" type="string">new_building_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
-            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="debuglevel" type="string">10</argument>
           </run>
           <prepare_for_estimate type="dictionary">
             <output name="output" type="string">(specification, index)</output>
@@ -360,6 +361,28 @@
           </estimate>
         </structure>
       </model>
+      <!-- this was experimental -lmz
+      <model name="adjust_problem_data" type="model">
+        <structure type="dictionary">
+          <import hidden="False" name="import" type="dictionary">
+            <class_module type="string">sanfrancisco.models.adjust_problem_data</class_module>
+            <class_name>AdjustProblemData</class_name>
+          </import>
+          <init type="dictionary" hidden="True">
+            <name hidden="True" name="name" type="string">AdjustProblemData</name>
+          </init>
+          <run type="dictionary">
+            <output name="output" type="string">building</output>
+            <argument name="building_dataset" type="string">building</argument>
+            <argument name="business_dataset" type="string">business</argument>
+            <argument name="parcel_dataset" type="string">parcel</argument>
+            <argument name="zone_dataset" type="string">zone</argument>
+            <argument name="year" type="string">year</argument>
+            <argument name="storage" type="string">base_cache_storage</argument>
+          </run>
+        </structure>      
+      </model>
+      -->
       <model name="process_pipeline_events" type="model">
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
@@ -374,6 +397,24 @@
             <argument name="building_dataset" type="string">building</argument>
             <argument name="year" type="string" hidden="True">year</argument>
             <argument name="storage" type="string" hidden="True">base_cache_storage</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="process_pipeline_events_low" type="model">
+        <structure type="dictionary">
+          <import hidden="True" name="import" type="dictionary">
+            <class_module type="string">sanfrancisco.models.process_pipeline_events</class_module>
+            <class_name>ProcessPipelineEvents</class_name>
+          </import>
+          <init type="dictionary" hidden="True">
+            <name hidden="True" name="name" type="string">ProcessPipelineEvents</name>
+          </init>
+          <run type="dictionary">
+            <output hidden="True" name="output" type="string">scheduled_development_events</output>
+            <argument name="building_dataset" type="string">building</argument>
+            <argument name="year" type="string" hidden="True">year</argument>
+            <argument name="storage" type="string" hidden="True">base_cache_storage</argument>
+            <argument name="event_filter" type="string" convert_blank_to_none="True" parser_action="quote_string">development_event.entitlement_status==1</argument>
           </run>
         </structure>
       </model>
@@ -430,124 +471,6 @@
       </datasets_to_preload>
     </estimation_config>
   </model_manager>
-  <scenario_manager>
-    <scenario executable="True" name="sanfrancisco_baseline" type="scenario">
-      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-      <base_year type="integer">2001</base_year>
-      <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer">2002</firstyear>
-        <lastyear type="integer">2005</lastyear>
-      </years_to_run>
-      <models_to_run config_name="models" type="selectable_list">
-        <selectable name="process_pipeline_events" type="selectable">True</selectable>
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="building_transition_model" type="selectable">True</selectable>
-        <selectable name="building_location_choice_model" type="selectable">True</selectable>
-        <selectable name="Household_transition_model" type="selectable">True</selectable>
-        <selectable name="Business_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="business_relocation_model" type="selectable">True</selectable>
-        <selectable name="business_location_choice_model" type="selectable">True</selectable>
-      </models_to_run>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">sanfrancisco/base_year_data</cache_directory>
-      <creating_baseyear_cache_configuration type="class">
-        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
-        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
-        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">sanfrancisco/runs</argument>
-        <argument name="baseyear_cache" type="class">
-          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
-          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">sanfrancisco/base_year_data</argument>
-        </argument>
-        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
-        <argument name="advanced" type="category">
-          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
-            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
-            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
-            <argument name="database_name" type="string">sanfrancisco_baseyear</argument>
-          </baseyear_database_configuration>
-          <cache_from_database type="boolean">False</cache_from_database>
-          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-          <tables_to_cache type="selectable_list">
-            <selectable name="activities" type="selectable">True</selectable>
-            <selectable name="annual_business_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_business" type="selectable">True</selectable>
-            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
-            <selectable name="building_types" type="selectable">True</selectable>
-            <selectable name="building_type_classification" type="selectable">True</selectable>
-            <selectable name="buildings" type="selectable">True</selectable>
-            <selectable name="business" type="selectable">True</selectable>
-            <selectable name="business_for_estimation" type="selectable">True</selectable>
-            <selectable name="business_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="business_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="development_event_history" type="selectable">True</selectable>
-            <selectable name="development_events_exogenous" type="selectable">True</selectable>
-            <selectable name="district14" type="selectable">True</selectable>
-            <selectable name="district24" type="selectable">True</selectable>
-            <selectable name="households" type="selectable">True</selectable>
-            <selectable name="households_for_estimation" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="nonresidential_building_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="nonresidential_building_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="parcels" type="selectable">True</selectable>
-            <selectable name="planning_districts" type="selectable">True</selectable>
-            <selectable name="persons" type="selectable">True</selectable>
-            <selectable name="real_estate_price_model_coefficients" type="selectable">True</selectable>
-            <selectable name="real_estate_price_model_specification" type="selectable">True</selectable>
-            <selectable name="residential_building_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="residential_building_location_choice_model_specification" type="selectable">True</selectable>
-            <selectable name="sectors" type="selectable">True</selectable>
-            <selectable name="target_vacancies" type="selectable">True</selectable>
-            <selectable name="tracts" type="selectable">True</selectable>
-            <selectable name="travel_data" type="selectable">True</selectable>
-            <selectable name="urbansim_constants" type="selectable">True</selectable>
-            <selectable name="zones" type="selectable">True</selectable>
-            <!--
-            <selectable name="housing_price_model_coefficients" type="selectable">True</selectable>
-            <selectable name="housing_price_model_specification" type="selectable">True</selectable>
-            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
-            -->
-          </tables_to_cache>
-          <tables_to_cache_nchunks type="dictionary">
-            <parcels type="integer">1</parcels>
-          </tables_to_cache_nchunks>
-        </argument>
-      </creating_baseyear_cache_configuration>
-      <advanced type="category">
-        <dataset_pool_configuration type="class">
-          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['sanfrancisco', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
-        </dataset_pool_configuration>
-        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
-        <flush_variables type="boolean">False</flush_variables>
-        <low_memory_run type="boolean">False</low_memory_run>
-        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'business','travel_data']</datasets_to_cache_after_each_model>
-        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
-        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-          <selectable name="zone" type="selectable">True</selectable>
-          <selectable name="household" type="selectable">True</selectable>
-          <selectable name="building" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">False</selectable>
-          <selectable name="parcel" type="selectable">True
-          	<package_name type="string">sanfrancisco</package_name>
-          </selectable>
-          <selectable name="business" type="selectable">True
-          	<package_name type="string">sanfrancisco</package_name>
-          </selectable>
-          <selectable name="person" type="selectable">True
-          	<package_name type="string">sanfrancisco</package_name>
-          </selectable>
-          <selectable name="travel_data" type="selectable">True</selectable>
-          <selectable name="target_vacancy" type="selectable">True</selectable>
-          <selectable name="development_event_history" type="selectable">True</selectable>
-        </datasets_to_preload>
-      </advanced>
-    </scenario>
-  </scenario_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
   </results_manager>
