@@ -1,0 +1,131 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\makeatletter
+\newcommand\code{\bgroup\@makeother\_\@makeother\~\@makeother\$\@codex}
+\def\@codex#1{{\normalfont\ttfamily\hyphenchar\font=-1 #1}\egroup}
+\makeatother
+
+\title{UrbanSim Data Preparation Scripts}
+\author{Hana \v{S}ev\v{c}\'{\i}kov\'{a}}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+\section{Unrolling Jobs from Establishments}
+\label{sec:unrollbusiness}
+%
+\subsection{Prerequisities}
+%
+\begin{itemize}
+\item Table of {\bf businesses} that are assigned either to zones, or optionally to buildings or parcels. 
+	\begin{description}
+	\item[Mandatory columns:] \code{zone_id}, \code{sector_id}, number of jobs (name configurable), building sqft  (name configurable).
+	\item[Optional columns:] \code{parcel_id}, \code{building_id}, \code{home_based} - maps to job's attribute \code{building_type} (should map to \code{home_based_status}), \code{join_flag},\\ \code{impute_building_sqft_flag}.
+	\end{description}
+\item Optionally, table of {\bf zonal job control totals} (name configurable).
+\end{itemize}
+
+\subsection{Procedure}
+%
+\begin{enumerate}
+\item User's settings:
+\begin{itemize}
+\item \code{compute_sqft_per_job}: True or False
+\item \code{unplace_jobs_with_non_existing_buildings}: True or False
+\item \code{minimum_sqft} and \code{maximum_sqft}: numeric values. They default to 1 and 4000, respectively.
+\end{itemize}
+\item Initialize a job dataset with columns
+\begin{description}
+\item[job\_id]
+\item[sector\_id]
+\item[building\_id]
+\item[parcel\_id]
+\item[zone\_id]
+\item[building\_type] (corresponds to business attribute \code{home_based})
+\item[sqft]
+\item[join\_flag] (if \code{businesses.join_flag} exists)
+\item[impute\_building\_sqft\_flag] (if \code{businesses.impute_building_sqft_flag} exists)
+\end{description}
+\item For each job in each business create an entry in the job dataset. Attribute \code{job_id} is an enumeration of the jobs.
+\item If \code{compute_sqft_per_job} is True, the attribute \code{sqft} is computed (using $10\%$ vacancy) as (building sqft - $0.1\cdot$building sqft)/number of jobs. The result is clipped between \code{minimum_sqft} and \code{maximum_sqft}. If \code{compute_sqft_per_job} is False, the  \code{sqft} attribute is set to the building sqft of the business.
+\item All missing values of \code{building_type} (i.e. smaller than 0) are set to 'non-home-based'.
+\item If \code{unplace_jobs_with_non_existing_buildings} is True, all jobs that are assigned to a non-existing building are unplaced. 
+\item If a table of job control totals is not given go to 10., otherwise continue.
+\item The table of control totals is expected to have columns \code{zone_id}, \code{sector_id}, and \code{jobs}.
+\item For each zone and sector, check the actual number of jobs and compare it to the control total (CT). If there are less jobs than CT, continue. Otherwise compute the number of jobs to be deleted. Delete jobs randomly, starting from jobs  that have neither \code{parcel_id} nor \code{building_id} assigned. If more jobs need to be deleted, continue by deleting jobs that have no  \code{building_id} assigned, and only after that consider all jobs as candidate for  being deleted.
+\item Write the resulting table of jobs into cache (or other user-defined storage).
+\item Table {\bf building\_sqft\_per\_job} is created by taking the median of the job \code{sqft} attribute over buildings of each building type and in each zone, clipped between min and max (defaults are 25 and 2000, respectively). Only jobs are considered that have \code{sqft} larger than 0.
+\end{enumerate}
+
+\section{Handling Residential Locations}
+%
+\begin{enumerate}
+\item In each zone, check the number of households and create new buildings if necessary to accommodate all households.
+\item Run the household location choice model for each zone and assign buildings to households within their zone.
+\end{enumerate}
+
+\section{Handling Non-Residential Locations}
+%
+\subsection{Prerequisities}
+\begin{itemize}
+\item Table of {\bf jobs} (e.g. result of procedure described in Section~\ref{sec:unrollbusiness}).
+	\begin{description}
+	\item[Mandatory columns:] \code{job_id}, \code{building_id}, \code{parcel_id},  \code{building_type} (1=home based, 2=non-home based, 3=governmental), \code{sqft}
+	\item[Optional columns:] \code{impute_building_sqft_flag}
+	\end{description}
+	The table is assumed to have \code{building_id} assigned for parcels that have only one building.
+\item Table of {\bf buildings} with columns \code{building_id}, \code{parcel_id}, \code{building_type_id}, \code{non_residential_sqft}
+\item Table of {\bf building types}.
+\item Table {\bf building\_sqft\_per\_job}.
+\end{itemize}
+
+\subsection{Procedure of placing jobs with known parcel id}
+\begin{enumerate}
+\item Select all jobs that have \code{parcel_id} assigned but no \code{building_id} and group them by \code{building_type} into a governmental, non-home based and home-based group.
+\item Place governmental jobs: For each parcel that have governmental jobs, sample randomly within governmental buildings in that parcel. Leave jobs unplaced if there are no governmental buildings. 
+\item Move jobs from the governmental group that were not placed in the step above  into the non-home based group.
+\item Determine the joint distribution of jobs over sectors and building types.
+\item Place jobs from the non-home based group into buildings, depending on the available space, as follows.\\ For each parcel that contains at least one job of this group:
+	\begin{enumerate}
+	\item Locate all buildings in this parcel. If there are no buildings go to the next parcel.
+	\item Determine the sqft capacity of each such building (i.e. \code{non_residential_sqft} minus occupied sqft). If there is no available capacity go to the next parcel.
+	\item Create a demand table with rows corresponding to buildings and columns corresponding to jobs which contains the values of jobs \code{sqft}. Zero values are replaced by corresponding values from the   building\_sqft\_per\_job table.
+	\item Compute a table of supply-demand ratio where each cell is equal to the building's capacity divided by demand multiplied by the number of jobs. This value is multiplied by 0.9 in order to assure 10\% vacancy. Thus each cell in this table contains a factor with the meaning 'If all jobs in this parcel would have this size, by how much would the sqft need to be decreased/increased to fit into this building, leaving 10\% vacancy'.
+	\item For buildings that have supply-demand ratio smaller than one in at least one cell, multiply the demand table by the supply-demand ratio.
+	\item Using the job's distribution table from Step 4., create a probability table of the same shape as the demand table.
+	\item Sort jobs by their sqft in decreasing order and sample a building to each job using the distribution table as sampling weights.
+	\item Update job's \code{sqft} attribute by the corresponding value from the demand table, clipped between minimum and maximum set in Section~\ref{sec:unrollbusiness}.
+	\end{enumerate}
+\item Consider all non-home based jobs that were not placed in the previous step (excluding governmental jobs) and check if their parcel contains at least one residential building. In such a case, re-classify such a job to a home-based job.
+\item For each non-home based job that was neither placed in Step 5.  nor re-classify in Step 6., and has \code{impute_building_sqft_flag} equal to 1, sample a building using the distribution table from Step 4. and impute the corresponding sqft into the building. Update the attribute \code{non_residential_sqft} of such buildings and update the job's \code{sqft} attribute for such jobs  by the corresponding value from a demand table created as in Step 5(c).
+\item Place jobs from the home based group into buildings, as follows.\\
+For each parcel that contains at least one job of this group:
+	\begin{enumerate}
+	\item Locate all buildings in this parcel. 
+	\item Compute the capacity for home-based jobs as total job space minus the number of home-based jobs. The total job space for a building is computed as follows: For a single family building, take the minimum of the number of persons and 2, sum-up over households in the building; For a multi-family building, take the minimum of the number of residential units and 50. If there is no available capacity in this parcel go to the next parcel.
+	\item Randomly sample residential buildings to jobs, taking into account the capacity.
+	\end{enumerate}
+\item Assign building type 1 (home-based) or 2 (non-home based) to jobs with missing values of the building type by sampling randomly with weights proportional to the actual home-based/non-home based distribution.
+\item Store the updated table of jobs and buildings into cache (or other user-defined storage).
+\item Update the building\_sqft\_per\_job table.
+\end{enumerate}
+
+
+\subsection{Procedure of placing remaining jobs}
+ \begin{enumerate}
+\item Run the expected sales price model.
+\item Run the development proposal choice model for each zone and generate proposals to accommodate all jobs.
+\item Run the building construction model.
+\item Run the employment location choice model for each zone and assign buildings to reamaining jobs within their zone.
+\end{enumerate}
+\end{document}  
