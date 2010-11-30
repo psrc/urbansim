@@ -157,9 +157,12 @@ class AssignBuildingsToJobs:
             wn = jobs_sqft[idx_in_jobs] <= 0
             for i in range(idx_in_bldgs.size):
                 this_jobs_sqft_table[i, where(wn)[0]] = zone_bt_lookup[jobs_zones[idx_in_jobs[wn]], bldg_types_in_bldgs[idx_in_bldgs[i]]]
-            supply_demand_ratio = (resize(capacity, (capacity.size, 1))/this_jobs_sqft_table.astype("float32").sum(axis=0))/float(idx_in_jobs.size)*0.9
-            if any(supply_demand_ratio < 1): # correct only if supply is smaller than demand 
-                this_jobs_sqft_table = this_jobs_sqft_table * supply_demand_ratio
+            #supply_demand_ratio = (resize(capacity, (capacity.size, 1))/this_jobs_sqft_table.astype("float32").sum(axis=0))/float(idx_in_jobs.size)*0.9
+            supply_demand_ratio = resize(capacity, (capacity.size, 1))/(this_jobs_sqft_table.astype("float32")*float(idx_in_jobs.size))*0.9
+            if any(supply_demand_ratio < 1): # applies only if supply is smaller than demand
+                for i in range(idx_in_bldgs.size):
+                    if any(supply_demand_ratio[i,:] < 1):
+                        this_jobs_sqft_table[i,:] = this_jobs_sqft_table[i,:] * supply_demand_ratio[i,:]
             probcomb = zeros(this_jobs_sqft_table.shape)
             bt = bldg_types_in_bldgs[idx_in_bldgs]
             ibt = building_type_dataset.get_id_index(bt)
@@ -207,7 +210,7 @@ class AssignBuildingsToJobs:
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
         unique_parcels = unique(parcel_ids[job_index_non_home_based_unplaced])
         imputed_sqft = 0
-        logger.log_status("Try to reclassify non-home-based jobs (excluding governemtal jobs) ...")
+        logger.log_status("Try to reclassify non-home-based jobs (excluding governmental jobs) ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             if idx_in_bldgs.size <= 0:
