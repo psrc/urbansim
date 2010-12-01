@@ -6,6 +6,7 @@ import os
 import sys
 import subprocess
 import re
+import shutil
 
 AUTO=-1
 
@@ -24,15 +25,25 @@ def build(modules, cwd=os.getcwd(), make_bibliography=AUTO, make_index=AUTO):
         rerun = bool(check_latex_rerun(result))
         if (make_bibliography == True) or \
                 (make_bibliography == AUTO and check_latex_wants_bbl(result)):
+            files_in_cwd = os.listdir(cwd)
+            for name in files_in_cwd:
+                if '.bib' in name:
+                    shutil.copy(name, out_dir)
             print "  * Running bibtex"
-            result = run(["bibtex",module_base_path], cwd)
+            wd = os.getcwd()
+            os.chdir(out_dir)
+            result = run(["bibtex",module], out_dir)
             report_on_run(result, error_fns=[check_returncode])
+            os.chdir(wd)
             rerun = True
         if (make_index == True) or \
                 (make_index == AUTO and os.access(module_base_path+".idx", os.F_OK)):
             print "  * Running makeindex"
-            result = run(["makeindex",module_base_path+".idx"], cwd, log=module_base_path+".ilg")
+            wd = os.getcwd()
+            os.chdir(out_dir)
+            result = run(["makeindex",module+".idx"], out_dir, log=module_base_path+".ilg")
             report_on_run(result, error_fns=[check_returncode,check_makeindex_errors])
+            os.chdir(wd)
             rerun = True
         pass_number = 1
         while rerun:
