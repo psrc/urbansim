@@ -464,7 +464,7 @@ if __name__ == '__main__':
     starttime = time()
     logger.log_note(strftime("%x %X", localtime(starttime)) + ": Starting")
     
-    cache_directory=r'C:\opus\data\sanfrancisco\runs\run_60.2010.10.07_baseline'
+    cache_directory=sys.argv[1]
 
     make_multiyear_workbook(cache_directory=cache_directory,
                              yearstart=2010,
