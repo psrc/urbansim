@@ -137,7 +137,10 @@ class RunSanfranciscoTravelModel(RunTravelModel):
            [r"(baseyear\s*=\s*)(\S*)", r"\1"+os.path.join(tmprocdatadir,"input",baseyearfile)]
          ])
         logger.log_status("Updating TazKey file %s" % tazkeyfile)
-        self._updateConfigPaths(os.path.join(dest_inputdir, tazkeyfile),
+        
+        # disable the use of income information in SF-CHAMP; it's too unreliable <sob>
+        if False:
+            self._updateConfigPaths(os.path.join(dest_inputdir, tazkeyfile),
                                 [["0,zmast,HHINCQ1",  "0,sfzones,HHINCQ1"],
                                  ["0,zmast,HHINCQ2",  "0,sfzones,HHINCQ2"],
                                  ["0,zmast,HHINCQ3",  "0,sfzones,HHINCQ3"],
