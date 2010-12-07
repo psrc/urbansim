@@ -6,7 +6,7 @@ from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from numpy import array, where, zeros, logical_and, logical_or
-import os, csv
+import os, csv, subprocess
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
@@ -40,11 +40,18 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
             )
                 
         travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=self.TABLE_NAME)
-        # This isn't necessary
-        # remove_index = where(logical_or(travel_data_set.get_attribute("from_zone_id")>max_zone_id,
-        #                                travel_data_set.get_attribute("to_zone_id")>max_zone_id))[0]
-        # travel_data_set.size()
-        # travel_data_set.remove_elements(remove_index)
+         
+        # zip up model_dir
+        cmd = '"C:\Program Files\7-Zip\7z.exe" a %s.7z %s' % (tm_config[year]['year_dir'], tm_config[year]['year_dir'])
+        logger.start_block("Running [%s]" % (cmd))
+        zipproc = subprocess.Popen( cmd, cwd = base_dir, stdout=subprocess.PIPE ) 
+        for line in zipproc.stdout:
+            logger.log_status(line.strip('\r\n'))
+        zipret  = zipproc.wait()
+        logger.log_status("Returned %d" % (zipret))
+        if zipret != 0: print "Zip (%s) exited with bad return code" % (cmd)
+        logger.end_block()
+
         return travel_data_set
 
     def _read_skims(self, run_dir, maxTAZ, MISSING_VALUE=9999):
@@ -77,7 +84,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
                                                       timeperiod=2)
                 
                 # auto 
-                d = skims.getTripTravelDist(tripmode=modes["DA"],
+                d = skims.getTripTravelDist(tripmode=modes["DA"], segdir=1,
                                             otaz=otaz, dtaz=dtaz, timeperiod=2)
                 if d > 0:           return_data["dist"].append(d)
                 else:               return_data["dist"].append(MISSING_VALUE)
