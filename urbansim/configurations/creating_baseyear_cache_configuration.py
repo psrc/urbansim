@@ -28,6 +28,19 @@ class CreatingBaseyearCacheConfiguration(CoreCreatingBaseyearCacheConfiguration)
             *args, **kwargs
             )
         
+class CreatingBaseyearCacheConfigurationNoDB(CreatingBaseyearCacheConfiguration):
+    """As CreatingBaseyearCacheConfiguration but the defaults are set so that it does not involve a database. """
+    def __init__(self, 
+            unroll_gridcells=False,
+            cache_from_database = False,            
+            *args, **kwargs
+            ):
+        CreatingBaseyearCacheConfiguration.__init__(self,
+            unroll_gridcells = unroll_gridcells,
+            cache_from_database = cache_from_database,
+            *args, **kwargs
+            )
+        
 
 from opus_core.tests import opus_unittest
 
