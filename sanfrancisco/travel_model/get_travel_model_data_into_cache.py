@@ -42,7 +42,8 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
         travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=self.TABLE_NAME)
          
         # zip up model_dir
-        cmd = '"C:\Program Files\7-Zip\7z.exe" a %s.7z %s' % (tm_config[year]['year_dir'], tm_config[year]['year_dir'])
+        cmd = r'"C:\Program Files\7-Zip\7z.exe"' 
+        cmd = cmd + ' a %s.7z %s' % (tm_config[year]['year_dir'], tm_config[year]['year_dir'])
         logger.start_block("Running [%s]" % (cmd))
         zipproc = subprocess.Popen( cmd, cwd = base_dir, stdout=subprocess.PIPE ) 
         for line in zipproc.stdout:
