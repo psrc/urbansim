@@ -1,0 +1,141 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+  	<project_name type="string">simplest_project</project_name>
+  	<expression_library type="dictionary" />
+  </general>
+  <scenario_manager>
+    <scenario executable="True" name="simple_scenario" type="scenario">
+      <model_system type="string">opus_core.model_coordinators.model_system</model_system>
+      <base_year type="integer">1980</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">1981</firstyear>
+        <lastyear type="integer">1982</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable name="auto_ownership_choice_model" type="selectable">True</selectable>
+        <selectable name="simple_model" type="selectable">True</selectable>
+      </models_to_run>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">simple_project/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="FALSE" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="FALSE" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" type="directory">/workspace/opus/src/opus_core/data/test_cache/</argument>
+        </argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['opus_core']</argument>
+      </dataset_pool_configuration>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="household" type="selectable">True</selectable>
+      </datasets_to_preload>    
+	</scenario>
+  </scenario_manager>
+  <model_manager>
+  	<models hidden="False" name="Models">
+      <model name="simple_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string">household.income*1.03</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="auto_ownership_choice_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.choice_model</class_module>
+            <class_name type="string">ChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ChoiceModel</name>
+            <argument name="choice_set" type="string">array([0, 1, 2, 3])</argument>
+            <argument name="choice_attribute_name" parser_action="quote_string" type="string">cars</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="agents_index" type="string">cm_index</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(specification, coefficients, cm_index)</output>
+            <argument convert_blank_to_none="True" name="agent_set" type="string">household</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">auto_ownership_choice_model_specification</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">auto_ownership_choice_model_coefficients</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, dummy)</output>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agents_index" type="string">cm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+          </estimate>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(specification, cm_index)</output>
+            <argument convert_blank_to_none="True" name="agent_set" type="string">household</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">auto_ownership_choice_model_specification</argument>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <equation equation_id="0" name="Car 0" type="submodel_equation">
+              <variable_list type="variable_list">
+                <variable_spec name="constant" coefficient_name="car0"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="2" name="Car 2" type="submodel_equation">
+              <variable_list type="variable_list">
+                <variable_spec name="constant" coefficient_name="car2"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="3" name="Car 3" type="submodel_equation">
+              <variable_list type="variable_list">
+                <variable_spec name="constant" coefficient_name="car3"/>
+              </variable_list>
+            </equation>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model>      
+  	</models>
+    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
+      <save_estimation_results type="boolean">True</save_estimation_results>
+      <cache_directory type="directory" >/workspace/opus/src/opus_core/data/test_cache/</cache_directory>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['opus_core']</argument>
+      </dataset_pool_configuration>  	      
+      <base_year type="integer" field_identifier="Base Year">1980</base_year>
+      <years type="tuple">
+        <firstyear type="integer" field_identifier="Base Year">1980</firstyear>
+        <lastyear type="integer" field_identifier="Base Year">1980</lastyear>
+      </years>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
+      </datasets_to_preload>
+    </estimation_config>  	
+  	<templates hidden="True"/>
+  </model_manager>
+</opus_project>
