@@ -10,6 +10,7 @@ from opus_core.configurations.xml_version import XMLVersion
 from opus_core.version_numbers import minimum_xml_version, maximum_xml_version
 from opus_core.opus_exceptions.xml_version_exception import XMLVersionException
 from opus_core.variables.variable_name import VariableName
+from opus_core.misc import directory_path_from_opus_path
 
 def element_id(node):
     '''
@@ -801,6 +802,8 @@ class XMLConfiguration(object):
     def _convert_file_or_directory_to_data(self, node):
         if node.get('parser_action', '')=='prefix_with_opus_data_path':
             return os.path.join(self.get_opus_data_path(), node.text)
+        elif node.get('parser_action', '')=='prefix_with_opus_core':
+            return os.path.join(directory_path_from_opus_path('opus_core'), node.text)
         else:
             return node.text
 

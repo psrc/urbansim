@@ -19,12 +19,17 @@ class CreatingBaseyearCacheConfiguration(object):
             cache_scenario_database = 'opus_core.cache.cache_scenario_database',
             cache_from_database = True,
             baseyear_cache = None,
+            existing_cache_to_copy = None,
+            years_to_cache = BaseyearCacheConfiguration.ALL_YEARS,
             tables_to_cache = [],
             tables_to_cache_nchunks = {},
             tables_to_copy_to_previous_years = {},
             scenario_database_configuration = None,
             ):
-            
+        
+        if (baseyear_cache is None) and existing_cache_to_copy:
+            baseyear_cache = BaseyearCacheConfiguration(existing_cache_to_copy,
+                                                        years_to_cache=years_to_cache)        
         if baseyear_cache is None and not cache_from_database:
             raise TypeError("Parameter 'baseyear_cache' must be specified if "
                 "parameter 'cache_from_database' is not True!")
