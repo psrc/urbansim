@@ -55,6 +55,11 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
             try: os.mkdir(self.output_directory)
             except: pass
         
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         ### PERSONS ###############################
         
         self.dataset_table_persons = DatasetTable(
@@ -63,7 +68,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                     'parcel_id_work = person.disaggregate(parcel.parcel_id, intermediates=[building,job])',
                     ],
                 dataset_name = 'person',
-#               exclude_condition = 'person.matsim_flag==0',
+                # exclude_condition = 'person.matsim_flag==0',
                 storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',
@@ -78,7 +83,7 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
              display_error_box = False, 
              show_results = False)
         
-        ### "FACILITIES" ###############################
+        ### FACILITIES ###############################
         
         self.dataset_table_parcels = DatasetTable(
                 attributes = [

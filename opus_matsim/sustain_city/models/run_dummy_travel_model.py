@@ -4,7 +4,6 @@
 
 import os, sys
 from opus_core.logger import logger
-from travel_model.models.abstract_travel_model import AbstractTravelModel
 
 class RunDummyTravelModel():
     """Run a dummy travel model.  This is used in the test, where this is run in lieu of the Java code.
@@ -13,10 +12,6 @@ class RunDummyTravelModel():
     def run(self):
         """
         """
-        try:
-            import pydevd
-            pydevd.settrace()
-        except: pass
         logger.start_block("Starting RunDummyTravelModel.run(...)")
         
         print >> sys.stderr, "\nThis should also check if get_cache_data_into_matsim did something reasonable"

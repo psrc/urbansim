@@ -23,6 +23,13 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 #        print >> sys.stderr, "MATSim replaces only _some_ of the columns of travel_data.  Yet, Urbansim does not truly merge them"
 #        print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
+        
+        # tnicolai :for debugging
+        try:
+            import pydevd
+            pydevd.settrace()
+        except: pass
+        
         self.input_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
         logger.log_status("input_directory: " + self.input_directory )
 
@@ -36,6 +43,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         ##TODO:This may not work or may be wrong after the id_names of travel_data 
         ##changed from ['from_zone_id', 'to_zone_id'] to _hidden_id (lmwang)
         existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)
+        
+        # tnicolai : is it possible to replace the travel data instead of joining it with the MATSim values?
         
         return existing_travel_data_set
 
