@@ -39,7 +39,7 @@ except:
 class PostgresServerManager(AbstractDatabaseEngineManager):
     
     def __init__(self):
-        self.uses_schemas = True
+        self.uses_schemas = False
         
     def _get_default_database(self, get_existing_db = False):
         if get_existing_db:
@@ -58,7 +58,7 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
             
         if get_base_db:
             database_name = self._get_default_database(get_existing_db = True)
-        else:
+        elif not database_name:
             database_name = self._get_default_database()
         
         connect_string = '%s://%s:%s@%s/%s'%(server_config.protocol, 
