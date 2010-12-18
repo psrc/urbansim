@@ -6,7 +6,7 @@ from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from numpy import array, where, zeros, logical_and, logical_or
-import os, csv, subprocess
+import os, csv, shutil, subprocess
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
@@ -20,6 +20,7 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
     A class to access the output of travel models.
     """
     TABLE_NAME = "travel_data"
+    RECYCLE_BIN = r"Recycle Bin"
 
     def get_travel_data_from_travel_model(self, config, 
                                           year, zone_set ):
@@ -52,6 +53,25 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
         logger.log_status("Returned %d" % (zipret))
         if zipret != 0: print "Zip (%s) exited with bad return code" % (cmd)
         logger.end_block()
+        
+        # delete everything except for the triptables subdir
+        try:
+            delete_list = os.listdir(run_dir)
+            for del_file in delete_list:
+                if del_file == "triptables": continue
+                
+                del_file_path = os.path.join(run_dir, del_file)
+                if os.path.isfile(del_file_path): os.remove(del_file_path)
+                elif os.path.isdir(del_file_path): shutil.rmtree(del_file_path)
+            
+            
+            # recycle bin remove
+            (drive, tail) = os.path.splitdrive(run_dir)
+            recycle_dir =  os.path.join(drive + r"\\", RECYCLE_BIN, tail.lstrip(r"\\"))
+            shutil.rmtree(recycle_dir)
+        except Exception, err:
+            logger.log_error("Error: %s" % str(err))
+
 
         return travel_data_set
 

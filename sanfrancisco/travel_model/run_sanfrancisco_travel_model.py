@@ -395,15 +395,22 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         if os.path.exists(dest_controlsdir): shutil.rmtree(dest_controlsdir)  
         src_controlsdir = os.path.join(tm_config['popsyn_srcdir'], "controls")
         shutil.copytree(src_controlsdir, dest_controlsdir)
+        
+        # copy over converted files
+        dest_converteddir = os.path.join(dest_dir, "inputs", "converted")
+        if os.path.exists(dest_converteddir): shutil.rmtree(dest_converteddir)
+        src_converteddir = os.path.join(tm_config['popsyn_srcdir'], "inputs", "converted")
+        shutil.copytree(src_converteddir, dest_converteddir)
 
         self._updateConfigPaths(os.path.join(dest_controlsdir, "hhSubmodels.properties"), 
          [ [r"(tazdata.file\s*=\s*)(\S*)",      r"\1inputs\tazdata.dbf"],
-           [r"(tazdata.out.file\s*=\s*)(\S*)",  r"\1inputs\tazdata_converted.csv"],
+           [r"(tazdata.out.file\s*=\s*)(\S*)",  r"\1inputs\converted\tazdata_converted.csv"],
            [r"(\S\s*=\s*)(inputs/)(\S*)",       "%s%s%s" % (r"\1",os.path.join(tm_config['popsyn_srcdir'],"inputs"),r"\\\3")]
          ])
         self._updateConfigPaths(os.path.join(dest_controlsdir, "arc.properties"), 
-         [ [r"(Forecast.TazFile\s*=\s*)(\S*)",  r"\1inputs\tazdata_converted.csv"],
-           [r"(\S\s*=\s*)(./inputs/)(\S*)",       "%s%s%s" % (r"\1",os.path.join(tm_config['popsyn_srcdir'],"inputs"),r"\\\3")]
+         [ [r"(Forecast.TazFile\s*=\s*)(\S*)",  r"\1inputs\converted\tazdata_converted.csv"],
+           [r"(\S\s*=\s*)(./inputs/)((pums|census|design|TAZIndex|conversion|forecast)\S*)",
+               "%s%s%s" % (r"\1",os.path.join(tm_config['popsyn_srcdir'],"inputs"),r"\\\3")]
          ])
         
         # make the outputs directory
