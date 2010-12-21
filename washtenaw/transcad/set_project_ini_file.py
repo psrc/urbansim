@@ -5,16 +5,24 @@
 import os
 
 def get_project_year_dir(config, year):
-    project_data_dir = config["directory"]   #C:/SEMCOG_baseline
-    year_dir = config[year]  #'CoreEA05\\urbansim\\2001'
-    dir_part1,dir_part2 = os.path.split(year_dir)
-    while dir_part1:
-        dir_part1, dir_part2 = os.path.split(dir_part1)
-    project_year_dir = os.path.join(project_data_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA0511202006
-    return project_year_dir
+    base_dir = config["travel_model_base_directory"]   #C:/SEMCOG_baseline
+    year_dir = config[year]  
+    if year_dir.has_key('data_dir'):  #'CoreEA05'
+        return os.path.join(base_dir, year_dir['data_dir'])
+    elif year_dir.has_key('exchange_dir'):
+        dir_part1, dir_part2 = os.path.split(year_dir['exchange_dir'])  #'CoreEA05\\urbansim\\2001'
+        while dir_part1:
+            dir_part1, dir_part2 = os.path.split(dir_part1)
+        return os.path.join(base_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA05
+    else:  # to be compatible with old configuration
+        dir_part1, dir_part2 = os.path.split(year_dir)  #'CoreEA05\\urbansim\\2001'
+        while dir_part1:
+            dir_part1, dir_part2 = os.path.split(dir_part1)
+        return os.path.join(base_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA05
+
 
 def set_project_ini_file(config, year):
-    """ set project ini setting using values in config"""
+    """ set project ini using values in config"""
     ini_file = config['project_ini']
     ini_fp = open(ini_file,"r")
     project_year_dir = get_project_year_dir(config, year)

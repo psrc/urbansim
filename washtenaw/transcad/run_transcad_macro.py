@@ -9,8 +9,8 @@ def run_get_file_location_macro(config):
     """ run the macro define in configuration for get_file_location, which should return a list of tuples of
     file location define in model.bin (in the case of SEMCOG, SEMCOG_MOD.bin), and convert the tuples into dict
     """
-    macro_settings = config['macro']['get_file_location']
-    macroname, dbname = macro_settings
+    
+    macroname, dbname = config['macro']['get_file_location'], config['ui_file']
     args = None
     return dict(run_transcad_macro(macroname, dbname, args))
 
@@ -37,4 +37,3 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
     run_transcad_macro(options.macroname, options.dbname, options.args)
- 

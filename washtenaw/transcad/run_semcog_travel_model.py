@@ -11,7 +11,7 @@ from washtenaw.travel_model.run_transcad_macro import run_transcad_macro
 import win32pdhutil, win32api, win32process
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-from washtenaw.transcad.set_project_ini_file import set_project_ini_file
+from washtenaw.transcad.set_project_ini_file import set_project_ini_file, get_project_year_dir
 
 class RunSemcogTravelModel(RunTravelModel):
     """Run the travel model.
@@ -21,19 +21,19 @@ class RunSemcogTravelModel(RunTravelModel):
         """Runs the travel model, using appropriate info from config. 
         """
         tm_config = config["travel_model_configuration"]
-        tm_data_dir = tm_config["directory"]
         self.prepare_for_run(tm_config, year)
-
-        year_dir = tm_config[year]  #'CoreEA0511202006\\urbansim\\2001'
-        dir_part1,dir_part2 = os.path.split(year_dir)
-        while dir_part1:
-            dir_part1, dir_part2 = os.path.split(dir_part1)
-        project_year_dir = os.path.join(tm_data_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA0511202006
+        
+        project_year_dir = get_project_year_dir(tm_config, year)
+#        year_dir = tm_config[year]  #'CoreEA0511202006\\urbansim\\2001'
+#        dir_part1,dir_part2 = os.path.split(year_dir)
+#        while dir_part1:
+#            dir_part1, dir_part2 = os.path.split(dir_part1)
+#        project_year_dir = os.path.join(tm_data_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA0511202006
         
         logger.log_status('Start travel model from directory %s for year %d' % (project_year_dir, year))
         #for macroname, ui_db_file in tm_config['macro']['run_semcog_travel_model'].iteritems():
             #pass 
-        macroname, ui_db_file = tm_config['macro']['run_semcog_travel_model']
+        macroname, ui_db_file = tm_config['macro']['run_semcog_travel_model'], tm_config['ui_file']
 
         loops = 1
         logger.log_status('Running travel model ...')

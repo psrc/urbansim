@@ -25,25 +25,39 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                                           ):
         """
         
-        Returns a new travel data set from a given set of transcad matrices 
-        populated by a specified transcad macro.  
+        Extracts a new travel data set from a given set of transcad matrices 
+        by calling a pre-specified transcad macro.  
         The columns in the travel data set are those given in matrix_variable_map in travel_model_configuration.
         """
         tm_config = config['travel_model_configuration']
 
-        tm_data_dir = os.path.join(tm_config['directory'], tm_config[year])
+        tm_data_dir = os.path.join(tm_config['travel_model_base_directory'], tm_config[year]["data_exchange_dir"])
         tm_output_full_name = os.path.join(tm_data_dir, tm_output_file)
         matrix_attribute_name_map = tm_config['tm_to_urbansim_variable_mapping']
         
         transcad_file_location = run_get_file_location_macro(tm_config)
-        for matrix in matrix_attribute_name_map:
-            matrix[0] = transcad_file_location[matrix[0]]  #replace internal matrix name with absolute file name
-
+        
+        matrices = []
+        row_index_name, col_index_name = "ZoneID", "ZoneID"  #default values
+        if matrix_attribute_name_map.has_key('row_index_name'):
+            row_index_name = matrix_attribute_name_map['row_index_name']
+        if matrix_attribute_name_map.has_key('col_index_name'):
+            col_index_name = matrix_attribute_name_map['col_index_name']
+            
+        for key, val in matrix_attribute_name_map.iteritems():
+            if (key != 'row_index_name') and (key != 'col_index_name'):
+                if val.has_key('row_index_name'):
+                    row_index_name = val['row_index_name']
+                if val.has_key('col_index_name'):
+                    col_index_name = val['col_index_name']
+                matrix_file_name = transcad_file_location[key]  #replace internal matrix name with absolute file name
+                matrices.append([matrix_file_name, row_index_name, col_index_name, val.items()])
+                  
         macro_args =[ ("ExportTo", tm_output_full_name) ]
-        macro_args.append(("Matrix", matrix_attribute_name_map))
+        macro_args.append(("Matrix", matrices))
         #for macroname, ui_db_file in tm_config['macro']['get_transcad_data_into_cache'].iteritems():
             #ui_db_file = os.path.join(tm_config['directory'], ui_db_file)
-        macroname, ui_db_file = tm_config['macro']['get_transcad_data_into_cache']
+        macroname, ui_db_file = tm_config['macro']['get_transcad_data_into_cache'], tm_config['ui_file']
         run_transcad_macro(macroname, ui_db_file, macro_args)
 
         table_name = "travel_data"

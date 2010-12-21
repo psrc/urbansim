@@ -24,11 +24,11 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
                                        datasets,
                                        tm_input_file_name="tm_input.txt",
                                        delimiter = '\t'):
-        """Writes to file tm_input.txt in [travel_model_data_directory]/urbansim/[year].
+        """Writes to file tm_input.txt to os.path.join(config["travel_model_data_directory"], config[year]["data_exchange_dir"]).
         """
 
         tm_config = config['travel_model_configuration']
-        project_year_dir = get_project_year_dir(tm_config, year)
+        #project_year_dir = get_project_year_dir(tm_config, year)
         urbansim_to_tm = tm_config['urbansim_to_tm_variable_mapping']
         if 'DataTable' in urbansim_to_tm:
             datatable = urbansim_to_tm['DataTable']
@@ -43,15 +43,14 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
         
         variable_list = []
         column_name = []
-        for variable_pair in variable_mapping:
-            urbansim_var, transcad_var = variable_pair
-            variable_list.append(urbansim_var)
-            column_name.append(transcad_var)
+        for key, val in variable_mapping.iteritems():
+            variable_list.append(key)
+            column_name.append(val)
 
         zone_set.compute_variables(variable_list)
         variable_short_name = [VariableName(x).get_alias() for x in variable_list]
         
-        tm_input_data_dir = os.path.join(tm_config['directory'], tm_config[year])
+        tm_input_data_dir = os.path.join(tm_config['travel_model_base_directory'], tm_config[year]['data_exchange_dir'])
         if not os.path.exists(tm_input_data_dir):
             os.makedirs(tm_input_data_dir)
 
@@ -86,7 +85,7 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
         #for macroname in tm_config['macro']['get_cache_data_into_transcad'].keys():
             #ui_db_file = tm_config['macro']['get_cache_data_into_transcad'][macroname]
             #ui_db_file = os.path.join(tm_config['directory'], ui_db_file)
-        macroname, ui_db_file = tm_config['macro']['get_cache_data_into_transcad']
+        macroname, ui_db_file = tm_config['macro']['get_cache_data_into_transcad'], tm_config['ui_file']
         run_transcad_macro(macroname, ui_db_file, macro_args)
         
     def _write_to_txt_file(self, data, header, input_file, delimiter='\t'):
