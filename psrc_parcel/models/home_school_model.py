@@ -1,3 +1,7 @@
+# Opus/UrbanSim urban simulation software.
+# Copyright (C) 2005-2009 University of Washington
+# See opus_core/LICENSE
+
 from psrc_parcel.models.school_type_choice_model import SchoolTypeChoiceModel
 
 class HomeSchoolModel(SchoolTypeChoiceModel):
