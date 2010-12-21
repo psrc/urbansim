@@ -33,13 +33,13 @@ class mask:
            coefficient names for the given submodel. Can be used only on in models that are estimable."""
         return self.get_model().get_coefficient_names(submodel)
         
-    def get_data_as_dataset(self, submodel=-2):
+    def get_data_as_dataset(self, submodel=-2, **kwargs):
         """Calls method get_data_as_dataset of the Model object which should return
         an object of class Dataset containing model data. 
         Works only for ChoiceModel (returns InteractionDataset), 
         and for RegressionModel (returns Dataset). 
         """
-        return self.get_model().get_data_as_dataset(submodel)
+        return self.get_model().get_data_as_dataset(submodel, **kwargs)
         
     def get_choice_set(self): 
         """Return a Dataset of choices. Works only for the ChoiceModel class.
