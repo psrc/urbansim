@@ -2,14 +2,91 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-
+from opus_core.logger import logger
+from opus_core.configuration import Configuration
+from opus_core.resources import Resources
+from opus_core.simulation_state import SimulationState
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.store.attribute_cache import AttributeCache
+from opus_core.store.utils.cache_flt_data import CacheFltData
+from opus_core.model_coordinators.model_system import ModelSystem
+from opus_core.choice_model import ChoiceModel
 from numpy import zeros, take, ones
 from opus_core.misc import unique
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
 
-class GenericModelExplorer(object):
+class ModelExplorer(object):
+    def __init__(self, model, year, scenario_name=None, model_group=None, configuration=None, xml_configuration=None, 
+                 cache_directory=None):
+        self.model_group = model_group
+        self.explored_model = model
+ 
+        if configuration is None:
+            if xml_configuration is None:
+                raise StandardError, "Either dictionary based or XML based configuration must be given."
+            config = xml_configuration.get_run_configuration(scenario_name)
+        else:
+            config = Configuration(configuration)
+            
+        if model is not None:
+            dependent_models = config['models_configuration'][model]['controller'].get('dependencies', [])
+            config['models'] = dependent_models
+            if model_group is None:
+                config['models'] = config['models'] + [{model: ["run"]}]
+            else:
+                config['models'] = config['models'] + [{model: {"group_members": [{model_group: ["run"]}]}}]
+        else:
+            config['models'] = []
+            
+        config['years'] = [year, year]
+        config["datasets_to_cache_after_each_model"]=[]
+        config['flush_variables'] = False
         
+        self.config = Resources(config)
+        self.xml_configuration = xml_configuration
+        
+        if cache_directory is None:
+            cache_directory = config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy
+        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory)
+        self.config['cache_directory'] = cache_directory
+        
+        SessionConfiguration(new_instance=True,
+                             package_order=self.config['dataset_pool_configuration'].package_order,
+                             in_storage=AttributeCache())
+        
+    def run(self):
+        self.model_system = ModelSystem()
+        self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False)
+        logger.log_status("Data cache in %s" % self.simulation_state.get_cache_directory())
+        
+    def get_agents_for_simulation(self):
+        return self.get_active_agent_set()
+        
+    def get_model_name(self):
+        return (self.explored_model, self.model_group)
+        
+    def get_specification(self):
+        return self.get_model().get_specified_coefficients().specification
+    
+    def get_probabilities(self, submodel=-2):
+        """Return a tuple of probabilities and choices, see ChoiceModel.get_probabilities_and_choices.
+        Works only for the ChoiceModel class.
+        """
+        model = self.get_model()
+        if isinstance(model, ChoiceModel):
+            return model.get_probabilities_and_choices(submodel)
+        print '\nMethod is implemented only for ChoiceModels.\n'
+
+    def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
+        """Export probabilities and choices into a file. Works only for the ChoiceModel class"""
+        
+        model = self.get_model()
+        if isinstance(model, ChoiceModel):
+            model.export_probabilities(submodel, file_name=filename)
+        else:
+            print '\nMethod is implemented only for ChoiceModels.\n'
+            
     def get_model(self):
         """Return a model object."""
         return self.model_system.run_year_namespace["model"]
@@ -171,11 +248,6 @@ class GenericModelExplorer(object):
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
         return ds.correlation_matrix(attrs)
         
-    def get_model_name(self):
-        """ Must be defined in a child class. A tuple of model name and model group.
-        """
-        raise NotImplementedError('get_model_name')
-        
     def plot_correlation(self, submodel=-2, useR=False, **kwargs):
         """Plot correlations between all variables of the model data (for given submodel).
         Works only for ChoiceModel and RegressionModel"""
@@ -202,4 +274,4 @@ class GenericModelExplorer(object):
         choice_set.add_attribute(name=dummy_attribute_name, data=filter_var)
         choice_set.plot_map(name, filter=dummy_attribute_name)
         choice_set.delete_one_attribute(dummy_attribute_name)
-        
+                   

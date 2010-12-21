@@ -4,9 +4,9 @@
 
 
 from opus_core.configuration import Configuration
-from urbansim.estimation.estimator import Estimator
-from urbansim.estimation.estimator import plot_utility_diagnose
-from urbansim.estimation.estimator import update_controller_by_specification_from_module, update_controller_by_specification_from_dict
+from opus_core.estimation.estimator import Estimator
+from opus_core.estimation.estimator import plot_utility_diagnose
+from opus_core.estimation.estimator import update_controller_by_specification_from_module, update_controller_by_specification_from_dict
 
 class EstimationRunner(Estimator):
 

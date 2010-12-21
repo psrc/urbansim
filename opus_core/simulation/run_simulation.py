@@ -14,7 +14,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.session_configuration import SessionConfiguration
 
-from urbansim.model_coordinators.model_system import ModelSystem
+from opus_core.model_coordinators.model_system import ModelSystem
 
 class RunSimulation(object):
     def prepare_for_simulation(self, config, cache_directory=None):

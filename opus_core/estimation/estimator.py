@@ -16,10 +16,10 @@ from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.generic_model_explorer import GenericModelExplorer
-from urbansim.model_coordinators.model_system import ModelSystem
+from opus_core.simulation.model_explorer import ModelExplorer
+from opus_core.model_coordinators.model_system import ModelSystem
 
-class Estimator(GenericModelExplorer):
+class Estimator(ModelExplorer):
     def __init__(self, config=None, save_estimation_results=False):
         if 'cache_directory' not in config or config['cache_directory'] is None:
             raise KeyError("The cache directory must be specified in the "
@@ -67,8 +67,6 @@ class Estimator(GenericModelExplorer):
             self.config.merge(change)
             self.config['models_configuration'][self.model_name]['controller']['init']['arguments']['estimate_config'] = 'Resources(%s)' % estimate_config
 
-            
-       
     def estimate(self, out_storage=None):
         self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False)
         self.extract_coefficients_and_specification()

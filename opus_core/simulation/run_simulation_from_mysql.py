@@ -15,7 +15,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
 
-from urbansim.model_coordinators.model_system import ModelSystem
+from opus_core.model_coordinators.model_system import ModelSystem
 
 
 class RunSimulationFromMysql:
