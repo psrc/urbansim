@@ -164,6 +164,12 @@ class HierarchicalChoiceModel(ChoiceModel):
     def get_nested_structure(self):
         return self.nested_structure
     
+    def get_all_data(self, submodel, nest=None):
+        data = self.model_interaction.get_data(submodel)
+        if nest is None:
+            return data
+        return data[:,:,:,self.model_interaction.specified_coefficients.other_dimensions_mapping['dim_%s' % self.nest_id_name][nest]]
+
 from opus_core.choice_model import ModelInteraction
 class ModelInteractionHM(ModelInteraction):
     def create_specified_coefficients(self, coefficients, specification, choice_ids=None):
