@@ -8,7 +8,6 @@ from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.generic_model_explorer import GenericModelExplorer
 from urbansim.model_coordinators.model_system import ModelSystem
 #from opus_core.choice_model import ChoiceModel
 from opus_core.configurations.xml_configuration import XMLConfiguration
