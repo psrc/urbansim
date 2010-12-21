@@ -11,7 +11,7 @@ aliases = [
    "persons_with_age_le_13 = household.aggregate(person.age<=13)",   
    "persons_with_age_le_16 = household.aggregate(person.age<=16)",      
    "persons_with_age_le_18 = household.aggregate(person.age<=18)",
-
+   "number_of_adults = household.aggregate(person.age>=18)",
    "faz_id = household.disaggregate(zone.faz_id, intermediates=[parcel, building])",
 #   "large_area_id = household.disaggregate(faz.large_area_id, intermediates=[zone, parcel, building])",
    "large_area_id = household.disaggregate(parcel.large_area_id, intermediates=[building])",   
