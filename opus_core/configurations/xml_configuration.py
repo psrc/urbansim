@@ -536,7 +536,7 @@ class XMLConfiguration(object):
         local_child_nodes = dict((node_identity_string(n), n) for n in local_node.getchildren())
         # decide what to do with each child node of the parent tree
         node_index = 0
-        for n in parent_node:
+        for n in parent_node.getchildren():
             id_ = node_identity_string(n)
             parent_child_node = parent_child_nodes[id_]
             if id_ in local_child_nodes:
