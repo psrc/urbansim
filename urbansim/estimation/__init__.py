@@ -3,4 +3,5 @@
 # See opus_core/LICENSE 
 
 ##TODO: remove this directory once everything settles
-from opus_core.estimation import *
+from opus_core.misc import directory_path_from_opus_path
+__path__.append(directory_path_from_opus_path('opus_core.estimation'))
