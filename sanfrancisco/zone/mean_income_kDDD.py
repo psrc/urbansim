@@ -10,8 +10,7 @@ import networkx as nx
 class mean_income_kDDD(Variable):
     """mean income for DDD order expansion
     Used in GNSI (Generalized Neighborhood Sorting Index) (Jargowsky and Kim, 2005) :
-    GNSI^2 = alldata.aggregate_all( zone.number_of_agents(household) * numpy.square(sanfrancisco.zone.mean_income_k2 - zone.aggregate_all(household.income, function=mean)) ) / \
-             alldata.aggregate_all(household.income - household.aggregate_all(household.income, function=mean)) 
+    GNSI^2 = numpy.sqrt( alldata.aggregate_all( zone.number_of_agents(household) * numpy.square(sanfrancisco.zone.mean_income_k2 - zone.aggregate_all(household.income, function=mean)) ) / alldata.aggregate_all( numpy.square(household.income - household.aggregate_all(household.income, function=mean)) )) 
     """
 
     _return_type="float32"
