@@ -28,7 +28,6 @@ class mean_income_kDDD(Variable):
                 ]
 
     def compute(self,  dataset_pool):
-        import pdb; pdb.set_trace()
         zones = self.get_dataset()
         adjacent_zones = dataset_pool.get_dataset('adjacent_zone')
         id_max = zones['zone_id'].max()+1
