@@ -134,9 +134,9 @@
     </estimation_config>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable name="opus_matsim.sustain_city.tests.psrc_measurements.models.get_cache_data_into_matism_psrc_test" type="selectable">False</selectable>
-        <selectable name="opus_matsim.sustain_city.tests.psrc_measurements.models.run_matsim_psrc_test" type="selectable">False</selectable>
-        <selectable name="opus_matsim.sustain_city.tests.psrc_measurements.models.get_matism_data_into_cache_psrc_test" type="selectable">False</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.get_cache_data_into_matsim" type="selectable">False</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.run_travel_model" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.get_matsim_data_into_cache" type="selectable">False</selectable>
       </models>
       <matsim4urbansim type="dictionary">
         <sampling_rate type="float">0.01</sampling_rate>

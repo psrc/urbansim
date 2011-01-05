@@ -35,11 +35,11 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 
         in_storage = csv_storage(storage_location = self.input_directory)
 
-        self.table_name = "travel_data"
-        travel_data_set = TravelDataDataset( in_storage=in_storage, in_table_name=self.table_name )
+        self.travel_data_table_name = "travel_data"
+        travel_data_set = TravelDataDataset( in_storage=in_storage, in_table_name=self.travel_data_table_name )
 
         cache_storage = AttributeCache().get_flt_storage_for_year(year)
-        existing_travel_data_set = TravelDataDataset( in_storage=cache_storage, in_table_name=self.table_name )
+        existing_travel_data_set = TravelDataDataset( in_storage=cache_storage, in_table_name=self.travel_data_table_name )
         ##TODO:This may not work or may be wrong after the id_names of travel_data 
         ##changed from ['from_zone_id', 'to_zone_id'] to _hidden_id (lmwang)
         existing_travel_data_set.join(travel_data_set, travel_data_set.get_non_id_primary_attribute_names(),metadata=AttributeType.PRIMARY)

@@ -14,11 +14,9 @@ class StartRunOptionGroup(object):
     def __init__(self):
         logger.start_block("Starting UrbanSim")
         
-        # starts BASE SCENARIO
-        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_sensitivity_tests/config/psrc_base_scenario.xml' ).get_run_configuration( 'PSRC_baseline' )
-        
-        # starts MOD SCENARIO WITHOUT MATSIM
-        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_sensitivity_tests/config/psrc_modified_without_matsim_scenario.xml' ).get_run_configuration( 'PSRC_baseline' )
+        # start
+        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_sensitivity_tests/config/psrc_sensitivity_test.xml' ).get_run_configuration( 'PSRC_baseline' )
+        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_sensitivity_tests/config/seattle_parcel_common_test.xml' ).get_run_configuration( 'Seattle_baseline' )
         
     def run(self):
         
