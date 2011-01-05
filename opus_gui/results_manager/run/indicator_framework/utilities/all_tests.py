@@ -4,4 +4,4 @@
 
 from opus_core.tests.utils.package_tester import PackageTester
 
-PackageTester().run_all_tests_for_package('opus_gui.results_manager.indicator_framework') 
+PackageTester().run_all_tests_for_package('opus_gui.results_manager.run.indicator_framework') 
