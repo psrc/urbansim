@@ -127,6 +127,7 @@
       <matsim4urbansim type="dictionary">
         <sampling_rate type="float">0.01</sampling_rate>
         <temp_directory type="string">/opus_matsim/tmp/</temp_directory>
+		<test_parameter type="string">Highway</test_parameter>
       </matsim4urbansim>
       <matsim_config type="dictionary">
         <common type="dictionary">

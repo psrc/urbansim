@@ -24,12 +24,6 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
 #        print >> sys.stderr, " but simply overwrites the columns, without looking for a different sequence of from_zone_id, to_zone_id"
         # solved 3dec08 by hana
         
-        # tnicolai :for debugging
-        try:
-            import pydevd
-            pydevd.settrace()
-        except: pass
-        
         self.input_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
         logger.log_status("input_directory: " + self.input_directory )
 

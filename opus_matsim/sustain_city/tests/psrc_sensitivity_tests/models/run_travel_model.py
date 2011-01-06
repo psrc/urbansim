@@ -17,6 +17,7 @@ class RunTravelModel(AbstractTravelModel):
         self.matsim_config_destination = None  # path to generated matsim config xml
         self.matsim_config_name = None  # matsim config xml name
         self.matsim_config_full = None  # concatination of matsim config path and name
+        self.test_parameter = ""
 
     def run(self, config, year):
         """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
@@ -42,23 +43,17 @@ class RunTravelModel(AbstractTravelModel):
         #        'opus_home': os.environ['OPUS_HOME'],
         #        'vmargs': "-Xmx2000m",
         #        'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
-        #        'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbanSimCUPUM",
+        #       'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbanSimCUPUM",
         #        'matsim_config_file': self.matsim_config_full } 
-        
-        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-                'opus_home': os.environ['OPUS_HOME'],
-                'vmargs': "-Xmx2000m",
-                'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
-                'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbanSimCUPUM",
-                'matsim_config_file': self.matsim_config_full } 
         
         # tnicolai : test for matsim jar execution ...
-        #cmd = """cd %(opus_home)s ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s""" % {
-        #        'opus_home': '/Users/thomas/Desktop/export',
-        #        'vmargs': "-Xmx2000m",
-        #        'classpath': "matsim4urbansim20110103.jar",
-        #        'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbanSimCUPUM",
-        #        'matsim_config_file': self.matsim_config_full } 
+        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+                'opus_home': os.environ['OPUS_HOME'],
+                'vmargs': "-Xmx2000m",
+                'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:jar/matsim4urbansim.jar",
+                'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+                'matsim_config_file': self.matsim_config_full,
+                'test_parameter': self.test_parameter } 
         
         logger.log_status('Running command %s' % cmd ) 
         
@@ -81,6 +76,10 @@ class RunTravelModel(AbstractTravelModel):
             except: pass
         self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
         self.matsim_config_full = os.path.join( self.matsim_config_destination, self.matsim_config_name  )
+        
+        tmc = config['travel_model_configuration']
+        if tmc['matsim4urbansim'].get('test_parameter') != None:
+            self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
 
 # called from opus via main!
 if __name__ == "__main__":
