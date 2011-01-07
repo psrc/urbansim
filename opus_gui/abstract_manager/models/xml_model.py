@@ -128,13 +128,33 @@ class XmlModel(QAbstractItemModel):
             self.insertRow(row, parent_index, reinserted_node, reinserting = True)
         self.dirty = True
         return True
+    
+    def _get_node_name(self, node):
+        if node.get('type') == 'selectable':
+            return node.get('return_value') or node.get('name') or node.tag
+        return node.get('name') or node.tag
+    
+    def _get_node_text(self, node):
+        if node.get('type') == "password":
+            return "*********"
+        # hide the text value for checkable nodes
+        elif node.tag == 'selectable' or node.get('type') == 'boolean':
+            return ""
+        elif node.text:
+            return node.text.strip()
+        return ""
+
+    def _get_item_children_text(self, item):
+        l = list(self._get_node_name(child.node) for child in item.child_items)
+        return ', '.join(l)
 
     def data(self, index, role):
         ''' PyQt API Method -- See the PyQt documentation for a description '''
         if not index.isValid():
             return QVariant()
 
-        node = index.internalPointer().node
+        item = index.internalPointer()
+        node = item.node
 
         # Foreground Coloring
         if role == Qt.ForegroundRole:
@@ -145,27 +165,35 @@ class XmlModel(QAbstractItemModel):
         # Display
         elif role == Qt.DisplayRole:
             if index.column() == 0:
-                if node.get('type') == 'selectable':
-                    return QVariant(node.get('return_value') or node.get('name') or node.tag)
-                return QVariant(node.get('name') or node.tag)
+                return QVariant(self._get_node_name(node))
             elif index.column() == 1:
-                if node.get('type') == "password":
-                    return QVariant(QString("*********"))
-                # hide the text value for checkable nodes
-                elif node.tag == 'selectable' or node.get('type') == 'boolean':
-                    return QVariant()
-                elif node.text:
-                    return QVariant(node.text.strip())
-                return QVariant()
+                return QVariant(self._get_node_text(node))
         elif role == Qt.ToolTipRole:
-            if index.column() == 0 and self.project: # don't need to worry about inheritance when there is no project
+            # don't need to worry about inheritance when there is no project
+            if not self.project:
+                return QVariant()
+            
+            if index.column() == 0:
+                value = self._get_node_text(node)
+                if value:
+                    value = 'Value: %s\n' % value
+                else:
+                    value = self._get_item_children_text(item)
+                    if value:
+                        value = 'Children: %s\n' % value
+                
+                inheritance = ''
                 if node.get('inherited'):
-                    return QVariant('Inherited value from file: %s' % node.get('inherited'))
+                    inheritance = 'Inherited value from file: %s' % node.get('inherited')
                 elif self.project.is_shadowing(node):
                     prototype_node = self.project.get_prototype_node(node)
-                    return QVariant('Original value defined in file: %s' % prototype_node.get('inherited'))
+                    inheritance = 'Original value defined in file: %s' % prototype_node.get('inherited')
                 else:
-                    return QVariant('Value is defined in this file.')
+                    inheritance = 'Value is defined in this file.'
+                text = 'Name: %s\n%s%s' % (self._get_node_name(node), value, inheritance)
+                return QVariant(text)
+            elif index.column() == 1:
+                return QVariant(self._get_node_text(node))
 
 #        elif role == Qt.FontRole:
 #            if index.column() == 0:
