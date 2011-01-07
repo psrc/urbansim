@@ -18,12 +18,13 @@ class MATSimConfigObject(object):
         self.destination_location = destination
         
         # get sub dictionaries from travel model configuration
-        matsim4urbansim_part, common_matsim_part = self.__get_travel_model_sub_dictionaries()
+        travel_model_configuration, matsim4urbansim_part, common_matsim_part = self.__get_travel_model_sub_dictionaries()
         
         # network parameter
         if common_matsim_part['matsim_network_file'] == None:
             raise StandardError('Network location for MATSim not set in "travel_model_configuration" of your current configuration file')
-        self.network_file = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", common_matsim_part['matsim_network_file'])
+        #self.network_file = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", common_matsim_part['matsim_network_file']) # tnicolai: old version
+        self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'])
         # controler parameter
         self.first_iteration = common_matsim_part['first_iteration']
         self.last_iteration = common_matsim_part['last_iteration']
@@ -39,14 +40,14 @@ class MATSimConfigObject(object):
         
         self.firstRun = "FALSE"
         try: # determine for MATSim if this is the fist run
-            if self.travel_model_configuration['start_year'] == year:
+            if travel_model_configuration['start_year'] == year:
                 self.firstRun = "TRUE"
         except: pass
     
     def marschall(self):
         """ create a matsim config with the parameter from the travel model configuration with PyxB
         """
-            
+
         # create/maschal matsim config file
         logger.log_status("Creating Matsim config file in " + self.destination_location)
         
@@ -123,7 +124,7 @@ class MATSimConfigObject(object):
         matsim_config = travel_model_configuration['matsim_config']            # contains various matsim_config parameter 
         matsim_common = matsim_config['common']
         
-        return matsim4urbansim_config, matsim_common
+        return travel_model_configuration, matsim4urbansim_config, matsim_common
     
     
     def validate_xml(self, xml, xsd):

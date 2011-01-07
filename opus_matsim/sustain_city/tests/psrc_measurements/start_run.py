@@ -19,10 +19,10 @@ class StartRunOptionGroup(object):
         #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/psrc_measurement.xml' ).get_run_configuration( 'accra_baseline' )
         
         # starts the same measurements with a smaller scenario (Seattle baseline)
-        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/seattle_parcel_measurement.xml' ).get_run_configuration( 'Seattle_baseline' )
+        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/seattle_parcel_measurement.xml' ).get_run_configuration( 'Seattle_baseline' )
         
         # starts sensetivity test for psrc
-        self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/psrc_measurement.xml' ).get_run_configuration( 'accra_baseline' )
+        #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_measurements/config/psrc_measurement.xml' ).get_run_configuration( 'accra_baseline' )
         
         # add result dictionary to config, where all measurements are stored
         self.config['psrc_logfile'] = self.create_logfile()
