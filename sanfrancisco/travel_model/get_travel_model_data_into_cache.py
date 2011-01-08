@@ -42,35 +42,39 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
                 
         travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=self.TABLE_NAME)
          
-        # zip up model_dir
-        cmd = r'"C:\Program Files\7-Zip\7z.exe"' 
-        cmd = cmd + ' a %s.7z %s' % (tm_config[year]['year_dir'], tm_config[year]['year_dir'])
-        logger.start_block("Running [%s]" % (cmd))
-        zipproc = subprocess.Popen( cmd, cwd = base_dir, stdout=subprocess.PIPE ) 
-        for line in zipproc.stdout:
-            logger.log_status(line.strip('\r\n'))
-        zipret  = zipproc.wait()
-        logger.log_status("Returned %d" % (zipret))
-        if zipret != 0: print "Zip (%s) exited with bad return code" % (cmd)
-        logger.end_block()
-        
-        # delete everything except for the triptables subdir
-        try:
-            delete_list = os.listdir(run_dir)
-            for del_file in delete_list:
-                if del_file == "triptables": continue
+        # Disabling for now.  This is problematic because the dispatcher doesn't give
+        # up a handle and things fail.
+        if False:
+            
+            # zip up model_dir
+            cmd = r'"C:\Program Files\7-Zip\7z.exe"' 
+            cmd = cmd + ' a %s.7z %s' % (tm_config[year]['year_dir'], tm_config[year]['year_dir'])
+            logger.start_block("Running [%s]" % (cmd))
+            zipproc = subprocess.Popen( cmd, cwd = base_dir, stdout=subprocess.PIPE ) 
+            for line in zipproc.stdout:
+                logger.log_status(line.strip('\r\n'))
+            zipret  = zipproc.wait()
+            logger.log_status("Returned %d" % (zipret))
+            if zipret != 0: print "Zip (%s) exited with bad return code" % (cmd)
+            logger.end_block()
+            
+            # delete everything except for the triptables subdir
+            try:
+                delete_list = os.listdir(run_dir)
+                for del_file in delete_list:
+                    if del_file == "triptables": continue
+                    
+                    del_file_path = os.path.join(run_dir, del_file)
+                    if os.path.isfile(del_file_path): os.remove(del_file_path)
+                    elif os.path.isdir(del_file_path): shutil.rmtree(del_file_path)
                 
-                del_file_path = os.path.join(run_dir, del_file)
-                if os.path.isfile(del_file_path): os.remove(del_file_path)
-                elif os.path.isdir(del_file_path): shutil.rmtree(del_file_path)
-            
-            
-            # recycle bin remove
-            (drive, tail) = os.path.splitdrive(run_dir)
-            recycle_dir =  os.path.join(drive + r"\\", RECYCLE_BIN, tail.lstrip(r"\\"))
-            shutil.rmtree(recycle_dir)
-        except Exception, err:
-            logger.log_error("Error: %s" % str(err))
+                
+                # recycle bin remove
+                (drive, tail) = os.path.splitdrive(run_dir)
+                recycle_dir =  os.path.join(drive + r"\\", RECYCLE_BIN, tail.lstrip(r"\\"))
+                shutil.rmtree(recycle_dir)
+            except Exception, err:
+                logger.log_error("Error: %s" % str(err))
 
 
         return travel_data_set
