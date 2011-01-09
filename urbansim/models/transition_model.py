@@ -836,11 +836,11 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(persons.size(), hh_set['persons'].sum())
         oldest_age = ndimage.maximum(persons['age'], labels=persons['household_id'], index=hh_set['household_id'])
         count_persons = ndimage.sum(ones(persons.size()), labels=persons['household_id'], index=hh_set['household_id'])
-        self.assertArraysEqual(hh_set['age_of_head'], oldest_age)
-        self.assertArraysEqual(hh_set['persons'], count_persons)
+        self.assertArraysEqual(hh_set['age_of_head'], asarray(oldest_age))
+        self.assertArraysEqual(hh_set['persons'], asarray(count_persons))
         
         self.assertEqual((hh_set['grid_id'] == -1).sum(), 7000, '')
-        self.assertGreater((persons['job_id'] == -1).sum(), 7000, '')
+        self.assertTrue((persons['job_id'] == -1).sum() > 7000, '')
         
 if __name__=='__main__':
     opus_unittest.main()
