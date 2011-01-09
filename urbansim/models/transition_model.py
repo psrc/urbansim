@@ -5,8 +5,9 @@
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
-from numpy import array, where, ones, zeros, setdiff1d, logical_and
+from numpy import array, asarray, where, ones, zeros, setdiff1d, logical_and
 from numpy import arange, concatenate, resize, int32, float64, ceil
+from opus_core.misc import ismember
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
@@ -46,7 +47,11 @@ class TransitionModel(Model):
             target_attribute_name='number_of_households', 
             sample_filter="", 
             reset_dataset_attribute_value={}, 
-            dataset_pool=None,  **kwargs):
+            dataset_pool=None,  
+            sync_dataset=None,
+            reset_sync_dataset_attribute_value={}, 
+            **kwargs
+            ):
         """ sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
         """
         #if dataset_pool is None:
@@ -178,26 +183,33 @@ class TransitionModel(Model):
         if error_log:
             logger.log_error(error_log)
                     
-        clone_data = {}
-        if to_be_cloned.size > 0:
-            ### ideally duplicate_rows() is all needed to add newly cloned rows
-            ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
-            ##self.dataset.duplicate_rows(to_be_cloned)
-            logger.log_status()
-            for attribute in dataset_known_attributes:
-                if reset_dataset_attribute_value.has_key(attribute):
-                    clone_data[attribute] = resize(array(reset_dataset_attribute_value[attribute]), to_be_cloned.size)
-                else:
-                    clone_data[attribute] = self.dataset.get_attribute_by_index(attribute, to_be_cloned)
-                    
         self.post_run(self.dataset, to_be_cloned, to_be_removed, **kwargs)
         
+        ## TODO: this sequence of add_elements first and then remove_elements works only when
+        ## add_elements method appends data to the end of dataset and doesn't change the
+        ## indices of existing elements.
+        if to_be_cloned.size > 0:
+            index_updated = self.dataset.duplicate_rows(to_be_cloned)
+            if reset_dataset_attribute_value:
+                for key, value in reset_dataset_attribute_value.items():
+                    if key in dataset_known_attributes:
+                        data = resize(value, index_updated.size)
+                        self.dataset.modify_attribute(name=key, data=data, index=index_updated)
+                    else: ## add attribute key whose value defaults to value
+                        self.dataset.add_primary_attribute(data=resize(value, self.dataset.size()), name=key)                        
+
+            # sync with another dataset (duplicate matched records) after adding records to dataset
+            # since we need to know new ids if they are changed.                    
+            self.sync_datasets(sync_dataset=sync_dataset, 
+                               add_index=to_be_cloned, 
+                               new_id=self.dataset.get_id_attribute()[index_updated],
+                               reset_sync_dataset_attribute_value=reset_sync_dataset_attribute_value)
+        
         if to_be_removed.size > 0:
-            logger.log_status()
-            self.dataset.remove_elements(to_be_removed)
-            
-        if clone_data:
-            self.dataset.add_elements(data=clone_data, change_ids_if_not_unique=True)
+            #logger.log_status()
+            # sync with another dataset (delete matched records) before removing records from dataset
+            self.sync_datasets(sync_dataset=sync_dataset, remove_index=to_be_removed)
+            self.dataset.remove_elements(to_be_removed)            
             
         return self.dataset
     
@@ -220,14 +232,66 @@ class TransitionModel(Model):
         return self.control_totals
     
     def post_run(self, *args, **kwargs):
-        """ To be implemented in child class for additional function, like synchronizing persons with households table
+        """ To be implemented in child class for additional function
         """
         pass
+    
+    def sync_datasets(self, sync_dataset=None, 
+                      remove_index=None, 
+                      add_index=None, 
+                      new_id=None, 
+                      reset_sync_dataset_attribute_value={}):
+        """ synchronize sync_data with self.dataset: remove/add records from/to sync_data accordingly
+        """
+        if sync_dataset is None:
+            return
+
+        dataset_id_name = self.dataset.get_id_name()[0]
+        sync_dataset_id_name = sync_dataset.get_id_name()[0]
+        known_attribute_names = sync_dataset.get_known_attribute_names()
+        if dataset_id_name in known_attribute_names:
+            # assume sync_dataset (n)-->(1) dataset, e.g. run TM on households and sync persons
+            id_name_common = dataset_id_name
+        elif sync_dataset_id_name in self.dataset.get_known_attribute_names():
+            # assume dataset (n)-->(1) sync_dataset, e.g. e.g. run TM on persons and sync households (hypothetical example)
+            id_name_common = sync_dataset_id_name
+        else:
+            ## there is no common id name to synchronize sync_dataset with dataset
+            logger.log_error( "Dataset %s and %s have no common id field. Abort synchronizing these two datasets" % \
+                             (self.dataset.get_dataset_name(), sync_dataset.get_dataset_name()) )
+            return
+        
+        id_dataset = self.dataset[id_name_common]; id_sync_dataset = sync_dataset[id_name_common]
+        if remove_index is not None and remove_index.size>0:
+            index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[remove_index]) )[0]
+            sync_dataset.remove_elements(index_sync_dataset)
+        if add_index is not None and add_index.size>0:
+            if new_id is not None: #need to duplicate rows of sync_dataset and update id of the duplicated rows
+                assert new_id.size == add_index.size
+                ## find indices to sync_dataset that need to be duplicated and new values for id_name_common field
+                index_id_array = asarray([ (index, i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id) for index in where(id_sync_dataset==old_id)[0]])
+                index_sync_dataset_updated = sync_dataset.duplicate_rows(index_id_array[:,0])
+                sync_dataset.modify_attribute(name=id_name_common, data=index_id_array[:,1], index=index_sync_dataset_updated)
+            else:    
+                index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[add_index]) )[0]
+                index_sync_dataset_updated = sync_dataset.duplicate_rows(index_sync_dataset)
+                
+            if reset_sync_dataset_attribute_value:
+                for key, value in reset_sync_dataset_attribute_value.items():
+                    if key in known_attribute_names:
+                        data = resize(value, index_sync_dataset_updated.size)
+                        sync_dataset.modify_attribute(name=key, data=data, index=index_sync_dataset_updated)
+                    else: ## add attribute key whose value defaults to value
+                        sync_dataset.add_primary_attribute(data=resize(value, sync_dataset.size()), name=key)
+        
+        ##TODO: where is the best location to flush sync_dataset
+        #sync_dataset.flush_dataset()
                 
 from opus_core.tests import opus_unittest
 from opus_core.resources import Resources
-from numpy import array, logical_and, int32, int8
-from numpy import ma
+from numpy import array, logical_and, int32, int8, ma
+from scipy import ndimage
+from opus_core.datasets.dataset import Dataset
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim_parcel.datasets.business_dataset import BusinessDataset
@@ -258,10 +322,15 @@ class Tests(opus_unittest.OpusTestCase):
             "persons": array(6000*[2] + 2000*[3] + 3000*[1] + 4000*[6] + 2000*[1] + 5000*[4] +
                                 3000*[1]+ 8000*[5], dtype=int8)
             }
-        self.household_characteristics_for_ht_data = {
-            "characteristic": array(2*['age_of_head'] + 2*['income'] + 2*['persons']),
-            "min": array([50, 0, 0, 40000, 0, 3]), # the first and second category of age_of_head is switched to test a row invariance 
-            "max": array([100, 49, 39999, -1, 2, -1])
+        
+        import itertools
+        total_persons = self.households_data['persons'].sum()
+        self.persons_data = {
+            "person_id":arange(total_persons)+1,
+            "household_id": array( list(itertools.chain.from_iterable([[i] * p for i,p in zip(self.households_data['household_id'], self.households_data['persons'])])) ),
+            ## head of the household is the oldest
+            "age": array( list(itertools.chain.from_iterable([range(a, a-p*2, -2) for a,p in zip(self.households_data['age_of_head'], self.households_data['persons'])])) ),
+            "job_id": zeros(total_persons)
             }
 
     def test_same_distribution_after_household_addition(self):
@@ -281,9 +350,6 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what="household", id_name="year")
-
-        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
-        hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
@@ -331,9 +397,6 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what="household", id_name="year")
 
-        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
-        hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
-
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
 
@@ -355,11 +418,7 @@ class Tests(opus_unittest.OpusTestCase):
         (those with age_of_head < 40 and >= 40), ensure that the control totals are met and that the distribution within
         each large group is the same before and after running the model
         """
-   
-        #IMPORTANT: marginal characteristics grouping indices have to start at 0!
-        #i.e. below, there is one marg. char. "age_of_head". here we indicate that the first "large group" (groups 1-4),
-        #consisting of those groups with age_of_head < 40 should total 25000 households after running this model for one year,
-        #and the second large group, those groups with age_of_head > 40, should total 15000 households
+
         annual_household_control_totals_data = {
             "year": array([2000, 2000]),
             "age_of_head_min": array([ 50,  0]),
@@ -374,9 +433,6 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=[])
-
-        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
-        hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
@@ -435,9 +491,6 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=[])
-
-        #storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
-        #hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         # unplace some households
         where10 = where(hh_set.get_attribute("grid_id")<>10)[0]
@@ -505,9 +558,6 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=[])
 
-        #storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
-        #hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
-
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
 
@@ -527,7 +577,6 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         # this run should remove households in all four categories
-        #model.run(year=2001, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2001, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
         results = hh_set.size()
         should_be = [(hct_set.get_attribute("total_number_of_households")[4:8]).sum()]
@@ -545,7 +594,6 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         # this run should add and remove households
-        #model.run(year=2002, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2002, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
         results = hh_set.size()
         should_be = [(hct_set.get_attribute("total_number_of_households")[8:12]).sum()]
@@ -596,9 +644,6 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household',
                                       id_name=[])
-
-        #storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
-        #hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
         
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
@@ -619,7 +664,6 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         # this run should remove households in all four categories
-        #model.run(year=2001, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2001, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
         results = hh_set.size()
         should_be = [(hct_set.get_attribute("total_number_of_households")[3:6]).sum()]
@@ -636,8 +680,6 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
-        # this run should add and remove households
-        #model.run(year=2002, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2002, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1})
         results = hh_set.size()
         should_be = [(hct_set.get_attribute("total_number_of_households")[6:9]).sum()]
@@ -698,8 +740,6 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
-        # this run should remove households in all four categories
-        #model.run(year=2001, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2001, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
         results = job_set.size()
         should_be = [(ect_set.get_attribute("number_of_jobs")[3:6]).sum()]
@@ -713,8 +753,6 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
-        # this run should add and remove households
-        #model.run(year=2002, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
         model.run(year=2002, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
         results = job_set.size()
         should_be = [(ect_set.get_attribute("number_of_jobs")[6:9]).sum()]
@@ -773,7 +811,36 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = ect_set.get_attribute("number_of_jobs")[0:3]
         self.assertEqual(ma.allclose(results, should_be, rtol=10),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+    def test_sync_datasets(self):
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000]),
+            "age_of_head_min": array([ 50,  0]),
+            "age_of_head_max": array([100, 49]),
+            "total_number_of_households": array([25000, 10000])
+            }
 
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+        storage.write_table(table_name='persons', table_data=self.persons_data)
+        persons = Dataset(in_storage=storage, in_table_name='persons', dataset_name='person', id_name=['person_id'])
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=[])
+
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, target_attribute_name="total_number_of_households", reset_dataset_attribute_value={'grid_id':-1},
+                  sync_dataset=persons, reset_sync_dataset_attribute_value={'job_id':-1})
+
+        self.assertEqual(persons.size(), hh_set['persons'].sum())
+        oldest_age = ndimage.maximum(persons['age'], labels=persons['household_id'], index=hh_set['household_id'])
+        count_persons = ndimage.sum(ones(persons.size()), labels=persons['household_id'], index=hh_set['household_id'])
+        self.assertArraysEqual(hh_set['age_of_head'], oldest_age)
+        self.assertArraysEqual(hh_set['persons'], count_persons)
+        
+        self.assertEqual((hh_set['grid_id'] == -1).sum(), 7000, '')
+        self.assertGreater((persons['job_id'] == -1).sum(), 7000, '')
         
 if __name__=='__main__':
     opus_unittest.main()
