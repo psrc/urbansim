@@ -23,7 +23,6 @@ class MATSimConfigObject(object):
         # network parameter
         if common_matsim_part['matsim_network_file'] == None:
             raise StandardError('Network location for MATSim not set in "travel_model_configuration" of your current configuration file')
-        #self.network_file = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", common_matsim_part['matsim_network_file']) # tnicolai: old version
         self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'])
         # controler parameter
         self.first_iteration = common_matsim_part['first_iteration']

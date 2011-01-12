@@ -165,15 +165,20 @@ if __name__ == "__main__":
     parser.add_option("-t", "--testrun", dest="test_run_flag", action="store", type="int",
                       help="Indicates if this is a test run")
     (options, args) = parser.parse_args()
-
-    # UpdateBindingClass().run( )
+    
+    # default: updates with default xsd on matsim.org
+    UpdateBindingClass().run( )
+    
+    # use this to update a pyxb classes wit custom xsd
+    #if options.test_run_flag == 0:
+    #    UpdateBindingClass().run( options.xsd_file_name, None, None, False )
+    #else:
+    #    UpdateBindingClass().run( options.xsd_file_name, None, None, True )
     
     # tnicolai: only testing
     #import opus_matsim.sustain_city.configs as test_path
     #xsd_source = os.path.join(test_path.__path__[0], 'xsd_template', 'MATSim4UrbanSimConfigSchema.xsd')
-    if options.test_run_flag == 0:
-        UpdateBindingClass().run( options.xsd_file_name, None, None, False )
-    else:
-        UpdateBindingClass().run( options.xsd_file_name, None, None, True )
+    
+
     
     

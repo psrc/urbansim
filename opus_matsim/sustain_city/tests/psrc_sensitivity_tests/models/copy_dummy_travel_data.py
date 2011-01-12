@@ -43,16 +43,19 @@ class CopyDummyTravelData(AbstractTravelModel):
         logger.end_block()
         
     def copy_dummy_travel_data(self):
-        ''' Copies pre-calculated MATSim travel costs into the 
+        ''' Copies pre-calculated MATSim travel costs, travel times and workplace accessibility into the 
             OPUS HOME tmp directory.
         '''
         # get sensitivity test path as an anchor to determine the location of the MATSim travel_data file
-        test_dir_path = test_path.__path__[0]
-        
+        #test_dir_path = test_path.__path__[0]
+
         # set source location
-        travel_data_source = os.path.join( test_dir_path, 'data', "MOD_SCENARIO travel_data without MATSim MIN.csv" )
+        travel_data_source = os.path.join( os.environ['OPUS_DATA_PATH'], 'psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'travel_data.csv' )
         if not self.travel_data_exsists( travel_data_source ):
             raise StandardError( 'Dummy MATSim travel data not fould! %s' % travel_data_source )
+        workplace_accessibility_source = os.path.join( os.environ['OPUS_DATA_PATH'], 'psrc_parcel_cupum_preliminary', 'MATSimTravelData', 'zones.csv' )
+        if not self.travel_data_exsists( workplace_accessibility_source ):
+            raise StandardError( 'Dummy MATSim travel data not fould! %s' % workplace_accessibility_source )
             
         # set destination location
         destination_dir = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
@@ -60,6 +63,7 @@ class CopyDummyTravelData(AbstractTravelModel):
             try: os.mkdir(destination_dir)
             except: pass
         travel_data_destination = os.path.join( destination_dir, "travel_data.csv" )
+        workplace_accessibility_destination = os.path.join( destination_dir, "zones.csv" )
         
         logger.log_status("Copying dummy travel data:")
         logger.log_status("Source: %s" % travel_data_source)
@@ -70,7 +74,18 @@ class CopyDummyTravelData(AbstractTravelModel):
         if os.path.isfile (travel_data_destination): 
             logger.log_status("Copying successful ...")
         else: 
-            raise StandardError("Test travel data not copied!")
+            raise StandardError("Test travel data travel_data_destination not copied!")
+        
+        logger.log_status("Copying dummy workplace accessibility indicators:")
+        logger.log_status("Source: %s" % workplace_accessibility_source)
+        logger.log_status("Destination %s:" % workplace_accessibility_destination)
+        
+        # copy workplace accessibility indicators
+        shutil.copy (workplace_accessibility_source, workplace_accessibility_destination)
+        if os.path.isfile (workplace_accessibility_destination): 
+            logger.log_status("Copying successful ...")
+        else: 
+            raise StandardError("Test travel data workplace_accessibility_destination not copied!")
         
     def travel_data_exsists(self, travel_data):
         if not os.path.exists( travel_data ):
