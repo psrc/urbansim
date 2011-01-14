@@ -190,14 +190,10 @@ class TransitionModel(Model):
         ## indices of existing elements.
         if to_be_cloned.size > 0:
             index_updated = self.dataset.duplicate_rows(to_be_cloned)
-            if reset_dataset_attribute_value:
-                for key, value in reset_dataset_attribute_value.items():
-                    if key in dataset_known_attributes:
-                        data = resize(value, index_updated.size)
-                        self.dataset.modify_attribute(name=key, data=data, index=index_updated)
-                    else: ## add attribute key whose value defaults to value
-                        self.dataset.add_primary_attribute(data=resize(value, self.dataset.size()), name=key)                        
-
+            self._reset_attribute(self.dataset, 
+                                 reset_attribute_dict = reset_dataset_attribute_value, 
+                                 index=index_updated)
+            
             # sync with another dataset (duplicate matched records) after adding records to dataset
             # since we need to know new ids if they are changed.                    
             self.sync_datasets(sync_dataset=sync_dataset, 
@@ -238,6 +234,7 @@ class TransitionModel(Model):
     
     def sync_datasets(self, sync_dataset=None, 
                       remove_index=None, 
+                      remove_from_sync_dataset=True,
                       add_index=None, 
                       new_id=None, 
                       reset_sync_dataset_attribute_value={}):
@@ -264,28 +261,47 @@ class TransitionModel(Model):
         id_dataset = self.dataset[id_name_common]; id_sync_dataset = sync_dataset[id_name_common]
         if remove_index is not None and remove_index.size>0:
             index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[remove_index]) )[0]
-            sync_dataset.remove_elements(index_sync_dataset)
+            if remove_from_sync_dataset: 
+                sync_dataset.remove_elements(index_sync_dataset)
+            else:
+                self._reset_attribute(sync_dataset, 
+                                     reset_attribute_dict = reset_sync_dataset_attribute_value, 
+                                     index=index_sync_dataset)
+            
         if add_index is not None and add_index.size>0:
             if new_id is not None: #need to duplicate rows of sync_dataset and update id of the duplicated rows
                 assert new_id.size == add_index.size
                 ## find indices to sync_dataset that need to be duplicated and new values for id_name_common field
                 index_id_array = asarray([ (index, i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id) for index in where(id_sync_dataset==old_id)[0]])
-                index_sync_dataset_updated = sync_dataset.duplicate_rows(index_id_array[:,0])
-                sync_dataset.modify_attribute(name=id_name_common, data=index_id_array[:,1], index=index_sync_dataset_updated)
+                ##TODO: speed up the above list comprehension; code below didn't do it
+#                f = lambda x, y: (x.tolist(), [y] * x.size)
+#                g = lambda x, y: (x[0]+y[0], x[1]+y[1])
+#                index_id_array = [ f(where(id_sync_dataset==old_id)[0], i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id) ]
+#                index_id_array = asarray(reduce(g, index_id_array)).T
+                index_sync_dataset_updated = sync_dataset.duplicate_rows(index_id_array[:, 0])
+                sync_dataset.modify_attribute(name=id_name_common, data=index_id_array[:, 1], index=index_sync_dataset_updated)
             else:    
                 index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[add_index]) )[0]
                 index_sync_dataset_updated = sync_dataset.duplicate_rows(index_sync_dataset)
-                
-            if reset_sync_dataset_attribute_value:
-                for key, value in reset_sync_dataset_attribute_value.items():
-                    if key in known_attribute_names:
-                        data = resize(value, index_sync_dataset_updated.size)
-                        sync_dataset.modify_attribute(name=key, data=data, index=index_sync_dataset_updated)
-                    else: ## add attribute key whose value defaults to value
-                        sync_dataset.add_primary_attribute(data=resize(value, sync_dataset.size()), name=key)
+
+            self._reset_attribute(sync_dataset, 
+                                 reset_attribute_dict = reset_sync_dataset_attribute_value, 
+                                 index=index_sync_dataset_updated)
         
-        ##TODO: where is the best location to flush sync_dataset
+        ### TODO: where is the best location to flush sync_dataset
         #sync_dataset.flush_dataset()
+        
+    def _reset_attribute(self, dataset, reset_attribute_dict=None, index=None):
+        if not reset_attribute_dict: return
+        known_attribute_names = dataset.get_known_attribute_names()
+        for key, value in reset_attribute_dict.items():
+            if key in known_attribute_names:
+                data_size = index.size if index is not None else dataset.size()
+                data = resize(value, data_size)
+                dataset.modify_attribute(name=key, data=data, index=index)
+            else: ## add attribute key whose value defaults to value
+                dataset.add_primary_attribute(data=resize(value, dataset.size()), name=key)
+                    
                 
 from opus_core.tests import opus_unittest
 from opus_core.resources import Resources
@@ -493,7 +509,7 @@ class Tests(opus_unittest.OpusTestCase):
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=[])
 
         # unplace some households
-        where10 = where(hh_set.get_attribute("grid_id")<>10)[0]
+        where10 = where(hh_set.get_attribute("grid_id") != 10)[0]
         hh_set.modify_attribute(name="grid_id", data=zeros(where10.size), index=where10)
 
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
