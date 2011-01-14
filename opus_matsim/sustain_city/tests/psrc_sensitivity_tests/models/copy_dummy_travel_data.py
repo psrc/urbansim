@@ -62,30 +62,30 @@ class CopyDummyTravelData(AbstractTravelModel):
         if not os.path.exists(destination_dir):
             try: os.mkdir(destination_dir)
             except: pass
-        travel_data_destination = os.path.join( destination_dir, "travel_data.csv" )
-        workplace_accessibility_destination = os.path.join( destination_dir, "zones.csv" )
+        self.travel_data_destination = os.path.join( destination_dir, "travel_data.csv" )
+        self.workplace_accessibility_destination = os.path.join( destination_dir, "zones.csv" )
         
         logger.log_status("Copying dummy travel data:")
         logger.log_status("Source: %s" % travel_data_source)
-        logger.log_status("Destination %s:" % travel_data_destination)
+        logger.log_status("Destination %s:" % self.travel_data_destination)
         
         # copy travel data
-        shutil.copy (travel_data_source, travel_data_destination)
-        if os.path.isfile (travel_data_destination): 
+        shutil.copy (travel_data_source, self.travel_data_destination)
+        if os.path.isfile (self.travel_data_destination): 
             logger.log_status("Copying successful ...")
         else: 
             raise StandardError("Test travel data travel_data_destination not copied!")
         
         logger.log_status("Copying dummy workplace accessibility indicators:")
         logger.log_status("Source: %s" % workplace_accessibility_source)
-        logger.log_status("Destination %s:" % workplace_accessibility_destination)
+        logger.log_status("Destination %s:" % self.workplace_accessibility_destination)
         
         # copy workplace accessibility indicators
-        shutil.copy (workplace_accessibility_source, workplace_accessibility_destination)
-        if os.path.isfile (workplace_accessibility_destination): 
+        shutil.copy (workplace_accessibility_source, self.workplace_accessibility_destination)
+        if os.path.isfile (self.workplace_accessibility_destination): 
             logger.log_status("Copying successful ...")
         else: 
-            raise StandardError("Test travel data workplace_accessibility_destination not copied!")
+            raise StandardError("Test travel data workplace_accessibility_destination not copied!")  
         
     def travel_data_exsists(self, travel_data):
         if not os.path.exists( travel_data ):

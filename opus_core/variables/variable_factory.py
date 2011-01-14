@@ -57,19 +57,21 @@ class VariableFactory(object):
                         return None
                     v = VariableName(e)
                     return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
-            # not in the expression library - next look in the appropriate 'aliases' file, if one is present
-            try:
-                stmt = 'from %s.%s.aliases import aliases' % (package_name, dataset_name)
-                exec(stmt)
-            except ImportError:
-                aliases = []
-            for a in aliases:
-                # for each definition, see if the alias is equal to the short_name.  If it is,
-                # then use that definition for the variable
-                v = VariableName(a)
-                if v.get_alias() == short_name:
-                    return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
-
+            else:
+                # not in the expression library - next look in the appropriate 'aliases' file, if one is present
+                # (but only if we have a package name in the first place)
+                try:
+                    stmt = 'from %s.%s.aliases import aliases' % (package_name, dataset_name)
+                    exec(stmt)
+                except ImportError:
+                    aliases = []
+                for a in aliases:
+                    # for each definition, see if the alias is equal to the short_name.  If it is,
+                    # then use that definition for the variable
+                    v = VariableName(a)
+                    if v.get_alias() == short_name:
+                        return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
+            
             lag_variable_parser = LagVariableParser()
             if lag_variable_parser.is_short_name_for_lag_variable(short_name):
                 lag_attribute_name, lag_offset = lag_variable_parser.parse_lag_variable_short_name(short_name)
@@ -77,9 +79,10 @@ class VariableFactory(object):
                 substrings = (package_name, lag_attribute_name, lag_offset, dataset_name, index_name)
                 directory_path = 'opus_core.variables'
                 
-            else:             
+            else:      
                 if package_name is None:
-                    raise LookupError("Incomplete variable specification for '%s.%s' (missing package name)." 
+                    raise LookupError("Incomplete variable specification for '%s.%s' (missing package name, "
+                                      "and variable is not in expression library not a lag variable)." 
                                       % (dataset_name, short_name))
                 
                 directory_path = '%s.%s' % (package_name,dataset_name)

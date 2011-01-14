@@ -30,8 +30,9 @@ class StartRunOptionGroup(object):
         #self.config = XMLConfiguration( 'opus_matsim/sustain_city/tests/psrc_sensitivity_tests/config/seattle_parcel_common_test.xml' ).get_run_configuration( 'Seattle_baseline' )
         #self.config = XMLConfiguration( '/Users/thomas/Development/opus_home/data/vsp_configs/cupum/psrc_parcel_default_cupum.xml' ).get_run_configuration( 'PSRC_baseline' )
         #self.config = XMLConfiguration( '/Users/thomas/Development/opus_home/data/vsp_configs/cupum/seattle_parcel_common_test.xml' ).get_run_configuration( 'Seattle_baseline' )
-        self.config = XMLConfiguration( '/Users/thomas/Development/opus_home/data/vsp_configs/cupum/psrc_parcel_ferry_testing.xml' ).get_run_configuration( 'PSRC_baseline' )
-        #self.config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
+        #self.config = XMLConfiguration( '/Users/thomas/Development/opus_home/data/vsp_configs/cupum/psrc_parcel_ferry_testing.xml' ).get_run_configuration( 'PSRC_baseline' )
+        #self.config = XMLConfiguration( '/Users/thomas/Development/opus_home/data/vsp_configs/cupum/psrc_parcel_sensitivity_test_wp_accessibility.xml' ).get_run_configuration( 'PSRC_baseline' )
+        self.config = XMLConfiguration( options.config_file_name ).get_run_configuration( options.scenario_executable )
         
     def run(self):
         

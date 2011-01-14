@@ -28,10 +28,10 @@ class RunTravelModel(AbstractTravelModel):
         logger.start_block("Starting RunTravelModel.run(...)")
         
         # tnicolai :for debugging
-        try:
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try:
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         self.setUp( config )
         
@@ -44,12 +44,13 @@ class RunTravelModel(AbstractTravelModel):
         #        'vmargs': "-Xmx2000m",
         #        'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:libs/jfree/jfreechart/1.0.7/jfreechart-1.0.7.jar:libs/jfree/jcommon/1.0.9/jcommon-1.0.9.jar:classesMATSim:classesToronto:classesTNicolai:classesKai:classesEntry", #  'classpath': "classes:jar/MATSim.jar",
         #       'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbanSimCUPUM",
-        #        'matsim_config_file': self.matsim_config_full } 
+        #        'matsim_config_file': self.matsim_config_full,
+        #        'test_parameter': self.test_parameter } 
         
         # tnicolai : test for matsim jar execution ...
         cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'opus_home': os.environ['OPUS_HOME'],
-                'vmargs': "-Xmx2000m", # set to 4GB on math cluster
+                'vmargs': "-Xmx4000m", # set to 4GB on math cluster
                 'classpath': "libs/log4j/log4j/1.2.15/log4j-1.2.15.jar:jar/matsim4urbansim.jar",
                 'javaclass': "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
                 'matsim_config_file': self.matsim_config_full,

@@ -17,6 +17,8 @@ class GetIndices(object):
         self.to_zone_id = 'to_zone_id'
         self.single_vehicle_to_work_travel_cost = 'single_vehicle_to_work_travel_cost'
         self.am_single_vehicle_to_work_travel_time = 'am_single_vehicle_to_work_travel_time'
+        self.zone_id = 'zone_id'
+        self.workplace_asseccibility = 'workplace_accessibility'
         
         # default value
         self.from_zone_id_value = -1
@@ -24,6 +26,8 @@ class GetIndices(object):
         self.single_vehicle_to_work_travel_cost_value = -1
         self.am_single_vehicle_to_work_travel_time_value = -1
         self.number_of_elements = -1
+        self.zone_id_value = -1
+        self.workplace_asseccibility_value = -1
         
         self.init_values()
         
@@ -51,6 +55,10 @@ class GetIndices(object):
                 elif item == self.am_single_vehicle_to_work_travel_time:
                     self.am_single_vehicle_to_work_travel_time_value = i
                     continue
+                elif item == self.zone_id:
+                    self.zone_id_value = i
+                elif item == self.workplace_asseccibility:
+                    self.workplace_asseccibility_value = i
             self.number_of_elements = len(header_list)
                 
     def get_from_zone_index(self):
@@ -64,6 +72,12 @@ class GetIndices(object):
     
     def get_am_single_vehicle_to_work_travel_time_index(self):
         return self.am_single_vehicle_to_work_travel_time_value
+    
+    def get_zone_id_index(self):
+        return self.zone_id_value
+    
+    def get_workplace_asseccibility_index(self):
+        return self.workplace_asseccibility_value
     
     def get_number_of_colums(self):
         return self.number_of_elements

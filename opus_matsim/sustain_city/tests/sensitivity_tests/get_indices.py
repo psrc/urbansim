@@ -2,10 +2,11 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-class GetIndices(object):
+class GetIndices(object): # DEPRICATED use get_indices in "psrc_sensitivity_tests"
     ''' Calulates the indices of key words.
     '''
     
+    # DEPRICATED use get_indices in "psrc_sensitivity_tests"
     def __init__(self, header):
         ''' Constructor
         '''
@@ -26,7 +27,8 @@ class GetIndices(object):
         self.number_of_elements = -1
         
         self.init_values()
-        
+    
+    # DEPRICATED
     def init_values(self):
         
         header_list = self.header.split(',')

@@ -73,7 +73,7 @@ class ModifyTravelTimes(AbstractTravelModel):
         # using default cbd 
         cbd = 129
         # set the preferred zone
-        study_zone = 909
+        study_zone = 908
         # set travel times for the preferered zone and other zones
         min_travel_time = '0.40'    # time in minutes
         min_travel_cost = '3.47'    # travel const in ???
