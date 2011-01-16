@@ -22,8 +22,10 @@ except:
     PrettyTable = None
     
 class TransitionModel(Model):
-    """ The generic model behind household transition model and employment transition
-    model
+    """ 
+    A generic transition model that clones or removes records from a dataset to 
+    fit distributions specified in a control_total table.
+        
     """
     
     model_name = "Transition Model"
@@ -35,6 +37,33 @@ class TransitionModel(Model):
                  model_name=None, 
                  model_short_name=None,
                  **kwargs):
+        """
+        **Parameters**
+        
+                **dataset** : OPUS Dataset object, required
+                
+                        The main dataset whose records are to be sampled or removed.
+                        
+                **dataset_accounting_attribute** : string, optional
+                        
+                        Name of dataset attribute that represents quantities summing
+                        toward target_attribute.  If unspecified, counting number of
+                        dataset records toward target.
+                        
+                **control_total_dataset** : OPUS Dataset object, optional
+                
+                        Control_total dataset.  It can be loaded by prepare_for_run
+                        method instead.
+                        
+                **model_name** : string, optional
+                
+                        Name of instantiated model. Default to "Transition Model"
+                        
+                **model_short_name** : string, optional
+                        
+                        Short name of instantiated model. Default to "TM"                         
+                          
+        """
         self.dataset = dataset
         self.dataset_accounting_attribute = dataset_accounting_attribute
         self.control_totals = control_total_dataset
@@ -43,16 +72,46 @@ class TransitionModel(Model):
         if model_short_name:
             self.model_short_name = model_short_name
         
-    def run(self, year=None, 
+    def run(self, 
+            year=None, 
             target_attribute_name='number_of_households', 
             sample_filter="", 
             reset_dataset_attribute_value={}, 
-            dataset_pool=None,  
             sync_dataset=None,
             reset_sync_dataset_attribute_value={}, 
+            dataset_pool=None,  
             **kwargs
             ):
-        """ sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
+        """ 
+
+        **Parameters**
+        
+                **year** : int, optional
+                
+                        Simulation year. If unspecified, gets value from SimulationState
+
+                **target_attribute_name** : string, optional
+                
+                        Name of dataset attribute that contains target values.                         
+                        
+                **sample_filter** : string, optional
+                 
+                        Name of dataset attribute or variable indicating which 
+                        records in dataset are eligible in the sampling for removal 
+                        or cloning.
+
+                **reset_dataset_attribute_value** : dictionary, optional
+                 
+                        Name of dataset attribute or variable indicating which 
+                        records in dataset are eligible in the sampling for removal 
+                        or cloning.                        
+
+                **sync_dataset** : OPUS Dataset object, optional
+
+                **reset_sync_dataset_attribute_value** : dictionary, optional
+
+                **dataset_pool** : OPUS DatasetPool object, optional                                                        
+        
         """
         #if dataset_pool is None:
         #    dataset_pool = SessionConfiguration().get_dataset_pool()
@@ -209,22 +268,46 @@ class TransitionModel(Model):
             
         return self.dataset
     
-    def prepare_for_run(self, control_total_dataset_name=None, control_total_table=None, control_total_storage=None):
-        if (control_total_storage is None) or ((control_total_table is None) and (control_total_dataset_name is None)):
-            dataset_pool = SessionConfiguration().get_dataset_pool()
-            self.control_totals = dataset_pool.get_dataset( 'annual_%s_control_total' % self.dataset.get_dataset_name() )
+    def prepare_for_run(self, control_total_dataset_name=None, 
+                        control_total_table=None, 
+                        control_total_storage=None):
+        """
+        Loads control_total dataset.
+        **Parameters**
+        
+                **control_total_dataset_name** : string, optional
+                
+                        Name of control_total dataset.
+                        
+                **control_total_table** : string, optional
+                        
+                        Table name of control_total dataset.
+                        
+                **control_total_storage** : OPUS Storage object, optional
+                        
+                        Storage that contains control total dataset.
+                        
+        """
+        sc = SessionConfiguration()
+        if (control_total_storage is None) or \
+           ((control_total_table is None) and \
+           (control_total_dataset_name is None)):
+            dataset_pool = sc.get_dataset_pool()
+            self.control_totals = dataset_pool.get_dataset( 'annual_%s_control_total' \
+                                                            % self.dataset.get_dataset_name() )
             return self.control_totals
         
+        df = DatasetFactory()
         if not control_total_dataset_name:
-            control_total_dataset_name = DatasetFactory().dataset_name_for_table(control_total_table)
+            control_total_dataset_name = df.dataset_name_for_table(control_total_table)
         
-        self.control_totals = DatasetFactory().search_for_dataset(control_total_dataset_name,
-                                                                  package_order=SessionConfiguration().package_order,
-                                                                  arguments={'in_storage':control_total_storage, 
-                                                                             'in_table_name':control_total_table,
-                                                                             'id_name':[]
-                                                                             }
-                                                                  )
+        self.control_totals = df.search_for_dataset(control_total_dataset_name,
+                                                    package_order=sc.package_order,
+                                                    arguments={'in_storage':control_total_storage, 
+                                                               'in_table_name':control_total_table,
+                                                               'id_name':[]
+                                                               }
+                                                    )
         return self.control_totals
     
     def post_run(self, *args, **kwargs):
@@ -238,7 +321,36 @@ class TransitionModel(Model):
                       add_index=None, 
                       new_id=None, 
                       reset_sync_dataset_attribute_value={}):
-        """ synchronize sync_data with self.dataset: remove/add records from/to sync_data accordingly
+        """ 
+        Synchronizes sync_data with dataset.
+        
+        **Parameters**
+                
+                **sync_dataset** : OPUS Dataset object, optional
+                
+                **remove_index** : numpy array, optional
+                
+                        Index to self.dataset records to be removed 
+                
+                **remove_from_sync_dataset** : bool, optional
+                        
+                        Whether to remove from sync_dataset records that match
+                        to remove_index. If not, flag these records with 
+                        reset_sync_dataset_attribute_value.
+                        
+                **add_index** : numpy array, optional
+                    
+                        Index to self.dataset records to be cloned
+                        
+                **new_id** : numpy array, optional
+                
+                        New ids for sync_dataset when being cloned
+                        
+                **reset_sync_dataset_attribute_value**: dictionary, optional
+                        
+                        New attribute name and value for sync_dataset records that
+                        are affected.
+        
         """
         if sync_dataset is None:
             return
@@ -292,6 +404,9 @@ class TransitionModel(Model):
         #sync_dataset.flush_dataset()
         
     def _reset_attribute(self, dataset, reset_attribute_dict=None, index=None):
+        """
+        Resets Dataset attribute value for records indicated by index.
+        """
         if not reset_attribute_dict: return
         known_attribute_names = dataset.get_known_attribute_names()
         for key, value in reset_attribute_dict.items():
