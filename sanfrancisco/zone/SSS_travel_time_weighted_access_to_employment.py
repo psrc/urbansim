@@ -2,38 +2,18 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.logger import logger
-from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
-from numpy import where, power, float32, array
-from opus_core.ndimage import sum as ndimage_sum
+from urbansim.abstract_variables.abstract_weighted_access import abstract_weighted_access
 
-class SSS_travel_time_weighted_access_to_employment(Variable):
+class SSS_travel_time_weighted_access_to_employment(abstract_weighted_access):
     """sum of number of jobs in zone j divided by SSS (mode) travel time from zone i to j,
     """
 
     def __init__(self, mode):
-        self.mode = mode
-        Variable.__init__(self)
-    
-    def dependencies(self):
-        return [attribute_label("travel_data", self.mode),
-                my_attribute_label("employment")]
-    
-    def compute(self,  dataset_pool):
-        zone_ids = self.get_dataset().get_id_attribute()
-        travel_data = dataset_pool.get_dataset("travel_data")
-        time = power(travel_data.get_attribute(self.mode), 2)
+        self.aggregate_by_origin = False
+        self.travel_data_attribute  = "travel_data."+mode
+        self.zone_attribute_to_access = "zone.employment"
         
-        to_zone_id = travel_data.get_attribute("to_zone_id")
-        zone_index = self.get_dataset().get_id_index(to_zone_id)
-        num_jobs = self.get_dataset().get_attribute('employment')[zone_index]
-
-        from_zone_id = travel_data.get_attribute("from_zone_id")        
-        results = array(ndimage_sum(num_jobs / time.astype(float32), labels = from_zone_id, index=zone_ids))
-        
-        return results
+        abstract_weighted_access.__init__(self)
 
 from opus_core.tests import opus_unittest
 from numpy import array, arange

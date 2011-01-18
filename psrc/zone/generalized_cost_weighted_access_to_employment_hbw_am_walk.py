@@ -2,37 +2,22 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from opus_core.variables.variable import Variable
-from numpy import power, float32, array
-from opus_core.ndimage import sum as ndimage_sum
+from urbansim.abstract_variables.abstract_weighted_access import abstract_weighted_access
 
-class generalized_cost_weighted_access_to_employment_hbw_am_walk(Variable):
+class generalized_cost_weighted_access_to_employment_hbw_am_walk(abstract_weighted_access):
     """sum of number of jobs in zone j divided by generalized cost from zone i to j,
     The travel time used is for the home-based-work am trips by auto with 
     walk.
     """
     
-    def dependencies(self):
-        return ["psrc.travel_data.am_walk_time_in_minutes",
-                "urbansim.zone.number_of_jobs"]
-    
-    def compute(self, dataset_pool):
-        zone_ids = self.get_dataset().get_id_attribute()
-        travel_data = dataset_pool.get_dataset('travel_data')
-        time = power(travel_data.get_attribute('am_walk_time_in_minutes'), 2)
+    def __init__(self):
+        self.aggregate_by_origin = False
+        self.travel_data_attribute  = "travel_data.am_walk_time_in_minutes"
+        self.zone_attribute_to_access = "zone.number_of_jobs"
         
-        to_zone_id = travel_data.get_attribute("to_zone_id")
-        zone_index = self.get_dataset().get_id_index(to_zone_id)
-        num_jobs = self.get_dataset().get_attribute('number_of_jobs')[zone_index]
-
-        from_zone_id = travel_data.get_attribute("from_zone_id")        
-        results = array(ndimage_sum(num_jobs / time.astype(float32), labels = from_zone_id, index=zone_ids))
-        
-        return results
-
-
-from numpy import ma
-
+        abstract_weighted_access.__init__(self)
+            
+from numpy import ma, array
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
