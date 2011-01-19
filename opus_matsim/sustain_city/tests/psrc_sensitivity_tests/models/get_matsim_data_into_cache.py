@@ -77,7 +77,7 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         # Case 2) Join the data sets and delete unneeded 'columns' here
         
         # delete copied travel data in cache
-        # self.clear_cache_travel_data(year) # tnicolai : this may causes errors in some models
+        self.clear_cache_travel_data(year) # tnicolai : this may causes errors in some models
         # load actual travel data set from cache
         existing_travel_data_set = TravelDataDataset( in_storage=self.cache_storage, in_table_name=self.travel_data_table_name )
         

@@ -28,15 +28,16 @@ class CopyDummyTravelDataWithModWPA(CopyDummyTravelData):
         self.base_year = self.travel_model_configuration['base_year']
         
         # for debugging
-        try: #tnicolai
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
         # set travel data for test simulation
         if year == self.base_year+1:
             logger.log_status("Prepare copying pre-calculated MATSim travel data to OPUS_HOME tmp directory.")
             self.copy_dummy_travel_data()
+            self.modify_workplace_accessibility()
         # use modified travel data for all following runs
         else:
             logger.log_status("Travel data is already copied in the first iteration.")

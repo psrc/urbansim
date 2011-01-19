@@ -23,6 +23,12 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
 
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
         
+        # tnicolai :for debugging
+        #try:
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         # I guess this is access to the full urbansim cache data.
         source_data = SourceData(
             cache_directory = config['cache_directory'],
@@ -57,11 +63,11 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
                 name = 'exported_indicators',
                 )
         
-        export_indicators_persons = [ self.dataset_table_jobs ]
+        export_indicators_jobs = [ self.dataset_table_jobs ]
         
         # executing the export jobs
         IndicatorFactory().create_indicators(
-             indicators = export_indicators_persons,
+             indicators = export_indicators_jobs,
              display_error_box = False, 
              show_results = False)
         
