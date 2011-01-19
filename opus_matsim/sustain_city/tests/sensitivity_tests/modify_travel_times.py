@@ -34,10 +34,10 @@ class ModifyTravelTimes(AbstractTravelModel):
         self.travel_data_dir = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
 
         # for debugging
-        try: #tnicolai
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         # set travel data for test simulation
         if year == self.base_year+1:

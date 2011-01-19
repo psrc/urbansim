@@ -28,10 +28,10 @@ class GetTestTravelDataIntoCache(GetTravelModelDataIntoCache):
         test_dir_path = test_dir.__path__[0]
         
         # for debugging
-        try: #tnicolai
-            import pydevd
-            pydevd.settrace()
-        except: pass
+        #try: #tnicolai
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
 
         # get the exsisting travel data from the current year
         logger.log_status('Loading travel data from UrbanSim cache (year:%i)' % year)
