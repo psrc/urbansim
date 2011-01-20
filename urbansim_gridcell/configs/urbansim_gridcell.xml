@@ -1018,20 +1018,35 @@
     </estimation_config>
   </model_manager>
   <scenario_manager>
-    <scenario name="default_scenario" type="scenario">
-      <data cloneable="True" type="category">
-        <baseyear_database config_name="scenario_database_configuration" type="class">
-          <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
-          <argument name="protocol" type="string"/>
-          <argument name="host_name" type="string"/>
-          <argument name="user_name" type="string"/>
-          <argument name="password" type="password"/>
-          <argument name="database_name" type="string"/>
-        </baseyear_database>
-        <cache_configuration type="category">
-          <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</cache_directory>
-          <creating_baseyear_cache_configuration type="class">
+    <scenario executable="True" name="default_scenario" type="scenario">
+      <models_to_run config_name="models" type="selectable_list">
+          <selectable name="prescheduled_events" type="selectable">True</selectable>
+          <selectable name="events_coordinator" type="selectable">True</selectable>
+          <selectable name="residential_land_share_model" type="selectable">True</selectable>
+          <selectable name="land_price_model" type="selectable">True</selectable>
+          <selectable name="development_project_transition_model" type="selectable">True</selectable>
+          <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
+          <selectable name="commercial_development_project_location_choice_model" type="selectable">True</selectable>
+          <selectable name="industrial_development_project_location_choice_model" type="selectable">True</selectable>
+          <selectable name="development_event_transition_model" type="selectable">True</selectable>
+          <selectable name="events_coordinator_1" return_value="events_coordinator" type="selectable">True</selectable>
+          <selectable name="residential_land_share_model" type="selectable">True</selectable>
+          <selectable name="household_transition_model" type="selectable">True</selectable>
+          <selectable name="employment_transition_model" type="selectable">True</selectable>
+          <selectable name="household_relocation_model" type="selectable">True</selectable>
+          <selectable name="household_location_choice_model" type="selectable">True</selectable>
+          <selectable name="employment_relocation_model" type="selectable">True</selectable>
+          <selectable name="employment_location_choice_model" type="selectable">True<group_members type="string">_all_</group_members>
+          </selectable>
+          <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+      </models_to_run>
+      <base_year type="integer" field_identifier="Base Year">1980</base_year>
+      <years_to_run config_name="years" type="tuple">
+            <firstyear type="integer" field_identifier="First Year of Simulation">1981</firstyear>
+            <lastyear type="integer" field_identifier="Last Year of Simulation">1982</lastyear>
+      </years_to_run>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
             <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
             <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
 	        <argument config_name="cache_directory_root" name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory"  field_identifier="Scenario Runs Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/runs">[Project Name]/runs</argument>
@@ -1104,39 +1119,7 @@
               <gridcells type="integer">1</gridcells>
             </argument>
             <argument name="tables_to_copy_to_previous_years" type="dictionary"/>
-          </creating_baseyear_cache_configuration>
-        </cache_configuration>
-      </data>
-      <model_system type="category">
-        <models_to_run config_name="models" type="selectable_list">
-          <selectable name="prescheduled_events" type="model_choice">True</selectable>
-          <selectable name="events_coordinator" type="model_choice">True</selectable>
-          <selectable name="residential_land_share_model" type="model_choice">True</selectable>
-          <selectable name="land_price_model" type="model_choice">True</selectable>
-          <selectable name="development_project_transition_model" type="model_choice">True</selectable>
-          <selectable name="residential_development_project_location_choice_model" type="model_choice">True</selectable>
-          <selectable name="commercial_development_project_location_choice_model" type="model_choice">True</selectable>
-          <selectable name="industrial_development_project_location_choice_model" type="model_choice">True</selectable>
-          <selectable name="development_event_transition_model" type="model_choice">True</selectable>
-          <selectable name="events_coordinator_1" return_value="events_coordinator" type="model_choice">True</selectable>
-          <selectable name="residential_land_share_model" type="model_choice">True</selectable>
-          <selectable name="household_transition_model" type="model_choice">True</selectable>
-          <selectable name="employment_transition_model" type="model_choice">True</selectable>
-          <selectable name="household_relocation_model" type="model_choice">True</selectable>
-          <selectable name="household_location_choice_model" type="model_choice">True</selectable>
-          <selectable name="employment_relocation_model" type="model_choice">True</selectable>
-          <selectable name="employment_location_choice_model" type="model_choice">True<group_members type="string">_all_</group_members>
-          </selectable>
-          <selectable name="distribute_unplaced_jobs_model" type="model_choice">True</selectable>
-        </models_to_run>
-        <others type="category">
-          <base_year type="integer" field_identifier="Base Year">1980</base_year>
-          <years_to_run config_name="years" type="tuple">
-            <firstyear type="integer" field_identifier="First Year of Simulation">1981</firstyear>
-            <lastyear type="integer" field_identifier="Last Year of Simulation">1982</lastyear>
-          </years_to_run>
-        </others>
-      </model_system>
+      </creating_baseyear_cache_configuration>      
       <advanced type="category">
         <datasets_to_cache_after_each_model type="selectable_list">
           <selectable name="gridcell" type="selectable">True</selectable>

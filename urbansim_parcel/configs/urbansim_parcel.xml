@@ -799,18 +799,13 @@
     </estimation_config>
   </model_manager>
   <scenario_manager>
-    <scenario name="urbansim_parcel_baseline" type="scenario">
-      <advanced type="category">
-        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
-        <debuglevel type="integer">4</debuglevel>
-        <flush_variables type="boolean">False</flush_variables>
-        <seed type="integer" convert_blank_to_none="True">None</seed>
-        <dataset_pool_configuration type="class">
-          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
-          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
-          <argument name="package_order" type="list">['urbansim_parcel', 'urbansim', 'opus_core']</argument>
-        </dataset_pool_configuration>        
-      </advanced>
+    <scenario executable="True" name="urbansim_parcel_baseline" type="scenario">
+      <models_to_run config_name="models" type="selectable_list" />
+      <base_year type="integer" field_identifier="Base Year">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer" field_identifier="First Year of Simulation">2001</firstyear>
+        <lastyear type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
+      </years_to_run>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
@@ -823,11 +818,17 @@
           <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory"  field_identifier="Cache Directory" field_description="Parent Directory for simulation runs, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">[Project Name]/base_year_data</argument>
         </argument>
       </creating_baseyear_cache_configuration>
-      <base_year type="integer" field_identifier="Base Year">2000</base_year>
-      <years_to_run config_name="years" type="tuple">
-        <firstyear type="integer" field_identifier="First Year of Simulation">2001</firstyear>
-        <lastyear type="integer" field_identifier="Last Year of Simulation">2002</lastyear>
-      </years_to_run>
+      <advanced type="category">
+        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <debuglevel type="integer">4</debuglevel>
+        <flush_variables type="boolean">False</flush_variables>
+        <seed type="integer" convert_blank_to_none="True">None</seed>
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>        
+      </advanced>
     </scenario>
   </scenario_manager>
 </opus_project>
