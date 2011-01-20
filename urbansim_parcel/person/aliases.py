@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 aliases = ['is_worker = person.employment_status > 0',
            'is_worker_without_job = numpy.logical_and(urbansim_parcel.person.is_worker, person.job_id <= 0)',

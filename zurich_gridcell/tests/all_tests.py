@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
 raise "Please change the name of the package in tests.all_tests" #remove this line after changing the package name

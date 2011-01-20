@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
 from urbansim_parcel.faz_x_land_use_type.total_value_per_sqft import total_value_per_sqft as faz_total_value_per_sqft

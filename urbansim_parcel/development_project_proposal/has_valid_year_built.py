@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
 from urbansim_parcel.building.has_valid_year_built import has_valid_year_built as building_has_valid_year_built

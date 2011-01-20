@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
 from urbansim.gridcell.code_for_price_model_SSS import code_for_price_model_SSS as gridcell_code_for_price_model_SSS

@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
 import os
@@ -111,7 +111,7 @@ class UpdateBindingClass(object):
         # read whole file
         f = open(binding_class, "r")
         # binding class will be extended by the UrbanSim header
-        content = "# Opus/UrbanSim urban simulation software\n# Copyright (C) 2005-2009 University of Washington\n# See opus_core/LICENSE\n\n"
+        content = "# Opus/UrbanSim urban simulation software\n# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington\n# See opus_core/LICENSE\n\n"
         line = f.readline()
         while line:
             content += line

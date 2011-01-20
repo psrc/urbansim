@@ -1,5 +1,5 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2005-2009 University of Washington
+# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
 from urbansim.gridcell.vacancy_rate_for_SSS import vacancy_rate_for_SSS as gc_vacancy_rate_for_SSS
