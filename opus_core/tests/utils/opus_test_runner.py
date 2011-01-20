@@ -5,11 +5,31 @@
 import time
 import sys
 from StringIO import StringIO
-from unittest import TestResult, _WritelnDecorator, _strclass
+from unittest import TestResult#, _WritelnDecorator, _strclass                                         
+from opus_core.logger import logger                                                                    
+                                                                                                       
+def _strclass(cls):                                                                                    
+    """taken from unittest code                                                                        
+    ##TODO: it used to be imported from unittest,                                                      
+    but it has been removed from unittest module in python27                                           
+    """                                                                                                
+    return "%s.%s" % (cls.__module__, cls.__name__)                                                    
+                                                                                                       
+class _WritelnDecorator:                                                                               
+    """Used to decorate file-like objects with a handy 'writeln' method                                
+    ##TODO: it used to be imported from unittest,                                                      
+    but it has been removed from unittest module in python27                                           
+    """                                                                                                
+    def __init__(self,stream):                                                                         
+        self.stream = stream                                                                           
+                                                                                                       
+    def __getattr__(self, attr):                                                                       
+        return getattr(self.stream,attr)                                                               
+                                                                                                       
+    def writeln(self, arg=None):                                                                       
+        if arg: self.write(arg)                                                                        
+        self.write('\n') # text-mode streams translate to \r\n if needed                               
 
-from opus_core.logger import logger
-
-    
 def _get_centered_string(input_string, width):
     if len(input_string) < width:
         diff = width - len(input_string)

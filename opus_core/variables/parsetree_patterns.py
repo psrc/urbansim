@@ -20,7 +20,9 @@ FULL_TREE_EXPRESSION =  \
        (symbol.small_stmt,
         (symbol.expr_stmt, ['expr'])),
        (token.NEWLINE, ''))),
-     (token.ENDMARKER, ''))
+     (token.NEWLINE, '') if sys.version >= '2.7' else None, 
+     (token.ENDMARKER, '') 
+     )
 
 # This pattern matches a tree consisting of a single assignment statement alias=expr
 FULL_TREE_ASSIGNMENT =  \
@@ -46,6 +48,7 @@ FULL_TREE_ASSIGNMENT =  \
                        (symbol.atom, (token.NAME, ['alias'])))))))))))))))),
             (token.EQUAL, '='), ['expr'])),
        (token.NEWLINE, ''))),
+     (token.NEWLINE, '') if sys.version >= '2.7' else None,
      (token.ENDMARKER, ''))
 
 # ************************************************************************************
