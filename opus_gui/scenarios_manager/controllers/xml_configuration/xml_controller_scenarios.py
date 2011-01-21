@@ -30,6 +30,7 @@ class XmlController_Scenarios(XmlController):
         self.actMoveNodeUp = self.create_action('arrow_up', "Move Up", self.moveNodeUp)
         self.actMoveNodeDown = self.create_action('arrow_down', "Move Down", self.moveNodeDown)
         self.actExecutable = self.create_action('executable', "Executable", self.toggleExecutable)
+        self.actModelsToRun = self.create_action('add', "Add models_to_run node", self.addModelsToRun)
         self.actExecutable.setCheckable(True)
 
         # CK - what's this? Removing for now...
@@ -70,7 +71,7 @@ class XmlController_Scenarios(XmlController):
         self.view.setCurrentIndex(self.model.move_down(self.selected_index()))
 
     def toggleExecutable(self):
-        ''' Toggle the "executable" attribute and add/remove the "models_to_run" element '''
+        ''' Toggle the "executable" attribute'''
         assert self.has_selected_item()
         item = self.selected_item()
         node = item.node
@@ -78,11 +79,8 @@ class XmlController_Scenarios(XmlController):
 
         if node_executable:
             node.set('executable', 'False')
-            for models_to_run in list(node.iterchildren('models_to_run')):
-                self.model.remove_node(models_to_run)
         else:
-            node.set('executable', 'True')
-            self.model.add_node(node, etree.parse(StringIO.StringIO('<models_to_run config_name="models" type="selectable_list"/>')).getroot())
+            node.set('executable', 'True')            
 
     def process_custom_menu(self, point):
         ''' See XmlController for documentation '''
@@ -95,9 +93,12 @@ class XmlController_Scenarios(XmlController):
         if node.get('type') == 'scenario':
             node_executable = (node.get('executable') == 'True')
             menu.addAction(self.actExecutable)
-            self.actExecutable.setChecked(node_executable)            
+            self.actExecutable.setChecked(node_executable)
             if node_executable:
                 menu.addAction(self.actRunScenario)
+            if node.find('models_to_run') is None:  
+                #if there isn't a child node models_to_run
+                menu.addAction(self.actModelsToRun)                
         elif node.get('type') in ['selectable', 'model_choice']:
             menu.addAction(self.actMoveNodeUp)
             menu.addAction(self.actMoveNodeDown)
@@ -116,7 +117,13 @@ class XmlController_Scenarios(XmlController):
 
         if not menu.isEmpty():
             menu.exec_(QCursor.pos())
-
+    
+    def addModelsToRun(self):
+        assert self.has_selected_item()
+        item = self.selected_item()
+        node = item.node
+        self.model.add_node(node, etree.parse(StringIO.StringIO('<models_to_run config_name="models" type="selectable_list"/>')).getroot())
+                        
     def addModel(self, models_to_run_list_index, model_name):
         '''
         Add a model to a models_to_run list.
