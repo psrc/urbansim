@@ -29,15 +29,15 @@ with --database_server and --scenario_database_name options:
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                 help="Opus path to Python module defining run_configuration.")
         self.parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
-                                help="file name of xml configuration (must also provide a scenario name using -s)")
+                                help="File name of xml configuration (must also provide a scenario name using -s). Only used if only a specific set of tables should be flattened.")
         self.parser.add_option("-s", "--scenario_name", dest="scenario_name", default=None, 
-                                help="name of the scenario to run")
+                                help="Name of the scenario to run. Only used if only a specific set of tables should be flattened.")
         self.parser.add_option("--scenario_database_configuration", dest="scenario_database_configuration", default = "scenario_database_server",
                                action="store", help="Name of the database server configuration in database_server_configurations.xml that is to be used to connect to the database. Defaults to 'scenario_database_server'.")
         self.parser.add_option("--scenario_database_name", dest="scenario_database_name", default = None,
                                action="store", help="Name of the scenario database on the scenario database server.")
         self.parser.add_option("--flattened_database", dest="flattened_database_name", default=None, 
-                               action="store", help="Name of flattened database")
+                               action="store", help="Name of flattened database.")
 
 if __name__ == "__main__":
     option_group = CreateFlattenedDatabaseOptionGroup()
