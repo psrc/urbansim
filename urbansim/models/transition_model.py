@@ -1,19 +1,19 @@
 # Opus/UrbanSim urban simulation software.
-# Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
+# Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
-from numpy import array, asarray, where, ones, zeros, setdiff1d, logical_and
-from numpy import arange, concatenate, resize, int32, float64, ceil
+from numpy import array, asarray, where, ones, zeros, ones_like, setdiff1d 
+from numpy import arange, concatenate, resize, int32, float64, ceil, logical_and
 from opus_core.misc import ismember
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
-import re
+import re, copy
 
 try:
     ## if installed, use PrettyTable module for status logging
@@ -66,16 +66,89 @@ class TransitionModel(Model):
         """
         self.dataset = dataset
         self.dataset_accounting_attribute = dataset_accounting_attribute
+        self.control_totals_all = control_total_dataset
         self.control_totals = control_total_dataset
         if model_name:
             self.model_name = model_name
         if model_short_name:
             self.model_short_name = model_short_name
+    
+    def _code_control_total_id(self, column_names, 
+                               control_total_index=None,
+                               dataset_pool=None):
+        """
+        Assigns a control_total_id to control_totals and self.dataset, so that
+        they can be joined with each other for opus expression computation, e.g.
+        "control_total.aggregate(household.age>65)".
+        """
         
+        id_name = 'control_total_id'
+        assert id_name in self.control_totals.get_known_attribute_names()
+
+        ct_known_attributes = self.control_totals_all.get_known_attribute_names()
+        dataset_known_attributes = self.dataset.get_known_attribute_names()
+        if id_name not in dataset_known_attributes:
+            self.dataset.add_attribute(name=id_name,
+                                       data = -1 * ones(self.dataset.size()))
+
+        ## if no index is passed, reset all id_name attribute for dataset
+        if control_total_index is None:
+            control_total_index = arange(self.control_totals.size())
+            self.dataset.modify_attribute(name=id_name,
+                                          data=-1*ones(self.dataset.size()))
+            
+        if len(column_names) == 0:
+            if len(control_total_index) == 1:
+                control_total_id = resize(self.control_totals[id_name][control_total_index],
+                                          self.dataset.size())
+                self.dataset.modify_attribute(name=id_name,
+                                              data=control_total_id)
+            else:
+                logger.log_error("")
+
+            return 
+
+        logger.be_quiet()
+        expressions = []
+        for column_name in column_names:
+            ind_var = re.sub('_max$', '', re.sub('_min$', '', column_name))
+             
+            if   re.search('_min$', column_name):
+                expressions.append( "(%s >= " % ind_var + "%" + "(%s)s)" % column_name )
+            elif re.search('_max$', column_name):
+                expressions.append( "(%s <= " % ind_var + "%" + "(%s)s)" % column_name )
+            else:  
+                expressions.append( "(%s == " % ind_var + "%" + "(%s)s)" % column_name )
+                
+            if column_name not in ct_known_attributes:
+                ## we may need to compute a column in sampling_hierarchy
+                self.control_totals_all.compute_one_variable_with_unknown_package(column_name, 
+                                                     dataset_pool=dataset_pool)                
+            if ind_var not in dataset_known_attributes:
+                self.dataset.compute_one_variable_with_unknown_package(ind_var,
+                                                                       dataset_pool=dataset_pool)
+                
+        for index in control_total_index:
+            control_total_id = self.control_totals[id_name][index]
+            expression_inst = '*'.join( [ expression % {column_name:self.control_totals[column_name][index]} \
+                                        for expression, column_name in zip(expressions, column_names) 
+                                        if self.control_totals[column_name][index] != -1] )
+            
+            ## TODO: handle -2 special value 
+            is_this_id = self.dataset.compute_variables(expression_inst, quiet=True)
+            self.dataset.modify_attribute(name=id_name, 
+                                          data=control_total_id,
+                                          index=where(is_this_id)[0])
+            
+        logger.talk()
+        logger.log_status()
+    
     def run(self, 
             year=None, 
             target_attribute_name='number_of_households', 
-            sample_filter="", 
+            sampling_threshold=0, 
+            sampling_hierarchy=[], 
+            sampling_filter="", 
             reset_dataset_attribute_value={}, 
             sync_dataset=None,
             reset_sync_dataset_attribute_value={}, 
@@ -93,8 +166,19 @@ class TransitionModel(Model):
                 **target_attribute_name** : string, optional
                 
                         Name of dataset attribute that contains target values.                         
+
+                **sampling_threshold** : int or string, optional
+                 
+                        Lower bound value or control total variable specifying whether
+                        dataset records satifying conditions of a control total cell are 
+                        suitable to be sampled. 
+
+                **sampling_hierarchy** : list, optional
+                 
+                        A list of sampling hierarchy to traverse when sampling_threshold
+                        isn't satified.
                         
-                **sample_filter** : string, optional
+                **sampling_filter** : string, optional
                  
                         Name of dataset attribute or variable indicating which 
                         records in dataset are eligible in the sampling for removal 
@@ -113,29 +197,81 @@ class TransitionModel(Model):
                 **dataset_pool** : OPUS DatasetPool object, optional                                                        
         
         """
-        #if dataset_pool is None:
-        #    dataset_pool = SessionConfiguration().get_dataset_pool()
+
+        id_name = 'control_total_id'
+        ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
+        if id_name not in ct_known_attributes:
+            self.control_totals_all.add_attribute(name=id_name,
+                                             data = arange(1, self.control_totals_all.size()+1)
+                                            )
+        if self.control_totals_all.get_id_name() != [id_name]:
+            self.control_totals_all._id_names = [id_name]
 
         if year is None:
             year = SimulationState().get_current_time()
-        this_year_index = where(self.control_totals.get_attribute('year')==year)[0]
-        control_totals_for_this_year = DatasetSubset(self.control_totals, this_year_index)
-        column_names = list(set( self.control_totals.get_known_attribute_names() ) - set( [ target_attribute_name, 'year', '_hidden_id_'] ))
+        this_year_index = where(self.control_totals_all['year']==year)[0]
+        self.control_totals = DatasetSubset(self.control_totals_all, this_year_index)
+
+        if dataset_pool is None:
+            try:
+                dataset_pool = SessionConfiguration().get_dataset_pool()
+            except AttributeError:
+                dataset_pool = DatasetPool(datasets_dict={
+                                           self.dataset.dataset_name:self.dataset,
+                                           #sync_dataset.dataset_name:sync_dataset,
+                                           'control_total': self.control_totals
+                                            })
+        column_names = list( set( ct_known_attributes  ) \
+                           - set( [ target_attribute_name, 
+                                   'year', 
+                                   '_hidden_id_',
+                                   id_name, 
+                                   '_actual_'] ))
         column_names.sort(reverse=True)
-        column_values = dict([ (name, control_totals_for_this_year.get_attribute(name)) for name in column_names + [target_attribute_name]])
+        #column_values = dict([ (name, self.control_totals.get_attribute(name)) 
+        #                       for name in column_names + [target_attribute_name]])
+
+        self._code_control_total_id(column_names,
+                                    dataset_pool=dataset_pool)
         
-        independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
-        dataset_known_attributes = self.dataset.get_known_attribute_names()
-        for variable in independent_variables:
-            if variable not in dataset_known_attributes:
-                self.dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
-        dataset_known_attributes = self.dataset.get_known_attribute_names() #update after compute
-        if sample_filter:
-            short_name = VariableName(sample_filter).get_alias()
-            if short_name not in dataset_known_attributes:
-                filter_indicator = self.dataset.compute_variables(sample_filter, dataset_pool=dataset_pool)
+        target = self.control_totals[target_attribute_name]
+        if self.dataset_accounting_attribute is None:
+            self.dataset_accounting_attribute = '_one_'
+            self.dataset.add_attribute(name = self.dataset_accounting_attribute,
+                                       data = ones(self.dataset.size(), 
+                                                   dtype=target.dtype))
+
+        exp_actual = '_actual_ = control_total.aggregate(%s.%s)' % \
+                        (self.dataset.dataset_name,
+                         self.dataset_accounting_attribute)
+        
+        actual = self.control_totals_all.compute_variables(exp_actual,
+                                    dataset_pool=dataset_pool)[this_year_index]
+        actual = actual.astype(target.dtype)
+        
+        threshold_str = ''
+        threshold = ones_like(actual)
+        if sampling_threshold:
+            if type(sampling_threshold) in (int, float):
+                threshold_str = '_actual_ > %s' % sampling_threshold
+            elif type(sampling_threshold) == str:
+                threshold_str = sampling_threshold
             else:
-                filter_indicator = self.dataset.get_attribute(short_name)
+                error_msg = "Unknown sampling_threshold type; it must be of int, float, or str."
+                logger.log_error(error_msg)
+                raise TypeError, error_msg
+                
+            threshold=self.control_totals_all.compute_variables(threshold_str,
+                                                      dataset_pool=dataset_pool)[this_year_index]
+
+        dataset_known_attributes = self.dataset.get_known_attribute_names() #update after compute
+        
+        if sampling_filter:
+            short_name = VariableName(sampling_filter).get_alias()
+            if short_name not in dataset_known_attributes:
+                filter_indicator = self.dataset.compute_variables(sampling_filter, dataset_pool=dataset_pool)
+            else:
+                filter_indicator = self.dataset[short_name]
         else:
             filter_indicator = 1
 
@@ -144,103 +280,116 @@ class TransitionModel(Model):
         #log header
         if PrettyTable is not None:
             status_log = PrettyTable()
-            status_log.set_field_names(column_names + ["actual", "target", "difference", "action"])
+            status_log.set_field_names(column_names + ["actual", "target", "difference", "action", "note"])
         else:        
-            logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action"]))
-        error_log = ''
-        for index in range(control_totals_for_this_year.size()):
-            lucky_index = None
-            indicator = ones( self.dataset.size(), dtype='bool' )
-            criterion = {}
-            for attribute in independent_variables:
-                if attribute in dataset_known_attributes:
-                    dataset_attribute = self.dataset.get_attribute(attribute)
-                else:
-                    raise ValueError, "attribute %s used in control total dataset can not be found in dataset %s" % (attribute, self.dataset.get_dataset_name())
-                if attribute + '_min' in column_names:
-                    amin = column_values[attribute + '_min'][index]
-                    criterion.update({attribute + '_min':amin})
-                    if amin != -1:
-                        indicator *= dataset_attribute >= amin
-                if attribute + '_max' in column_names: 
-                    amax = column_values[attribute+'_max'][index]
-                    criterion.update({attribute + '_max':amax}) 
-                    if amax != -1:
-                        indicator *= dataset_attribute <= amax
-                if attribute in column_names: 
-                    aval = column_values[attribute][index] 
-                    criterion.update({attribute:aval}) 
-                    if aval == -1:
-                        continue
-                    elif aval == -2:   ##treat -2 in control totals column as complement set, i.e. all other values not already specified in this column
-                        complement_values = setdiff1d( dataset_attribute, column_values[attribute] )
-                        has_one_of_the_complement_value = zeros(dataset_attribute.size, dtype='bool')
-                        for value in complement_values:
-                            has_one_of_the_complement_value += dataset_attribute == value
-                        indicator *= has_one_of_the_complement_value
-                    else:
-                        indicator *= dataset_attribute == aval
-                        
-            target_num = column_values[target_attribute_name][index]
-            ## if accounting attribute is None, count number of agents with indicator = True 
-            if self.dataset_accounting_attribute is None:
-                actual_num = indicator.sum()
-                action_num = 0
-                diff = target_num - actual_num
-                if actual_num != target_num:
-                    legit_index = where(logical_and(indicator, filter_indicator))[0]
-                    if legit_index.size > 0:                    
-                        if actual_num < target_num:
-                            lucky_index = sample_replace(legit_index, target_num - actual_num)
-                            to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                        elif actual_num > target_num:
-                            lucky_index = sample_noreplace(legit_index, actual_num-target_num)
-                            to_be_removed = concatenate((to_be_removed, lucky_index))
-                        action_num = lucky_index.size
-                    else:
-                        error_log += "There is nothing to sample from %s and no action will happen for " % self.dataset.get_dataset_name() + \
-                                  ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
-                        
-            else: 
-                ## sum accounting attribute for agents with indicator = True; 
-                ## assume dataset_accouting_attribute is a primary attribute 
-                accounting = self.dataset.get_attribute(self.dataset_accounting_attribute) * indicator
-                actual_num = accounting.sum()
-                mean_size = float(actual_num) / indicator.sum()
-                action_num = 0
-                diff = target_num - actual_num
-                if actual_num != target_num:
-                    legit_index = where(logical_and(indicator, filter_indicator))[0]
-                    if legit_index.size > 0:
-                        while actual_num + action_num < target_num:
-                            lucky_index = sample_replace(legit_index, ceil((target_num - actual_num - action_num)/mean_size) )
-                            action_num += accounting[lucky_index].sum()
-                            to_be_cloned = concatenate((to_be_cloned, lucky_index))
-                        while actual_num - action_num > target_num:
-                            lucky_index = sample_noreplace(legit_index, ceil((actual_num - target_num - action_num)/mean_size) )
-                            action_num += accounting[lucky_index].sum()
-                            to_be_removed = concatenate((to_be_removed, lucky_index))                
-                    else:
-                        error_log += "There is nothing to sample from %s and no action will happen for " % self.dataset.get_dataset_name() + \
-                                  ','.join([col+"="+str(criterion[col]) for col in column_names]) + '\n'
+            logger.log_status("\t".join(column_names + ["actual", "target", "difference", "action", "note"]))
             
+        error_log = ''
+        error_num = 1
+        
+        def log_status():
             ##log status
             action = "0"
-            if lucky_index is not None:                    
+            if lucky_index is not None:
                 if actual_num < target_num: action = "+" + str(action_num)
                 if actual_num > target_num: action = "-" + str(action_num)
-                    
-            cat = [ str(criterion[col]) for col in column_names]
-            cat += [str(actual_num), str(target_num), str(diff), action]
+            
+            cat = [ str(self.control_totals[col][index]) for col in column_names]
+            cat += [str(actual_num), str(target_num), str(diff), action, error_str]
             if PrettyTable is not None:
                 status_log.add_row(cat)
             else:
-                logger.log_status("\t".join(cat))
+                logger.log_status("\t".join(cat))        
+        original_id = copy.copy(self.dataset[id_name])
+        
+        for index, control_total_id in enumerate(self.control_totals.get_id_attribute()):
+            indicator = original_id==control_total_id
+            n_indicator = indicator.sum()
+
+            target_num = target[index]
+            actual_num = actual[index]
+            action_num = 0
+            diff = target_num - actual_num
+            
+            accounting = self.dataset[self.dataset_accounting_attribute]
+            lucky_index = None
+            error_str = ''
+                       
+            if actual_num != target_num:
+                ## handle sampling_threshold and sampling_hiearchy if needed
+                if not threshold[index]:
+                    if not sampling_hierarchy:
+                        error_str = str(error_num)
+                        error_log += "%s. Sampling_threshold %s is not reached and no sampling_hierarchy specified.\n" % \
+                                     (error_num, sampling_threshold)
+                        error_num += 1
+                        log_status()
+                        continue
+                    
+                    #iterate sampling_hiearchy starting from 1, because the first
+                    #in hierarchy is the one supposed to be replaced 
+                    i = 1  
+                    while not threshold[index]:
+                        if i == len(sampling_hierarchy):
+                            break #& continue                              
+                        
+                        column_names_new = list(set(column_names) \
+                                              - set([sampling_hierarchy[i-1]])) \
+                                              + [sampling_hierarchy[i]]
+                                                
+                        self._code_control_total_id(column_names_new, 
+                                                    control_total_index=[index],
+                                                    dataset_pool=dataset_pool)
+                        threshold[index] = self.control_totals_all.compute_variables(threshold_str,
+                                                                      dataset_pool=dataset_pool
+                                                                      )[this_year_index][index]
+                        i += 1
+                    if not threshold[index]:
+                        ## we have exhausted the sampling_hierarchy,
+                        ## and yet the sampling_threshold is not reached
+                        error_str = str(error_num)
+                        error_log += "%s. Sampling_threshold %s is not reached after exhausting sampling_hierarchy: %s.\n" % \
+                                          (error_num, sampling_threshold, sampling_hierarchy)
+                        error_num += 1
+                        log_status()
+                        continue                        
+                    else:
+                        error_str = str(error_num)
+                        error_log += "%s. Sampling_threshold reached at sampling_hierarchy %s.\n" % \
+                                                                         (error_num,
+                                                                          sampling_hierarchy[i]
+                                                                          )
+                        error_num += 1
+                        indicator = self.dataset[id_name] == control_total_id
+                        n_indicator = indicator.sum()
+                
+                mean_size = float(sum(self.dataset[self.dataset_accounting_attribute][indicator])) \
+                            / n_indicator if n_indicator != 0 else 1
+                legit_index = where(logical_and(indicator, filter_indicator))[0]
+                if legit_index.size > 0:
+                    while diff > 0 and actual_num + action_num < target_num:
+                        n = ceil((target_num - actual_num - action_num)/mean_size)
+                        lucky_index = sample_replace(legit_index, n)
+                        action_num += accounting[lucky_index].sum()
+                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                    while diff < 0 and actual_num - action_num > target_num:
+                        n = ceil(( actual_num - target_num - action_num)/mean_size)
+                        lucky_index = sample_noreplace(legit_index, n )
+                        action_num += accounting[lucky_index].sum()
+                        to_be_removed = concatenate((to_be_removed, lucky_index))
+                else:
+                    error_str = str(error_num)
+                    error_log += "%s. There is no suitable %s to sample from.\n" % (error_num, self.dataset.get_dataset_name())
+                      #+ \ ','.join([col+"="+str(self.control_totals[col][index]) for col in column_names]) + '\n'
+                    error_num += 1
+            
+            log_status()
 
         if PrettyTable is not None:
-            logger.log_status("\n" + status_log.get_string())
+            logger.log_status("\n" + status_log.get_string() + '\n')
+            
         if error_log:
-            logger.log_error(error_log)
+            logger.log_error( '\n' + error_log)
                     
         self.post_run(self.dataset, to_be_cloned, to_be_removed, **kwargs)
         
@@ -293,22 +442,22 @@ class TransitionModel(Model):
            ((control_total_table is None) and \
            (control_total_dataset_name is None)):
             dataset_pool = sc.get_dataset_pool()
-            self.control_totals = dataset_pool.get_dataset( 'annual_%s_control_total' \
+            self.control_totals_all = dataset_pool.get_dataset( 'annual_%s_control_total' \
                                                             % self.dataset.get_dataset_name() )
-            return self.control_totals
-        
-        df = DatasetFactory()
-        if not control_total_dataset_name:
-            control_total_dataset_name = df.dataset_name_for_table(control_total_table)
-        
-        self.control_totals = df.search_for_dataset(control_total_dataset_name,
-                                                    package_order=sc.package_order,
-                                                    arguments={'in_storage':control_total_storage, 
-                                                               'in_table_name':control_total_table,
-                                                               'id_name':[]
-                                                               }
-                                                    )
-        return self.control_totals
+        else:
+            df = DatasetFactory()
+            if not control_total_dataset_name:
+                control_total_dataset_name = df.dataset_name_for_table(control_total_table)
+            
+            self.control_totals_all = df.search_for_dataset(control_total_dataset_name,
+                                                        package_order=sc.package_order,
+                                                        arguments={'in_storage':control_total_storage, 
+                                                                   'in_table_name':control_total_table,
+                                                                   'id_name':[]
+                                                                   }
+                                                        )
+
+        self.control_totals_all.dataset_name = 'control_total'
     
     def post_run(self, *args, **kwargs):
         """ To be implemented in child class for additional function
@@ -417,11 +566,13 @@ class TransitionModel(Model):
             else: ## add attribute key whose value defaults to value
                 dataset.add_primary_attribute(data=resize(value, dataset.size()), name=key)
                     
-                
+
 from opus_core.tests import opus_unittest
+from opus_core.misc import ismember
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.resources import Resources
-from numpy import array, logical_and, int32, int8, ma
-from scipy import ndimage
+from numpy import array, logical_and, int32, int8, ma, all
+from scipy import ndimage, histogram
 from opus_core.datasets.dataset import Dataset
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
@@ -463,6 +614,161 @@ class Tests(opus_unittest.OpusTestCase):
             "age": array( list(itertools.chain.from_iterable([range(a, a-p*2, -2) for a,p in zip(self.households_data['age_of_head'], self.households_data['persons'])])) ),
             "job_id": zeros(total_persons)
             }
+
+    def test_sampling_threshold(self):
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2000]),
+            "control_total_id": arange(1, 5),
+            "age_of_head_min": array([ 50,  0,  50,  0]),
+            "age_of_head_max": array([100, 49, 100, 49]),
+            "persons_min":     array([  1,  1,   3,  3]),
+            "persons_max":     array([  2,  2,   6,  6]),
+            "total_number_of_households": array([16000, 26000, 16000, 26000])
+            }
+
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['control_total_id'])
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                           datasets_dict={'household':hh_set})
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 6001,
+                  reset_dataset_attribute_value={'grid_id':-1})
+        
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([5000, 26000, 16000, 6000]))        
+        
+        #check that there are indeed 50000 total households after running the model
+        #results = hh_set.size()
+        #should_be = [50000]
+        #self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+        #                 True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'control_total.number_of_agents(household)>6001',
+                  reset_dataset_attribute_value={'grid_id':-1})
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([5000, 26000, 16000, 6000]))
+
+    def test_sampling_hierarchy(self):
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2000]),
+            "control_total_id": arange(1, 5),
+            "age_of_head_min": array([ 50,  0,  50,  0]),
+            "age_of_head_max": array([100, 49, 100, 49]),
+            "persons_min":     array([  1,  1,   3,  3]),
+            "persons_max":     array([  2,  2,   6,  6]),
+            "total_number_of_households": array([15000, 25000, 15000, 25000])
+            }
+
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['control_total_id'])
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                                   datasets_dict={'household':hh_set})
+        
+        ##code control_total on a sampling_hierarchy (not a primary attribute)        
+        from urbansim.control_total.aliases import aliases as ct_aliases
+        ct_aliases += ['persons_p2_max = control_total.persons_max + 2',
+                       'persons_p4_max = control_total.persons_max + 4'
+                       ]
+        from urbansim.household.aliases import aliases as hh_aliases
+        hh_aliases += ['persons_p2 = household.persons',
+                       'persons_p4 = household.persons',
+                       ]
+                
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 6001,
+                  sampling_hierarchy = ['persons_max', 'persons_p2_max', 'persons_p4_max'],
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool)
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        #self.assertArraysEqual(hct_set['households'], array([15000, 25000, 15000, 6000]))
+        self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
+
+    def test_code_control_total_id(self):
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2000]),
+            "control_total_id": arange(1, 5),
+            "age_of_head_min": array([ 50,  0,  50,  0]),
+            "age_of_head_max": array([100, 49, 100, 49]),
+            "persons":         array([  1,  1,   2,  2]),
+            "income_min":      array([  1,  1,   2,  2]),
+            "income_max":      array([  1,  1,   2,  2]),
+            "total_number_of_households": array([15000, 25000, 15000, 25000])
+            }
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['control_total_id'])
+
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model._code_control_total_id(['age_of_head_min', 'age_of_head_max'])
+
+        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 3, 4])))
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                                   datasets_dict={'household':hh_set})
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))
+        
+        model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'persons'])
+        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([5000, 3000, 0, 6000]))
+        
+        ##code control_total on a sampling_hierarchy (not a primary attribute)        
+        from urbansim.control_total.aliases import aliases as ct_aliases
+        ct_aliases += ['person_ge2 = control_total.persons >= 2']
+        from urbansim.household.aliases import aliases as hh_aliases
+        hh_aliases += ['person_ge2 = household.persons >= 2']
+        
+        model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'person_ge2'], 
+                                     control_total_index=[2], 
+                                     dataset_pool=dataset_pool)
+        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([5000, 3000, 13000, 6000]))        
+
+        model._code_control_total_id(['age_of_head_min', 'age_of_head_max'])
+        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))
+
+        model._code_control_total_id(['age_of_head_min', 'age_of_head_max', 'person_ge2'], 
+                                     control_total_index=[3],
+                                     dataset_pool=dataset_pool)
+        self.assert_(all(ismember(hh_set['control_total_id'], [-1, 1, 2, 3, 4])))
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertArraysEqual(hct_set['households'], array([0, 0, 18000, 15000]))
+        #                                  it is not  array([0, 0, 18000, 12000]
+        # because only update control_total_id for passed index, in this case,
+        # because index 3 (0-49, persons>2) is a smaller set than (0-49) computed
+        # before this call of _code_control_total_id, thus there is no observed
+        # change in control_total_id field of households
+        
 
     def test_same_distribution_after_household_addition(self):
         """Using the control_totals and no marginal characteristics,
@@ -551,10 +857,10 @@ class Tests(opus_unittest.OpusTestCase):
         """
 
         annual_household_control_totals_data = {
-            "year": array([2000, 2000]),
-            "age_of_head_min": array([ 50,  0]),
-            "age_of_head_max": array([100, 49]),
-            "total_number_of_households": array([15000, 25000])
+            "year": array([2000, 2000, 2000, 2000]),
+            "age_of_head_min": array([111, 101,  50,  0]),
+            "age_of_head_max": array([120, 110, 100, 49]),
+            "total_number_of_households": array([1, 1, 15000, 25000])
             }
 
         storage = StorageFactory().get_storage('dict_storage')
@@ -576,14 +882,14 @@ class Tests(opus_unittest.OpusTestCase):
 
         #check that the total number of households within first four groups increased by 10000
         #and that the total number of households within last four groups decreased by 3000
-        results = self.get_count_all_groups(hh_set)
-        should_be = [25000, 15000]
-        self.assertEqual(ma.allclose([sum(results[0:4]), sum(results[4:8])], should_be, rtol=1e-1),
+        results = histogram(hh_set['age_of_head'], bins=[0, 49,100, 110, 120])[0]
+        should_be = [25000, 15000, 0, 0]
+        self.assertEqual(ma.allclose(results, should_be, rtol=1e-1),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         #check that the distribution of households within groups 1-4 and 5-8 are the same before and after
         #running the model, respectively
-
+        results = self.get_count_all_groups(hh_set)
         should_be = [6000.0/15000.0*25000.0, 2000.0/15000.0*25000.0, 3000.0/15000.0*25000.0, 4000.0/15000.0*25000.0,
                      2000.0/18000.0*15000.0, 5000.0/18000.0*15000.0, 3000.0/18000.0*15000.0, 8000.0/18000.0*15000.0]
         self.assertEqual(ma.allclose(results, should_be, rtol=0.05),
