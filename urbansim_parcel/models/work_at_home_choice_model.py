@@ -7,9 +7,9 @@ from opus_core.resources import Resources
 from opus_core.choice_model import ChoiceModel
 from opus_core.model import prepare_specification_and_coefficients
 from opus_core.model import get_specification_for_estimation
-from numpy import array, arange, where, ones, concatenate, logical_and
+from numpy import array, arange, where, ones, concatenate, logical_and, zeros
 from opus_core.variables.variable_name import VariableName
-from opus_core.sampling_toolbox import sample_noreplace
+from opus_core.sampling_toolbox import sample_noreplace, probsample_noreplace
 from opus_core.misc import unique
 from opus_core.logger import logger
 
@@ -21,26 +21,52 @@ class WorkAtHomeChoiceModel(ChoiceModel):
     model_name = "Work At Home Choice Model"
     model_short_name = "WAHCM"
 
-    def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', location_id_name='urbansim_parcel.person.building_id', **kwargs):
+    def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', 
+                 location_id_name='urbansim_parcel.person.building_id', match_number_of_jobs=False, **kwargs):
+        """If match_number_of_jobs is True, the choices are drawn from the probability distribution in a way 
+           that the final number matches teh number of jobs.
+        """
         self.job_set = choice_set
         self.filter = filter
         self.choice_attribute_name = choice_attribute_name
         self.location_id_name = location_id_name
+        self.match_number_of_jobs=match_number_of_jobs
         ChoiceModel.__init__(self, [0, 1], choice_attribute_name=choice_attribute_name, **kwargs)
+        if self.match_number_of_jobs:
+            self.upc_sequence.choice_class = None # no choices are made, since we only want the probabilities
+    
         
     def run(self, run_choice_model=True, choose_job_only_in_residence_zone=False, *args, **kwargs):
         agent_set = kwargs['agent_set']
+        agents_index = kwargs.get('agents_index', None)
+        if agents_index is None:
+            agents_index = arange(agent_set.size())
+        if agents_index.size <= 0:
+            logger.log_status("Nothing to be done.")
+            return
+        
+        if self.filter is not None:
+            jobs_set_index = where( self.job_set.compute_variables(self.filter) )[0]
+        else:
+            jobs_set_index = arange( self.job_set.size() )
+            
         if run_choice_model:
             choices = ChoiceModel.run(self, *args, **kwargs)
-            #prob_work_at_home = self.upc_sequence.probabilities[:, 0]
+            if self.match_number_of_jobs:
+                prob_work_at_home = self.upc_sequence.probabilities[:, 1]
+                # sample as many workers as there are jobs
+                draw = probsample_noreplace(arange(agents_index.size), min(agents_index.size, jobs_set_index.size), 
+                                            prob_work_at_home)
+                choices = zeros(agents_index.size, dtype='int32')
+                choices[draw] = 1
                 
             agent_set.set_values_of_one_attribute(self.choice_attribute_name, 
                                                   choices, 
-                                                  index=kwargs['agents_index'])
-            at_home_worker_index = kwargs['agents_index'][choices==1]
+                                                  index=agents_index)
+            at_home_worker_index = agents_index[choices==1]
             logger.log_status("%s workers choose to work at home, %s workers chose to work out of home." % 
-                              (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
-                               where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))            
+                              (where(agent_set.get_attribute_by_index(self.choice_attribute_name, agents_index) == 1)[0].size,
+                               where(agent_set.get_attribute_by_index(self.choice_attribute_name, agents_index) == 0)[0].size))            
         else:
             at_home_worker_index = where(logical_and( 
                                                      agent_set.get_attribute(self.choice_attribute_name) == 1,
@@ -48,10 +74,6 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                                      )
                                         )[0]
         
-        if self.filter is not None:
-            jobs_set_index = where( self.job_set.compute_variables(self.filter) )[0]
-        else:
-            jobs_set_index = arange( self.job_set.size() )
             
         logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s workers to %s jobs." % 
                           (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
@@ -90,7 +112,7 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                                       index=assigned_job_index)
 
     def _assign_job_to_worker(self, worker_index, job_index):
-        logger.log_status("Atempt to assign %s jobs to %s workers" % (worker_index.size, job_index.size))
+        logger.log_status("Attempt to assign %s jobs to %s workers" % (worker_index.size, job_index.size))
         if worker_index.size >= job_index.size: 
            #number of at home workers is greater than the available choice (home_based jobs by default)
             assigned_worker_index = sample_noreplace(worker_index, job_index.size)
