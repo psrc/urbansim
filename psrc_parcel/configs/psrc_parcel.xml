@@ -218,8 +218,8 @@
             <selectable name="generic_land_use_types" type="selectable">True</selectable>
             <selectable name="grade" type="selectable">True</selectable>
             <selectable name="gridcells" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
-            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">False</selectable>
+            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">False</selectable>
             <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
@@ -232,6 +232,7 @@
             <selectable name="large_areas" type="selectable">True</selectable>
             <selectable name="non_home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
             <selectable name="non_home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="home_based_status" type="selectable">True</selectable>
             <selectable name="parcels" type="selectable">True</selectable>
             <selectable name="persons" type="selectable">True</selectable>
             <selectable name="persons_for_estimation" type="selectable">True</selectable>
