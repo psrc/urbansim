@@ -474,6 +474,7 @@
         </structure>
       </model>
       <model name="development_proposal_choice_model" type="model">
+        <dependencies type="list">['real_estate_price_model', "expected_sale_price_model"]</dependencies>
         <structure type="dictionary">
           <import hidden="True" name="import" type="dictionary">
             <class_module type="string">urbansim_parcel.models.development_project_proposal_sampling_model</class_module>
