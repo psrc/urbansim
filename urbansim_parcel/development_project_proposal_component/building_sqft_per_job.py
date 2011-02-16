@@ -18,8 +18,8 @@ class building_sqft_per_job(Variable):
     def compute(self,  dataset_pool):
         sqft_per_job = dataset_pool.get_dataset("building_sqft_per_job")
         proposal_components = self.get_dataset()
-        zones = proposal_components.get_attribute("zone_id")
-        type_ids = proposal_components.get_attribute("building_type_id")
+        zones = proposal_components.get_attribute("zone_id").astype('int32')
+        type_ids = proposal_components.get_attribute("building_type_id").astype('int32')
         building_sqft_per_job_table = sqft_per_job.get_building_sqft_as_table(zones.max(), type_ids.max())
         return building_sqft_per_job_table[zones, type_ids]
 
