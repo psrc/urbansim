@@ -28,7 +28,7 @@ class Estimator(ModelExplorer):
                 "check that your configuration contains the 'cache_directory' "
                 "entry and that it is not None.")
 
-        self.simulation_state = SimulationState(new_instance=True)
+        self.simulation_state = SimulationState(new_instance=True, start_time=config.get('base_year', 0))
         self.simulation_state.set_cache_directory(config['cache_directory'])
 
         SessionConfiguration(new_instance=True,

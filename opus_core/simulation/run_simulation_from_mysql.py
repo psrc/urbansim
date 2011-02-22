@@ -21,7 +21,8 @@ from opus_core.model_coordinators.model_system import ModelSystem
 class RunSimulationFromMysql:
     def prepare_for_simulation(self, run_configuration, cache_directory=None):
         self.config = Resources(run_configuration)
-        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory)
+        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory, 
+                                                start_time=self.config.get('base_year', 0))
 
         ### TODO: Get rid of this! There is no good reason to be changing the
         ###       Configuration.

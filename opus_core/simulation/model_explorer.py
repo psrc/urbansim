@@ -48,7 +48,8 @@ class ModelExplorer(object):
         
         if cache_directory is None:
             cache_directory = config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy
-        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory)
+        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=cache_directory, 
+                                                start_time=config.get('base_year', 0))
         self.config['cache_directory'] = cache_directory
         
         SessionConfiguration(new_instance=True,
@@ -173,7 +174,7 @@ class ModelExplorer(object):
         var_name = VariableName(attribute_name)
         storage = AttributeCache(self.simulation_state.get_cache_directory())
         ds = self._get_before_after_dataset_from_attribute(var_name, storage=storage,
-                   package_order=self.model_system.run_year_namespace["dataset_pool"].get_package_order())
+                   package_order=self.get_dataset_pool().get_package_order())
         return {'after': ds.get_attribute(var_name.get_alias()),
                 'before': ds.get_attribute('%s_reload__' % var_name.get_alias())}
         
@@ -185,7 +186,7 @@ class ModelExplorer(object):
         var_name = VariableName(attribute_name)
         storage = AttributeCache(self.simulation_state.get_cache_directory())
         ds = self._get_before_after_dataset_from_attribute(var_name, storage=storage, 
-                   package_order=self.model_system.run_year_namespace["dataset_pool"].get_package_order())
+                   package_order=self.get_dataset_pool().get_package_order())
         print ''
         print 'Before model run:'
         print '================='
@@ -226,8 +227,11 @@ class ModelExplorer(object):
         var_name = VariableName(attribute_name)
         dataset_name = var_name.get_dataset_name()
         ds = self.get_dataset(dataset_name)
-        return ds.compute_variables([var_name], dataset_pool=self.model_system.run_year_namespace["dataset_pool"])
+        return ds.compute_variables([var_name], dataset_pool=self.get_dataset_pool())
         
+    def get_dataset_pool(self):
+        return self.model_system.run_year_namespace["dataset_pool"]
+    
     def plot_histogram_before_after(self, attribute_name, bins=None):
         """Plot histograms of values returned by the method get_before_after_attribute."""
         from opus_core.plot_functions import create_histogram, show_plots

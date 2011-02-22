@@ -21,7 +21,8 @@ class RunSimulation(object):
         self.config = Resources(config)
         base_cache_dir = self.config['creating_baseyear_cache_configuration'].cache_directory_root
         
-        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=base_cache_dir)
+        self.simulation_state = SimulationState(new_instance=True, base_cache_dir=base_cache_dir,
+                                                start_time=self.config.get('base_year', 0))
 
         ### TODO: Get rid of this! There is no good reason to be changing the 
         ###       Configuration.

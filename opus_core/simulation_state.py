@@ -17,13 +17,14 @@ class SimulationState(object):
     """
     
     class __impl(object):
-        """ Implementaion of the singleton """ 
+        """ Implementation of the singleton """ 
         def __init__(self, 
                 current_time, ### TODO: Changes often. Does this belong in a Singleton?
                 low_memory_run, ### TODO: This seems like configuration information.
                 base_cache_dir, ### TODO: This seems like configuration information.
                 time_increment=1, ### TODO: Related to current_time. Does this belong in a Singleton?
-                created_base_cache_dir=False ### TODO: Probably eliminate this entirely. Why would SimulationState create a directory???
+                created_base_cache_dir=False, ### TODO: Probably eliminate this entirely. Why would SimulationState create a directory???
+                start_time=0
                 ):
             self.current_time = current_time
             self.low_memory_run = low_memory_run
@@ -34,6 +35,7 @@ class SimulationState(object):
             self.set_cache_directory(cache_dir)
             self._created_base_cache_dir = created_base_cache_dir
             self.time_increment = time_increment
+            self.start_time = start_time
                         
         def set_current_time(self, time):
             self.current_time = time
@@ -43,6 +45,12 @@ class SimulationState(object):
         
         def get_prior_time(self):
             return self.current_time - self.time_increment
+                    
+        def set_start_time(self, time):
+            self.start_time = time
+        
+        def get_start_time(self):
+            return self.start_time
         
         def set_low_memory_run(self, is_low_memory_run):
             self.low_memory_run = is_low_memory_run
@@ -81,7 +89,7 @@ class SimulationState(object):
         
     __instance = None
     
-    def __init__(self, current_year=0, low_memory_run=False, base_cache_dir=None, new_instance=False):
+    def __init__(self, current_year=0, low_memory_run=False, base_cache_dir=None, start_time=0, new_instance=False):
         if new_instance or (base_cache_dir is not None):
             self.remove_singleton()
         if SimulationState.__instance is None:
@@ -100,7 +108,8 @@ class SimulationState(object):
                 created_base_cache_dir = False
                 
             SimulationState.__instance = SimulationState.__impl(current_year, low_memory_run, base_cache_dir,
-                                                                created_base_cache_dir=created_base_cache_dir)
+                                                                created_base_cache_dir=created_base_cache_dir,
+                                                                start_time=start_time)
     def __getattr__(self, attr):
         """Delegate access to implementation"""
         return getattr(self.__instance, attr)
