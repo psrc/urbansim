@@ -5,6 +5,7 @@
 from opus_core.variables.variable import Variable
 from numpy import ma
 from opus_core.misc import safe_array_divide
+from opus_core.simulation_state import SimulationState
 
 class job_capacity_computed_if_necessary(Variable):
     """get job_capacity either from base_year job_capacity or computed from non_residential_sqft / building_sqft_per_job for new buildings
@@ -24,7 +25,8 @@ class job_capacity_computed_if_necessary(Variable):
         non_residential_sqft = buildings.get_attribute("non_residential_sqft")
         building_sqft_per_job = buildings.get_attribute("building_sqft_per_job")
         job_spaces = safe_array_divide(buildings['non_residential_sqft'], buildings['building_sqft_per_job'])
-        job_spaces[buildings['year_built']<=2000] = buildings['job_capacity'][buildings['year_built']<=2000]
+        base_year = SimulationState().get_start_time()
+        job_spaces[buildings['year_built']<=base_year] = buildings['job_capacity'][buildings['year_built']<=base_year]
         return job_spaces
 
     def post_check(self,  values, dataset_pool=None):
@@ -54,6 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
                 },                
         }
         )
+        SimulationState().set_start_time(2000)
         # mean over "building_sqft_per_job" is 127.5
         should_be = array([0, 10, 2000/80., 1000/60., 7000/50., 0/200, 3000/127.5 ,
                            5000/10., 0, 50]).astype("int32")
