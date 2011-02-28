@@ -5,8 +5,9 @@
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
-from numpy import array, asarray, where, ones, zeros, ones_like, setdiff1d 
-from numpy import arange, concatenate, resize, int32, float64, ceil, logical_and
+from numpy import array, asarray, where, ones, zeros, ones_like 
+from numpy import arange, concatenate, resize, int32, float64
+from numpy import asscalar, setdiff1d, ceil, logical_and
 from opus_core.misc import ismember
 from opus_core.model import Model
 from opus_core.logger import logger
@@ -23,8 +24,8 @@ except:
     
 class TransitionModel(Model):
     """ 
-    A generic transition model that clones or removes records from a dataset to 
-    fit distributions specified in a control_total table.
+    A generic transition model that clones or removes records from dataset to 
+    fit distributions specified in control_total table.
         
     """
     
@@ -48,7 +49,7 @@ class TransitionModel(Model):
                         
                         Name of dataset attribute that represents quantities summing
                         toward target_attribute.  If unspecified, counting number of
-                        dataset records toward target.
+                        dataset records and comparing it against target.
                         
                 **control_total_dataset** : OPUS Dataset object, optional
                 
@@ -130,6 +131,7 @@ class TransitionModel(Model):
                 
         for index in control_total_index:
             control_total_id = self.control_totals[id_name][index]
+            ## parse expressions with column_name and column value
             expression_inst = '*'.join( [ expression % {column_name:self.control_totals[column_name][index]} \
                                         for expression, column_name in zip(expressions, column_names) 
                                         if self.control_totals[column_name][index] != -1] )
@@ -165,7 +167,7 @@ class TransitionModel(Model):
 
                 **target_attribute_name** : string, optional
                 
-                        Name of dataset attribute that contains target values.                         
+                        Name of control total attribute that contains target values.                         
 
                 **sampling_threshold** : int or string, optional
                  
@@ -197,6 +199,9 @@ class TransitionModel(Model):
                 **dataset_pool** : OPUS DatasetPool object, optional                                                        
         
         """
+        
+        ## NOTE: always call compute_variables method on self.control_total_all instead of
+        ## self.control_total, because there is a problem with DataSubset to handle index
 
         id_name = 'control_total_id'
         ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
@@ -226,7 +231,11 @@ class TransitionModel(Model):
                                    'year', 
                                    '_hidden_id_',
                                    id_name, 
-                                   '_actual_'] ))
+                                   '_actual_',
+                                   'sampling_threshold',
+                                   'sampling_hierarchy'
+                                  ] )
+                           )
         column_names.sort(reverse=True)
         #column_values = dict([ (name, self.control_totals.get_attribute(name)) 
         #                       for name in column_names + [target_attribute_name]])
@@ -248,21 +257,46 @@ class TransitionModel(Model):
         actual = self.control_totals_all.compute_variables(exp_actual,
                                     dataset_pool=dataset_pool)[this_year_index]
         actual = actual.astype(target.dtype)
-        
-        threshold_str = ''
-        threshold = ones_like(actual)
-        if sampling_threshold:
-            if type(sampling_threshold) in (int, float):
-                threshold_str = '_actual_ > %s' % sampling_threshold
-            elif type(sampling_threshold) == str:
-                threshold_str = sampling_threshold
+
+        def get_threshold_val(threshold, dataset_pool=None):
+            if not threshold:
+                return None
+
+            threshold_str = ''
+            if type(threshold) == str:
+                ## check if sampling_threshold is a number in str type
+                try:
+                    threshold = float(threshold)
+                except ValueError:
+                    threshold_str = threshold
+
+            if type(threshold) in (int, float):
+                threshold_str = '_actual_ > %s' % threshold
+
+            if threshold_str:
+                threshold_val = self.control_totals_all.compute_variables(threshold_str,
+                                                                      dataset_pool=dataset_pool)
+
+                return threshold_val
             else:
+                import ipdb; ipdb.set_trace()
                 error_msg = "Unknown sampling_threshold type; it must be of int, float, or str."
                 logger.log_error(error_msg)
                 raise TypeError, error_msg
-                
-            threshold=self.control_totals_all.compute_variables(threshold_str,
-                                                      dataset_pool=dataset_pool)[this_year_index]
+        
+        ## handle sampling_threshold and/or sampling_hierarchy specified in control_totals table
+        threshold_ct = None; hierarchy_ct = None
+        if 'sampling_threshold' in ct_known_attributes:
+            threshold_ct = self.control_totals['sampling_threshold']
+        if 'sampling_hierarchy' in ct_known_attributes:
+            hierarchy_ct = self.control_totals['sampling_hierarchy']
+
+        threshold_raw = sampling_threshold
+        threshold_val = ones_like(actual)
+        if sampling_threshold: 
+            ## this has to computable
+            threshold_val = get_threshold_val(threshold_raw, 
+                                              dataset_pool=dataset_pool)[this_year_index]
 
         dataset_known_attributes = self.dataset.get_known_attribute_names() #update after compute
         
@@ -300,7 +334,11 @@ class TransitionModel(Model):
                 status_log.add_row(cat)
             else:
                 logger.log_status("\t".join(cat))        
+
         original_id = copy.copy(self.dataset[id_name])
+
+        def process_threshold_and_hierarchy():
+            pass
         
         for index, control_total_id in enumerate(self.control_totals.get_id_attribute()):
             indicator = original_id==control_total_id
@@ -314,50 +352,73 @@ class TransitionModel(Model):
             accounting = self.dataset[self.dataset_accounting_attribute]
             lucky_index = None
             error_str = ''
-                       
+             
             if actual_num != target_num:
-                ## handle sampling_threshold and sampling_hiearchy if needed
-                if not threshold[index]:
-                    if not sampling_hierarchy:
+                
+                ## handle sampling_threshold and sampling_hierarchy
+                threshold_val_this = threshold_val[index]
+
+                ## sampling_threshold and sampling_hierarchy specified in control_totals 
+                ## override those passed in through argments in configuration
+                threshold_raw_this = threshold_raw  # for logging
+                if threshold_ct is not None:
+                    threshold_val_ct = get_threshold_val(asscalar(threshold_ct[index]),
+                                                         dataset_pool=dataset_pool
+                                                        )
+                    if threshold_val_ct is not None:
+                        threshold_raw_this = asscalar(threshold_ct[index])
+                        threshold_val_this = threshold_val_ct[this_year_index][index]
+
+                hierarchy_this = sampling_hierarchy
+                if hierarchy_ct is not None:
+                    hierarchy_list_ct = eval( hierarchy_ct[index] )  # assume to be a string of list, e.g. "['zone_id', 'raz_id']"
+                    if hierarchy_list_ct:
+                        hierarchy_this = hierarchy_list_ct
+
+                if not threshold_val_this:
+                    if not hierarchy_this:
                         error_str = str(error_num)
                         error_log += "%s. Sampling_threshold %s is not reached and no sampling_hierarchy specified.\n" % \
-                                     (error_num, sampling_threshold)
+                                     (error_num, threshold_raw_this)
                         error_num += 1
                         log_status()
-                        continue
+                        continue  #TODO: shall we proceed to do sampling even if sampling_threshold is not satisfied
+                                  #      and sampling_hierarchy is not specified? 
                     
-                    #iterate sampling_hiearchy starting from 1, because the first
+                    #iterate sampling_hierarchy starting from the second element (index 1), because the first
                     #in hierarchy is the one supposed to be replaced 
-                    i = 1  
-                    while not threshold[index]:
-                        if i == len(sampling_hierarchy):
-                            break #& continue                              
-                        
+                    i = 1 
+                    while not threshold_val_this:
+                        if i == len(hierarchy_this):
+                            break
+                        ##replace preceding sampling_threshold
                         column_names_new = list(set(column_names) \
-                                              - set([sampling_hierarchy[i-1]])) \
-                                              + [sampling_hierarchy[i]]
-                                                
+                                              - set([hierarchy_this[i-1]])) \
+                                              + [hierarchy_this[i]]
+ 
                         self._code_control_total_id(column_names_new, 
                                                     control_total_index=[index],
                                                     dataset_pool=dataset_pool)
-                        threshold[index] = self.control_totals_all.compute_variables(threshold_str,
-                                                                      dataset_pool=dataset_pool
-                                                                      )[this_year_index][index]
+                        threshold_val_this = get_threshold_val(threshold_raw_this,
+                                                               dataset_pool=dataset_pool
+                                                              )[this_year_index][index]
                         i += 1
-                    if not threshold[index]:
+
+                    if not threshold_val_this:
                         ## we have exhausted the sampling_hierarchy,
                         ## and yet the sampling_threshold is not reached
                         error_str = str(error_num)
                         error_log += "%s. Sampling_threshold %s is not reached after exhausting sampling_hierarchy: %s.\n" % \
-                                          (error_num, sampling_threshold, sampling_hierarchy)
+                                          (error_num, threshold_raw_this, hierarchy_this)
                         error_num += 1
                         log_status()
-                        continue                        
+                        continue  # TODO: shall we proceed to do sampling even if we exhaust sampling_hierarchy 
+                                  #       and sampling_threshold is not satisfied? 
                     else:
                         error_str = str(error_num)
                         error_log += "%s. Sampling_threshold reached at sampling_hierarchy %s.\n" % \
                                                                          (error_num,
-                                                                          sampling_hierarchy[i]
+                                                                          hierarchy_this[i]
                                                                           )
                         error_num += 1
                         indicator = self.dataset[id_name] == control_total_id
@@ -503,6 +564,12 @@ class TransitionModel(Model):
         """
         if sync_dataset is None:
             return
+        
+        #this may take a while
+        logger.log_status("Synchronize %s dataset with %s dataset... " % \
+                          ( sync_dataset.dataset_name,
+                            self.dataset.dataset_name )
+                         )
 
         dataset_id_name = self.dataset.get_id_name()[0]
         sync_dataset_id_name = sync_dataset.get_id_name()[0]
@@ -533,7 +600,8 @@ class TransitionModel(Model):
             if new_id is not None: #need to duplicate rows of sync_dataset and update id of the duplicated rows
                 assert new_id.size == add_index.size
                 ## find indices to sync_dataset that need to be duplicated and new values for id_name_common field
-                index_id_array = asarray([ (index, i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id) for index in where(id_sync_dataset==old_id)[0]])
+                index_id_array = asarray([ (index, i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id)
+                                          for index in where(id_sync_dataset==old_id)[0]])
                 ##TODO: speed up the above list comprehension; code below didn't do it
 #                f = lambda x, y: (x.tolist(), [y] * x.size)
 #                g = lambda x, y: (x[0]+y[0], x[1]+y[1])
@@ -541,7 +609,7 @@ class TransitionModel(Model):
 #                index_id_array = asarray(reduce(g, index_id_array)).T
                 index_sync_dataset_updated = sync_dataset.duplicate_rows(index_id_array[:, 0])
                 sync_dataset.modify_attribute(name=id_name_common, data=index_id_array[:, 1], index=index_sync_dataset_updated)
-            else:    
+            else:
                 index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[add_index]) )[0]
                 index_sync_dataset_updated = sync_dataset.duplicate_rows(index_sync_dataset)
 
@@ -616,6 +684,10 @@ class Tests(opus_unittest.OpusTestCase):
             }
 
     def test_sampling_threshold(self):
+        """ Test passing sampling_threshold through argument to run method:
+            1. sampling_threshold = 6001,
+            2. sampling_threshold = 'control_total.number_of_agents(household)>6001',
+        """
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000]),
             "control_total_id": arange(1, 5),
@@ -632,7 +704,10 @@ class Tests(opus_unittest.OpusTestCase):
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
         storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
-        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['control_total_id'])
+        hct_set = ControlTotalDataset(in_storage=storage, 
+                                      in_table_name='hct_set', 
+                                      what='household', 
+                                      id_name=['control_total_id'])
         dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
                            datasets_dict={'household':hh_set})
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
@@ -659,6 +734,9 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertArraysEqual(hct_set['households'], array([5000, 26000, 16000, 6000]))
 
     def test_sampling_hierarchy(self):
+        """ Test passing sampling_threshold and sampling_hierarchy through 
+            arguments to run method
+        """
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000]),
             "control_total_id": arange(1, 5),
@@ -701,6 +779,61 @@ class Tests(opus_unittest.OpusTestCase):
         #self.assertArraysEqual(hct_set['households'], array([15000, 25000, 15000, 6000]))
         self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
 
+    def test_threshold_hierarchy_in_control_totals(self):
+        """Test when sampling_threshold and sampling_hierarchy are provided in control totals
+        instead of being passed through arguments of run method.
+        """
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2000]),
+            "control_total_id": arange(1, 5),
+            "age_of_head_min": array([ 50,  0,  50,  0]),
+            "age_of_head_max": array([100, 49, 100, 49]),
+            "persons_min":     array([  1,  1,   3,  3]),
+            "persons_max":     array([  2,  2,   6,  6]),
+            "sampling_threshold": array([6001, 6001, 6001, 6001]),
+            "sampling_hierarchy": array(["['persons_max', 'persons_p2_max', 'persons_p4_max']",
+                                         "['persons_max', 'persons_p2_max', 'persons_p4_max']",
+                                         "['persons_max', 'persons_p2_max', 'persons_p4_max']",
+                                         "['persons_max', 'persons_p2_max', 'persons_p4_max']",
+                                        ]),
+            "total_number_of_households": array([15000, 25000, 15000, 25000])
+            }
+
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='hct_set', 
+                            table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, 
+                                      in_table_name='hct_set', 
+                                      what='household', 
+                                      id_name=['control_total_id'])
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                           datasets_dict={'household':hh_set})
+        ##code control_total on a sampling_hierarchy (not a primary attribute)        
+        from urbansim.control_total.aliases import aliases as ct_aliases
+        ct_aliases += ['persons_p2_max = control_total.persons_max + 2',
+                       'persons_p4_max = control_total.persons_max + 4'
+                       ]
+        from urbansim.household.aliases import aliases as hh_aliases
+        hh_aliases += ['persons_p2 = household.persons',
+                       'persons_p4 = household.persons',
+                       ]
+
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  #sampling_threshold = 6001,
+                  #sampling_hierarchy = ['persons_max', 'persons_p2_max', 'persons_p4_max'],
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool)
+
+        hct_set.compute_variables('households=control_total.number_of_agents(household)', 
+                                 dataset_pool=dataset_pool)
+        self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
+       
     def test_code_control_total_id(self):
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000]),
