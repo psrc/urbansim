@@ -401,6 +401,35 @@
           </run>
         </structure>
       </model_template>
+      <model_template name="transition_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+	        <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
+	        <argument field_identifier="Dataset Attribute for Number Accounting" name="dataset_accounting_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">None</argument>
+	        <argument field_identifier="Model Full Name" name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+	        <argument field_identifier="Model Short Name" name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+	        <argument field_identifier="Control Total Table Name" name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+	    <argument field_identifier="Target Attribute Name" name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+	    <argument field_identifier="Reset Dataset Attributes" name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+	    <argument field_identifier="Sampling Threshold" name="sampling_threshold" parser_action="quote_string" convert_blank_to_none="True" type="string">control_total.number_of_agents(household)>500</argument>
+	    <argument field_identifier="Sampling Hierarchy" name="sampling_hierarchy" convert_blank_to_none="True" type="string">['zone_id','raz_id', 'county_id']</argument>
+	    <argument field_identifier="Synchronize Dataset" name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
+	    <argument field_identifier="Reset Sync Dataset Attributes" name="reset_sync_dataset_attribute_value" type="string">{'job_id':-1}</argument>
+          </run>
+        </structure>
+      </model_template>      
     </templates>
   </model_manager>
   <data_manager>
