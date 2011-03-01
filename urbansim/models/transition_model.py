@@ -205,10 +205,14 @@ class TransitionModel(Model):
 
         id_name = 'control_total_id'
         ct_known_attributes = self.control_totals_all.get_primary_attribute_names()
+
+        if target_attribute_name not in ct_known_attributes:
+            raise AttributeError, "Target attribute %s must be an attribute of control_total dataset" % target_attribute_name
+        
         if id_name not in ct_known_attributes:
             self.control_totals_all.add_attribute(name=id_name,
-                                             data = arange(1, self.control_totals_all.size()+1)
-                                            )
+                                                  data = arange(1, self.control_totals_all.size()+1)
+                                                  )
         if self.control_totals_all.get_id_name() != [id_name]:
             self.control_totals_all._id_names = [id_name]
 
@@ -336,9 +340,6 @@ class TransitionModel(Model):
                 logger.log_status("\t".join(cat))        
 
         original_id = copy.copy(self.dataset[id_name])
-
-        def process_threshold_and_hierarchy():
-            pass
         
         for index, control_total_id in enumerate(self.control_totals.get_id_attribute()):
             indicator = original_id==control_total_id
@@ -418,7 +419,7 @@ class TransitionModel(Model):
                         error_str = str(error_num)
                         error_log += "%s. Sampling_threshold reached at sampling_hierarchy %s.\n" % \
                                                                          (error_num,
-                                                                          hierarchy_this[i]
+                                                                          hierarchy_this[i-1]
                                                                           )
                         error_num += 1
                         indicator = self.dataset[id_name] == control_total_id
