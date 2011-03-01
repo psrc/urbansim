@@ -36,7 +36,42 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
-        <model name="aging_model" type="model">
+      <model name="household_transition_model_with_growth_threshold" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
+            <argument name="sampling_threshold" parser_action="quote_string" type="string">(mag_zone.control_total.households - mag_zone.control_total.households_lag1) > 0 </argument>            
+	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>    
+      <model name="household_transition_model" type="model">
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
+            <argument name="sampling_threshold" type="string">10000</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="aging_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module type="string">opus_core.simple_model</class_module>
@@ -447,8 +482,8 @@
       <save_estimation_results type="boolean">False</save_estimation_results>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">mag_zone_v3b/base_year_data</cache_directory>
       <estimation_database_configuration type="class">
-        <class_name type="string">EstimationDatabaseConfiguration</class_name>
-        <class_module type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+        <class_name type="string" hidden="True">EstimationDatabaseConfiguration</class_name>
+        <class_module type="string" hidden="True">opus_core.database_management.configurations.estimation_database_configuration</class_module>
         <argument name="database_name" type="string">mag_zone</argument>
       </estimation_database_configuration>
       <scenario_database_configuration type="class">
@@ -474,8 +509,8 @@
         <selectable name="building_type" type="selectable">True</selectable>
       </datasets_to_preload>
       <dataset_pool_configuration type="class">
-        <class_name type="string">DatasetPoolConfiguration</class_name>
-        <class_module type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <class_name type="string" hidden="True">DatasetPoolConfiguration</class_name>
+        <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
         <argument name="package_order" type="list">['mag_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
       </dataset_pool_configuration>
     </estimation_config>
@@ -490,23 +525,25 @@
       </run>
     </simulation_runs>
   </results_manager>
-  <scenario_manager followers="debuglevel,base_year,cache_directory">
+  <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">
-        <selectable name="real_estate_price_model" type="selectable">True</selectable>
-        <selectable name="development_project_transition_model" type="selectable">True</selectable>
-        <selectable name="residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="non_residential_development_project_location_choice_model" type="selectable">True</selectable>
-        <selectable name="add_projects_to_buildings" type="selectable">True</selectable>
+        <selectable name="real_estate_price_model" type="selectable">False</selectable>
+        <selectable name="development_project_transition_model" type="selectable">False</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
         <selectable name="household_transition_model" type="selectable">True</selectable>
-        <selectable name="employment_transition_model" type="selectable">True</selectable>
-        <selectable name="household_relocation_model" type="selectable">True</selectable>
-        <selectable name="household_location_choice_model" type="selectable">True</selectable>
-        <selectable name="employment_relocation_model" type="selectable">True</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">True
-		  <group_members type="string">_all_</group_members>
+        <!--
+        <selectable name="household_transition_model_with_growth_threshold" type="selectable">True</selectable>
+        -->      
+        <selectable name="employment_transition_model" type="selectable">False</selectable>
+        <selectable name="household_relocation_model" type="selectable">False</selectable>
+        <selectable name="household_location_choice_model" type="selectable">False</selectable>
+        <selectable name="employment_relocation_model" type="selectable">False</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">_all_</group_members>
         </selectable>
-        <selectable name="distribute_unplaced_jobs_model" type="selectable">True</selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
       </models_to_run>
       <model_system type="string">urbansim.model_coordinators.model_system</model_system>
       <base_year type="integer">2009</base_year>
@@ -590,9 +627,11 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
-          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name></selectable>
+          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
           <selectable name="job" type="selectable">True</selectable>
-          <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name></selectable>
+          <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
           <selectable name="travel_data" type="selectable">True</selectable>
           <selectable name="target_vacancy" type="selectable">True</selectable>
           <selectable name="development_event_history" type="selectable">True</selectable>
