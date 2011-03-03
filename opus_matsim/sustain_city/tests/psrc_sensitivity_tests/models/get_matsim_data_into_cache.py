@@ -27,10 +27,10 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         self.delete_travel_data_columns = ['am_bike_to_work_travel_time', 
                                       'am_biking_person_trips',
-                                      'am_pk_period_drive_alone_vehicle_trips',
+                                      #'am_pk_period_drive_alone_vehicle_trips',
                                       'am_total_transit_time_walk',
                                       'am_transit_person_trip_table',
-                                      'am_walk_time_in_minutes',
+                                      #'am_walk_time_in_minutes',
                                       'am_walking_person_trips',
                                       'am_double_vehicle_to_work_travel_time',
                                       'am_threeplus_vehicle_to_work_travel_time',
@@ -76,8 +76,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         # Case 1) Delete all 'columns' but the 'columns' passing to urbansim first. then no join operation is needed
         # Case 2) Join the data sets and delete unneeded 'columns' here
         
-        # delete copied travel data in cache
-        self.clear_cache_travel_data(year) # tnicolai : this may causes errors in some models
+        # delete travel data attributes in UrbanSim data store (see list above: "self.delete_travel_data_columns") -> (tnicolai: may causes errors in some models)
+        #self.clear_cache_travel_data(year) 
         # load actual travel data set from cache
         existing_travel_data_set = TravelDataDataset( in_storage=self.cache_storage, in_table_name=self.travel_data_table_name )
         
