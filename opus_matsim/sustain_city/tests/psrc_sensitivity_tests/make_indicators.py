@@ -14,25 +14,20 @@ start_time = time.time()
 project_name = 'psrc_parcel'
 years_arr = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
-cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
-#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_1.2011_02_24_11_54' # highway
+# cupum scenarios 2030 
+#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
+cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_1.2011_02_24_11_54' # highway
 #cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_1.2011_02_24_11_55' # ferry
 
+# cupum scenarios 2020 
 #cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_26.2011_02_16_18_18' # highway
 #cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_1.2011_02_23_10_12' # highway limited cap.
 #cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_26.2011_02_16_18_15' # ferry
-
-#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_26.2011_02_13_10_49' # highway
-#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_27.2011_02_13_09_34' # ferry
 
 types = ['tab']
 
 indicators = {
     
-    #'avg_work_logsum':Indicator( 
-    #   dataset_name = 'household_x_building',
-    #   attribute = 'avg_work_logsum=((psrc.household.logsum_income_break==1) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1)) + ((psrc.household.logsum_income_break==2) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2)) + ((psrc.household.logsum_income_break==3) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_3)) + ((psrc.household.logsum_income_break==4) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_4))'),
-
     'building_type_other':Indicator( # other (agriculture, group_quarter, outbuilding, open space, parking, recreation, school, no code)
        dataset_name = 'zone',
        attribute = 'zone.aggregate(urbansim_parcel.building.is_generic_building_type_8, intermediates=[parcel])'),
@@ -65,14 +60,34 @@ indicators = {
        dataset_name = 'zone',
        attribute = 'zone.aggregate(urbansim_parcel.building.is_generic_building_type_1, intermediates=[parcel])'),
 
+    'single_familiy_housing_units':Indicator( # sfr (mobile home, single family residential)
+       dataset_name = 'zone',
+       attribute = ''),
+       
+    'multi_familiy_housing_units':Indicator( # mfr (condo residential, multi family residential)
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(building.residential_units * urbansim_parcel.building.is_generic_building_type_2)'),
+       
+    'office_sqft':Indicator( # office
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(building.non_residential_sqft * urbansim_parcel.building.is_generic_building_type_3)'),
+       
+    'commercial_sqft':Indicator( # commercial
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(building.non_residential_sqft * urbansim_parcel.building.is_generic_building_type_4)'),
+
+    'industrial_sqft':Indicator( # industrial (industrial, transportation ,Communication, Warehousing)
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(building.non_residential_sqft * urbansim_parcel.building.is_generic_building_type_5)'),
+       
+    'other_sqft':Indicator( # other (agriculture, group_quarter, outbuilding, open space, parking, recreation, school, no code)
+       dataset_name = 'zone',
+       attribute = 'zone.aggregate(building.non_residential_sqft * urbansim_parcel.building.is_generic_building_type_7)'),
+
     'vacant_residential_units':Indicator( 
        dataset_name = 'zone',
        attribute = 'zone.aggregate(urbansim_parcel.building.vacant_residential_units)'),
 
-    #'max_drive_alone_hbw_am_travel_time_from_home_to_work':Indicator( 
-    #   dataset_name = 'zone',
-    #   attribute = 'zone.aggregate(psrc_parcel.household_x_building.max_drive_alone_hbw_am_travel_time_from_home_to_work, intermediates=[parcel])'),
-       
     'travel_time_to_129':Indicator( 
        dataset_name = 'zone',
        attribute = 'psrc.zone.travel_time_hbw_am_drive_alone_to_cbd'),
@@ -108,14 +123,6 @@ indicators = {
     'unit_price':Indicator( 
        dataset_name = 'zone',
        attribute = 'zone.aggregate(urbansim_parcel.building.unit_price, intermediates=[parcel])'),
-       
-    'building_sqft_per_unit':Indicator( 
-       dataset_name = 'zone',
-       attribute = 'zone.aggregate(urbansim_parcel.building.building_sqft_per_unit, intermediates=[parcel])'),
-       
-    'building_sqft_per_job':Indicator( 
-       dataset_name = 'zone',
-       attribute = 'zone.aggregate(urbansim_parcel.building.building_sqft_per_job, intermediates=[parcel])'),
 
     'number_of_jobs':Indicator( 
        dataset_name = 'zone',
@@ -133,40 +140,34 @@ indicators = {
        dataset_name = 'zone',
        attribute = 'zone.aggregate(building.residential_units, intermediates=[parcel])'),
        
-    #'zone_household_persons':Indicator( 
-    #   dataset_name = 'zone',
-    #   attribute = 'zone.aggregate(household.persons)'),
-        
-    #'zone_household_avg_income':Indicator( 
-    #   dataset_name = 'zone',
-    #   attribute = 'zone.aggregate(household.income, function=mean)'),
-       
-    #'zone_income_household':Indicator( 
-    #   dataset_name = 'zone',
-    #   attribute = 'zone.aggregate(household.income)'),
-    
-    #'travel_time_to_908':Indicator( 
-    #   dataset_name = 'zone',
-    #   attribute = 'psrc.zone.travel_time_hbw_am_drive_alone_to_908'),
+    'total_units':Indicator( 
+       dataset_name = 'alldata',
+       attribute = 'alldata.aggregate_all(building.residential_units * urbansim_parcel.building.is_generic_building_type_1)'),
 
-    #'traveldata_am_single_vehicle_to_work_travel_time':Indicator( 
-    #   dataset_name = 'travel_data',
-    #   attribute = 'travel_data.am_single_vehicle_to_work_travel_time'),
+    'total_office_units':Indicator( 
+       dataset_name = 'alldata',
+       attribute = 'alldata.aggregate_all(building.non_residential_sqft * urbansim_parcel.building.is_generic_building_type_3)'),
 
-    #'gridcell_population':Indicator(
-    #    dataset_name = 'gridcell',
-    #    attribute = 'urbansim.gridcell.population'),   
-              
-    #'gridcell_number_of_jobs':Indicator(
-    #    dataset_name = 'gridcell',
-    #    attribute = 'urbansim.gridcell.number_of_jobs', 
-    #    name = 'jobs'),
+    'building_sqft_per_unit':Indicator( 
+       dataset_name = 'zone',
+       attribute = 'safe_array_divide(zone.aggregate(building.non_residential_sqft * urbansim_parcel.building.is_residential),  zone.aggregate(building.residential_units * urbansim_parcel.building.is_residential))'),
 
-    #'zone_number_of_jobs':Indicator(
-    #    dataset_name = 'zone',
-    #    attribute = 'urbansim.gridcell.number_of_jobs', 
-    #    name = 'zone_jobs'),
-              
+    'worker_share':Indicator( 
+       dataset_name = 'zone',
+       attribute = 'safe_array_divide(zone.aggregate(household.workers, intermediates=[building, parcel]), urbansim_parcel.zone.population)'),
+
+    'single_hh_share':Indicator( 
+       dataset_name = 'zone',
+       attribute = 'safe_array_divide(zone.aggregate(household.persons == 1, intermediates=[building, parcel]), urbansim_parcel.zone.number_of_households)'),
+
+    #'building_sqft_per_unit':Indicator( 
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate(urbansim_parcel.building.building_sqft_per_unit, intermediates=[parcel])'),
+
+    #'building_sqft_per_job':Indicator( 
+    #   dataset_name = 'zone',
+    #   attribute = 'zone.aggregate(urbansim_parcel.building.building_sqft_per_job, intermediates=[parcel])'),
+
     #Expression example (comparison to baseyear)
     #'large_area_population_change':Indicator(
     #    dataset_name = 'large_area',
@@ -336,21 +337,66 @@ for output_type in types:
     
 for output_type in types:
     visualizations += visualizer.visualize(
+        indicators_to_visualize = ['single_familiy_housing_units'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'single_familiy_housing_units',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['multi_familiy_housing_units'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'multi_familiy_housing_units',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['office_sqft'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'office_sqft',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['commercial_sqft'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'commercial_sqft',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['industrial_sqft'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'industrial_sqft',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['other_sqft'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+       name = 'other_sqft',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
         indicators_to_visualize = ['vacant_residential_units'],
         computed_indicators = computed_indicators,
         visualization_type = 'table',
         output_type = output_type,
         name = 'vacant_residential_units',
         )
-
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['max_drive_alone_hbw_am_travel_time_from_home_to_work'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'max_drive_alone_hbw_am_travel_time_from_home_to_work',
-#        )
     
 for output_type in types:
     visualizations += visualizer.visualize(
@@ -435,24 +481,6 @@ for output_type in types:
 
 for output_type in types:
     visualizations += visualizer.visualize(
-        indicators_to_visualize = ['building_sqft_per_unit'],
-        computed_indicators = computed_indicators,
-        visualization_type = 'table',
-        output_type = output_type,
-        name = 'building_sqft_per_unit',
-        )
-    
-for output_type in types:
-    visualizations += visualizer.visualize(
-        indicators_to_visualize = ['building_sqft_per_job'],
-        computed_indicators = computed_indicators,
-        visualization_type = 'table',
-        output_type = output_type,
-        name = 'building_sqft_per_job',
-        )
-    
-for output_type in types:
-    visualizations += visualizer.visualize(
         indicators_to_visualize = ['number_of_jobs'],
         computed_indicators = computed_indicators,
         visualization_type = 'table',
@@ -478,52 +506,51 @@ for output_type in types:
         name = 'residential_units',
         )    
     
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['zone_household_persons'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'zone_household_persons',
-#        )
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['total_units'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'total_units',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['total_office_units'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'total_office_units',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['building_sqft_per_unit'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'building_sqft_per_unit',
+        )  
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['worker_share'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'worker_share',
+        ) 
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['single_hh_share'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'single_hh_share',
+        ) 
 
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['zone_household_avg_income'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'zone_household_avg_income',
-#        )
-    
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['zone_income_household'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'zone_income_household',
-#        )
-
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['travel_time_to_908'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'travel_time_to_908',
-#        )
-    
-#for output_type in types:
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = ['traveldata_am_single_vehicle_to_work_travel_time'],
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'table',
-#        output_type = output_type,
-#        name = 'traveldata_am_single_vehicle_to_work_travel_time',
-#        )
-    
-    
 # Write a set of indicators sharing a dataset as a Dataset Table
 
 #indicators_in_dataset_table = ['zone_population',
