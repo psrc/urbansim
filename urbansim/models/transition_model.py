@@ -15,6 +15,7 @@ from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
 import re, copy
+from numpy.lib.type_check import asscalar
 
 try:
     ## if installed, use PrettyTable module for status logging
@@ -81,6 +82,20 @@ class TransitionModel(Model):
         Assigns a control_total_id to control_totals and self.dataset, so that
         they can be joined with each other for opus expression computation, e.g.
         "control_total.aggregate(household.age>65)".
+        
+        **Parameters**
+        
+                **column_names** : list, required
+                
+                        A list of column names that define a row in control total. 
+                        Each of the names in the list must be a primary attribute
+                        or a computable/computed attribute of both control_total 
+                        and self.dataset.
+                        
+                **control_total_index** : array or integer, optional
+                
+                        Selectively only updates control_total_id row specified 
+                        by control_total_index
         """
         
         id_name = 'control_total_id'
@@ -340,7 +355,7 @@ class TransitionModel(Model):
                 logger.log_status("\t".join(cat))        
 
         original_id = copy.copy(self.dataset[id_name])
-        
+        reset_hierarchy_value = {}
         for index, control_total_id in enumerate(self.control_totals.get_id_attribute()):
             indicator = original_id==control_total_id
             n_indicator = indicator.sum()
@@ -350,6 +365,7 @@ class TransitionModel(Model):
             action_num = 0
             diff = target_num - actual_num
             
+            reset_hierarchy_attribute = False
             accounting = self.dataset[self.dataset_accounting_attribute]
             lucky_index = None
             error_str = ''
@@ -422,6 +438,7 @@ class TransitionModel(Model):
                                                                           hierarchy_this[i-1]
                                                                           )
                         error_num += 1
+                        reset_hierarchy_attribute = True
                         indicator = self.dataset[id_name] == control_total_id
                         n_indicator = indicator.sum()
                 
@@ -429,11 +446,33 @@ class TransitionModel(Model):
                             / n_indicator if n_indicator != 0 else 1
                 legit_index = where(logical_and(indicator, filter_indicator))[0]
                 if legit_index.size > 0:
+                    size_tbc_prev = to_be_cloned.size
                     while diff > 0 and actual_num + action_num < target_num:
                         n = ceil((target_num - actual_num - action_num)/mean_size)
                         lucky_index = sample_replace(legit_index, n)
                         action_num += accounting[lucky_index].sum()
                         to_be_cloned = concatenate((to_be_cloned, lucky_index))
+
+                    idx_to_be_cloned = arange(size_tbc_prev, \
+                                              to_be_cloned.size)                    
+                    ## TODO: for now, only reset hierarchy value if
+                    ## the lowest hierarchy is a primary attribute of dataset
+                    if reset_hierarchy_attribute and hierarchy_this[0] in \
+                       self.dataset.get_primary_attribute_names():
+                        h = hierarchy_this[0]
+                        k = asscalar(self.control_totals[h][index])
+                        
+                        if reset_hierarchy_value.has_key(h):
+                            if reset_hierarchy_value[h].has_key(k):
+                                #concatenate
+                                reset_hierarchy_value[h][k] = \
+                                    concatenate((reset_hierarchy_value[h][k], 
+                                                 idx_to_be_cloned))
+                            else:
+                                reset_hierarchy_value[h].update({k:idx_to_be_cloned})
+                        else:
+                            reset_hierarchy_value[h] = {k:idx_to_be_cloned}
+
                     while diff < 0 and actual_num - action_num > target_num:
                         n = ceil(( actual_num - target_num - action_num)/mean_size)
                         lucky_index = sample_noreplace(legit_index, n )
@@ -463,6 +502,12 @@ class TransitionModel(Model):
             self._reset_attribute(self.dataset, 
                                  reset_attribute_dict = reset_dataset_attribute_value, 
                                  index=index_updated)
+            #reset hierarchy value
+            for h, k in reset_hierarchy_value.items():
+                for v, idx in k.items():
+                    self._reset_attribute(self.dataset, 
+                                          reset_attribute_dict={h:v},
+                                          index=index_updated[idx])
             
             # sync with another dataset (duplicate matched records) after adding records to dataset
             # since we need to know new ids if they are changed.                    
@@ -503,9 +548,9 @@ class TransitionModel(Model):
         if (control_total_storage is None) or \
            ((control_total_table is None) and \
            (control_total_dataset_name is None)):
-            dataset_pool = sc.get_dataset_pool()
-            self.control_totals_all = dataset_pool.get_dataset( 'annual_%s_control_total' \
-                                                            % self.dataset.get_dataset_name() )
+            dp = sc.get_dataset_pool()
+            self.control_totals_all = dp.get_dataset( 'annual_%s_control_total' \
+                                                      % self.dataset.get_dataset_name() )
         else:
             df = DatasetFactory()
             if not control_total_dataset_name:
@@ -619,11 +664,28 @@ class TransitionModel(Model):
                                  index=index_sync_dataset_updated)
         
         ### TODO: where is the best location to flush sync_dataset
+        ## leave the flushing to model_system for now
         #sync_dataset.flush_dataset()
         
-    def _reset_attribute(self, dataset, reset_attribute_dict=None, index=None):
+    def _reset_attribute(self, dataset, reset_attribute_dict=None, index=None, add_unknown_attribute=False):
         """
         Resets Dataset attribute value for records indicated by index.
+
+        **Parameters**
+                
+                **dataset** : Opus Dataset object, required
+                        
+                        dataset whose attributes are to be reset
+                
+                **reset_attribute_dict** : dictionary, optional
+                        
+                        dictionary with key being attribute name of dataset and
+                        value being value of attribute to be set to        
+
+                **index** : array, optional
+                        
+                        index of partial dataset attribute to be reset
+        
         """
         if not reset_attribute_dict: return
         known_attribute_names = dataset.get_known_attribute_names()
@@ -632,9 +694,16 @@ class TransitionModel(Model):
                 data_size = index.size if index is not None else dataset.size()
                 data = resize(value, data_size)
                 dataset.modify_attribute(name=key, data=data, index=index)
-            else: ## add attribute key whose value defaults to value
+#                continue
+#            
+#            if index is not None: ## add attribute key whose value defaults to value
+#                ## key is not a known attribute, but index is specified
+#                self.dataset.compute_one_variable_with_unknown_package(key,
+#                                                                       dataset_pool=dataset_pool)
+#                result = self.dataset[key]
+#                result[index] = value
+            elif add_unknown_attribute:
                 dataset.add_primary_attribute(data=resize(value, dataset.size()), name=key)
-                    
 
 from opus_core.tests import opus_unittest
 from opus_core.misc import ismember
@@ -671,7 +740,8 @@ class Tests(opus_unittest.OpusTestCase):
             "income": array(6000*[35000] + 2000*[25000] + 3000*[40000] + 4000*[50000] + 2000*[20000] +
                                 5000*[25000] + 3000*[45000]+ 8000*[55000], dtype=int32),
             "persons": array(6000*[2] + 2000*[3] + 3000*[1] + 4000*[6] + 2000*[1] + 5000*[4] +
-                                3000*[1]+ 8000*[5], dtype=int8)
+                                3000*[1]+ 8000*[5], dtype=int8),
+            "mpa_id": array(11000*[1] + 4000 * [2] + 7000*[3] + 11000*[4])
             }
         
         import itertools
@@ -780,6 +850,47 @@ class Tests(opus_unittest.OpusTestCase):
         #self.assertArraysEqual(hct_set['households'], array([15000, 25000, 15000, 6000]))
         self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
 
+    def test_sampling_hierarchy_reset_primary_dataset_attribute(self):
+        """ Test passing sampling_threshold and sampling_hierarchy through 
+            arguments to run method
+        """
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2000]),
+            "control_total_id": arange(1, 5),
+            "mpa_id":     array([1,  2,  3,  4]),
+            "total_number_of_households": array([10000, 10000, 15000, 15000])
+            }
+
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['control_total_id'])
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                                   datasets_dict={'household':hh_set})
+        
+        ##code control_total on a sampling_hierarchy (not a primary attribute)        
+        from urbansim.control_total.aliases import aliases as ct_aliases
+        ct_aliases += ['county_id = mpa_id*0 + 1'
+                       ]
+        from urbansim.household.aliases import aliases as hh_aliases
+        hh_aliases += ['county_id = mpa_id*0 + 1'
+                       ]
+                
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'control_total.number_of_agents(household)>10000',
+                  sampling_hierarchy = ['mpa_id', 'county_id'],
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool)
+        results = histogram(hh_set['mpa_id'], [1,2,3,4,4])[0]
+        self.assertEqual(results.sum(), array([10000, 10000, 15000, 15000]).sum())
+        print results
+        self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
+        
     def test_threshold_hierarchy_in_control_totals(self):
         """Test when sampling_threshold and sampling_hierarchy are provided in control totals
         instead of being passed through arguments of run method.
