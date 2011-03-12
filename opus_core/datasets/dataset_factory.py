@@ -76,6 +76,7 @@ class DatasetFactory(object):
         ('non_home_based_employment_location_choice_model_specification', 'non_home_based_employment_location_choice_model_specification', None, None),
         ('plan_type_group', 'plan_type_groups', 'plan_type_group_dataset', 'PlanTypeGroupDataset'),
         ('race', 'race_names', 'race_dataset', 'RaceDataset'), 
+        ('raz', 'razes', None, None),
         ('real_estate_price_model_specification', 'real_estate_price_model_specification', None, None),
         ('residential_development_location_choice_model_specification', 'residential_development_location_choice_model_specification', None, None),
         ('residential_land_share_model_specification', 'residential_land_share_model_specification', None, None),

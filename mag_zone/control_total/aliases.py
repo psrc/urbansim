@@ -3,7 +3,8 @@
 # See opus_core/LICENSE
 
 aliases = [
-           'county_id=mpa_id*0+1',
+           'mpa_id=control_total.disaggregate(raz.mpa_id)',
+           'county_id=control_total.disaggregate(mpa.county_id)',
            'households = control_total.number_of_agents(household)',
            'jobs = control_total.number_of_agents(job)',
            ]

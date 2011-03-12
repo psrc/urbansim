@@ -410,7 +410,7 @@ class TransitionModel(Model):
                             break
                         ##replace preceding sampling_threshold
                         column_names_new = list(set(column_names) \
-                                              - set([hierarchy_this[i-1]])) \
+                                              - set(hierarchy_this[:i])) \
                                               + [hierarchy_this[i]]
  
                         self._code_control_total_id(column_names_new, 
@@ -858,7 +858,8 @@ class Tests(opus_unittest.OpusTestCase):
             "year": array([2000, 2000, 2000, 2000]),
             "control_total_id": arange(1, 5),
             "mpa_id":     array([1,  2,  3,  4]),
-            "total_number_of_households": array([10000, 10000, 15000, 15000])
+            "total_number_of_households": array([12000,  8000, 15000, 15000]),
+           #"total_number_of_households": array([10000, 10000, 15000, 15000])
             }
 
         storage = StorageFactory().get_storage('dict_storage')
@@ -873,23 +874,27 @@ class Tests(opus_unittest.OpusTestCase):
         
         ##code control_total on a sampling_hierarchy (not a primary attribute)        
         from urbansim.control_total.aliases import aliases as ct_aliases
-        ct_aliases += ['county_id = mpa_id*0 + 1'
+        ct_aliases += ['county_id = (mpa_id <= 2)*1 + (mpa_id >=3)*2',
+                       'region_id = county_id * 0 + 1'
                        ]
         from urbansim.household.aliases import aliases as hh_aliases
-        hh_aliases += ['county_id = mpa_id*0 + 1'
+        hh_aliases += ['county_id = (mpa_id <= 2)*1 + (mpa_id >=3)*2',
+                       'region_id = county_id * 0 + 1'
                        ]
                 
         model = TransitionModel(hh_set, control_total_dataset=hct_set)
         model.run(year=2000, 
                   target_attribute_name="total_number_of_households", 
-                  sampling_threshold = 'control_total.number_of_agents(household)>10000',
-                  sampling_hierarchy = ['mpa_id', 'county_id'],
+                  sampling_threshold = 'control_total.number_of_agents(household)>15000',
+                  sampling_hierarchy = ['mpa_id', 'county_id', 'region_id'],
                   reset_dataset_attribute_value={'grid_id':-1},
                   dataset_pool=dataset_pool)
         results = histogram(hh_set['mpa_id'], [1,2,3,4,4])[0]
-        self.assertEqual(results.sum(), array([10000, 10000, 15000, 15000]).sum())
+        self.assertEqual(results.sum(), array([12000, 8000, 15000, 15000]).sum())
+        #self.assertEqual(results.sum(), array([10000, 10000, 15000, 15000]).sum())
         print results
-        self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
+        self.assertArraysEqual(results, array([12000, 8000, 15000, 15000]))
+        #self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
         
     def test_threshold_hierarchy_in_control_totals(self):
         """Test when sampling_threshold and sampling_hierarchy are provided in control totals
