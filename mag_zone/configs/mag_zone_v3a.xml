@@ -234,6 +234,7 @@
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
+		  <selectable name="business" type="selectable">True</selectable>
           <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name></selectable>
           <selectable name="job" type="selectable">True</selectable>
           <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name></selectable>
