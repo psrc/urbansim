@@ -14,8 +14,13 @@ start_time = time.time()
 project_name = 'psrc_parcel'
 years_arr = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
+# cupum scenarios 2030 re-estimated
+#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_3.2011_03_12_10_01' # highway limited cap.
+#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_26.2011_03_10_16_31' # highway
+cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_2.2011_03_10_13_35' # ferry
+
 # cupum scenarios 2030 
-cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
+#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
 #cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_1.2011_02_24_11_54' # highway
 #cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_1.2011_02_24_11_55' # ferry
 
@@ -106,6 +111,10 @@ indicators = {
     'zone_number_of_households':Indicator( 
        dataset_name = 'zone',
        attribute = 'urbansim_parcel.zone.number_of_households'),
+       
+    'zone_number_of_residential_units':Indicator( 
+       dataset_name = 'zone',
+       attribute = 'urbansim_parcel.building.residential_units'),
        
     'zone_number_of_single_households':Indicator( 
        dataset_name = 'zone',
@@ -336,6 +345,15 @@ for output_type in types:
         visualization_type = 'table',
         output_type = output_type,
         name = 'number_of_buildings',
+        )
+    
+for output_type in types:
+    visualizations += visualizer.visualize(
+        indicators_to_visualize = ['zone_number_of_residential_units'],
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type,
+        name = 'zone_number_of_residential_units',
         )
     
 for output_type in types:
