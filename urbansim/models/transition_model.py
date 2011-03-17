@@ -7,7 +7,8 @@ from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
 from numpy import array, asarray, where, ones, zeros, ones_like 
 from numpy import arange, concatenate, resize, int32, float64
-from numpy import asscalar, setdiff1d, ceil, logical_and
+from numpy import asscalar, setdiff1d, ceil, logical_and, logical_not
+from numpy import searchsorted, argsort, unique
 from opus_core.misc import ismember
 from opus_core.model import Model
 from opus_core.logger import logger
@@ -645,16 +646,26 @@ class TransitionModel(Model):
         if add_index is not None and add_index.size>0:
             if new_id is not None: #need to duplicate rows of sync_dataset and update id of the duplicated rows
                 assert new_id.size == add_index.size
-                ## find indices to sync_dataset that need to be duplicated and new values for id_name_common field
-                index_id_array = asarray([ (index, i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id)
-                                          for index in where(id_sync_dataset==old_id)[0]])
-                ##TODO: speed up the above list comprehension; code below didn't do it
-#                f = lambda x, y: (x.tolist(), [y] * x.size)
-#                g = lambda x, y: (x[0]+y[0], x[1]+y[1])
-#                index_id_array = [ f(where(id_sync_dataset==old_id)[0], i_new_id) for old_id, i_new_id in zip(id_dataset[add_index], new_id) ]
-#                index_id_array = asarray(reduce(g, index_id_array)).T
-                index_sync_dataset_updated = sync_dataset.duplicate_rows(index_id_array[:, 0])
-                sync_dataset.modify_attribute(name=id_name_common, data=index_id_array[:, 1], index=index_sync_dataset_updated)
+                
+                idx_sync_clone = array([], dtype=add_index.dtype)
+                id_sync_clone = array([], dtype=new_id.dtype)
+                ids = id_dataset[add_index]
+                processed = zeros(ids.size, dtype='bool')
+                uids, uidx = unique(ids, return_index=True)
+                while not all(processed):
+                    idx_sort = argsort(uids)
+                    to_be_cloned = where(ismember(id_sync_dataset, uids))[0]
+                    idx_sync_clone = concatenate((idx_sync_clone, to_be_cloned))
+                    ss = uids[idx_sort].searchsorted(id_sync_dataset[to_be_cloned])
+                    id_sync_clone = concatenate((id_sync_clone, new_id[uidx][idx_sort][ss]))
+                    processed[uidx] = 1
+                    uids, uidx = unique(ids[logical_not(processed)], 
+                                        return_index=True)
+                    uidx = arange(ids.size)[logical_not(processed)][uidx]
+                    
+                index_sync_dataset_updated = sync_dataset.duplicate_rows(idx_sync_clone)
+                sync_dataset.modify_attribute(name=id_name_common, data=id_sync_clone, index=index_sync_dataset_updated)
+       
             else:
                 index_sync_dataset = where( ismember(id_sync_dataset, id_dataset[add_index]) )[0]
                 index_sync_dataset_updated = sync_dataset.duplicate_rows(index_sync_dataset)
