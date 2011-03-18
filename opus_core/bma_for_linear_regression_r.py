@@ -5,9 +5,13 @@
 from opus_core.estimation_procedure import EstimationProcedure
 import rpy2.robjects as robjects
 import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
-from rpy2.robjects.packages import importr
 from numpy import zeros, float32, array
 from opus_core.logger import logger
+## importr only available in rpy2-2.2.x
+try:
+    from rpy2.robjects.packages import importr
+except ImportError:
+    importr = None
 
 class bma_for_linear_regression_r(EstimationProcedure):
     """    Class for variable selection in a linear regression using R package BMA.
