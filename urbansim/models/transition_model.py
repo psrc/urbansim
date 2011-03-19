@@ -8,8 +8,8 @@ from opus_core.datasets.dataset import DatasetSubset
 from numpy import array, asarray, where, ones, zeros, ones_like 
 from numpy import arange, concatenate, resize, int32, float64
 from numpy import asscalar, setdiff1d, ceil, logical_and, logical_not
-from numpy import searchsorted, argsort, unique
-from opus_core.misc import ismember
+from numpy import searchsorted, argsort
+from opus_core.misc import ismember, unique
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
