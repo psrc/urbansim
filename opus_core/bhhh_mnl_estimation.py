@@ -14,6 +14,47 @@ import time
 class bhhh_mnl_estimation(EstimationProcedure):
     maximum_iterations = 200
     
+    def print_results(self, result, tags=["estimate", "result"], verbosity_level=2):
+        model_info = result['other_info']
+        aic = model_info['aic']
+        bic = model_info['bic']
+        iterations = model_info['iterations']
+        l_1 = model_info['l_1']
+        l_0 = model_info['l_0']
+        ll_ratio = model_info['ll_ratio_index']
+        adj_ll_ratio = model_info['ll_ratio_test_statistics']
+        nobs = model_info['nobs']
+        nvars = model_info['nvars']
+        nalts = model_info['nalts']
+        c = model_info['convergence']
+        
+        names = result['coefficient_names']
+        b1 = result['estimators']
+        se = result['standard_errors']
+        tvalues = result["other_measures"]["t_statistic"]
+        
+        logger.log_status("Akaike's Information Criterion (AIC): ", str(aic), tags=tags, verbosity=verbosity_level)
+        logger.log_status("Bayesian Information Criterion (BIC): ", str(bic), tags=tags, verbosity=verbosity_level)
+        
+        logger.log_status("Number of Iterations: ", iterations, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("***********************************************", tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Log-likelihood is:           ', l_1, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Null Log-likelihood is:      ', l_0, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Likelihood ratio index:      ', ll_ratio, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Adj. likelihood ratio index: ', adj_ll_ratio, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Number of observations:      ', nobs, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('Number of alternatives:      ', nalts, tags=tags, verbosity_level=verbosity_level)        
+        logger.log_status('Suggested |t-value| >        ', sqrt(log(nobs)))
+        logger.log_status('Convergence statistic is:    ', c, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("-----------------------------------------------", tags=tags, verbosity_level=verbosity_level)
+
+        logger.log_status("Coeff_names\testimate\tstd err\t\tt-values", tags=tags, verbosity_level=verbosity_level)
+        for i in arange(nvars):
+            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],b1[i],se[i],tvalues[i]), tags=tags, verbosity_level=verbosity_level)
+        logger.log_status('***********************************************', tags=tags, verbosity_level=verbosity_level)
+        #logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=verbosity_level)
+
+        
     def run(self, data, upc_sequence, resources):
         """
         'data' is of shape (nobservations, nchoices, nvariables).
@@ -80,36 +121,38 @@ class bhhh_mnl_estimation(EstimationProcedure):
         
         # http://en.wikipedia.org/wiki/Akaike_information_criterion 
         aic = 2 * index_of_not_fixed_values.size - 2 * l_1
-        logger.log_status("Akaike's Information Criterion (AIC): ", str(aic), tags=tags, verbosity=vl)
         bic = -2 * l_1 + index_of_not_fixed_values.size * log(nobs)
-        logger.log_status("Bayesian Information Criterion (BIC): ", str(bic), tags=tags, verbosity=vl)
-        
-        logger.log_status("Number of Iterations: ", it+1, tags=tags, verbosity_level=vl)
-        logger.log_status("***********************************************", tags=tags, verbosity_level=vl)
-        logger.log_status('Log-likelihood is:           ', l_1, tags=tags, verbosity_level=vl)
-        logger.log_status('Null Log-likelihood is:      ', l_0, tags=tags, verbosity_level=vl)
-        logger.log_status('Likelihood ratio index:      ', ll_ratio, tags=tags, verbosity_level=vl)
-        logger.log_status('Adj. likelihood ratio index: ', adj_ll_ratio, tags=tags, verbosity_level=vl)
-        logger.log_status('Number of observations:      ', nobs, tags=tags, verbosity_level=vl)
-        logger.log_status('Suggested |t-value| >        ', sqrt(log(nobs)))
-        logger.log_status('Convergence statistic is:    ', c, tags=tags, verbosity_level=vl)
-        logger.log_status("-----------------------------------------------", tags=tags, verbosity_level=vl)
+
         if coef_names is not None:
             names = coef_names
         else:
             names = ['']*index_of_not_fixed_values.size
-        logger.log_status("Coeff_names\testimate\tstd err\t\tt-values", tags=tags, verbosity_level=vl)
-        for i in index_of_not_fixed_values:
-            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],b1[i],se[i],tvalues[i]), tags=tags, verbosity_level=vl)
-        logger.log_status('***********************************************', tags=tags, verbosity_level=vl)
-        logger.log_status('Elapsed time: ',time.clock()-self.start_time, 'seconds', tags=tags, verbosity_level=vl)
+
         est = b1
         df=nvars-index_of_fixed_values.size
         lrts = -2*(l_0-l_1)
-        return {"estimators":est, "standard_errors":se, "other_measures":{"t_statistic": tvalues},
-                 "other_info":{"p-value":chisqprob(lrts, df),
-                    "ll_ratio_index":ll_ratio,
-                    "ll_ratio_test_statistics":lrts, "df": df,  "nobs":nobs}}
+
+        result = {"coefficient_names":names,
+                  "estimators":est, 
+                  "standard_errors":se, 
+                  "other_measures":{"t_statistic": tvalues},
+                  "other_info":{"aic": aic,
+                                "bic": bic,
+                                "p-value":chisqprob(lrts, df),
+                                "l_0": l_0,
+                                "l_1": l_1,
+                                "ll_ratio_index":ll_ratio,
+                                "ll_ratio_test_statistics":lrts,
+                                "convergence": c,
+                                "df": df,  
+                                "nobs":nobs,
+                                "nvars": nvars,
+                                "nalts": alts,
+                                "iterations": it+1
+                                }}
+        self.print_results(result)
+        
+        return result
 
     def mnl_loglikelihood(self, data, b, depm):
         return EstimationProcedure.dcm_loglikelihood(self, data, b, depm)

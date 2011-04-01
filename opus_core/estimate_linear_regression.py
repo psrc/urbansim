@@ -12,6 +12,37 @@ from opus_core.misc import check_dimensions
 class estimate_linear_regression(EstimationProcedure):
     """    Class for estimating linear regression.
     """
+
+    def print_results(self, result, tags=["estimate", "result"], verbosity_level=2):
+        constant_position = result.get('constant_position')
+        names = result.get('coefficient_names')
+        values = result.get('estimators')
+        standard_errors = result.get('standard_errors')
+        tvalues = result.get("other_measures")["t_statistic"]
+        nvar = len(names)
+        
+        info = result['other_info']
+        nobs = info.get('nobs')
+        Rsquared = info.get('R-Squared') 
+        Rsquared_adj = info.get('Adjusted R-Squared')
+        
+        logger.log_status("===============================================", tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("Number of observations: ", nobs, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("R-Squared:              ", Rsquared, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("Adjusted R-Squared:     ", Rsquared_adj, tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("Suggested |t-value| >   ", sqrt(log(nobs)))
+        logger.log_status("-----------------------------------------------", tags=tags, verbosity_level=verbosity_level)
+        logger.log_status("Coeff_names\testimate\tSE\tt-values", tags=tags, verbosity_level=verbosity_level)
+        if constant_position >= 0:
+            logger.log_status("%10s\t%8g\t%8g\t%8g" % ("constant", values[constant_position], standard_errors[constant_position], tvalues[constant_position]), tags=tags, verbosity_level=verbosity_level)
+        for i in range(nvar):
+            if i == constant_position:
+                continue
+            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i], values[i], standard_errors[i], tvalues[i]), tags=tags, verbosity_level=verbosity_level)
+        
+        logger.log_status("===============================================", tags=tags, verbosity_level=verbosity_level)
+        #logger.log_status(tags=tags, verbosity_level=verbosity_level)
+
     def run(self, data, regression=None, resources=None):
 
         """
@@ -85,25 +116,17 @@ class estimate_linear_regression(EstimationProcedure):
             j+=1
 
         tvalues = values/se
-        result = {"estimators":values, "standard_errors":se,
-                   "other_measures":{"t_statistic":tvalues},
-                    "other_info":{"R-Squared":Rsquared,
-            "Adjusted R-Squared":Rsquared_adj}}
+        result = {"coefficient_names":resources.get("coefficient_names"),
+                  "estimators":values, 
+                  "standard_errors":se,
+                  "other_measures":{"t_statistic":tvalues},
+                  "other_info":{"nobs":nobs,
+                                "R-Squared":Rsquared,
+                                "Adjusted R-Squared":Rsquared_adj},
+                  "constant_position":constant_position
+                  }
 
-        names = resources.get("coefficient_names",  nvar*[])
-        logger.log_status("R-Squared:            ", Rsquared, tags=tags, verbosity_level=vl)
-        logger.log_status("Adjusted R-Squared:   ", Rsquared_adj, tags=tags, verbosity_level=vl)
-        logger.log_status('Suggested |t-value| > ', sqrt(log(nobs)))
-        logger.log_status("-----------------------------------------------", tags=tags, verbosity_level=vl)
-        logger.log_status("Coeff_names\testimate\tSE\tt-values", tags=tags, verbosity_level=vl)
-        if constant_position>=0:
-            logger.log_status("%10s\t%8g\t%8g\t%8g" % ("constant", estimates[0], standard_errors[0],
-                                    estimates[0]/standard_errors[0]), tags=tags, verbosity_level=vl)
-        for i in range(nvar):
-            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],estimates[i+start],standard_errors[i+start],
-                                    estimates[i+start]/standard_errors[i+start]), tags=tags, verbosity_level=vl)
-        logger.log_status("===============================================", tags=tags, verbosity_level=vl)
-        logger.log_status(tags=tags, verbosity_level=vl)
+        self.print_results(result, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
 
         return result
 

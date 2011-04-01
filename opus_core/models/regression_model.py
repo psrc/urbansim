@@ -234,8 +234,8 @@ class RegressionModel(ChunkModel):
             self.increment_current_status_piece()
             logger.log_status("Estimate regression for submodel " +str(submodel),
                                tags=["estimate"], verbosity_level=2)
-            logger.log_status("Number of observations: " +str(self.observations_mapping[submodel].size),
-                               tags=["estimate"], verbosity_level=2)
+            #logger.log_status("Number of observations: " +str(self.observations_mapping[submodel].size),
+                               #tags=["estimate"], verbosity_level=2)
             self.data[submodel] = dataset.create_regression_data_for_estimation(coef[submodel],
                                                             index = estimation_idx[self.observations_mapping[submodel]])
             self.coefficient_names[submodel] = coef[submodel].get_coefficient_names_without_constant()[0,:]

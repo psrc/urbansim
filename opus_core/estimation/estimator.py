@@ -2,6 +2,7 @@
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
 
+import os
 import copy
 from opus_core import ndimage
 from numpy import absolute, array, where, take, zeros, ones, concatenate
@@ -70,9 +71,10 @@ class Estimator(ModelExplorer):
     def estimate(self, out_storage=None):
         self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False)
         self.extract_coefficients_and_specification()
-
+        
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
+            self.log_estimation_result()
 
     def reestimate(self, specification_module_name=None, specification_dict=None, out_storage=None, type=None, submodels=None):
         """specification_module_name is name of a module that contains a dictionary called
@@ -326,9 +328,30 @@ class Estimator(ModelExplorer):
             logger.end_block()
         logger.start_block("Writing specification and coefficients into %s" % AttributeCache().get_storage_location())
         self.specification.write(out_storage=AttributeCache(), out_table_name=specification_table)
-        self.coefficients.write(out_storage=AttributeCache(), out_table_name=coefficients_table)
+        self.coefficients.write(out_storage=AttributeCache(), out_table_name=coefficients_table)        
         logger.end_block()
 
+    def log_estimation_result(self):
+        procedure = self.model_system.run_year_namespace["model"].procedure        
+        if not hasattr(procedure, 'print_results'):
+            logger.log_warning("Estimation procedure %s doesn't have a print_results() method, "  % procedure + \
+                               "which is needed to log estimation results.")
+            return
+
+        tmp_config = Resources(self.config)
+        outputvar = tmp_config['models_configuration'][self.model_name]['controller']['estimate']['arguments']['output']
+        results = self.model_system.vardict.get(outputvar, "process_output")[1]
+        
+        storage_location = AttributeCache().get_storage_location()
+        log_file_name = "estimate_models.log" ## one file for all estimation results
+        logger.enable_file_logging( os.path.join(storage_location, log_file_name) )
+        logger.start_block("%s Estimation Results" % self.model_name)        
+        for submodel, submodel_results in results.items():
+            logger.log_status( "Submodel %s" % submodel)
+            procedure.print_results(submodel_results)
+        logger.end_block()
+        logger.disable_file_logging()        
+    
     def extract_coefficients_and_specification(self):
         for key in self.model_system.run_year_namespace.keys():
             if isinstance(self.model_system.run_year_namespace[key], Coefficients):
