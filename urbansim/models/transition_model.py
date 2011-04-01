@@ -23,6 +23,9 @@ try:
     from prettytable import PrettyTable
 except:
     PrettyTable = None
+
+STEP_SIZE = 1.1
+MAX_ITERATIONS = 50
     
 class TransitionModel(Model):
     """ 
@@ -373,86 +376,107 @@ class TransitionModel(Model):
              
             if actual_num != target_num:
                 
-                ## handle sampling_threshold and sampling_hierarchy
-                threshold_val_this = threshold_val[index]
-
-                ## sampling_threshold and sampling_hierarchy specified in control_totals 
-                ## override those passed in through argments in configuration
-                threshold_raw_this = threshold_raw  # for logging
-                if threshold_ct is not None:
-                    threshold_val_ct = get_threshold_val(asscalar(threshold_ct[index]),
-                                                         dataset_pool=dataset_pool
-                                                        )
-                    if threshold_val_ct is not None:
-                        threshold_raw_this = asscalar(threshold_ct[index])
-                        threshold_val_this = threshold_val_ct[this_year_index][index]
-
-                hierarchy_this = sampling_hierarchy
-                if hierarchy_ct is not None:
-                    hierarchy_list_ct = eval( hierarchy_ct[index] )  # assume to be a string of list, e.g. "['zone_id', 'raz_id']"
-                    if hierarchy_list_ct:
-                        hierarchy_this = hierarchy_list_ct
-
-                if not threshold_val_this:
-                    if not hierarchy_this:
-                        error_str = str(error_num)
-                        error_log += "%s. Sampling_threshold %s is not reached and no sampling_hierarchy specified.\n" % \
-                                     (error_num, threshold_raw_this)
-                        error_num += 1
-                        log_status()
-                        continue  #TODO: shall we proceed to do sampling even if sampling_threshold is not satisfied
-                                  #      and sampling_hierarchy is not specified? 
-                    
-                    #iterate sampling_hierarchy starting from the second element (index 1), because the first
-                    #in hierarchy is the one supposed to be replaced 
-                    i = 1 
-                    while not threshold_val_this:
-                        if i == len(hierarchy_this):
-                            break
-                        ##replace preceding sampling_threshold
-                        column_names_new = list(set(column_names) \
-                                              - set(hierarchy_this[:i])) \
-                                              + [hierarchy_this[i]]
- 
-                        self._code_control_total_id(column_names_new, 
-                                                    control_total_index=[index],
-                                                    dataset_pool=dataset_pool)
-                        threshold_val_this = get_threshold_val(threshold_raw_this,
-                                                               dataset_pool=dataset_pool
-                                                              )[this_year_index][index]
-                        i += 1
-
+                if actual_num < target_num:
+                    ## handle sampling_threshold and sampling_hierarchy
+                    threshold_val_this = threshold_val[index]
+    
+                    ## sampling_threshold and sampling_hierarchy specified in control_totals 
+                    ## override those passed in through arguments in configuration
+                    threshold_raw_this = threshold_raw  # for logging
+                    if threshold_ct is not None:
+                        threshold_val_ct = get_threshold_val(asscalar(threshold_ct[index]),
+                                                             dataset_pool=dataset_pool
+                                                            )
+                        if threshold_val_ct is not None:
+                            threshold_raw_this = asscalar(threshold_ct[index])
+                            threshold_val_this = threshold_val_ct[this_year_index][index]
+    
+                    hierarchy_this = sampling_hierarchy
+                    if hierarchy_ct is not None:
+                        hierarchy_list_ct = eval( hierarchy_ct[index] )  # assume to be a string of list, e.g. "['zone_id', 'raz_id']"
+                        if hierarchy_list_ct:
+                            hierarchy_this = hierarchy_list_ct
+    
                     if not threshold_val_this:
-                        ## we have exhausted the sampling_hierarchy,
-                        ## and yet the sampling_threshold is not reached
-                        error_str = str(error_num)
-                        error_log += "%s. Sampling_threshold %s is not reached after exhausting sampling_hierarchy: %s.\n" % \
-                                          (error_num, threshold_raw_this, hierarchy_this)
-                        error_num += 1
-                        log_status()
-                        continue  # TODO: shall we proceed to do sampling even if we exhaust sampling_hierarchy 
-                                  #       and sampling_threshold is not satisfied? 
-                    else:
-                        error_str = str(error_num)
-                        error_log += "%s. Sampling_threshold reached at sampling_hierarchy %s.\n" % \
-                                                                         (error_num,
-                                                                          hierarchy_this[i-1]
-                                                                          )
-                        error_num += 1
-                        reset_hierarchy_attribute = True
-                        indicator = self.dataset[id_name] == control_total_id
-                        n_indicator = indicator.sum()
+                        if not hierarchy_this:
+                            error_str = str(error_num)
+                            error_log += "%s. Sampling_threshold %s is not reached and no sampling_hierarchy specified.\n" % \
+                                         (error_num, threshold_raw_this)
+                            error_num += 1
+                            log_status()
+                            continue  #TODO: shall we proceed to do sampling even if sampling_threshold is not satisfied
+                                      #      and sampling_hierarchy is not specified? 
+                        
+                        #iterate sampling_hierarchy starting from the second element (index 1), because the first
+                        #in hierarchy is the one supposed to be replaced 
+                        i = 1 
+                        while not threshold_val_this:
+                            if i == len(hierarchy_this):
+                                break
+                            ##replace preceding sampling_threshold
+                            column_names_new = list(set(column_names) \
+                                                  - set(hierarchy_this[:i])) \
+                                                  + [hierarchy_this[i]]
+     
+                            self._code_control_total_id(column_names_new, 
+                                                        control_total_index=[index],
+                                                        dataset_pool=dataset_pool)
+                            threshold_val_this = get_threshold_val(threshold_raw_this,
+                                                                   dataset_pool=dataset_pool
+                                                                  )[this_year_index][index]
+                            i += 1
+    
+                        if not threshold_val_this:
+                            ## we have exhausted the sampling_hierarchy,
+                            ## and yet the sampling_threshold is not reached
+                            error_str = str(error_num)
+                            error_log += "%s. Sampling_threshold %s is not reached after exhausting sampling_hierarchy: %s.\n" % \
+                                              (error_num, threshold_raw_this, hierarchy_this)
+                            error_num += 1
+                            log_status()
+                            continue  # TODO: shall we proceed to do sampling even if we exhaust sampling_hierarchy 
+                                      #       and sampling_threshold is not satisfied? 
+                        else:
+                            error_str = str(error_num)
+                            error_log += "%s. Sampling_threshold reached at sampling_hierarchy %s.\n" % \
+                                                                             (error_num,
+                                                                              hierarchy_this[i-1]
+                                                                              )
+                            error_num += 1
+                            reset_hierarchy_attribute = True
+                            indicator = self.dataset[id_name] == control_total_id
+                            n_indicator = indicator.sum()
                 
-                mean_size = float(sum(self.dataset[self.dataset_accounting_attribute][indicator])) \
-                            / n_indicator if n_indicator != 0 else 1
+                
                 legit_index = where(logical_and(indicator, filter_indicator))[0]
                 if legit_index.size > 0:
+                    abs_diff = abs(target_num - actual_num)
+                    mean_size = float(sum(self.dataset[self.dataset_accounting_attribute][indicator])) \
+                                                / n_indicator if n_indicator != 0 else 1
+                    n = int(ceil(abs_diff / mean_size))
                     size_tbc_prev = to_be_cloned.size
-                    while diff > 0 and actual_num + action_num < target_num:
-                        n = ceil((target_num - actual_num - action_num)/mean_size)
+                    i = 0
+                    while diff > 0 and action_num < abs_diff:
+                        if n > 1:
+                            n = int( ceil((abs_diff - action_num) / (mean_size * STEP_SIZE**i)) )
                         lucky_index = sample_replace(legit_index, n)
-                        action_num += accounting[lucky_index].sum()
-                        to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                        temp_num = accounting[lucky_index].sum()
+                        
+                        if action_num + temp_num <= abs_diff:
+                            ## accept the last batch of samples only when it does not overshoot
+                            to_be_cloned = concatenate((to_be_cloned, lucky_index))
+                            action_num += temp_num
+                        else:
+                            ## already overshoot, reject the last batch and reduce the number of samples
+                            i += 1
+                        
+                        if i > MAX_ITERATIONS:
+                            ## we're in trouble
+                            error_str = str(error_num)
+                            error_log += "%s. We exhausted %s iterations and could not find samples to match target %s exactly.\n" % \
+                                                                             (error_num, MAX_ITERATIONS, target_num)
+                            error_num += 1
+                            break
 
                     idx_to_be_cloned = arange(size_tbc_prev, \
                                               to_be_cloned.size)                    
@@ -473,12 +497,30 @@ class TransitionModel(Model):
                                 reset_hierarchy_value[h].update({k:idx_to_be_cloned})
                         else:
                             reset_hierarchy_value[h] = {k:idx_to_be_cloned}
-
-                    while diff < 0 and actual_num - action_num > target_num:
-                        n = ceil(( actual_num - target_num - action_num)/mean_size)
-                        lucky_index = sample_noreplace(legit_index, n )
-                        action_num += accounting[lucky_index].sum()
-                        to_be_removed = concatenate((to_be_removed, lucky_index))
+                    
+                    i = 0
+                    while diff < 0 and action_num < abs_diff :
+                        if n > 1:
+                            n = int( ceil(( abs_diff - action_num) / (mean_size * STEP_SIZE**i)) )
+                        legit_index_not_yet_sampled = setdiff1d(legit_index, to_be_removed)
+                        lucky_index = sample_noreplace(legit_index_not_yet_sampled, n)
+                        temp_num = accounting[lucky_index].sum()
+                        
+                        if action_num + temp_num <= abs_diff:
+                            ## accept the last batch of samples only when it does not overshoot
+                            to_be_removed = concatenate((to_be_removed, lucky_index))
+                            action_num += temp_num
+                        else:
+                            ## already overshoot, reject the last batch and reduce the number of samples                            
+                            i += 1
+                        
+                        if i > MAX_ITERATIONS:
+                            ## we're in trouble
+                            error_str = str(error_num)
+                            error_log += "%s. We exhausted %s iterations and could not find samples to match target %s exactly.\n" % \
+                                                                             (error_num, MAX_ITERATIONS, target_num)
+                            error_num += 1
+                            break
                 else:
                     error_str = str(error_num)
                     error_log += "%s. There is no suitable %s to sample from.\n" % (error_num, self.dataset.get_dataset_name())
@@ -720,7 +762,7 @@ from opus_core.tests import opus_unittest
 from opus_core.misc import ismember
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.resources import Resources
-from numpy import array, logical_and, int32, int8, ma, all
+from numpy import array, logical_and, int32, int8, ma, all, allclose
 from scipy import ndimage, histogram
 from opus_core.datasets.dataset import Dataset
 from urbansim.datasets.household_dataset import HouseholdDataset
@@ -869,8 +911,8 @@ class Tests(opus_unittest.OpusTestCase):
             "year": array([2000, 2000, 2000, 2000]),
             "control_total_id": arange(1, 5),
             "mpa_id":     array([1,  2,  3,  4]),
-            "total_number_of_households": array([12000,  8000, 15000, 15000]),
-           #"total_number_of_households": array([10000, 10000, 15000, 15000])
+           #"total_number_of_households": array([12000,  8000, 15000, 15000]),
+           "total_number_of_households": array([10000, 10000, 15000, 15000])
             }
 
         storage = StorageFactory().get_storage('dict_storage')
@@ -901,11 +943,11 @@ class Tests(opus_unittest.OpusTestCase):
                   reset_dataset_attribute_value={'grid_id':-1},
                   dataset_pool=dataset_pool)
         results = histogram(hh_set['mpa_id'], [1,2,3,4,4])[0]
-        self.assertEqual(results.sum(), array([12000, 8000, 15000, 15000]).sum())
+        #self.assertEqual(results.sum(), array([12000, 8000, 15000, 15000]).sum())
         #self.assertEqual(results.sum(), array([10000, 10000, 15000, 15000]).sum())
         print results
-        self.assertArraysEqual(results, array([12000, 8000, 15000, 15000]))
-        #self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
+        #self.assertArraysEqual(results, array([12000, 8000, 15000, 15000]))
+        self.assertArraysEqual(results, array([10000, 10000, 15000, 15000]))
         
     def test_threshold_hierarchy_in_control_totals(self):
         """Test when sampling_threshold and sampling_hierarchy are provided in control totals
@@ -1499,7 +1541,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         results = bs_set.get_attribute('jobs').sum()
         should_be = [(ect_set.get_attribute("number_of_jobs")[0:3]).sum()]
-        self.assertEqual(ma.allclose(should_be, results, rtol=10),
+        self.assertEqual(ma.allclose(should_be, results, rtol=0.1),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
         
         cats = 3
@@ -1507,9 +1549,9 @@ class Tests(opus_unittest.OpusTestCase):
         for i in range(0, cats):
             results[i] = ( bs_set.get_attribute('jobs')*(bs_set.get_attribute('sector_id') == ect_set.get_attribute("sector_id")[i])).sum()
         should_be = ect_set.get_attribute("number_of_jobs")[0:3]
-        self.assertEqual(ma.allclose(results, should_be, rtol=10),
+        self.assertEqual(ma.allclose(results, should_be, rtol=0.1),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
-        
+               
     def test_sync_datasets(self):
         annual_household_control_totals_data = {
             "year": array([2000, 2000]),
@@ -1539,6 +1581,49 @@ class Tests(opus_unittest.OpusTestCase):
         
         self.assertEqual((hh_set['grid_id'] == -1).sum(), 7000, '')
         self.assertTrue((persons['job_id'] == -1).sum() > 7000, '')
+
+    def test_match_exact_target(self):
+        """
+        """
+        annual_employment_control_totals_data = {
+            "year":           array([2000,   2000,  2000,  2001]),
+            "sector_id":      array([    1,     2,     3,     2]),
+            "number_of_jobs": array([25013,  1510,  5000, 10055])
+            }
+
+
+        business_data = {
+            "business_id":arange(1500)+1,
+            "grid_id": array(1500*[1]),
+            "sector_id": array(500*[1] +
+                               500*[2] + 
+                               500*[3]),
+            "jobs":      array(100*[1] + 200*[10] + 200*[25] + 
+                               250*[2] + 250*[20] + 
+                               250*[2] + 250*[8]),
+                            
+            }
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='bs_set', table_data=business_data)
+        bs_set = BusinessDataset(in_storage=storage, in_table_name='bs_set')
+
+        storage.write_table(table_name='ect_set', table_data=annual_employment_control_totals_data)
+        ect_set = ControlTotalDataset(in_storage=storage, in_table_name='ect_set', what='',
+                                      id_name=[])
+
+        model = TransitionModel(bs_set, dataset_accounting_attribute='jobs', control_total_dataset=ect_set)
+        model.run(year=2000, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
+        results = ndimage.sum(bs_set['jobs'], bs_set['sector_id'], [1,2,3])
+        should_be = array([25013,  1510,  5000])
+        self.assertArraysEqual(results, should_be)
+        
+        model.run(year=2001, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
+        results = ndimage.sum(bs_set['jobs'], bs_set['sector_id'], [1,2,3])
+        should_be = array([25013,  10055,  5000])
+        print results
+        self.assertTrue(allclose(results, should_be, atol=2))     #difference less than 3 
+        self.assertTrue(allclose(results, should_be, rtol=1e-3))  #difference less than 1%
         
 if __name__=='__main__':
     opus_unittest.main()
