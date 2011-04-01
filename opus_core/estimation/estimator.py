@@ -74,7 +74,7 @@ class Estimator(ModelExplorer):
         
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
-            self.log_estimation_result()
+            self.log_results()
 
     def reestimate(self, specification_module_name=None, specification_dict=None, out_storage=None, type=None, submodels=None):
         """specification_module_name is name of a module that contains a dictionary called
@@ -331,7 +331,7 @@ class Estimator(ModelExplorer):
         self.coefficients.write(out_storage=AttributeCache(), out_table_name=coefficients_table)        
         logger.end_block()
 
-    def log_estimation_result(self):
+    def log_results(self):
         procedure = self.model_system.run_year_namespace["model"].procedure        
         if not hasattr(procedure, 'print_results'):
             logger.log_warning("Estimation procedure %s doesn't have a print_results() method, "  % procedure + \
@@ -344,7 +344,8 @@ class Estimator(ModelExplorer):
         
         storage_location = AttributeCache().get_storage_location()
         log_file_name = "estimate_models.log" ## one file for all estimation results
-        logger.enable_file_logging( os.path.join(storage_location, log_file_name) )
+        logger.enable_file_logging( os.path.join(storage_location, log_file_name),
+                                    mode = 'a')  ##appending instead of overwriting
         logger.start_block("%s Estimation Results" % self.model_name)        
         for submodel, submodel_results in results.items():
             logger.log_status( "Submodel %s" % submodel)
