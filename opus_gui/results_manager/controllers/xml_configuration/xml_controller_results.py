@@ -15,6 +15,7 @@ from opus_gui.results_manager.controllers.dialogs.configure_new_batch_indicator_
 from opus_gui.results_manager.controllers.dialogs.indicator_batch_run_form import IndicatorBatchRunForm
 from opus_gui.results_manager.results_manager_functions import get_available_run_nodes, get_run_manager
 from opus_gui.util.icon_library import IconLibrary
+from opus_gui.main.controllers.instance_handlers import update_mainwindow_savestate
 
 class XmlController_Results(XmlController):
     ''' XmlController for the Results Manager '''
@@ -83,6 +84,8 @@ class XmlController_Results(XmlController):
             run_manager.delete_everything_for_this_run(run_id, cache_directory)
             run_manager.close()
             self.project.delete_node(run_node)
+            self.project.dirty = True
+            update_mainwindow_savestate()
             # self.model.remove_node(run_node)
         except Exception, ex: # TODO catch more specific error?
             MessageBox.warning(self.view, 'Could not remove run', str(ex))
