@@ -1,22 +1,23 @@
 # Opus/UrbanSim urban simulation software.
 # Copyright (C) 2005-2009 University of Washington
 # See opus_core/LICENSE
-
-from opus_core.session_configuration import SessionConfiguration
-from opus_core.datasets.dataset_factory import DatasetFactory
-from opus_core.datasets.dataset import DatasetSubset
+import re, copy
+from numpy.lib.type_check import asscalar
 from numpy import array, asarray, where, ones, zeros, ones_like 
 from numpy import arange, concatenate, resize, int32, float64
 from numpy import asscalar, setdiff1d, ceil, logical_and, logical_not
 from numpy import searchsorted, argsort
+from opus_core import ndimage
 from opus_core.misc import ismember, unique
 from opus_core.model import Model
 from opus_core.logger import logger
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.variable_name import VariableName
-import re, copy
-from numpy.lib.type_check import asscalar
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.datasets.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset import DatasetSubset
+
 
 try:
     ## if installed, use PrettyTable module for status logging
@@ -763,7 +764,7 @@ from opus_core.misc import ismember
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.resources import Resources
 from numpy import array, logical_and, int32, int8, ma, all, allclose
-from scipy import ndimage, histogram
+from scipy import histogram
 from opus_core.datasets.dataset import Dataset
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
