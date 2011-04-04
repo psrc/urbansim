@@ -1616,13 +1616,14 @@ class Tests(opus_unittest.OpusTestCase):
         model = TransitionModel(bs_set, dataset_accounting_attribute='jobs', control_total_dataset=ect_set)
         model.run(year=2000, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
         results = ndimage.sum(bs_set['jobs'], bs_set['sector_id'], array([1,2,3]))
+        results = asarray(results)
         should_be = array([25013,  1510,  5000])
         self.assertArraysEqual(results, should_be)
         
         model.run(year=2001, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
         results = ndimage.sum(bs_set['jobs'], bs_set['sector_id'], array([1,2,3]))
+        results = asarray(results)
         should_be = array([25013,  10055,  5000])
-        print results
         self.assertTrue(allclose(results, should_be, atol=2))     #difference less than 3 
         self.assertTrue(allclose(results, should_be, rtol=1e-3))  #difference less than 1%
         
