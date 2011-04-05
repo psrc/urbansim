@@ -61,13 +61,13 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.config = None
         self.xml_config = xml_config
 
-        self.config = xml_config.get_run_configuration(str(self.model.modeltorun))
+        self.config = xml_config.get_run_configuration(str(self.model.scenariotorun))
 
         insert_auto_generated_cache_directory_if_needed(self.config)
         (self.start_year, self.end_year) = self.config['years']
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = model.modeltorun
+        self.tabLabel = model.scenariotorun
 
         self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
@@ -94,7 +94,7 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         self.diagnostic_go_button.setEnabled(False)
 
     def updateConfigAndGuiForRun(self):
-        config = self.xml_config.get_run_configuration(str(self.model.modeltorun))
+        config = self.xml_config.get_run_configuration(str(self.model.scenariotorun))
         self.config = config
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']

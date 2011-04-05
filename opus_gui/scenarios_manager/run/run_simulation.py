@@ -110,9 +110,9 @@ class RunModelThread(QThread):
 
 
 class OpusModel(object):
-    def __init__(self, manager, xml_config, modeltorun):
+    def __init__(self, manager, xml_config, scenariotorun):
         self.xml_config = xml_config
-        self.modeltorun = modeltorun
+        self.scenariotorun = scenariotorun
         self.manager = manager
 
         self.progressCallback = None
@@ -160,6 +160,9 @@ class OpusModel(object):
 
         return run_name
 
+    def restart_run(self):
+        pass
+    
     def run(self):
         # Run the Eugene model using the XML version of the Eugene configuration.
         # This code adapted from opus_core/tools/start_run.py
@@ -170,8 +173,8 @@ class OpusModel(object):
         run_id = None
 
         try:
-            config = self.xml_config.get_run_configuration(str(self.modeltorun))
-            # self.xmltreeobject.toolboxbase.opus_core_xml_configuration.get_run_configuration(str(self.modeltorun))
+            config = self.xml_config.get_run_configuration(str(self.scenariotorun))
+            # self.xmltreeobject.toolboxbase.opus_core_xml_configuration.get_run_configuration(str(self.scenariotorun))
 
             cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
             run_name = self.get_run_name(config = config, run_name = self.run_name)
@@ -184,7 +187,7 @@ class OpusModel(object):
 
             run_manager.setup_new_run(cache_directory = config['cache_directory'],
                                       configuration = config)
-
+            
             statusdir = run_manager.get_current_cache_directory()
             self.statusfile = os.path.join(statusdir, 'status.txt')
             self.currentLogfileYear = self.start_year
@@ -201,11 +204,26 @@ class OpusModel(object):
             self.run_manager = run_manager
             self.startedCallback(run_id = run_id, 
                                  run_name = run_name, 
-                                 scenario_name = self.modeltorun, 
+                                 scenario_name = self.scenariotorun, 
                                  run_resources = config)
             run_id = run_manager.run_run(config, run_name = run_name)
             self.running = False
             succeeded = True
+            
+            ## make a copy of the full tree to run directory
+            
+            xml_file_name = os.path.basename(self.xml_config.full_filename)
+            file_name, ext = os.path.splitext(xml_file_name)
+            xml_file = os.path.join(statusdir, file_name + "_flattened" + ext)
+            self.xml_config.full_tree.write(xml_file, pretty_print = True)
+            
+            ## it may be better to save it with the run in services/run_activity database table
+            from opus_core.version_numbers import get_opus_version_number
+            version_numbers = get_opus_version_number()
+            version_file = os.path.join(statusdir, "opus_version_number.txt")
+            with open(version_file, 'w') as f:
+                f.write(version_numbers)
+            
         except SimulationRunError:
             self.running = False
             succeeded = False
@@ -309,7 +327,8 @@ class OpusModel(object):
             try:
                 # the current year is in the first line of the status file
                 f = open(self.statusfile)
-                year = int(f.readline())
+                year_str = f.readline().strip()
+                year = int(year_str)
                 f.close()
             except IOError:
                 if year != self.currentLogfileYear:
