@@ -20,3 +20,4 @@ aliases = [
     "williamsgateway_enplanement_capacity = (building.other_spaces_name=='williamsgateway_enplanement_capacity')*(building.other_spaces)",
     "hotel_motel_rooms = (building.other_spaces_name=='hotel_motel_rooms')*(building.other_spaces)",
            ]
+
