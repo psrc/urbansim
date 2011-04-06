@@ -75,7 +75,7 @@ class AllocationModel(Model):
                 is_considered_idx = where(is_considered)[0]
                 weights = all_weights[is_considered_idx]
                 weights_sum = float(weights.sum())
-                outcome[is_considered_idx] = round_(outcome[is_considered_idx] + T * weights/weights_sum).astype('int32')
+                outcome[is_considered_idx] = round_(outcome[is_considered_idx] + T * (weights/weights_sum)).astype('int32')
                 if capacity_attribute is None:
                     break
                 diff = outcome[is_considered_idx] - C[is_considered_idx]
