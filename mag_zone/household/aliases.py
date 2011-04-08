@@ -18,5 +18,6 @@
 aliases = [
     'mpa_id = household.disaggregate(building.disaggregate(zone.mpa_id))',
     'raz_id = household.disaggregate(building.disaggregate(zone.raz_id))',
+    'age_of_the_youngest = household.aggregate(person.age, function=minimum)',
     'county_id = household.disaggregate(building.disaggregate(zone.county_id))'
            ]
