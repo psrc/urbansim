@@ -3,11 +3,10 @@
 # See opus_core/LICENSE
 
 import os
-
 from lxml.etree import Element, SubElement, ElementTree
 from PyQt4.QtCore import QString, QFileInfo
 from PyQt4.QtGui import QMenu, QCursor, QFileDialog
-
+from opus_gui.util.exception_formatter import formatExceptionInfo
 from opus_gui.main.controllers.dialogs.message_box import MessageBox
 from opus_gui.data_manager.data_manager_functions import *
 from opus_core.configurations.xml_configuration import XMLConfiguration
@@ -207,9 +206,10 @@ class XmlController_DataTools(XmlController):
             print e
             MessageBox.error(mainwindow = self.view,
                 text = 'Invalid module name',
-                detailed_text = ('This tool points to a module named "%s" '
-                    'but there is no module with that name, or module returned import error.' %
-                    import_path))
+                detailed_text = ('This tool points to a module named "%s", ' % import_path + \
+                                 'but there is no module with that name, or module returned import error: %s. ' \
+                                 % formatExceptionInfo() 
+                                 ))
             return
 
         window = ExecuteToolGui(parent_widget = self.manager.base_widget,
@@ -265,7 +265,7 @@ class XmlController_DataTools(XmlController):
             hooked_tool_name = str(hook_node.text or '').strip()
             hooked_tool_node = get_tool_node_by_name(self.project, hooked_tool_name)
             module_name = hooked_tool_node.find('class_module').text
-
+            
             try:
                 module_name = hooked_tool_node.find('class_module').text
                 tool_path = get_path_to_tool_modules(self.project)
@@ -276,9 +276,10 @@ class XmlController_DataTools(XmlController):
             except Exception, e:
                 MessageBox.error(mainwindow = self.view,
                     text = 'Invalid module name',
-                    detailed_text = ('This tool points to a module named "%s" '
-                    'but there is no module with that name, or module returned import error.' %
-                    import_path))
+                    detailed_text = ('This tool points to a module named "%s", ' % import_path + \
+                                     'but there is no module with that name, or module returned import error: %s. ' \
+                                     % formatExceptionInfo() 
+                                     ))
                 return
 
         ExecuteToolSetGui(get_mainwindow_instance(),
