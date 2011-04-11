@@ -10,7 +10,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.misc import unique
+from opus_core.misc import unique, write_to_text_file
 from opus_core.model import Model
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
@@ -36,8 +36,6 @@ class FltStorage:
         return storage
     
 class AssignBuildingsToJobs:
-    minimum_sqft = UnrollJobsFromEstablishments.minimum_sqft
-    maximum_sqft = UnrollJobsFromEstablishments.maximum_sqft
     
     def run(self, job_dataset, dataset_pool, out_storage=None, jobs_table="jobs"):
         """
@@ -66,13 +64,15 @@ class AssignBuildingsToJobs:
         """
         parcel_ids = job_dataset.get_attribute("parcel_id")
         building_ids = job_dataset.get_attribute("building_id")
-        home_base_status = job_dataset.get_attribute("home_base_status")
+        home_base_status = job_dataset.get_attribute("home_based_status")
         sectors = job_dataset.get_attribute("sector_id")
         
         is_considered = logical_and(parcel_ids > 0, building_ids <= 0) # jobs that have assigned parcel but not building
         job_index_home_based = where(logical_and(is_considered, home_base_status == 0))[0]
-        is_governmental_job = logical_or(sectors == 18, sectors == 19)
+        is_governmental_job = sectors == 18
+        is_edu_job = sectors == 19
         job_index_governmental = where(logical_and(is_considered, is_governmental_job))[0]
+        job_index_edu = where(logical_and(is_considered, is_edu_job))[0]
         
         building_dataset = dataset_pool.get_dataset('building')
         parcel_ids_in_bldgs = building_dataset.get_attribute("parcel_id")
@@ -81,64 +81,100 @@ class AssignBuildingsToJobs:
         
         non_res_sqft = building_dataset.get_attribute("non_residential_sqft")
 
-        is_governmental = building_dataset.compute_variables(["building.disaggregate(building_type.generic_building_type_id == 7)"],
+        preferred_nhb_btypes =   (building_dataset['building.building_type_id'] == 3) + \
+                                (building_dataset['building.building_type_id'] == 8) + \
+                                (building_dataset['building.building_type_id'] == 13) + \
+                                (building_dataset['building.building_type_id'] == 20) + \
+                                (building_dataset['building.building_type_id'] == 21)
+        non_res_sqft_preferred =  non_res_sqft  * preferred_nhb_btypes              
+                                          
+        is_governmental = building_dataset.compute_variables([
+            "numpy.logical_and(building.disaggregate(building_type.generic_building_type_id == 7), building.building_type_id <> 18)"],
                                                                      dataset_pool=dataset_pool)
+        idx_gov = where(is_governmental)[0]
+        is_edu = building_dataset['building.building_type_id'] == 18
+        idx_edu = where(is_edu)[0]
+        
+        bldgs_is_residential = logical_and(logical_not(logical_or(is_governmental, is_edu)), 
+                                           building_dataset.compute_variables(["urbansim_parcel.building.is_residential"], 
+                                                           dataset_pool=dataset_pool))
+        
+        bldgs_isnot_residential = logical_not(bldgs_is_residential)
+        
+        # assign buildings to educational jobs randomly
+        unique_parcels = unique(parcel_ids[job_index_edu])
+        logger.log_status("Placing educational jobs ...")
+        for parcel in unique_parcels:
+            idx_in_bldgs = where(parcel_ids_in_bldgs[idx_edu] == parcel)[0]
+            if idx_in_bldgs.size <= 0:
+                continue
+            idx_in_jobs = where(parcel_ids[job_index_edu] == parcel)[0]
+            draw = sample_replace(idx_in_bldgs, idx_in_jobs.size)
+            building_ids[job_index_edu[idx_in_jobs]] = bldg_ids_in_bldgs[idx_edu[draw]]
+        logger.log_status("%s educational jobs (out of %s edu. jobs) were placed." % (
+                                        (building_ids[job_index_edu]>0).sum(), job_index_edu.size))
         
         # assign buildings to governmental jobs randomly
         unique_parcels = unique(parcel_ids[job_index_governmental])
         logger.log_status("Placing governmental jobs ...")
         for parcel in unique_parcels:
-            idx_in_bldgs = where(parcel_ids_in_bldgs[is_governmental] == parcel)[0]
+            idx_in_bldgs = where(parcel_ids_in_bldgs[idx_gov] == parcel)[0]
             if idx_in_bldgs.size <= 0:
                 continue
             idx_in_jobs = where(parcel_ids[job_index_governmental] == parcel)[0]
             draw = sample_replace(idx_in_bldgs, idx_in_jobs.size)
-            building_ids[job_index_governmental[idx_in_jobs]] = bldg_ids_in_bldgs[where(is_governmental)[0][draw]]
+            building_ids[job_index_governmental[idx_in_jobs]] = bldg_ids_in_bldgs[idx_gov[draw]]
         logger.log_status("%s governmental jobs (out of %s gov. jobs) were placed." % (
-                                                                (building_ids[job_index_governmental]>0).sum(),
-                                                                 job_index_governmental.size))
-        logger.log_status("The not-placed governmental jobs will be added to the non-home based jobs.")
+                        (building_ids[job_index_governmental]>0).sum(), job_index_governmental.size))
+        logger.log_status("The unplaced governmental jobs will be added to the non-home based jobs.")
+        
+        #tmp = unique(parcel_ids[job_index_governmental][building_ids[job_index_governmental]<=0])
+        #output_dir =  "/Users/hana"
+        #write_to_text_file(os.path.join(output_dir, 'parcels_with_no_gov_bldg.txt'), tmp, delimiter='\n')
         
         # consider the unplaced governmental jobs together with other non-home-based jobs
         is_now_considered = logical_and(is_considered, building_ids <= 0)
-        job_index_non_home_based = where(logical_and(is_now_considered, logical_or(home_base_status == 1, is_governmental_job)))[0]
+        job_index_non_home_based = where(logical_and(is_now_considered, logical_or(home_base_status == 0, is_governmental_job)))[0]
                                     
         # assign buildings to non_home_based jobs based on available space
         unique_parcels = unique(parcel_ids[job_index_non_home_based])
-        job_building_types = job_dataset.compute_variables(["bldgs_building_type_id = job.disaggregate(building.building_type_id)"], 
-                                                           dataset_pool=dataset_pool)
-        where_valid_jbt = where(logical_and(job_building_types>0, logical_or(home_base_status == 1, is_governmental_job)))[0]
-
-        unique_sectors = unique(sectors)
-
-        job_dataset._compute_if_needed("urbansim_parcel.job.zone_id", dataset_pool=dataset_pool) 
-        jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
-        
         # iterate over parcels
         logger.log_status("Placing non-home-based jobs ...")
+        nhb_not_placed = 0
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             if idx_in_bldgs.size <= 0:
                 continue
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
-            weights = non_res_sqft[idx_in_bldgs] # sample proportionally to the building size
-            draw = probsample_replace(idx_in_bldgs, idx_in_jobs.size, resize(weights/weights.sum()))
-            building_ids[job_index_non_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
+            # sample proportionally to the building size
+            weights = non_res_sqft_preferred[idx_in_bldgs] # 1.preference: preferred building types with non-res sqft 
+            if weights.sum() <= 0:
+                weights = preferred_nhb_btypes[idx_in_bldgs] # 2.preference: preferred building types
+                if weights.sum() <= 0:
+                    weights = non_res_sqft[idx_in_bldgs] # 3.preference: any building with non-res sqft 
+                    if weights.sum() <= 0: 
+                        weights = bldgs_isnot_residential[idx_in_bldgs] # 4.preference: any non-res building
+                        if weights.sum() <= 0: 
+                            nhb_not_placed = nhb_not_placed + idx_in_jobs.size
+                            continue
+            draw = probsample_replace(idx_in_bldgs, idx_in_jobs.size, weights/float(weights.sum()))
+            building_ids[job_index_non_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[draw]
             
-        logger.log_status("%s non home based jobs (out of %s nhb jobs) were placed." % (
+        logger.log_status("%s non home based jobs (out of %s nhb jobs) were placed. No capacity in buildings for %s jobs." % (
                                                                 (building_ids[job_index_non_home_based]>0).sum(),
-                                                                 job_index_non_home_based.size))
+                                                                 job_index_non_home_based.size, nhb_not_placed))
         
         job_dataset.modify_attribute(name="building_id", data = building_ids)
         
         # re-classify unplaced non-home based jobs to home-based if parcels contain residential buildings
-        bldgs_is_residential = logical_and(logical_not(is_governmental), building_dataset.compute_variables(["urbansim_parcel.building.is_residential"], 
-                                                           dataset_pool=dataset_pool))
+
         is_now_considered = logical_and(parcel_ids > 0, building_ids <= 0)
-        job_index_non_home_based_unplaced = where(logical_and(is_now_considered, home_base_status == 0))[0]
+        job_index_non_home_based_unplaced = where(logical_and(is_now_considered, 
+                                               logical_and(home_base_status == 0, logical_not(is_governmental_job))))[0]
         unique_parcels = unique(parcel_ids[job_index_non_home_based_unplaced])
 
         logger.log_status("Try to reclassify non-home-based jobs (excluding governmental jobs) ...")
+        nhb_reclass = 0
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             if idx_in_bldgs.size <= 0:
@@ -146,47 +182,22 @@ class AssignBuildingsToJobs:
             idx_in_jobs = where(parcel_ids[job_index_non_home_based_unplaced] == parcel)[0]
             where_residential = where(bldgs_is_residential[idx_in_bldgs])[0]
             if where_residential.size > 0:
-                home_base_status[job_index_non_home_based_unplaced[idx_in_jobs]] = 1 # set to home-based jobs
-            elif non_res_sqft[idx_in_bldgs].sum() <= 0:
-                # impute non_residential_sqft and assign buildings
-                this_jobs_sectors = sectors[job_index_non_home_based_unplaced][idx_in_jobs]
-                this_jobs_sqft_table = resize(jobs_sqft[idx_in_jobs], (idx_in_bldgs.size, idx_in_jobs.size))
-                wn = jobs_sqft[idx_in_jobs] <= 0
-                for i in range(idx_in_bldgs.size):
-                    this_jobs_sqft_table[i, where(wn)[0]] = zone_bt_lookup[jobs_zones[idx_in_jobs[wn]], bldg_types_in_bldgs[idx_in_bldgs[i]]]
-                probcomb = zeros(this_jobs_sqft_table.shape)
-                bt = bldg_types_in_bldgs[idx_in_bldgs]
-                ibt = building_type_dataset.get_id_index(bt)
-                for i in range(probcomb.shape[0]):
-                    for j in range(probcomb.shape[1]):
-                        probcomb[i,j] = sector_bt_distribution[sector_index_mapping[this_jobs_sectors[j]],ibt[i]]
-                for ijob in range(probcomb.shape[1]):
-                    if (probcomb[:,ijob].sum() <= 0) or (impute_sqft_flags[job_index_non_home_based_unplaced[ijob]] == 0):
-                        continue
-                    weights = probcomb[:,ijob]
-                    draw = probsample_noreplace(arange(probcomb.shape[0]), 1, resize(weights/weights.sum(), (probcomb.shape[0],)))
-                    non_res_sqft[idx_in_bldgs[draw]] += this_jobs_sqft_table[draw,ijob]
-                    imputed_sqft += this_jobs_sqft_table[draw,ijob]
-                    building_ids[job_index_non_home_based_unplaced[idx_in_jobs[ijob]]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
-                    new_jobs_sqft[job_index_non_home_based[idx_in_jobs[ijob]]] = int(min(self.maximum_sqft, max(round(this_jobs_sqft_table[draw,ijob]), 
-                                                                                     self.minimum_sqft)))
-                    
-        building_dataset.modify_attribute(name="non_residential_sqft", data = non_res_sqft)
-        job_dataset.modify_attribute(name="building_id", data = building_ids)
-        job_dataset.modify_attribute(name="home_base_status", data = home_base_status)
-        job_dataset.modify_attribute(name="sqft", data = new_jobs_sqft)
+                #home_base_status[job_index_non_home_based_unplaced[idx_in_jobs]] = 1 # set to home-based jobs
+                nhb_reclass = nhb_reclass + idx_in_jobs.size
+            else:
+                draw = sample_replace(idx_in_bldgs, idx_in_jobs.size)
+                #building_ids[job_index_non_home_based_unplaced[idx_in_jobs]] = bldg_ids_in_bldgs[draw]
+
+        #job_dataset.modify_attribute(name="home_base_status", data = home_base_status)
+        #job_dataset.modify_attribute(name="building_id", data = building_ids)
         
-        old_nhb_size = job_index_non_home_based.size
         job_index_home_based = where(logical_and(is_considered, home_base_status == 1))[0]
-        job_index_non_home_based = where(logical_and(is_considered, home_base_status == 0))[0]
-        logger.log_status("%s non-home based jobs reclassified as home-based." % (old_nhb_size-job_index_non_home_based.size))
-        logger.log_status("%s non-residential sqft imputed." % imputed_sqft)
-        logger.log_status("Additionaly, %s non home based jobs were placed due to imputed sqft." % \
-                                                (building_ids[job_index_non_home_based_unplaced]>0).sum())
+        logger.log_status("%s non-home based jobs reclassified as home-based." % nhb_reclass)
+
         # home_based jobs
         unique_parcels = unique(parcel_ids[job_index_home_based])
         capacity_in_buildings = building_dataset.compute_variables([
-                          "urbansim_parcel.building.vacant_home_based_job_space"],
+                          "clip_to_zero(urbansim_parcel.building.total_home_based_job_space-building.aggregate(job.home_based_status==1))"],
                              dataset_pool=dataset_pool)
         parcels_with_exceeded_capacity = []
         # iterate over parcels
@@ -228,25 +239,16 @@ class AssignBuildingsToJobs:
         idx_bt_missing = where(home_base_status <= 0)[0]
         if idx_bt_missing.size > 0:
             # sample building types
-            sample_bt = probsample_replace(array([1,2]), idx_bt_missing.size, 
+            sample_bt = probsample_replace(array([1,0]), idx_bt_missing.size, 
                array([idx_home_based.size, idx_non_home_based.size])/float(idx_home_based.size + idx_non_home_based.size))
             # coerce to int32 (on a 64 bit machine, sample_bt will be of type int64)
             home_base_status[idx_bt_missing] = sample_bt.astype(int32)
-            job_dataset.modify_attribute(name="home_base_status", data = home_base_status) 
+            job_dataset.modify_attribute(name="home_based_status", data = home_base_status) 
         
         if out_storage is not None:
             job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
-            building_dataset.write_dataset(out_table_name='buildings', out_storage=out_storage, attributes=AttributeType.PRIMARY)
         logger.log_status("Assigning building_id to jobs done.")
 
-        
-class RunAssignBldgsToJobs(Model):
-    model_name = 'Assigning Buildings To Jobs'
-    
-    def run(self, job_dataset, dataset_pool):
-        AssignBuildingsToJobs().run(job_dataset, dataset_pool)
-        ds = CreateBuildingSqftPerJobDataset()._do_run(dataset_pool)
-        dataset_pool.replace_dataset('building_sqft_per_job', ds)
         
 if __name__ == '__main__':
     # Uncomment the right instorage and outstorage.
@@ -258,8 +260,8 @@ if __name__ == '__main__':
     output_cache = "/Users/hana/urbansim_cache/psrc/data_preparation/stepIV"
     input_cache =  "/workspace/work/psrc/unroll_jobs/unroll_jobs_from_establishments_cache"
     output_cache = "/workspace/work/psrc/unroll_jobs/output"
-    input_cache =  "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/2000_jobs_from_establishments"
-    output_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/2000_assigned_jobs"
+    input_cache =  "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/revised/2000_jobs_from_establishments"
+    output_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/revised/2000_assigned_jobs"
     #instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     instorage = FltStorage().get(input_cache)

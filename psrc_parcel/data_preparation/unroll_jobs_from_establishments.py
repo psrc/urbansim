@@ -222,17 +222,20 @@ if __name__ == '__main__':
     #input_database_name = "psrc_2005_data_workspace_hana"
     #output_database_name = "psrc_2005_parcel_baseyear_data_prep_start"
     output_database_name = "psrc_2005_parcel_baseyear_data_prep_business_zip"
-    input_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/2000"
-    output_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/2000_jobs_from_establishments"
+    input_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/revised/2000"
+    output_cache = "/Users/hana/workspace/data/psrc_parcel/jobsdataprep/revised/2000_jobs_from_establishments"
     #instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     
     unrolling_businesses_with_zipcode = False # set this True for unrolling businesses that have zip codes (instead of zone, parcels and buildings) 
+    create_bldg_sqft_per_job_table = False
     
     if not unrolling_businesses_with_zipcode:
         UnrollJobsFromEstablishments().run(instorage, outstorage, business_table=business_table, control_totals_table=control_totals_table)
-        CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
     else:
         UnrollJobsFromEstablishmentsWithZipcode().run(instorage, outstorage, business_table=business_table, control_totals_table=None)
+
+    if create_bldg_sqft_per_job_table:
+        CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
