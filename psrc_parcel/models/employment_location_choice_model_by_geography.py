@@ -22,6 +22,7 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
         geographies_of_agents = agent_set.get_attribute(self.geography_id_name)
         orig_filter = self.filter
         for geography_id in geography_ids:
+        #for geography_id in [545]:
             new_index = where(logical_and(cond_array, geographies_of_agents == geography_id))[0]
             if orig_filter is not None:
                 self.filter = "(building.%s == %s) * %s" % (self.geography_id_name, geography_id, orig_filter)
@@ -33,6 +34,6 @@ class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()
         # set the right parcels
-        parcels = agent_set.compute_variables(["job.disaggregate(building.parcel_id)"],
-                                              dataset_pool = self.dataset_pool)
-        agent_set.modify_attribute(name="parcel_id", data = parcels)
+        #parcels = agent_set.compute_variables(["job.disaggregate(building.parcel_id)"],
+        #                                      dataset_pool = self.dataset_pool)
+        #agent_set.modify_attribute(name="parcel_id", data = parcels)
