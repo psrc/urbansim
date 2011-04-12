@@ -1,0 +1,55 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+  	<project_name type="string">simplest_project</project_name>
+  </general>
+  <scenario_manager>
+    <scenario executable="True" name="simple_scenario" type="scenario">
+      <model_system type="string">opus_core.model_coordinators.model_system</model_system>
+      <base_year type="integer">1980</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">1981</firstyear>
+        <lastyear type="integer">1982</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable name="simple_model" type="selectable">True</selectable>
+      </models_to_run>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">simple_project/runs</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_core" type="directory">data/test_cache/</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['opus_core']</argument>
+      </dataset_pool_configuration>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="household" type="selectable">True</selectable>
+      </datasets_to_preload>    
+	</scenario>
+  </scenario_manager>
+  <model_manager>
+  	<models hidden="False" name="Models">
+      <model name="simple_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">household</argument>
+            <argument name="expression" parser_action="quote_string" type="string">household.income*1.03</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+  	</models>
+  	<templates hidden="True"/>
+  </model_manager>
+</opus_project>
