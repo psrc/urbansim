@@ -36,6 +36,66 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="transient_households_in_residential_units_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.allocation_model</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_residential_units</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">building.residential_units</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">transient_households_in_residential_units</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_residential_units_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="transient_households_in_hotels_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.allocation_model</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_hotels</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">hotel_motel_rooms</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">transient_households_in_hotels</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_hotels_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
       <model name="household_transition_model_with_growth_threshold" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
