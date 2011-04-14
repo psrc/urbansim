@@ -32,7 +32,7 @@
       <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
       <argument name="package_order" type="list">['mag_zone', 'urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
     </dataset_pool_configuration>
-    <available_datasets type="list">['building','person','household_x_building','household','zone','raz','mpa','gridcell','city','county','alldata','job','business','travel_data']</available_datasets>
+    <available_datasets type="list">['raz2011','razi03','development_project','building','person','household_x_building','household','zone','raz','mpa','gridcell','city','county','alldata','job','business','travel_data']</available_datasets>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">

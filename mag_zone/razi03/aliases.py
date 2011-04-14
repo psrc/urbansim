@@ -16,9 +16,5 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-    "skyharbor_enplanement_capacity = (building.other_spaces_name=='skyharbor_enplanement_capacity')*(building.other_spaces)",
-    "williamsgateway_enplanement_capacity = (building.other_spaces_name=='williamsgateway_enplanement_capacity')*(building.other_spaces)",
-    "hotel_motel_rooms = (building.other_spaces_name=='hotel_motel_rooms')*(building.other_spaces)",
-    "is_developing_type = (building.building_type_id==1)+(building.building_type_id==2)+(building.building_type_id==3)+(building.building_type_id==4)+(building.building_type_id==5)",
            ]
 
