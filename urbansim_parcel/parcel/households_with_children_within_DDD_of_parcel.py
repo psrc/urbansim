@@ -2,35 +2,13 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from numpy import zeros
-from numpy import array
-from scipy.spatial import KDTree
-from numpy import column_stack
+from abstract_variable_within_radius_DDD_of_parcel import abstract_variable_within_radius_DDD_of_parcel
 
-class households_with_children_within_DDD_of_parcel(Variable):
+class households_with_children_within_DDD_of_parcel(abstract_variable_within_radius_DDD_of_parcel):
     """total number of households with children>0 within radius DDD of parcel"""
     _return_type = "int32"
-
-    def __init__(self, radius):
-        self.radius = radius
-        Variable.__init__(self)
     
-    def dependencies(self):
-        return [my_attribute_label("x_coord_sp"),
-                my_attribute_label("y_coord_sp"),
-                "urbansim_parcel.household.parcel_id",
-                "_hh_wchildren=parcel.aggregate(household.children>0)"
-                ]
-
-    def compute(self, dataset_pool):
-        parcels = self.get_dataset()
-        arr = parcels['_hh_wchildren']
-        coords = column_stack( (parcels["x_coord_sp"], parcels["y_coord_sp"]) )
-        kd_tree = KDTree(coords, 100)
-        results = kd_tree.query_ball_tree(kd_tree, self.radius)
-        return array(map(lambda l: arr[l].sum(), results))
+    quantity = "_hh_wchildren=parcel.aggregate(household.children>0)"
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
