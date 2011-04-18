@@ -27,8 +27,8 @@ class jobs_of_sector_DDD_within_DDD_of_parcel(Variable):
 
     def compute(self, dataset_pool):
         parcels = self.get_dataset()
-        arr = self.get_dataset()["_njobs_of_sector_%s" % self.sector_id]
-        coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
+        arr = parcels["_njobs_of_sector_%s" % self.sector_id]
+        coords = column_stack( (parcels["x_coord_sp"], parcels["y_coord_sp"]) )
         kd_tree = KDTree(coords, 100)
         results = kd_tree.query_ball_tree(kd_tree, self.radius)
         return array(map(lambda l: arr[l].sum(), results))
