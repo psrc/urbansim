@@ -79,6 +79,10 @@ class AllocationModel(Model):
             it = 1
             while True:
                 is_considered_idx = where(is_considered)[0]
+                # Make sure to jump out of the loop when no index is considered, or else cause the index out of boundary error in cum_prob[-1]
+                if is_considered_idx.size < 1:
+                    break
+                # End of Make sure
                 weights = all_weights[is_considered_idx]
                 weights_sum = float(weights.sum())
                 # Add: Do the prob sample for exact match --Hanyi
@@ -182,11 +186,11 @@ class AllocationModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(result[self.jobs.get_attribute('zone_id')==3].sum() == 1000, True)
         #check if resulting proportions correspond to weights
         res = result[self.jobs.get_attribute('zone_id')==1]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.25), True)
         res = result[self.jobs.get_attribute('zone_id')==2]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([1, 5, 9, 8])/23.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([1, 5, 9, 8])/23.0, rtol=0.25), True)
         res = result[self.jobs.get_attribute('zone_id')==3]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([3, 7, 2])/12.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([3, 7, 2])/12.0, rtol=0.25), True)
         
         # add quantity to results from previous year
         result_2005 = result.copy()
@@ -199,11 +203,11 @@ class AllocationModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(result[self.jobs.get_attribute('zone_id')==3].sum() == 2000, True)
         #check if resulting proportions correspond to weights
         res = result[self.jobs.get_attribute('zone_id')==1]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.25), True)
         res = result[self.jobs.get_attribute('zone_id')==2]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([1, 5, 9, 8])/23.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([1, 5, 9, 8])/23.0, rtol=0.25), True)
         res = result[self.jobs.get_attribute('zone_id')==3]
-        self.assertEqual(ma.allclose(res/float(res.sum()), array([3, 7, 2])/12.0, rtol=0.01), True)
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([3, 7, 2])/12.0, rtol=0.25), True)
         
     def test_allocation_with_capacity(self):
         model = AllocationModel()
