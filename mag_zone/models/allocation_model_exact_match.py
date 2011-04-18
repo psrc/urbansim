@@ -10,6 +10,7 @@ from numpy import where, ones, zeros, logical_and, clip, round_
 # Add: Import some numpy functions for prob sample --Hanyi
 from numpy import searchsorted, cumsum, float64, array
 from numpy.random import uniform
+import sys
 # End
 
 class AllocationModel(Model):
@@ -31,6 +32,7 @@ class AllocationModel(Model):
         If add_quantity is True and the 'outcome_attribute' exists in dataset, the resulting values are added to the current values of 
         'outcome_attribute'.
         """
+        python_version = '2.%s' % (sys.version_info[1])
         ct_attr = control_totals.get_known_attribute_names()
         if year_attribute not in ct_attr:
             raise StandardError, "Year attribute '%s' must be a known attribute of the control totals dataset." % year_attribute
@@ -87,28 +89,29 @@ class AllocationModel(Model):
                 sampled_index = sampled_index.astype('int32')
                 # due to precision problems, searchsorted could return index = cum_prob.size
                 sampled_index = clip(sampled_index, 0, cum_prob.size-1)
-                # Start: Python 2.6 version
-                count = zeros(prob_array.size).astype('int32')
-               
-                for i in range(0,prob_array.size):
-                    sub_indx = where(sampled_index==i)[0]
-                    count[i] = sub_indx.size
-                # End: Python 2.6 version
-                # Start: Python 2.7 version
-#                from collections import Counter
-#                dict_count_ini = dict([(x,0) for x in range(prob_array.size)])
-##                # Alternative init dict method
-##                from numpy import arange
-##                dict_count_ini_keys = arange(prob_array.size).astype('int32')
-##                dict_count_ini_values = zeros(prob_array.size).astype('int32')
-##                dict_count_ini = dict(zip(dict_count_ini_keys, dict_count_ini_values))
-##                # Alternative End
-#                dict_count = Counter(sampled_index)
-#                dict_count_ini.update(dict(dict_count))
-#                count = array(dict(sorted(dict_count_ini.items())).values())
-                # End: Python 2.7 version
+                if python_version == '2.6':
+                    # Start: Python 2.6 version
+                    count = zeros(prob_array.size).astype('int32')
+                   
+                    for i in range(0,prob_array.size):
+                        sub_indx = where(sampled_index==i)[0]
+                        count[i] = sub_indx.size
+                    # End: Python 2.6 version
+                elif python_version == '2.7':
+                    # Start: Python 2.7 version
+                    from collections import Counter
+                    dict_count_ini = dict([(x,0) for x in range(prob_array.size)])
+                    ## Alternative init dict method
+                    #from numpy import arange
+                    #dict_count_ini_keys = arange(prob_array.size).astype('int32')
+                    #dict_count_ini_values = zeros(prob_array.size).astype('int32')
+                    #dict_count_ini = dict(zip(dict_count_ini_keys, dict_count_ini_values))
+                    ## Alternative End
+                    dict_count = Counter(sampled_index)
+                    dict_count_ini.update(dict(dict_count))
+                    count = array(dict(sorted(dict_count_ini.items())).values())
+                    # End: Python 2.7 version
                 
-
                 outcome[is_considered_idx] = outcome[is_considered_idx] + count
                 # End
                 # Comment out the line below --Hanyi
