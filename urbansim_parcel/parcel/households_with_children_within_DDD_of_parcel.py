@@ -21,11 +21,12 @@ class households_with_children_within_DDD_of_parcel(Variable):
         return [my_attribute_label("x_coord_sp"),
                 my_attribute_label("y_coord_sp"),
                 "urbansim_parcel.household.parcel_id",
+                "_hh_wchildren=parcel.aggregate(household.children>0)"
                 ]
 
     def compute(self, dataset_pool):
         parcels = self.get_dataset()
-        arr = self.get_dataset().compute_variables(['parcel.aggregate(household.children>0)'], dataset_pool=dataset_pool)
+        arr = self.get_dataset()['_hh_wchildren']
         coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         kd_tree = KDTree(coords, 100)
         results = kd_tree.query_ball_tree(kd_tree, self.radius)

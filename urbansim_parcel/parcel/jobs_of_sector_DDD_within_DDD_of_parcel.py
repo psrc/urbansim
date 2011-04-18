@@ -21,12 +21,13 @@ class jobs_of_sector_DDD_within_DDD_of_parcel(Variable):
     def dependencies(self):
         return [my_attribute_label("x_coord_sp"),
                 my_attribute_label("y_coord_sp"),
-                "urbansim_parcel.job.parcel_id"
+                "urbansim_parcel.job.parcel_id",
+                "_njobs_of_sector_%s = parcel.aggregate(job.sector_id==%s)" % (self.sector_id, self.sector_id)
                 ]
 
     def compute(self, dataset_pool):
         parcels = self.get_dataset()
-        arr = self.get_dataset().compute_variables(['parcel.aggregate(job.sector_id==%s)' % self.sector_id], dataset_pool=dataset_pool)
+        arr = self.get_dataset()["_njobs_of_sector_%s" % self.sector_id]
         coords = column_stack( (parcels.get_attribute("x_coord_sp"), parcels.get_attribute("y_coord_sp")) )
         kd_tree = KDTree(coords, 100)
         results = kd_tree.query_ball_tree(kd_tree, self.radius)
