@@ -27,8 +27,13 @@ class RunMalta(AbstractTravelModel):
                             ).communicate()
         except:
             print "Error occured when running MALTA"
-            raise        
-	    
+            raise
+        
+        if stderr:
+            print "Error occured when running OpenAMOS"
+            print stderr
+            sys.exit(1)
+            
 if __name__ == "__main__":
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file

@@ -17,11 +17,14 @@ class RunOpenamos(AbstractTravelModel):
         """
         
         tm_config = config['travel_model_configuration']
-        xml_config = tm_config.get("openamos_project")
+        xml_config = tm_config.get("openamos_configuration")
+        processes = tm_config.get("number_of_processes_to_spawn_for_openamos", 1)
         if tm_config.has_key("openamos_module"):
-            python_cmd = "python -m %s %s" % (tm_config["openamos_module"], xml_config)
+            python_cmd = "%s -m %s %s %s" % (sys.executable, tm_config["openamos_module"], xml_config, processes)
+        elif tm_config.has_key("openamos_path"):
+            python_cmd = "%s %s %s %s" % (sys.executable, tm_config["openamos_path"], xml_config, processes)
         else:
-            python_cmd = "%s %s %s" % (sys.executable, tm_config["openamos_path"], xml_config)
+            raise ValueError("Either openamos_module or openamos_path needs to be specified in travel_model_configuration.")
             
         logger.log_status("Start OpenAMOS...")
         #print python_cmd
