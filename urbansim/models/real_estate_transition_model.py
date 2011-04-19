@@ -49,7 +49,7 @@ class RealEstateTransitionModel(Model):
             append_to_realestate_dataset = False,
             table_name = "development_projects",
             dataset_name = "development_project",
-            id_name = [],
+            id_name = 'development_project_id',
             **kwargs):
         """         
         sample_filter attribute/variable indicates which records in the dataset are eligible in the sampling for removal or cloning
@@ -204,15 +204,19 @@ class RealEstateTransitionModel(Model):
                 else:
                     result_data[attribute] = sample_from_dataset.get_attribute_by_index(attribute, sampled_index)
         
+            if id_name and result_data and id_name not in result_data:
+                result_data[id_name] = arange(sampled_index.size, dtype='int32') + 1
+        
             storage = StorageFactory().get_storage('dict_storage')
             storage.write_table(table_name=table_name, table_data=result_data)
-    
+            
             result_dataset = Dataset(id_name = id_name,
                                       in_storage = storage,
                                       in_table_name = table_name,
                                       dataset_name = dataset_name
                                       )
             index = arange(result_dataset.size())
+        
             
         if append_to_realestate_dataset:
             if len(result_data) > 0:
