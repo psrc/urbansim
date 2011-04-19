@@ -60,6 +60,7 @@ variables_for_development_project_proposal = {
       "lnsqftunit": 'ln_bounded(safe_array_divide(urbansim_parcel.development_project_proposal.building_sqft, (urbansim_parcel.development_project_proposal.units_proposed).astype(float32)))',
       "lnlotsqftunit": "ln_bounded(safe_array_divide(development_project_proposal.disaggregate(parcel.parcel_sqft), (urbansim_parcel.development_project_proposal.units_proposed).astype(float32)))",
       "ln_invfar": "ln_bounded(safe_array_divide(development_project_proposal.disaggregate(parcel.parcel_sqft), (urbansim_parcel.development_project_proposal.building_sqft).astype(float32)))",
+      'lnunits': 'ln_bounded((urbansim_parcel.development_project_proposal.units_proposed).astype(float32))'
     }
 
 specification = {
