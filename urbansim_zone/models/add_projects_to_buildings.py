@@ -29,7 +29,6 @@ class AddProjectsToBuildings(Model):
             return building_dataset
 
         if flush_developmentproject_dataset:
-            #developmentproject_dataset.flush_dataset(out_storage=building_dataset.attribute_cache)
             developmentproject_dataset.flush_dataset()
 
         is_placed_project = ones(developmentproject_dataset.size(), dtype='bool')
