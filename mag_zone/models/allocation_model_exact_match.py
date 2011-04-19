@@ -14,7 +14,7 @@ import sys
 # End
 
 class AllocationModel(Model):
-    """ Model allocates given quantity according to weights while meeting capacity restrictions.
+    """ Model allocates given quantity according to weights while meeting capacity restrictions.  This model differs from the one in opus_core.models in the respect that this one allocates the exact control total.
     """
     model_name = "Allocation Model"
 

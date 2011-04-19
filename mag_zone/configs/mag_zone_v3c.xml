@@ -36,10 +36,149 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="household_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"/>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"/>
+            <argument name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="construction_jobs_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">bldg_sqft_constructed_this_year</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_construction_jobs_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="williamsgateway_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">williamsgateway_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_enplanement_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="skyharbor_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">skyharbor_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">skyharbor_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string">skyharbor_enplanement_capacity</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_enplanement_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="scheduled_capacity_events_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.scheduled_events_model</class_module>
+            <class_name>ScheduledEventsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ScheduledEventsModel</name>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Scheduled Capacity Events Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">SCEM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="scheduled_events_table" parser_action="quote_string" type="string">scheduled_capacity_events</argument>
+            <argument name="scheduled_events_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
       <model name="transient_households_in_residential_units_allocation_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">opus_core.allocation_model</class_module>
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
             <class_name type="string">AllocationModel</class_name>
           </import>
           <init type="dictionary">
@@ -69,7 +208,7 @@
       <model name="transient_households_in_hotels_allocation_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
-            <class_module type="string">opus_core.allocation_model</class_module>
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
             <class_name type="string">AllocationModel</class_name>
           </import>
           <init type="dictionary">
@@ -312,7 +451,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
@@ -335,7 +474,7 @@
             <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string"/>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string">mag_zone.building.is_developing_type</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
@@ -409,7 +548,7 @@
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
-            <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
             <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
             <argument name="filter" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units&gt;0</argument>
             <argument convert_blank_to_none="True" name="estimation_weight_string" parser_action="quote_string" type="string"/>
@@ -593,10 +732,7 @@
         <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
         <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
         <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
-        <selectable name="household_transition_model" type="selectable">True</selectable>
-        <!--
-        <selectable name="household_transition_model_with_growth_threshold" type="selectable">True</selectable>
-        -->      
+        <selectable name="household_transition_model" type="selectable">True</selectable>   
         <selectable name="employment_transition_model" type="selectable">False</selectable>
         <selectable name="household_relocation_model" type="selectable">False</selectable>
         <selectable name="household_location_choice_model" type="selectable">False</selectable>
