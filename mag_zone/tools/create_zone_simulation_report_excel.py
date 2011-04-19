@@ -4,6 +4,7 @@
 
 from sqlalchemy import create_engine
 from datetime import datetime
+from easygui import multenterbox, multchoicebox
 import xlwt, os, sys
 
 class RegionWideReport():
@@ -26,7 +27,7 @@ class RegionWideReport():
             row_counter += 1
         self.column_counter += 1
 
-    def get_total_residential_units_by_year(self):
+    def get_total_DUs_by_year(self):
         # Get total residential units by year
         self.worksheet.write(0,self.column_counter,'total_units')
         row_counter = 1
@@ -39,7 +40,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_total_non_residential_sqft_by_year(self):
+    def get_total_nonres_sqft_by_year(self):
         # Get total residential units by year
         self.worksheet.write(0,self.column_counter,'total_nonres_sqft')
         row_counter = 1
@@ -52,76 +53,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_total_new_residential_units_by_year(self):
-        # Get total newly built residential units by year
-        self.worksheet.write(0,self.column_counter,'new_res_units')
-        years_and_totals = {}
-        for year in self.years:
-            print 'Computing total new residential units for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings' % (self.run_name,year))
-            for row in r:
-                years_and_totals[year] = row[0]
-            r.close()
-        new_units = []
-        for yr,total in years_and_totals.iteritems():
-            if yr == self.base_year:
-                new_units.append(0)
-            else:
-                diff = total-years_and_totals[yr-1]
-                new_units.append(diff)
-        row_counter = 1
-        for value in new_units:
-            self.worksheet.write(row_counter,self.column_counter,value)
-            row_counter += 1
-        self.column_counter += 1
-
-    def get_total_new_SF_residential_units_by_year(self):
-        # Get total newly built single family residential units by year
-        self.worksheet.write(0,self.column_counter,'new_SF_res_units')
-        years_and_totals = {}
-        for year in self.years:
-            print 'Computing total new SF residential units for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id = 1' % (self.run_name,year))
-            for row in r:
-                years_and_totals[year] = row[0]
-            r.close()
-        new_units = []
-        for yr,total in years_and_totals.iteritems():
-            if yr == self.base_year:
-                new_units.append(0)
-            else:
-                diff = total-years_and_totals[yr-1]
-                new_units.append(diff)
-        row_counter = 1
-        for value in new_units:
-            self.worksheet.write(row_counter,self.column_counter,value)
-            row_counter += 1
-        self.column_counter += 1
-
-    def get_total_new_MF_residential_units_by_year(self):
-        # Get total newly built multi family residential units by year
-        self.worksheet.write(0,self.column_counter,'new_MF_res_units')
-        years_and_totals = {}
-        for year in self.years:
-            print 'Computing total new MF residential units for year %s' % year
-            r = self.connection.execute('select sum(residential_units) from %s_%s_buildings where building_type_id = 2' % (self.run_name,year))
-            for row in r:
-                years_and_totals[year] = row[0]
-            r.close()
-        new_units = []
-        for yr,total in years_and_totals.iteritems():
-            if yr == self.base_year:
-                new_units.append(0)
-            else:
-                diff = total-years_and_totals[yr-1]
-                new_units.append(diff)
-        row_counter = 1
-        for value in new_units:
-            self.worksheet.write(row_counter,self.column_counter,value)
-            row_counter += 1
-        self.column_counter += 1
-
-    def get_total_SF_residential_units_by_year(self):
+    def get_total_DUs_SF_by_year(self):
         # Get total single family residential units by year
         self.worksheet.write(0,self.column_counter,'total_SF_units')
         row_counter = 1
@@ -134,7 +66,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_total_MF_residential_units_by_year(self):
+    def get_total_DUs_MF_by_year(self):
         # Get total multi family residential units by year
         self.worksheet.write(0,self.column_counter,'total_MF_units')
         row_counter = 1
@@ -147,7 +79,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_total_vacant_residential_units_by_year(self):
+    def get_total_vacant_DUs_by_year(self):
         # Get total vacant residential units by year
         self.worksheet.write(0,self.column_counter,'vacant_res_units')
         row_counter = 1
@@ -212,7 +144,7 @@ class RegionWideReport():
             row_counter += 1
         self.column_counter += 1
 
-    def get_vacant_residential_units_by_type_and_year(self):
+    def get_total_vacant_DUs_by_type_and_year(self):
         # Get vacant residential units by type and year
         r = self.connection.execute('select building_type_id, building_type_name from %s_%s_buildingTypes where is_residential = 1 order by building_type_id' % (self.run_name, self.base_year))
         building_types = []
@@ -297,7 +229,87 @@ class RegionWideReport():
                 row_counter += 1
             r.close()
         self.column_counter += 1
-        
+
+    def get_total_households_in_SFR_by_year(self):
+        self.worksheet.write(0,self.column_counter,'total_hh_SFR')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households in SFR for year %s' % year
+            query = '''
+                    select
+                        count(*)
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    where b.building_type_id = 1
+                    ''' % (self.run_name, year, self.run_name, year)
+            r = self.connection.execute(query)
+            for row in r:
+                self.worksheet.write(row_counter, self.column_counter, row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_total_households_in_MFR_by_year(self):
+        self.worksheet.write(0,self.column_counter,'total_hh_MFR')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total households in MFR for year %s' % year
+            query = '''
+                    select
+                        count(*)
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    where b.building_type_id = 2
+                    ''' % (self.run_name, year, self.run_name, year)
+            r = self.connection.execute(query)
+            for row in r:
+                self.worksheet.write(row_counter, self.column_counter, row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_total_population_in_SFR_by_year(self):
+        self.worksheet.write(0,self.column_counter,'total_pop_SFR')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population in SFR for year %s' % year
+            query = '''
+                    select
+                        sum(persons)
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    where b.building_type_id = 1
+                    ''' % (self.run_name, year, self.run_name, year)
+            r = self.connection.execute(query)
+            for row in r:
+                self.worksheet.write(row_counter, self.column_counter, row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
+    def get_total_population_in_MFR_by_year(self):
+        self.worksheet.write(0,self.column_counter,'total_pop_MFR')
+        row_counter = 1
+        for year in self.years:
+            print 'Computing total population in MFR for year %s' % year
+            query = '''
+                    select
+                        sum(persons)
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on h.building_id = b.building_id
+                    where b.building_type_id = 2
+                    ''' % (self.run_name, year, self.run_name, year)
+            r = self.connection.execute(query)
+            for row in r:
+                self.worksheet.write(row_counter, self.column_counter, row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
+
     def get_total_population_by_year(self):
         self.worksheet.write(0,self.column_counter,'total_pop')
         row_counter = 1
@@ -356,7 +368,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 3
 
-    def get_houehold_control_total_by_year(self):
+    def get_houehold_control_totals_by_year(self):
         self.worksheet.write(0,self.column_counter,'household_ct')
         row_counter = 1
         print 'Computing household control totals'
@@ -373,7 +385,7 @@ class RegionWideReport():
         r.close()
         self.column_counter += 1
 
-    def get_job_control_total_by_year(self):
+    def get_job_control_totals_by_year(self):
         self.worksheet.write(0,self.column_counter,'job_ct')
         row_counter = 1
         print 'Computing job control totals'
@@ -390,7 +402,7 @@ class RegionWideReport():
         r.close()
         self.column_counter += 1
 
-    def get_unplaced_household_totals_by_year(self):
+    def get_total_unplaced_households_by_year(self):
         # Get unplaced household totals by year
         self.worksheet.write(0,self.column_counter,'unplaced_hh')
         row_counter = 1
@@ -403,7 +415,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_unplaced_household_totals_by_household_income_category(self):
+    def get_total_unplaced_households_by_income_categories(self):
         # Get unplaced household totals by household income category
         # unplaced households under 50k
         self.worksheet.write(0,self.column_counter,'unpl_hh_0_50k')
@@ -437,7 +449,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 3
 
-    def get_unplaced_job_totals_by_year(self):
+    def get_total_unplaced_jobs_by_year(self):
         # Get unplaced job totals by year
         self.worksheet.write(0,self.column_counter,'unplaced_jobs')
         row_counter = 1
@@ -450,7 +462,7 @@ class RegionWideReport():
             r.close()
         self.column_counter += 1
 
-    def get_unplaced_job_totals_by_sector_and_year(self):
+    def get_total_unplaced_jobs_by_sector_and_year(self):
         # Get unplaced job totals by sector and year
         # Get sectors
         r = self.connection.execute('select sector_id from %s_%s_employmentSectors order by sector_id' % (self.run_name, self.base_year))
@@ -474,7 +486,7 @@ class RegionWideReport():
             column_counter += 1
         self.column_counter += len(sectors)
 
-    def get_job_totals_by_sector_and_year(self):
+    def get_total_jobs_by_sector_and_year(self):
         # Get job totals by sector and year
         # Get sectors
         r = self.connection.execute('select sector_id from %s_%s_employmentSectors order by sector_id' % (self.run_name, self.base_year))
@@ -499,45 +511,45 @@ class RegionWideReport():
         self.column_counter += len(sectors)
 
 ## SOMETHING IS WRONG W/ THIS QUERY
-##    def get_total_job_spaces_by_year(self):
-##        # Get total job spaces by year
-##        self.worksheet.write(0,self.column_counter,'total_job_spaces')
-##        row_counter = 1           
-##        for year in self.years:
-##            print 'Computing total job spaces for year %s' % year
-##            # delete previous temp table
-##            r = self.connection.execute("IF OBJECT_ID('tempdb..#temp_bldgs_non_res_sqft','local') IS NOT NULL DROP TABLE #temp_bldgs_non_res_sqft")
-##            r.close()
-##            query = '''
-##                        select
-##                            b1.non_residential_sqft,
-##                            b1.zone_id,
-##                            b1.building_type_id
-##                        into
-##                            #temp_bldgs_non_res_sqft
-##                        from
-##                            %s_%s_buildings b1          
-##                    ''' % (self.run_name, year)
-##            r = self.connection.execute(query)
-##            r.close()
-##            query = '''
-##                        select
-##                            sum(b1.non_residential_sqft/b2.building_sqft_per_job) job_spaces
-##                        from
-##                            #temp_bldgs_non_res_sqft b1
-##                        left join
-##                            %s_%s_buildingSqftPerJob b2
-##                        on
-##                            b1.building_type_id = b2.building_type_id and b1.zone_id = b2.zone_id            
-##                    ''' % (self.run_name, year)
-##            r = self.connection.execute(query)
-##            for row in r:
-##                self.worksheet.write(row_counter,self.column_counter,row[0])
-##                row_counter += 1
-##            r.close()
-##        self.column_counter += 1
+    def get_total_job_spaces_by_year(self):
+        # Get total job spaces by year
+        self.worksheet.write(0,self.column_counter,'total_job_spaces')
+        row_counter = 1           
+        for year in self.years:
+            print 'Computing total job spaces for year %s' % year
+            # delete previous temp table
+            r = self.connection.execute("IF OBJECT_ID('tempdb..#temp_bldgs_non_res_sqft','local') IS NOT NULL DROP TABLE #temp_bldgs_non_res_sqft")
+            r.close()
+            query = '''
+                        select
+                            b1.non_residential_sqft,
+                            b1.zone_id,
+                            b1.building_type_id
+                        into
+                            #temp_bldgs_non_res_sqft
+                        from
+                            %s_%s_buildings b1          
+                    ''' % (self.run_name, year)
+            r = self.connection.execute(query)
+            r.close()
+            query = '''
+                        select
+                            sum(b1.non_residential_sqft/b2.building_sqft_per_job) job_spaces
+                        from
+                            #temp_bldgs_non_res_sqft b1
+                        left join
+                            %s_%s_buildingSqftPerJob b2
+                        on
+                            b1.building_type_id = b2.building_type_id and b1.zone_id = b2.zone_id            
+                    ''' % (self.run_name, year)
+            r = self.connection.execute(query)
+            for row in r:
+                self.worksheet.write(row_counter,self.column_counter,row[0])
+                row_counter += 1
+            r.close()
+        self.column_counter += 1
 
-def get_total_jobs_by_subarea(subarea, years, workbook, run_name, base_year, connection):
+def get_total_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total jobs by subarea in a separate sheet
     # write column headings
     worksheet = workbook.add_sheet('jobs_by_%s_and_year' % (subarea))
@@ -639,7 +651,7 @@ def get_total_jobs_by_subarea(subarea, years, workbook, run_name, base_year, con
 ##        column_counter += 1
 ##        r.close()
 
-def get_total_households_by_subarea(subarea, years, workbook, run_name, base_year, connection):
+def get_total_households_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total households by subarea in a separate sheet
     # write column headings
     worksheet = workbook.add_sheet('hh_by_%s_and_year' % (subarea))
@@ -689,7 +701,211 @@ def get_total_households_by_subarea(subarea, years, workbook, run_name, base_yea
         column_counter += 1
         r.close()
 
-def get_total_population_by_subarea(subarea, years, workbook, run_name, base_year, connection):
+def get_total_households_in_SFR_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total households in SFR by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('SFR_hh_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total SFR households by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select z.%s_id, count(*) as numSFRhh
+                    into #numSFRhh_%s
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on b.building_id = h.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    where b.building_type_id = 1
+                    group by z.%s_id
+                    order by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numSFRhh IS NULL THEN 0
+                                    ELSE u.numSFRhh
+                            END
+                        from #distinct_%s r
+                        left join #numSFRhh_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_households_in_MFR_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total households in MFR by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('MFR_hh_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total MFR households by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select z.%s_id, count(*) as numMFRhh
+                    into #numMFRhh_%s
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on b.building_id = h.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    where b.building_type_id = 2
+                    group by z.%s_id
+                    order by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numMFRhh IS NULL THEN 0
+                                    ELSE u.numMFRhh
+                            END
+                        from #distinct_%s r
+                        left join #numMFRhh_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_population_in_SFR_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total population in SFR by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('SFR_pop_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total SFR population by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select z.%s_id, sum(persons) as numSFRpop
+                    into #numSFRpop_%s
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on b.building_id = h.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    where b.building_type_id = 1
+                    group by z.%s_id
+                    order by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numSFRpop IS NULL THEN 0
+                                    ELSE u.numSFRpop
+                            END
+                        from #distinct_%s r
+                        left join #numSFRpop_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_population_in_MFR_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total population in MFR by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('MFR_pop_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total MFR population by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close()
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        query = '''select z.%s_id, sum(persons) as numMFRpop
+                    into #numMFRpop_%s
+                    from %s_%s_households h
+                    left join %s_%s_buildings b
+                    on b.building_id = h.building_id
+                    left join %s_%s_zones z
+                    on b.zone_id = z.zone_id
+                    where b.building_type_id = 2
+                    group by z.%s_id
+                    order by z.%s_id''' % (subarea, year, run_name, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.numMFRpop IS NULL THEN 0
+                                    ELSE u.numMFRpop
+                            END
+                        from #distinct_%s r
+                        left join #numMFRpop_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_population_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total population by subarea in a separate sheet
     # write column headings
     worksheet = workbook.add_sheet('pop_by_%s_and_year' % (subarea))
@@ -739,7 +955,7 @@ def get_total_population_by_subarea(subarea, years, workbook, run_name, base_yea
         column_counter += 1
         r.close()
 
-def get_total_residential_units_by_subarea(subarea, years, workbook, run_name, base_year, connection):
+def get_total_DUs_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total residential units by subarea in a separate sheet
     # write column headings
     worksheet = workbook.add_sheet('res_units_by_%s_and_year' % (subarea))
@@ -795,8 +1011,126 @@ def get_total_residential_units_by_subarea(subarea, years, workbook, run_name, b
             row_counter += 1
         column_counter += 1
         r.close()
+        
+def get_total_DUs_SF_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total SF residential units by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('sf_DUs_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total SFR residential units by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        if year == base_year:
+            query = '''select p.%s_id, sum(b.residential_units) as sum_SF_res_units
+                        into #sfres_units_%s
+                        from %s_%s_buildings b
+                        left join %s_%s_zones p
+                        on b.zone_id = p.zone_id
+                        where b.building_type_id = 1
+                        group by p.%s_id
+                        order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
+        else:
+            query = '''select p.%s_id, sum(b.residential_units) as sum_SF_res_units
+                        into #sfres_units_%s
+                        from %s_%s_buildings b
+                        left join %s_%s_zones p
+                        on b.zone_id = p.zone_id
+                        where b.building_type_id = 1
+                        group by p.%s_id
+                        order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.sum_SF_res_units IS NULL THEN 0
+                                    ELSE u.sum_SF_res_units
+                            END
+                        from #distinct_%s r
+                        left join #sfres_units_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
 
-def get_total_non_residential_sqft_by_subarea(subarea, years, workbook, run_name, base_year, connection):
+def get_total_DUs_MF_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
+    # Get total MF residential units by subarea in a separate sheet
+    # write column headings
+    worksheet = workbook.add_sheet('mf_DUs_by_%s_and_year' % (subarea))
+    worksheet.write(0,0,'%s_id' % (subarea))
+    column_counter = 1
+    for year in years:
+        worksheet.write(0,column_counter,'y'+str(year))
+        column_counter += 1
+    # get distinct subareas
+    row_counter = 1
+    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
+    for row in r:
+        worksheet.write(row_counter,0,row[0])
+        row_counter += 1
+    # get values and fill in table
+    column_counter = 1
+    for year in years:
+        print 'Computing total MFR residential units by %s for year %s' % (subarea, year)
+        row_counter = 1
+        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
+        r.close
+        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
+        r.close()
+        if year == base_year:
+            query = '''select p.%s_id, sum(b.residential_units) as sum_MF_res_units
+                        into #mfres_units_%s
+                        from %s_%s_buildings b
+                        left join %s_%s_zones p
+                        on b.zone_id = p.zone_id
+                        where b.building_type_id = 2
+                        group by p.%s_id
+                        order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
+        else:
+            query = '''select p.%s_id, sum(b.residential_units) as sum_MF_res_units
+                        into #mfres_units_%s
+                        from %s_%s_buildings b
+                        left join %s_%s_zones p
+                        on b.zone_id = p.zone_id
+                        where b.building_type_id = 2
+                        group by p.%s_id
+                        order by p.%s_id''' % (subarea, year, run_name, year, run_name, year, subarea, subarea)
+        r = connection.execute(query)
+        r.close()
+        r = connection.execute('''select
+                            CASE 
+                                    WHEN u.sum_MF_res_units IS NULL THEN 0
+                                    ELSE u.sum_MF_res_units
+                            END
+                        from #distinct_%s r
+                        left join #mfres_units_%s u
+                        on r.%s_id = u.%s_id
+                        order by r.%s_id''' % (subarea, year, subarea, subarea, subarea))
+        for row in r:
+            worksheet.write(row_counter,column_counter,row[0])
+            row_counter += 1
+        column_counter += 1
+        r.close()
+
+def get_total_nonres_sqft_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total non-residential sqft by subarea in a separate sheet
     # write column headings
     worksheet = workbook.add_sheet('nonres_sqft_by_%s_and_year' % (subarea))
@@ -853,7 +1187,7 @@ def get_total_non_residential_sqft_by_subarea(subarea, years, workbook, run_name
         column_counter += 1
         r.close()
 
-def get_vacant_residential_units_by_year_and_subarea(subarea, workbook, years, connection, run_name, base_year):
+def get_total_vacant_DUs_by_year_and_subarea(subarea, workbook, years, connection, run_name, base_year):
     # Get vacant residential units by year and subarea
     worksheet = workbook.add_sheet('vac_res_units_by_year_%s' % (subarea))
     worksheet.write(0,0,'%s_id' % (subarea))
@@ -1127,81 +1461,137 @@ def save_excel_workbook(run_name, excel_output_path, workbook):
     except:
         print 'No worksheets have been created, workbook not saved.'
 
-# TODO:
-# add a drop table if exists function
-# some of these queries were designed to be run w/ a full simulation uploaded to SQL (every year) instead of
-#      a partial run (e.g. 2005,2010,2015).  Generalization of the code to handle these cases would be good
-
-if __name__ == "__main__":
-
-    # connection variables
-    username = sys.argv[1]
-    password = sys.argv[2]
-    server = sys.argv[3]
-    database = sys.argv[4]
-
-    # create the engine and connection
-    engine = create_engine('mssql://%s:%s@%s/%s' % (username, password, server, database))
-    connection = engine.connect()
-
+def main():
+    
     # other setup variables
-    base_year = 2009
-    end_year = 2030
-    run_name = 'opus_magZoneV3c_runs_SparcelLow'
-    excel_output_path = 'c:/working/v3c_superparcel_analysis'
-    subarea = 'tazi03' #choices include any geography in the zones table ending in '_id'
-    #years = range(base_year,end_year+1)
-    years = (2010,2015,2020,2025,2030)
+    query_fields = ['Base Year','End Year','Run Name','Excel Output Path','Subarea']
+    query_default_values = ['2009','2030','opus_magZoneV3c_runs_','c:/working/excel_outputs','']
+    query_variables = multenterbox('','Enter Values',query_fields,query_default_values)
+    base_year = int(query_variables[0])
+    end_year = int(query_variables[1])
+    run_name = query_variables[2]
+    excel_output_path = query_variables[3]
+    subarea = query_variables[4]
+    years = range(base_year,end_year+1)
 
-    # create Excel workbook and add a worksheet
+    # create Excel workbook
     workbook = xlwt.Workbook()
     
-    # REGION WIDE REPORTS
-    # create report object:
-    region_wide_report = RegionWideReport(workbook, years, connection, run_name, base_year)
-    # reports:
-    #WORKING, TESTED:
-    region_wide_report.get_total_population_by_year()
-    region_wide_report.get_total_households_by_year()
-    #region_wide_report.get_total_jobs_by_year()
-    #region_wide_report.get_total_residential_units_by_year()
-    #region_wide_report.get_total_non_residential_sqft_by_year()
-    #region_wide_report.get_total_SF_residential_units_by_year()
-    #region_wide_report.get_total_MF_residential_units_by_year()
-    #region_wide_report.get_total_vacant_residential_units_by_year()
-    #region_wide_report.get_vacant_residential_units_by_type_and_year()
-    #region_wide_report.get_total_households_by_year_and_income_category()
-    #region_wide_report.get_unplaced_household_totals_by_year()
-    #region_wide_report.get_unplaced_household_totals_by_household_income_category()
-    #region_wide_report.get_unplaced_job_totals_by_year()    
-    #region_wide_report.get_unplaced_job_totals_by_sector_and_year()
-    #region_wide_report.get_job_totals_by_sector_and_year()    
+    while True:
+        report_list = \
+                        [ 'get_total_population_by_year'
+                        , 'get_total_households_by_year'
+                        , 'get_total_jobs_by_year'
+                        , 'get_total_DUs_by_year'
+                        , 'get_total_nonres_sqft_by_year'
+                        , 'get_total_DUs_SF_by_year'
+                        , 'get_total_DUs_MF_by_year'
+                        , 'get_total_vacant_DUs_by_year'
+                        , 'get_total_vacant_DUs_by_type_and_year'
+                        , 'get_total_households_by_year_and_income_category'
+                        , 'get_total_unplaced_households_by_year'
+                        , 'get_total_unplaced_households_by_income_categories'
+                        , 'get_total_unplaced_jobs_by_year'
+                        , 'get_total_unplaced_jobs_by_sector_and_year'
+                        , 'get_total_jobs_by_sector_and_year'
+                        , 'get_job_control_totals_by_year'
+                        , 'get_houehold_control_totals_by_year'
+                        , 'get_total_job_spaces_by_year'
+                        , 'get_total_households_in_SFR_by_year'
+                        , 'get_total_households_in_MFR_by_year'
+                        , 'get_total_population_in_SFR_by_year'
+                        , 'get_total_population_in_MFR_by_year'
+                        ]
+        
+        # Add subarea query choices if subarea was specified
+        if subarea <> '':
+            report_list.extend(
+                        [ 'get_total_jobs_by_year_and_subarea'
+                        , 'get_total_households_by_year_and_subarea'
+                        , 'get_total_population_by_year_and_subarea'
+                        , 'get_total_DUs_by_year_and_subarea'
+                        , 'get_total_nonres_sqft_by_year_and_subarea'
+                        , 'get_total_vacant_DUs_by_year_and_subarea'
+                        , 'get_total_DUs_MF_by_year_and_subarea'
+                        , 'get_total_DUs_SF_by_year_and_subarea'
+                        , 'get_total_households_in_SFR_by_year_and_subarea'
+                        , 'get_total_households_in_MFR_by_year_and_subarea'
+                        , 'get_total_population_in_SFR_by_year_and_subarea'
+                        , 'get_total_population_in_MFR_by_year_and_subarea'
+                        ]
+                               )
+        report_list.sort()
+        
+        # Open GUI
+        choices = multchoicebox('Choose queries to run','Run Queries',report_list)
+        if not choices: return
+        
+        # create report object:
+        region_wide_report = RegionWideReport(workbook, years, connection, run_name, base_year)
+        
+        # Organize chosen queries into two lists
+        region_wide_choices = []
+        subarea_choices = []
+        for choice in choices:
+            if 'subarea' in choice:
+                subarea_choices.append(choice)
+            else:
+                region_wide_choices.append(choice)
+        
+        # Run region wide queries
+        for region_wide_choice in region_wide_choices:
+            exec('region_wide_report.%s()' % region_wide_choice)
+        # Run subarea queries
+        for subarea_choice in subarea_choices:
+            exec('%s(subarea, years, workbook, run_name, base_year, connection)' % subarea_choice)
+        
+        # Save excel workbook
+        save_excel_workbook(run_name, excel_output_path, workbook)
+        
 
-    # REGION WIDE REPORTS
-    # ONLY SUITABLE FOR FULL SIMULATION UPLOADS
-    #region_wide_report.get_total_new_residential_units_by_year()
-    #region_wide_report.get_total_new_SF_residential_units_by_year()
-    #region_wide_report.get_total_new_MF_residential_units_by_year()   
-    #region_wide_report.get_job_control_total_by_year()
-    #region_wide_report.get_houehold_control_total_by_year()
+if __name__ == "__main__":
+    print 'Starting: Create Zone Simulation Report in Excel'
+    # database connection variables   
+    try:
+        # get values as sys arguments
+        username = sys.argv[1]
+        password = sys.argv[2]
+        server = sys.argv[3]
+        database = sys.argv[4]
+        # create the engine and connection
+        engine = create_engine('mssql://%s:%s@%s/%s' % (username, password, server, database))
+        connection = engine.connect()
+        print 'SQL connection made to %s via command line arguments' % server
+        main()
+    except:
+        # get values from gui
+        db_connection_fields = ['Username','Password','Server Name','Database Name']
+        db_connection_default_values = ['AZSMARTExport','thebigone','MAG1113','AZSMART_V3_zone']
+        db_connection_values = multenterbox('','Enter values',db_connection_fields,db_connection_default_values)
+        # create the engine and connection
+        engine = create_engine('mssql://%s:%s@%s/%s' % (db_connection_values[0], db_connection_values[1], db_connection_values[2], db_connection_values[3]))
+        connection = engine.connect()
+        print 'SQL connection made to %s via GUI arguments' % db_connection_values[2]
+        main()
+
+#############################
+########### NOTES ###########
+#############################
 
     # REGION WIDE REPORTS
     # NOT WORKING AT ALL
     # region_wide_report.get_total_job_spaces_by_year()
     
-    #SUBAREA REPORTS
-    # WORKING, TESTED:
-    #get_total_jobs_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_total_households_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_total_population_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_total_residential_units_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_total_non_residential_sqft_by_subarea(subarea, years, workbook, run_name, base_year, connection)    
-    #get_vacant_residential_units_by_year_and_subarea(subarea, workbook, years, connection, run_name, base_year)
-
     # SUBAREA REPORTS
     # NOT WORKING AT ALL
     #get_household_density_per_acre_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_vacant_job_spaces_by_subarea(subarea, years, workbook, run_name, base_year, connection)  
-    
-    # save excel workbook
-    save_excel_workbook(run_name, excel_output_path, workbook)
+    #get_vacant_job_spaces_by_subarea(subarea, years, workbook, run_name, base_year, connection)
+
+# TODO:
+# add a drop table if exists function
+# some of these queries were designed to be run w/ a full simulation uploaded to SQL (every year) instead of
+#      a partial run (e.g. 2005,2010,2015).  Generalization of the code to handle these cases would be good
+
+
+
+
