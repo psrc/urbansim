@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-import os, sys
+import os, sys, re
 from opus_core.export_storage import ExportStorage
 from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
@@ -39,19 +39,17 @@ def opusRun(progressCB,logCB,params):
     if table_name == 'ALL':
         logCB('caching all tables...\n')
         lst = input_storage.get_table_names()
-        for i in lst:
-            ExportStorage().export_dataset(
-                dataset_name = i,
-                in_storage = input_storage,
-                out_storage = output_storage,
-            )
     else:
+        lst = re.split(' +', table_name.strip())
+        
+    for i in lst:
         logCB("Exporting table '%s' to year %s of cache located at %s...\n" %
-                   (table_name, opus_data_year, opus_data_directory))
+                   (i, opus_data_year, opus_data_directory))
         ExportStorage().export_dataset(
-            dataset_name = table_name,
+            dataset_name = i,
             in_storage = input_storage,
-            out_storage = output_storage)
+            out_storage = output_storage,
+        )
 
 def opusHelp():
     help = 'This tool will get a table from a SQL database and export it to the OPUS cache format.\n' \
@@ -59,5 +57,5 @@ def opusHelp():
            'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
            'opus_data_year: the year to which the data should be exported (2000)\n' \
            'database_name: the name of the database (or PostgreSQL schema) that contains the table\n' \
-           'table_name: the name of the table to be exported\n'
+           'table_name: the name of the table to be exported, separated by spaces. ALL imports all tables\n'
     return help
