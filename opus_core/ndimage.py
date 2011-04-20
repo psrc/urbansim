@@ -38,7 +38,8 @@ def mean(input, labels=None, index=None):
     else: 
         results = scipy.ndimage.mean(input, labels, index)
     ## scipy 0.8.0 returns NaN for 0 counts
-    results[numpy.isnan(results)] = 0
+    if numpy.any(numpy.isnan(results)):
+        results[numpy.isnan(results)] = 0
     return results
 
 def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_positions=False):
