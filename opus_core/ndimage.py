@@ -34,8 +34,12 @@ def mean(input, labels=None, index=None):
     _fix_dtype(labels)
     _fix_dtype(index)
     if index is not None and (labels is None or len(labels) ==0):
-        return scipy.ndimage.mean(input, labels=None, index=index) * ones(array(len(index)))
-    return scipy.ndimage.mean(input, labels, index)
+        results = scipy.ndimage.mean(input, labels=None, index=index) * ones(array(len(index)))
+    else: 
+        results = scipy.ndimage.mean(input, labels, index)
+    ## scipy 0.8.0 returns NaN for 0 counts
+    results[numpy.isnan(results)] = 0
+    return results
 
 def labeled_comprehension(input, labels, index, func, out_dtype, default, pass_positions=False):
     '''
@@ -323,7 +327,24 @@ class ndimageTests(opus_unittest.OpusTestCase):
         results = sum(input, labels=labels, index=index)
         self.assert_(all(results==expected))
         self.assert_(len(results)==len(expected))
+
+    def test_ndimage_mean_nan(self):
+        """ test fix for ndimage.mean for scipy 0.8.0
+        """
+        from numpy import array, all, int64, int32
+        input = array([],dtype=int32)
+        labels=array([], dtype=int32)
+        index = array([1,2,3],dtype=int32)
+        expected = array([0, 0, 0], dtype=int32)
+        results = mean(input, labels=labels, index=index)
+        self.assert_(all(results==expected))
+        self.assert_(len(results)==len(expected))
         
+        index = [1,2,3]
+        expected = array([0, 0, 0], dtype=int32)
+        results = mean(input, labels=labels, index=index)
+        self.assert_(all(results==expected))
+        self.assert_(len(results)==len(expected))
 
     def MASKED_test_empty_array_memory_error(self):
         """ weird error introduced in scipy 0.8.0
