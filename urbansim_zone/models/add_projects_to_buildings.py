@@ -15,9 +15,7 @@ class AddProjectsToBuildings(Model):
 
     def run(self, developmentproject_dataset, building_dataset, 
             label_attribute_names=["building_type_id", "zone_id"], 
-            quantity_attribute_names = ["residential_units", "non_residential_sqft"],
-            flush_developmentproject_dataset = False,
-            ):
+            quantity_attribute_names = ["residential_units", "non_residential_sqft"]):
         """Modify buildings to reflect new development projects. 
         """
         
@@ -27,9 +25,6 @@ class AddProjectsToBuildings(Model):
         if not developmentproject_dataset or developmentproject_dataset.size() == 0:
             logger.log_warning("Empty development project dataset. Skip add_projects_to_buildings.")
             return building_dataset
-
-        if flush_developmentproject_dataset:
-            developmentproject_dataset.flush_dataset()
 
         is_placed_project = ones(developmentproject_dataset.size(), dtype='bool')
         for label_attribute in label_attribute_names:
