@@ -9,7 +9,7 @@ from PyQt4.QtCore import QThread, SIGNAL, QString
 import os, time, gc
 
 from opus_gui.util.exception_formatter import formatExceptionInfo
-from urbansim.estimation.estimation_runner import EstimationRunner
+from opus_core.estimation.estimation_runner import EstimationRunner
 
 class RunEstimationThread(QThread):
     def __init__(self, mainwindow, estimationguielement, xml_file = None):
