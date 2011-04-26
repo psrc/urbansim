@@ -1,0 +1,1009 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string" hidden="True">mag_zone_v3d</project_name>
+    <description type="string">UrbanSim Zone v3d RAZi03</description>
+    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+    <expression_library type="dictionary">
+      <variable use="both" source="primary attribute" name="building.building_type_id" type="variable_definition">building.building_type_id</variable>
+      <variable use="both" source="expression" name="building.xxx" type="variable_definition">building.building_id &gt;0</variable>
+      <variable use="both" source="primary attribute" name="building.bldg_zone_id" type="variable_definition">building.zone_id</variable>
+      <variable use="both" source="expression" name="building.num_hh_in_building" type="variable_definition">building.number_of_agents(household)</variable>
+      <variable use="both" source="expression" name="building.building_emp_pk_hov_access" type="variable_definition">building.disaggregate(zone.emp_pk_hov_access)</variable>
+      <variable use="both" source="expression" name="building.building_freeway_within_qtr_mile" type="variable_definition">building.disaggregate(zone.freeway_within_qtr_mile)</variable>
+      <variable use="both" source="primary attribute" name="building.building_year_built" type="variable_definition">building.year_built</variable>
+      <variable use="both" source="expression" name="building.HLCM_ln_residential_units" type="variable_definition">ln_bounded(building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.HLCM_lnresunits" type="variable_definition">ln(building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.HLCM_lnbldgsqftperunit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnpopden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.population))</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgvalperunit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgincome" type="variable_definition">ln(building.aggregate(household.income, function=mean))</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_is_office" type="variable_definition">building.building_type_id==5</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_is_industrial" type="variable_definition">building.building_type_id==4</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnnonressqft" type="variable_definition">ln(building.non_residential_sqft)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnempden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.number_of_jobs))</variable>
+      <variable use="both" source="expression" name="building.num_hh_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(household))</variable>
+      <variable use="both" source="expression" name="building.num_jobs_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(job))</variable>
+      <variable use="both" source="expression" name="building.ln_average_value_per_unit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.phoenix_cbd_distance" type="variable_definition">building.disaggregate(zone.dist_to_phx_cbd)</variable>
+      <variable use="both" source="expression" name="building.zonal_is_in_SC" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.mpa_id == 4))</variable>
+      <variable use="both" source="expression" name="building.zonal_is_in_PA" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.mpa_id == 5))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_20_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 20)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_20" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 20)))</variable>
+      <variable use="both" source="Python class" name="household.hhld_income_category" type="variable_definition">urbansim.household.income_category</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_hh_income_1" type="variable_definition">(building.disaggregate(zone.aggregate(household.income, intermediates=[building],function = mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_is_value_low" type="variable_definition">building.disaggregate(zone.value_indicator) == 1</variable>
+      <variable use="both" source="expression" name="building.zonal_is_value_high" type="variable_definition">building.disaggregate(zone.value_indicator) == 2</variable>
+      <variable use="both" source="expression" name="building.network_length_majorrd_zone" type="variable_definition">(building.disaggregate(zone.network_length_majorrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_civic_unit_price" type="variable_definition">ln(where(building.building_type_id==8,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_hotel_unit_price" type="variable_definition">ln(where(building.building_type_id==11,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_hotel_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_civic_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 8,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 8,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_children_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(household.children), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_educational_unit_price" type="variable_definition">ln(where(building.building_type_id==9,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_medial_unit_price" type="variable_definition">ln(where(building.building_type_id==7,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_public_unit_price" type="variable_definition">ln(where(building.building_type_id==6,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_medical_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 7,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 7,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_educational_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 9,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 9,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_public_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_transportation_unit_price" type="variable_definition">ln(where(building.building_type_id==13,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_transportation_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 13,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 13,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_19_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 19)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_18_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 18)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_17_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 17)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_16_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 16)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_15_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 15)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_14_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 14)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_13_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 13)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_12_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 12)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_11_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id ==11)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_10_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 10)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_9_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 9)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_8_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 8)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_7_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 7)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_6_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 6)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_5_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 5)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_3_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 3)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_2_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 2)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_agriculture_unit_price" type="variable_definition">ln(where(building.building_type_id==12,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_agriculturel_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_transportation" type="variable_definition">building.building_type_id == 13</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_agriculture" type="variable_definition">building.building_type_id == 12</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_hotel" type="variable_definition">building.building_type_id == 11</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_public" type="variable_definition">building.building_type_id == 6</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_medical" type="variable_definition">building.building_type_id == 7</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_gq" type="variable_definition">building.building_type_id == 10</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_education" type="variable_definition">building.building_type_id == 9</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_civic" type="variable_definition">building.building_type_id == 8</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_retail" type="variable_definition">building.building_type_id == 3</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_office" type="variable_definition">building.building_type_id == 5</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_industrial" type="variable_definition">building.building_type_id == 4</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_1_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 1)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="primary attribute" name="building.zonal_bldg_sqft_per_unit_1" type="variable_definition">building.sqft_per_unit</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_hhld_size_x_bldg_sqft_per_unit" type="variable_definition">household.persons*building.sqft_per_unit</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_avg_res_sqft_per_person" type="variable_definition">building.disaggregate(ln(zone.aggregate(safe_array_divide(building.sqft_per_unit,building.aggregate(household.persons))+0, function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_res_sqft_per_person" type="variable_definition">building.disaggregate(zone.aggregate(safe_array_divide(building.sqft_per_unit,building.aggregate(household.persons))+0, function=mean))</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_avg_persons_per_hhld" type="variable_definition">ln(building.disaggregate(zone.aggregate(household.persons+0, intermediates=[building],function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_persons_per_hhld" type="variable_definition">building.disaggregate(zone.aggregate(household.persons+0, intermediates=[building],function=mean))</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_bldg_ln_price_hhld_income_ratio" type="variable_definition">ln(safe_array_divide(building.average_value_per_unit, household.income))</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_bldg_price_hhld_income_ratio" type="variable_definition">safe_array_divide(building.average_value_per_unit, household.income)</variable>
+      <variable use="both" source="expression" name="household.zonal_ln_hhld_size" type="variable_definition">ln(household.persons)</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_one_pers_x_non_sfr" type="variable_definition">(household.persons&lt;2)*numpy.logical_not(building.building_type_id == 1)</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_ln_hhld_inc_x_is_RMF" type="variable_definition">ln(household.income)*(building.building_type_id == 2)</variable>
+      <variable use="both" source="primary attribute" name="household.zonal_hhld_size" type="variable_definition">household.persons</variable>
+      <variable use="both" source="expression" name="building.zonal_average_value_per_unit" type="variable_definition">building.average_value_per_unit</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_ln_hhld_size_x_bldg_sqft_per_unit" type="variable_definition">ln(household.persons*building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_office_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_office_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_officel_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_office_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_office_unit_price" type="variable_definition">ln(where(building.building_type_id==5,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_office_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 5,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_officel_jobs_per_acre" type="variable_definition">ln(building.disaggregate((zone.aggregate(job.sector_id == 9)+ zone.aggregate(job.sector_id == 10) + zone.aggregate(job.sector_id == 11)+ zone.aggregate(job.sector_id == 13))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_industrial_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_industrial_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_industrial_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_industrial_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_retail_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_industrial_jobs_per_acre" type="variable_definition">ln(building.disaggregate((zone.aggregate(job.sector_id == 8)+ zone.aggregate(job.sector_id == 6) + zone.aggregate(job.sector_id == 5))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_retail_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_retail_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_retail_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_retail_jobs_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_industrial_unit_price" type="variable_definition">ln(where(building.building_type_id==4,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_industrial_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 4,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_retail_unit_price" type="variable_definition">ln(where(building.building_type_id==3,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_retaill_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 3,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_mf_residential_units_capacity" type="variable_definition">ln(where(building.building_type_id == 2,urbansim_zone.building.developable_residential_units_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_sf_residential_units_capacity" type="variable_definition">ln(where(building.building_type_id == 1,urbansim_zone.building.developable_residential_units_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_mf_units" type="variable_definition">ln(where(building.building_type_id==2,building.residential_units,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sf_units" type="variable_definition">ln(where(building.building_type_id==1,building.residential_units,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sf_unit_price" type="variable_definition">ln(where(building.building_type_id==1,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_mf_unit_price" type="variable_definition">ln(where(building.building_type_id==2,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_hh_income" type="variable_definition">ln(building.disaggregate(zone.aggregate(household.income, function = mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_avg_year_built" type="variable_definition">ln(building.year_built)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_to_vac_ratio" type="variable_definition">ln(safe_array_divide((building.residential_units),(urbansim_zone.building.vacant_residential_units)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_to_capacity_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.residential_units),(urbansim_zone.building.residential_units_capacity)))</variable>
+      <variable use="both" source="primary attribute" name="building.zonal_bldg_bldg_typeID" type="variable_definition">building.building_type_id</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_land_per_unit" type="variable_definition">ln_bounded(safe_array_divide(building.residential_units, building.land_area))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_far" type="variable_definition">ln_bounded(safe_array_divide(building.non_residential_sqft, building.land_area))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_avg_hh_income" type="variable_definition">ln(building.aggregate(household.income, function = mean))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_majorrd" type="variable_definition">ln(building.disaggregate(zone.network_length_majorrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_localrd" type="variable_definition">ln(building.disaggregate(zone.network_length_localrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_highway" type="variable_definition">ln(building.disaggregate(zone.network_length_highway))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_freeway" type="variable_definition">ln(building.disaggregate(zone.network_length_freeway))</variable>
+      <variable use="both" source="expression" name="building.zonal_sqft_per_unit" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id &lt; 3, building.sqft_per_unit, 0),function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_6" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 6)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_5" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 5)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_3" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 3)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_2" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 2)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_19" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 19)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_18" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 18)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_17" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 17)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_16" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 16)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_15" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 15)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_14" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 14)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_13" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 13)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_12" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 12)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_11" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 11)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_10" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 10)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_1" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 1)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_vac_res_units" type="variable_definition">ln(urbansim_zone.building.vacant_residential_units)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_units" type="variable_definition">ln(urbansim_zone.building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_9" type="variable_definition">ln(building.aggregate(job.sector_id==9))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_8" type="variable_definition">ln(building.aggregate(job.sector_id==8))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_7" type="variable_definition">ln(building.aggregate(job.sector_id == 7))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_6" type="variable_definition">ln(building.aggregate(job.sector_id==6))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_5" type="variable_definition">ln(building.aggregate(job.sector_id==5))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_3" type="variable_definition">ln(building.aggregate(job.sector_id==3))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_2" type="variable_definition">ln(building.aggregate(job.sector_id==2))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_19" type="variable_definition">ln(building.aggregate(job.sector_id==19))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_18" type="variable_definition">ln(building.aggregate(job.sector_id==18))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_17" type="variable_definition">ln(building.aggregate(job.sector_id==17))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_16" type="variable_definition">ln(building.aggregate(job.sector_id==16))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_15" type="variable_definition">ln(building.aggregate(job.sector_id==15))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_14" type="variable_definition">ln(building.aggregate(job.sector_id==14))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_13" type="variable_definition">ln(building.aggregate(job.sector_id==13))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_12" type="variable_definition">ln(building.aggregate(job.sector_id==12))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_11" type="variable_definition">ln(building.aggregate(job.sector_id==11))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_10" type="variable_definition">ln(building.aggregate(job.sector_id==10))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_1" type="variable_definition">ln(building.aggregate(job.sector_id==1))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs" type="variable_definition">ln(urbansim_zone.building.number_of_non_home_based_jobs)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_hh" type="variable_definition">ln(urbansim_zone.building.number_of_households)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_nonres_to_capacity_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.non_residential_sqft),(urbansim_zone.building.non_residential_sqft_capacity)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_job_space_to_vac_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.total_job_spaces),(urbansim_zone.building.vacant_job_spaces)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_residential_units_capacity" type="variable_definition">ln(urbansim_zone.building.developable_residential_units_capacity)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_non_residential_sqft_capacity" type="variable_definition">ln(urbansim_zone.building.developable_non_residential_sqft_capacity)</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.vacant_job_spaces)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_toal_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.total_job_spaces)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(urbansim_zone.building.total_job_spaces),zone.aggregate(urbansim_zone.building.vacant_job_spaces))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_vacant_job_spaces" type="variable_definition">ln(urbansim_zone.building.vacant_job_spaces)</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_average_value_per_unit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_8" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 8)))</variable>
+      <variable use="both" source="expression" name="zone.zonal_vac_job_spaces_per_acre" type="variable_definition">zone.aggregate(urbansim_zone.building.vacant_job_spaces)/zone.acres</variable>
+      <variable use="both" source="expression" name="zone.zonal_toal_job_spaces_per_acre" type="variable_definition">zone.aggregate(urbansim_zone.building.total_job_spaces)/zone.acres</variable>
+      <variable use="both" source="expression" name="building.zonal_num_hhlds_per_acre" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_nonres_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(urbansim_zone.building.non_residential_sqft),zone.aggregate(urbansim_zone.building.non_residential_sqft_capacity))))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(building.residential_units),zone.aggregate(building.residential_units_capacity))))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(building.residential_units),zone.aggregate(urbansim_zone.building.vacant_residential_units))))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_res_units_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.vacant_residential_units)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_units_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.residential_units)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_pops_per_acre" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_per_acre" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))</variable>
+      <variable use="both" source="expression" name="building.zonal_pop_ofp_sov_access" type="variable_definition">ln(building.disaggregate(zone.pop_ofp_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_pop_pk_sov_access" type="variable_definition">ln(building.disaggregate(zone.pop_pk_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_emp_ofp_sov_access" type="variable_definition">ln(building.disaggregate(zone.emp_ofp_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_emp_pk_sov_access" type="variable_definition">ln(building.disaggregate(zone.emp_pk_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_freeway_within_qtr_mile" type="variable_definition">ln(building.disaggregate(zone.freeway_within_qtr_mile))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sqft_per_unit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_9" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 9)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_7" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(job)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
+      <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
+    </expression_library>
+    <dataset_pool_configuration type="class">
+      <class_name type="string" hidden="True">DatasetPoolConfiguration</class_name>
+      <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['mag_zone', 'urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+    </dataset_pool_configuration>
+    <available_datasets type="list">['raz2011','razi03','development_project','building','person','household_x_building','household','zone','raz','mpa','gridcell','city','county','alldata','job','business','travel_data']</available_datasets>
+  </general>
+  <model_manager>
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="household_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="sampling_hierarchy" convert_blank_to_none="True" type="string"/>
+            <argument name="sampling_threshold" convert_blank_to_none="True" type="string"/>
+            <argument name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="construction_jobs_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">bldg_sqft_constructed_this_year</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">construction_jobs</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_construction_jobs_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="williamsgateway_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">williamsgateway_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_enplanement_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="skyharbor_enplanement_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">skyharbor_enplanements</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">skyharbor_enplanement_capacity</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">enplanements</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string">skyharbor_enplanement_capacity</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_enplanement_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="scheduled_capacity_events_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.scheduled_events_model</class_module>
+            <class_name>ScheduledEventsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ScheduledEventsModel</name>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Scheduled Capacity Events Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">SCEM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="scheduled_events_table" parser_action="quote_string" type="string">scheduled_capacity_events</argument>
+            <argument name="scheduled_events_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="transient_households_in_residential_units_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_residential_units</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">building.residential_units</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">transient_households_in_residential_units</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_residential_units_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="transient_households_in_hotels_allocation_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.allocation_model_exact_match</class_module>
+            <class_name type="string">AllocationModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AllocationModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">building</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">transient_households_in_hotels</argument>
+            <argument name="weight_attribute" parser_action="quote_string" type="string">hotel_motel_rooms</argument>
+            <argument name="control_totals" type="string">cts</argument>
+            <argument name="current_year" type="string">year</argument>
+            <argument name="control_total_attribute" parser_action="quote_string" type="string">transient_households_in_hotels</argument>
+            <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
+            <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">cts</output>
+            <argument name="storage" type="string">base_cache_storage</argument>
+            <argument name="control_totals_table_name" parser_action="quote_string" type="string">annual_transient_households_in_hotels_control_totals</argument>
+            <argument name="control_totals_id_name" type="list">['year']</argument>
+            <argument name="control_totals_dataset_name" parser_action="quote_string" type="string">control_totals</argument>
+          </prepare_for_run>
+        </structure>
+      </model>
+      <model name="household_transition_model_with_growth_threshold" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">household</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
+            <argument name="sampling_threshold" parser_action="quote_string" type="string">(mag_zone.control_total.households - mag_zone.control_total.households_lag1) > 0 </argument>            
+	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>    
+      <model name="aging_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.simple_model</class_module>
+            <class_name type="string">SimpleModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">SimpleModel</name>
+          </init>
+          <run type="dictionary">
+            <argument name="dataset" type="string">person</argument>
+            <argument name="expression" parser_action="quote_string" type="string">person.age+1</argument>
+            <argument convert_blank_to_none="True" name="outcome_attribute" parser_action="quote_string" type="string">age</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+      <model name="residential_development_project_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">projects</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_residential</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==1)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="lottery_max_iterations" type="integer">3</key>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units_capacity</key>
+              <key name="sample_alternatives_by_submodel" type="string">True</key>
+              <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
+              <key name="sample_size_locations" type="integer">10</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <key name="capacity_string" type="string">urbansim_zone.building.residential_units_capacity</key>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="sample_alternatives_by_submodel" type="string">True</key>
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string"/>
+              <key name="sample_size_locations" type="integer">30</key>
+            </argument>
+            <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim_zone.models.development_project_location_choice_model</class_module>
+            <class_name>DevelopmentProjectLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agent_set" type="string">projects</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">residential_development_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">residential_development_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, projects)</output>
+            <argument name="specification_table" parser_action="quote_string" type="string">residential_development_location_choice_model_specification</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential==1), development_project.scheduled_year&gt;=2000)</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+      </model>
+      <model name="non_residential_development_project_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">projects</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_non_residential</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==0)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="lottery_max_iterations" type="integer">3</key>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
+              <key name="capacity_string" type="string">urbansim_zone.building.developable_non_residential_sqft_capacity</key>
+              <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="sample_alternatives_by_submodel" type="string">True</key>
+              <key name="sample_size_locations" type="integer">30</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string">non_residential_sqft</key>
+              <key name="capacity_string" type="string">urbansim_zone.building.non_residential_sqft_capacity</key>
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" type="string"/>
+              <key name="compute_capacity_flag" type="string">True</key>
+              <key name="sample_alternatives_by_submodel" type="string">True</key>
+              <key name="sample_size_locations" type="integer">30</key>
+            </argument>
+            <name name="name" type="string">DevelopmentProjectLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim_zone.models.development_project_location_choice_model</class_module>
+            <class_name>DevelopmentProjectLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agent_set" type="string">projects</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, projects)</output>
+            <argument name="specification_table" parser_action="quote_string" type="string">non_residential_development_location_choice_model_specification</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="events_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="events_for_estimation_table" parser_action="quote_string" type="string">development_event_history</argument>
+            <argument name="agents_filter" parser_action="quote_string" type="string">numpy.logical_and(development_project.disaggregate(building_type.is_residential==0), development_project.scheduled_year&gt;=2000)</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+      </model>
+      <model name="employment_transition_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.transition_model</class_module>
+            <class_name>TransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TransitionModel</name>
+            <argument name="dataset" type="string">job</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">Employment Transition Model</argument>
+            <argument name="model_short_name" parser_action="quote_string" type="string">ETM</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="control_total_table" parser_action="quote_string" type="string">annual_employment_control_totals</argument>
+            <argument name="control_total_storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="year" type="string">year</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
+            <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="employment_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <group_by_attribute type="list">('home_based_status', 'name')</group_by_attribute>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.employment_location_choice_model</class_module>
+            <class_name>EmploymentLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <argument name="agents_grouping_attribute" parser_action="quote_string" type="string">job.home_based_status</argument>
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
+            <argument name="compute_capacity_flag" type="boolean">True</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_SSS_job_spaces</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="estimation_weight_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string">mag_zone.building.is_developing_type</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument name="run_config" type="dictionary">
+              <key name="lottery_max_iterations" type="integer">3</key>
+              <key convert_blank_to_none="True" name="agent_units_string" type="string"/>
+            </argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument name="estimation_size_agents" type="float">1.0</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="sample_size_locations" type="integer">30</argument>
+            <name name="name" type="string">EmploymentLocationChoiceModel</name>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">employment_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">employment_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="agent_set" type="string">job</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="agents_index" type="string">erm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="portion_to_unplace" type="integer">0</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">employment_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">job</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">jobs_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="join_datasets" type="boolean">False</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">job</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+        </structure>
+      </model>
+      <model name="household_location_choice_model" type="model">
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="agents_index" type="string">hrm_index</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
+            <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
+            <argument convert_blank_to_none="True" name="submodel_string" parser_action="quote_string" type="string">urbansim.household.income_category</argument>
+            <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
+            <argument name="filter" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units&gt;0</argument>
+            <argument convert_blank_to_none="True" name="estimation_weight_string" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
+            <argument name="location_set" type="string">building</argument>
+            <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
+            <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
+            <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
+            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="estimate_config" type="string">Resources({})</argument>
+            <name name="name" type="string">HouseholdLocationChoiceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.household_location_choice_model</class_module>
+            <class_name>HouseholdLocationChoiceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="agents_index" type="string">index</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">household_location_choice_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, index)</output>
+            <argument name="portion_to_unplace" type="float">0.333333333333</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">household_location_choice_model_specification</argument>
+            <argument name="agent_set" type="string">household</argument>
+            <argument name="index_to_unplace" type="string">None</argument>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument convert_blank_to_none="True" name="filter" type="string"/>
+            <argument name="join_datasets" type="boolean">False</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_table" parser_action="quote_string" type="string">households_for_estimation</argument>
+            <argument convert_blank_to_none="True" name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+      </model>
+      <model name="household_transition_model_with_persons" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module>urbansim_parcel.models.household_transition_model</class_module>
+            <class_name>HouseholdTransitionModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">HouseholdTransitionModel</name>
+            <argument name="location_id_name" type="string">'building_id'</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </init>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(control_totals, characteristics)</output>
+            <name name="name" type="string">prepare_for_run</name>
+            <argument name="storage" type="string">base_cache_storage</argument>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument name="characteristics" type="string">characteristics</argument>
+            <argument name="household_set" type="string">household</argument>
+            <argument name="person_set" type="string">person</argument>
+            <argument convert_blank_to_none="True" name="control_totals" type="string">control_totals</argument>
+            <argument name="year" type="string">year</argument>
+          </run>
+        </structure>
+      </model>
+      <model name="real_estate_price_model" type="model">
+        <structure type="dictionary">
+          <run type="dictionary">
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+          </run>
+          <init type="dictionary">
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_average_value_per_unit=ln(building.average_value_per_unit)</argument>
+            <argument convert_blank_to_none="True" name="filter_attribute" type="string"/>
+            <argument name="submodel_string" parser_action="quote_string" type="string">building_type_id</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <name name="name" type="string">RealEstatePriceModel</name>
+          </init>
+          <import name="import" type="dictionary">
+            <class_module>urbansim.models.real_estate_price_model</class_module>
+            <class_name>RealEstatePriceModel</class_name>
+          </import>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, _)</output>
+            <argument name="index" type="string">repm_index</argument>
+            <argument name="outcome_attribute" parser_action="quote_string" type="string">ln_average_value_per_unit=ln(building.average_value_per_unit)</argument>
+            <argument name="specification" type="string">specification</argument>
+            <argument name="dataset" type="string">building</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <output name="output" type="string">(specification, coefficients)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument name="coefficients_table" parser_action="quote_string" type="string">real_estate_price_model_coefficients</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
+            <name name="name" type="string">prepare_for_run</name>
+          </prepare_for_run>
+          <prepare_for_estimate type="dictionary">
+            <output name="output" type="string">(specification, repm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">real_estate_price_model_specification</argument>
+            <argument convert_blank_to_none="True" name="filter_variable" type="string"/>
+            <argument name="dataset" type="string">building</argument>
+            <name name="name" type="string">prepare_for_estimate</name>
+          </prepare_for_estimate>
+        </structure>
+      </model>
+    </models>
+    <templates name="Model Templates" parser_action="skip" hidden="True"/>
+    <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
+      <save_estimation_results type="boolean">False</save_estimation_results>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" field_identifier="Cache Directory" field_description="Directory for base_year cache, relative to OPUS_DATA_PATH or OPUS_HOME/data, e.g. seattle_parcel/base_year_data">mag_zone_v3d/base_year_data</cache_directory>
+      <estimation_database_configuration type="class">
+        <class_name type="string" hidden="True">EstimationDatabaseConfiguration</class_name>
+        <class_module type="string" hidden="True">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+        <argument name="database_name" type="string">mag_zone</argument>
+      </estimation_database_configuration>
+      <scenario_database_configuration type="class">
+        <class_name type="string">ScenarioDatabaseConfiguration</class_name>
+        <class_module type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+        <argument name="database_name" type="string">mag_zone</argument>
+      </scenario_database_configuration>
+      <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+      <low_memory_mode type="boolean">False</low_memory_mode>
+      <base_year type="integer" field_identifier="Base Year">2009</base_year>
+      <years type="tuple">
+        <firstyear type="integer" field_identifier="Base Year">2009</firstyear>
+        <lastyear type="integer" field_identifier="Base Year">2009</lastyear>
+      </years>
+      <seed type="integer">1</seed>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+        <selectable name="building" type="selectable">True</selectable>
+        <selectable name="zone" type="selectable">True</selectable>
+        <selectable name="household" type="selectable">True</selectable>
+        <selectable name="job" type="selectable">True</selectable>
+        <selectable name="development_event_history" type="selectable">True</selectable>
+        <selectable name="target_vacancy" type="selectable">True</selectable>
+        <selectable name="building_type" type="selectable">True</selectable>
+      </datasets_to_preload>
+      <dataset_pool_configuration type="class">
+        <class_name type="string" hidden="True">DatasetPoolConfiguration</class_name>
+        <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['mag_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+    </estimation_config>
+  </model_manager>
+  <results_manager>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data">
+      <run hidden="Children" type="source_data" name="base_year_data" run_id="1">
+        <scenario_name type="string"/>
+        <cache_directory type="string">c:\opus\data\mag_zone_v3d\base_year_data</cache_directory>
+        <start_year type="integer">2009</start_year>
+        <end_year type="integer">2009</end_year>
+      </run>
+    </simulation_runs>
+  </results_manager>
+  <scenario_manager>
+    <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
+      <models_to_run setexpanded="True" config_name="models" type="selectable_list">
+        <selectable name="real_estate_price_model" type="selectable">False</selectable>
+        <selectable name="development_project_transition_model" type="selectable">False</selectable>
+        <selectable name="residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="non_residential_development_project_location_choice_model" type="selectable">False</selectable>
+        <selectable name="add_projects_to_buildings" type="selectable">False</selectable>
+        <selectable name="household_transition_model" type="selectable">True</selectable>   
+        <selectable name="employment_transition_model" type="selectable">False</selectable>
+        <selectable name="household_relocation_model" type="selectable">False</selectable>
+        <selectable name="household_location_choice_model" type="selectable">False</selectable>
+        <selectable name="employment_relocation_model" type="selectable">False</selectable>
+        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">_all_</group_members>
+        </selectable>
+        <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
+      </models_to_run>
+      <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+      <base_year type="integer">2009</base_year>
+      <years_to_run setexpanded="True" config_name="years" type="tuple">
+        <firstyear type="integer">2010</firstyear>
+        <lastyear type="integer">2010</lastyear>
+      </years_to_run>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v3d/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v3d/runs</argument>
+        <argument name="baseyear_cache" type="class">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">mag_zone_v3d/base_year_data</argument>
+        </argument>
+        <argument hidden="True" name="unroll_gridcells" type="boolean">False</argument>
+        <argument name="advanced" type="category">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+            <argument name="database_name" type="string">urbansim</argument>
+          </baseyear_database_configuration>
+          <cache_from_database type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+          <tables_to_cache type="selectable_list">
+            <selectable name="annual_employment_control_totals" type="selectable">True</selectable>
+            <selectable name="annual_household_control_totals" type="selectable">True</selectable>
+            <selectable name="households" type="selectable">True</selectable>
+            <selectable name="job_building_types" type="selectable">True</selectable>
+            <selectable name="building_types" type="selectable">True</selectable>
+            <selectable name="jobs" type="selectable">True</selectable>
+            <selectable name="travel_data" type="selectable">True</selectable>
+            <selectable name="zones" type="selectable">True</selectable>
+            <selectable name="counties" type="selectable">True</selectable>
+            <selectable name="commercial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="commercial_development_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="commercial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="commercial_employment_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="home_based_employment_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="home_based_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="industrial_employment_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="industrial_employment_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="industrial_development_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="industrial_development_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="residential_development_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="residential_development_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="urbansim_constants" type="selectable">True</selectable>
+            <selectable name="household_location_choice_model_coefficients" type="selectable">True</selectable>
+            <selectable name="household_location_choice_model_specification" type="selectable">True</selectable>
+            <selectable name="household_characteristics_for_ht" type="selectable">True</selectable>
+            <selectable name="annual_relocation_rates_for_households" type="selectable">True</selectable>
+            <selectable name="annual_relocation_rates_for_jobs" type="selectable">True</selectable>
+            <selectable name="base_year" type="selectable">True</selectable>
+            <selectable name="cities" type="selectable">True</selectable>
+            <selectable name="development_event_history" type="selectable">True</selectable>
+            <selectable name="employment_adhoc_sector_group_definitions" type="selectable">True</selectable>
+            <selectable name="employment_adhoc_sector_groups" type="selectable">True</selectable>
+            <selectable name="employment_sectors" type="selectable">True</selectable>
+            <selectable name="race_names" type="selectable">True</selectable>
+            <selectable name="target_vacancies" type="selectable">True</selectable>
+            <selectable name="jobs_for_estimation" type="selectable">True</selectable>
+            <selectable name="households_for_estimation" type="selectable">True</selectable>
+          </tables_to_cache>
+          <tables_to_cache_nchunks type="dictionary">
+            <parcels type="integer">1</parcels>
+          </tables_to_cache_nchunks>
+        </argument>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument name="package_order" type="list">['mag_zone','urbansim_zone', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable name="zone" type="selectable">True</selectable>
+          <selectable name="household" type="selectable">True</selectable>
+          <selectable name="building" type="selectable">True</selectable>
+          <selectable name="person" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="job" type="selectable">True</selectable>
+          <selectable name="building_type" type="selectable">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable name="travel_data" type="selectable">True</selectable>
+          <selectable name="target_vacancy" type="selectable">True</selectable>
+          <selectable name="development_event_history" type="selectable">True</selectable>
+          <selectable name="home_based_status" type="selectable">True</selectable>
+        </datasets_to_preload>
+      </advanced>
+    </scenario>
+  </scenario_manager>
+  <debuglevel type="integer">4</debuglevel>
+  <base_year type="integer"/>
+  <cache_directory type="string"/>
+</opus_project>
+
