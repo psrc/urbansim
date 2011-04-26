@@ -2,9 +2,9 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, exc
 from datetime import datetime
-from easygui import multenterbox, multchoicebox
+from easygui import multenterbox, multchoicebox, choicebox
 import xlwt, os, sys
 
 class RegionWideReport():
@@ -78,145 +78,6 @@ class RegionWideReport():
                 row_counter += 1
             r.close()
         self.column_counter += 1
-
-    def get_total_vacant_DUs_by_year(self):
-        # Get total vacant residential units by year
-        self.worksheet.write(0,self.column_counter,'vacant_res_units')
-        row_counter = 1
-        for year in self.years:
-            print 'Computing vacant residential units for year %s' % year
-            r = self.connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units','local') IS NOT NULL DROP TABLE #bldg_res_units")
-            r.close()
-            query = '''
-                    select building_id, residential_units
-                    into #bldg_res_units
-                    from %s_%s_buildings
-                    ''' % (self.run_name, year)
-            r = self.connection.execute(query)
-            r.close()
-            r = self.connection.execute("IF OBJECT_ID('tempdb..#hh_by_building','local') IS NOT NULL DROP TABLE #hh_by_building")
-            r.close()
-            query = '''
-                    select building_id, count(*) as total_hh
-                    into #hh_by_building
-                    from %s_%s_households
-                    group by building_id
-                    ''' % (self.run_name, year)
-            r = self.connection.execute(query)
-            r.close()
-            r = self.connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units_hh','local') IS NOT NULL DROP TABLE #bldg_res_units_hh")
-            r.close()
-            query = '''
-                    select
-                            b.building_id,
-                            b.residential_units,
-                            case
-                                    when h.total_hh is null then 0
-                                    else h.total_hh
-                            end as num_hh
-                    into #bldg_res_units_hh
-                    from #bldg_res_units b
-                    left join #hh_by_building h
-                    on b.building_id = h.building_id
-                    '''
-            r = self.connection.execute(query)
-            r.close()
-            r = self.connection.execute("IF OBJECT_ID('tempdb..#vac_res_units','local') IS NOT NULL DROP TABLE #vac_res_units")
-            r.close()
-            query = '''
-                    select
-                            building_id,
-                            residential_units,
-                            num_hh,
-                            residential_units - num_hh as vacant_res_units
-                    into #vac_res_units
-                    from #bldg_res_units_hh
-                    '''
-            r = self.connection.execute(query)
-            r.close()
-            query = '''
-                    select sum(vacant_res_units) from #vac_res_units where vacant_res_units > 0
-                    '''
-            r = self.connection.execute(query)
-            for row in r:
-                self.worksheet.write(row_counter,self.column_counter,row[0])
-            r.close
-            row_counter += 1
-        self.column_counter += 1
-
-    def get_total_vacant_DUs_by_type_and_year(self):
-        # Get vacant residential units by type and year
-        r = self.connection.execute('select building_type_id, building_type_name from %s_%s_buildingTypes where is_residential = 1 order by building_type_id' % (self.run_name, self.base_year))
-        building_types = []
-        building_type_names = []
-        for row in r:
-            building_types.append(str(row[0]).strip())
-            building_type_names.append(str(row[1]).strip())
-        r.close()
-        for (indx, btype) in enumerate(building_types):
-            row_counter = 1
-            self.worksheet.write(0,self.column_counter,'vacant_%s' % building_type_names[indx])
-            for year in self.years:
-                print 'Computing vacant %s units for year %s' % (building_type_names[indx], year)
-                r = self.connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units','local') IS NOT NULL DROP TABLE #bldg_res_units")
-                r.close()
-                query = '''
-                        select building_id, residential_units
-                        into #bldg_res_units
-                        from %s_%s_buildings
-                        where building_type_id = %s
-                        ''' % (self.run_name, year, btype)
-                r = self.connection.execute(query)
-                r.close()
-                r = self.connection.execute("IF OBJECT_ID('tempdb..#hh_by_building','local') IS NOT NULL DROP TABLE #hh_by_building")
-                r.close()
-                query = '''
-                        select building_id, count(*) as total_hh
-                        into #hh_by_building
-                        from %s_%s_households
-                        group by building_id
-                        ''' % (self.run_name, year)
-                r = self.connection.execute(query)
-                r.close()
-                r = self.connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units_hh','local') IS NOT NULL DROP TABLE #bldg_res_units_hh")
-                r.close()
-                query = '''
-                        select
-                                b.building_id,
-                                b.residential_units,
-                                case
-                                        when h.total_hh is null then 0
-                                        else h.total_hh
-                                end as num_hh
-                        into #bldg_res_units_hh
-                        from #bldg_res_units b
-                        left join #hh_by_building h
-                        on b.building_id = h.building_id
-                        '''
-                r = self.connection.execute(query)
-                r.close()
-                r = self.connection.execute("IF OBJECT_ID('tempdb..#vac_res_units','local') IS NOT NULL DROP TABLE #vac_res_units")
-                r.close()
-                query = '''
-                        select
-                                building_id,
-                                residential_units,
-                                num_hh,
-                                residential_units - num_hh as vacant_res_units
-                        into #vac_res_units
-                        from #bldg_res_units_hh
-                        '''
-                r = self.connection.execute(query)
-                r.close()
-                query = '''
-                        select sum(vacant_res_units) from #vac_res_units where vacant_res_units > 0
-                        '''
-                r = self.connection.execute(query)
-                for row in r:
-                    self.worksheet.write(row_counter,self.column_counter,row[0])
-                r.close()
-                row_counter += 1
-            self.column_counter += 1
 
     def get_total_households_by_year(self):
         self.worksheet.write(0,self.column_counter,'total_hh')
@@ -510,7 +371,6 @@ class RegionWideReport():
             column_counter += 1
         self.column_counter += len(sectors)
 
-## SOMETHING IS WRONG W/ THIS QUERY
     def get_total_job_spaces_by_year(self):
         # Get total job spaces by year
         self.worksheet.write(0,self.column_counter,'total_job_spaces')
@@ -598,58 +458,6 @@ def get_total_jobs_by_year_and_subarea(subarea, years, workbook, run_name, base_
             row_counter += 1
         column_counter += 1
         r.close()
-## NEEDS TO BE REWORKED TO ACCOUNT FOR SUBAREA ID NOT BEING ON BUILDINGS TABLE
-## SEE 1ST MULTILINE QUERY THAT SUBSTITUTES 'subarea' 1ST
-##
-##def get_household_density_per_acre_by_subarea(subarea, years, workbook, run_name, base_year, connection):
-##    # Get household density per acre by subarea in a separate sheet
-##    # write column headings
-##    worksheet = workbook.add_sheet('hh_density_by_%s_and_year' % (subarea))
-##    worksheet.write(0,0,'%s_id' % (subarea))
-##    column_counter = 1
-##    for year in years:
-##        worksheet.write(0,column_counter,'y'+str(year))
-##        column_counter += 1
-##    # get distinct subareas
-##    row_counter = 1
-##    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
-##    for row in r:
-##        worksheet.write(row_counter,0,row[0])
-##        row_counter += 1
-##    # get values and fill in table
-##    column_counter = 1
-##    for year in years:
-##        print 'Computing households per acre by %s for %s' % (subarea, year)
-##        row_counter = 1
-##        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
-##        r.close()
-##        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
-##        r.close()
-##        query = '''select count(*) num_hh, b.%s_id, avg(z.acres) acres
-##                    into #hh_zones_acres_%s
-##                    from %s_%s_households h
-##                    left join %s_%s_buildings b
-##                    on h.building_id = b.building_id
-##                    left join %s_%s_zones z
-##                    on b.zone_id = z.zone_id
-##                    group by b.zone_id
-##                    order by b.zone_id''' % (subarea, year, run_name, year, run_name, year, run_name, year)
-##        r = connection.execute(query)
-##        r.close()
-##        r = connection.execute('''select
-##                                        case
-##                                                when h.num_hh/h.acres is null then 0
-##                                                else h.num_hh/h.acres
-##                                        end
-##                                from #distinct_%s d
-##                                left join #hh_zones_acres_%s h
-##                                on d.zone_id = h.zone_id
-##                                order by d.zone_id''' % (subarea,year))
-##        for row in r:
-##            worksheet.write(row_counter, column_counter,row[0])
-##            row_counter += 1
-##        column_counter += 1
-##        r.close()
 
 def get_total_households_by_year_and_subarea(subarea, years, workbook, run_name, base_year, connection):
     # Get total households by subarea in a separate sheet
@@ -1187,259 +995,6 @@ def get_total_nonres_sqft_by_year_and_subarea(subarea, years, workbook, run_name
         column_counter += 1
         r.close()
 
-def get_total_vacant_DUs_by_year_and_subarea(subarea, workbook, years, connection, run_name, base_year):
-    # Get vacant residential units by year and subarea
-    worksheet = workbook.add_sheet('vac_res_units_by_year_%s' % (subarea))
-    worksheet.write(0,0,'%s_id' % (subarea))
-    # get years
-    column_counter = 1
-    for year in years:
-        worksheet.write(0,column_counter,'y'+str(year))
-        column_counter += 1
-    # write distinct subareas
-    row_counter = 1
-    r = connection.execute('select distinct(%s_id) from %s_%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
-    subarea_counter = 0
-    for row in r:
-        worksheet.write(row_counter,0,row[0])
-        row_counter += 1
-        subarea_counter += 1
-    r.close()
-    # get values and fill in table
-    column_counter = 1
-    for year in years:
-        print 'Computing vacant residential units by %s for year %s' % (subarea, year)
-        row_counter = 1
-        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
-        r.close()
-        r = connection.execute('select distinct(%s_id) into #distinct_%s from %s_%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea))
-        r.close()
-        r = connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units','local') IS NOT NULL DROP TABLE #bldg_res_units")
-        r.close()
-        query = '''
-                select b.building_id, b.residential_units, p.%s_id
-                into #bldg_res_units
-                from %s_%s_buildings b
-                left join %s_%s_zones p
-                on b.zone_id = p.zone_id
-                ''' % (subarea, run_name, year, run_name, year)
-        r = connection.execute(query)
-        r.close()
-        r = connection.execute("IF OBJECT_ID('tempdb..#hh_by_building','local') IS NOT NULL DROP TABLE #hh_by_building")
-        r.close()
-        query = '''
-                select building_id, count(*) as total_hh
-                into #hh_by_building
-                from %s_%s_households
-                group by building_id
-                ''' % (run_name, year)
-        r = connection.execute(query)
-        r.close()
-        r = connection.execute("IF OBJECT_ID('tempdb..#bldg_res_units_hh','local') IS NOT NULL DROP TABLE #bldg_res_units_hh")
-        r.close()
-        query = '''
-                select
-                        b.building_id,
-                        b.residential_units,
-                        b.%s_id,
-                                case
-                                        when h.total_hh is null then 0
-                                        else h.total_hh
-                                end as num_hh
-                into #bldg_res_units_hh
-                from #bldg_res_units b
-                left join #hh_by_building h
-                on b.building_id = h.building_id
-                ''' % subarea
-        r = connection.execute(query)
-        r.close()
-        r = connection.execute("IF OBJECT_ID('tempdb..#vac_res_units','local') IS NOT NULL DROP TABLE #vac_res_units")
-        r.close()
-        query = '''
-                select
-                        building_id,
-                        residential_units,
-                        num_hh,
-                        %s_id,
-                        residential_units - num_hh as vacant_res_units
-                into #vac_res_units
-                from #bldg_res_units_hh
-                ''' % subarea
-        r = connection.execute(query)
-        r.close()
-        r = connection.execute("IF OBJECT_ID('tempdb..#vac_res_units_%s','local') IS NOT NULL DROP TABLE #vac_res_units_%s" % (year, year))
-        r.close()
-        query = '''
-                select 
-                        %s_id,
-                        sum(vacant_res_units) as sum_vac_res_units
-                into #vac_res_units_%s
-                from #vac_res_units
-                where vacant_res_units > 0
-                group by %s_id
-                order by %s_id
-                ''' % (subarea, year, subarea, subarea)
-        r = connection.execute(query)
-        r.close()
-        query = '''
-                select
-                        case
-                                when s.sum_vac_res_units is null then 0
-                                else s.sum_vac_res_units
-                        end
-                from #distinct_%s r
-                left join #vac_res_units_%s s
-                on r.%s_id = s.%s_id
-                order by r.%s_id
-                ''' % (subarea, year, subarea, subarea, subarea)
-        r = connection.execute(query)
-        for row in r:
-            worksheet.write(row_counter,column_counter,row[0])
-            row_counter += 1
-        column_counter += 1
-        r.close()
-
-## NEEDS WORK
-##def get_vacant_job_spaces_by_subarea(subarea, years, workbook, run_name, base_year, connection):
-##    # Get vacant residential units by year and subarea
-##    worksheet = workbook.add_sheet('vac_job_spaces_by_year_%s' % (subarea))
-##    worksheet.write(0,0,'%s_id' % (subarea))
-##    # get years
-##    column_counter = 1
-##    for year in years:
-##        worksheet.write(0,column_counter,'y'+str(year))
-##        column_counter += 1
-##    # write distinct subareas
-##    row_counter = 1
-##    r = connection.execute('select distinct(%s_id) from %s_Y%s_zones order by %s_id' % (subarea, run_name, base_year, subarea))
-##    subarea_counter = 0
-##    for row in r:
-##        worksheet.write(row_counter,0,row[0])
-##        row_counter += 1
-##        subarea_counter += 1
-##    r.close()
-##    # get values and fill in table
-##    column_counter = 1
-##    for year in years:
-##        print 'Computing vacant job spaces by %s for year %s' % (subarea, year)
-##        row_counter = 1
-##        r = connection.execute("IF OBJECT_ID('tempdb..#distinct_%s','local') IS NOT NULL DROP TABLE #distinct_%s" % (subarea, subarea))
-##        r.close()
-##        query = 'select distinct(%s_id) into #distinct_%s from %s_Y%s_zones order by %s_id' % (subarea, subarea, run_name, base_year, subarea)
-##        r = connection.execute(query)
-##        r.close()
-##        # get buildings w/ zone_id into temp table
-##        r = connection.execute("IF OBJECT_ID('tempdb..#temp_buildings','local') IS NOT NULL DROP TABLE #temp_buildings")
-##        r.close()
-##        query = '''
-##                    select
-##                            b.building_id, b.building_type_id,
-##                            b.non_residential_sqft, p.zone_id
-##                    into #temp_buildings
-##                    from %s_Y%s_buildings b
-##                    left join %s_Y%s_zones p
-##                    on b.zone_id = p.zone_id
-##                ''' % (run_name, year, run_name, year)
-##        r = connection.execute(query)
-##        r.close()
-##        # join sqft per job w/ temp buildings
-##        r = connection.execute("IF OBJECT_ID('tempdb..#temp_buildings2','local') IS NOT NULL DROP TABLE #temp_buildings2")
-##        r.close()
-##        query = '''
-##                    select t.*, b.building_sqft_per_job
-##                    into #temp_buildings2
-##                    from #temp_buildings t
-##                    left join %s_Y%s_building_sqft_per_job b
-##                    on t.zone_id = b.zone_id and t.building_type_id = b.building_type_id
-##                ''' % (run_name, year)
-##        r = connection.execute(query)
-##        r.close()
-##        # get count of jobs by building
-##        r = connection.execute("IF OBJECT_ID('tempdb..#temp_jobs_by_bldg','local') IS NOT NULL DROP TABLE #temp_jobs_by_bldg")
-##        r.close()
-##        query = '''
-##                    select 
-##                            building_id, count(*) as num_jobs
-##                    into #temp_jobs_by_bldg
-##                    from %s_Y%s_jobs
-##                    group by building_id
-##                ''' % (run_name, year)
-##        r = connection.execute(query)
-##        r.close()
-##        # combine building and job data
-##        r = connection.execute("IF OBJECT_ID('tempdb..#buildings_jobs','local') IS NOT NULL DROP TABLE #buildings_jobs")
-##        r.close()
-##        query = '''
-##                    select
-##                            t.*, j.num_jobs
-##                    into #buildings_jobs
-##                    from #temp_buildings2 t
-##                    left join #temp_jobs_by_bldg j
-##                    on t.building_id = j.building_id
-##                '''
-##        r = connection.execute(query)
-##        r.close()        
-##        # update jobs data to zero where null
-##        query = '''
-##                    update #buildings_jobs
-##                    set num_jobs = 0
-##                    where num_jobs is null
-##                '''
-##        r = connection.execute(query)
-##        r.close()
-##        # compute total and vacant job spaces
-##        r = connection.execute("IF OBJECT_ID('tempdb..#job_space_data','local') IS NOT NULL DROP TABLE #job_space_data")
-##        r.close()
-##        query = '''
-##                    select
-##                            building_id, zone_id, num_jobs,
-##                            non_residential_sqft/building_sqft_per_job as total_job_spaces,
-##                            (non_residential_sqft/building_sqft_per_job)-num_jobs as vacant_job_spaces
-##                    into #job_space_data
-##                    from #buildings_jobs
-##                '''
-##        r = connection.execute(query)
-##        r.close()
-##        # update vacant spaces to zero where < 1
-##        query = '''
-##                    update #job_space_data
-##                    set vacant_job_spaces = 0
-##                    where vacant_job_spaces < 1
-##                '''
-##        r = connection.execute(query)
-##        r.close()
-##        # calculate vacant job space by subarea
-##        r = connection.execute("IF OBJECT_ID('tempdb..#vac_job_space_by_subarea','local') IS NOT NULL DROP TABLE #vac_job_space_by_subarea")
-##        r.close()
-##        query = '''
-##                    select p.%s_id, sum(j.vacant_job_spaces) as vac_job_spc
-##                    into #vac_job_space_by_subarea
-##                    from #job_space_data j
-##                    left join %s_Y%s_zones p
-##                    on j.zone_id = p.zone_id
-##                    group by p.%s_id
-##                ''' % (subarea, run_name, year, subarea)
-##        r = connection.execute(query)
-##        r.close()
-##        # join data to distinct subareas
-##        query = '''
-##                    select s.%s_id, 
-##                               case
-##                                    when v.vac_job_spc is null then 0
-##                                    else v.vac_job_spc
-##                               end
-##                    from #distinct_%s s
-##                    left join #vac_job_space_by_subarea v
-##                    on s.%s_id = v.%s_id
-##                ''' % (subarea, subarea, subarea, subarea)
-##        r = connection.execute(query)
-##        for row in r:
-##            worksheet.write(row_counter,column_counter,row[1])
-##            row_counter += 1
-##        column_counter += 1
-##        r.close()
-
-
 def save_excel_workbook(run_name, excel_output_path, workbook):
     # check for existence of excel workbook, append date/time stamp if it exists
     try:
@@ -1461,18 +1016,132 @@ def save_excel_workbook(run_name, excel_output_path, workbook):
     except:
         print 'No worksheets have been created, workbook not saved.'
 
+def get_projects_runs_available_years(connection):
+    
+    # run query to get all tables
+    query = 'select TABLE_NAME from INFORMATION_SCHEMA.TABLES'
+    r = connection.execute(query)
+    
+    # get all opus tables
+    all_opus_tables = []
+    for row in r:
+        result = row[0]
+        if result[0:4] == 'opus':
+            all_opus_tables.append(str(row[0]))
+    r.close()
+    
+    # get all opus runs
+    all_opus_runs = []
+    for table in all_opus_tables:
+        if '_runs_' in table:
+            all_opus_runs.append(table)
+    
+    # get unique projects and runs
+    all_opus_runs_split = []
+    for table in all_opus_runs:
+        all_opus_runs_split.append(table.split('_'))
+    unique_runs = []
+    unique_projects = []
+    for table in all_opus_runs_split:
+        this_project, this_run = table[1], table[3]
+        if not this_project in unique_projects:
+            unique_projects.append(this_project)
+        if not this_run in unique_runs:
+            unique_runs.append(this_run)
+
+    #build nested dictionary of available projects, runs, years
+    projects_runs_years = {}
+    for project in unique_projects:
+        projects_runs_years[project] = {}
+        for i in all_opus_runs_split:
+            if i[1] == project:
+                if i[3] not in projects_runs_years[project]:
+                    projects_runs_years[project][i[3]] = []
+    for proj in projects_runs_years:
+        for run in projects_runs_years[proj]:
+            for i in all_opus_runs_split:
+                if i[3] == run:
+                    if i[4] not in projects_runs_years[proj][run]:
+                        projects_runs_years[proj][run].append(i[4])
+    
+    return unique_projects, projects_runs_years
+
+def get_available_subareas(connection, run_name, lowest_year):
+    # run query to get all columns
+    query = "select column_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '%s_%s_zones'" % (run_name, lowest_year)
+    r = connection.execute(query)
+    # sort through columns for subarea id columns
+    available_subareas = []
+    for row in r:
+        if '_id' in row[0]:
+             available_subareas.append(row[0].replace('_id',''))
+    r.close()
+    return available_subareas
+
 def main():
+    # choose project
+    chosen_project = choicebox('Choose a project:','Available Projects',unique_projects)
+    if not chosen_project:
+        print 'User cancelled, ending script.'
+        return 
+    print 'chosen_project = %s' % chosen_project
+    
+    #given project, get available runs
+    available_runs = []
+    for run in projects_runs_years[chosen_project]:
+        available_runs.append(run)
+    
+    # choose run
+    chosen_run = choicebox('Choose a simulation run:','Available simulation runs',available_runs)
+    if not chosen_run:
+        print 'User cancelled, ending script.'
+        return
+    print 'chosen_run = %s' % chosen_run
+    
+    # given project and run, get available years
+    available_years = projects_runs_years[chosen_project][chosen_run]
+    available_years.sort()
+    
+    # choose years
+    chosen_years_str = multchoicebox('Choose simulation years:','Available simulation years',available_years)
+    chosen_years = []
+    for i in chosen_years_str:
+        chosen_years.append(int(i))
+    chosen_years.sort()
+    lowest_year = chosen_years[0]
+    if not chosen_years:
+        print 'User cancelled, ending script.'
+        return
+    print 'chosen_years = %s' % chosen_years
+
+    # construct full run name
+    run_name = 'opus_' + chosen_project + '_runs_' + chosen_run
+    
+    # given project and full run name, get available subareas
+    available_subareas = get_available_subareas(connection, run_name, lowest_year)
+    # choose subarea
+    if available_subareas <> []:
+        chosen_subarea = choicebox('Choose a subarea:','Available subareas',available_subareas)
+        if not chosen_subarea:
+            chosen_subarea = ''
+            print 'No chosen subarea.'
+        else:
+            print 'chosen_subarea = %s' % chosen_subarea
+    else:
+        chosen_subarea = ''
     
     # other setup variables
-    query_fields = ['Base Year','End Year','Run Name','Excel Output Path','Subarea']
-    query_default_values = ['2009','2030','opus_magZoneV3c_runs_','c:/working/excel_outputs','']
-    query_variables = multenterbox('','Enter Values',query_fields,query_default_values)
-    base_year = int(query_variables[0])
-    end_year = int(query_variables[1])
+    query_fields = ['Base Year','Years','Run Name','Excel Output Path','Subarea']
+    query_default_values = ['2009',chosen_years,run_name,'c:/working/excel_outputs',chosen_subarea]
+    query_variables = multenterbox('Confirm and/or update values','Report setup values',query_fields,query_default_values)
+    if not query_variables:
+        print 'User cancelled, ending script.'
+        return
     run_name = query_variables[2]
     excel_output_path = query_variables[3]
     subarea = query_variables[4]
-    years = range(base_year,end_year+1)
+    base_year = int(query_variables[0])
+    years = eval(query_variables[1])
 
     # create Excel workbook
     workbook = xlwt.Workbook()
@@ -1486,8 +1155,6 @@ def main():
                         , 'get_total_nonres_sqft_by_year'
                         , 'get_total_DUs_SF_by_year'
                         , 'get_total_DUs_MF_by_year'
-                        , 'get_total_vacant_DUs_by_year'
-                        , 'get_total_vacant_DUs_by_type_and_year'
                         , 'get_total_households_by_year_and_income_category'
                         , 'get_total_unplaced_households_by_year'
                         , 'get_total_unplaced_households_by_income_categories'
@@ -1511,7 +1178,6 @@ def main():
                         , 'get_total_population_by_year_and_subarea'
                         , 'get_total_DUs_by_year_and_subarea'
                         , 'get_total_nonres_sqft_by_year_and_subarea'
-                        , 'get_total_vacant_DUs_by_year_and_subarea'
                         , 'get_total_DUs_MF_by_year_and_subarea'
                         , 'get_total_DUs_SF_by_year_and_subarea'
                         , 'get_total_households_in_SFR_by_year_and_subarea'
@@ -1523,8 +1189,11 @@ def main():
         report_list.sort()
         
         # Open GUI
-        choices = multchoicebox('Choose queries to run','Run Queries',report_list)
-        if not choices: return
+        text = 'Chosen project: %s\nChosen simulation run: %s\n\nChoose queries to run:' % (chosen_project, chosen_run)
+        choices = multchoicebox(text,'Run Queries',report_list)
+        if not choices:
+            print 'User cancelled, ending script.'
+            return
         
         # create report object:
         region_wide_report = RegionWideReport(workbook, years, connection, run_name, base_year)
@@ -1540,53 +1209,51 @@ def main():
         
         # Run region wide queries
         for region_wide_choice in region_wide_choices:
-            exec('region_wide_report.%s()' % region_wide_choice)
+            try:
+                q = 'region_wide_report.%s()' % region_wide_choice
+                exec(q)
+            except exc.ProgrammingError, e:
+                print '\nERROR when calling the following region-wide report method: \n%s' % q
+                print '\nThere was a SQL error: \n%s\n' % (e)
         # Run subarea queries
         for subarea_choice in subarea_choices:
-            exec('%s(subarea, years, workbook, run_name, base_year, connection)' % subarea_choice)
-        
+            try:
+                q = '%s(subarea, years, workbook, run_name, base_year, connection)' % subarea_choice
+                exec(q)
+            except exc.ProgrammingError, e:
+                print '\nERROR when calling the following subarea report function: \n%s' % q
+                print '\nThere was a SQL error: \n%s\n' % (e)
+
         # Save excel workbook
+        print 'Report successful'
         save_excel_workbook(run_name, excel_output_path, workbook)
-        
+        return
 
 if __name__ == "__main__":
     print 'Starting: Create Zone Simulation Report in Excel'
     # database connection variables   
+    # get values from gui
+    db_connection_fields = ['Username','Password','Server Name','Database Name']
+    db_connection_default_values = ['','','MAG1113','AZSMART_V3_zone']
+    db_connection_values = multenterbox('Enter SQL connection values:','SQL Connection',db_connection_fields,db_connection_default_values)
+    if not db_connection_values:
+        print 'User cancelled, ending script.'
+        exit()
+    # create the engine and connection
     try:
-        # get values as sys arguments
-        username = sys.argv[1]
-        password = sys.argv[2]
-        server = sys.argv[3]
-        database = sys.argv[4]
-        # create the engine and connection
-        engine = create_engine('mssql://%s:%s@%s/%s' % (username, password, server, database))
-        connection = engine.connect()
-        print 'SQL connection made to %s via command line arguments' % server
-        main()
-    except:
-        # get values from gui
-        db_connection_fields = ['Username','Password','Server Name','Database Name']
-        db_connection_default_values = ['AZSMARTExport','thebigone','MAG1113','AZSMART_V3_zone']
-        db_connection_values = multenterbox('','Enter values',db_connection_fields,db_connection_default_values)
-        # create the engine and connection
         engine = create_engine('mssql://%s:%s@%s/%s' % (db_connection_values[0], db_connection_values[1], db_connection_values[2], db_connection_values[3]))
         connection = engine.connect()
-        print 'SQL connection made to %s via GUI arguments' % db_connection_values[2]
-        main()
+    except:
+        print 'Connection to %s failed, ending script.' % db_connection_values[2]
+        exit()
+    print 'SQL connection to %s successful.' % db_connection_values[2]
+    unique_projects, projects_runs_years = get_projects_runs_available_years(connection)
+    main()
 
 #############################
 ########### NOTES ###########
 #############################
-
-    # REGION WIDE REPORTS
-    # NOT WORKING AT ALL
-    # region_wide_report.get_total_job_spaces_by_year()
     
-    # SUBAREA REPORTS
-    # NOT WORKING AT ALL
-    #get_household_density_per_acre_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-    #get_vacant_job_spaces_by_subarea(subarea, years, workbook, run_name, base_year, connection)
-
 # TODO:
 # add a drop table if exists function
 # some of these queries were designed to be run w/ a full simulation uploaded to SQL (every year) instead of
