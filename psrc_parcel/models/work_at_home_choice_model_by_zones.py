@@ -70,9 +70,7 @@ class WorkAtHomeChoiceModelByZones(WorkAtHomeChoiceModel):
             self.job_set.flush_dataset()
             
             
-        logger.log_status("Total: %s workers work at home, (%s workers work out of home), will try to assign %s workers to %s jobs." % 
+        logger.log_status("Total: %s workers work at home, %s workers work out of home." % 
                           (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
-                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size,
-                          at_home_worker_index.size,
-                          jobs_set_index.size
+                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size
                           ))
