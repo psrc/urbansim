@@ -179,6 +179,13 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                                   dataset_pool=dataset_pool,
                                                                   resources = kwargs.get("resources", None))
                 
+                if(kwargs.get('accept_only_larger_proposals_for_redevelopment', False)):
+                    # remove proposals that are smaller than the current building in the parcel
+                    remove_proposals = where(redev_proposal_set.compute_variables(['urbansim_parcel.development_project_proposal.units_proposed <= development_project_proposal.disaggregate(urbansim_parcel.parcel.existing_units)'],
+                                                         dataset_pool=dataset_pool))[0]
+                    if remove_proposals.size > 0:
+                        redev_proposal_set.remove_elements(remove_proposals)
+                        logger.log_status('%s proposals smaller than existing buildings, therefore removed.' %  remove_proposals.size)
                 redev_proposal_set.add_attribute( ones(redev_proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
                 proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
                 ###roll back land_area of buildings
