@@ -903,7 +903,7 @@
         <selectable name="household_relocation_model" type="selectable">False</selectable>
         <selectable name="household_location_choice_model" type="selectable">False</selectable>
         <selectable name="employment_relocation_model" type="selectable">False</selectable>
-        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">_all_</group_members>
+        <selectable name="employment_location_choice_model" type="selectable">False<group_members type="string">non_home_based</group_members>
         </selectable>
         <selectable name="distribute_unplaced_jobs_model" type="selectable">False</selectable>
       </models_to_run>
