@@ -15,9 +15,9 @@ project_name = 'psrc_parcel'
 years_arr = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
 # cupum scenarios 2030 re-estimated
-#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_3.2011_03_12_10_01' # highway limited cap.
-#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_26.2011_03_10_16_31' # highway
-cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_2.2011_03_10_13_35' # ferry
+cache_dir = r'/net/ils/nicolai3/opus_home/data/psrc_parcel/runs/run_5.2011_04_18_20_55' # highway limited cap.
+#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_4.2011_04_18_20_40' # highway
+#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_4.2011_04_18_20_38' # ferry
 
 # cupum scenarios 2030 
 #cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
@@ -26,9 +26,11 @@ cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_2.2011_03_10
 
 types = ['tab']
 
+print "creating indicators ..."
+
 indicators = {
     
-    'building_type_other':Indicator( # other (agriculture, group_quarter, outbuilding, open space, parking, recreation, school, no code)
+    'building_type_other':Indicator( # other (agriculture, group_quarter, out building, open space, parking, recreation, school, no code)
        dataset_name = 'zone',
        attribute = 'zone.aggregate(urbansim_parcel.building.is_generic_building_type_8, intermediates=[parcel])'),
 
@@ -112,9 +114,9 @@ indicators = {
        dataset_name = 'zone',
        attribute = 'urbansim_parcel.zone.number_of_households'),
        
-    'zone_number_of_residential_units':Indicator( 
-       dataset_name = 'zone',
-       attribute = 'urbansim_parcel.building.residential_units'),
+    #'zone_number_of_residential_units':Indicator( 
+    #   dataset_name = 'zone',
+    #   attribute = 'urbansim_parcel.building.residential_units'),
        
     'zone_number_of_single_households':Indicator( 
        dataset_name = 'zone',
@@ -194,6 +196,7 @@ indicators = {
     #    name =  'number_of_home_based_jobs'),              
 }
 
+print "... done."
 
 #################################################################
 #DEFINE data source
@@ -202,6 +205,8 @@ indicators = {
 # over which the indicators are computed
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_gui.results_manager.run.indicator_framework.maker.source_data import SourceData
+
+print "creating result template ..."
 
 result_template = SourceData(
    cache_directory = cache_dir,
@@ -213,6 +218,8 @@ result_template = SourceData(
    name = project_name
 )
 
+print "... done."
+
 ################################################################
 #COMPUTE indicators
 ################################################################
@@ -220,10 +227,14 @@ result_template = SourceData(
 # for a given result template
 from opus_gui.results_manager.run.indicator_framework.maker.maker import Maker
 
+print "creating maker (to compute indicators) ..."
+
 maker = Maker( project_name )
 computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = result_template)
+
+print "... done."
 
 ############################################
 #VISUALIZE the resulting computed indicators
@@ -347,14 +358,14 @@ for output_type in types:
         name = 'number_of_buildings',
         )
     
-for output_type in types:
-    visualizations += visualizer.visualize(
-        indicators_to_visualize = ['zone_number_of_residential_units'],
-        computed_indicators = computed_indicators,
-        visualization_type = 'table',
-        output_type = output_type,
-        name = 'zone_number_of_residential_units',
-        )
+#for output_type in types:
+#    visualizations += visualizer.visualize(
+#        indicators_to_visualize = ['zone_number_of_residential_units'],
+#        computed_indicators = computed_indicators,
+#        visualization_type = 'table',
+#        output_type = output_type,
+#        name = 'zone_number_of_residential_units',
+#        )
     
 for output_type in types:
     visualizations += visualizer.visualize(

@@ -44,7 +44,7 @@ class ExportTravelData(object):
         # get output dir path
         output_directory = output_dir
         if output_directory == None:
-            # set deafult
+            # set default
             output_directory = os.path.join( os.environ['OPUS_HOME'], 'opus_matsim', 'tmp')
         if not os.path.exists( output_directory ):
             try: os.mkdir( output_directory )
