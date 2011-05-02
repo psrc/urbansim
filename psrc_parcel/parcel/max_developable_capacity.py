@@ -22,7 +22,7 @@ class max_developable_capacity(Variable):
         # iterate over GLU types
         for glu in parcels.development_constraints.keys():
             if  str(glu).isdigit(): 
-                result = maximum(result, parcels.development_constraints[glu]['far'][:, 1])  #max constraint
+                result = maximum(result, parcels.development_constraints[glu]['far'][:, 1])*parcels['parcel_sqft']  #max constraint
                 res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] * 5.96 * 1/43560.0# median of units_per_acre over templates times acre-to-sqft converter
                 result = maximum(result, res_constraints)
         return result
@@ -52,6 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 "parcel_id":        array([1,   2,    3]),
                 "is_constrained":   array([1,   0,    1]),
+                'parcel_sqft': array([70, 20, 5])
             },
             'generic_land_use_type':
             {
@@ -61,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
             }
         )
         
-        should_be = array([10, 100, 10])
+        should_be = array([49000, 40000, 250])
         
         instance_name = 'psrc_parcel.parcel.max_developable_capacity'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
