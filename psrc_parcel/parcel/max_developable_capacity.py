@@ -6,7 +6,9 @@ from opus_core.variables.variable import Variable
 from numpy import zeros, maximum
 
 class max_developable_capacity(Variable):
-    """ maximum capacity (far, units_per_acre, etc) allowed by development constraints
+    """ Maximum capacity over all generic land use types and over far and units_per_acre 
+        allowed by development constraints. The units-to-sqft conversion is approximated by taking
+        the median over residential templates, which is 5.96.
     """
 
     def dependencies(self):
