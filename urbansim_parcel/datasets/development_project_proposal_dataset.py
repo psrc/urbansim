@@ -7,6 +7,7 @@ from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
+from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique, DebugPrinter
@@ -243,6 +244,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
 
     # eliminate proposals with zero units_proposed
     units_proposed = proposals.compute_variables([proposed_units_variable], dataset_pool = dataset_pool)
+    proposals.add_attribute(units_proposed, "units_proposed", AttributeType.PRIMARY)
     where_up_greater_zero = where(units_proposed > 0)[0]
     if where_up_greater_zero.size > 0:
         proposals.subset_by_index(where_up_greater_zero, flush_attributes_if_not_loaded=False)
