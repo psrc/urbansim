@@ -23,7 +23,7 @@ class max_developable_capacity(Variable):
         for glu in parcels.development_constraints.keys():
             if  glu == 'index':
                 continue
-            result = maximum(result, parcels.development_constraints[glu]['far'][:, 1])*parcels['parcel_sqft']  #max constraint
+            result = maximum(result, parcels.development_constraints[glu]['far'][:, 1]*parcels['parcel_sqft'])  #max constraint
             res_constraints = parcels.development_constraints[glu]['units_per_acre'][:, 1] * 5.96 * 1/43560.0# median of units_per_acre over templates times acre-to-sqft converter
             result = maximum(result, res_constraints)
         return result
