@@ -63,7 +63,7 @@ class Tests(opus_unittest.OpusTestCase):
             }
         )
         
-        should_be = array([49000, 40000, 250])
+        should_be = array([700, 2000, 50])
         
         instance_name = 'psrc_parcel.parcel.max_developable_capacity'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
