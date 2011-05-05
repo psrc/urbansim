@@ -52,7 +52,7 @@ if __name__ == '__main__':
     except: pass
     from psrc_parcel.household.aliases import aliases
     aliases += ["customized_est_filter= (household.household_id > 6000000) * " + \
-                "numpy.logical_or(household.tenure==1, household.tenure==3) * " + \
+                "numpy.logical_or(household.tenure_id==1, household.tenure_id==3) * " + \
                 #numpy.setmember1d(household.tenure, (1,3)) * \ ## buggy
                 "(( (psrc_parcel.household.building_type_id==4) + (psrc_parcel.household.building_type_id==11) + (psrc_parcel.household.building_type_id==12) + (psrc_parcel.household.building_type_id==19)) >= 1) * " + \
                 #numpy.setmember1d(psrc_parcel.household.building_type_id, (4, 11, 12, 19)) * \ ##ideally the above line can be replaced with this, but this is buggy

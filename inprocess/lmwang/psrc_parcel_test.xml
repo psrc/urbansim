@@ -26,6 +26,9 @@
       <variable use="both" source="expression" name="car.car3" type="variable_definition">car.car_id==3</variable>
       <variable use="both" source="expression" name="car.car2" type="variable_definition">car.car_id==2</variable>
       <variable use="both" source="expression" name="car.car0" type="variable_definition">car.car_id==0</variable>
+      <variable use="both" source="expression" name="tenure.constant_own" type="variable_definition">tenure.tenure_id==1</variable>
+      <variable use="both" source="expression" name="household_x_tenure.income_own" type="variable_definition">household.income * (tenure.tenure_id==1)</variable>
+      <variable use="both" source="expression" name="household_x_tenure.persons_own" type="variable_definition">household.persons * (tenure.tenure_id==1)</variable>
       <variable use="model variable" source="expression" name="household_x_building.ln_inc_avg_inc" type="variable_definition">ln_bounded(urbansim.household.income) * ln(building.aggregate(household.income, function=mean))</variable>
       <variable use="model variable" source="expression" name="household_x_building.disposable_inc_0" type="variable_definition">(household.income - ((urbansim_parcel.building.unit_price/10.) * urbansim_parcel.building.building_sqft_per_unit))&lt;0</variable>
       <variable use="both" source="expression" name="parcel.ln_total_price" type="variable_definition">ln(parcel.total_price)</variable>
@@ -99,7 +102,7 @@
       <variable dataset="person_trip" name="time_2" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.travel_data_am_double_vehicle_to_work_travel_time</variable>
       <variable dataset="person_trip" name="travel_data_retail" source="Python class" type="variable_definition" use="model variable">urbansim.person_trip.destination_zone_number_of_jobs</variable>
       <variable use="model variable" source="expression" name="building.Kitsap" type="variable_definition">building.disaggregate(faz.fazdistrict_id) == 6</variable>
-      <variable use="model variable" source="expression" name="household_x_building.renter_x_is_mfr" type="variable_definition">household.tenure == 3 * urbansim.building.is_multi_family_residential</variable>
+      <variable use="model variable" source="expression" name="household_x_building.renter_x_is_mfr" type="variable_definition">household.tenure_id == 3 * urbansim.building.is_multi_family_residential</variable>
       <variable use="model variable" source="expression" name="household_x_building.zero_workers_x_avg_work_logsum" type="variable_definition">(household.workers==0) * ( ((psrc.household.logsum_income_break==1) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1)) + ((psrc.household.logsum_income_break==2) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2)) + ((psrc.household.logsum_income_break==3) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_3)) + ((psrc.household.logsum_income_break==4) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_4)) )</variable>
       <variable use="model variable" source="expression" name="household_x_building.neigh_shopping" type="variable_definition">ln_bounded(building.disaggregate(urbansim.gridcell.sector_7_employment_within_walking_distance + urbansim.gridcell.sector_14_employment_within_walking_distance + urbansim.gridcell.sector_17_employment_within_walking_distance))</variable>
       <variable use="model variable" source="expression" name="household_x_building.E_max_commute_logsum" type="variable_definition">psrc_parcel.household_x_building.max_logsum_hbw_am_from_home_to_work</variable>
@@ -362,12 +365,12 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">ChoiceModel</name>
-            <argument name="choice_set" type="string">[1,3]</argument>
+            <argument name="choice_set" type="string">tenure</argument>
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices</argument>
             <argument convert_blank_to_none="True" field_description="test description" name="submodel_string" type="string"/>
-            <argument name="choice_attribute_name" parser_action="quote_string" type="string">household.tenure</argument>
+            <argument name="choice_attribute_name" parser_action="quote_string" type="string">household.tenure_id</argument>
             <argument name="interaction_pkg" parser_action="quote_string" type="string">opus_core</argument>
             <argument convert_blank_to_none="True" name="run_config" type="string"/>
             <argument name="estimate_config" type="dictionary">
@@ -417,6 +420,13 @@
         </structure>
         <specification type="dictionary">
           <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">No submodel</description>
+            <variable_list type="variable_list">
+                <variable_spec name="tenure.constant_own"/>
+                <variable_spec name="household_x_tenure.income_own"/>
+                <variable_spec name="household_x_tenure.persons_own"/>
+            </variable_list>
+		<!--
             <equation equation_id="1" name="Own" type="submodel_equation">
               <variable_list type="variable_list">
                 <variable_spec name="constant"/>
@@ -424,6 +434,7 @@
                 <variable_spec name="household.persons"/>
               </variable_list>
             </equation>
+		  -->
           </submodel>
         </specification>
         <estimation_config name="Estimation Configuration" parser_action="skip">
@@ -1565,6 +1576,7 @@
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <selectable copyable="True" type="selectable" name="district">True</selectable>
         <selectable copyable="True" type="selectable" name="car">True</selectable>
+        <selectable copyable="True" type="selectable" name="tenure">True</selectable>
         <selectable copyable="True" type="selectable" name="building_type">True</selectable>
         <selectable copyable="True" type="selectable" name="large_area">True</selectable>
         <selectable copyable="True" type="selectable" name="person_trip">True</selectable>
@@ -1615,6 +1627,7 @@
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
           <selectable copyable="True" type="selectable" name="district">True</selectable>
           <selectable copyable="True" type="selectable" name="car">True</selectable>
+          <selectable copyable="True" type="selectable" name="tenure">True</selectable>
           <selectable name="zone" type="selectable">True</selectable>
           <selectable name="household" type="selectable">True</selectable>
           <selectable name="building" type="selectable">True</selectable>
