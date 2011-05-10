@@ -4,6 +4,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
+from numpy import logical_and
 
 class workerDDD(Variable):
     """if a person (worker) is workerDDD"""
@@ -17,7 +18,7 @@ class workerDDD(Variable):
         
     def compute(self, dataset_pool):
         persons = self.get_dataset()
-        return persons.get_attribute("member_id") == self.n
+        return logical_and(persons["member_id"] == self.n, persons["job_id"] > 0)
     
 
 from opus_core.tests import opus_unittest
@@ -42,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
                     'person_id':array([1, 2, 3, 4, 5]),
                     'household_id':array([1, 1, 3, 3, 3]),
                     'member_id':array([1,2,1,2,3]),
-                    'job_id':array([-1,1,3,0,5])
+                    'job_id':array([0,45,78,0,2])
                     },
             )
 
@@ -55,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
             dataset = 'person'
             )
             
-        should_be = array([1, 0, 1, 0, 0])
+        should_be = array([0, 0, 1, 0, 0])
         
         self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
             'Error in ' + self.variable_name)
