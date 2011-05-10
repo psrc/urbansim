@@ -39,14 +39,14 @@ for m in range(len(models)):
     std_errors = coefficients.standard_errors
     sub_ids = coefficients.submodels
     t_stats = coefficients.other_measures['t_statistic']
-    
+
     # ... finally print out all available data 
-    content_coefficients+='{0:30s} {1:10s} {2:10s} {3:10s} {4:10s}\n\r'.format('coefficient_name', 'estimate', 'error', 'submodel_id', 't_statistic')
+    content_coefficients+='{0:40s} {1:10s} {2:10s} {3:10s} {4:10s}\n\r'.format('coefficient_name', 'estimate', 'error', 'submodel_id', 't_statistic')
     for i in range(len(names)):
         if len(sub_ids) <= 0:
-            content_coefficients+='{0:30s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], '-', t_stats[i])
-        else:
-            content_coefficients+='{0:30s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], sub_ids[i], t_stats[i])
+            content_coefficients+='{0:40s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], '-', t_stats[i])#'{0:30s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], '-', t_stats[i])
+        else:            
+            content_coefficients+='{0:40s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], sub_ids[i], t_stats[i]) #'{0:30s} {1:10f} {2:10f} {3:10s} {4:10f}\n'.format(names[i], estimates[i], std_errors[i], sub_ids[i], t_stats[i])
     content_coefficients+='\n\r'
     
     # now do the same for the specification ...
@@ -72,12 +72,12 @@ for m in range(len(models)):
     long_var_names_spec = specification.get_long_variable_names()
     
     # ... finally print out all available data 
-    content_specification+='{0:30s} {1:10s} {2:20s}\n\r'.format('coefficient_name', 'submodel_id', 'variable_name')
+    content_specification+='{0:40s} {1:10s} {2:20s}\n\r'.format('coefficient_name', 'submodel_id', 'variable_name')
     for x in range(len(names_spec)):
         if len(submodels_spec) <= 0:
-            content_specification+='{0:30s} {1:10s} {2:20s}\n'.format(names_spec[x], '-', long_var_names_spec[x])
+            content_specification+='{0:40s} {1:10s} {2:20s}\n'.format(names_spec[x], '-', long_var_names_spec[x])
         else:
-            content_specification+='{0:30s} {1:10s} {2:20s}\n'.format(names_spec[x], submodels_spec[x], long_var_names_spec[x])
+            content_specification+='{0:40s} {1:10s} {2:20s}\n'.format(names_spec[x], submodels_spec[x], long_var_names_spec[x]) #'{0:30s} {1:10s} {2:20s}\n'.format(names_spec[x], submodels_spec[x], long_var_names_spec[x])
     content_specification+='\n\r'
     
 # print and store coefficients

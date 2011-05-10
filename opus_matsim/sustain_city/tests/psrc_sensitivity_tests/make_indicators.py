@@ -15,9 +15,9 @@ project_name = 'psrc_parcel'
 years_arr = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 
 # cupum scenarios 2030 re-estimated
-cache_dir = r'/net/ils/nicolai3/opus_home/data/psrc_parcel/runs/run_5.2011_04_18_20_55' # highway limited cap.
-#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_4.2011_04_18_20_40' # highway
-#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_4.2011_04_18_20_38' # ferry
+cache_dir = r'/net/ils/nicolai3/opus_home/data/psrc_parcel/runs/run_5.2011_05_02_15_18' # highway limited cap.
+#cache_dir = r'/net/ils/nicolai2/opus_home/data/psrc_parcel/runs/run_5.2011_05_02_14_41' # highway
+#cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_5.2011_05_02_14_37' # ferry
 
 # cupum scenarios 2030 
 #cache_dir = r'/net/ils/nicolai/opus_home/data/psrc_parcel/runs/run_2.2011_02_25_19_21' # highway limited cap.
@@ -124,11 +124,11 @@ indicators = {
        
     'zone_income_per_person':Indicator( 
        dataset_name = 'zone',
-       attribute = 'zone.aggregate(household.income / household.persons, intermediates=[building, parcel])'),
+       attribute = 'safe_array_divide(zone.aggregate(household.income, intermediates=[building, parcel]), zone.aggregate(household.persons, intermediates=[building, parcel]))'),  #'zone.aggregate(household.income / household.persons, intermediates=[building, parcel])'),
        
     'zone_income_per_worker':Indicator( 
        dataset_name = 'zone',
-       attribute = 'zone.aggregate(household.income / household.workers, intermediates=[building, parcel])'),
+       attribute = 'safe_array_divide(zone.aggregate(household.income, intermediates=[building, parcel]), zone.aggregate(household.workers, intermediates=[building, parcel]))'), #'zone.aggregate(household.income / household.workers, intermediates=[building, parcel])'),
        
     'zone_employment_within_30min_travel_time':Indicator( 
        dataset_name = 'zone',
