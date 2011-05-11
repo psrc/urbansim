@@ -23,6 +23,13 @@
               <variable_spec name=".bsqft" />
             </variable_list>
           </submodel>
+          <submodel type="submodel" name="single_family_residential" submodel_id="25">
+            <variable_list type="variable_list">
+              <variable_spec name=".existing_units" />
+              <variable_spec name=".ln_cost" coefficient_name="cost" />
+              <variable_spec name=".bsqft" coefficient_name="bsqft" fixed_value="10" />
+            </variable_list>
+          </submodel>
         </specification>
       </model>
     </models>

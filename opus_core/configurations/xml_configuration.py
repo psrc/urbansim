@@ -789,6 +789,11 @@ class XMLConfiguration(object):
         def name_or_tuple(var_node):
             name = get_variable_name(var_node)
             coeff_name = var_node.get('coefficient_name')
+            fixed_value = var_node.get('fixed_value')
+            if fixed_value and not coeff_name:
+                coeff_name = name
+            if fixed_value:
+                return (name, coeff_name, float(fixed_value))
             if coeff_name:
                 return (name, coeff_name)
             return name
@@ -1306,7 +1311,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['bsqft = urbansim_parcel.parcel.building_sqft', 'ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
-          24: ['ln_cost', 'existing_units', 'bsqft']}
+          24: ['ln_cost', 'existing_units', 'bsqft'],
+          25: ['existing_units', ('ln_cost', 'cost'), ('bsqft', 'bsqft', 10.0)]}
         self.assertEqual(config, should_be)
 
     def test_get_estimation_specification_with_equation(self):
