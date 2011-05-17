@@ -281,20 +281,20 @@ class RefinementModel(Model):
             [ agents_pool.remove(i) for i in agents_index_from_agents_pool ]
             if fit_index.size == 0:
                 ##cannot find agents to copy their location or clone them, place agents in agents_pool
-                logger.log_warning("Refinement requests to add %i agents,  but there are only %i agents subtracted from previous action(s) and no agents satisfying %s to clone from;" \
+                if amount > amount_from_agents_pool:                   
+                    logger.log_warning("Refinement requests to add %i agents,  but there are only %i agents subtracted from previous action(s) and no agents satisfying %s to clone from;" \
                                    "add %i agents instead" % (amount, amount_from_agents_pool, 
                                                               ' and '.join( [this_refinement.agent_expression, 
                                                                            this_refinement.location_expression]).strip(' and '), 
                                                               amount_from_agents_pool,) )
-
-                amount = amount_from_agents_pool
-                
+                    amount = amount_from_agents_pool
+                # sample from all suitable locations
                 is_suitable_location = location_dataset.compute_variables( this_refinement.location_expression,
                                                                            dataset_pool=dataset_pool )
                 location_id_for_agents_pool = sample_replace( location_dataset.get_id_attribute()[is_suitable_location],
                                                                  amount_from_agents_pool )
             else:
-                
+                #sample from locations of suitable agents            
                 agents_index_for_location = sample_replace( fit_index, amount_from_agents_pool)
                 location_id_for_agents_pool = agent_dataset.get_attribute( location_dataset.get_id_name()[0] 
                                                                          )[agents_index_for_location]
