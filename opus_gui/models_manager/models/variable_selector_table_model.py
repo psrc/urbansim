@@ -179,7 +179,9 @@ class VariableSelectorTableModel(QtCore.QAbstractTableModel):
             elif (name, dataset) in self._names_to_definition_nodes:
                 definition_node = self._names_to_definition_nodes[(name, dataset)]
                 if definition_node is not None:
-                    definition = definition_node.text or '<empty definition>'
+                    definition = definition_node.text
+                else:
+                    definition = '<empty definition>'
             else:
                 definition = '<unknown definition>'
 

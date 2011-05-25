@@ -10,7 +10,7 @@ import copy
 
 from PyQt4.QtCore import SIGNAL, Qt
 from PyQt4 import QtGui
-
+from lxml.etree import SubElement
 from opus_gui.models_manager.views.ui_model_from_template_dialog_base import Ui_DynamicTemplateDialog
 from opus_gui.general_manager.general_manager_functions import get_available_dataset_names
 from opus_gui.general_manager.general_manager_functions import get_variable_nodes_per_dataset
@@ -111,7 +111,35 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         for field, method in self.fields_to_data_methods.items():
             for node in self.fields_to_nodes[field]:
                 node.text = method()
-
+                self._generate_specification(node)
+                
+    def _generate_specification(self, node):
+        if not node.get('field_identifier') == 'Choice Set':
+            return
+        struct = self.model_node.find("structure/init/argument[@name='nested_structure']")
+        if not isinstance(eval(node.text), list) and struct is None:
+            return
+        specnode = self.model_node.find('specification')
+        for isubmodelnode in range(len(specnode)):
+            for deletenode in specnode[isubmodelnode]:
+                specnode[isubmodelnode].remove(deletenode)
+            if struct is not None and isinstance(eval(struct.text), dict): # model with nests
+                for nest, choices in eval(struct.text).iteritems():
+                    nestnode = SubElement(specnode[isubmodelnode], 'nest', 
+                                            nest_id="%s" % nest, name="Nest %s" % nest)
+                    self._generate_equations_specification(nestnode, choices)
+            else:
+                choices = eval(node.text)
+                self._generate_equations_specification(specnode[isubmodelnode], choices)
+                
+    def _generate_equations_specification(self, node, choices):
+            for choice in choices:
+                eq = SubElement(node, 'equation', equation_id="%s" % choice, 
+                            name="Choice %s" % choice, type="submodel_equation")
+                varl = SubElement(eq, "variable_list", type="variable_list")
+                if choice <> choices[0]:
+                    SubElement(varl, "variable_spec", name="constant")
+           
     def _widget_and_method_from_field_data_type(self, template_node):
         '''
         Fetch the widget and the data-method for a given node based in it's field_data_type
