@@ -131,7 +131,7 @@
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices</argument>
-            <argument convert_blank_to_none="True" field_description="test description" field_identifier="Submodel String" name="submodel_string" type="string"/>
+            <argument convert_blank_to_none="True" field_description="attribute/expression specifying submodel" field_identifier="Submodel String" name="submodel_string" type="string"/>
             <argument field_identifier="Choice Attribute Name" name="choice_attribute_name" parser_action="quote_string" type="string">choice_id</argument>
             <argument name="interaction_pkg" parser_action="quote_string" type="string">opus_core</argument>
             <argument convert_blank_to_none="True" name="run_config" type="string"/>
@@ -352,6 +352,94 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model_template>
+      <model_template name="nested_choice_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">opus_core.models.hierarchical_choice_model</class_module>
+            <class_name type="string">HierarchicalChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">HierarchicalChoiceModel</name>
+            <argument field_identifier="Choice Set" name="choice_set" field_description="dataset name or list of choices" type="string">[1,2,3]</argument>
+            <argument field_identifier="Nested Structure" name="nested_structure" field_description="python dict with choices (values) assigned to nests (keys)" type="string">{1: [1], 2: [2,3]}</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.upc.hierarchical_linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.nl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">opus_core.upc.random_choices</argument>
+            <argument convert_blank_to_none="True" field_description="attribute/expression specifying submodel" field_identifier="Submodel String" name="submodel_string" type="string"/>
+            <argument field_identifier="Choice Attribute Name" name="choice_attribute_name" parser_action="quote_string" type="string">choice_id</argument>
+            <argument name="interaction_pkg" parser_action="quote_string" type="string">opus_core</argument>
+            <argument convert_blank_to_none="True" name="run_config" type="string"/>
+            <argument name="estimate_config" type="dictionary">
+              <key field_identifier="Estimation Size Agents" name="estimation_size_agents" type="float">1.0</key>
+            </argument>
+            <argument name="debuglevel" type="integer">0</argument>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+          </init>
+          <run type="dictionary">
+            <argument name="specification" type="string">specification</argument>
+            <argument name="coefficients" type="string">coefficients</argument>
+            <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+            <argument name="agents_index" type="string">cm_index</argument>
+            <argument convert_blank_to_none="True" name="chunk_specification" type="string"/>
+            <argument name="data_objects" type="string">datasets</argument>
+          </run>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(specification, coefficients, cm_index)</output>
+            <argument convert_blank_to_none="True" field_identifier="Agent Set" name="agent_set" type="string"/>
+            <argument convert_blank_to_none="True" name="agent_filter" parser_action="quote_string" type="string"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument field_data_type="specification_table" field_identifier="spectable" name="specification_table" parser_action="quote_string" type="string"/>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument field_data_type="coefficients_table" field_identifier="coefftable" name="coefficients_table" parser_action="quote_string" type="string"/>
+            <argument name="cache_storage" type="string">base_cache_storage</argument>
+            <argument name="sample_coefficients" type="boolean">False</argument>
+            <argument name="distribution" parser_action="quote_string" type="string">normal</argument>
+            <argument name="multiplicator" type="integer">1</argument>
+          </prepare_for_run>
+          <estimate type="dictionary">
+            <output name="output" type="string">(coefficients, dummy)</output>
+            <argument name="specification" type="string">specification</argument>
+            <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+            <argument name="agents_index" type="string">cm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.upc.bfgs_nl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+          </estimate>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(specification, cm_index)</output>
+            <argument convert_blank_to_none="True" name="agent_set" type="string"/>
+            <argument convert_blank_to_none="True" field_identifier="Agent Filter" name="agent_filter" parser_action="quote_string" type="string"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument name="specification_table" parser_action="quote_string" type="string">choice_model_template_specification</argument>
+          </prepare_for_estimate>
+        </structure>
+        <specification type="dictionary">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+          <nest nest_id="1" name="nest 1">
+            <equation equation_id="1" name="Choice 1" type="submodel_equation">
+              <variable_list type="variable_list">
+                <variable_spec name="constant" coefficient_name="constant"/>
+              </variable_list>
+            </equation>
+            <equation equation_id="2" name="Choice 2" type="submodel_equation">
+              <variable_list type="variable_list">
+                <variable_spec name="constant" coefficient_name="constant"/>
+              </variable_list>
+            </equation>
+          </nest>
+          <nest nest_id="2" name="nest 2">
+            <equation equation_id="3" name="Choice 3">
+               <variable_list type="variable_list">
+                </variable_list>
+            </equation>
+          </nest>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model_template>
       <model_template name="allocation_model_template">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -409,27 +497,27 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">TransitionModel</name>
-	        <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
-	        <argument field_identifier="Dataset Attribute for Number Accounting" name="dataset_accounting_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">None</argument>
-	        <argument field_identifier="Model Full Name" name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
-	        <argument field_identifier="Model Short Name" name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
+          <argument field_data_type="dataset" field_identifier="Dataset" name="dataset" type="string"/>
+          <argument field_identifier="Dataset Attribute for Number Accounting" name="dataset_accounting_attribute" parser_action="quote_string" type="string" convert_blank_to_none="True">None</argument>
+          <argument field_identifier="Model Full Name" name="model_name" parser_action="quote_string" type="string">Household Transition Model</argument>
+          <argument field_identifier="Model Short Name" name="model_short_name" parser_action="quote_string" type="string">HTM</argument>
           </init>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
-	        <argument field_identifier="Control Total Table Name" name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
+          <argument field_identifier="Control Total Table Name" name="control_total_table" parser_action="quote_string" type="string">annual_household_control_totals</argument>
             <argument name="control_total_storage" type="string">base_cache_storage</argument>
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-	    <argument field_identifier="Target Attribute Name" name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
-	    <argument field_identifier="Reset Dataset Attributes" name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
-	    <argument field_identifier="Sampling Threshold" name="sampling_threshold" parser_action="quote_string" convert_blank_to_none="True" type="string">control_total.number_of_agents(household)>500</argument>
-	    <argument field_identifier="Sampling Hierarchy" name="sampling_hierarchy" convert_blank_to_none="True" type="string">['zone_id','raz_id', 'county_id']</argument>
-	    <argument field_identifier="Synchronize Dataset" name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
-	    <argument field_identifier="Reset Sync Dataset Attributes" name="reset_sync_dataset_attribute_value" type="string">{'job_id':-1}</argument>
+      <argument field_identifier="Target Attribute Name" name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
+      <argument field_identifier="Reset Dataset Attributes" name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
+      <argument field_identifier="Sampling Threshold" name="sampling_threshold" parser_action="quote_string" convert_blank_to_none="True" type="string">control_total.number_of_agents(household)>500</argument>
+      <argument field_identifier="Sampling Hierarchy" name="sampling_hierarchy" convert_blank_to_none="True" type="string">['zone_id','raz_id', 'county_id']</argument>
+      <argument field_identifier="Synchronize Dataset" name="sync_dataset" convert_blank_to_none="True" type="string">person</argument>
+      <argument field_identifier="Reset Sync Dataset Attributes" name="reset_sync_dataset_attribute_value" type="string">{'job_id':-1}</argument>
           </run>
         </structure>
-      </model_template>      
+      </model_template>
     </templates>
   </model_manager>
   <data_manager>
