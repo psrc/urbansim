@@ -18,6 +18,8 @@ def opusRun(progressCB,logCB,params):
         params_dict[str(key)] = str(val)
 
     opus_data_directory = params_dict['opus_data_directory']
+    if not os.path.isabs(opus_data_directory):
+        opus_data_directory = os.path.join(os.environ['OPUS_HOME'], opus_data_directory)
     opus_data_year = params_dict['opus_data_year']
     database_name = params_dict['database_name']
     table_name = params_dict['table_name']
@@ -54,8 +56,8 @@ def opusRun(progressCB,logCB,params):
 def opusHelp():
     help = 'This tool will get a table from a SQL database and export it to the OPUS cache format.\n' \
            '\n' \
-           'opus_data_directory: full path to the OPUS data directory (c:\\opus\\data\\seattle_parcel\\base_year_data)\n' \
+           'opus_data_directory: path to the OPUS data directory (full path, e.g., c:\\opus\\data\\seattle_parcel\\base_year_data, or relative to OPUS_HOME)\n' \
            'opus_data_year: the year to which the data should be exported (2000)\n' \
            'database_name: the name of the database (or PostgreSQL schema) that contains the table\n' \
-           'table_name: the name of the table to be exported, separated by spaces. ALL imports all tables\n'
+           'table_name: the name of the tables to be exported, separated by spaces. ALL imports all tables\n'
     return help
