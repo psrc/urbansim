@@ -12,7 +12,7 @@ class workerDDD_drive_alone_from_home_to_work(abstract_travel_time_variable_for_
     travel_data_attribute = "urbansim.travel_data.am_single_vehicle_to_work_travel_time"
     
     def __init__(self, number):
-        self.destination_zone_id = "work%s_workplace_zone_id = (household.aggregate((person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id)).astype(int32)" % (number, number)
+        self.destination_zone_id = "work%s_workplace_zone_id = (household.aggregate((psrc.person.worker%s == 1) * urbansim_parcel.person.workplace_zone_id)).astype(int32)" % (number, number)
         abstract_travel_time_variable_for_non_interaction_dataset.__init__(self)
 
 from numpy import ma, array

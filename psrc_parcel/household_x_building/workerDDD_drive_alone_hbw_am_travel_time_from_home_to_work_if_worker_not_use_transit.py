@@ -9,7 +9,7 @@ class workerDDD_drive_alone_hbw_am_travel_time_from_home_to_work_if_worker_not_u
 
     def __init__(self, number):
         self.default_value = 0
-        self.agent_zone_id = "work%s_workplace_zone_id_if_transit = household.aggregate((person.worker%s == 1) * (person.transit == 2) * urbansim_parcel.person.workplace_zone_id ).astype(int32)" % (number, number)
+        self.agent_zone_id = "work%s_workplace_zone_id_if_transit = household.aggregate((psrc.person.worker%s == 1) * (person.transit == 2) * urbansim_parcel.person.workplace_zone_id ).astype(int32)" % (number, number)
         self.location_zone_id = "urbansim_parcel.building.zone_id"
         self.travel_data_attribute = "urbansim.travel_data.am_single_vehicle_to_work_travel_time"
         self.direction_from_home = False
