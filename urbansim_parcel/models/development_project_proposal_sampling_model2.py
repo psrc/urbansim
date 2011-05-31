@@ -344,7 +344,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         this_site = self.proposal_set["parcel_id"][proposal_index]            
         building_indexes = array([], dtype='i')
         demolished_spaces = defaultdict(int)
-        if self.proposal_set["is_redevelopment"][proposal_index]:  #redevelopment proposal
+        if self.proposal_set["is_redevelopment"][proposal_index] or force_accepting:  #redevelopment proposal
             building_indexes = where(self.realestate_dataset['parcel_id']==this_site)[0]
             for building_index in building_indexes:
                 column_value = tuple(self.realestate_dataset.column_values[building_index,:].tolist())
