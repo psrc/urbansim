@@ -27,7 +27,7 @@ def opusRun(progressCB,logCB,params):
     
     dbs_config = DatabaseServerConfiguration(database_configuration=database_server_connection)
     server = DatabaseServer(database_server_configuration = dbs_config)
-    opusdb = server.get_database(database_name=database_name)
+    opusdb = server.get_database(database_name=database_name, create_if_doesnt_exist=False)
     
     input_storage = sql_storage(storage_location = opusdb)
 
