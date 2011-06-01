@@ -8,7 +8,7 @@
 # rather than int_, the native python int 32 type).
 # See comment at the end of this file for more details.
 
-from numpy import int32, int64, ndarray, ones, array
+from numpy import int32, int64, ndarray, ones, array, asarray
 import scipy, scipy.ndimage
 import numpy
 
@@ -37,6 +37,8 @@ def mean(input, labels=None, index=None):
         results = scipy.ndimage.mean(input, labels=None, index=index) * ones(array(len(index)))
     else: 
         results = scipy.ndimage.mean(input, labels, index)
+    ## scipy 0.7.0 may return a list instead of an array
+    results = asarray(results)
     ## scipy 0.8.0 returns NaN for 0 counts
     if numpy.any(numpy.isnan(results)):
         results[numpy.isnan(results)] = 0
