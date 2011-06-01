@@ -346,7 +346,6 @@
             <argument name="coefficients" type="string">coefficients</argument>
           </run>
           <init type="dictionary">
-            <argument convert_blank_to_none="True" name="number_of_units_string" type="string"/>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument convert_blank_to_none="True" name="location_id_string" type="string"/>
             <argument convert_blank_to_none="True" name="submodel_string" type="string"/>
@@ -356,6 +355,7 @@
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument convert_blank_to_none="True" name="number_of_units_string" type="string">residential_units</argument>
             <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
             <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
