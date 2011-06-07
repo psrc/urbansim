@@ -21,9 +21,6 @@ class RefinementModel(Model):
     according to specified actions ('subtract', 'add', 'target', 'set_value', 'delete'):
     
     subtract - unplace/removes agents satisfying agent_expression from locations with location_expression being true;
-    modify - takes agents that are unplaced by preceeding subtract action, and modify their attribute(s) to 
-         match agent_expression and then place them to locations with location_expression being true, must share 
-         year and transaction_id with a subtract action;
     add - adds agents with attributes matching agent_expression to locations with location_expression being true; 
          If sharing year and transaction_id with a subtract action, it first place agents that are unplaced by subtract 
          action and satisfy agents_expression condition. If not, or if there are less unplaced agents than the specified
@@ -77,17 +74,17 @@ class RefinementModel(Model):
                     location_dataset = None
                     if len(this_refinement.location_expression)>0:
                         location_dataset = dataset_pool.get_dataset( VariableName( this_refinement.location_expression ).get_dataset_name() )
-                    
+                
                     logger.log_status("Action: %s %i agents satisfying %s" % \
-                                      (action_type, this_refinement.amount,
-                                       ' and '.join( [this_refinement.agent_expression, 
-                                                    this_refinement.location_expression] ).strip(' and ')
-                                   ) )
+                                  (action_type, this_refinement.amount,
+                                   ' and '.join( [this_refinement.agent_expression, 
+                                                this_refinement.location_expression] ).strip(' and ')
+                               ) )
                     action_function( agents_pool, this_refinement.amount,
-                                     agent_dataset, location_dataset, 
-                                     this_refinement, 
-                                     dataset_pool )
-                    
+                                 agent_dataset, location_dataset, 
+                                 this_refinement, 
+                                 dataset_pool )
+                
                     agent_dataset.flush_dataset()
                     dataset_pool._remove_dataset(agent_dataset.get_dataset_name())
                     if location_dataset is not None:
