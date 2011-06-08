@@ -16,6 +16,7 @@ class SchoolTypeChoiceModel(ChoiceModel):
         if households_for_estimation_table is not None:
             hhs = HouseholdDataset(in_storage=estimation_storage, in_table_name='households_for_estimation')
             self.dataset_pool.replace_dataset('household', hhs)
+        self.dataset_pool.replace_dataset(estimation_set.get_dataset_name(), estimation_set)
         spec, index = ChoiceModel.prepare_for_estimate(self, estimation_set, **kwargs)
         return (spec, index, estimation_set)
     
@@ -28,5 +29,6 @@ class SchoolTypeChoiceModelNested(HierarchicalChoiceModel):
         if households_for_estimation_table is not None:
             hhs = HouseholdDataset(in_storage=estimation_storage, in_table_name='households_for_estimation')
             self.dataset_pool.replace_dataset('household', hhs)
+        self.dataset_pool.replace_dataset(estimation_set.get_dataset_name(), estimation_set)
         spec, index = HierarchicalChoiceModel.prepare_for_estimate(self, estimation_set, **kwargs)
         return (spec, index, estimation_set)
