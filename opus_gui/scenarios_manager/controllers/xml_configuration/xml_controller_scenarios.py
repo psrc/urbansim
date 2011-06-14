@@ -80,7 +80,8 @@ class XmlController_Scenarios(XmlController):
         if node_executable:
             node.set('executable', 'False')
         else:
-            node.set('executable', 'True')            
+            node.set('executable', 'True')
+        self.model.dirty = True
 
     def process_custom_menu(self, point):
         ''' See XmlController for documentation '''
@@ -93,7 +94,16 @@ class XmlController_Scenarios(XmlController):
         if node.get('type') == 'scenario':
             node_executable = (node.get('executable') == 'True')
             menu.addAction(self.actExecutable)
-            self.actExecutable.setChecked(node_executable)
+            
+            # Workaround: disabled items do not show check marks
+            if node.get('inherited') is None:
+                self.actExecutable.setEnabled(True)
+                self.actExecutable.setText('Executable')
+                self.actExecutable.setChecked(node_executable)
+            else:
+                self.actExecutable.setDisabled(True)
+                self.actExecutable.setText('Executable: %s' % ('Yes' if node_executable else 'No'))
+                
             if node_executable:
                 menu.addAction(self.actRunScenario)
             if node.find('models_to_run') is None:  
