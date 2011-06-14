@@ -296,8 +296,6 @@ class XmlModel(QAbstractItemModel):
         parent_item = self.item_for_node(parent_node)
         parent_index = self.index_for_item(parent_item)
         self.insertRow(0, parent_index, node)
-        if self.project:
-            self.project.dirty = True
 
     # TODO update comments to xml 2.0
     def insert_node(self, node, parent_node):
@@ -318,7 +316,6 @@ class XmlModel(QAbstractItemModel):
         parent_index = self.index_for_item(parent_item)
         if parent_index is not None:
             self.insertRow(0, parent_index, node)
-            self.project.dirty = True
             return (True, 'OK')
         else:
             msg = ('Tried to insert a node under <%s>, but could not find its index.' %
@@ -470,7 +467,7 @@ class XmlModel(QAbstractItemModel):
 
         # If the item was created we store it so that XmlViews can access it
         self.last_inserted_index = self.index(row, 0, parent_index) if new_item else None
-        update_mainwindow_savestate()
+        self.dirty = True
         return True
 
     def insert_sibling(self, node, sibling_index):
