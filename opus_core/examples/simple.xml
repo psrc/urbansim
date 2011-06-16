@@ -1,8 +1,10 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-  	<project_name type="string">simplest_project</project_name>
-  	<expression_library type="dictionary" />
+    <project_name type="string">simplest_project</project_name>
+    <expression_library type="dictionary" />
+    <available_datasets type="list">['household']</available_datasets>
+    <spatial_datasets type="list">[]</spatial_datasets>
   </general>
   <scenario_manager>
     <scenario executable="True" name="simple_scenario" type="scenario">
@@ -31,10 +33,10 @@
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <selectable name="household" type="selectable">True</selectable>
       </datasets_to_preload>    
-	</scenario>
+  </scenario>
   </scenario_manager>
   <model_manager>
-  	<models hidden="False" name="Models">
+    <models hidden="False" name="Models">
       <model name="simple_model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -114,7 +116,7 @@
           <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
         </estimation_config>
       </model>      
-  	</models>
+    </models>
     <estimation_config config_name="estimation_config" name="Estimation Configuration" type="configuration">
       <save_estimation_results type="boolean">True</save_estimation_results>
       <cache_directory parser_action="prefix_with_opus_core" type="directory">data/test_cache/</cache_directory>
@@ -132,6 +134,11 @@
         <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
       </datasets_to_preload>
     </estimation_config>  	
-  	<templates hidden="True"/>
+    <templates hidden="True"/>
   </model_manager>
+  <data_manager> </data_manager>
+  <results_manager> 
+     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
+   </results_manager>
 </opus_project>

@@ -1,7 +1,9 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-  	<project_name type="string">simplest_project</project_name>
+    <project_name type="string">simplest_project</project_name>
+    <available_datasets type="list">['household']</available_datasets>
+    <spatial_datasets type="list">[]</spatial_datasets>
   </general>
   <scenario_manager>
     <scenario executable="True" name="simple_scenario" type="scenario">
@@ -29,10 +31,10 @@
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <selectable name="household" type="selectable">True</selectable>
       </datasets_to_preload>    
-	</scenario>
+  </scenario>
   </scenario_manager>
   <model_manager>
-  	<models hidden="False" name="Models">
+    <models hidden="False" name="Models">
       <model name="simple_model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -49,7 +51,11 @@
         </structure>
         <specification type="dictionary"/>
       </model>
-  	</models>
-  	<templates hidden="True"/>
+    </models>
+    <templates hidden="True"/>
   </model_manager>
+    <results_manager> 
+     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
+    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
+   </results_manager>
 </opus_project>
