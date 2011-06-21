@@ -11,3 +11,10 @@ class HomeSchoolModel(SchoolTypeChoiceModel):
         home_school = estimation_set.compute_variables("%s.school_type==3" % estimation_set.get_dataset_name())
         estimation_set.add_primary_attribute(name=self.choice_attribute_name, data=home_school)
         return (spec, index, estimation_set)
+    
+    def prepare_for_estimate_hh(self, *args, **kwargs):
+        spec, index, estimation_set = SchoolTypeChoiceModel.prepare_for_estimate_hh(self, *args, **kwargs)
+        home_school = estimation_set.compute_variables("household.aggregate(person.school_type==3)>0",
+                                                       dataset_pool=self.dataset_pool)
+        estimation_set.add_primary_attribute(name=self.choice_attribute_name, data=home_school)
+        return (spec, index, estimation_set)
