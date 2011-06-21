@@ -252,7 +252,7 @@ class LocationChoiceModel(ChoiceModel):
                 
                 submodel_sampling_weights = sampling_weights
                 if isinstance(sampling_weights, str):
-                    submodel_sampling_weights = re.sub('SUBMODEL', str(submodel), sampling_weights)
+                    submodel_sampling_weights = re.sub('SUBMODEL', str(int(submodel)), sampling_weights)
                     
                 chunk_specification = config.get("chunk_specification_for_sampling", {"nchunks":1})
                 if type(chunk_specification) == str:
