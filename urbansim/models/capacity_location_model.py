@@ -55,12 +55,12 @@ class CapacityLocationModel(Model):
 
         if self.agents_filter is not None:
             filter_values = agent_set.compute_variables([self.agents_filter], dataset_pool=self.dataset_pool)[agents_index]
-            filtered_agents_index = agents_index[where(filter_values>0)]
+            filtered_agents_index = where(filter_values>0)[0] # index relative to agents_index
         else:
-            filtered_agents_index = agents_index
+            filtered_agents_index = arange(agents_index.size)
         results = -1*ones(agents_index.size)
         logger.log_status("Number of agents: %s" % filtered_agents_index.size)
-        choices = self._do_run(location_set, agent_set, filtered_agents_index, resources)
+        choices = self._do_run(location_set, agent_set, agents_index[filtered_agents_index], resources)
         if choices.size > 0:
             results[filtered_agents_index] = choices
         return results
