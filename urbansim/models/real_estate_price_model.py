@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.resources import Resources
-from opus_core.regression_model_with_addition_initial_residuals import RegressionModelWithAdditionInitialResiduals
+from opus_core.models.regression_model_with_addition_initial_residuals import RegressionModelWithAdditionInitialResiduals
 from numpy import exp, arange, logical_and, zeros, where, array, float32
 import re
 

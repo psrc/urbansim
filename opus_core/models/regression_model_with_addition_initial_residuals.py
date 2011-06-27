@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from numpy import zeros, arange
-from opus_core.regression_model import RegressionModel
+from opus_core.models.regression_model import RegressionModel
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 

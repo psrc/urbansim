@@ -13,8 +13,7 @@ class estimate_linear_regression(EstimationProcedure):
     """    Class for estimating linear regression.
     """
 
-    def print_results(self, result, tags=["estimate", "result"], verbosity_level=2):
-        constant_position = result.get('constant_position')
+    def print_results(self, result, constant_position, const_shift, tags=["estimate", "result"], verbosity_level=2):
         names = result.get('coefficient_names')
         values = result.get('estimators')
         standard_errors = result.get('standard_errors')
@@ -36,9 +35,7 @@ class estimate_linear_regression(EstimationProcedure):
         if constant_position >= 0:
             logger.log_status("%10s\t%8g\t%8g\t%8g" % ("constant", values[constant_position], standard_errors[constant_position], tvalues[constant_position]), tags=tags, verbosity_level=verbosity_level)
         for i in range(nvar):
-            if i == constant_position:
-                continue
-            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i], values[i], standard_errors[i], tvalues[i]), tags=tags, verbosity_level=verbosity_level)
+            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i], values[i+const_shift], standard_errors[i+const_shift], tvalues[i+const_shift]), tags=tags, verbosity_level=verbosity_level)
         
         logger.log_status("===============================================", tags=tags, verbosity_level=verbosity_level)
         #logger.log_status(tags=tags, verbosity_level=verbosity_level)
@@ -126,7 +123,7 @@ class estimate_linear_regression(EstimationProcedure):
                   "constant_position":constant_position
                   }
 
-        self.print_results(result, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
+        self.print_results(result, constant_position=constant_position, const_shift=start, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
 
         return result
 
