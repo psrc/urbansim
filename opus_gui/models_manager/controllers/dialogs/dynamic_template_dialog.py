@@ -111,34 +111,66 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         for field, method in self.fields_to_data_methods.items():
             for node in self.fields_to_nodes[field]:
                 node.text = method()
-                self._generate_specification(node)
+        self._generate_specification()
                 
-    def _generate_specification(self, node):
-        if not node.get('field_identifier') == 'Choice Set':
-            return
-        struct = self.model_node.find("structure/init/argument[@name='nested_structure']")
-        if not isinstance(eval(node.text), list) and struct is None:
+    def _generate_specification(self):
+        node = self.model_node.find("structure/init/argument[@field_data_type='choice_set']")
+        #if not node.get('field_data_type') == 'choice_set':
+        if node is None:
             return
         specnode = self.model_node.find('specification')
+        if not specnode.get('dynamic'):
+            return
+        struct = self.model_node.find("structure/init/argument[@name='nested_structure']")
+        nestidsnode = self.model_node.find("structure/init/argument[@name='nest_ids']")
+        choiceset = node.text
+        try:
+            choiceset = eval(choiceset)
+        except:
+            pass
+        if not isinstance(choiceset, list) and struct is None and nestidsnode is None:
+            return
+        # The following code is processed only if
+        # the choice set is given as a list of choices or
+        # if it's a nested model.
+        nested_structure = None
+        if struct is not None and isinstance(eval(struct.text), dict): # model with nests given by nested_structure
+            nested_structure = eval(struct.text)
+        elif nestidsnode is not None: # model with nests given by nest ids
+            nested_structure = {}
+            nests = eval(nestidsnode.text)
+            for nest in nests:
+                nested_structure[nest] = [-2]
         for isubmodelnode in range(len(specnode)):
-            for deletenode in specnode[isubmodelnode]:
+            for deletenode in specnode[isubmodelnode]: # delete submodel nodes given by the template
                 specnode[isubmodelnode].remove(deletenode)
-            if struct is not None and isinstance(eval(struct.text), dict): # model with nests
-                for nest, choices in eval(struct.text).iteritems():
+            if nested_structure is not None:                
+                for nest, choices in nested_structure.iteritems():
                     nestnode = SubElement(specnode[isubmodelnode], 'nest', 
                                             nest_id="%s" % nest, name="Nest %s" % nest)
+                    keep_fixed = "True"
+                    if nest <> nested_structure.keys()[0]: # is it not the first nest processed
+                        keep_fixed = "False"
+                    add_vars = {'keep_fixed': keep_fixed, 'starting_value': '1'}
                     self._generate_equations_specification(nestnode, choices)
+                    eqnode = nestnode.find('equation/variable_list')
+                    SubElement(eqnode, "variable_spec", name='__logsum_%s' % nest, **add_vars)
+                if nestidsnode is not None:
+                    initnode = self.model_node.find("structure/init")
+                    initnode.remove(nestidsnode)
             else:
                 choices = eval(node.text)
                 self._generate_equations_specification(specnode[isubmodelnode], choices)
                 
-    def _generate_equations_specification(self, node, choices):
-            for choice in choices:
-                eq = SubElement(node, 'equation', equation_id="%s" % choice, 
+    def _generate_equations_specification(self, node, choices, add_vars={}):
+        for choice in choices:
+            eq = SubElement(node, 'equation', equation_id="%s" % choice, 
                             name="Choice %s" % choice, type="submodel_equation")
-                varl = SubElement(eq, "variable_list", type="variable_list")
-                if choice <> choices[0]:
-                    SubElement(varl, "variable_spec", name="constant")
+            varl = SubElement(eq, "variable_list", type="variable_list")
+            if choice <> choices[0]:
+                SubElement(varl, "variable_spec", name="constant")
+            for key, value in add_vars.iteritems():
+                SubElement(varl, "variable_spec", name=key, **value)
            
     def _widget_and_method_from_field_data_type(self, template_node):
         '''
@@ -183,6 +215,8 @@ class DynamicTemplateDialog(QtGui.QDialog, Ui_DynamicTemplateDialog):
         if data_type == 'coefficients_table':
             return (None, lambda x = '_coefficients': get_model_name_based_string(suffix = x))
 
+        if data_type == 'choice_set': # No special handling
+            return None
         # unknown, notify with a warning
         print ('Warning: <%s name=%s> has a field_data_type of unknown value (%s) and is ignored.' %
                (template_node.tag, template_node.get('name'), data_type))

@@ -477,7 +477,8 @@ class SubModelEditor(QtGui.QDialog, Ui_SubModelEditor):
         # We guess that is a NLM if it has a structure/init/nested_structure node
         model_node = self._lookup_model_node_for(submodel_node)
         path_to_nested_struct = "structure/init/argument[@name='nested_structure']"
-        if model_node is not None and model_node.find(path_to_nested_struct) is not None:
+        path_to_stratum = "structure/init/argument[@name='stratum']"
+        if model_node is not None and (model_node.find(path_to_nested_struct) is not None or path_to_stratum is not None):
             self.pb_update_model_structure.setEnabled(True)
         else:
             self.pb_update_model_structure.setEnabled(False)
