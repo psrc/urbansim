@@ -127,7 +127,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">ChoiceModel</name>
-            <argument field_identifier="Choice Set" name="choice_set" type="string"/>
+            <argument field_identifier="Choice Set" name="choice_set" field_data_type="choice_set" type="string"/>
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
             <argument name="choices" parser_action="quote_string" type="string">opus_core.random_choices</argument>
@@ -270,7 +270,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">AgentLocationChoiceModel</name>
-            <argument field_identifier="Location Set" name="location_set" type="string"/>
+            <argument field_identifier="Location Set" name="location_set" field_data_type="choice_set" type="string"/>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.mnl_probabilities</argument>
@@ -360,7 +360,7 @@
           </import>
           <init type="dictionary">
             <name name="name" type="string">HierarchicalChoiceModel</name>
-            <argument field_identifier="Choice Set" name="choice_set" field_description="dataset name or list of choices" type="string">[1,2,3]</argument>
+            <argument field_identifier="Choice Set" name="choice_set" field_data_type="choice_set" field_description="dataset name or list of choices" type="string">[1,2,3]</argument>
             <argument field_identifier="Nested Structure" name="nested_structure" field_description="python dict with choices (values) assigned to nests (keys)" type="string">{1: [1], 2: [2,3]}</argument>
             <argument name="utilities" parser_action="quote_string" type="string">opus_core.upc.hierarchical_linear_utilities</argument>
             <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.nl_probabilities</argument>
@@ -402,7 +402,7 @@
             <argument name="specification" type="string">specification</argument>
             <argument field_identifier="Agent Set" name="agent_set" type="string"/>
             <argument name="agents_index" type="string">cm_index</argument>
-            <argument name="procedure" parser_action="quote_string" type="string">opus_core.upc.bfgs_nl_estimation</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bfgs_nl_estimation</argument>
             <argument name="data_objects" type="string">datasets</argument>
           </estimate>
           <prepare_for_estimate type="dictionary">
@@ -434,6 +434,97 @@
                 </variable_list>
             </equation>
           </nest>
+          </submodel>
+        </specification>
+        <estimation_config name="Estimation Configuration" parser_action="skip">
+          <config_override config_name="models" name="Models to run before estimation" type="list">[]</config_override>
+        </estimation_config>
+      </model_template>
+      <model_template name="nested_agent_location_choice_model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">urbansim.models.agent_hierarchical_location_choice_model</class_module>
+            <class_name type="string">AgentHierarchicalLocationChoiceModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">AgentHierarchicalLocationChoiceModel</name>
+            <argument field_identifier="Location Set" name="location_set" field_data_type="choice_set" type="string" field_description="dataset name"/>
+            <argument field_identifier="Stratum" name="stratum" type="string" parser_action="quote_string" field_description="variable name or expression of the location set defining assignments of location records to nests."/>
+            <argument field_identifier="Nest ids" name="nest_ids" type="string">[1,2]</argument>
+            <argument field_identifier="Sampler size" name="sampler_size" type="integer">10</argument>
+            <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.stratified_sampler</argument>
+            <argument name="utilities" parser_action="quote_string" type="string">opus_core.upc.hierarchical_linear_utilities</argument>
+            <argument name="probabilities" parser_action="quote_string" type="string">opus_core.upc.nl_probabilities</argument>
+            <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
+            <argument convert_blank_to_none="True" field_identifier="Filter" name="filter" parser_action="quote_string" type="string"/>
+            <argument convert_blank_to_none="True" field_identifier="Submodel String" name="submodel_string" parser_action="quote_string" type="string"/>
+            <argument convert_blank_to_none="True" field_identifier="Location ID String" name="location_id_string" parser_action="quote_string" type="string"/>
+            <argument name="dataset_pool" type="string">dataset_pool</argument>
+            <argument name="model_name" parser_action="quote_string" type="string">AgentHierarchicalLocationChoiceModel</argument>
+            <argument field_identifier="Short Name" name="short_name" parser_action="quote_string" type="string">ANLCM</argument>
+            <argument name="variable_package" parser_action="quote_string" type="string">urbansim</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="run_config" type="dictionary">
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="compute_capacity_flag" type="boolean">True</key>
+              <key convert_blank_to_none="True" name="capacity_string" parser_action="quote_string" type="string"/>
+              <key convert_blank_to_none="True" name="number_of_units_string" parser_action="quote_string" type="string"/>
+              <key convert_blank_to_none="True" name="number_of_agents_string" parser_action="quote_string" type="string"/>
+              <key name="lottery_max_iterations" type="integer">3</key>
+            </argument>
+            <argument name="estimate_config" type="dictionary">
+              <key convert_blank_to_none="True" name="weights_for_estimation_string" parser_action="quote_string" type="string"/>
+              <key convert_blank_to_none="True" name="sample_proportion_locations" type="integer"/>
+              <key name="estimation_size_agents" type="float">1.0</key>
+            </argument>
+          </init>
+          <prepare_for_estimate type="dictionary">
+            <name name="name" type="string">prepare_for_estimate</name>
+            <output name="output" type="string">(anlcm_specification, anlcm_index)</output>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument field_data_type="specification_table" field_identifier="Specification Table" name="specification_table" parser_action="quote_string" type="string"/>
+            <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+            <argument name="agents_for_estimation_storage" type="string">base_cache_storage</argument>
+            <argument field_identifier="Agents for Estimation Table" name="agents_for_estimation_table" parser_action="quote_string" type="string"/>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument convert_blank_to_none="True" name="index_to_unplace" type="string"/>
+            <argument name="join_datasets" type="boolean">True</argument>
+            <argument name="portion_to_unplace" type="string">1.0</argument>
+            <argument convert_blank_to_none="True" field_identifier="Filter" name="filter" parser_action="quote_string" type="string"/>
+            <argument convert_blank_to_none="True" field_identifier="Location ID String" name="location_id_variable" parser_action="quote_string" type="string"/>
+          </prepare_for_estimate>
+          <estimate type="dictionary">
+            <output name="output" type="string">(anlcm_coefficients, dummy)</output>
+            <argument field_identifier="Agent Set" name="agent_set" type="string"/>
+            <argument name="agents_index" type="string">anlcm_index</argument>
+            <argument name="procedure" parser_action="quote_string" type="string">opus_core.bfgs_nl_estimation</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">anlcm_specification</argument>
+          </estimate>
+          <prepare_for_run type="dictionary">
+            <name name="name" type="string">prepare_for_run</name>
+            <output name="output" type="string">(anlcm_specification, anlcm_coefficients)</output>
+            <argument name="coefficients_storage" type="string">base_cache_storage</argument>
+            <argument field_data_type="coefficients_table" field_identifier="Coefficients Table" name="coefficients_table" parser_action="quote_string" type="string"/>
+            <argument name="specification_storage" type="string">base_cache_storage</argument>
+            <argument field_data_type="specification_table" field_identifier="Specification Table" name="specification_table" parser_action="quote_string" type="string"/>
+          </prepare_for_run>
+          <run type="dictionary">
+            <argument field_identifier="Agent Set" name="agent_set" type="string">fill in</argument>
+            <argument convert_blank_to_none="True" name="agents_index" type="string"/>
+            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="coefficients" type="string">anlcm_coefficients</argument>
+            <argument name="data_objects" type="string">datasets</argument>
+            <argument name="debuglevel" type="string">debuglevel</argument>
+            <argument name="specification" type="string">anlcm_specification</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
+          </run>
+        </structure>
+        <specification type="dictionary" dynamic="True">
+          <submodel hidden="Children" name="submodel" submodel_id="-2" type="submodel">
+            <description type="string">In order to estimate the model, please add at least one variable.</description>
+            <variable_list type="variable_list"/>
           </submodel>
         </specification>
         <estimation_config name="Estimation Configuration" parser_action="skip">
