@@ -36,8 +36,8 @@
   </scenario>
   </scenario_manager>
   <model_manager>
-    <models hidden="False" name="Models">
-      <model name="simple_model">
+    <models hidden="False" name="Models" config_name="model_system"  type="dictionary">
+      <model name="simple_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
             <class_module type="string">opus_core.simple_model</class_module>
@@ -133,8 +133,7 @@
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <selectable name="household" type="selectable" followers="my_dataset">True</selectable>
       </datasets_to_preload>
-    </estimation_config>  	
-    <templates hidden="True"/>
+    </estimation_config>
   </model_manager>
   <data_manager> </data_manager>
   <results_manager> 
