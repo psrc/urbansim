@@ -13,13 +13,17 @@ class estimate_linear_regression(EstimationProcedure):
     """    Class for estimating linear regression.
     """
 
-    def print_results(self, result, constant_position, const_shift, tags=["estimate", "result"], verbosity_level=2):
+    def print_results(self, result, constant_position, tags=["estimate", "result"], verbosity_level=2):
         names = result.get('coefficient_names')
         values = result.get('estimators')
         standard_errors = result.get('standard_errors')
         tvalues = result.get("other_measures")["t_statistic"]
+        constant_position = result.get("constant_position")
         nvar = len(names)
-        
+        if constant_position >= 0:
+            const_shift = 1
+        else:
+            const_shift = 0
         info = result['other_info']
         nobs = info.get('nobs')
         Rsquared = info.get('R-Squared') 
@@ -123,7 +127,7 @@ class estimate_linear_regression(EstimationProcedure):
                   "constant_position":constant_position
                   }
 
-        self.print_results(result, constant_position=constant_position, const_shift=start, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
+        self.print_results(result, constant_position=constant_position, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
 
         return result
 

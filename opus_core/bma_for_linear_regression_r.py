@@ -50,23 +50,24 @@ class bma_for_linear_regression_r(EstimationProcedure):
         coef_names = resources.get("coefficient_names",  nvar*[])
         data_for_r = {}
         for icoef in range(len(coef_names)):
-            data_for_r[coef_names[icoef]] = data[:, icoef]
+            data_for_r[coef_names[icoef]] = robjects.FloatVector(data[:, icoef])
         bma = importr("BMA")
         d = robjects.DataFrame(data_for_r)
         try:
-            bma_params = {'x': d, 'y': resources["outcome"], 'glm.family': "gaussian", 'strict':1}
+            bma_params = {'x': d, 'y': robjects.FloatVector(resources["outcome"]), 'glm.family': "gaussian", 'strict':1}
             #fit = bma.bic_glm(x=d, y=resources["outcome"], glm_family="gaussian", strict=1)
             fit = bma.bic_glm(**bma_params)
             fit[20] = '' # to have less output in the summary
             r.summary(fit)
             filename = resources.get('bma_imageplot_filename', None)
+            plot_params = {'bma.out':fit, 'cex.axis':0.7}
             if filename is not None:
                 r.pdf(file=filename)
-                bma.imageplot_bma(fit)
+                bma.imageplot_bma(**plot_params)
                 r['dev.off']()
             else:
                 r.X11()
-                bma.imageplot_bma(fit)
+                bma.imageplot_bma(**plot_params)
         except:
             logger.log_warning("Error in BMA procedure.")
         return {}
