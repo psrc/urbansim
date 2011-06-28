@@ -22,11 +22,11 @@ class bhhh_mnl_estimation(EstimationProcedure):
         l_1 = model_info['l_1']
         l_0 = model_info['l_0']
         ll_ratio = model_info['ll_ratio_index']
-        adj_ll_ratio = model_info['ll_ratio_test_statistics']
         nobs = model_info['nobs']
         nvars = model_info['nvars']
         nalts = model_info['nalts']
         c = model_info['convergence']
+        adj_ll_ratio = 1-((l_1-nvars)/l_0)
         
         names = result['coefficient_names']
         b1 = result['estimators']
