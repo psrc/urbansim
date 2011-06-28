@@ -205,7 +205,10 @@ class FileController_OpusData(FileController):
             name = self.model.fileName(self.currentIndex)
             parentname = self.model.fileName(self.model.parent(self.currentIndex))
             isdir = self.model.isDir(self.currentIndex)
-            parentisdir = self.model.isDir(self.model.parent(self.currentIndex))
+            if self.model.parent(self.currentIndex).isValid():
+                parentisdir = self.model.isDir(self.model.parent(self.currentIndex))
+            else:
+                parentisdir = False
             # print "%s %s %s %s" % (name, parentname,isdir,parentisdir)
             if isdir and regex.exactMatch(name):
                 # We have a database dir
@@ -327,7 +330,7 @@ class FileController_OpusData(FileController):
 
     def process_custom_menu(self, position):
         self.currentColumn = self.treeview.indexAt(position).column()
-        self.currentIndex = self.treeview.indexAt(position)
+        self.currentIndex=self.treeview.indexAt(position)
 
         self.menu = QMenu(self.treeview)
 
