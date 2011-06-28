@@ -55,4 +55,6 @@ aliases = [
       "total_non_home_based_job_space = psrc_parcel.building.job_capacity_computed_if_necessary",
       "vacant_home_based_job_space = clip_to_zero(psrc_parcel.building.total_home_based_job_space - psrc_parcel.building.number_of_home_based_jobs)",
       "vacant_non_home_based_job_space = clip_to_zero(psrc_parcel.building.total_non_home_based_job_space - psrc_parcel.building.number_of_non_home_based_jobs)",
+      "fraction_occupied_by_non_home_based_jobs = safe_array_divide(psrc_parcel.building.number_of_non_home_based_jobs, psrc_parcel.building.total_non_home_based_job_space)",
+      "has_vacancy_for_new_sector = numpy.logical_or(numpy.logical_and(psrc_parcel.building.fraction_occupied_by_non_home_based_jobs < 0.5, psrc_parcel.building.vacant_non_home_based_job_space > 20), psrc_parcel.building.number_of_non_home_based_jobs == 0)"
            ]

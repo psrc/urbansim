@@ -20,7 +20,7 @@ class fraction_of_SSS_jobs_of_sector_DDD_combined(Variable):
         return ["urbansim_parcel.building.fraction_of_jobs_of_sector_%s" % self.sector_id,
                 "urbansim_parcel.building.number_of_jobs",
                 "psrc_parcel.building.fraction_of_jobs_of_sector_%s_static" % self.sector_id,
-                "urbansim_parcel.building.vacant_%s_job_space" % self.type]
+                "psrc_parcel.building.vacant_%s_job_space" % self.type]
         
     def compute(self, dataset_pool):
         ds = self.get_dataset()
