@@ -5,8 +5,8 @@
 from opus_core.misc import safe_array_divide
 from opus_core.variables.variable import Variable
 
-class percentage_of_jobs_of_sector_DDD(Variable):
-    """ Percentage of jobs of sector DDD in buildings."""
+class fraction_of_jobs_of_sector_DDD(Variable):
+    """ Fraction of jobs of sector DDD in buildings."""
     
     def __init__(self, sector_id):
         self.sector_id = sector_id
@@ -32,7 +32,7 @@ from opus_core.storage_factory import StorageFactory
 
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim_parcel.building.percentage_of_jobs_of_sector_3"
+    variable_name = "urbansim_parcel.building.fraction_of_jobs_of_sector_3"
 
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')

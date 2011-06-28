@@ -36,7 +36,8 @@ aliases = [
    "has_vacant_residential_units = urbansim_parcel.building.vacant_residential_units > 0",
    "is_governmental = building.disaggregate(building_type.generic_building_type_description == 'government')",
    "occupied_building_sqft = numpy.minimum(urbansim_parcel.building.occupied_building_sqft_by_non_home_based_jobs, building.building_sqft)",
-   "occupied_residential_units = numpy.minimum(building.number_of_agents(household), building.residential_units)"
+   "occupied_residential_units = numpy.minimum(building.number_of_agents(household), building.residential_units)",
+   "fraction_occupied_by_non_home_based_jobs = safe_array_divide(urbansim_parcel.building.number_of_non_home_based_jobs,urbansim_parcel.building.total_non_home_based_job_space)" 
     ]
 
 for group in ['retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:

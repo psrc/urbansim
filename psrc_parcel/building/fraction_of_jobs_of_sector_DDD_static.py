@@ -5,20 +5,20 @@
 from numpy import array
 from opus_core.variables.variable import Variable
 
-class percentage_of_jobs_of_sector_DDD_static(Variable):
-    """ Percentage of jobs of sector DDD in buildings taken from the base year."""
+class fraction_of_jobs_of_sector_DDD_static(Variable):
+    """ Fraction of jobs of sector DDD in buildings taken from the base year. Only non-residential buildings are considered in the static distribution"""
     _return_type="float32"
     sector_building_type_distribution = {
         #         0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19    20    21    22 
-        1: array([0, 3.8,    0, 10.6,    0,    0,    0,    0,  4.9,    0,    0,    0,    0, 12.8,  2.7,    0,    0,    0,    0, 36.4,  2.5, 11.3,  8.9]),                         
-        2: array([0,   0,    0, 10.2,    0,    0,    0,    0,  5.1,    0,    0,    0,    0, 18.3,  1.8,    0,    0,    0,  1.1, 33.8,  1.0, 17.8,    0]),                         
-        3: array([0,   0,  1.4,  4.4,    0,  2.2,    0,    0, 33.5,    0,    0,    0,    0, 25.2,    0,    0,  1.4,    0,    0,  3.5,  1.4,  9.9, 14.2]),                         
-        4: array([0,   0,    0, 10.3,    0,  9.2,    0,    0, 23.6,    0,    0,    0,    0, 17.3,    0,    0,    0,    0,    0,  5.4,  1.0, 28.1,    0]),                         
-        5: array([0,   0,    0, 10.8,    0,    0,    0,    0, 27.7,    0,    0,    0,    0, 12.5,    0,    0,    0,    0,  1.1,  4.2,  2.4, 34.5,    0]),                         
-        6: array([0,   0,    0, 10.7,    0,  1.1,    0,    0,  8.3,    0,    0,    0,    0, 18.7,    0,    0,    0,    0,    0, 11.0,    0, 42.4,    0]),                         
+        1: array([0, 3.8,    0, 10.6,    0,    0,    0,    0,  4.9,    0,    0,    0,    0, 12.8,  2.7,    0,    0,    0,    0,    0,  2.5, 11.3,  8.9]),                         
+        2: array([0,   0,    0, 10.2,    0,    0,    0,    0,  5.1,    0,    0,    0,    0, 18.3,  1.8,    0,    0,    0,  1.1,    0,  1.0, 17.8,    0]),                         
+        3: array([0,   0,  1.4,  4.4,    0,  2.2,    0,    0, 33.5,    0,    0,    0,    0, 25.2,    0,    0,  1.4,    0,    0,    0,  1.4,  9.9, 14.2]),                         
+        4: array([0,   0,    0, 10.3,    0,  9.2,    0,    0, 23.6,    0,    0,    0,    0, 17.3,    0,    0,    0,    0,    0,    0,  1.0, 28.1,    0]),                         
+        5: array([0,   0,    0, 10.8,    0,    0,    0,    0, 27.7,    0,    0,    0,    0, 12.5,    0,    0,    0,    0,  1.1,    0,  2.4, 34.5,    0]),                         
+        6: array([0,   0,    0, 10.7,    0,  1.1,    0,    0,  8.3,    0,    0,    0,    0, 18.7,    0,    0,    0,    0,    0,    0,    0, 42.4,    0]),                         
         7: array([0,   0,    0, 59.3,    0,    0,    0,    0,  1.5,    0,    0,    0,    0, 12.0,    0,    0,    0,    0,    0,    0,    0,  9.5,    0]),                         
         8: array([0,   0,    0, 12.6,    0,  1.3,    0,    0, 10.7,    0,    0,    0,    0, 27.5,    0,    0,    0,    0,  1.5,    0,    0, 32.6,    0]),                         
-        9: array([0,   0,  1.9, 21.1,    0,  1.2,    0,    0,  2.3,    0,    0,    0,    0, 40.4,  1.1,    0,    0,    0,  1.4, 10.1,  2.1, 13.8,    0]),                         
+        9: array([0,   0,  1.9, 21.1,    0,  1.2,    0,    0,  2.3,    0,    0,    0,    0, 40.4,  1.1,    0,    0,    0,  1.4,    0,  2.1, 13.8,    0]),                         
        10: array([0,   0,    0, 13.7,    0, 14.8,    0,    0,  2.6,    0,  1.2,    0,    0, 48.5,    0,    0,  1.5,    0,    0,    0,    0,  4.8,    0]),                         
        11: array([0,   0,    0, 12.3,    0,    0,    0,    0,  2.3,    0,    0,    0,    0, 67.2,    0,    0,  3.2,    0,    0,    0,    0,  3.0,    0]),                         
        12: array([0,   0,    0, 13.7,    0,    0,    0,    0,  3.0,    0,  1.0,    0,    0, 56.3,    0,    0,  1.4,    0,    0,    0,    0,  4.0,    0]),                         
@@ -56,7 +56,7 @@ from opus_core.storage_factory import StorageFactory
 
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "psrc_parcel.building.percentage_of_jobs_of_sector_9_static"
+    variable_name = "psrc_parcel.building.fraction_of_jobs_of_sector_9_static"
 
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')
