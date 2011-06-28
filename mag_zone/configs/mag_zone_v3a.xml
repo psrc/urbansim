@@ -36,6 +36,21 @@
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
+      <model name="active_developments_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.active_developments_model</class_module>
+            <class_name type="string">ActiveDevelopmentsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ActiveDevelopmentsModel</name>
+          </init>
+          <run type="dictionary">
+          	<argument name="percent_active_development" type="integer">80</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
       <model name="employment_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">

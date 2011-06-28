@@ -287,6 +287,7 @@
             <argument name="year_attribute" parser_action="quote_string" type="string">year</argument>
             <argument convert_blank_to_none="True" name="capacity_attribute" parser_action="quote_string" type="string">williamsgateway_enplanement_capacity</argument>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
+			<argument name="add_quantity" type="string">False</argument>
           </run>
           <prepare_for_run type="dictionary">
             <name name="name" type="string">prepare_for_run</name>
