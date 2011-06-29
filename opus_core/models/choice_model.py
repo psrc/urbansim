@@ -206,6 +206,9 @@ class ChoiceModel(ChunkModel):
         ## move Choice set size log after compute_variables so it is not buried in compute_variable msg
         #logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         index = self.model_interaction.get_choice_index()
+        if index.size <=0:
+            logger.log_warning("No choices available.")
+            return array(agents_index.size*[-1], dtype="int32")
         self.debug.print_debug("Create specified coefficients ...",4)
         self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
         self.run_config.merge({"index":index})
