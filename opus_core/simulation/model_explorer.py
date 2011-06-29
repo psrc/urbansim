@@ -227,12 +227,16 @@ class ModelExplorer(object):
         #ds.summary(names=[var_name.get_alias()])
         ds.summary(names=[var_name.get_alias()])
         
-    def model_dependencies(self):
+    def model_dependencies(self, model=None, group=None):
         """Prints out variable dependencies for the model."""
         from opus_core.variables.dependency_query import DependencyChart
-        model, group = self.get_model_name()
+        if model is None:
+            model, group = self.get_model_name()
+            spec = self.get_specification()
+        else:
+            spec=None
         chart = DependencyChart(self.xml_configuration, model=model, model_group=group, 
-                                specification=self.get_specification())
+                                specification=spec)
         chart.print_model_dependencies()
         
     def variable_dependencies(self, name):
