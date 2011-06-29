@@ -41,7 +41,8 @@ class ModelSystem(object):
         self.forked_processes = []
         self.running_conditional = threading.Condition()
 
-    def run(self, resources, write_datasets_to_cache_at_end_of_year=True, log_file_name='run_model_system.log'):
+    def run(self, resources, write_datasets_to_cache_at_end_of_year=True, log_file_name='run_model_system.log',
+            cleanup_datasets=True):
         """Entries in resources: (entries with no defaults are required)
                models - a list containing names of models to be run. Each name
                            must correspond to the name of the module/class of that model. Default(object): None
@@ -124,7 +125,8 @@ class ModelSystem(object):
                                 simulation_state=self.simulation_state,
                                 debuglevel=debuglevel,
                                 resources=resources,
-                                write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year)
+                                write_datasets_to_cache_at_end_of_year=write_datasets_to_cache_at_end_of_year,
+                                cleanup_datasets=cleanup_datasets)
                         finally:
                             logger.enable_file_logging(log_file, verbose=False)
                         collect()
@@ -166,7 +168,7 @@ class ModelSystem(object):
         self.flush_datasets(datasets_to_cache, after_model=True)
         
     def _run_year(self, year, models, simulation_state, debuglevel,
-                  resources, write_datasets_to_cache_at_end_of_year):
+                  resources, write_datasets_to_cache_at_end_of_year, cleanup_datasets=True):
         """
         Assumes that all datasets resides in the cache directory in binary format.
         """
@@ -312,7 +314,8 @@ class ModelSystem(object):
         finally:
             logger.disable_file_logging(log_file_name)
 
-        SessionConfiguration().delete_datasets()
+        if cleanup_datasets:
+            SessionConfiguration().delete_datasets()
 
     def do_init(self, parent_state):
         """Run the 'init' part of this model's configuration.
