@@ -134,6 +134,18 @@ class ModelExplorer(object):
         index = self.get_choice_set_index()
         return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
     
+    def get_active_choice_set(self, submodel=None):
+        """Return choice set as seen by agents in the model.
+        Works only for the ChoiceModel class.
+        """
+        if submodel is None:
+            choices = self.get_choice_set_index()
+        else:
+            choices = self.get_choice_set_index_for_submodel(submodel)
+        choices = unique(choices.flatten())
+        ds = self.get_choice_set()
+        return DatasetSubset(ds, choices)
+                             
     def get_agent_set(self):
         """Return a Dataset of all agents. Works only for the ChoiceModel class.
         """
@@ -152,12 +164,28 @@ class ModelExplorer(object):
         model = self.get_model()
         return model.observations_mapping[submodel]
     
-    def get_active_agent_set(self):
+    def get_active_agent_set(self, submodel=None):
         """Return agent set that make choices in the model.
         Works only for the ChoiceModel class.
         """
         agents = self.get_agent_set()
-        return DatasetSubset(agents, self.get_agent_set_index())
+        if submodel is None:
+            index = self.get_agent_set_index()
+        else:
+            index = self.get_agent_set_index_for_submodel(submodel)
+        return DatasetSubset(agents, index)
+    
+    def agent_summary(self, submodel=None):
+        ds = self.get_active_agent_set(submodel=submodel)
+        ds.summary()
+        
+    def choice_summary(self, submodel=None):
+        ds = self.get_active_choice_set(submodel=submodel)
+        ds.summary()
+       
+    def data_summary(self, **kwargs):
+        ds = self.get_data_as_dataset(**kwargs)
+        ds.summary()
         
     def _get_before_after_dataset_from_attribute(self, var_name, storage, **kwargs):
         dataset_name = var_name.get_dataset_name()
