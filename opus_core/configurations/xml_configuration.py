@@ -358,7 +358,20 @@ class XMLConfiguration(object):
         if None in dataset_names or '' in dataset_names:
             result['_definition_'] = all_vars
         else:
-            result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
+            #result['_definition_'] = [v for v in all_vars for dataset_name in set(dataset_names) if VariableName(v).get_dataset_name()==dataset_name]
+            # The line above was replaced by the loop below because dataset_name of an autogen class of an interaction dataset is None in VariableName.
+            # Therefore all such variables are included in the definition.
+            result['_definition_'] = []
+            for v in all_vars:
+                var_dataset_name = VariableName(v).get_dataset_name()
+                if var_dataset_name is None:
+                    result['_definition_'].append(v)
+                else:
+                    for dataset_name in set(dataset_names):
+                        if var_dataset_name==dataset_name:
+                            result['_definition_'].append(v)
+                
+
         
         # model system expects the result to be categorized by the model_group if one is provided
         if model_group is not None:

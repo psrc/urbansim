@@ -89,7 +89,7 @@ class EquationSpecification(object):
                 submodels = array([-2]*self.coefficients.size, dtype="int32")
             self.submodels=submodels
             if equations.max() >= 0:
-                 self.equations=equations
+                self.equations=equations
             if local_resources["field_fixed_value"] in data:
                 self.fixed_values = data[local_resources["field_fixed_value"]]
             for field in data:
