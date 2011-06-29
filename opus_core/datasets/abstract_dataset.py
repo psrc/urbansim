@@ -974,13 +974,14 @@ class AbstractDataset(object):
         """
         return self.attribute_sum(name)/self.size()
 
-    def summary(self, names=[], resources=None, output=logger, unload_after_each_attribute=False):
+    def summary(self, names=[], resources=None, output=logger, unload_after_each_attribute=False, index=None):
         """Print a summary of the attributes given in the list 'names' to 'output'.
         'output' should be a file or file-like object; the default is the logger.
         If names is an empty list, display summary for all primary attributes
         plus all computed attributes.
         If unload_after_each_attribute is True, each attributes that is not in memory and is not computed
-        will be unloaded from memory right after its processing. 
+        will be unloaded from memory right after its processing.
+        If index is given, the summary is computed only on the records given by index.
         """
         attr_in_memory = self.get_attributes_in_memory()
         if not names:
@@ -989,6 +990,8 @@ class AbstractDataset(object):
         output.write("%94s\n" % (94*("-")))
         if (not isinstance(names, list)) and (not isinstance(names, tuple)):
             names = [names]
+        if index is None:
+            index = arange(self.size())
         for item in names:
             item_name = VariableName(item)
             short_name = item_name.get_alias()
@@ -1002,7 +1005,7 @@ class AbstractDataset(object):
                         computed = True
                 if self.get_data_type(item).char <> 'S':
                     s = self.attribute_sum(short_name)
-                    values = self.get_attribute(short_name)
+                    values = self.get_attribute(short_name)[index]
                     if self.size()==0:
                         output.write("%25s\n" % short_name)
                     else:
@@ -1011,11 +1014,12 @@ class AbstractDataset(object):
                 if unload_after_each_attribute and (not computed) and (short_name not in attr_in_memory):
                     self.unload_one_attribute(short_name)
                     
-        output.write("\nSize: %d records\n" % self.size())
-        if self.size()>0:
+        output.write("\nSize: %d records\n" % index.size)
+        if index.size>0:
             output.write("identifiers:\n")
             for idname in self.get_id_name():
-                output.write("\t%s in range %d-%d\n" % (idname, self.get_attribute(idname).min(), self.get_attribute(idname).max()))
+                output.write("\t%s in range %d-%d\n" % (idname, self.get_attribute(idname)[index].min(), 
+                                                        self.get_attribute(idname)[index].max()))
     
     def aggregate_all(self, function='sum', attribute_name=None):
         """Aggregate atttribute (given by 'attribute_name') by applying the given function. 'attribute_name' must be given."""
