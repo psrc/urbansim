@@ -49,18 +49,23 @@ class SchoolTypeChoiceModel(ChoiceModel):
                                                dataset_pool=self.dataset_pool)
             if agents_index==None:
                 agents_index=arange(agent_set.size())
-            pers_idx = ismember(persons['%s' % agent_set.get_id_name()[0]], agent_set.get_id_attribute()[agents_index])
+            pers_idx = where(ismember(persons['%s' % agent_set.get_id_name()[0]], agent_set.get_id_attribute()[agents_index]))
             if choice_id_name not in persons.get_known_attribute_names():
                 persons.add_primary_attribute(data=zeros(persons.size(), dtype=values.dtype), name=choice_id_name)
             persons.modify_attribute(data=values, name=choice_id_name, index=pers_idx)
             persons.delete_one_attribute('_tmp_')
         return results
     
-    def prepare_for_run(self, agent_set=None, agent_filter=None, agents_index=None, filter_threshold=0, **kwargs):
-        """Combine agent_filter and agents_index."""
+    def prepare_for_run(self, agent_set=None, agent_filter=None, agents_index=None, convert_index_to_person=False, 
+                        filter_threshold=0, **kwargs):
+        """Combine agent_filter and agents_index. If convert_index_to_person is True, it means agents_index is an index of 
+        households whereas agent_set is a person dataset. Thus, a conversion need to be done."""
         spec, coef, index = ChoiceModel.prepare_for_run(self, agent_set=agent_set, agent_filter=agent_filter, 
                                     filter_threshold=filter_threshold, **kwargs)
         if agents_index is not None:
+            if convert_index_to_person:
+                hhs = self.dataset_pool.get_dataset('household')
+                agents_index = where(ismember(agent_set['%s' % hhs.get_id_name()[0]], hhs.get_id_attribute()[agents_index]))
             tmp1 = zeros(agent_set.size(), dtype='bool8')
             tmp1[agents_index] = True
             if index is not None:
