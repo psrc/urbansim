@@ -993,7 +993,11 @@ class AbstractDataset(object):
         if index is None:
             index = arange(self.size())
         for item in names:
-            item_name = VariableName(item)
+            if isinstance(item, VariableName):
+                item_name = item
+                item = item_name.get_expression()
+            else:
+                item_name = VariableName(item)
             short_name = item_name.get_alias()
             if short_name not in self.get_id_name():
                 computed = False
@@ -1185,6 +1189,7 @@ class AbstractDataset(object):
             values = self.get_attribute_by_index(name, index)
         else:
             values = self.get_attribute(name)
+        values = robjects.FloatVector(values)
         r.hist(values, breaks=breaks, main=main, xlab=name, prob=prob)
         r.lines(r.density(values))
         if file:
@@ -1208,7 +1213,7 @@ class AbstractDataset(object):
             r(rcode)
         else:
             r.X11()
-        r.plot(v1, v2, main=main, xlab=name_x, ylab=name_y)
+        r.plot(robjects.FloatVector(v1), robjects.FloatVector(v2), main=main, xlab=name_x, ylab=name_y)
         if file:
             r['dev.off']()
             
@@ -1564,7 +1569,7 @@ class AbstractDataset(object):
         """
     
         import matplotlib
-        matplotlib.use('Agg') 
+        #matplotlib.use('Agg')  # why is this here?
         
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
@@ -1619,7 +1624,7 @@ class AbstractDataset(object):
 
         title(my_title)
         axis('off')
-        if file:
+        if file is not None:
             savefig(file)
             close()
         else:
