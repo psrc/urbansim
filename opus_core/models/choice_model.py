@@ -16,7 +16,7 @@ from opus_core.sampler_factory import SamplerFactory
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import DebugPrinter, unique
 from opus_core.sampling_toolbox import sample_noreplace
-from opus_core.chunk_model import ChunkModel
+from opus_core.models.chunk_model import ChunkModel
 from opus_core.chunk_specification import ChunkSpecification
 from opus_core.class_factory import ClassFactory
 from opus_core.model import get_specification_for_estimation, prepare_specification_and_coefficients
@@ -110,6 +110,7 @@ class ChoiceModel(ChunkModel):
             self.estimate_config = Resources()
         self.result_choices = None
         self.dataset_pool = self.create_dataset_pool(dataset_pool)
+        self.dataset_pool.replace_dataset(self.choice_set.get_dataset_name(), self.choice_set)
         self.coefficient_names = {}
         self.model_interaction = ModelInteraction(self, interaction_pkg, self.choice_set)
         ChunkModel.__init__(self)
@@ -139,6 +140,7 @@ class ChoiceModel(ChunkModel):
         run_config.merge_with_defaults({"include_chosen_choice":False, "estimate":False})
         self.run_config = run_config.merge_with_defaults(self.run_config)
 
+        self.dataset_pool.replace_dataset(agent_set.get_dataset_name(), agent_set)
         if agents_index==None:
             agents_index=arange(agent_set.size())
 
@@ -146,7 +148,7 @@ class ChoiceModel(ChunkModel):
         ## (HS) but we need it in cases when doesn't exist and is added as primary attribute,
         ## e.g. cars_category in auto-ownership model. 
         if self.compute_choice_attribute:
-              agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
+            agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
         
         ## add a primary attribute for choice_id_name or convert it to primary attribute
         choice_id_name = self.choice_set.get_id_name()[0]
@@ -579,7 +581,7 @@ class ChoiceModel(ChunkModel):
     def export_probabilities(self, submodel, file_name):
         """Export the current probabilities into a file.
         """
-        from misc import write_table_to_text_file
+        from opus_core.misc import write_table_to_text_file
         
         if self.index_of_current_chunk == 0:
             mode = 'w'
@@ -745,6 +747,9 @@ class ChoiceModel(ChunkModel):
     def get_data(self, coefficient, submodel=-2):
         return ChunkModel.get_data(self, coefficient, submodel, is3d=True)
 
+    def get_dataset_pool(self):
+        return self.dataset_pool
+    
     def get_data_as_dataset(self, submodel=-2):
         """Like get_all_data, but the returning value is an InteractionDataset containing attributes that
         correspond to the data columns. Their names are coefficient names."""

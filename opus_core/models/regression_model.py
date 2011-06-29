@@ -81,6 +81,7 @@ class RegressionModel(ChunkModel):
         self.run_config.merge({"debug":self.debug})
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
+        self.dataset_pool.replace_dataset(dataset.get_dataset_name(), dataset)
         if procedure is not None: 
             self.regression = RegressionModelFactory().get_model(name=procedure)
         if initial_values is None:

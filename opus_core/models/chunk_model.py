@@ -4,7 +4,7 @@
 
 from numpy import array, arange, ndarray, float32, zeros
 from opus_core.misc import DebugPrinter
-from opus_core.model import Model
+from opus_core.models.model import Model
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.logger import logger
 from opus_core.chunk_specification import ChunkSpecification
