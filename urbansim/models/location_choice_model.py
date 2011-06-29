@@ -11,7 +11,7 @@ from opus_core import ndimage
 from numpy.random import permutation
 from numpy import ma, ndarray
 from opus_core.sampler_factory import SamplerFactory
-from opus_core.choice_model import ChoiceModel
+from opus_core.models.choice_model import ChoiceModel
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from opus_core.opus_error import OpusError
@@ -93,7 +93,6 @@ class LocationChoiceModel(ChoiceModel):
         self.run_config = run_config.merge_with_defaults(self.run_config)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-        self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
         
         ## what is the use of compute location_id string in run? it gets new values anyway
         #if self.location_id_string is not None:
