@@ -58,7 +58,8 @@ class ModelExplorer(object):
         
     def run(self):
         self.model_system = ModelSystem()
-        self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False)
+        self.model_system.run(self.config, write_datasets_to_cache_at_end_of_year=False,
+                              cleanup_datasets=False)
         logger.log_status("Data cache in %s" % self.simulation_state.get_cache_directory())
         
     def get_agents_for_simulation(self):
@@ -75,18 +76,18 @@ class ModelExplorer(object):
         Works only for the ChoiceModel class.
         """
         model = self.get_model()
-        if isinstance(model, ChoiceModel):
-            return model.get_probabilities_and_choices(submodel)
-        print '\nMethod is implemented only for ChoiceModels.\n'
+        #if isinstance(model, ChoiceModel):
+        return model.get_probabilities_and_choices(submodel)
+        #print '\nMethod is implemented only for ChoiceModels.\n'
 
     def export_probabilities(self, submodel=-2, filename='./choice_model.txt'):
         """Export probabilities and choices into a file. Works only for the ChoiceModel class"""
         
         model = self.get_model()
-        if isinstance(model, ChoiceModel):
-            model.export_probabilities(submodel, file_name=filename)
-        else:
-            print '\nMethod is implemented only for ChoiceModels.\n'
+        #if isinstance(model, ChoiceModel):
+        model.export_probabilities(submodel, file_name=filename)
+        #else:
+        #    print '\nMethod is implemented only for ChoiceModels.\n'
             
     def get_model(self):
         """Return a model object."""
@@ -190,6 +191,7 @@ class ModelExplorer(object):
     def _get_before_after_dataset_from_attribute(self, var_name, storage, **kwargs):
         dataset_name = var_name.get_dataset_name()
         ds = self.get_dataset(dataset_name)
+        ds.compute_variables([var_name], dataset_pool=self.get_dataset_pool())
         ds.copy_attribute_by_reload(var_name, storage=storage, **kwargs)
         return ds
     
@@ -202,8 +204,8 @@ class ModelExplorer(object):
         var_name = VariableName(attribute_name)
         storage = AttributeCache(self.simulation_state.get_cache_directory())
         ds = self._get_before_after_dataset_from_attribute(var_name, storage=storage,
-                   package_order=self.get_dataset_pool().get_package_order())
-        return {'after': ds.get_attribute(var_name.get_alias()),
+                   package_order=self.get_dataset_pool().get_package_order())       
+        return {'after': ds[var_name.get_alias()],
                 'before': ds.get_attribute('%s_reload__' % var_name.get_alias())}
         
     def summary_before_after(self, attribute_name):
@@ -222,6 +224,7 @@ class ModelExplorer(object):
         print ''
         print 'After model run:'
         print '================='
+        #ds.summary(names=[var_name.get_alias()])
         ds.summary(names=[var_name.get_alias()])
         
     def model_dependencies(self):
