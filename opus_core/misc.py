@@ -532,8 +532,9 @@ def corr(var_array, *var_arrays):
     except:
         raise ValueError, "Input variable arrays must have the same number of observations"
 
-    from scipy.stats import corrcoef
-    return corrcoef(X)
+    #from scipy.stats import corrcoef
+    from numpy import corrcoef
+    return corrcoef(X, rowvar=0)
 
 def quantile(values, probs):
     """Return quantiles of given probability from the values. 'values' and probs are numpys.
