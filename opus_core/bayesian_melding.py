@@ -355,7 +355,8 @@ class BayesianMelding(MultipleRuns):
         return self.weight_components
     
     def set_propagation_factor(self, year):
-        self.propagation_factor = (year - self.get_base_year())/float(self.get_calibration_year() - self.get_base_year())
+        #self.propagation_factor = (year - self.get_base_year())/float(self.get_calibration_year() - self.get_base_year())
+        self.propagation_factor = 1
 
     def get_propagation_factor(self):
         return self.propagation_factor
