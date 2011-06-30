@@ -4,7 +4,7 @@
 
 from numpy import zeros, concatenate, array, where, ndarray, sort, ones, all
 from opus_core.misc import unique
-from opus_core.choice_model import ChoiceModel
+from opus_core.models.choice_model import ChoiceModel
 from opus_core.samplers.constants import NO_STRATUM_ID
 
 class HierarchicalChoiceModel(ChoiceModel):
