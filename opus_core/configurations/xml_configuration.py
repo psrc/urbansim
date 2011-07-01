@@ -271,10 +271,16 @@ class XMLConfiguration(object):
         if model_specific_overrides:
             config['config_changes_for_estimation'] = {model_name: model_specific_overrides}
         if estimate_config:
-            if not config.get('config_changes_for_estimation'):
-                config['config_changes_for_estimation'] = {model_name: estimate_config}
+            if config['models_configuration'].get(model_name,{}).get('controller', {}).get('init',{}).get('arguments',{}):
+                config['models_configuration'][model_name]['controller']['init']['arguments'].merge(estimate_config)
             else:
-                config['config_changes_for_estimation'].merge({model_name: estimate_config})
+                # Hana (06/30/2011)
+                # It should actually not go into 'config_changes_for_estimation' because it would overwrite existing estimate_config
+                # But not sure under which circumstances the condition above would be not fulfilled.
+                if not config.get('config_changes_for_estimation'):
+                    config['config_changes_for_estimation'] = {model_name: estimate_config}
+                else:
+                    config['config_changes_for_estimation'].merge({model_name: estimate_config})
         return config
 
     def get_estimation_specification(self, model_name, model_group=None):

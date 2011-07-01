@@ -326,7 +326,7 @@ class ChoiceModel(ChunkModel):
 
         self.procedure=procedure
         if self.procedure == None:
-            self.procedure = estimate_config.get("estimation", None)
+            self.procedure = self.estimate_config.get("estimation", None)
         self.procedure = ModelComponentCreator().get_model_component(self.procedure)
         if self.procedure == None:
             raise StandardError, "No estimation procedure given, or error when loading the corresponding module."
@@ -348,7 +348,7 @@ class ChoiceModel(ChunkModel):
         self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
 
-        estimation_size_agents = estimate_config.get("estimation_size_agents", None) # should be a proportion of the agent_set
+        estimation_size_agents = self.estimate_config.get("estimation_size_agents", None) # should be a proportion of the agent_set
         if estimation_size_agents == None:
             estimation_size_agents = 1.0
         else:
@@ -374,7 +374,7 @@ class ChoiceModel(ChunkModel):
                                       resources = Resources({"debug": self.debug}),
                                       submodel_size_max=self.estimate_config.get('submodel_size_max', None))
         
-        self.create_interaction_datasets(agent_set, agents_index_for_estimation, estimate_config, submodels=submodels)
+        self.create_interaction_datasets(agent_set, agents_index_for_estimation, self.estimate_config, submodels=submodels)
         ## move Choice set size log after compute_variables so it is not buried in compute_variable msg
         #logger.log_status("Choice set size: %i" % self.get_choice_set_size())
         #self.model_interaction.set_chosen_choice(agents_index_for_estimation)
