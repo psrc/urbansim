@@ -245,6 +245,7 @@ class RegressionModel(ChunkModel):
                 regression_resources.merge({"outcome":  self.outcome[submodel]})
                 regression_resources.merge({"coefficient_names":self.coefficient_names[submodel].tolist(),
                             "constant_position": coef[submodel].get_constants_positions()})
+                regression_resources.merge({"submodel": submodel})
                 estimated_coef[submodel] = self.procedure.run(self.data[submodel], self.regression,
                                                         resources=regression_resources)
                 if "estimators" in estimated_coef[submodel].keys():

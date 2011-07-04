@@ -45,7 +45,11 @@ class estimate_linear_regression_r(EstimationProcedure):
         else:
             expression = "y ~ x.1"
 
-        d = robjects.DataFrame({'x': data, 'y': resources["outcome"]})
+        data_for_r = {"y": robjects.FloatVector(resources["outcome"])}
+        for icoef in range(nvar):
+            data_for_r["x.%s" % (icoef+1)] = robjects.FloatVector(data[:, icoef])
+            
+        d = robjects.DataFrame(data_for_r)
         
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)

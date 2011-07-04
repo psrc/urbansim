@@ -5,7 +5,7 @@
 from opus_core.estimation_procedure import EstimationProcedure
 import rpy2.robjects as robjects
 import rpy2.robjects.numpy2ri # this turns on an automatic conversion from numpy to rpy2 objects
-from numpy import zeros, float32, array
+from numpy import zeros, float32, array, concatenate
 from opus_core.logger import logger
 ## importr only available in rpy2-2.2.x
 try:
@@ -59,8 +59,16 @@ class bma_for_linear_regression_r(EstimationProcedure):
             fit = bma.bic_glm(**bma_params)
             fit[20] = '' # to have less output in the summary
             r.summary(fit)
+            estimates = array(fit[11])
+            standard_errors = array(fit[12])
+            postprob = concatenate((array([1]), array(fit[10])/100.)) # add intercept (always included, therefore 1)
+            nmodels = fit[21][0]
             filename = resources.get('bma_imageplot_filename', None)
-            plot_params = {'bma.out':fit, 'cex.axis':0.7}
+            subtitle = ''
+            submodel = resources.get('submodel', -2)
+            if resources > -2:
+                subtitle = "Submodel: %s" % submodel
+            plot_params = {'bma.out':fit, 'cex.axis':0.7, 'sub': subtitle}
             if filename is not None:
                 r.pdf(file=filename)
                 bma.imageplot_bma(**plot_params)
@@ -68,9 +76,15 @@ class bma_for_linear_regression_r(EstimationProcedure):
             else:
                 r.X11()
                 bma.imageplot_bma(**plot_params)
+            result = {"estimators":estimates, "standard_errors":standard_errors,
+                      "other_measures":{"post_probability": postprob,
+                                        "t_statistic": zeros(estimates.size) # not applicable
+                                        },
+                      "other_info":{"nmodels": nmodels}}
         except:
             logger.log_warning("Error in BMA procedure.")
-        return {}
+            result = {}
+        return result
 
 from numpy import arange, random, concatenate
 from opus_core.tests import opus_unittest
