@@ -55,9 +55,11 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
         if persons_to_duplicate.size <= 0:
             return result
         new_persons_idx = self.person_set.duplicate_rows(persons_to_duplicate)
-
-        # assign job_id to 'no job'
-        self.person_set.modify_attribute(name='job_id', data=zeros(new_persons_idx.size, dtype=self.person_set.get_data_type('job_id')), index=new_persons_idx)
+        
+        # assign job_id to 'no job', but only if the job_id is present in the person dataset
+        dtype=self.person_set.get_data_type('job_id')
+        if dtype!=None:
+            self.person_set.modify_attribute(name='job_id', data=zeros(new_persons_idx.size, dtype=dtype), index=new_persons_idx)
         
         # assign the right household_id
         self.person_set.modify_attribute(name=household_set.get_id_name()[0], data=new_person_hh_ids, index=new_persons_idx)
