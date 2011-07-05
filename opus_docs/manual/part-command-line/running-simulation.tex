@@ -363,7 +363,8 @@ values are defaults set by our system):
     'datasets_to_cache_after_each_model':[],
     'flush_variables': False,
     'seed':None,
-    'debuglevel':0
+    'debuglevel':0,
+    'run_in_same_process':False,
 \end{verbatim}
 
 The entry \verb|'datasets_to_cache_after_each_model'| specifies names of datasets that
@@ -383,6 +384,11 @@ function \method{seed()}. If it is None, the function reads data from /dev/urand
 seeds from the clock.  See seed() in numpy.random module for more details.
 
 \verb|'debuglevel'| controls the amount of output information.
+
+If the entry \verb|'run_in_same_process'| is set to True, the entire
+simulation will run in the main process.  
+(By default, the simulation will run in a child process.)  
+This is useful for debugging purposes.
 
 Models usually need various datasets to run with. They are specified in the
 configuration entry \verb|'datasets_to_preload'|. For example,
