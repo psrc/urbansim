@@ -69,7 +69,6 @@ class RunManager(AbstractService):
            run simulation
            mark run as done/failed
            """
-
         if not self.ready_to_run:
             raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
 
@@ -105,8 +104,10 @@ class RunManager(AbstractService):
                 run_resources['base_year'] = run_resources['years'][0] - 1
 
             self._create_seed_dictionary(run_resources)
-#            model_system.run_in_same_process(run_resources)
-            if run_as_multiprocess:
+            
+            if 'run_in_same_process' in run_resources and run_resources['run_in_same_process']:
+                model_system.run_in_same_process(run_resources)
+            elif run_as_multiprocess:
                 model_system.run_multiprocess(run_resources)
             else:
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
