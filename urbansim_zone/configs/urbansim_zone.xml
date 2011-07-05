@@ -673,7 +673,8 @@
           <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
           <argument name="package_order" type="list">['urbansim_zone', 'urbansim', 'opus_core']</argument>
         </dataset_pool_configuration>
-      </advanced>        
+        <run_in_same_process type="boolean">False</run_in_same_process>
+      </advanced>
     </scenario>
   </scenario_manager>
   <!--

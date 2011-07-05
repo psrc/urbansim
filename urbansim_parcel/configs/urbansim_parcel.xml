@@ -828,7 +828,8 @@
           <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
           <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
           <argument name="package_order" type="list">['urbansim_parcel', 'urbansim', 'opus_core']</argument>
-        </dataset_pool_configuration>        
+        </dataset_pool_configuration>
+        <run_in_same_process type="boolean">False</run_in_same_process>
       </advanced>
     </scenario>
   </scenario_manager>
