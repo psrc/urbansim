@@ -13,6 +13,33 @@ import sys, os
 # Urbansim Tools
 from opus_gui.main.controllers.opus_gui_configuration import OpusGuiConfiguration
 
+# Ensure that we have an existing OPUS_HOME directory that we can write to
+def check_opus_home():
+    valid_opus_home = True
+    if not 'OPUS_HOME' in os.environ:
+        msg = 'Opus GUI could not find the environment variable "OPUS_HOME".\n'\
+        'Opus GUI relies on this variable to function properly. '\
+        'Please set it to the directory containing Opus data and '\
+        'restart the application.'
+        valid_opus_home = False
+    elif not os.path.exists(os.environ['OPUS_HOME']):
+        msg = 'The directory pointed to by environment variable "OPUS_HOME" '\
+        '("%s") appears to be missing. Please make sure that the '\
+        'directory pointed to by this variable is valid and restart the '\
+        'application.' % os.path.normpath(os.environ['OPUS_HOME'])
+        valid_opus_home = False
+    elif not os.access(os.environ['OPUS_HOME'], os.W_OK):
+        msg = 'The directory pointed to by environment variable OPUS_HOME '\
+        '("%s") appears to be write protected (or you do not have '\
+        'sufficient privileges to make changes to it). Please make '\
+        'sure that the directory pointed to by this variable is valid '\
+        'and restart the application.'
+        valid_opus_home = False
+    if not valid_opus_home:
+        QMessageBox.critical(None, 'Could not start Opus GUI', msg + '\n\nOpus GUI will now quit.')
+    
+    return valid_opus_home
+
 # importing OpusGui could take a long time, so we want to load the configuration and display the
 # splash-screen meanwhile
 
@@ -20,10 +47,19 @@ gui_config = None
 
 def load_gui():
     global gui_config
+    if not gui_config is None:
+        return
+    
     # create Qt application
     app = QApplication(sys.argv,True)
+
     gui_config = OpusGuiConfiguration()
     gui_config.app = app
+    
+    # Do this first, because loading the gui_config requires OPUS_HOME
+    if not check_opus_home():
+        sys.exit(1)
+
     gui_config.load()
     gui_config.splash_screen.show()
     gui_config.splash_screen.raise_()
@@ -39,9 +75,9 @@ from opus_gui.main.controllers.mainwindow import OpusGui
 # Main entry to program.  Set up the main app and create a new window.
 def main():
     global gui_config
-    if gui_config is None:
-        load_gui()
+    assert gui_config is not None
     app = gui_config.app
+    
     # Setting these items allows for saving application state via a QSettings object
     app.setOrganizationName("CUSPA")
     app.setOrganizationDomain("urbansim.org")
@@ -65,33 +101,6 @@ def main():
     #  qgis.core.QgsApplication.initQgis()
     #except ImportError:
     #    print "Unable to import QGIS"
-
-    # Ensure that we have an existing OPUS_HOME directory that we can write to
-    valid_opus_home = True
-    if not 'OPUS_HOME' in os.environ:
-        msg = ('Opus GUI could not find the environment variable "OPUS_HOME".\n'
-               'Opus GUI relies on this variable to function properly. '
-               'Please set it to the directory containing Opus data and '
-               'restart the application.')
-        valid_opus_home = False
-    elif not os.path.exists(os.environ['OPUS_HOME']):
-        msg = ('The directory pointed to by environment variable "OPUS_HOME" '
-               '("%s") appears to be missing. Please make sure that the '
-               'directory pointed to by this variable is valid and restart the '
-               'application.' %
-               os.path.normpath(os.environ['OPUS_HOME']))
-        valid_opus_home = False
-    elif not os.access(os.environ['OPUS_HOME'], os.W_OK):
-        msg = ('The directory pointed to by environment variable OPUS_HOME '
-               '("%s") appears to be write protected (or you do not have '
-               'sufficient privileges to make changes to it). Please make '
-               'sure that the directory pointed to by this variable is valid '
-               'and restart the application.')
-        valid_opus_home = False
-    if not valid_opus_home:
-        QMessageBox.critical(None, 'Could not start Opus GUI',
-                             msg + '\n\nOpus GUI will now quit.')
-        return
 
     # init main window
     gui_config.splash_screen.showMessage('Initializing Opus Main Window...')
