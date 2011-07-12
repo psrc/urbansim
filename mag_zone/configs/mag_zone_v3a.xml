@@ -2,55 +2,11 @@
   <xml_version>2.0</xml_version>
   <general>
     <project_name type="string" hidden="True">mag_zone_v3a</project_name>
-    <description type="string">UrbanSim Zone v3a</description>
-    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
-    <expression_library type="dictionary">
-      <variable use="both" source="primary attribute" name="building.building_type_id" type="variable_definition">building.building_type_id</variable>
-      <variable use="both" source="expression" name="building.xxx" type="variable_definition">building.building_id &gt;0</variable>
-      <variable use="both" source="primary attribute" name="building.bldg_zone_id" type="variable_definition">building.zone_id</variable>
-      <variable use="both" source="expression" name="building.num_hh_in_building" type="variable_definition">building.number_of_agents(household)</variable>
-      <variable use="both" source="expression" name="building.building_emp_pk_hov_access" type="variable_definition">building.disaggregate(zone.emp_pk_hov_access)</variable>
-      <variable use="both" source="expression" name="building.building_freeway_within_qtr_mile" type="variable_definition">building.disaggregate(zone.freeway_within_qtr_mile)</variable>
-      <variable use="both" source="primary attribute" name="building.building_year_built" type="variable_definition">building.year_built</variable>
-      <variable use="both" source="expression" name="building.HLCM_ln_residential_units" type="variable_definition">ln_bounded(building.residential_units)</variable>
-      <variable use="both" source="expression" name="building.HLCM_lnresunits" type="variable_definition">ln(building.residential_units)</variable>
-      <variable use="both" source="expression" name="building.HLCM_lnbldgsqftperunit" type="variable_definition">ln(building.sqft_per_unit)</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_lnpopden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.population))</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgvalperunit" type="variable_definition">ln(building.average_value_per_unit)</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgincome" type="variable_definition">ln(building.aggregate(household.income, function=mean))</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_is_office" type="variable_definition">building.building_type_id==5</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_is_industrial" type="variable_definition">building.building_type_id==4</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_lnnonressqft" type="variable_definition">ln(building.non_residential_sqft)</variable>
-      <variable use="both" source="expression" name="building.NHB_ELCM_lnempden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.number_of_jobs))</variable>
-      <variable use="both" source="expression" name="building.num_hh_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(household))</variable>
-      <variable use="both" source="expression" name="building.num_jobs_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(job))</variable>
-      <variable use="both" source="expression" name="building.ln_average_value_per_unit" type="variable_definition">ln(building.average_value_per_unit)</variable>
-      <variable use="both" source="expression" name="building.phoenix_cbd_distance" type="variable_definition">building.disaggregate(zone.dist_to_phx_cbd)</variable>
-    </expression_library>
-    <dataset_pool_configuration type="class">
-      <class_name type="string" hidden="True">DatasetPoolConfiguration</class_name>
-      <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
-      <argument name="package_order" type="list">['mag_zone', 'urbansim_zone', 'urbansim_zone', 'urbansim', 'opus_core']</argument>
-    </dataset_pool_configuration>
-    <available_datasets type="list">['building','person','household_x_building','household','zone','raz','mpa','gridcell','city','county','alldata','job','business','travel_data']</available_datasets>
+    <description type="string">UrbanSim Zone v3a TAZi03 SE Valley Only</description>
+    <parent type="file">mag_zone/configs/mag_zone_base.xml</parent>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
-      <model name="active_developments_model" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary">
-            <class_module type="string">mag_zone.models.active_developments_model</class_module>
-            <class_name type="string">ActiveDevelopmentsModel</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string">ActiveDevelopmentsModel</name>
-          </init>
-          <run type="dictionary">
-          	<argument name="percent_active_development" type="integer">80</argument>
-          </run>
-        </structure>
-        <specification type="dictionary"/>
-      </model>
       <model name="employment_transition_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">
@@ -150,7 +106,7 @@
       </run>
     </simulation_runs>
   </results_manager>
-  <scenario_manager followers="debuglevel,base_year,cache_directory">
+  <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">
         <selectable name="real_estate_price_model" type="selectable">False</selectable>
@@ -261,8 +217,5 @@
       </advanced>
     </scenario>
   </scenario_manager>
-  <debuglevel type="integer">4</debuglevel>
-  <base_year type="integer"/>
-  <cache_directory type="string"/>
 </opus_project>
 

@@ -1,0 +1,292 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <project_name type="string" hidden="True">mag_zone_base</project_name>
+    <description type="string">MAG Zone Base Project</description>
+    <parent type="file">urbansim_zone/configs/urbansim_zone.xml</parent>
+    <expression_library type="dictionary">
+      <variable use="both" source="Python class" name="building.occupied_rmf_units_col" type="variable_definition">mag_zone.building.occupied_rmf_units_col</variable>
+      <variable use="both" source="Python class" name="building.occupied_rsf_units_col" type="variable_definition">mag_zone.building.occupied_rsf_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_rmf_units_col" type="variable_definition">mag_zone.building.total_rmf_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_rsf_units_col" type="variable_definition">mag_zone.building.total_rsf_units_col</variable>
+      <variable use="both" source="Python class" name="building.occupied_retl_units_col" type="variable_definition">mag_zone.building.occupied_retl_units_col</variable>
+      <variable use="both" source="Python class" name="building.occupied_ind_units_col" type="variable_definition">mag_zone.building.occupied_ind_units_col</variable>
+      <variable use="both" source="Python class" name="building.occupied_off_units_col" type="variable_definition">mag_zone.building.occupied_off_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_retl_units_col" type="variable_definition">mag_zone.building.total_retl_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_ind_units_col" type="variable_definition">mag_zone.building.total_ind_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_off_units_col" type="variable_definition">mag_zone.building.total_off_units_col</variable>
+      <variable use="both" source="Python class" name="building.total_hot_units_col" type="variable_definition">mag_zone.building.total_hot_units_col</variable>
+      <variable use="both" source="expression" name="building.num_jobs_in_building" type="variable_definition">building.number_of_agents(job)</variable>
+      <variable use="both" source="Python class" name="building.is_building_type_hot" type="variable_definition">urbansim_zone.building.is_building_type_hot</variable>
+      <variable use="both" source="Python class" name="building.occupied_hot_units_col" type="variable_definition">mag_zone.building.occupied_hot_units_col</variable>
+      <variable use="both" source="expression" name="building.mpa_id" type="variable_definition">building.disaggregate(zone.mpa_id)</variable>
+      <variable use="both" source="expression" name="building.dev_prj_test" type="variable_definition">building.disaggregate(development_project.non_residential_sqft)</variable>
+      <variable use="both" source="primary attribute" name="building.bldg_nonres_sqft" type="variable_definition">building.non_residential_sqft</variable>
+      <variable use="both" source="expression" name="building.nonres_sqft_lag" type="variable_definition">building.non_residential_sqft - building.non_residential_sqft_lag1</variable>
+      <variable use="both" source="expression" name="building.nonres_sqft_test" type="variable_definition">building.disaggregate(development_project.non_residential_sqft)</variable>
+      <variable use="both" source="expression" name="building.zonal_is_in_SC" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.mpa_id == 4))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_hh_income_1" type="variable_definition">(building.disaggregate(safe_array_divide(zone.aggregate(household.income,intermediates=[building]),zone.number_of_agents(household))))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_res_sqft_per_person" type="variable_definition">building.disaggregate(zone.aggregate(safe_array_divide(building.sqft_per_unit,building.aggregate(household.persons))+0, function=mean))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_20" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 20)))</variable>
+      <variable use="both" source="expression" name="building.zonal_is_value_high" type="variable_definition">building.disaggregate(zone.value_indicator) == 2</variable>
+      <variable use="both" source="expression" name="building.zonal_hotel_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_medial_unit_price" type="variable_definition">ln(where(building.building_type_id==7,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_public_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_18_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 18)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_14_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 14)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_10_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 10)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_6_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 6)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_agriculture_unit_price" type="variable_definition">ln(where(building.building_type_id==12,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_hotel" type="variable_definition">building.building_type_id == 11</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_education" type="variable_definition">building.building_type_id == 9</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_industrial" type="variable_definition">building.building_type_id == 4</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_bldg_ln_price_hhld_income_ratio" type="variable_definition">ln(safe_array_divide(building.average_value_per_unit, household.income))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_office_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_office_unit_price" type="variable_definition">ln(where(building.building_type_id==5,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_industrial_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_industrial_jobs_per_acre" type="variable_definition">ln(building.disaggregate((zone.aggregate(job.sector_id == 8)+ zone.aggregate(job.sector_id == 6) + zone.aggregate(job.sector_id == 5))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_retail_jobs_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_retaill_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 3,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sf_units" type="variable_definition">ln(where(building.building_type_id==1,building.residential_units,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_avg_year_built" type="variable_definition">ln(building.year_built)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_land_per_unit" type="variable_definition">ln_bounded(safe_array_divide(building.residential_units, building.land_area))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_localrd" type="variable_definition">ln(building.disaggregate(zone.network_length_localrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_6" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 6)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_19" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 19)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_15" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 15)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_11" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 11)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_units" type="variable_definition">ln(urbansim_zone.building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_6" type="variable_definition">ln(building.aggregate(job.sector_id==6))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_19" type="variable_definition">ln(building.aggregate(job.sector_id==19))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_15" type="variable_definition">ln(building.aggregate(job.sector_id==15))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_11" type="variable_definition">ln(building.aggregate(job.sector_id==11))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_hh" type="variable_definition">ln(urbansim_zone.building.number_of_households)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_non_residential_sqft_capacity" type="variable_definition">ln(urbansim_zone.building.developable_non_residential_sqft_capacity)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_vacant_job_spaces" type="variable_definition">ln(urbansim_zone.building.vacant_job_spaces)</variable>
+      <variable use="both" source="expression" name="building.zonal_res_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(building.residential_units),zone.aggregate(urbansim_zone.building.vacant_residential_units))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_per_acre" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))</variable>
+      <variable use="both" source="expression" name="building.zonal_emp_pk_sov_access" type="variable_definition">ln(building.disaggregate(zone.emp_pk_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_7" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)))</variable>
+      <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>
+      <variable use="both" source="primary attribute" name="building.building_type_id" type="variable_definition">building.building_type_id</variable>
+      <variable use="both" source="expression" name="building.xxx" type="variable_definition">building.building_id &gt;0</variable>
+      <variable use="both" source="primary attribute" name="building.bldg_zone_id" type="variable_definition">building.zone_id</variable>
+      <variable use="both" source="expression" name="building.num_hh_in_building" type="variable_definition">building.number_of_agents(household)</variable>
+      <variable use="both" source="expression" name="building.building_emp_pk_hov_access" type="variable_definition">building.disaggregate(zone.emp_pk_hov_access)</variable>
+      <variable use="both" source="expression" name="building.building_freeway_within_qtr_mile" type="variable_definition">building.disaggregate(zone.freeway_within_qtr_mile)</variable>
+      <variable use="both" source="primary attribute" name="building.building_year_built" type="variable_definition">building.year_built</variable>
+      <variable use="both" source="expression" name="building.HLCM_ln_residential_units" type="variable_definition">ln_bounded(building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.HLCM_lnresunits" type="variable_definition">ln(building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.HLCM_lnbldgsqftperunit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnpopden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.population))</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgvalperunit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnavgincome" type="variable_definition">ln(building.aggregate(household.income, function=mean))</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_is_office" type="variable_definition">building.building_type_id==5</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_is_industrial" type="variable_definition">building.building_type_id==4</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnnonressqft" type="variable_definition">ln(building.non_residential_sqft)</variable>
+      <variable use="both" source="expression" name="building.NHB_ELCM_lnempden" type="variable_definition">ln(building.disaggregate(urbansim_zone.zone.number_of_jobs))</variable>
+      <variable use="both" source="expression" name="building.num_hh_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(household))</variable>
+      <variable use="both" source="expression" name="building.num_jobs_in_zone" type="variable_definition">building.disaggregate(zone.number_of_agents(job))</variable>
+      <variable use="both" source="expression" name="building.ln_average_value_per_unit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.phoenix_cbd_distance" type="variable_definition">building.disaggregate(zone.dist_to_phx_cbd)</variable>
+      <variable use="both" source="expression" name="building.zonal_is_in_SC" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.mpa_id == 4))</variable>
+      <variable use="both" source="expression" name="building.zonal_is_in_PA" type="variable_definition">building.disaggregate(zone.disaggregate(mpa.mpa_id == 5))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_20_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 20)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_20" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 20)))</variable>
+      <variable use="both" source="Python class" name="household.hhld_income_category" type="variable_definition">urbansim.household.income_category</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_hh_income_1" type="variable_definition">(building.disaggregate(zone.aggregate(household.income, intermediates=[building],function = mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_is_value_low" type="variable_definition">building.disaggregate(zone.value_indicator) == 1</variable>
+      <variable use="both" source="expression" name="building.zonal_is_value_high" type="variable_definition">building.disaggregate(zone.value_indicator) == 2</variable>
+      <variable use="both" source="expression" name="building.network_length_majorrd_zone" type="variable_definition">(building.disaggregate(zone.network_length_majorrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_civic_unit_price" type="variable_definition">ln(where(building.building_type_id==8,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_hotel_unit_price" type="variable_definition">ln(where(building.building_type_id==11,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_hotel_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 11,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_civic_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 8,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 8,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_children_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(household.children), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_educational_unit_price" type="variable_definition">ln(where(building.building_type_id==9,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_medial_unit_price" type="variable_definition">ln(where(building.building_type_id==7,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_public_unit_price" type="variable_definition">ln(where(building.building_type_id==6,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_medical_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 7,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 7,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_educational_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 9,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 9,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_public_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 6,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_transportation_unit_price" type="variable_definition">ln(where(building.building_type_id==13,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_transportation_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 13,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 13,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_19_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 19)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_18_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 18)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_17_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 17)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_16_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 16)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_15_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 15)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_14_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 14)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_13_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 13)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_12_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 12)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_11_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id ==11)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_10_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 10)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_9_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 9)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_8_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 8)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_7_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 7)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_6_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 6)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_5_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 5)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_3_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 3)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_2_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 2)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_agriculture_unit_price" type="variable_definition">ln(where(building.building_type_id==12,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_agriculturel_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_transportation" type="variable_definition">building.building_type_id == 13</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_agriculture" type="variable_definition">building.building_type_id == 12</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_hotel" type="variable_definition">building.building_type_id == 11</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_public" type="variable_definition">building.building_type_id == 6</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_medical" type="variable_definition">building.building_type_id == 7</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_gq" type="variable_definition">building.building_type_id == 10</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_education" type="variable_definition">building.building_type_id == 9</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_civic" type="variable_definition">building.building_type_id == 8</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_retail" type="variable_definition">building.building_type_id == 3</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_office" type="variable_definition">building.building_type_id == 5</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_is_industrial" type="variable_definition">building.building_type_id == 4</variable>
+      <variable use="both" source="expression" name="building.zonal_sector_1_fraction" type="variable_definition">ln(building.disaggregate(safe_array_divide((zone.aggregate(job.sector_id == 1)),zone.number_of_agents(job))))</variable>
+      <variable use="both" source="primary attribute" name="building.zonal_bldg_sqft_per_unit_1" type="variable_definition">building.sqft_per_unit</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_hhld_size_x_bldg_sqft_per_unit" type="variable_definition">household.persons*building.sqft_per_unit</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_avg_res_sqft_per_person" type="variable_definition">building.disaggregate(ln(zone.aggregate(safe_array_divide(building.sqft_per_unit,building.aggregate(household.persons))+0, function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_res_sqft_per_person" type="variable_definition">building.disaggregate(zone.aggregate(safe_array_divide(building.sqft_per_unit,building.aggregate(household.persons))+0, function=mean))</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_avg_persons_per_hhld" type="variable_definition">ln(building.disaggregate(zone.aggregate(household.persons+0, intermediates=[building],function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_persons_per_hhld" type="variable_definition">building.disaggregate(zone.aggregate(household.persons+0, intermediates=[building],function=mean))</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_bldg_ln_price_hhld_income_ratio" type="variable_definition">ln(safe_array_divide(building.average_value_per_unit, household.income))</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_bldg_price_hhld_income_ratio" type="variable_definition">safe_array_divide(building.average_value_per_unit, household.income)</variable>
+      <variable use="both" source="expression" name="household.zonal_ln_hhld_size" type="variable_definition">ln(household.persons)</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_one_pers_x_non_sfr" type="variable_definition">(household.persons&lt;2)*numpy.logical_not(building.building_type_id == 1)</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_ln_hhld_inc_x_is_RMF" type="variable_definition">ln(household.income)*(building.building_type_id == 2)</variable>
+      <variable use="both" source="primary attribute" name="household.zonal_hhld_size" type="variable_definition">household.persons</variable>
+      <variable use="both" source="expression" name="building.zonal_average_value_per_unit" type="variable_definition">building.average_value_per_unit</variable>
+      <variable use="both" source="expression" name="household_x_building.zonal_ln_hhld_size_x_bldg_sqft_per_unit" type="variable_definition">ln(household.persons*building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_office_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_office_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_officel_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_office_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 5,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_office_unit_price" type="variable_definition">ln(where(building.building_type_id==5,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_office_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 5,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_officel_jobs_per_acre" type="variable_definition">ln(building.disaggregate((zone.aggregate(job.sector_id == 9)+ zone.aggregate(job.sector_id == 10) + zone.aggregate(job.sector_id == 11)+ zone.aggregate(job.sector_id == 13))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_industrial_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_industrial_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_industrial_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_industrial_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 4,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_total_retail_job_space_per_acre" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.total_job_spaces, 0)), zone.acres)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_industrial_jobs_per_acre" type="variable_definition">ln(building.disaggregate((zone.aggregate(job.sector_id == 8)+ zone.aggregate(job.sector_id == 6) + zone.aggregate(job.sector_id == 5))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_retail_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.vacant_job_spaces,0))/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_retail_sqft_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3, urbansim_zone.building.non_residential_sqft,0)),zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.non_residential_sqft_capacity, 0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_retail_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.total_job_spaces, 0)),zone.aggregate(where(building.building_type_id == 3,urbansim_zone.building.vacant_job_spaces,0)))))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_retail_jobs_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_industrial_unit_price" type="variable_definition">ln(where(building.building_type_id==4,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_industrial_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 4,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_retail_unit_price" type="variable_definition">ln(where(building.building_type_id==3,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_retaill_sqft_capacity" type="variable_definition">ln(where(building.building_type_id == 3,urbansim_zone.building.developable_non_residential_sqft_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_mf_residential_units_capacity" type="variable_definition">ln(where(building.building_type_id == 2,urbansim_zone.building.developable_residential_units_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_sf_residential_units_capacity" type="variable_definition">ln(where(building.building_type_id == 1,urbansim_zone.building.developable_residential_units_capacity,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_mf_units" type="variable_definition">ln(where(building.building_type_id==2,building.residential_units,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sf_units" type="variable_definition">ln(where(building.building_type_id==1,building.residential_units,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sf_unit_price" type="variable_definition">ln(where(building.building_type_id==1,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_mf_unit_price" type="variable_definition">ln(where(building.building_type_id==2,building.average_value_per_unit,0))</variable>
+      <variable use="both" source="expression" name="building.zonal_avg_hh_income" type="variable_definition">ln(building.disaggregate(zone.aggregate(household.income, function = mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_avg_year_built" type="variable_definition">ln(building.year_built)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_to_vac_ratio" type="variable_definition">ln(safe_array_divide((building.residential_units),(urbansim_zone.building.vacant_residential_units)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_to_capacity_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.residential_units),(urbansim_zone.building.residential_units_capacity)))</variable>
+      <variable use="both" source="primary attribute" name="building.zonal_bldg_bldg_typeID" type="variable_definition">building.building_type_id</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_land_per_unit" type="variable_definition">ln_bounded(safe_array_divide(building.residential_units, building.land_area))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_far" type="variable_definition">ln_bounded(safe_array_divide(building.non_residential_sqft, building.land_area))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_avg_hh_income" type="variable_definition">ln(building.aggregate(household.income, function = mean))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_majorrd" type="variable_definition">ln(building.disaggregate(zone.network_length_majorrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_localrd" type="variable_definition">ln(building.disaggregate(zone.network_length_localrd))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_highway" type="variable_definition">ln(building.disaggregate(zone.network_length_highway))</variable>
+      <variable use="both" source="expression" name="building.zonal_network_length_freeway" type="variable_definition">ln(building.disaggregate(zone.network_length_freeway))</variable>
+      <variable use="both" source="expression" name="building.zonal_sqft_per_unit" type="variable_definition">ln(building.disaggregate(zone.aggregate(where(building.building_type_id &lt; 3, building.sqft_per_unit, 0),function=mean)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_6" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 6)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_5" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 5)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_3" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 3)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_2" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 2)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_19" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 19)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_18" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 18)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_17" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 17)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_16" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 16)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_15" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 15)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_14" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 14)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_13" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 13)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_12" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 12)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_11" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 11)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_10" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 10)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_1" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 1)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_vac_res_units" type="variable_definition">ln(urbansim_zone.building.vacant_residential_units)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_res_units" type="variable_definition">ln(urbansim_zone.building.residential_units)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_9" type="variable_definition">ln(building.aggregate(job.sector_id==9))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_8" type="variable_definition">ln(building.aggregate(job.sector_id==8))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_7" type="variable_definition">ln(building.aggregate(job.sector_id == 7))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_6" type="variable_definition">ln(building.aggregate(job.sector_id==6))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_5" type="variable_definition">ln(building.aggregate(job.sector_id==5))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_3" type="variable_definition">ln(building.aggregate(job.sector_id==3))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_2" type="variable_definition">ln(building.aggregate(job.sector_id==2))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_19" type="variable_definition">ln(building.aggregate(job.sector_id==19))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_18" type="variable_definition">ln(building.aggregate(job.sector_id==18))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_17" type="variable_definition">ln(building.aggregate(job.sector_id==17))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_16" type="variable_definition">ln(building.aggregate(job.sector_id==16))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_15" type="variable_definition">ln(building.aggregate(job.sector_id==15))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_14" type="variable_definition">ln(building.aggregate(job.sector_id==14))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_13" type="variable_definition">ln(building.aggregate(job.sector_id==13))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_12" type="variable_definition">ln(building.aggregate(job.sector_id==12))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_11" type="variable_definition">ln(building.aggregate(job.sector_id==11))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_10" type="variable_definition">ln(building.aggregate(job.sector_id==10))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs_1" type="variable_definition">ln(building.aggregate(job.sector_id==1))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_jobs" type="variable_definition">ln(urbansim_zone.building.number_of_non_home_based_jobs)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_num_hh" type="variable_definition">ln(urbansim_zone.building.number_of_households)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_nonres_to_capacity_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.non_residential_sqft),(urbansim_zone.building.non_residential_sqft_capacity)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_job_space_to_vac_ratio" type="variable_definition">ln(safe_array_divide((urbansim_zone.building.total_job_spaces),(urbansim_zone.building.vacant_job_spaces)))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_residential_units_capacity" type="variable_definition">ln(urbansim_zone.building.developable_residential_units_capacity)</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_developable_non_residential_sqft_capacity" type="variable_definition">ln(urbansim_zone.building.developable_non_residential_sqft_capacity)</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.vacant_job_spaces)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_toal_job_spaces_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.total_job_spaces)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_job_space_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(urbansim_zone.building.total_job_spaces),zone.aggregate(urbansim_zone.building.vacant_job_spaces))))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_vacant_job_spaces" type="variable_definition">ln(urbansim_zone.building.vacant_job_spaces)</variable>
+      <variable use="both" source="expression" name="building.zonal_ln_average_value_per_unit" type="variable_definition">ln(building.average_value_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_8" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 8)))</variable>
+      <variable use="both" source="expression" name="zone.zonal_vac_job_spaces_per_acre" type="variable_definition">zone.aggregate(urbansim_zone.building.vacant_job_spaces)/zone.acres</variable>
+      <variable use="both" source="expression" name="zone.zonal_toal_job_spaces_per_acre" type="variable_definition">zone.aggregate(urbansim_zone.building.total_job_spaces)/zone.acres</variable>
+      <variable use="both" source="expression" name="building.zonal_num_hhlds_per_acre" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_nonres_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(urbansim_zone.building.non_residential_sqft),zone.aggregate(urbansim_zone.building.non_residential_sqft_capacity))))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_to_capacity_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(building.residential_units),zone.aggregate(building.residential_units_capacity))))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_to_vac_ratio" type="variable_definition">ln(building.disaggregate(safe_array_divide(zone.aggregate(building.residential_units),zone.aggregate(urbansim_zone.building.vacant_residential_units))))</variable>
+      <variable use="both" source="expression" name="building.zonal_vac_res_units_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.vacant_residential_units)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_res_units_per_acre" type="variable_definition">ln(building.disaggregate(zone.aggregate(urbansim_zone.building.residential_units)/zone.acres))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_pops_per_acre" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_per_acre" type="variable_definition">ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))</variable>
+      <variable use="both" source="expression" name="building.zonal_pop_ofp_sov_access" type="variable_definition">ln(building.disaggregate(zone.pop_ofp_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_pop_pk_sov_access" type="variable_definition">ln(building.disaggregate(zone.pop_pk_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_emp_ofp_sov_access" type="variable_definition">ln(building.disaggregate(zone.emp_ofp_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_emp_pk_sov_access" type="variable_definition">ln(building.disaggregate(zone.emp_pk_sov_access))</variable>
+      <variable use="both" source="expression" name="building.zonal_freeway_within_qtr_mile" type="variable_definition">ln(building.disaggregate(zone.freeway_within_qtr_mile))</variable>
+      <variable use="both" source="expression" name="building.zonal_bldg_sqft_per_unit" type="variable_definition">ln(building.sqft_per_unit)</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_9" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 9)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs_7" type="variable_definition">ln(building.disaggregate(zone.aggregate(job.sector_id == 7)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_jobs" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(job)))</variable>
+      <variable use="both" source="expression" name="building.zonal_num_hh" type="variable_definition">ln(building.disaggregate(zone.number_of_agents(household)))</variable>
+      <variable use="both" source="expression" name="building.zonal_phoenix_cbd_distance" type="variable_definition">ln(building.disaggregate(zone.dist_to_phx_cbd))</variable>	</expression_library>    <dataset_pool_configuration type="class">
+      <class_name type="string" hidden="True">DatasetPoolConfiguration</class_name>
+      <class_module type="string" hidden="True">opus_core.configurations.dataset_pool_configuration</class_module>
+      <argument name="package_order" type="list">['mag_zone','urbansim_zone','urbansim','opus_core']</argument>
+    </dataset_pool_configuration>
+    <available_datasets type="list">['zone','building','household','person','job','raz2011','razi03','mpa2011','mpai03','county','taz2011','tazi03','blockgroup_2010','blockgroup_2000','travel_data','active_development','household_x_building','development_project','alldata','development_event_history','target_vacancy','building_type','building_sqft_per_job']</available_datasets>
+  </general>
+  <model_manager>
+    <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">  
+      <model name="active_developments_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.active_developments_model</class_module>
+            <class_name type="string">ActiveDevelopmentsModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">ActiveDevelopmentsModel</name>
+          </init>
+          <run type="dictionary">
+          	<argument name="percent_active_development" type="integer">80</argument>
+          </run>
+        </structure>
+        <specification type="dictionary"/>
+      </model>
+    </models>
+  </model_manager>	
+</opus_project>
