@@ -17,7 +17,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
-
+from urbansim.control_total.growth_rate import growth_rate
 
 try:
     ## if installed, use PrettyTable module for status logging
@@ -55,7 +55,7 @@ class TransitionModel(Model):
                         
                         Name of dataset attribute that represents quantities summing
                         toward target_attribute.  If unspecified, counting number of
-                        dataset records and comparing it against target.
+                        dataset records and comparing it against the target number.
                         
                 **control_total_dataset** : OPUS Dataset object, optional
                 
@@ -92,14 +92,14 @@ class TransitionModel(Model):
         
                 **column_names** : list, required
                 
-                        A list of column names that define a row in control total. 
-                        Each of the names in the list must be a primary attribute
+                        A list of column names that define a category in control total. 
+                        Each of the column names in the list must be either a primary attribute
                         or a computable/computed attribute of both control_total 
                         and self.dataset.
                         
                 **control_total_index** : array or integer, optional
                 
-                        Selectively only updates control_total_id row specified 
+                        Selectively only update control_total_id row specified 
                         by control_total_index
         """
         
@@ -156,8 +156,11 @@ class TransitionModel(Model):
                                         for expression, column_name in zip(expressions, column_names) 
                                         if self.control_totals[column_name][index] != -1] )
             
-            ## TODO: handle -2 special value 
-            is_this_id = self.dataset.compute_variables(expression_inst, quiet=True)
+            ## TODO: handle -2 special value
+            if expression_inst:
+                is_this_id = self.dataset.compute_variables(expression_inst, quiet=True)
+            else:
+                is_this_id = ones(self.dataset.size(), dtype='bool')
             self.dataset.modify_attribute(name=id_name, 
                                           data=control_total_id,
                                           index=where(is_this_id)[0])
@@ -298,12 +301,13 @@ class TransitionModel(Model):
                 threshold_str = '_actual_ > %s' % threshold
 
             if threshold_str:
+                #logger.be_quiet()
                 threshold_val = self.control_totals_all.compute_variables(threshold_str,
                                                                       dataset_pool=dataset_pool)
+                #logger.talk()
 
                 return threshold_val
             else:
-                import ipdb; ipdb.set_trace()
                 error_msg = "Unknown sampling_threshold type; it must be of int, float, or str."
                 logger.log_error(error_msg)
                 raise TypeError, error_msg
@@ -315,8 +319,12 @@ class TransitionModel(Model):
         if 'sampling_hierarchy' in ct_known_attributes:
             hierarchy_ct = self.control_totals['sampling_hierarchy']
 
+        growth_rate.target_attribute_name = target_attribute_name
+        growth_rate.attr_names = column_names    #prepare for growth_rate threshold
+        
         threshold_raw = sampling_threshold
         threshold_val = ones_like(actual)
+
         if sampling_threshold: 
             ## this has to computable
             threshold_val = get_threshold_val(threshold_raw, 
@@ -378,6 +386,8 @@ class TransitionModel(Model):
             if actual_num != target_num:
                 
                 if actual_num < target_num:
+                    growth_rate.attr_names = column_names  #prepare for growth_rate threshold
+                    
                     ## handle sampling_threshold and sampling_hierarchy
                     threshold_val_this = threshold_val[index]
     
@@ -418,7 +428,8 @@ class TransitionModel(Model):
                             column_names_new = list(set(column_names) \
                                                   - set(hierarchy_this[:i])) \
                                                   + [hierarchy_this[i]]
-     
+                            self.control_totals_all.touch_attribute(target_attribute_name)
+                            growth_rate.attr_names = column_names_new                            
                             self._code_control_total_id(column_names_new, 
                                                         control_total_index=[index],
                                                         dataset_pool=dataset_pool)
@@ -448,7 +459,7 @@ class TransitionModel(Model):
                             indicator = self.dataset[id_name] == control_total_id
                             n_indicator = indicator.sum()
                 
-                
+                # do sampling from legitimate records
                 legit_index = where(logical_and(indicator, filter_indicator))[0]
                 if legit_index.size > 0:
                     abs_diff = abs(target_num - actual_num)
@@ -458,7 +469,7 @@ class TransitionModel(Model):
                     size_tbc_prev = to_be_cloned.size
                     i = 0
                     while diff > 0 and action_num < abs_diff:
-                        if n > 1:
+                        if n > 1:  # adjust number of records to sample in each iteration
                             n = int( ceil((abs_diff - action_num) / (mean_size * STEP_SIZE**i)) )
                         lucky_index = sample_replace(legit_index, n)
                         temp_num = accounting[lucky_index].sum()
@@ -858,6 +869,175 @@ class Tests(opus_unittest.OpusTestCase):
                                  dataset_pool=dataset_pool)
         self.assertArraysEqual(hct_set['households'], array([5000, 26000, 16000, 6000]))
 
+    def test_growth_rate_sampling_threshold(self):
+        """ Test using growth_rate as sampling threshold:
+            sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+        """
+        
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2001, 2001, 2001, 2002, 2002, 2002]),
+            #"age_of_head": array([0,1,2,0,1,2, 0,1,2]),
+            "age_of_head_min": array([ 0,35,65,  0,35,65,  0,35,65]),
+            "age_of_head_max": array([34,64,-1, 34,64,-1, 34,64,-1]),
+            "total_number_of_households": array([25013, 21513, 18227,  # 2000
+                                                 10055, 21600, 18999,  # 2001
+                                                 15678, 22001, 19432]) # 2002
+            }
+
+        #household_characteristics_for_ht_data = {
+            #"characteristic": array(3*['age_of_head']),
+            #"min": array([0, 35, 65]),
+            #"max": array([34, 64, -1])
+            #}
+
+        households_data = {
+            "household_id":arange(15000)+1,
+            "grid_id": array(15000*[1]),
+            "age_of_head": array(1000*[25] + 1000*[28] + 2000*[32] + 1000*[34] +
+                            2000*[35] + 1000*[40] + 1000*[54]+ 1000*[62] +
+                            1000*[65] + 1000*[68] + 2000*[71] + 1000*[98])
+            }
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                                   datasets_dict={'household':hh_set})
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household',
+                                      id_name=[])
+        
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  reset_dataset_attribute_value={'grid_id':-1},                  
+                  )
+        
+        #given the default growth rate of 1.0, first year threshold should all satisfy
+        this_year = hct_set['year']==2000
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year]
+        should_be = array([25013, 21513, 18227])
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+        model.run(year=2001, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  reset_dataset_attribute_value={'grid_id':-1},                  
+                  )
+        
+        #given the default, first year threshold should all satisfy
+        this_year = hct_set['year']==2001
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year]
+        should_be = array([10055, 21513, 18227])
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+
+        model.run(year=2002, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  reset_dataset_attribute_value={'grid_id':-1},                  
+                  )
+                
+        this_year = hct_set['year']==2002
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year]
+        should_be = array([15678, 21513, 18227])
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+    def test_growth_rate_sampling_threshold_with_sampling_hiearchy(self):
+        """ Test using growth_rate as sampling threshold with sampling_hiearchy:
+            sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+        """        
+        annual_household_control_totals_data = {
+            "year": array([2000, 2000, 2000, 2001, 2001, 2001, 2002, 2002, 2002]),
+            "age_category": array([0,1,2,0,1,2, 0,1,2]),
+            #"age_of_head_min": array([ 0,35,65,  0,35,65,  0,35,65]),
+            #"age_of_head_max": array([34,64,-1, 34,64,-1, 34,64,-1]),
+            "total_number_of_households": array([25013, 21513, 18227,  # 2000
+                                                 10055, 21600, 18999,  # 2001
+                                                 15678, 22001, 19432]) # 2002
+            }
+        
+        households_data = {
+            "household_id":arange(15000)+1,
+            "grid_id": array(15000*[1]),
+            "age_of_head": array(1000*[25] + 1000*[28] + 2000*[32] + 1000*[34] +
+                            2000*[35] + 1000*[40] + 1000*[54]+ 1000*[62] +
+                            1000*[65] + 1000*[68] + 2000*[71] + 1000*[98])
+            }
+        
+        from urbansim.control_total.aliases import aliases as ct_aliases
+        ct_aliases += ['age_category2 = 0 * (control_total.age_category < 2) + ' + 
+                                       '1 * (control_total.age_category == 2)']
+        from urbansim.household.aliases import aliases as hh_aliases
+        hh_aliases += ['age_category = 0 * (household.age_of_head <= 34) + ' +
+                                      '1 * (household.age_of_head >= 35) * (household.age_of_head <= 64) + ' +
+                                      '2 * (household.age_of_head >= 65)',
+                       'age_category2 = 0 * (household.age_of_head <= 64) + ' +
+                                       '1 * (household.age_of_head >= 65)',
+                       ]
+        
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+        dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'],
+                                   datasets_dict={'household':hh_set})
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household',
+                                      id_name=[])
+        
+        model = TransitionModel(hh_set, control_total_dataset=hct_set)
+        model.run(year=2000, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool               
+                  )
+        
+        #given the default growth rate of 1.0, first year threshold should all satisfy
+        this_year = hct_set['year']==2000
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year]
+        should_be = array([25013, 21513, 18227])
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+
+        model.run(year=2001, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool
+                  )
+        
+        this_year = hct_set['year']==2001
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year]
+        should_be = array([10055, 21513, 18227])
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+        ##growth_rate threshold with sampling hiearchy        
+        model.run(year=2002, 
+                  target_attribute_name="total_number_of_households", 
+                  sampling_threshold = 'urbansim.control_total.growth_rate>0.1',
+                  sampling_hierarchy = ['age_category', 'age_category2'],
+                  reset_dataset_attribute_value={'grid_id':-1},
+                  dataset_pool=dataset_pool
+                  )
+                
+        this_year = hct_set['year']==2002
+        results = hct_set.compute_variables('households = control_total.number_of_agents(household)',
+                                            dataset_pool=dataset_pool)[this_year].sum()
+        should_be = array([15678, 22001, 18227]).sum()
+        self.assertEqual(ma.allclose(should_be, results, rtol=1e-1),
+                         True, "Error, should_be: %s, but result: %s" % (should_be, results))
+
     def test_sampling_hierarchy(self):
         """ Test passing sampling_threshold and sampling_hierarchy through 
             arguments to run method
@@ -905,8 +1085,8 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
 
     def test_sampling_hierarchy_reset_primary_dataset_attribute(self):
-        """ Test passing sampling_threshold and sampling_hierarchy through 
-            arguments to run method
+        """ Test agents sampled at higher sampling_hierarchy will have their 
+            lowest hiearchy attribute correctly reset
         """
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000]),
@@ -1006,6 +1186,9 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(hct_set['households'].sum(), array([15000, 25000, 15000, 6000]).sum())
        
     def test_code_control_total_id(self):
+        """ Test internal method \_code\_control\_total\_id
+        """
+
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000]),
             "control_total_id": arange(1, 5),
@@ -1075,7 +1258,10 @@ class Tests(opus_unittest.OpusTestCase):
         
 
     def test_same_distribution_after_household_addition(self):
-        """Using the control_totals and no marginal characteristics,
+        """
+        Test distribution of households meeting control total specification after HTM
+
+        Using the control_totals and no marginal characteristics,
         add households and ensure that the distribution within each group stays the same
         """
 
@@ -1122,7 +1308,9 @@ class Tests(opus_unittest.OpusTestCase):
                          "Error in data type of the new household set. Should be: int8, is: %s" % str(hh_set.get_attribute("persons").dtype))
 
     def test_same_distribution_after_household_subtraction(self):
-        """Using the control_totals and no marginal characteristics,
+        """Test distribution of households meeting control total specification after HTM
+        
+        Using the control_totals and no marginal characteristics,
         subtract households and ensure that the distribution within each group stays the same
         """
         annual_household_control_totals_data = {
@@ -1155,7 +1343,9 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s,\n but result: %s" % (should_be, results))
 
     def test_controlling_with_one_marginal_characteristic(self):
-        """Using the age_of_head as a marginal characteristic, which would partition the 8 groups into two larger groups
+        """Test HTM on control total categories defined by age group
+        
+        Using the age_of_head as a marginal characteristic, which would partition the 8 groups into two larger groups
         (those with age_of_head < 40 and >= 40), ensure that the control totals are met and that the distribution within
         each large group is the same before and after running the model
         """
@@ -1200,7 +1390,9 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
     def test_controlling_with_three_marginal_characteristics(self):
-        """Controlling with all three possible marginal characteristics in this example, age_of_head, income, and persons,
+        """Test HTM on control total categories defined by age group, income brackets, and number of persons in household
+        
+        Controlling with all three possible marginal characteristics in this example, age_of_head, income, and persons,
         this would partition the 8 groups into the same 8 groups, and with a control total specified for each group, we must
         ensure that the control totals for each group exactly meet the specifications.
         """
@@ -1266,15 +1458,15 @@ class Tests(opus_unittest.OpusTestCase):
         return res
 
     def test_controlling_income(self):
-        """ Controls for one marginal characteristics, namely income.
+        """ Test HTM on control total categories defined by income brackets
         """
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2000, 2001, 2001, 2001, 2001, 2002, 2002, 2002, 2002]),
             #"income": array([0,1,2,3,0,1,2,3, 0,1,2,3]),
             "income_min": array([    0,40000, 70000,120000,     0,40000, 70000,120000,     0,40000, 70000,120000]),
             "income_max": array([39999,69999,119999,    -1, 39999,69999,119999,    -1, 39999,69999,119999,    -1]),
-            "total_number_of_households": array([25013, 21513, 18227, 18493, # 2000   
-                                                 10055, 15003, 17999, 17654, # 2001
+            "total_number_of_households": array([25013, 21513, 18227, 18493,  # 2000   
+                                                 10055, 15003, 17999, 17654,  # 2001
                                                  15678, 14001, 20432, 14500]) # 2002
             }
 
@@ -1352,7 +1544,7 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
     def test_controlling_age_of_head(self):
-        """ Controls for one marginal characteristics, namely age_of_head.
+        """ Test HTM on control total categories defined by age group
         """
         annual_household_control_totals_data = {
             "year": array([2000, 2000, 2000, 2001, 2001, 2001, 2002, 2002, 2002]),
@@ -1438,7 +1630,7 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
         
     def test_controlling_sector(self):
-        """ Controls for one marginal characteristics, namely age_of_head.
+        """ Test ETM on control total categories defined by sector\_id
         """
         annual_employment_control_totals_data = {
             "year": array([2000, 2000, 2000, 2001, 2001, 2001, 2002, 2002, 2002]),
@@ -1465,7 +1657,6 @@ class Tests(opus_unittest.OpusTestCase):
         ect_set = ControlTotalDataset(in_storage=storage, in_table_name='ect_set', what='',
                                       id_name=[])
 
-        
         model = TransitionModel(job_set, control_total_dataset=ect_set)
         model.run(year=2000, target_attribute_name="number_of_jobs", reset_dataset_attribute_value={'grid_id':-1})
 
@@ -1508,7 +1699,7 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
     def test_accounting_attribute(self):
-        """
+        """ Test BTM controlling on number\_of\_jobs
         """
         annual_employment_control_totals_data = {
             "year":           array([2000,   2000,  2000,  2001]),
@@ -1554,6 +1745,8 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
                
     def test_sync_datasets(self):
+        """ Test synchronizing persons after HTM
+        """
         annual_household_control_totals_data = {
             "year": array([2000, 2000]),
             "age_of_head_min": array([ 50,  0]),
@@ -1584,7 +1777,8 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertTrue((persons['job_id'] == -1).sum() > 7000, '')
 
     def test_match_exact_target(self):
-        """
+        """ Test that TM will try to match the targets in control_totals table as close as possible
+            within maximum number of iterations
         """
         annual_employment_control_totals_data = {
             "year":           array([2000,   2000,  2000,  2001]),
