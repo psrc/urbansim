@@ -14,12 +14,15 @@ class RestartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--skip-urbansim", dest="skip_urbansim", default=False, 
                                 action="store_true", 
                                 help="Skip running UrbanSim for the restart year.")
-        self.parser.add_option("--create-baseyear-cache-if-not-exists", dest="create_baseyear_cache_if_not_exists", default=False, 
-                                action="store_true",
+        self.parser.add_option("--create-baseyear-cache-if-not-exists", 
+                               dest="create_baseyear_cache_if_not_exists", default=False, 
+                               action="store_true",
                                 help="Create baseyear cache if not already exists")
         self.parser.add_option("--skip-cache-cleanup", dest="skip_cache_cleanup", 
                                 default=False, action="store_true", 
                                 help="Skip removing year caches for this and future years.")
+        self.parser.add_option("--end-year", dest="end_year", default=None, 
+                                help="end_year of the run to be restarted.")
                                 
 if __name__ == "__main__":
     option_group = RestartRunOptionGroup()
@@ -32,9 +35,11 @@ if __name__ == "__main__":
         parser.print_help()
     else:
         run_id, year = (int(args[0]), int(args[1]))
+        end_year = int(options.end_year) if options.end_year is not None else None
         run_manager.restart_run(run_id, 
                                 year,
                                 options.project_name,
+                                end_year=end_year,
                                 skip_urbansim=options.skip_urbansim,
                                 create_baseyear_cache_if_not_exists=options.create_baseyear_cache_if_not_exists,
                                 skip_cache_cleanup=options.skip_cache_cleanup)

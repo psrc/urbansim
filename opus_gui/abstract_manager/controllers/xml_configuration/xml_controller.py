@@ -21,7 +21,7 @@ _REMOVABLE_NODE_TYPES = (
     "tool_set", "param_template", "model", "submodel", "source_data",
     "batch_visualization", "indicator_batch", "indicator",
     "indicator_result", "scenario", 'tool_file', 'tool_library', 'tool_group',
-    'class', 'param', None, "models_to_run"
+    'class', 'param', None, "models_to_run", "integer"
 )
 
 class XmlController(object):
@@ -140,6 +140,7 @@ class XmlController(object):
         index = self.selected_index()
         self.model.removeRow(index.row(), self.model.parent(index))
         self.view.clearSelection()
+        self.project.dirty = True
 
     # CK: this is a helper function for the clone_node method, but maybe its general enough to be
     # promoted to a higher abstraction layer?
@@ -184,6 +185,7 @@ class XmlController(object):
             # Select the new clone if it was inserted
             if index_of_clone is not None:
                 self.view.setCurrentIndex(index_of_clone)
+            self.project.dirty = True
 
     def rename_selected_node(self):
         ''' Opens a dialog box for changing the node name. '''
@@ -195,6 +197,7 @@ class XmlController(object):
         dialog = RenameDialog(node.get('name'), taken_names, self.view)
         if dialog.exec_() == dialog.Accepted:
             node.set('name', dialog.accepted_name)
+            self.project.dirty = True
 
     def make_selected_editable(self):
         '''
@@ -240,7 +243,7 @@ class XmlController(object):
             added_actions.append(self.act_rename_node)
         if self.project.is_shadowing(node):
             added_actions.append(self.act_revert)
-        elif node.tag in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
+        elif node.get('type') in _REMOVABLE_NODE_TYPES and not node.get('inherited'):
             added_actions.append(self.act_remove_selected)
 
         # Separate from other items

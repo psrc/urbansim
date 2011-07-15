@@ -133,6 +133,7 @@ class XmlController_Scenarios(XmlController):
         item = self.selected_item()
         node = item.node
         self.model.add_node(node, etree.parse(StringIO.StringIO('<models_to_run config_name="models" type="selectable_list"/>')).getroot())
+        self.project.dirty = True
                         
     def addModel(self, models_to_run_list_index, model_name):
         '''
@@ -148,3 +149,4 @@ class XmlController_Scenarios(XmlController):
         self.model.insertRow(last_row_num, models_to_run_list_index, model_node)
         # Validate models to run
         update_models_to_run_lists()
+        self.project.dirty = True

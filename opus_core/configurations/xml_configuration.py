@@ -191,7 +191,9 @@ class XMLConfiguration(object):
         project_name = general_section['project_name']
         config = self.get_section('scenario_manager/scenario', name)
         if config is None:
-            raise ValueError, "didn't find a scenario named %s" % name
+            raise ValueError, "didn't find scenario named %s; " % name + \
+                  "If you're restarting a run make sure there is a scenario_name column in " + \
+                  "run_activity table of your services database."
         self._insert_expression_library(config)
         # Merge the information from the travel model configuration sections in the model_manager
         model_manager_tm_config = self.get_section('model_manager/travel_model_configuration')
@@ -545,7 +547,9 @@ class XMLConfiguration(object):
         # All child nodes of the parent_node with the same node id as child nodes of local_node are
         # also merged. Other child nodes are added to the local_node.
         # print 'merging nodes (p>c): %s -> %s' %(parent_node, local_node)
-        if local_node.get('inherit_parent_values') == 'False':
+        if local_node.get('inherit_parent_values') == 'False': # or \
+           #parent_node.get('inherit_parent_values') == 'False':
+            ## allow parent to specify nodes that are not supposed to be inherited
             return
         for name, value in parent_node.items():
             if name != 'inherited' and not name in local_node.attrib:

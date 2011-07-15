@@ -43,6 +43,15 @@ def apply_before_close(question, parent_widget = None):
     buttons = (QMessageBox.Discard, QMessageBox.Apply, QMessageBox.Cancel)
     return _action_before_continue(question, buttons, parent_widget)
 
+def yes_or_cancel(question, parent_widget = None):
+    '''
+    Ask the users if it is OK to continue, or cancel the action.
+    @param question the question to ask the user
+    @return the answer (common_dialogs.YES|CANCEL)
+    '''
+    buttons = (QMessageBox.Yes, QMessageBox.Cancel)
+    return _action_before_continue(question, buttons, parent_widget)
+
 def user_is_sure(question, parent_widget = None):
     buttons = (QMessageBox.Yes, QMessageBox.No)
     return _action_before_continue(question, buttons, parent_widget) == YES

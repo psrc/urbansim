@@ -83,4 +83,6 @@ if __name__ == "__main__":
  
     run_manager.setup_new_run(cache_directory = config['cache_directory'],
                               configuration = config)
-    run_manager.run_run(config, run_as_multiprocess = run_as_multiprocess)
+    run_manager.run_run(config, 
+                        scenario_name=options.scenario_name,
+                        run_as_multiprocess=run_as_multiprocess)

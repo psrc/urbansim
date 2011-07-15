@@ -24,6 +24,7 @@ class RunsRunActivity(Entity):
     run_id = Field(Integer, primary_key = True)
     run_name = Field(Text)
     run_description = Field(Text)
+    scenario_name = Field(Text)
     cache_directory = Field(Text)
     processor_name = Field(Text)
     date_time = Field(DateTime)

@@ -49,15 +49,21 @@ def get_opus_version_number(package_name='opus_core'):
         # locate where opus_core is living
         package_dir = __import__(package_name).__path__[0]
         if sys.platform=='win32':
-            # It's a windows machine -- use SubWCRev.  This may not be on the user's search
-            # path, so if just calling it doesn't work try guessing where it is.  (This is
-            # where TortoiseSVN installs it by default).
+            # It's a Windows machine
+            # try svnversion first:
             try:
-                cmd = r'SubWCRev ' + package_dir
-                (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+                cmds = ('svnversion', package_dir)
+                (svn_response, err) = Popen(cmds, stdout=PIPE, stderr=PIPE).communicate()
             except WindowsError:
-                cmd = r'C:\Program Files\TortoiseSVN\bin\SubWCRev ' + package_dir
-                (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+                # Try SubWCRev.  This may not be on the user's search
+                # path, so if just calling it doesn't work try guessing where it is.  (This is
+                # where TortoiseSVN installs it by default).
+                try:
+                    cmd = r'SubWCRev ' + package_dir
+                    (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+                except WindowsError:
+                    cmd = r'C:\Program Files\TortoiseSVN\bin\SubWCRev ' + package_dir
+                    (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             if err=='':
                 # if no error, the last line of the response will be something like
                 # 'Updated to revision 3024', with a newline following -- get the '3024' part

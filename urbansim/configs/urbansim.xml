@@ -905,6 +905,6 @@
   </data_manager>
   <results_manager>
     <indicator_batches name="Indicator Batches" setexpanded="True" type="group"/>
-    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data"/>
+    <simulation_runs followers="Results" name="Simulation Runs" temporary="True" inherit_parent_values="False" setexpanded="True" type="all_source_data"/>
   </results_manager>
 </opus_project>

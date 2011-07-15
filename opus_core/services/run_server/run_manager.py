@@ -4,6 +4,7 @@
 
 import os, pickle, shutil, datetime
 from time import localtime, strftime
+from numpy import array
 from numpy.random import seed, randint
 from opus_core.logger import logger
 from opus_core.fork_process import ForkProcess
@@ -63,7 +64,7 @@ class RunManager(AbstractService):
             self.services_db.close()
             self.services_db = self.create_storage()
 
-    def run_run(self, run_resources, run_name = None, run_as_multiprocess=True, run_in_background=False):
+    def run_run(self, run_resources, run_name = None, scenario_name=None, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running
            log it in to run_activity
            run simulation
@@ -75,7 +76,8 @@ class RunManager(AbstractService):
         if run_resources['cache_directory'] != self.current_cache_directory:
             raise 'The configuration and the RunManager conflict on the proper cache_directory'
 
-        self.add_row_to_history(self.run_id, run_resources, "started", run_name = run_name)
+        self.add_row_to_history(self.run_id, run_resources, "started", 
+                                run_name=run_name, scenario_name=scenario_name)
 
         try:
             # Test pre-conditions
@@ -102,24 +104,34 @@ class RunManager(AbstractService):
 
             if 'base_year' not in run_resources:
                 run_resources['base_year'] = run_resources['years'][0] - 1
-
-            self._create_seed_dictionary(run_resources)
+            
+            base_year = run_resources['base_year']
+            ## create a large enough seed_array so that a restarted run
+            ## can still have seed when running pass the original end_year
+            ## the size needed to store seed_dict of 100 seeds is about 12568 Bytes
+            self._create_seed_dictionary(run_resources, 
+                                         start_year=base_year,
+                                         end_year=base_year+100)
             
             if 'run_in_same_process' in run_resources and run_resources['run_in_same_process']:
                 model_system.run_in_same_process(run_resources)
             elif run_as_multiprocess:
                 model_system.run_multiprocess(run_resources)
             else:
-                model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
+                model_system.run_in_one_process(run_resources, 
+                                                run_in_background=run_in_background, 
+                                                class_path=model_system_class_path)
 
             self.model_system = None
 
         except:
-            self.add_row_to_history(self.run_id, run_resources, "failed", run_name = run_name)
+            self.add_row_to_history(self.run_id, run_resources, "failed", 
+                                    run_name=run_name, scenario_name=scenario_name)
             self.ready_to_run = False
             raise # This re-raises the last exception
         else:
-            self.add_row_to_history(self.run_id, run_resources, "done", run_name = run_name)
+            self.add_row_to_history(self.run_id, run_resources, "done", 
+                                    run_name=run_name, scenario_name=scenario_name)
 
         self.ready_to_run = False
         return self.run_id
@@ -128,6 +140,7 @@ class RunManager(AbstractService):
         self.delete_everything_for_this_run(run_id = self.run_id, cache_directory = self.current_cache_directory)
 
     def restart_run(self, run_id, restart_year, project_name,
+                    end_year=None,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
                     skip_cache_cleanup=False):
@@ -137,8 +150,9 @@ class RunManager(AbstractService):
             self.update_environment_variables(run_resources = {'project_name':project_name}) 
 
         run_resources = self.create_run_resources_from_history(
-           run_id=run_id,
-           restart_year=restart_year)
+                                                               run_id=run_id,
+                                                               restart_year=restart_year,
+                                                               end_year=end_year)
 
         run_tbl = self.services_db.get_table('run_activity')
         s = select([run_tbl.c.run_name], whereclause = run_tbl.c.run_id == run_id)
@@ -188,12 +202,11 @@ class RunManager(AbstractService):
             base_year = run_resources['base_year']
 
             model_system.run_multiprocess(run_resources)
-
-            self.add_row_to_history(run_id, run_resources, "done", run_name = run_name)
-
         except:
             self.add_row_to_history(run_id, run_resources, "failed", run_name = run_name)
             raise
+        else:
+            self.add_row_to_history(run_id, run_resources, "done", run_name = run_name)
 
     def create_run_resources_from_history(self,
                                           run_id,
@@ -208,12 +221,16 @@ class RunManager(AbstractService):
         if 'cache_variables' not in resources:
             resources['cache_variables'] = False
 
-        if restart_year < resources["years"][0]:
-            raise StandardError("restart year cannot be less than %s" % resources["years"][0])
+        #if restart_year < resources["years"][0]:
+        #    raise StandardError("restart year cannot be less than %s" % resources["years"][0])
 
         #if no end_year is specified, it will default to the current end_year in "years" entry in resources
-        if not end_year:
+        if end_year is None:
             end_year = resources["years"][-1]
+        
+        if end_year < restart_year:
+            raise ValueError,"restart year (%s) cannot be less than end_year (%s)" % (restart_year, end_year) 
+        
         if 'base_year' not in resources:
             resources['base_year'] = resources['years'][0] - 1
 
@@ -222,20 +239,20 @@ class RunManager(AbstractService):
 
         return resources
 
-    def _create_seed_dictionary(self, resources):
+    def _create_seed_dictionary(self, resources, start_year=None, end_year=None):
         """Create a dictionary of seeds (one dict item per year) and add it to the resources under the name
         '_seed_dictionary_'. That way one can reproduce results also for simulations that are restarted.
+        
         """
         root_seed = resources.get("seed", NO_SEED)
         seed(root_seed)
-        start_year = resources["years"][0]
-        end_year = resources["years"][-1]
-        seed_array = randint(1,2**30, end_year - start_year + 1)
-        seed_dict = {}
-        i = 0
-        for year in range(start_year, end_year+1):
-            seed_dict[year] = seed_array[i]
-            i = i + 1
+        start_year = start_year if start_year is not None else resources["years"][0]
+        end_year = end_year if end_year is not None else resources["years"][-1]
+        seed_dict = dict( zip(range(start_year, end_year+1),
+                              randint(1,2**30, end_year-start_year+1)
+                              )
+                          )
+        
         resources['_seed_dictionary_'] = seed_dict
         
     ######## DATABASE OPERATIONS ###########
@@ -269,18 +286,82 @@ class RunManager(AbstractService):
 
         return config
 
-    def get_run_id_from_name(self, run_name):
-        run_activity = self.services_db.get_table('run_activity')
+    def get_runs_by_status(self, run_ids = None):
+        """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
+        If run_ids is None, all runs from available runs are considered, otherwise only ids
+        given by the run_ids list.
+        """
+        map = {}
+        run_activity_table = self.services_db.get_table('run_activity')
+        s = select([run_activity_table.c.run_id, run_activity_table.c.status])
+        for run_id, status in self.services_db.execute(s).fetchall():
+            if run_ids is None or run_id in run_ids:
+                if status in map:
+                    map[status].append(run_id)
+                else:
+                    map[status] = [run_id]
 
-        query = select([run_activity.c.run_id],
-                       whereclause = run_activity.c.run_name == run_name)
-        results = self.services_db.execute(query).fetchall()
-        if len(results) > 1:
-            raise Exception('Error: Multiple runs with the name %s'%run_name)
-        elif len(results) == 0:
-            raise Exception('Error: Cannot find a run with the name %s'%run_name)
+        return map
+
+    def get_runs(self, return_columns=['run_id'], return_rs=False, **kwargs):
+        run_activity = self.services_db.get_table('run_activity')
+        whereclause = run_activity.c.run_id > 0
+        for k, v in kwargs.items():
+            if k in run_activity.c:
+                whereclause = and_(whereclause, run_activity.c[k]==v)
+        
+        if isinstance(return_columns, list):
+            assert all([ c in run_activity.c for c in return_columns]), \
+                   "all return_columns have to be a column in run_activity"
+            
+            return_columns = [run_activity.c[c] for c in return_columns]
+        query = select(columns=return_columns,
+                       whereclause=whereclause)
+        results = self.services_db.execute(query)
+        if not return_rs:
+            return results.fetchall()
         else:
-            return results[0][0]
+            return results
+    
+    def get_runs_by_name(self, run_name):
+        return self.get_runs(run_name=run_name)
+
+    def has_run(self, **kwargs):
+        results = self.get_runs(**kwargs)
+        if len(results) >= 1:
+            return True
+        else:
+            return False
+        
+    #def has_run(self, run_id):
+        #run_activity_table = self.services_db.get_table('run_activity')
+        #qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
+        #return self.services_db.execute(qry).fetchone() is not None
+            
+    def get_runs_rs(self, **kwargs):
+        """ returns rows from run_activity table in services database
+        
+        run_ids - run_id to get info for
+        status - only return rows with status = [status]        
+        """
+
+        run_activity = self.services_db.get_table('run_activity')
+        query = select()
+        if run_ids is not None:
+            query = query.where(run_activity.c.run_id.in_(run_ids))
+
+        if status is not None:
+            query = query.where(run_activity.c.status == status)
+
+        rs = self.services_db.execute(query)
+        if resources:
+            for row in rs:
+                row_resources = pickle.loads(str(rs.resources))
+                if isinstance(row_resources, XMLConfiguration) and 'scenario_name' in rs.c:
+                    row.resources = row_resources.get_run_configuration(row.scenario_name)
+                else:
+                    row.resources = row_resources
+        return rs
 
     def get_run_info(self, run_ids = None, resources = False, status = None, soft_fail = True):
         """ returns the name of the server where this run was processed"""
@@ -321,23 +402,6 @@ class RunManager(AbstractService):
 
         return results
 
-    def get_runs_by_status(self, run_ids = None):
-        """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
-        If run_ids is None, all runs from available runs are considered, otherwise only ids
-        given by the run_ids list.
-        """
-        map = {}
-        run_activity_table = self.services_db.get_table('run_activity')
-        s = select([run_activity_table.c.run_id, run_activity_table.c.status])
-        for run_id, status in self.services_db.execute(s).fetchall():
-            if run_ids is None or run_id in run_ids:
-                if status in map:
-                    map[status].append(run_id)
-                else:
-                    map[status] = [run_id]
-
-        return map
-
     def _get_new_run_id(self):
         """Returns a unique run_id for a new run_activity trail."""
 
@@ -357,7 +421,7 @@ class RunManager(AbstractService):
 
         return run_id
 
-    def add_row_to_history(self, run_id, resources, status, run_name = None):
+    def add_row_to_history(self, run_id, resources, status, run_name=None, scenario_name=''):
         """update the run history table to indicate changes to the state of this run history trail."""
 
         self.update_environment_variables(run_resources = resources)
@@ -375,14 +439,17 @@ class RunManager(AbstractService):
              'date_time':datetime.datetime.now(),
              'resources':'%s' % pickled_resources,
              'cache_directory': resources['cache_directory'],
-             'project_name': resources.get('project_name', None)
+             'project_name': resources.get('project_name', None),
+             'scenario_name': scenario_name
              }
 
         run_activity_table = self.services_db.get_table('run_activity')
-        if not 'project_name' in run_activity_table.c:
+        if (not 'project_name' in run_activity_table.c):
             del values['project_name']
+        if (not 'scenario_name' in run_activity_table.c) or not scenario_name:
+            del values['scenario_name']
 
-        if self.has_run(run_id):
+        if self.has_run(run_id=run_id):
             qry = run_activity_table.update(values = values,
                                             whereclause = run_activity_table.c.run_id == run_id)
         else:
@@ -390,10 +457,34 @@ class RunManager(AbstractService):
 
         self.services_db.execute(qry)
 
-    def has_run(self, run_id):
-        run_activity_table = self.services_db.get_table('run_activity')
-        qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
-        return self.services_db.execute(qry).fetchone() is not None
+    def import_run_from_cache(self, cache_directory, run_info={}):
+        baseyear = run_info.get('baseyear', -1)
+        years = self.get_years_run(cache_directory, baseyear=baseyear)
+                
+        if years == []:
+            msg = 'Cannot import run from %s: it contains no data for simulation years' % cache_directory
+            logger.log_warning(msg)
+            return (False, msg)
+        else:
+            run_id = run_manager._get_new_run_id()
+            run_name = run_info.get('run_name', 
+                                    os.path.basename(cache_directory))
+
+            start_year, end_year = min(years), max(years)
+            project_name = os.environ.get('OPUSPROJECTNAME', 
+                                                      None)
+            resources = {'cache_directory': cache_directory,
+                         'description': 'run imported from cache',
+                         'years': (start_year, end_year),
+                         'project_name': project_name
+                         }
+            resources.update(run_info)
+
+            self.add_row_to_history(run_id=run_id, 
+                                    run_name=run_name, 
+                                    resources=resources, 
+                                    status='done',)
+            return (True, '')
 
     def get_cache_directory(self, run_id):
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
@@ -433,8 +524,6 @@ class RunManager(AbstractService):
 
         query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
         self.services_db.execute(query)
-
-
 
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
@@ -566,6 +655,32 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         run_manager.services_db.close()
         os.rmdir(cache_directory)
 
-
+    def test_get_runs(self):
+        from numpy.random import randint
+        run_manager = RunManager(self.config)
+        run_ids = range(1, 11)
+        run_names = ['run ' + str(id) for id in run_ids]
+        resources = {'cache_directory':None}
+        status = ['done', 'failed'] * 5
+        for idx, run_id in enumerate(run_ids):
+            run_manager.add_row_to_history(run_id = run_id,
+                                           resources = resources,
+                                           status = status[idx],
+                                           run_name = run_names[idx])
+        results = run_manager.get_runs(return_columns = ['run_name'], run_id=5)
+        expected = [('run 5',)]
+        self.assertEqual(results, expected)
+        results = run_manager.get_runs(return_columns = ['run_id'], status='done')
+        expected = [(1,),(3,), (5,), (7,), (9,)]
+        self.assertEqual(results, expected)
+        
+        results = run_manager.get_runs(return_columns = ['run_name'], return_rs=True, run_id=5)
+        expected = 'run 5'
+        self.assertEqual(results.fetchone()['run_name'], expected)
+        results = run_manager.get_runs(return_columns = ['run_id'], return_rs=True, status='done')
+        results = [rs['run_id'] for rs in results]
+        expected = [1,3,5,7,9]
+        self.assertEqual(results, expected)
+        
 if __name__ == "__main__":
     opus_unittest.main()

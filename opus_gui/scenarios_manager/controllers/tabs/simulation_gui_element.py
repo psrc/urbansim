@@ -164,8 +164,9 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
         for batch_node in batch_nodes:
             self.cboOptionalIndicatorBatch.addItem(batch_node.get('name'))
 
-    def setup_run_name_line_edit(self):
-        run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
+    def setup_run_name_line_edit(self, run_name=None):
+        if run_name is None:
+            run_name = 'run_%s'%strftime('%Y_%m_%d_%H_%M', localtime())
         self.leRunName.setText(QString(run_name))
 
     def on_indicatorBox(self):
@@ -288,61 +289,63 @@ class SimulationGuiElement(QWidget, Ui_SimulationGuiElement):
                     if dlg_dup.exec_() == QDialog.Rejected:
                         return
                     delete_simulation_run(self.project, run_node.tag) # todo change to run_node.get('name')
+                    
+                    if run_id is not None:                        
+                        run_manager = get_run_manager()
+                        run_manager.delete_everything_for_this_run(run_id = run_id)
+                        run_manager.close()
+                    
             # Update the XML
             self.project.update_xml_config()
             self.updateConfigAndGuiForRun()
 
             # Fire up a new thread and run the model
-            self.pbnStartModel.setText(QString("Pause simulation run..."))
-            # References to the GUI elements for status for this run...
-            self.progressBarTotal = self.runProgressBarTotal
-            self.progressBarYear = self.runProgressBarYear
-            self.progressBarModel = self.runProgressBarModel
-
-            #self.pbnRemoveModel.setEnabled(False)
-            #self.pbnStartModel.setEnabled(False)
-
-            # Initializing values
-            self.progressBarTotal.setValue(0)
-            self.progressBarYear.setValue(0)
-            self.progressBarModel.setValue(0)
-            self.progressBarTotal.setRange(0,0)
-            self.progressBarYear.setRange(0,0)
-            self.progressBarModel.setRange(0,0)
-
-            batch_name = str(self.cboOptionalIndicatorBatch.currentText())
-            if batch_name == '(None)':
-                batch_name = None
-
-            self.runThread = RunModelThread(get_mainwindow_instance(),
-                                            self,
-                                            batch_name,
-                                            run_name)
-
-            if duplicate and run_id is not None:
-                from opus_core.services.run_server.run_manager import RunManager as ServicesRunManager
-                run_manager = ServicesRunManager(ServicesDatabaseConfiguration())
-                run_manager.delete_everything_for_this_run(run_id = run_id)
-                run_manager.close()
-
-
-            # Use this signal from the thread if it is capable of producing its own status signal
-            QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
-                            self.runFinishedFromThread)
-            QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
-                            self.runErrorFromThread)
-            # Use this timer to call a function in the thread to check status if the thread is unable
-            # to produce its own signal above
-            self.timer = QTimer()
-            QObject.connect(self.timer, SIGNAL("timeout()"),
-                            self.runStatusFromThread)
-            self.timer.start(1000)
-            self.running = True
-            self.paused = False
+            self._init_run(run_name)
             self.runThread.start()
         else:
             print "Unexpected state in the model run..."
 
+    def _init_run(self, run_name):
+        # Fire up a new thread and run the model
+        self.pbnStartModel.setText(QString("Pause simulation run..."))
+        # References to the GUI elements for status for this run...
+        self.progressBarTotal = self.runProgressBarTotal
+        self.progressBarYear = self.runProgressBarYear
+        self.progressBarModel = self.runProgressBarModel
+
+        #self.pbnRemoveModel.setEnabled(False)
+        #self.pbnStartModel.setEnabled(False)
+
+        # Initializing values
+        self.progressBarTotal.setValue(0)
+        self.progressBarYear.setValue(0)
+        self.progressBarModel.setValue(0)
+        self.progressBarTotal.setRange(0,0)
+        self.progressBarYear.setRange(0,0)
+        self.progressBarModel.setRange(0,0)
+
+        batch_name = str(self.cboOptionalIndicatorBatch.currentText())
+        if batch_name == '(None)':
+            batch_name = None
+
+        self.runThread = RunModelThread(get_mainwindow_instance(),
+                                        self,
+                                        batch_name,
+                                        run_name)
+
+        # Use this signal from the thread if it is capable of producing its own status signal
+        QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                        self.runFinishedFromThread)
+        QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
+                        self.runErrorFromThread)
+        # Use this timer to call a function in the thread to check status if the thread is unable
+        # to produce its own signal above
+        self.timer = QTimer()
+        QObject.connect(self.timer, SIGNAL("timeout()"),
+                        self.runStatusFromThread)
+        self.timer.start(1000)
+        self.running = True
+        self.paused = False        
 
     # This is not used currently since the model can not return status... instead we use a timer to
     # check the status from a log file.

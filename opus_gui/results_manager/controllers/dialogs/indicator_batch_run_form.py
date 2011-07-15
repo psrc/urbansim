@@ -11,6 +11,7 @@ from opus_gui.results_manager.run.batch_processor import BatchProcessor
 
 from opus_gui.results_manager.views.ui_run_indicator_batch import Ui_runIndicatorBatch
 from opus_gui.results_manager.results_manager_functions import get_simulation_runs, get_batch_configuration, get_years_for_simulation_run
+from opus_gui.results_manager.results_manager_functions import get_years_range_for_simulation_run
 
 
 class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
@@ -36,13 +37,16 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
         self._setup_co__years()
 
     def _setup_co__years(self):
-        runs = get_simulation_runs(self.project)
-
-        for run in runs:
-            if run.get('name') == self.run_name:
-                years = get_years_for_simulation_run(project = self.project,
-                                                     simulation_run_node = run)
-                (start,end) = (min(years), max(years))
+        start, end = get_years_range_for_run_name(self.project,
+                                                  self.run_name
+                                                  )
+#        runs = get_simulation_runs(self.project)
+#
+#        for run in runs:
+#            if run.get('name') == self.run_name:
+#                years = get_years_for_simulation_run(project = self.project,
+#                                                     simulation_run_node = run)
+#                (start,end) = (min(years), max(years))
 
         for i in range(start, end + 1):
             if i not in years: continue

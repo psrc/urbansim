@@ -236,11 +236,13 @@ class Table(Visualization):
         if self.name is not None:
             table_name = '%s__%s'%(self.name, table_name)
             
+	cols = [col for col in new_data.keys()
+                                               if col not in primary_keys]
+	cols.sort()
         self._write_to_storage(
             table_name = table_name,
             table_data = new_data,
-            column_names = primary_keys + [col for col in new_data.keys()
-                                               if col not in primary_keys],
+            column_names = primary_keys + cols,
             computed_indicators = computed_indicators,
             years = years,
             primary_keys = primary_keys,

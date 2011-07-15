@@ -74,6 +74,8 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     @param start_year (int): start year of run
     @param end_year (int): end year of run
     @param run_id (int): ID number for the run
+    
+    This function isn't able to update run_nodes existing in <simulation_runs>
     '''
     ## XML-ify the name
     # run_name = run_name.replace(' ', '_')
@@ -81,7 +83,9 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     # Assemble the new run node
     str_atr = {'type': 'string'}
     int_atr = {'type': 'integer'}
-
+    if not run_name or run_name is None or run_name == "No description":
+        ## if run_name is null or un-informative, use run id as name instead
+        run_name = "run_%s" % run_id
     run_node = Element('run', {'type': 'source_data',
                                'name': run_name,
                                'hidden': 'Children',
@@ -97,77 +101,54 @@ def add_simulation_run(project, cache_directory, scenario_name, run_name,
     project.dirty = True
     update_mainwindow_savestate()
 
-def update_available_runs(project, scenario_name = '?'):
+def sync_available_runs(project, scenario_name = '?'):
     '''
     Update the list of available runs and return a list of added runs.
     @param project (OpusProject): currently loaded project
     @return: Two lists; one of the runs that have been added, and the other of
     the runs that have been removed (tuple(list(String), list(String)))
     '''
-    if not os.path.exists(project.data_path()):
-        return ([], []) # Project data path doesn't exist -- so no runs to add
 
-    results_manager = get_manager_instance('results_manager')
+#    results_manager = get_manager_instance('results_manager')
     removed_runs = []
-    # Remove runs that exist in the project but not on disk
-    run_nodes = get_available_run_nodes(project)
+#    # Remove runs that exist in the project but not on disk
+#    run_nodes = get_available_run_nodes(project)
     existing_cache_directories = set()
-    for run_node in run_nodes:
-        cache_directory = os.path.normpath(run_node.find('cache_directory').text)
-        if not os.path.exists(cache_directory):
-            results_manager.delete_run(run_node, force=True)   #force deleting base_year_data entry when the directory doesn't exist
-            removed_runs.append(run_node.get('name'))
-            continue
-        # Add the cachedir to the list of seen cachedirs
-        existing_cache_directories.add(cache_directory)
+#    for run_node in run_nodes:
+#        cache_directory = os.path.normpath(run_node.find('cache_directory').text)
+#        if not os.path.exists(cache_directory):
+#            results_manager.delete_run(run_node, force=True)   #force deleting base_year_data entry when the directory doesn't exist
+#            removed_runs.append(run_node.get('name'))
+#            continue
+#        # Add the cachedir to the list of seen cachedirs
+#        existing_cache_directories.add(cache_directory)
 
     run_manager = get_run_manager()
-
-    # Make sure that the base_year_data is in the list of available runs
-    baseyear_dir = os.path.join(project.data_path(), 'base_year_data')
-    baseyear_dir = os.path.normpath(baseyear_dir)
-    years = []
-    if not baseyear_dir in existing_cache_directories:
-        try:
-            run_manager.get_run_id_from_name(run_name = 'base_year_data')
-        except:
-            for dir_ in os.listdir(baseyear_dir):
-                if len(dir_) == 4 and dir_.isdigit():
-                    years.append(int(dir_))
-            start_year = min(years)
-            end_year = max(years)
-            base_year = end_year
-            run_name = 'base_year_data'
-            run_id = run_manager._get_new_run_id()
-            resources = {
-                 'cache_directory': baseyear_dir,
-                 'description': 'base year data',
-                 'years': (base_year, end_year)
-            }
-            run_manager.add_row_to_history(run_id = run_id,
-                                           resources = resources,
-                                           status = 'done',
-                                           run_name = run_name)
-
     runs = run_manager.get_run_info(resources = True, status = 'done')
-    run_manager.close()
+    runs = run_manager.get_runs(return_columns='*',
+                                return_rs=True, status='done')
 
     # Make sure all runs with unique directories are list on the project
     added_runs = []
-    for run_id, run_name, _, _, run_resources in runs:
-        cache_directory = os.path.normpath(run_resources['cache_directory'])
+    for run in runs:
+        run_id = run['run_id']
+        run_name = run['run_name']
+        scenario_name = run['scenario_name'] if 'scenario_name' in run else 'unknown'
         if run_name == 'base_year_data':
-            found_scenario_name = ''
-        else:
-            found_scenario_name = scenario_name
+            scenario_name = run_name
+        cache_directory = os.path.normpath(run['cache_directory'])
+        run_resources = run_manager.get_resources_for_run_id_from_history(run_id)
+        available_years = run_manager.get_years_run(cache_directory)
+        start_year, end_year = min(available_years), max(available_years)
+        #start_year, end_year = run_resources['years']
 
         # don't add runs that we have already seen or that don't exist on disk
         if cache_directory in existing_cache_directories or not os.path.exists(cache_directory):
             continue
-        start_year, end_year = run_resources['years']
+        
         add_simulation_run(project,
                            cache_directory = cache_directory,
-                           scenario_name = found_scenario_name,
+                           scenario_name = scenario_name,
                            run_name = run_name,
                            start_year = start_year,
                            end_year = end_year,
@@ -175,7 +156,28 @@ def update_available_runs(project, scenario_name = '?'):
 
         existing_cache_directories.add(cache_directory)
         added_runs.append(cache_directory)
+    run_manager.close()
     return (added_runs, removed_runs)
+
+def get_years_range_for_simulation_run(project, run_name=None, run_node=None):
+    """ return min and max of years for run by run_name or run_node
+    """
+    if run_node is None:
+        if run_name is not None:
+            run_nodes = get_simulation_runs(project)
+            run_node = [run_node for run_node in run_nodes if run_node.get('name') == run_name]
+            #assert len(run_node) == 1  # run_name should be unique among run_nodes
+            if len(run_node) == 0:
+                raise ValueError, "There is no match run node for name %s" % run_name
+            if len(run_node) >= 1:
+                run_node = run_node[0]
+        else:
+            raise ValueError, "run_name and run_node cannot both be None."
+
+    years = get_years_for_simulation_run(project=project,
+                                         simulation_run_node=run_node
+                                         )
+    return min(years), max(years)
 
 def get_years_for_simulation_run(project, simulation_run_node):
     ''' Get the years run for the given simulation '''
@@ -198,11 +200,11 @@ def get_years_for_simulation_run(project, simulation_run_node):
             except (TypeError, ValueError):
                 continue
 
-    return run_manager.get_years_run(cache_dir, baseyear = baseyear)
+    return run_manager.get_years_run(cache_dir, baseyear=baseyear)
 
 def get_simulation_runs(project, update = False):
     if update:
-        update_available_runs(project)
+        sync_available_runs(project)
     return project.findall('results_manager/simulation_runs/run')
 
 def add_batch_indicator_visualization(batch_node, viz_node):

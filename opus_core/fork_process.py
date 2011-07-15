@@ -27,7 +27,8 @@ class ForkProcess(object):
         self._pickle_dir = None
     
     def fork_new_process(self, module_name, resources, delete_temp_dir=True, optional_args=[],
-                         stdin=None, stdout=None, stderr=None, run_in_background=False):
+                         stdin=None, stdout=None, stderr=None, 
+                         run_in_background=False):
         """Invoke the module whose fully-qualified opus name is module_name and pass it the 
         pickled resources.  Stores resources in pickle_file_path.
         If quiet=True, the console output for the command will not appear.
@@ -55,7 +56,7 @@ class ForkProcess(object):
             elif stdout == LOG:
                 log_file_path = os.path.join(self._pickle_dir, '_log_.log')
                 stdout = open(log_file_path, "w")
-
+            
             if stderr == PIPE:
                 stderr = subprocess.PIPE
             elif stderr == STDOUT:
@@ -65,14 +66,23 @@ class ForkProcess(object):
                 stderr = open(log_file_path, "w")
 
             logger.log_status("Invoking: %s" % " ".join(self.python_cmd))
-            self.popen = subprocess.Popen(self.python_cmd, stdin=stdin, stdout=stdout, stderr=stdout)
+            self.popen = subprocess.Popen(self.python_cmd, 
+                                         stdin=stdin, 
+                                         stdout=stdout, 
+                                         stderr=stderr)
             if not run_in_background:
                 self.wait()
-                
         finally:
             if not run_in_background and delete_temp_dir:
-                pass
-                #self.cleanup()
+                self.cleanup()    
+            returncode = self.popen.poll()
+            
+        if returncode != 0:
+            if returncode != 10:
+                logger.log_error("Error encountered in forked process with traceback:" )
+            return False
+        else:
+            return True
     
     def wait(self):
         if self.popen is not None:
@@ -80,9 +90,14 @@ class ForkProcess(object):
             self.check_status()
             
     def check_status(self):
+        #popen.returncode doesn't seem to work as it is supposed, e.g.:
+        #p = subprocess.Popen(['python', '-c' 'import sys; sys.exit(1)')
+        #p.returncode is None
+        #print p.poll()
+        
         if self.popen is not None and \
            self.popen.returncode is not None and \
-           self.popen.returncode != 0:
+           self.popen.returncode not in (0, 10):
             raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (self.module_name, self.python_cmd))
 
     def cleanup(self):
@@ -103,8 +118,6 @@ class ForkProcess(object):
             python_cmd += [str(optional_arg)]
         
         return python_cmd
-    
-
 
 
 import os

@@ -471,32 +471,50 @@ class ModelSystem(object):
         logger.log_status("Running simulation for years %d thru %d" % (start_year, end_year))
         logger.log_status("Simulation root seed: %s" % root_seed)
 
-        self._run_each_year_as_separate_process(start_year, end_year, seed_array, resources)
+        for iyear, year in enumerate(range(start_year, end_year+1)):
+            success = self._run_each_year_as_separate_process(iyear, year, 
+                                                                 seed=seed_array[iyear],
+                                                                 resources=resources,
+                                                                 profiler_name=profiler_name,
+                                                                 log_file=log_file)
+            if not success:
+                break
 
+        self._notify_stopped()
         if profiler_name is not None: # insert original value
             resources["profile_filename"] = profiler_name
         logger.log_status("Done running simulation for years %d thru %d" % (start_year, end_year))
 
     #TODO: changing of configuration
-    def _run_each_year_as_separate_process(self, start_year, end_year, seed_array, resources, log_file_name='run_multiprocess.log'):
-        log_file = os.path.join(resources['cache_directory'], log_file_name)
-        profiler_name = resources.get("profile_filename", None)
-        iyear = 0
-        for year in range(start_year, end_year+1):
-            logger.start_block('Running simulation for year %d in new process' % year)
-            try:
-                resources['years'] = (year, year)
-                resources['seed'] = seed_array[iyear],
-                logger.disable_file_logging(log_file)
-                if profiler_name is not None:
-                    resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
-                self._fork_new_process(
-                    'opus_core.model_coordinators.model_system', resources, optional_args=['--log-file-name', log_file_name])
-                logger.enable_file_logging(log_file, verbose=False)
-            finally:
-                logger.end_block()
-            iyear +=1
-        self._notify_stopped()
+    def _run_each_year_as_separate_process(self, iyear, year, 
+                                           seed=None, 
+                                           resources=None, 
+                                           profiler_name=None,
+                                           log_file=None):
+
+        logger.start_block('Running simulation for year %d in new process' % year)
+        resources['years'] = (year, year)
+        resources['seed'] = seed,
+
+        if profiler_name is not None:
+            # add year to the profile name
+            resources["profile_filename"] = "%s_%s" % (profiler_name, year)
+            
+        optional_args = []
+        if log_file:
+            optional_args += ['--log-file-name', os.path.split(log_file)[-1]]
+        
+        success = False
+        try:
+            logger.disable_file_logging(log_file)
+            success = self._fork_new_process(
+                'opus_core.model_coordinators.model_system', 
+                resources, optional_args=optional_args)
+            logger.enable_file_logging(log_file, verbose=False)
+        finally:
+            logger.end_block()
+            
+        return success
 
     def run_in_one_process(self, resources, run_in_background=False, class_path='opus_core.model_coordinators.model_system'):
         resources = Resources(resources)
@@ -563,13 +581,14 @@ class ModelSystem(object):
         self.running_conditional.acquire()
         self.running = True
         self.forked_processes.append(ForkProcess())
-        key_args["run_in_background"] = True
-        self.forked_processes[-1].fork_new_process(module_name, resources, **key_args)
+        key_args["run_in_background"] = run_in_background
+        success = self.forked_processes[-1].fork_new_process(module_name, resources, **key_args)
         self.running_conditional.notifyAll()
         self.running_conditional.release()
         if not run_in_background:
             self.forked_processes[-1].wait()
             self.forked_processes[-1].cleanup()
+        return success
 
     def _notify_started(self):
         self.running_conditional.acquire()
@@ -584,7 +603,23 @@ class ModelSystem(object):
         self.running_conditional.release()
 
     def update_config_for_multiple_runs(self, config):
-        raise NotImplementedError('update_config_for_multiple_runs')
+        models_to_update = config.get('models_with_sampled_coefficients', [])
+        if 'models_in_year' not in config.keys():
+            config['models_in_year'] = {}
+        if config['models_in_year'].get(config['base_year']+1, None) is None:
+            config['models_in_year'][config['base_year']+1]= config.get('models')
+        
+        for umodel in models_to_update:
+            try:
+                i = config['models_in_year'][config['base_year']+1].index(umodel)
+                new_model_name = '%s_sampled_coef' % umodel
+                config['models_in_year'][config['base_year']+1][i] = new_model_name
+            except:
+                pass
+            config["models_configuration"][new_model_name] = Configuration(config["models_configuration"][umodel])
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_coefficients"] = True
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["distribution"] = "'normal'"
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["cache_storage"] = "base_cache_storage" 
     
 class RunModelSystem(object):
     def __init__(self, model_system, resources, skip_cache_after_each_year = False, log_file_name = 'run_model_system.log'):
@@ -612,12 +647,8 @@ class RunModelSystem(object):
                                   resources.get("profile_filename"))
             profiler.close()
 
-
-
-if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
-    s = ModelSystem()
+def main(model_system_class):
+    s = model_system_class()
     parser = OptionParser()
     parser.add_option("-r", "--resources", dest="resources_file_name", action="store", type="string",
                       help="Name of file containing resources")
@@ -642,3 +673,8 @@ if __name__ == "__main__":
     if delete_resources_file_directory:
         dir = os.path.split(options.resources_file_name)[0]
         rmtree(dir)
+
+if __name__ == "__main__":
+    try: import wingdbstub
+    except: pass
+    main(ModelSystem)

@@ -23,6 +23,11 @@ class RunModelThread(QThread):
         self.batch_name = batch_name
         self.run_name = run_name
         self.project = get_mainwindow_instance().project
+        
+        self.restart = False
+        self.run_id = None
+        self.config = None
+        self.restart_year = None        
 
     def run(self):
         self.modelguielement.model.progressCallback = self.progressCallback
@@ -31,7 +36,14 @@ class RunModelThread(QThread):
         self.modelguielement.model.errorCallback = self.errorCallback
         if self.run_name.strip() != '':
             self.modelguielement.model.run_name = self.run_name
-        self.modelguielement.model.run()
+        if not self.restart:
+            self.modelguielement.model.run()
+        else:
+            self.modelguielement.model.restart_run(self.run_id, 
+                                                   self.config, 
+                                                   self.restart_year, 
+                                                   end_year=self.end_year,
+                                                   run_name=self.run_name)
 
     def pause(self):
         return self.modelguielement.model.pause()
@@ -42,6 +54,15 @@ class RunModelThread(QThread):
     def cancel(self):
         return self.modelguielement.model.cancel()
 
+    def setup_restart_run(self, run_id, config, restart_year, end_year=None, run_name=None):
+        self.restart = True
+        self.run_id = run_id
+        self.config = config
+        self.restart_year = restart_year
+        self.end_year = end_year
+        if run_name is not None:
+            self.run_name = run_name
+        
     def progressCallback(self,percent):
         print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
@@ -59,8 +80,6 @@ class RunModelThread(QThread):
                            start_year = baseyear,
                            end_year = end_year,
                            run_id = run_id)
-        
-        
         
     def finishedCallback(self, success, run_name):
         if success:
@@ -107,7 +126,6 @@ class RunModelThread(QThread):
 
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
-
 
 class OpusModel(object):
     def __init__(self, manager, xml_config, scenariotorun):
@@ -160,8 +178,46 @@ class OpusModel(object):
 
         return run_name
 
-    def restart_run(self):
-        pass
+    def restart_run(self, run_id, config, restart_year, end_year=None, run_name=None):
+        run_manager = get_run_manager()
+        statusdir = run_manager.get_cache_directory(run_id)
+        self.statusfile = os.path.join(statusdir, 'status.txt')
+        self.currentLogfileYear = restart_year
+        self.currentLogfileKey = 0
+        self.config = config
+        config['status_file_for_gui'] = self.statusfile
+        self.commandfile = os.path.join(statusdir, 'command.txt')
+        config['command_file_for_gui'] = self.commandfile
+
+        # To test delay in writing the first log file entry...
+        # time.sleep(5)
+        self.running = True
+        self.run_name = run_name
+        self.run_manager = run_manager
+        self.startedCallback(run_id=run_id,
+                             run_name=run_name, 
+                             scenario_name=self.scenariotorun, 
+                             run_resources = config)
+        run_manager.restart_run(run_id, restart_year, 
+                                end_year=end_year, 
+                                project_name='',
+                                skip_urbansim=False,
+                                create_baseyear_cache_if_not_exists=False,
+                                skip_cache_cleanup=False)
+        self.running = False
+        succeeded = True
+
+        if self.statusfile is not None:
+            gc.collect()
+            # adding try/except, windows sometimes has a lock on this file
+            # when it does, os.remove will cause the simulation to appear
+            # as if it has crashed, when in fact it simply could not delete
+            # status.txt
+            try:
+                os.remove(self.statusfile)
+            except:
+                pass
+        self.finishedCallback(succeeded, run_name = run_name)        
     
     def run(self):
         # Run the Eugene model using the XML version of the Eugene configuration.
@@ -202,11 +258,13 @@ class OpusModel(object):
             self.running = True
             self.run_name = run_name
             self.run_manager = run_manager
+            run_id = run_manager.run_id
             self.startedCallback(run_id = run_id, 
                                  run_name = run_name, 
                                  scenario_name = self.scenariotorun, 
                                  run_resources = config)
-            run_id = run_manager.run_run(config, run_name = run_name)
+            run_manager.run_run(config, run_name=run_name, 
+                                scenario_name=self.scenariotorun)
             self.running = False
             succeeded = True
             
