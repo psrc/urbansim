@@ -55,7 +55,7 @@ class DependencyQuery:
 
             # This assumes that xml nodes contain the tag 'model_dependency_type'
             self.model_structure_dependencies = config.model_dependencies(self.model)
-            self.var_list = self.model_structure_dependencies.get('variable', [])
+            self.var_list = self.var_list + self.model_structure_dependencies.get('variable', [])
 #            for var in addvars:
 #                if isinstance(var, str):
 #                    self.var_list.append(eval(var)) # eval because these entries are in double quotes, e.g. "'attribute'"
