@@ -1657,9 +1657,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'models.xml')
         xml = XMLConfiguration(f)
         regmdep = xml.model_dependencies("regmodel")
-        print regmdep
+        should_be = {'variable': ['parcel.land_use_id', 'parcel.land_use_id>0', 'parcel.land_value'], 
+                     'dataset': ['parcel']}
+        self.assertDictsEqual(regmdep, should_be)
         depall = xml.model_dependencies()
-        print depall
+        should_be = {'variable': ['parcel.land_use_id', 'parcel.land_use_id>0', 'parcel.land_value', 'building.residential_units'], 
+                     'dataset': ['parcel', 'building', 'household']}
+        self.assertDictsEqual(depall, should_be)
         
 if __name__ == '__main__':
     opus_unittest.main()
