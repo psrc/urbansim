@@ -978,6 +978,11 @@ class XMLConfiguration(object):
             config['expression_library'] = lib
 
     def model_dependencies(self, model_name=None):
+        """Find all nodes in 'model' section that have model_dependency_type defined.
+        Return a dictionary with keys being dependency types and each value being a list 
+        of dependencies of that type. If model_name is None, all models in the 'models' section
+        are considered.
+        """
         def get_dependencies(node):
             children = node.getchildren()
             for child in children:
