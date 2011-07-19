@@ -11,7 +11,7 @@ from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.autogen_variable_factory import AutogenVariableFactory
 from numpy import where, array
 from opus_core.configurations.xml_configuration import XMLConfiguration
-from opus_core.model import get_specification_for_estimation
+from opus_core.models.model import get_specification_for_estimation
 
 import os, sys
 from optparse import OptionParser
@@ -31,6 +31,8 @@ class DependencyQuery:
         if model is not None:
             if specification is None:
                 specification_dict = config.get_estimation_specification(model, model_group)
+                if model_group is not None:
+                    specification_dict = specification_dict[model_group]
                 spec = get_specification_for_estimation(specification_dict)
             else:
                 spec = specification
@@ -42,17 +44,21 @@ class DependencyQuery:
             self.var_list = spec.get_distinct_long_variable_names().tolist()
             
             #check other model nodes, such as agents_filter, submodel_string or filter
-            config_node_path = "model_manager/models/model[@name='%s']" % self.model
-            model_node = config._find_node(config_node_path)
-            controller = config._convert_model_to_dict(model_node)
-            addvars = []
-            addvars.append(controller.get('init', {}).get('arguments', {}).get('filter', None))
-            addvars.append(controller.get('init', {}).get('arguments', {}).get('submodel_string', None))
-            addvars.append(controller.get('init', {}).get('arguments', {}).get('choice_attribute_name', None))
-            addvars.append(controller.get('prepare_for_run', {}).get('arguments', {}).get('agent_filter', None))
-            for var in addvars:
-                if isinstance(var, str):
-                    self.var_list.append(eval(var)) # eval because these entries are in double quotes, e.g. "'attribute'"
+#            config_node_path = "model_manager/models/model[@name='%s']" % self.model
+#            model_node = config._find_node(config_node_path)
+#            controller = config._convert_model_to_dict(model_node)
+#            addvars = []
+#            addvars.append(controller.get('init', {}).get('arguments', {}).get('filter', None))
+#            addvars.append(controller.get('init', {}).get('arguments', {}).get('submodel_string', None))
+#            addvars.append(controller.get('init', {}).get('arguments', {}).get('choice_attribute_name', None))
+#            addvars.append(controller.get('prepare_for_run', {}).get('arguments', {}).get('agent_filter', None))
+
+            # This assumes that xml nodes contain the tag 'model_dependency_type'
+            self.model_structure_dependencies = config.model_dependencies(self.model)
+            self.var_list = self.model_structure_dependencies.get('variable', [])
+#            for var in addvars:
+#                if isinstance(var, str):
+#                    self.var_list.append(eval(var)) # eval because these entries are in double quotes, e.g. "'attribute'"
                     
             self.var_tree = []
             l = []
@@ -167,6 +173,9 @@ class DependencyQuery:
 
     def vars_tree(self, vl):
         return map(self.get_dep_tree_from_name, extract_leaves(vl))
+    
+    def get_model_structure_dependencies(self):
+        return self.model_structure_dependencies
 
 class DependencyChart:
     def __init__(self, config, **kwargs):
@@ -218,12 +227,18 @@ class DependencyChart:
             ret.append("")
         return '\n'.join(ret)
         
-    #print out a model's depndencies
+    #print out a model's dependencies
     def print_model_dependencies(self):
         tree = self.query.model_tree()
         print '\nDependencies for model: %s' % self.query.model_name
         print '==============================='
+        print ' * Variables:'
         self._print_dependencies(tree)
+        print ''
+        print ' * Other dependencies:'
+        for key, value in self.query.get_model_structure_dependencies().iteritems():
+            if key <> 'variable':
+                print key, ':', value
 
     def print_dependencies(self, name):
         """Prints out dependencies of one variable."""

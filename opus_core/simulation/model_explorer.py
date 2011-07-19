@@ -29,6 +29,7 @@ class ModelExplorer(object):
         else:
             config = Configuration(configuration)
             
+        self.scenario_models = config['models']
         if model is not None:
             dependent_models = config['models_configuration'][model]['controller'].get('dependencies', [])
             config['models'] = dependent_models
@@ -228,16 +229,28 @@ class ModelExplorer(object):
         ds.summary(names=[var_name.get_alias()])
         
     def model_dependencies(self, model=None, group=None):
-        """Prints out variable dependencies for the model."""
+        """Prints out all dependencies for the model."""
         from opus_core.variables.dependency_query import DependencyChart
-        if model is None:
+        if model is None: # current model
             model, group = self.get_model_name()
             spec = self.get_specification()
         else:
-            spec=None
-        chart = DependencyChart(self.xml_configuration, model=model, model_group=group, 
+            spec = None
+        if model == 'all': # print dependencies for all models
+            for thismodel in self.scenario_models:
+                thisgroups = None
+                if isinstance(thismodel, dict):
+                    thisgroups = thismodel[thismodel.keys()[0]].get('group_members', None)
+                    thismodel = thismodel.keys()[0]
+                if not isinstance(thisgroups, list):
+                    thisgroups = [thisgroups]                
+                for group in thisgroups:
+                    chart = DependencyChart(self.xml_configuration, model=thismodel, model_group=group)
+                    chart.print_model_dependencies()
+        else:
+            chart = DependencyChart(self.xml_configuration, model=model, model_group=group, 
                                 specification=spec)
-        chart.print_model_dependencies()
+            chart.print_model_dependencies()
         
     def variable_dependencies(self, name):
         """Prints out dependencies of this variable. 'name' can be either an alias from 
