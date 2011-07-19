@@ -977,6 +977,30 @@ class XMLConfiguration(object):
         if len(lib) > 0:
             config['expression_library'] = lib
 
+    def model_dependencies(self, model_name=None):
+        def get_dependencies(node):
+            children = node.getchildren()
+            for child in children:
+                if len(child.getchildren()) > 0:
+                    get_dependencies(child)
+                else:
+                    dependency_type = child.get('model_dependency_type')
+                    if dependency_type is None:
+                        continue
+                    if dependency_type not in result.keys():
+                        result[dependency_type] = []
+                    if child.text not in result[dependency_type] and child.text is not None:
+                        result[dependency_type].append(child.text)
+        result = {}
+        if model_name is None:
+            model_nodes = self._find_node('model_manager/models/model', get_all = True)
+        else:
+            model_nodes = [self._find_node('model_manager/models/model', model_name)]
+        for model_node in model_nodes:
+            get_dependencies(model_node)
+        return result
+                
+
 from numpy import ma
 import StringIO
 from opus_core.tests import opus_unittest
@@ -1629,7 +1653,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(element_id(node2), '/node2:node2')
         self.assertEqual(element_id(node3), '/node3:a node with a long name with spaces')
 
-
+    def test_model_dependencies(self):
+        f = os.path.join(self.test_configs, 'models.xml')
+        xml = XMLConfiguration(f)
+        regmdep = xml.model_dependencies("regmodel")
+        print regmdep
+        depall = xml.model_dependencies()
+        print depall
+        
 if __name__ == '__main__':
     opus_unittest.main()
 
