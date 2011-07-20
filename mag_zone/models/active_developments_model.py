@@ -10,6 +10,8 @@ from opus_core.logger import logger
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from numpy import where, minimum, array, in1d
 from prettytable import PrettyTable
+from opus_core.misc import DebugPrinter
+
 
 class ActiveDevelopmentsModel(Model):
     """
@@ -19,6 +21,10 @@ class ActiveDevelopmentsModel(Model):
     model_name = "Active Developments Model"
     model_short_name = "ADM"
 
+    def __init__(self, debuglevel=1):
+        self.debug = DebugPrinter(debuglevel)
+        self.debuglevel = debuglevel
+
     def run(self, percent_active_development=100, year=None):
         # General TODO:
         #    - deal with target_vacancies table with subarea_ids in it
@@ -27,7 +33,7 @@ class ActiveDevelopmentsModel(Model):
         #    - test with non-residential development
         #    - test ADM with other zone models
         #    - test ADM with developments that began prior to the base_year
-        #    - 
+        #    - deal with redevelopment here at all?
 
         # LIST OF MODEL ASSUMPTIONS:
         #    - TODO: can i generalize the need for these pre-defined variables?
@@ -36,6 +42,7 @@ class ActiveDevelopmentsModel(Model):
         #        - total_<building_type_name>_units_col
         #        - occupied_<building_type_name>_units_col
         #    - building_type_name must be unique, lowercase, contain no spaces
+        #    - target_vacancy.is_developing defines which building_types are considered
 
         # CURRENT LIST OF KNOWN ISSUES:
         #    - 
@@ -60,6 +67,12 @@ class ActiveDevelopmentsModel(Model):
         #       but also by whether they are built out, etc.
         active_developments_index = where(developments_dataset.get_attribute('start_year')<=simulation_year)[0]
         active_developments_capacity_this_year = active_developments_capacity[active_developments_index]
+        # debug help
+        self.debug.print_debug('\n*** BEGIN DEBUG INFO:', 1)
+        self.debug.print_debug('len(active_developments_index) = %s' % len(active_developments_index), 1)
+        self.debug.print_debug('len(active_developments_index) = %s' % len(active_developments_index), 1)
+        self.debug.print_debug('len(active_developments_capacity_this_year) = %s' % len(active_developments_capacity_this_year), 1)
+        self.debug.print_debug('END DEBUG INFO ***\n', 1)
 
         # get the target_vacancy_rates dataset
         target_vacancy_rates_dataset = dataset_pool.get_dataset('target_vacancy')
@@ -75,11 +88,15 @@ class ActiveDevelopmentsModel(Model):
         for developing_building_type in developing_building_type_ids:
             developing_building_types_info[developing_building_type] = {'target_vacancy_rate':target_vacancy_rates[counter]}
             counter += 1
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('developing_building_types_info', developing_building_types_info)
 
         # get the building_types dataset
         building_types_dataset = dataset_pool.get_dataset('building_type')
         # get the attribute names
-        building_types_dataset_attribute_names = building_types_dataset.get_attribute_names()
+        # I don't think this next line is used at all:
+        #building_types_dataset_attribute_names = building_types_dataset.get_attribute_names()
 
         # get only the developing building types
         developing_types_index = where(building_types_dataset.get_attribute('is_developing_type')==1)[0]
@@ -98,6 +115,10 @@ class ActiveDevelopmentsModel(Model):
                 counter += 1
             except:
                 logger.log_warning('There is a mismatch in the building_type_ids between those in the target_vacancies dataset and the developing types in the building_types dataset.')
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('developing_building_types_info', developing_building_types_info)
+
 
         # add 'is_residential' to the developing_building_types_info dictionary
         # now the dictionary takes the form of: 
@@ -105,6 +126,10 @@ class ActiveDevelopmentsModel(Model):
         for developing_building_type in developing_building_types_info:
             indx = where(building_types_dataset.get_attribute('building_type_id')==developing_building_type)[0]
             developing_building_types_info[developing_building_type]['is_residential'] = building_types_dataset.get_attribute('is_residential')[indx][0]
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('developing_building_types_info', developing_building_types_info)
+
 
         # build a list of total and occupied units variables to compute of the form
         #     ['occupied_rsf_units_col','total_rsf_units_col', ...]
@@ -115,6 +140,10 @@ class ActiveDevelopmentsModel(Model):
             total, occupied = 'total_%s_units_col' % dict_of_info['building_type_name'], 'occupied_%s_units_col' % dict_of_info['building_type_name']
             building_variables.append(total)
             building_variables.append(occupied)
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('building_variables', building_variables)
+
 
         # get the buildings dataset
         buildings_dataset = dataset_pool.get_dataset('building')
@@ -126,6 +155,10 @@ class ActiveDevelopmentsModel(Model):
         for building_variable in building_variables:
             summed_attribute = buildings_dataset.get_attribute('%s' % building_variable).sum()
             total_and_occupied_variable_sums[building_variable.replace('_col','')] = summed_attribute
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('total_and_occupied_variable_sums', total_and_occupied_variable_sums)
+
 
         # set up a table to log into
         status_log = PrettyTable()
@@ -200,16 +233,9 @@ class ActiveDevelopmentsModel(Model):
         # print the status table to the log
         logger.log_status(status_log)
 
-        #test
-#        print '\n'
-#        print '++++++++++++++++++++++++++'
-#        for i,j in developing_building_types_info.iteritems():
-#            print i
-#            for k,m in j.iteritems():
-#                print k, ':', m
-#        print '\n'
-#        print '\n'
-        #endtest
+        # debug help
+        if self.debuglevel > 0:
+            self.debug_printer('developing_building_types_info', developing_building_types_info)
 
         # update the active_developments and buildings datasets with new units
         for developing_building_type in developing_building_types_info:
@@ -228,6 +254,10 @@ class ActiveDevelopmentsModel(Model):
                 weight_array = weights/weights_sum
                 # distribute the total to build against the weight
                 action_array = (total_action * weight_array).astype('int32')
+                print 'current_built_units'
+                print current_built_units
+                print 'action_array'
+                print action_array
                 new_built_units = current_built_units + action_array
                 # update the current_built_units column with new values
                 developments_building_ids = developments_dataset.get_attribute('building_id')
@@ -235,14 +265,56 @@ class ActiveDevelopmentsModel(Model):
                 building_ids_to_be_updated_index_on_developments = in1d(developments_building_ids,building_ids_to_be_updated)
                 developments_dataset.set_values_of_one_attribute('current_built_units',new_built_units,building_ids_to_be_updated_index_on_developments)
 
+                # debug help
+                if self.debuglevel > 0:
+                    self.debug_printer('new_built_units', new_built_units)
+                    print new_built_units.size
+                    print new_built_units.sum()
+        
+
                 # update the relevant units column on the buildings dataset with new units
-                building_ids_to_be_updated = developments_dataset.get_attribute('building_id')[active_developments_index][indx]
                 building_ids = buildings_dataset.get_attribute('building_id')
-                building_ids_to_be_updated_index_on_buildnigs = in1d(building_ids,building_ids_to_be_updated)
+                building_ids_to_be_updated = building_ids[active_developments_index][indx]
+                # debug help
+                if self.debuglevel > 0:
+                    self.debug_printer('building_ids_to_be_updated', building_ids_to_be_updated)
+                    print building_ids_to_be_updated.size
+                
+                #TRY THIS from add_projects_to_buildings_model
+                #building_index = where(building_identifier==this_identifier)[0]
+                #MY OLD LINE:
+                building_ids_to_be_updated_index_on_buildings = in1d(building_ids,building_ids_to_be_updated)
+                #MY NEW LINE:
+                #building_ids_to_be_updated_index_on_buildings = where(==building_ids_to_be_updated)[0]
+                # debug help
+                if self.debuglevel > 0:
+                    self.debug_printer('building_ids_to_be_updated_index_on_buildings', building_ids_to_be_updated_index_on_buildings)
+                    print "THis many are TRUE: %s" % building_ids_to_be_updated_index_on_buildings.tolist().count(True)
+                    print "building_ids_to_be_updated_index_on_buildings.size = %s" % building_ids_to_be_updated_index_on_buildings.size 
                 if developing_building_types_info[developing_building_type]['is_residential']:
-                    buildings_dataset.set_values_of_one_attribute('residential_units',new_built_units,building_ids_to_be_updated_index_on_buildnigs)
+                    buildings_dataset.set_values_of_one_attribute('residential_units',new_built_units,building_ids_to_be_updated_index_on_buildings)
                 else:
-                    buildings_dataset.set_values_of_one_attribute('non_residential_sqft',new_built_units,building_ids_to_be_updated_index_on_buildnigs)
+                    buildings_dataset.set_values_of_one_attribute('non_residential_sqft',new_built_units,building_ids_to_be_updated_index_on_buildings)
+        
+        #dataset_pool.flush_loaded_datasets()
+
+
+    def debug_printer(self, name, item_to_print):
+        self.debug.print_debug('\n*** BEGIN DEBUG INFO:', self.debuglevel)
+        self.debug.print_debug('Printing: %s' % name, self.debuglevel)
+        if isinstance(item_to_print, dict):
+            try:
+                from json import dumps
+                self.debug.print_debug(dumps(item_to_print, indent=4), self.debuglevel)
+            except:
+                for key1,value1 in item_to_print.iteritems():
+                    self.debug.print_debug('primary dict key = %s' % key1, 1)
+                    for key2,value2 in value1.iteritems():
+                        self.debug.print_debug('%s : %s' % (key2,value2), 1)
+        else:
+            self.debug.print_debug(item_to_print, self.debuglevel)
+        self.debug.print_debug('END DEBUG INFO ***\n', self.debuglevel)
+
 
     def lesser(self,x,y):
         if x-y > 0:
@@ -250,3 +322,46 @@ class ActiveDevelopmentsModel(Model):
         else:
             return x
 
+
+
+from opus_core.tests import opus_unittest
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+
+class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
+    def setUp(self):
+        active_developments_data= {
+                    'active_development_id' : array([1,2]),
+                    'building_id' : array([1,2]),
+                    'start_year' : array([]),
+                    'building_type_id' : array([]),
+                    'build_out_capacity' : array([]),
+                    'max_annual_capacity' : array([]),
+                    'current_built_units' : array([]),
+                    'other_spaces_name' : array([]),
+                    'other_spaces' : array([]),
+                                   }
+        buildings_data = {
+                    'building_id' : array([1,2]),
+                    '' : array([]),
+                    '' : array([]),
+                          }
+        building_types_data = {
+                    'building_type_id' : array([1,2]),
+                    'building_type_name' : array(['rsf','rmf']),
+                    'is_residential' : array([1,1]),
+                               }
+        target_vacacy_data = {
+                    'year' : array([2010,2010]),
+                    'target_vacancy' : array([0.05,0.05]),
+                    'building_type_id' : array([1,2]),
+                    'is_residential' : array([1,1]),
+                              }
+
+        storage = StorageFactory().get_storage('dict_storage')
+
+    def test_one_test(self):
+        print ''
+
+if __name__=="__main__":
+    opus_unittest.main()

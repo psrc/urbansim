@@ -257,7 +257,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -329,7 +329,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_non_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -460,7 +460,7 @@
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">job</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="maximum_runs" type="integer">3</argument>
@@ -498,7 +498,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">household</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="maximum_runs" type="integer">3</argument>

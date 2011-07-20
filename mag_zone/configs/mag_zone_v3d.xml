@@ -256,7 +256,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -278,7 +278,7 @@
               <key name="capacity_string" type="string">urbansim_zone.building.developable_residential_units_capacity</key>
               <key name="sample_alternatives_by_submodel" type="string">True</key>
               <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
-              <key name="sample_size_locations" type="integer">10</key>
+              <key name="sample_size_locations" type="integer">5</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
@@ -328,7 +328,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">projects</argument>
             <argument name="agents_filter" parser_action="quote_string" type="string">urbansim_zone.development_project.is_non_residential</argument>
             <argument name="specification" type="string">specification</argument>
@@ -350,7 +350,7 @@
               <key convert_blank_to_none="True" name="weights_for_simulation_string" type="string"/>
               <key name="compute_capacity_flag" type="string">True</key>
               <key name="sample_alternatives_by_submodel" type="string">True</key>
-              <key name="sample_size_locations" type="integer">30</key>
+              <key name="sample_size_locations" type="integer">5</key>
             </argument>
             <argument name="estimate_config" type="dictionary">
               <key name="estimation" type="string">opus_core.bhhh_mnl_estimation</key>
@@ -447,7 +447,7 @@
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
-            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="sample_size_locations" type="integer">5</argument>
             <name name="name" type="string">EmploymentLocationChoiceModel</name>
           </init>
           <prepare_for_run type="dictionary">
@@ -459,7 +459,7 @@
             <name name="name" type="string">prepare_for_run</name>
           </prepare_for_run>
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'records_per_chunk':50000}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">job</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="maximum_runs" type="integer">3</argument>
@@ -497,7 +497,7 @@
         </estimation_config>
         <structure type="dictionary">
           <run type="dictionary">
-            <argument name="chunk_specification" type="string">{'nchunks':3}</argument>
+            <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">household</argument>
             <argument name="specification" type="string">specification</argument>
             <argument name="maximum_runs" type="integer">3</argument>
@@ -523,7 +523,7 @@
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
             <argument convert_blank_to_none="True" parser_action="quote_string" name="simulation_weight_string" type="string"/>
             <argument name="estimation" parser_action="quote_string" type="string">opus_core.bhhh_mnl_estimation</argument>
-            <argument name="sample_size_locations" type="integer">30</argument>
+            <argument name="sample_size_locations" type="integer">5</argument>
             <argument name="estimate_config" type="string">Resources({})</argument>
             <name name="name" type="string">HouseholdLocationChoiceModel</name>
           </init>
