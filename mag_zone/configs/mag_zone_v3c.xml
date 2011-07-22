@@ -677,16 +677,6 @@
       </dataset_pool_configuration>
     </estimation_config>
   </model_manager>
-  <results_manager>
-    <simulation_runs followers="Results" name="Simulation Runs" setexpanded="True" type="all_source_data">
-      <run hidden="Children" type="source_data" name="base_year_data" run_id="1">
-        <scenario_name type="string"/>
-        <cache_directory type="string">c:\opus\data\mag_zone_v3c\base_year_data</cache_directory>
-        <start_year type="integer">2009</start_year>
-        <end_year type="integer">2009</end_year>
-      </run>
-    </simulation_runs>
-  </results_manager>
   <scenario_manager>
     <scenario setexpanded="True" copyable="True" executable="True" name="Zone_baseline" type="scenario">
       <models_to_run setexpanded="True" config_name="models" type="selectable_list">

@@ -42,6 +42,20 @@
           </run>
         </structure>
       </model>
+      <model name="test_model" type="model">
+        <structure type="dictionary">
+          <import name="import" type="dictionary">
+            <class_module type="string">mag_zone.models.test_model</class_module>
+            <class_name type="string">TestModel</class_name>
+          </import>
+          <init type="dictionary">
+            <name name="name" type="string">TestModel</name>
+            <argument name="model_name" parser_action="quote_string" type="string">Test Model</argument>
+          </init>
+          <run type="dictionary">
+          </run>
+        </structure>
+      </model>
       <model name="aging_model" type="model">
         <structure type="dictionary">
           <import name="import" type="dictionary">

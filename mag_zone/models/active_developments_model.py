@@ -262,6 +262,10 @@ class ActiveDevelopmentsModel(Model):
                 # update the current_built_units column with new values
                 developments_building_ids = developments_dataset.get_attribute('building_id')
                 building_ids_to_be_updated = developments_building_ids[active_developments_index][indx]
+                if self.debuglevel > 0:
+                    print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+                    self.debug_printer('building_ids_to_be_updated', building_ids_to_be_updated)
+                    print building_ids_to_be_updated.size
                 building_ids_to_be_updated_index_on_developments = in1d(developments_building_ids,building_ids_to_be_updated)
                 developments_dataset.set_values_of_one_attribute('current_built_units',new_built_units,building_ids_to_be_updated_index_on_developments)
 
@@ -270,32 +274,32 @@ class ActiveDevelopmentsModel(Model):
                     self.debug_printer('new_built_units', new_built_units)
                     print new_built_units.size
                     print new_built_units.sum()
-        
+
 
                 # update the relevant units column on the buildings dataset with new units
-                building_ids = buildings_dataset.get_attribute('building_id')
-                building_ids_to_be_updated = building_ids[active_developments_index][indx]
+                #building_ids = buildings_dataset.get_attribute('building_id')
+                #building_ids_to_be_updated = building_ids[active_developments_index][indx]
                 # debug help
                 if self.debuglevel > 0:
                     self.debug_printer('building_ids_to_be_updated', building_ids_to_be_updated)
                     print building_ids_to_be_updated.size
-                
+
                 #TRY THIS from add_projects_to_buildings_model
                 #building_index = where(building_identifier==this_identifier)[0]
                 #MY OLD LINE:
-                building_ids_to_be_updated_index_on_buildings = in1d(building_ids,building_ids_to_be_updated)
+                #building_ids_to_be_updated_index_on_buildings = in1d(building_ids,building_ids_to_be_updated)
                 #MY NEW LINE:
-                #building_ids_to_be_updated_index_on_buildings = where(==building_ids_to_be_updated)[0]
+                building_ids_to_be_updated_index_on_buildings = buildings_dataset.get_id_index(building_ids_to_be_updated)
                 # debug help
                 if self.debuglevel > 0:
                     self.debug_printer('building_ids_to_be_updated_index_on_buildings', building_ids_to_be_updated_index_on_buildings)
-                    print "THis many are TRUE: %s" % building_ids_to_be_updated_index_on_buildings.tolist().count(True)
+                    #print "THis many are TRUE: %s" % building_ids_to_be_updated_index_on_buildings.tolist().count(True)
                     print "building_ids_to_be_updated_index_on_buildings.size = %s" % building_ids_to_be_updated_index_on_buildings.size 
                 if developing_building_types_info[developing_building_type]['is_residential']:
                     buildings_dataset.set_values_of_one_attribute('residential_units',new_built_units,building_ids_to_be_updated_index_on_buildings)
                 else:
                     buildings_dataset.set_values_of_one_attribute('non_residential_sqft',new_built_units,building_ids_to_be_updated_index_on_buildings)
-        
+
         #dataset_pool.flush_loaded_datasets()
 
 
