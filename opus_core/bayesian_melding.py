@@ -573,7 +573,7 @@ class BayesianMelding(MultipleRuns):
         """
         labels = self._get_label_of_simulated_values()
         idx = (arange(labels.shape[0])+1).astype('int32')
-        return eval("array(ndimage.%s(self.simulated_values, labels=labels, index=idx)" % function)
+        return eval("array(ndimage.%s(self.simulated_values, labels=labels, index=idx))" % function)
 
     def _get_label_of_simulated_values(self):
         self._check_simulated_values()
