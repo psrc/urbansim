@@ -572,8 +572,8 @@ class BayesianMelding(MultipleRuns):
         This function is applied to the simulated values (per dimension).
         """
         labels = self._get_label_of_simulated_values()
-        return eval("array(ndimage.%s(self.simulated_values, labels=labels, index=arange(labels.shape[0])+1))" %
-                    function)
+        idx = (arange(labels.shape[0])+1).astype('int32')
+        return eval("array(ndimage.%s(self.simulated_values, labels=labels, index=idx)" % function)
 
     def _get_label_of_simulated_values(self):
         self._check_simulated_values()
