@@ -83,7 +83,7 @@ class DevelopmentProjectProposalSamplingModel(USDevelopmentProjectProposalSampli
         ## each column provides a category for which a target vacancy is specified
         self.column_names = list(set( target_vacancy.get_known_attribute_names() ) - \
                             set( [ target_vacancy.target_attribute_name, 
-                                   'year', '_hidden_id_',
+                                   'year', '_hidden_id_', minimum_spaces_attribute,
                                    occupied_spaces_variable, total_spaces_variable
                                    ] )
                             )
