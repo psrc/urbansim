@@ -17,13 +17,13 @@ from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.attribute_cache import AttributeCache
 
 class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
-    ''' Tests the UrbanSim export and import functionallity for the travel model.
+    ''' Tests the UrbanSim export and import functionality for the travel model.
     '''
 
     def setUp(self):
         print "entering setUp"
         
-        logger.log_status('Testing UrbanSim export and import functionallity for MATSim...')
+        logger.log_status('Testing UrbanSim export and import functionality for MATSim...')
 
         # get root path to test cases
         self.path = test_path.__path__[0]
@@ -63,7 +63,7 @@ class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
     def testName(self):
         print "entering test_run"
         
-        logger.log_status('Preparing MATsim test run ...')
+        logger.log_status('Preparing MATSim test run ...')
         # unzip MATSim files
         matsim_zip = ExtractZipFile(self.matsim_source, self.destination)
         matsim_zip.extract()
@@ -88,10 +88,10 @@ class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
         run_manager.setup_new_run(cache_directory = self.run_config['cache_directory'],
                                   configuration = self.run_config)
 
-        logger.log_status('Strating UrbanSim run ... ')
+        logger.log_status('Starting UrbanSim run ... ')
         run_manager.run_run(self.run_config, run_as_multiprocess = True )
-        # after the UrbanSim run the travel data sets schould be equal
-        # self.assertTrue( self.compare_travel_data_sets() )
+        # after the UrbanSim run the travel data sets should be equal
+        self.assertTrue( self.compare_travel_data_sets() )
         logger.log_status('... UrbanSim run finished.')
         
         print "leaving test_run"
@@ -109,7 +109,7 @@ class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
         base_year_data_source_files = os.path.join( self.path, 'data', 'base_year_data.zip')
         if not os.path.exists(base_year_data_source_files):
             raise StandardError("Base year data zip file not found: %s" % base_year_data_source_files)
-        logger.log_status('Referering to base year cache file: %s' % base_year_data_source_files)
+        logger.log_status('Referring to base year cache file: %s' % base_year_data_source_files)
        
         return matsim_source_files, base_year_data_source_files
 

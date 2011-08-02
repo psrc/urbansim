@@ -12,7 +12,7 @@ import numpy
 from opus_core.logger import logger
 
 class MatrixTest(opus_unittest.OpusTestCase):
-    """ Testing access to travel data values stored in numpy arrays
+    """ Testing import of MATSim travel data into UrbanSim
     """
 
     def setUp(self):
@@ -31,9 +31,10 @@ class MatrixTest(opus_unittest.OpusTestCase):
     def test_run(self):
         print "Entering test run"
         
-        # This test loads an exsing travel data as a TravelDataSet (numpy array)
-        # and accesses single (pre-known) values to validate the conversion process
-        # (numpy array into standard python list).
+        # This test checks if the pre-computed MATSim travel data 
+        # is loaded correctly into UrbanSim. Therefore the UrbanSim
+        # travel data matrix is converted into a numpy array and two 
+        # predefined values are checked whether they match with MATSim data.
         #
         # Here an example:
         # my_list = [[1,2,3],

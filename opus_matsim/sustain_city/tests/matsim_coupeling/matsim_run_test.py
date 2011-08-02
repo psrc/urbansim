@@ -42,7 +42,7 @@ class MATSimTestRun(object):
     def test_run(self):
         print "entering test_run"
         
-        logger.log_status('Preparing MATsim test run ...')
+        logger.log_status('Preparing MATSim test run ...')
         
         ezf = ExtractZipFile(self.source, self.destination)
         ezf.extract()
@@ -59,7 +59,7 @@ class MATSimTestRun(object):
         
         cmd_result = os.system(cmd)
         if cmd_result != 0:
-            raise StandardError("Matsim Run failed. Code returned by cmd was %d" % (cmd_result))  
+            raise StandardError("MATSim Run failed. Code returned by cmd was %d" % (cmd_result))  
         elif cmd_result == 0:
             logger.log_status("MATSim returned exit code: %i " % cmd_result)
             logger.log_status('Successfully tested:')
@@ -87,7 +87,7 @@ class MATSimTestRun(object):
         if not os.path.exists(matsim_files_source):
             raise StandardError("MATSim source file not found: %s" % matsim_files_source)
 
-        logger.log_status('Referering to MATSim source file: %s' % matsim_files_source)
+        logger.log_status('Referencing to MATSim source file: %s' % matsim_files_source)
        
         return matsim_files_source
     
