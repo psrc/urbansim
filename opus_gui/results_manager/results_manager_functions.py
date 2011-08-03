@@ -128,35 +128,47 @@ def sync_available_runs(project, scenario_name = '?'):
     runs = run_manager.get_runs(return_columns='*',
                                 return_rs=True, status='done')
 
-    # Make sure all runs with unique directories are list on the project
+    # add all runs with unique directories are list on the project
     added_runs = []
-    for run in runs:
-        run_id = run['run_id']
-        run_name = run['run_name']
-        scenario_name = run['scenario_name'] if 'scenario_name' in run else 'unknown'
-        if run_name == 'base_year_data':
-            scenario_name = run_name
-        cache_directory = os.path.normpath(run['cache_directory'])
-        run_resources = run_manager.get_resources_for_run_id_from_history(run_id)
-        available_years = run_manager.get_years_run(cache_directory)
-        start_year, end_year = min(available_years), max(available_years)
-        #start_year, end_year = run_resources['years']
 
-        # don't add runs that we have already seen or that don't exist on disk
-        if cache_directory in existing_cache_directories or not os.path.exists(cache_directory):
-            continue
-        
-        add_simulation_run(project,
-                           cache_directory = cache_directory,
-                           scenario_name = scenario_name,
-                           run_name = run_name,
-                           start_year = start_year,
-                           end_year = end_year,
-                           run_id = run_id)
+    def add_runs():
+        for run in runs:
+            run_id = run['run_id']
+            run_name = run['run_name']
+            scenario_name = run['scenario_name'] if 'scenario_name' in run else 'unknown'
+            if run_name == 'base_year_data':
+                scenario_name = run_name
+            cache_directory = os.path.normpath(run['cache_directory'])
+            run_resources = run_manager.get_resources_for_run_id_from_history(run_id)
+            available_years = run_manager.get_years_run(cache_directory)
+            if available_years:
+                start_year, end_year = min(available_years), max(available_years)
+            else:
+                #skip an empty run directory
+                continue
+            #start_year, end_year = run_resources['years']
 
-        existing_cache_directories.add(cache_directory)
-        added_runs.append(cache_directory)
-    run_manager.close()
+            # don't add runs that we have already seen or that don't exist on disk
+            if cache_directory in existing_cache_directories or not os.path.exists(cache_directory):
+                continue
+            
+            add_simulation_run(project,
+                               cache_directory = cache_directory,
+                               scenario_name = scenario_name,
+                               run_name = run_name,
+                               start_year = start_year,
+                               end_year = end_year,
+                               run_id = run_id)
+
+            existing_cache_directories.add(cache_directory)
+            added_runs.append(cache_directory)
+
+    try:
+        add_runs()
+    except:
+        raise
+    finally:
+        run_manager.close()
     return (added_runs, removed_runs)
 
 def get_years_range_for_simulation_run(project, run_name=None, run_node=None):
