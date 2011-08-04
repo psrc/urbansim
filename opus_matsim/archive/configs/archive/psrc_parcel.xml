@@ -1,0 +1,300 @@
+<opus_project>
+  <xml_version>2.0</xml_version><general>
+    <description type="string">PSRC Parcel Project</description>
+    <project_name hidden="True" type="string">psrc_parcel</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <advanced type="category">
+      <dataset_pool_configuration type="class">
+        <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument type="list" name="package_order">['psrc_parcel','urbansim_parcel','urbansim','opus_core']</argument>
+      </dataset_pool_configuration>
+    </advanced>
+    <available_datasets type="list">['building','parcel','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+  </general>
+  <model_manager>
+    <estimation type="dictionary">
+      <save_estimation_results type="boolean">False</save_estimation_results>
+      <real_estate_price_model type="model_estimation">
+        <agriculture type="submodel">
+          <submodel_id type="integer">1</submodel_id>
+          <variables type="variable_list">constant, inugb, lnemp20da, lnsqft</variables>
+        </agriculture>
+        <civil type="submodel">
+          <description type="string">Civil and Quasi-Public</description>
+          <submodel_id type="integer">2</submodel_id>
+          <variables type="variable_list">constant, is_pre_1940, ln_invfar, lnemp10wa, lnempden</variables>
+        </civil>
+        <commercial type="submodel">
+          <submodel_id type="integer">3</submodel_id>
+          <variables type="variable_list">constant, art600, art300, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp20tw, lnemp10wa, lnempden, inugb, hbwavgtmda</variables>
+        </commercial>
+        <government type="submodel">
+          <submodel_id type="integer">7</submodel_id>
+          <variables type="variable_list">constant, art600, inugb, ln_bldgage, lnemp20tw, lngcdacbd, lnlotsqft, lnsqft</variables>
+        </government>
+        <hospital type="submodel">
+          <description type="string">Hospital, Convalescent Center</description>
+          <submodel_id type="integer">9</submodel_id>
+          <variables type="variable_list">constant, ln_bldgage, lngcdacbd, lnlotsqft, lnsqft</variables>
+        </hospital>
+        <industrial type="submodel">
+          <submodel_id type="integer">10</submodel_id>
+          <variables type="variable_list">constant, hbwavgtmda, inugb, ln_bldgage, ln_invfar, lnemp20tw, lnemp20wa, lnempden, lngcdacbd, lnsqft</variables>
+        </industrial>
+        <mining type="submodel">
+          <submodel_id type="integer">12</submodel_id>
+          <variables type="variable_list">constant, lnavginc</variables>
+        </mining>
+        <mobile_home_park type="submodel">
+          <submodel_id type="integer">13</submodel_id>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnsqft, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp30tw, lnemp20tw, lnavginc, lnempden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </mobile_home_park>
+        <apartment type="submodel">
+          <description type="string">Multi-Family Residential (Apartment)</description>
+          <submodel_id type="integer">14</submodel_id>
+          <variables type="variable_list">constant, art300, hwy200, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp10da, lnemp30tw, lnemp20tw, lnemp10wa, lnemp20wa, lnavginc, lnempden, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </apartment>
+        <condominium type="submodel">
+          <description type="string">Condominium Residential</description>
+          <submodel_id type="integer">15</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art600, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnempden, lnpopden</variables>
+        </condominium>
+        <office type="submodel">
+          <submodel_id type="integer">18</submodel_id>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp10da, lnemp10wa, lnavginc, lnempden, inugb, hbwavgtmda</variables>
+        </office>
+        <park_and_open_space type="submodel">
+          <submodel_id type="integer">19</submodel_id>
+          <variables type="variable_list">constant, art300, ln_invfar</variables>
+        </park_and_open_space>
+        <parking type="submodel">
+          <submodel_id type="integer">20</submodel_id>
+          <variables type="variable_list">constant, hwy200, ln_invfar, lnemp30da, lnempden</variables>
+        </parking>
+        <single_family_residential type="submodel">
+          <submodel_id type="integer">24</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art300, art600, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
+        </single_family_residential>
+        <transportation type="submodel">
+          <description type="string">Transportation, Communication, Public Utilities</description>
+          <submodel_id type="integer">25</submodel_id>
+          <variables type="variable_list">constant, inugb, ln_invfar, lnemp30tw, lngcdacbd, lnlotsqft</variables>
+        </transportation>
+        <vacant_developable type="submodel">
+          <submodel_id type="integer">26</submodel_id>
+          <variables type="variable_list">constant, hwy2000, art300, lnavginc, lnemp10da, lnemp10wa, lnempden, lngcdacbd</variables>
+        </vacant_developable>
+        <warehousing type="submodel">
+          <submodel_id type="integer">28</submodel_id>
+          <variables type="variable_list">constant, lnempden, lngcdacbd</variables>
+        </warehousing>
+        <mixed_use type="submodel">
+          <submodel_id type="integer">30</submodel_id>
+          <variables type="variable_list">constant, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20tw, inugb, hbwavgtmda</variables>
+        </mixed_use>
+      </real_estate_price_model>
+      <estimation_config type="dictionary">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
+        <estimation_database_configuration type="class">
+          <class_name hidden="True" type="string">EstimationDatabaseConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.database_management.configurations.estimation_database_configuration</class_module>
+          <argument type="string" name="database_name">none</argument>
+        </estimation_database_configuration>
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument type="list" name="package_order">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean">False</low_memory_mode>
+        <base_year type="integer">2000</base_year>
+        <years type="tuple">
+          <firstyear type="integer">2000</firstyear>
+          <lastyear type="integer">2000</lastyear>
+        </years>
+      </estimation_config>
+      <household_location_choice_model copyable="True" type="model_estimation">
+        <submodel copyable="True" type="submodel">
+          <description type="string">No submodel</description>
+          <submodel_id type="integer">-2</submodel_id>
+          <variables type="variable_list">ln_residential_units</variables>
+        </submodel>
+      </household_location_choice_model>
+      <employment_location_choice_model copyable="True" type="model_estimation">
+        <home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </home_based>
+        <non_home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </non_home_based>
+      </employment_location_choice_model>
+      <model_parameters type="dictionary">
+        <real_estate_price_model type="dictionary">
+          <abbreviation type="string">REPM</abbreviation>
+          <full_name type="string">real_estate_price_model</full_name>
+        </real_estate_price_model>
+        <household_location_choice_model type="dictionary">
+          <abbreviation type="string">HLCM</abbreviation>
+          <full_name type="string">household_location_choice_model</full_name>
+        </household_location_choice_model>
+      </model_parameters>
+    </estimation>
+    <travel_model_configuration type="dictionary">
+       <models type="selectable_list">
+        <selectable type="selectable" name="opus_matsim.models.get_cache_data_into_matsim">True</selectable>
+        <selectable type="selectable" name="opus_matsim.models.run_travel_model">True</selectable>
+        <selectable type="selectable" name="opus_matsim.models.run_export_macros">True</selectable>
+        <selectable type="selectable" name="opus_matsim.models.get_matsim_data_into_cache">True</selectable>
+      </models>
+      <years_to_run key_name="year" type="category_with_special_keys">
+      	<run_description type="dictionary">
+      		<year type="integer">2001</year>
+      	</run_description>
+      </years_to_run>
+	            <sampling_rate type="float">0.01</sampling_rate>
+      <matsim_config_filename type="file">configs/psrc_matsim.xml</matsim_config_filename>
+ </travel_model_configuration>
+  </model_manager>
+  <scenario_manager>
+    <scenario copyable="True" executable="True" type="scenario" name="PSRC_baseline">
+      <parent type="scenario_name">urbansim_parcel_baseline</parent>
+      <base_year type="integer">2000</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2001</firstyear>
+        <lastyear type="integer">2001</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable copyable="True" type="model_choice" name="model_template">False</selectable>
+        <selectable type="model_choice" name="prescheduled_events">True</selectable>
+        <selectable type="model_choice" name="real_estate_price_model">False</selectable>
+        <selectable type="model_choice" name="expected_sale_price_model">False</selectable>
+        <selectable type="model_choice" name="development_proposal_choice_model">False</selectable>
+        <selectable type="model_choice" name="building_construction_model">False</selectable>
+        <selectable type="model_choice" name="household_transition_model">False</selectable>
+        <selectable type="model_choice" name="employment_transition_model">False</selectable>
+        <selectable type="model_choice" name="household_relocation_model">False</selectable>
+        <selectable type="model_choice" name="household_location_choice_model">False</selectable>
+        <selectable type="model_choice" name="employment_relocation_model">False</selectable>
+        <selectable type="model_choice" name="employment_location_choice_model">False<group_members type="string">non_home_based</group_members>
+        </selectable>
+        <selectable type="model_choice" name="distribute_unplaced_jobs_model">False</selectable>
+      </models_to_run>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">psrc_parcel/base_year_data</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="True" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="True" type="string">urbansim.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory" name="scenario_runs_directory">psrc_parcel/runs</argument>
+        <argument type="class" name="baseyear_cache">
+          <class_name hidden="True" type="string">BaseyearCacheConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.baseyear_cache_configuration</class_module>
+          <argument parser_action="prefix_with_opus_data_path" type="directory" name="existing_cache_to_copy">psrc_parcel/base_year_data</argument>
+        </argument>
+        <argument hidden="True" type="boolean" name="unroll_gridcells">False</argument>
+        <argument type="category" name="advanced">
+          <baseyear_database_configuration config_name="scenario_database_configuration" type="class">
+            <class_name hidden="True" type="string">ScenarioDatabaseConfiguration</class_name>
+            <class_module hidden="True" type="string">opus_core.database_management.configurations.scenario_database_configuration</class_module>
+            <argument type="string" name="database_name">psrc_2000_parcel_baseyear_data</argument>
+          </baseyear_database_configuration>
+          <cache_from_database type="boolean">False</cache_from_database>
+          <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+          <tables_to_cache type="selectable_list">
+            <selectable type="selectable" name="households">True</selectable>
+            <selectable type="selectable" name="buildings">True</selectable>
+            <selectable type="selectable" name="parcels">True</selectable>
+            <selectable type="selectable" name="gridcells">True</selectable>
+            <selectable type="selectable" name="zones">True</selectable>
+            <selectable type="selectable" name="jobs">True</selectable>
+            <selectable type="selectable" name="households_for_estimation">True</selectable>
+            <selectable type="selectable" name="jobs_for_estimation">True</selectable>
+            <selectable type="selectable" name="development_event_history">True</selectable>
+            <selectable type="selectable" name="travel_data">False</selectable>
+            <selectable type="selectable" name="building_types">True</selectable>
+            <selectable type="selectable" name="job_building_types">True</selectable>
+            <selectable type="selectable" name="urbansim_constants">True</selectable>
+            <selectable type="selectable" name="target_vacancies">True</selectable>
+            <selectable type="selectable" name="home_based_employment_location_choice_model_coefficients">True</selectable>
+            <selectable type="selectable" name="home_based_employment_location_choice_model_specification">True</selectable>
+            <selectable type="selectable" name="non_home_based_employment_location_choice_model_coefficients">True</selectable>
+            <selectable type="selectable" name="non_home_based_employment_location_choice_model_specification">True</selectable>
+            <selectable type="selectable" name="household_location_choice_model_coefficients">True</selectable>
+            <selectable type="selectable" name="household_location_choice_model_specification">True</selectable>
+            <selectable type="selectable" name="real_estate_price_model_coefficients">True</selectable>
+            <selectable type="selectable" name="real_estate_price_model_specification">True</selectable>
+            <selectable type="selectable" name="annual_household_control_totals">True</selectable>
+            <selectable type="selectable" name="annual_relocation_rates_for_households">True</selectable>
+            <selectable type="selectable" name="household_characteristics_for_ht">True</selectable>
+            <selectable type="selectable" name="annual_employment_control_totals">True</selectable>
+            <selectable type="selectable" name="annual_relocation_rates_for_jobs">True</selectable>
+            <selectable type="selectable" name="land_use_types">True</selectable>
+            <selectable type="selectable" name="generic_land_use_types">True</selectable>
+            <selectable type="selectable" name="employment_sectors">True</selectable>
+            <selectable type="selectable" name="employment_adhoc_sector_groups">True</selectable>
+            <selectable type="selectable" name="employment_adhoc_sector_group_definitions">True</selectable>
+            <selectable type="selectable" name="development_templates">True</selectable>
+            <selectable type="selectable" name="development_template_components">True</selectable>
+            <selectable type="selectable" name="development_constraints">True</selectable>
+            <selectable type="selectable" name="building_sqft_per_job">True</selectable>
+            <selectable type="selectable" name="fazes">True</selectable>
+            <selectable type="selectable" name="fazes">True</selectable>
+            <selectable type="selectable" name="demolition_cost_per_sqft">True</selectable>
+            <selectable type="selectable" name="constant_taz_columns">True</selectable>
+          </tables_to_cache>
+          <tables_to_cache_nchunks type="dictionary">
+            <parcels type="integer">1</parcels>
+          </tables_to_cache_nchunks>
+        </argument>
+      </creating_baseyear_cache_configuration>
+      <advanced type="category">
+        <dataset_pool_configuration type="class">
+          <class_name hidden="True" type="string">DatasetPoolConfiguration</class_name>
+          <class_module hidden="True" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+          <argument type="list" name="package_order">['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+        </dataset_pool_configuration>
+        <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+        <flush_variables type="boolean">False</flush_variables>
+        <low_memory_run type="boolean">False</low_memory_run>
+        <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 'development_project_proposal_component', 'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
+        <unroll_gridcells hidden="True" type="boolean">False</unroll_gridcells>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable type="selectable" name="zone">True</selectable>
+          <selectable type="selectable" name="household">True</selectable>
+          <selectable type="selectable" name="building">True</selectable>
+          <selectable type="selectable" name="parcel">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="person">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_template">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_template_component">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="job">True</selectable>
+          <selectable type="selectable" name="building_type">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="travel_data">True</selectable>
+          <selectable type="selectable" name="job_building_type">True</selectable>
+        </datasets_to_preload>
+      </advanced>
+    </scenario>
+  </scenario_manager>
+  <results_manager>
+    <indicator_batches setexpanded="True" type="group" name="Indicator Batches"/>
+    <simulation_runs setexpanded="True" type="all_source_data" name="Simulation Runs">
+      <run type="source_data" name="base_year_data" run_id="1" hidden="Children">
+        <scenario_name type="string">psrc_parcel</scenario_name>
+        <cache_directory type="string">/urbansim_cache/psrc_parcel/base_year_data</cache_directory>
+        <end_year type="integer">2000</end_year>
+        <start_year type="integer">2000</start_year>
+        </run>
+    </simulation_runs>
+  </results_manager>
+</opus_project>
