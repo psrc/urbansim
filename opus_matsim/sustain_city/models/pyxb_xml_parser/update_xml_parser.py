@@ -13,7 +13,7 @@ from opus_matsim.sustain_city.models.pyxb_xml_parser.load_xsd import LoadXSD
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
     
-    def run(self, xsd_file=None, destination=None, binding_class_name=None, backup=False):
+    def run(self, xsd_file=None, destination=None, binding_class_name=None, skip_backup=True):
         logger.start_block('Starting to update xml parser for UrbanSim ...')
         
         self.output_pyxb_package_name = None
@@ -56,8 +56,8 @@ class UpdateBindingClass(object):
         binding_class = os.path.join(binding_class_destination, self.output_pyxb_package_file)
         if os.path.exists(binding_class):
             logger.log_status('Found a previous binding class')
-            if backup:
-                os.remove( binding_class)
+            if skip_backup:
+                os.remove( binding_class )
             else: # archiving previous pyxb parser versions
                 archive_folder = os.path.join(binding_class_destination, 'xsd_archive')
                 if not os.path.exists(archive_folder):
@@ -99,13 +99,13 @@ class UpdateBindingClass(object):
             'output': self.output_pyxb_package_name}
     
         logger.log_status('Executing command : %s' % cmd)
-        # executing comand line
+        # executing command line
         cmd_result = os.system(cmd)
-        # checking if some error occured
+        # checking if some error occurred
         if cmd_result != 0:
             raise StandardError('Executing command faild! Returncode = %i' %cmd_result)
         
-        # At this point executing comand line was successful
+        # At this point executing command line was successful
         # Now a UrbanSim header is added to the generated binding classes
         
         # read whole file

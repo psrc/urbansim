@@ -2,22 +2,20 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington and Kai Nagel
 # See opus_core/LICENSE
 
-from opus_core.logger import logger
 from opus_core.configurations.xml_configuration import XMLConfiguration
 from opus_core.database_management.configurations.services_database_configuration import ServicesDatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 from opus_core.tests import opus_unittest
 from shutil import rmtree
 import opus_matsim
-import os
-import tempfile
+import os, tempfile
 
 # doing the testing separately since it seems easier to combine the three modules into one test
 
 # files in eugene/tests may serve as examples ...
 
 
-class Tests(opus_unittest.OpusTestCase):
+class TestingInstallation(opus_unittest.OpusTestCase):
     
     def setUp(self):
         print "entering setUp"

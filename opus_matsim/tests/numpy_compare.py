@@ -6,14 +6,14 @@ from opus_core.tests import opus_unittest
 from numpy import array, zeros, int8, arange
 from opus_core.logger import logger
 
-class SimpleDataCompare(opus_unittest.OpusTestCase):
-    """ This test validates 
+class NumpyCompare(opus_unittest.OpusTestCase):
+    """ Testing how to compare numpy arrays
     """
     
     def setUp(self):
         print "Entering setup"
         
-        logger.log_status('Executing sample numpay array comparison tests...')
+        logger.log_status('Executing sample numpy array comparison tests...')
         
         print "Leaving setup"
     

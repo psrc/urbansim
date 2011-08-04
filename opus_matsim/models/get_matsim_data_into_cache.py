@@ -68,8 +68,8 @@ class GetMatsimDataIntoCache(GetTravelModelDataIntoCache):
         
         self.init(year, config);
         
-        # import workplace accessibility from matsim
-        self.get_workplace_accessibility_into_cache(year)
+        # tnicolai: experimental -> import workplace accessibility from matsim
+        #self.get_workplace_accessibility_into_cache(year)
         
         # import travel data from matsim
         travel_data_set = TravelDataDataset( in_storage=self.in_storage, in_table_name=self.travel_data_table_name )

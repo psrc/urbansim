@@ -16,7 +16,7 @@ from opus_core.store.csv_storage import csv_storage
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from opus_core.store.attribute_cache import AttributeCache
 
-class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
+class IOCacheMATSimTestRun(object): #opus_unittest.OpusTestCase):
     ''' Tests the UrbanSim export and import functionality for the travel model.
     '''
 
@@ -104,7 +104,7 @@ class IOCacheMATSimTestRun(opus_unittest.OpusTestCase):
         matsim_source_files = os.path.join( self.path, 'data', 'MATSimTestClasses.zip')
         if not os.path.exists(matsim_source_files):
             raise StandardError("MATSim source file not found: %s" % matsim_source_files)
-        logger.log_status('Referering to MATSim source file: %s' % matsim_source_files)
+        logger.log_status('Referring to MATSim source file: %s' % matsim_source_files)
         
         base_year_data_source_files = os.path.join( self.path, 'data', 'base_year_data.zip')
         if not os.path.exists(base_year_data_source_files):

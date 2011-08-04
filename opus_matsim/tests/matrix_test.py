@@ -3,11 +3,10 @@
 # See opus_core/LICENSE
 
 import os
-import opus_matsim.sustain_city.tests as test_dir
+import opus_matsim.tests as test_dir
 from opus_core.tests import opus_unittest
 from opus_core.store.csv_storage import csv_storage
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from numpy import *
 import numpy
 from opus_core.logger import logger
 
@@ -20,7 +19,7 @@ class MatrixTest(opus_unittest.OpusTestCase):
         # get sensitivity test path
         self.test_dir_path = test_dir.__path__[0]
         # get location to travel data table
-        self.input_directory = os.path.join( self.test_dir_path, 'data', 'travel_cost')
+        self.input_directory = os.path.join( self.test_dir_path, 'testdata')
         logger.log_status("input_directory: %s" % self.input_directory)
         # check source file
         if not os.path.exists( self.input_directory ):

@@ -43,7 +43,7 @@ class RunTravelModel(AbstractTravelModel):
                 'opus_home': os.environ['OPUS_HOME'],
                 'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
                 'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.tnicolai.urbansim.MATSim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+                'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
                 'matsim_config_file': self.matsim_config_full,
                 'test_parameter': self.test_parameter } 
         
