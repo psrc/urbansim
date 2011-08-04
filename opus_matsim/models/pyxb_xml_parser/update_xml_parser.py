@@ -6,9 +6,11 @@ import os
 import time
 import datetime
 import shutil
+from shutil import rmtree
+import tempfile
 from opus_core.logger import logger
-import opus_matsim.sustain_city.models.pyxb_xml_parser as pyxb_path
-from opus_matsim.sustain_city.models.pyxb_xml_parser.load_xsd import LoadXSD
+import opus_matsim.models.pyxb_xml_parser as pyxb_path
+from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
 
 class UpdateBindingClass(object):
     """Creates a new pyxb xml parser"""
@@ -56,9 +58,7 @@ class UpdateBindingClass(object):
         binding_class = os.path.join(binding_class_destination, self.output_pyxb_package_file)
         if os.path.exists(binding_class):
             logger.log_status('Found a previous binding class')
-            if backup:
-                os.remove( binding_class)
-            else: # archiving previous pyxb parser versions
+            if backup: # archiving previous pyxb parser versions
                 archive_folder = os.path.join(binding_class_destination, 'xsd_archive')
                 if not os.path.exists(archive_folder):
                     logger.log_status("Creating archive folder %s" % archive_folder)
@@ -71,6 +71,8 @@ class UpdateBindingClass(object):
                 # moving prevoius binding class into archive
                 logger.log_status("Moving previous binding class into archive: %s" %destination)
                 shutil.move(binding_class, destination)
+            else: 
+                os.remove( binding_class )
         
         #===========================================================================
         # EXAMPLE:
@@ -129,7 +131,10 @@ class UpdateBindingClass(object):
             logger.log_error("Error occured while adding the UrbanSim header to the binding class.")
         finally:
             f.close()
-            
+        
+        # clean up down loaded xsd
+        if os.path.exists(self.temp_dir):
+            rmtree(self.temp_dir)
         
         logger.log_status('Successful finished. Exit program.')
         logger.end_block()
@@ -138,14 +143,11 @@ class UpdateBindingClass(object):
     def get_xsd_from_matsim_org(self):
         """ Downloads and stores xsd file from matsim.org
         """
-        
-        # set output dir for xsd file
-        xsd_reposit = os.path.join(pyxb_path.__path__[0], 'xsd_reposit')
-        # create reposit if necessary
-        if not os.path.exists( xsd_reposit ):
-            dir = os.path.dirname( xsd_reposit )
-            os.makedirs(dir)
-        xsd_reposit = os.path.join(xsd_reposit, 'MATSim4UrbanSimConfigSchema.xsd')
+
+        # set temporary output dir for xsd file
+        self.temp_dir = tempfile.mkdtemp(prefix='xsd_tmp')
+
+        xsd_reposit = os.path.join(self.temp_dir, 'MATSim4UrbanSimConfigSchema.xsd')
         # set source url for xsd
         url = 'http://matsim.org/files/dtd/MATSim4UrbanSimConfigSchema.xsd'
         

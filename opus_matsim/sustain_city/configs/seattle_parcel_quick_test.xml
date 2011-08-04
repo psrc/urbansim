@@ -1,7 +1,8 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-    <description type="string">Seattle parcel project with travel model</description>
+    <description type="string">Seattle parcel project with travel 
+			model</description>
     <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
   </general>
   <model_manager>
@@ -10,9 +11,9 @@
     <templates hidden="True" name="Model Templates" parser_action="skip"/>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable name="opus_matsim.models.get_cache_data_into_matsim" type="selectable">True</selectable>
-        <selectable name="opus_matsim.models.run_travel_model" type="selectable">True</selectable>
-        <selectable name="opus_matsim.models.get_matsim_data_into_cache" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.get_cache_data_into_matsim" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.run_travel_model" type="selectable">True</selectable>
+        <selectable name="opus_matsim.sustain_city.tests.psrc_sensitivity_tests.models.get_matsim_data_into_cache" type="selectable">True</selectable>
       </models>
       <matsim4urbansim type="dictionary">
         <sampling_rate type="float">0.01</sampling_rate>

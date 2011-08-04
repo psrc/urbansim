@@ -1,8 +1,8 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-    <description type="string">Seattle parcel project with travel model</description>
-    <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <description type="string">Configuration for the PSRC parcel project</description>
+    <parent type="file">psrc_parcel.xml</parent>
   </general>
   <model_manager>
     <models config_name="model_system" hidden="False" name="Models" setexpanded="True" type="dictionary">
@@ -35,7 +35,7 @@
     </travel_model_configuration>
   </model_manager>
   <scenario_manager>
-    <scenario executable="True" name="Seattle_baseline" type="scenario">
+    <scenario executable="True" name="PSRC_baseline" type="scenario">
       <years_to_run config_name="years" type="tuple">
         <firstyear type="integer">2001</firstyear>
         <lastyear type="integer">2001</lastyear>
@@ -45,20 +45,26 @@
         <selectable name="expected_sale_price_model" type="model_choice">False</selectable>
         <selectable name="development_proposal_choice_model" type="model_choice">False</selectable>
         <selectable name="building_construction_model" type="model_choice">False</selectable>
+        <selectable name="modify_workers_jobs_after_moving_households" type="model_choice">False</selectable>
+        <selectable name="modify_workers_jobs_after_moving_jobs" type="model_choice">False</selectable>
         <selectable name="household_transition_model" type="model_choice">False</selectable>
         <selectable name="employment_transition_model" type="model_choice">False</selectable>
+        <selectable name="job_person_consistency_keeper" type="model_choice">False</selectable>
         <selectable name="household_relocation_model" type="model_choice">False</selectable>
         <selectable name="household_location_choice_model" type="model_choice">False</selectable>
+        <selectable name="modify_workers_jobs_after_moving_households" type="model_choice">False</selectable>
         <selectable name="employment_relocation_model" type="model_choice">False</selectable>
         <selectable name="employment_location_choice_model" type="model_choice">False<group_members type="string">non_home_based</group_members>
         </selectable>
         <selectable name="distribute_unplaced_jobs_model" type="model_choice">False</selectable>
+        <selectable name="distribute_unplaced_mining_utilities_jobs_model" type="model_choice">False</selectable>
+        <selectable name="modify_workers_jobs_after_moving_jobs" type="model_choice">False</selectable>
+        <selectable name="work_at_home_choice_model" type="model_choice">False</selectable>
+        <selectable name="workplace_choice_model_for_resident" type="model_choice">False</selectable>
       </models_to_run>
-      <advanced type="category">
-        </advanced>
     </scenario>
   </scenario_manager>
   <results_manager>
-    </results_manager>
+  </results_manager>
 </opus_project>
 

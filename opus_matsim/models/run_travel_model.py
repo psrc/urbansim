@@ -4,58 +4,77 @@
 
 from opus_core.logger import logger
 from opus_core.resources import Resources
-from opus_core.session_configuration import SessionConfiguration
 from travel_model.models.abstract_travel_model import AbstractTravelModel
 import os
-import sys
+from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
 class RunTravelModel(AbstractTravelModel):
     """Run the travel model.
     """
+    def __init__(self):
+        """Constructor
+        """
+        self.matsim_config_destination = None  # path to generated matsim config xml
+        self.matsim_config_name = None  # matsim config xml name
+        self.matsim_config_full = None  # concatenation of matsim config path and name
+        self.test_parameter = ""        # optional parameter for testing and debugging purposes
 
     def run(self, config, year):
         """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
         is correctly set and the matsim tarfile was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
         be problems with the java version.
         """
-        
+
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        travel_model_configuration = config['travel_model_configuration']
-
-        # The default config file name
-        matsim_config_filename = travel_model_configuration['matsim_config_filename']
+        # tnicolai :for debugging
+        #try:
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
-        # over-written if there is a specific config file name for the year:
-        if travel_model_configuration[year]['matsim_config_filename']:
-            matsim_config_filename = travel_model_configuration[year]['matsim_config_filename']
+        self.setUp( config )
         
+        config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
+        config_obj.marschall()
         
-        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s --year=%(year)i --samplingRate=%(sampling_rate)f""" % {
+        # calling travel model with cmd command
+        cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'opus_home': os.environ['OPUS_HOME'],
-                'vmargs': "-Xmx2000m",
-                'classpath': "classes:jar/MATSim.jar",
-                'javaclass': "playground.run.Matsim4Urbansim",
-                'matsim_config_file': os.path.join( os.environ['OPUS_HOME'], "opus_matsim", matsim_config_filename), 
-                'sampling_rate': config['travel_model_configuration']['sampling_rate'],
-                'year': year } 
+                'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
+                'classpath': "jar/matsim4urbansim.jar",
+                'javaclass': "playground.tnicolai.urbansim.MATSim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+                'matsim_config_file': self.matsim_config_full,
+                'test_parameter': self.test_parameter } 
         
         logger.log_status('Running command %s' % cmd ) 
         
         cmd_result = os.system(cmd)
         if cmd_result != 0:
-            error_msg = "Matsim Run failed. Code returned by cmd was %d" % (cmd_result)
+            error_msg = "MATSim Run failed. Code returned by cmd was %d" % (cmd_result)
             logger.log_error(error_msg)
             logger.log_error("Note that currently (dec/08), paths in the matsim config files are relative to the opus_matsim root,")
             logger.log_error("  which is one level 'down' from OPUS_HOME.")
             raise StandardError(error_msg)        
         
         logger.end_block()
+        
+    def setUp(self, config):
+        """ create MATSim config data
+        """
+        self.matsim_config_destination = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "matsim_config")
+        if not os.path.exists(self.matsim_config_destination):
+            try: os.mkdir(self.matsim_config_destination)
+            except: pass
+        self.matsim_config_name = config['project_name'] + "_matsim_config.xml"
+        self.matsim_config_full = os.path.join( self.matsim_config_destination, self.matsim_config_name  )
+        
+        tmc = config['travel_model_configuration']
+        if tmc['matsim4urbansim'].get('test_parameter') != None:
+            self.test_parameter = tmc['matsim4urbansim'].get('test_parameter')
 
-# called from the framework via main!
+# called from opus via main!
 if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file
     parser = OptionParser()

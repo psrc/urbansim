@@ -1,7 +1,7 @@
 <opus_project>
   <xml_version>2.0</xml_version>
   <general>
-    <description type="string">opus_matsim test setup.  DO NOT CHANGE</description>
+    <description type="string">opus_matsim test setup. DO NOT CHANGE</description>
     <project_name hidden="True" type="string">opus_matsim</project_name>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <advanced type="category">
@@ -15,19 +15,6 @@
   <model_manager>
     <models setexpanded="True" hidden="False" config_name="model_system" type="dictionary" name="Models">
        <model name="prescheduled_events" type="model">
-        <structure type="dictionary">
-          <import name="import" type="dictionary">
-            <class_module>urbansim.models.process_prescheduled_development_events</class_module>
-            <class_name>ProcessPrescheduledDevelopmentEvents</class_name>
-          </import>
-          <init type="dictionary">
-            <name name="name" type="string">ProcessPrescheduledDevelopmentEvents</name>
-          </init>
-          <run type="dictionary">
-            <output name="output" type="string">development_events</output>
-            <argument name="storage" type="string">base_cache_storage</argument>
-          </run>
-        </structure>
       </model>
     </models>
     <templates hidden="True" parser_action="skip" name="Model Templates"/>
@@ -37,8 +24,19 @@
         <selectable type="selectable" name="opus_matsim.tests.run_dummy_travel_model">True</selectable>
         <selectable type="selectable" name="opus_matsim.models.get_matsim_data_into_cache">True</selectable>
       </models>
-      <sampling_rate type="float">0.01</sampling_rate>
-      <matsim_config_filename type="file">opus_matsim/matsim_config/seattle_matsim_0.xml</matsim_config_filename>
+     <matsim4urbansim type="dictionary">
+        <sampling_rate type="float">0.01</sampling_rate>
+        <temp_directory type="string">/opus_matsim/tmp/</temp_directory>
+      </matsim4urbansim>
+      <matsim_config type="dictionary">
+        <common type="dictionary">
+          <matsim_network_file type="file">data/psrc/network/psrc.xml.gz</matsim_network_file>
+          <first_iteration type="integer">0</first_iteration>
+          <last_iteration type="integer">1</last_iteration>
+          <activityType_0 type="string">home</activityType_0>
+          <activityType_1 type="string">work</activityType_1>
+        </common>
+      </matsim_config>
       <years_to_run key_name="year" type="category_with_special_keys">
         <run_description type="dictionary">
           <year type="integer">2001</year>

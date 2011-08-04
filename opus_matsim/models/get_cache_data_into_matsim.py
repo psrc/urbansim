@@ -2,24 +2,14 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington
 # See opus_core/LICENSE 
 
-from numpy import zeros, arange
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.export_storage import ExportStorage
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 from opus_core.indicator_framework.core.source_data import SourceData
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.logger import logger
 from opus_core.resources import Resources
-from opus_core.sampling_toolbox import sample_noreplace
-from opus_core.session_configuration import SessionConfiguration
-from opus_core.store.flt_storage import flt_storage
-from opus_core.store.tab_storage import tab_storage
-from opus_core.tests import opus_unittest
-from opus_core.variables.attribute_type import AttributeType
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel
 import os
-import shutil
-import sys
 
 
 
@@ -29,24 +19,19 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
     """
 
     def create_travel_model_input_file(self, config, year, *args, **kwargs):
-        """"""
+        """Constructs and writes a persons and jobs table. 
+        Both are associated with a parcels table (also constructed here) storing locations (x and y coordinates) of each person and job .
+        """
+
         logger.start_block('Starting GetCacheDataIntoMatsim.run(...)')
         
+        # tnicolai :for debugging
+        #try:
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
         
-#        # When this is called for the first time, the 'matsim_flag' is not there.  Will be constructed here:  
-#        if not 'matsim_flag' in persons.get_known_attribute_names():
-#            persons = SessionConfiguration().get_dataset_from_pool('person')
-#            persons_size = persons.size()
-#            sampling_rate = config['travel_model_configuration']['sampling_rate']
-#            matsim_flag = zeros(persons_size, dtype='int32')
-#            sampled_person_index = sample_noreplace( arange(persons_size), 
-#                                                     int(sampling_rate * persons_size), 
-#                                                     return_index=True )
-#            matsim_flag[sampled_person_index] = 1
-#            persons.add_attribute(matsim_flag, 'matsim_flag', metadata=AttributeType.PRIMARY)
-#            persons.flush_attribute('matsim_flag')
-        
-        # I guess this is access to the full urbansim cache data.
+        # I guess this is access to the full UrbanSim cache data.
         source_data = SourceData(
             cache_directory = config['cache_directory'],
             years = [year],
@@ -56,55 +41,81 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         )            
         
         output_root = os.path.join( os.environ['OPUS_HOME'],"opus_matsim" ) 
-        try: os.mkdir( output_root )
-        except: pass
+        if not os.path.exists( output_root ):
+            try: os.mkdir( output_root )
+            except: pass
         
-        output_directory = os.path.join( os.environ['OPUS_HOME'], "opus_matsim", "tmp" )
-        try: os.mkdir(output_directory)
-        except: pass
+        self.output_directory = os.path.join( output_root, "tmp" )
+        if not os.path.exists( self.output_directory ):
+            try: os.mkdir(self.output_directory)
+            except: pass
+                
+        ### Jobs ###############################
         
-        ### PERSONS
-        export_indicators = [
-            DatasetTable(
+        self.dataset_table_jobs = DatasetTable(
                 attributes = [
-                    'parcel_id_home = person.disaggregate(parcel.parcel_id, intermediates=[building,household])',
-                    'parcel_id_work = person.disaggregate(parcel.parcel_id, intermediates=[building,job])',
+                    'parcel_id_work = job.disaggregate(parcel.parcel_id, intermediates=[building])',
+                    'zone_id_work = job.disaggregate(zone.zone_id, intermediates=[parcel,building])'
                     ],
-                dataset_name = 'person',
-#                exclude_condition = 'person.matsim_flag==0',
-                storage_location = output_directory,
+                dataset_name = 'job',
+                # exclude_condition = 'person.matsim_flag==0',
+                storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',
                 name = 'exported_indicators',
                 )
-        ]
-        # This is (I assume) executing the export
+        
+        export_indicators_jobs = [ self.dataset_table_jobs ]
+        
+        # executing the export jobs
         IndicatorFactory().create_indicators(
-             indicators = export_indicators,
+             indicators = export_indicators_jobs,
              display_error_box = False, 
              show_results = False)
         
-        ### "FACILITIES"
-        # yyyy There is a problem here (and at other places) if the table headers do not exist under exactly the same name.  
-        # For the _id, this is probably not a problem, since these are fairly strongly typed in the table definitions.  The other
-        # headers are, however, free form, and it could be, for example, "x_coord" or "xx" or "x100" or whatever.  There should
-        # be, minimally, something that checks that fields exist under these names.  kai, sep'10
-        export_indicators = [
-            DatasetTable(
+        ### PERSONS ###############################
+        
+        self.dataset_table_persons = DatasetTable(
+                attributes = [ # TODO: ADD HOME XY-COORDINATES AND WORK XY_COORDINATES
+                    'parcel_id_home = person.disaggregate(parcel.parcel_id, intermediates=[building,household])',
+                    'parcel_id_work = person.disaggregate(parcel.parcel_id, intermediates=[building,job])',
+                    ],
+                dataset_name = 'person',
+                # exclude_condition = 'person.matsim_flag==0',
+                storage_location = self.output_directory,
+                source_data = source_data,
+                output_type = 'tab',
+                name = 'exported_indicators',
+                )
+        
+        export_indicators_persons = [ self.dataset_table_persons ]
+        
+        # executing the export persons
+        IndicatorFactory().create_indicators(
+             indicators = export_indicators_persons,
+             display_error_box = False, 
+             show_results = False)
+        
+        ### FACILITIES ###############################
+        
+        self.dataset_table_parcels = DatasetTable(
                 attributes = [
                     'parcel.x_coord_sp',
                     'parcel.y_coord_sp',
                     'parcel.zone_id',
                     ],
                 dataset_name = 'parcel',
-                storage_location = output_directory,
+                storage_location = self.output_directory,
                 source_data = source_data,
                 output_type = 'tab',
                 name = 'exported_indicators',
                 )
-        ]
+        
+        export_indicators_parcels = [ self.dataset_table_parcels ]
+        
+        # executing the export parcels
         IndicatorFactory().create_indicators(
-             indicators = export_indicators,
+             indicators = export_indicators_parcels,
              display_error_box = False, 
              show_results = False)
                 
@@ -112,10 +123,8 @@ class GetCacheDataIntoMatsim(GetCacheDataIntoTravelModel):
         
 
 
-# the following is needed, since it is called as "main" from the framework ...  
+# called from opus via main! 
 if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
     from optparse import OptionParser
     from opus_core.file_utilities import get_resources_from_file
     parser = OptionParser()
