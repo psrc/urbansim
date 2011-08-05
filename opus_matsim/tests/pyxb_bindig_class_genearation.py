@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 import os
-from opus_matsim.sustain_city.models.pyxb_xml_parser import update_xml_parser
+from opus_matsim.models.pyxb_xml_parser import update_xml_parser
 from opus_core.logger import logger
 from opus_core.tests import opus_unittest
 from shutil import rmtree

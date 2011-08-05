@@ -5,7 +5,7 @@
 # ./pyxb_matsim_config_parser.py
 # PyXB bindings for NamespaceModule
 # NSM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2011-08-04 13:57:28.043732 by PyXB version 1.1.1
+# Generated 2011-08-05 17:14:31.648215 by PyXB version 1.1.1
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -15,7 +15,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:ecdb1575-be90-11e0-984e-001b63930ac1')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:9eb6dc0c-bf75-11e0-b61c-001b63930ac1')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes

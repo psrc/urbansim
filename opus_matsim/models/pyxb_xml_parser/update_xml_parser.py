@@ -6,7 +6,6 @@ import os
 import time
 import datetime
 import shutil
-from shutil import rmtree
 import tempfile
 from opus_core.logger import logger
 import opus_matsim.models.pyxb_xml_parser as pyxb_path
@@ -38,7 +37,7 @@ class UpdateBindingClass(object):
         self.output_pyxb_package_file = self.output_pyxb_package_name + '.py'
         
         # path to the PyXB executables
-        pyxb_gen = os.path.join( os.getenv('HOME'), 'bin', 'pyxbgen')
+        pyxb_gen = os.path.join( os.getenv('OPUS_HOME'), 'opus_matsim', 'bin', 'pyxbgen')
         # checking if PyXB is available
         if not os.path.exists( pyxb_gen ):
             raise StandardError('PyXB seems not to be installed on this machine.\nPlease download and install PyXB first. It is available on http://sourceforge.net/projects/pyxb/ (Accessed July 2010).')
@@ -93,7 +92,10 @@ class UpdateBindingClass(object):
         # 4) The generated classes are ready to use.
         #===========================================================================
         
-        # comand line to generate xml bindig classes as explained above
+        # change to binding class destination directory 
+        # os.chdir(binding_class_destination)
+        
+        # command line to generate xml binding classes as explained above
         cmd = 'cd %(binding_class_destination)s ; %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
             'binding_class_destination': binding_class_destination,
             'pyxbgen': pyxb_gen,
@@ -101,13 +103,13 @@ class UpdateBindingClass(object):
             'output': self.output_pyxb_package_name}
     
         logger.log_status('Executing command : %s' % cmd)
-        # executing comand line
+        # executing command line
         cmd_result = os.system(cmd)
-        # checking if some error occured
+        # checking if some error occurred
         if cmd_result != 0:
-            raise StandardError('Executing command faild! Returncode = %i' %cmd_result)
+            raise StandardError('Executing command failed! Return code = %i' %cmd_result)
         
-        # At this point executing comand line was successful
+        # At this point executing command line was successful
         # Now a UrbanSim header is added to the generated binding classes
         
         # read whole file
@@ -128,13 +130,9 @@ class UpdateBindingClass(object):
         try:
             f.write(content)
         except Exception:
-            logger.log_error("Error occured while adding the UrbanSim header to the binding class.")
+            logger.log_error("Error occurred while adding the UrbanSim header to the binding class.")
         finally:
             f.close()
-        
-        # clean up down loaded xsd
-        if os.path.exists(self.temp_dir):
-            rmtree(self.temp_dir)
         
         logger.log_status('Successful finished. Exit program.')
         logger.end_block()

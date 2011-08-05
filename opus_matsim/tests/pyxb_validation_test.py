@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 University of California, Berkeley, 2005-2009 University of Washington and Kai Nagel
 # See opus_core/LICENSE
 
-import os, sys, opus_matsim
+import os, opus_matsim
 from opus_core.logger import logger
 from lxml import etree
 from opus_core.tests import opus_unittest
