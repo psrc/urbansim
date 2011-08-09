@@ -3,7 +3,7 @@
 # See opus_core/LICENSE
 
 from opus_core.estimation_procedure import EstimationProcedure
-from numpy import array, zeros, float32, dot, transpose, concatenate
+from numpy import array, zeros, float32, dot, transpose, concatenate, where
 from numpy import ones, sqrt, diagonal, log
 from opus_core.logger import logger
 from numpy.linalg import inv, det
@@ -20,10 +20,10 @@ class estimate_linear_regression(EstimationProcedure):
         tvalues = result.get("other_measures")["t_statistic"]
         constant_position = result.get("constant_position")
         nvar = len(names)
-        if constant_position >= 0:
-            const_shift = 1
-        else:
-            const_shift = 0
+        valuesidx = ones(values.size, dtype='bool8')
+        if constant_position >= 0:           
+            valuesidx[constant_position]=False
+        valuesidx = where(valuesidx)[0]
         info = result['other_info']
         nobs = info.get('nobs')
         Rsquared = info.get('R-Squared') 
@@ -39,7 +39,7 @@ class estimate_linear_regression(EstimationProcedure):
         if constant_position >= 0:
             logger.log_status("%10s\t%8g\t%8g\t%8g" % ("constant", values[constant_position], standard_errors[constant_position], tvalues[constant_position]), tags=tags, verbosity_level=verbosity_level)
         for i in range(nvar):
-            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i], values[i+const_shift], standard_errors[i+const_shift], tvalues[i+const_shift]), tags=tags, verbosity_level=verbosity_level)
+            logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i], values[valuesidx][i], standard_errors[valuesidx][i], tvalues[valuesidx][i]), tags=tags, verbosity_level=verbosity_level)
         
         logger.log_status("===============================================", tags=tags, verbosity_level=verbosity_level)
         #logger.log_status(tags=tags, verbosity_level=verbosity_level)
@@ -79,7 +79,7 @@ class estimate_linear_regression(EstimationProcedure):
             logger.log_warning("Estimation led to singular matrix. No results.",
                                tags=tags, verbosity_level=vl)
             return {}
-        if det(Csquared) < 1e-20:
+        if det(Csquared) < 1e-25:
             logger.log_warning("Estimation may led to singularities. Results may be not correct.")
         tmp = dot(Csquared, tX)
         estimates = dot(tmp,outcome)
