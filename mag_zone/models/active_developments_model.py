@@ -8,7 +8,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 from opus_core.datasets.dataset import Dataset, DatasetSubset
-from numpy import where, minimum, array, in1d
+from numpy import where, minimum, array, in1d, unique1d
 from prettytable import PrettyTable
 from opus_core.misc import DebugPrinter
 
@@ -25,15 +25,13 @@ class ActiveDevelopmentsModel(Model):
         self.debug = DebugPrinter(debuglevel)
         self.debuglevel = debuglevel
 
-    def run(self, percent_active_development=100, year=None):
+    def run(self, percent_active_development=100, year=None, dataset_pool=None,
+            capacity_this_year_variable='mag_zone.active_development.capacity_this_year'):
         # General TODO:
-        #    - deal with target_vacancies table with subarea_ids in it
-        #        - do i need to worry about it if this column is present?
-        #    - create unit tests
-        #    - test with non-residential development
-        #    - test ADM with other zone models
-        #    - test ADM with developments that began prior to the base_year
-        #    - deal with redevelopment here at all?
+        #    - create more unit tests
+        #    - deal w/ "other_spaces" columns
+        #    - look at generalizing the weight used when building units
+        #    - low priority: percent_active_development by building type?
 
         # LIST OF MODEL ASSUMPTIONS:
         #    - TODO: can i generalize the need for these pre-defined variables?
@@ -51,18 +49,23 @@ class ActiveDevelopmentsModel(Model):
         # Get current simulation year
         if year is None:
             simulation_year = SimulationState().get_current_time()
+        else:
+            simulation_year = year
 
         # Get the percent_active_development
         # convert it to a float
         percent_active_development = percent_active_development / 100.0
 
         # Get the dataset pool
-        dataset_pool = SessionConfiguration().get_dataset_pool()
+        if dataset_pool is None:
+            dataset_pool = SessionConfiguration().get_dataset_pool()
+        else:
+            dataset_pool = dataset_pool
 
         # get the active_developments dataset, subset it for actually active projects
         # compute some variables
         developments_dataset = dataset_pool.get_dataset('active_developments')
-        active_developments_capacity = developments_dataset.compute_variables(['mag_zone.active_development.capacity_this_year'])
+        active_developments_capacity = developments_dataset.compute_variables([capacity_this_year_variable])
         # TODO: need to further filter active developments, not only by start_year<=simulation_year,
         #       but also by whether they are built out, etc.
         active_developments_index = where(developments_dataset.get_attribute('start_year')<=simulation_year)[0]
@@ -79,15 +82,16 @@ class ActiveDevelopmentsModel(Model):
         # get target vacancy rates for this simulation_year
         this_year_index = where(target_vacancy_rates_dataset.get_attribute('year')==simulation_year)[0]
         target_vacancies_for_this_year = DatasetSubset(target_vacancy_rates_dataset, this_year_index)
-        developing_building_type_ids = target_vacancies_for_this_year.get_attribute('building_type_id')
-        target_vacancy_rates = target_vacancies_for_this_year.get_attribute('target_vacancy')
-
+        # get some columns
+        bldg_types = target_vacancies_for_this_year.get_attribute('building_type_id')
+        tgt_vacancies = target_vacancies_for_this_year.get_attribute('target_vacancy')
+        # get unique building types
+        unique_building_types = unique1d(bldg_types)
         # build a dictionary containing building_type_id:{'target_vacancy_rate':<float>}
         developing_building_types_info = {}
-        counter = 0
-        for developing_building_type in developing_building_type_ids:
-            developing_building_types_info[developing_building_type] = {'target_vacancy_rate':target_vacancy_rates[counter]}
-            counter += 1
+        for unique_building_type in unique_building_types:
+            unique_building_type_index = where(bldg_types==unique_building_type)[0]
+            developing_building_types_info[unique_building_type] = {'target_vacancy_rate':tgt_vacancies[unique_building_type_index].mean()}
         # debug help
         if self.debuglevel > 0:
             self.debug_printer('developing_building_types_info', developing_building_types_info)
@@ -254,53 +258,30 @@ class ActiveDevelopmentsModel(Model):
                 weight_array = weights/weights_sum
                 # distribute the total to build against the weight
                 action_array = (total_action * weight_array).astype('int32')
-                print 'current_built_units'
-                print current_built_units
-                print 'action_array'
-                print action_array
                 new_built_units = current_built_units + action_array
                 # update the current_built_units column with new values
                 developments_building_ids = developments_dataset.get_attribute('building_id')
                 building_ids_to_be_updated = developments_building_ids[active_developments_index][indx]
                 if self.debuglevel > 0:
-                    print '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
                     self.debug_printer('building_ids_to_be_updated', building_ids_to_be_updated)
-                    print building_ids_to_be_updated.size
                 building_ids_to_be_updated_index_on_developments = in1d(developments_building_ids,building_ids_to_be_updated)
                 developments_dataset.set_values_of_one_attribute('current_built_units',new_built_units,building_ids_to_be_updated_index_on_developments)
-
                 # debug help
                 if self.debuglevel > 0:
                     self.debug_printer('new_built_units', new_built_units)
-                    print new_built_units.size
-                    print new_built_units.sum()
-
 
                 # update the relevant units column on the buildings dataset with new units
-                #building_ids = buildings_dataset.get_attribute('building_id')
-                #building_ids_to_be_updated = building_ids[active_developments_index][indx]
                 # debug help
                 if self.debuglevel > 0:
                     self.debug_printer('building_ids_to_be_updated', building_ids_to_be_updated)
-                    print building_ids_to_be_updated.size
-
-                #TRY THIS from add_projects_to_buildings_model
-                #building_index = where(building_identifier==this_identifier)[0]
-                #MY OLD LINE:
-                #building_ids_to_be_updated_index_on_buildings = in1d(building_ids,building_ids_to_be_updated)
-                #MY NEW LINE:
                 building_ids_to_be_updated_index_on_buildings = buildings_dataset.get_id_index(building_ids_to_be_updated)
                 # debug help
                 if self.debuglevel > 0:
                     self.debug_printer('building_ids_to_be_updated_index_on_buildings', building_ids_to_be_updated_index_on_buildings)
-                    #print "THis many are TRUE: %s" % building_ids_to_be_updated_index_on_buildings.tolist().count(True)
-                    print "building_ids_to_be_updated_index_on_buildings.size = %s" % building_ids_to_be_updated_index_on_buildings.size 
                 if developing_building_types_info[developing_building_type]['is_residential']:
                     buildings_dataset.set_values_of_one_attribute('residential_units',new_built_units,building_ids_to_be_updated_index_on_buildings)
                 else:
                     buildings_dataset.set_values_of_one_attribute('non_residential_sqft',new_built_units,building_ids_to_be_updated_index_on_buildings)
-
-        #dataset_pool.flush_loaded_datasets()
 
 
     def debug_printer(self, name, item_to_print):
@@ -330,42 +311,94 @@ class ActiveDevelopmentsModel(Model):
 
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import array
 
 class ActiveDevelopmentsModelTest(opus_unittest.OpusTestCase):
     def setUp(self):
+        # set up test data
         active_developments_data= {
-                    'active_development_id' : array([1,2]),
-                    'building_id' : array([1,2]),
-                    'start_year' : array([]),
-                    'building_type_id' : array([]),
-                    'build_out_capacity' : array([]),
-                    'max_annual_capacity' : array([]),
-                    'current_built_units' : array([]),
-                    'other_spaces_name' : array([]),
-                    'other_spaces' : array([]),
+                    'active_developments_id' : array([1,2,3,4]),
+                    'building_id' : array([1,2,3,4]),
+                    'start_year' : array([2010,2010,2010,2010]),
+                    'building_type_id' : array([1,2,3,4]),
+                    'build_out_capacity' : array([104,1052,10316,103211]),
+                    'max_annual_capacity' : array([4,52,516,4211]),
+                    'current_built_units' : array([100,1000,10000,99000]),
                                    }
         buildings_data = {
-                    'building_id' : array([1,2]),
-                    '' : array([]),
-                    '' : array([]),
+                    'building_id' : array([1,2,3,4]),
+                    'building_type_id' : array([1,2,3,4]),
+                    'residential_units' : array([100,1000,0,0]),
+                    'residential_units_capacity' : array([104,1052,0,0]),
+                    'non_residential_sqft' : array([0,0,10000,100000]),
+                    'non_residential_sqft_capacity' : array([0,0,10316,103211]),
+                    'total_rsf_units_col' : array([100.0,0,0,0]),
+                    'occupied_rsf_units_col' : array([99.0,0,0,0]),
+                    'total_rmf_units_col' : array([0,1000.0,0,0]),
+                    'occupied_rmf_units_col' : array([0,999.0,0,0]),
+                    'total_ret_units_col' : array([0,0,10000.0,0]),
+                    'occupied_ret_units_col' : array([0,0,9800.0,0]),
+                    'total_ind_units_col' : array([0,0,0,100000.0]),
+                    'occupied_ind_units_col' : array([0,0,0,99000.0]),
                           }
         building_types_data = {
-                    'building_type_id' : array([1,2]),
-                    'building_type_name' : array(['rsf','rmf']),
-                    'is_residential' : array([1,1]),
+                    'building_type_id' : array([1,2,3,4]),
+                    'building_type_name' : array(['rsf','rmf','ret','ind']),
+                    'is_residential' : array([1,1,0,0]),
+                    'is_developing_type' : array([1,1,1,1]),
                                }
         target_vacacy_data = {
-                    'year' : array([2010,2010]),
-                    'target_vacancy' : array([0.05,0.05]),
-                    'building_type_id' : array([1,2]),
-                    'is_residential' : array([1,1]),
+                    'target_vacancy_id' : array([1,2,3,4]),
+                    'year' : array([2010,2010,2010,2010]),
+                    'target_vacancy' : array([0.05,0.05,0.05,0.05]),
+                    'building_type_id' : array([1,2,3,4]),
+                    'is_residential' : array([1,1,0,0]),
                               }
-
+        
+        # set up storage and a dataset pool
         storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name = 'active_developments', table_data = active_developments_data)
+        storage.write_table(table_name = 'buildings', table_data = buildings_data)
+        storage.write_table(table_name = 'building_types', table_data = building_types_data)
+        storage.write_table(table_name = 'target_vacancies', table_data = target_vacacy_data)
+        self.dataset_pool = DatasetPool(storage = storage, package_order = ['opus_core'])
+        self.buildings = self.dataset_pool.get_dataset('building')
+        self.active_developments = self.dataset_pool.get_dataset('active_developments')
 
-    def test_one_test(self):
-        print ''
+    def test_residential_building_types(self):
+        # set up and run the model
+        model = ActiveDevelopmentsModel(debuglevel=0)
+        capacity_this_year = 'numpy.minimum((active_developments.build_out_capacity - active_developments.current_built_units),active_developments.max_annual_capacity)'
+        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year)
+        
+        # Check that the buildings dataset was updated properly
+        buildings_result = self.buildings.get_attribute('residential_units')
+        self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==1] == 104, True)
+        self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==2] == 1052, True)
+        
+        # Check that the active_developments dataset was updated properly
+        active_developments_result = self.active_developments.get_attribute('current_built_units')
+        self.assertEqual(active_developments_result[self.active_developments.get_attribute('building_type_id')==1] == 104, True)
+        self.assertEqual(active_developments_result[self.active_developments.get_attribute('building_type_id')==2] == 1052, True)
+        
+    def test_non_residential_types(self):
+        # set up and run the model
+        model = ActiveDevelopmentsModel(debuglevel=0)
+        capacity_this_year = 'numpy.minimum((active_developments.build_out_capacity - active_developments.current_built_units),active_developments.max_annual_capacity)'
+        model.run(year=2010, dataset_pool=self.dataset_pool, capacity_this_year_variable=capacity_this_year)
+        
+        # Check that the buildings dataset was updated properly       
+        buildings_result = self.buildings.get_attribute('non_residential_sqft')
+        print buildings_result
+        self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==3] == 10316, True)
+        self.assertEqual(buildings_result[self.buildings.get_attribute('building_type_id')==4] == 103211, True)        
+
+        # Check that the active_developments dataset was updated properly
+        active_developments_result = self.active_developments.get_attribute('current_built_units')
+        self.assertEqual(active_developments_result[self.active_developments.get_attribute('building_type_id')==3] == 10316, True)
+        self.assertEqual(active_developments_result[self.active_developments.get_attribute('building_type_id')==4] == 103211, True)
+
 
 if __name__=="__main__":
     opus_unittest.main()

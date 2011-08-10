@@ -94,7 +94,7 @@
             <argument name="model_name" parser_action="quote_string" type="string">Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==1)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)</argument>
+            <argument convert_blank_to_none="True" name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==1)*(urbansim_zone.building.developable_residential_units_capacity&gt;0)*(building.active_development_id&gt;0)</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
@@ -166,7 +166,7 @@
             <argument name="model_name" parser_action="quote_string" type="string">Non-Residential Development Project Location Choice Model</argument>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
-            <argument name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==0)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)</argument>
+            <argument name="filter" parser_action="quote_string" type="string">(urbansim_zone.building.is_residential==0)*(urbansim_zone.building.developable_non_residential_sqft_capacity&gt;0)*(building.active_development_id&gt;0)</argument>
             <argument name="run_config" type="dictionary">
               <key name="lottery_max_iterations" type="integer">3</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string">residential_units</key>
@@ -263,7 +263,7 @@
             <argument convert_blank_to_none="True" parser_action="quote_string" name="filter" type="string"/>
             <argument name="variable_package" parser_action="quote_string" type="string">urbansim_zone</argument>
             <argument name="run_config" type="dictionary">
-              <key name="lottery_max_iterations" type="integer">3</key>
+              <key name="lottery_max_iterations" type="integer">10</key>
               <key convert_blank_to_none="True" name="agent_units_string" type="string"/>
             </argument>
             <argument name="location_set" type="string">building</argument>
@@ -286,7 +286,7 @@
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">job</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
             <argument name="agents_index" type="string">erm_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
@@ -324,7 +324,7 @@
             <argument name="chunk_specification" type="string">{'nchunks':1}</argument>
             <argument name="agent_set" type="string">household</argument>
             <argument name="specification" type="string">specification</argument>
-            <argument name="maximum_runs" type="integer">3</argument>
+            <argument name="maximum_runs" type="integer">10</argument>
             <argument name="agents_index" type="string">hrm_index</argument>
             <argument name="data_objects" type="string">datasets</argument>
             <argument name="debuglevel" type="string">debuglevel</argument>
@@ -341,7 +341,7 @@
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>
             <argument name="number_of_agents_string" parser_action="quote_string" type="string">number_of_households</argument>
             <argument convert_blank_to_none="True" name="number_of_units_string" type="string">"residential_units"</argument>
-            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 3, })</argument>
+            <argument name="run_config" type="string">Resources({'lottery_max_iterations': 10, })</argument>
             <argument name="location_set" type="string">building</argument>
             <argument convert_blank_to_none="True" name="estimation_size_agents" type="string"/>
             <argument name="sampler" parser_action="quote_string" type="string">opus_core.samplers.weighted_sampler</argument>
