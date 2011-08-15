@@ -27,6 +27,8 @@ class UpdateBindingClass(object):
         else:
             xsd_location = xsd_file
         
+        xsd_location = '"file:' + xsd_location + '"'
+        
         # name of output package, where the generated bindig classes will be stored
         if binding_class_name == None:
             logger.log_note('Name for PyXB binding class is None! ')
@@ -93,11 +95,10 @@ class UpdateBindingClass(object):
         #===========================================================================
         
         # change to binding class destination directory 
-        # os.chdir(binding_class_destination)
+        os.chdir(binding_class_destination)
         
         # command line to generate xml binding classes as explained above
-        cmd = 'cd %(binding_class_destination)s ; %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
-            'binding_class_destination': binding_class_destination,
+        cmd = 'start python %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
             'pyxbgen': pyxb_gen,
             'xsd_location': xsd_location,
             'output': self.output_pyxb_package_name}

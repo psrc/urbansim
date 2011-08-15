@@ -33,9 +33,9 @@
     <templates hidden="True" parser_action="skip" name="Model Templates"/>
     <travel_model_configuration type="dictionary">
       <models type="selectable_list">
-        <selectable type="selectable" name="opus_matsim.models.get_cache_data_into_matsim">True</selectable>
-        <selectable type="selectable" name="opus_matsim.tests.run_dummy_travel_model">True</selectable>
-        <selectable type="selectable" name="opus_matsim.models.get_matsim_data_into_cache">True</selectable>
+        <selectable type="selectable" name="opus_matsim.archive.models.get_cache_data_into_matsim">True</selectable>
+        <selectable type="selectable" name="opus_matsim.archive.tests.run_dummy_travel_model">True</selectable>
+        <selectable type="selectable" name="opus_matsim.archive.models.get_matsim_data_into_cache">True</selectable>
       </models>
       <sampling_rate type="float">0.01</sampling_rate>
       <matsim_config_filename type="file">opus_matsim/matsim_config/seattle_matsim_0.xml</matsim_config_filename>
