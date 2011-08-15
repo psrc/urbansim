@@ -7,6 +7,7 @@ import time
 import datetime
 import shutil
 import tempfile
+import sys
 from opus_core.logger import logger
 import opus_matsim.models.pyxb_xml_parser as pyxb_path
 from opus_matsim.models.pyxb_xml_parser.load_xsd import LoadXSD
@@ -98,11 +99,17 @@ class UpdateBindingClass(object):
         os.chdir(binding_class_destination)
         
         # command line to generate xml binding classes as explained above
-        cmd = 'start python %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
+        if sys.platform == 'Win32':
+            cmd = 'start python %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
             'pyxbgen': pyxb_gen,
             'xsd_location': xsd_location,
             'output': self.output_pyxb_package_name}
-    
+        else:
+            cmd = '%(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
+                'pyxbgen': pyxb_gen,
+                'xsd_location': xsd_location,
+                'output': self.output_pyxb_package_name}
+
         logger.log_status('Executing command : %s' % cmd)
         # executing command line
         cmd_result = os.system(cmd)
