@@ -43,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
  
         # The paths work as follows: opus_matsim.__path__ is the path of the opus_matsim python module.  So we can use that
         # as anchor ...
-        config_location = os.path.join(opus_matsim.__path__[0], 'tests')
+        config_location = os.path.join(opus_matsim.__path__[0], 'archive', 'tests')
         print "location: ", config_location
         run_config = XMLConfiguration( os.path.join(config_location,"test_config.xml")).get_run_configuration("Test")
         
