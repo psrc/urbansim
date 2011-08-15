@@ -167,7 +167,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
     
     # default: updates with default xsd on matsim.org
-    UpdateBindingClass().run( )
+    #UpdateBindingClass().run( )
+    UpdateBindingClass().run( options.xsd_file_name, None, None, False )
     
     # use this to update a pyxb classes wit custom xsd
     #if options.test_run_flag == 0:

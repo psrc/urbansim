@@ -9,7 +9,7 @@ from opus_core.tests import opus_unittest
 from shutil import rmtree
 import opus_matsim, tempfile
 
-class PyXBBindigClassGeneration(opus_unittest.OpusTestCase):
+class PyXBBindingClassGeneration(opus_unittest.OpusTestCase):
     ''' Testing automatic generation of the PyXB binding class.
         The PyXB binding class is needed to create the MATSim configuration via a xsd.
     '''

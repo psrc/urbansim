@@ -21,14 +21,13 @@ class RunTravelModel(AbstractTravelModel):
 
     def run(self, config, year):
         """Running MATSim.  A lot of paths are relative; the base path is ${OPUS_HOME}/opus_matsim.  As long as ${OPUS_HOME}
-        is correctly set and the matsim tarfile was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
+        is correctly set and the matsim tar-file was unpacked in OPUS_HOME, this should work out of the box.  There may eventually
         be problems with the java version.
         """
 
         logger.start_block("Starting RunTravelModel.run(...)")
         
-        # tnicolai :for debugging
-        #try:
+        #try: # tnicolai :for debugging
         #    import pydevd
         #    pydevd.settrace()
         #except: pass

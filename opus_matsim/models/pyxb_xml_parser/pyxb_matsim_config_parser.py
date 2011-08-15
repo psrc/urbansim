@@ -5,7 +5,7 @@
 # ./pyxb_matsim_config_parser.py
 # PyXB bindings for NamespaceModule
 # NSM:e92452c8d3e28a9e27abfc9994d2007779e7f4c9
-# Generated 2011-08-05 17:14:31.648215 by PyXB version 1.1.1
+# Generated 2011-08-15 14:20:40.318511 by PyXB version 1.1.2
 import pyxb
 import pyxb.binding
 import pyxb.binding.saxer
@@ -15,7 +15,7 @@ import pyxb.utils.domutils
 import sys
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:9eb6dc0c-bf75-11e0-b61c-001b63930ac1')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:fd3fa607-c738-11e0-845f-001b63930ac1')
 
 # Import bindings for namespaces imported into schema
 import pyxb.binding.datatypes
@@ -46,6 +46,38 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, _fallback_namespace=default_namespace)
 
 
+# Complex type matsim_configType with content type ELEMENT_ONLY
+class matsim_configType (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'matsim_configType')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element matsim4urbansim uses Python identifier matsim4urbansim
+    __matsim4urbansim = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'matsim4urbansim'), 'matsim4urbansim', '__AbsentNamespace0_matsim_configType_matsim4urbansim', False)
+
+    
+    matsim4urbansim = property(__matsim4urbansim.value, __matsim4urbansim.set, None, None)
+
+    
+    # Element config uses Python identifier config
+    __config = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'config'), 'config', '__AbsentNamespace0_matsim_configType_config', False)
+
+    
+    config = property(__config.value, __config.set, None, None)
+
+
+    _ElementMap = {
+        __matsim4urbansim.name() : __matsim4urbansim,
+        __config.name() : __config
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'matsim_configType', matsim_configType)
+
+
 # Complex type matsim4urbansimType with content type ELEMENT_ONLY
 class matsim4urbansimType (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -70,6 +102,62 @@ class matsim4urbansimType (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'matsim4urbansimType', matsim4urbansimType)
 
 
+# Complex type urbansimParameterType with content type ELEMENT_ONLY
+class urbansimParameterType (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'urbansimParameterType')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element opusHOME uses Python identifier opusHOME
+    __opusHOME = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'opusHOME'), 'opusHOME', '__AbsentNamespace0_urbansimParameterType_opusHOME', False)
+
+    
+    opusHOME = property(__opusHOME.value, __opusHOME.set, None, None)
+
+    
+    # Element samplingRate uses Python identifier samplingRate
+    __samplingRate = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'samplingRate'), 'samplingRate', '__AbsentNamespace0_urbansimParameterType_samplingRate', False)
+
+    
+    samplingRate = property(__samplingRate.value, __samplingRate.set, None, None)
+
+    
+    # Element isTestRun uses Python identifier isTestRun
+    __isTestRun = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'isTestRun'), 'isTestRun', '__AbsentNamespace0_urbansimParameterType_isTestRun', False)
+
+    
+    isTestRun = property(__isTestRun.value, __isTestRun.set, None, None)
+
+    
+    # Element year uses Python identifier year
+    __year = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__AbsentNamespace0_urbansimParameterType_year', False)
+
+    
+    year = property(__year.value, __year.set, None, None)
+
+    
+    # Element tempDirectory uses Python identifier tempDirectory
+    __tempDirectory = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'tempDirectory'), 'tempDirectory', '__AbsentNamespace0_urbansimParameterType_tempDirectory', False)
+
+    
+    tempDirectory = property(__tempDirectory.value, __tempDirectory.set, None, None)
+
+
+    _ElementMap = {
+        __opusHOME.name() : __opusHOME,
+        __samplingRate.name() : __samplingRate,
+        __isTestRun.name() : __isTestRun,
+        __year.name() : __year,
+        __tempDirectory.name() : __tempDirectory
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'urbansimParameterType', urbansimParameterType)
+
+
 # Complex type networkType with content type ELEMENT_ONLY
 class networkType (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -92,6 +180,30 @@ class networkType (pyxb.binding.basis.complexTypeDefinition):
         
     }
 Namespace.addCategoryObject('typeBinding', u'networkType', networkType)
+
+
+# Complex type inputPlansFileType with content type ELEMENT_ONLY
+class inputPlansFileType (pyxb.binding.basis.complexTypeDefinition):
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'inputPlansFileType')
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element inputFile uses Python identifier inputFile
+    __inputFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'inputFile'), 'inputFile', '__AbsentNamespace0_inputPlansFileType_inputFile', False)
+
+    
+    inputFile = property(__inputFile.value, __inputFile.set, None, None)
+
+
+    _ElementMap = {
+        __inputFile.name() : __inputFile
+    }
+    _AttributeMap = {
+        
+    }
+Namespace.addCategoryObject('typeBinding', u'inputPlansFileType', inputPlansFileType)
 
 
 # Complex type controlerType with content type ELEMENT_ONLY
@@ -158,38 +270,6 @@ class planCalcScoreType (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'planCalcScoreType', planCalcScoreType)
 
 
-# Complex type matsim_configType with content type ELEMENT_ONLY
-class matsim_configType (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'matsim_configType')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element matsim4urbansim uses Python identifier matsim4urbansim
-    __matsim4urbansim = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'matsim4urbansim'), 'matsim4urbansim', '__AbsentNamespace0_matsim_configType_matsim4urbansim', False)
-
-    
-    matsim4urbansim = property(__matsim4urbansim.value, __matsim4urbansim.set, None, None)
-
-    
-    # Element config uses Python identifier config
-    __config = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'config'), 'config', '__AbsentNamespace0_matsim_configType_config', False)
-
-    
-    config = property(__config.value, __config.set, None, None)
-
-
-    _ElementMap = {
-        __matsim4urbansim.name() : __matsim4urbansim,
-        __config.name() : __config
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'matsim_configType', matsim_configType)
-
-
 # Complex type configType with content type ELEMENT_ONLY
 class configType (pyxb.binding.basis.complexTypeDefinition):
     _TypeDefinition = None
@@ -212,6 +292,13 @@ class configType (pyxb.binding.basis.complexTypeDefinition):
     network = property(__network.value, __network.set, None, None)
 
     
+    # Element inputPlansFile uses Python identifier inputPlansFile
+    __inputPlansFile = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'inputPlansFile'), 'inputPlansFile', '__AbsentNamespace0_configType_inputPlansFile', False)
+
+    
+    inputPlansFile = property(__inputPlansFile.value, __inputPlansFile.set, None, None)
+
+    
     # Element controler uses Python identifier controler
     __controler = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'controler'), 'controler', '__AbsentNamespace0_configType_controler', False)
 
@@ -222,6 +309,7 @@ class configType (pyxb.binding.basis.complexTypeDefinition):
     _ElementMap = {
         __planCalcScore.name() : __planCalcScore,
         __network.name() : __network,
+        __inputPlansFile.name() : __inputPlansFile,
         __controler.name() : __controler
     }
     _AttributeMap = {
@@ -230,155 +318,27 @@ class configType (pyxb.binding.basis.complexTypeDefinition):
 Namespace.addCategoryObject('typeBinding', u'configType', configType)
 
 
-# Complex type urbansimParameterType with content type ELEMENT_ONLY
-class urbansimParameterType (pyxb.binding.basis.complexTypeDefinition):
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, u'urbansimParameterType')
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element opusHOME uses Python identifier opusHOME
-    __opusHOME = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'opusHOME'), 'opusHOME', '__AbsentNamespace0_urbansimParameterType_opusHOME', False)
-
-    
-    opusHOME = property(__opusHOME.value, __opusHOME.set, None, None)
-
-    
-    # Element samplingRate uses Python identifier samplingRate
-    __samplingRate = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'samplingRate'), 'samplingRate', '__AbsentNamespace0_urbansimParameterType_samplingRate', False)
-
-    
-    samplingRate = property(__samplingRate.value, __samplingRate.set, None, None)
-
-    
-    # Element year uses Python identifier year
-    __year = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'year'), 'year', '__AbsentNamespace0_urbansimParameterType_year', False)
-
-    
-    year = property(__year.value, __year.set, None, None)
-
-    
-    # Element tempDirectory uses Python identifier tempDirectory
-    __tempDirectory = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'tempDirectory'), 'tempDirectory', '__AbsentNamespace0_urbansimParameterType_tempDirectory', False)
-
-    
-    tempDirectory = property(__tempDirectory.value, __tempDirectory.set, None, None)
-
-    
-    # Element isTestRun uses Python identifier isTestRun
-    __isTestRun = pyxb.binding.content.ElementUse(pyxb.namespace.ExpandedName(None, u'isTestRun'), 'isTestRun', '__AbsentNamespace0_urbansimParameterType_isTestRun', False)
-
-    
-    isTestRun = property(__isTestRun.value, __isTestRun.set, None, None)
-
-
-    _ElementMap = {
-        __opusHOME.name() : __opusHOME,
-        __samplingRate.name() : __samplingRate,
-        __year.name() : __year,
-        __tempDirectory.name() : __tempDirectory,
-        __isTestRun.name() : __isTestRun
-    }
-    _AttributeMap = {
-        
-    }
-Namespace.addCategoryObject('typeBinding', u'urbansimParameterType', urbansimParameterType)
-
-
 matsim_config = pyxb.binding.basis.element(pyxb.namespace.ExpandedName(Namespace, u'matsim_config'), matsim_configType)
 Namespace.addCategoryObject('elementBinding', matsim_config.name().localName(), matsim_config)
-
-
-
-matsim4urbansimType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'urbansimParameter'), urbansimParameterType, scope=matsim4urbansimType))
-matsim4urbansimType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=matsim4urbansimType._UseForTag(pyxb.namespace.ExpandedName(None, u'urbansimParameter'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=True, transitions=[
-    ])
-})
-
-
-
-networkType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputFile'), pyxb.binding.datatypes.token, scope=networkType))
-networkType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=networkType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputFile'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=True, transitions=[
-    ])
-})
-
-
-
-controlerType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastIteration'), pyxb.binding.datatypes.nonNegativeInteger, scope=controlerType))
-
-controlerType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'firstIteration'), pyxb.binding.datatypes.nonNegativeInteger, scope=controlerType))
-controlerType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=controlerType._UseForTag(pyxb.namespace.ExpandedName(None, u'firstIteration'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=3, element_use=controlerType._UseForTag(pyxb.namespace.ExpandedName(None, u'lastIteration'))),
-    ])
-    , 3 : pyxb.binding.content.ContentModelState(state=3, is_final=True, transitions=[
-    ])
-})
-
-
-
-planCalcScoreType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'activityType_1'), pyxb.binding.datatypes.token, scope=planCalcScoreType))
-
-planCalcScoreType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'activityType_0'), pyxb.binding.datatypes.token, scope=planCalcScoreType))
-planCalcScoreType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=planCalcScoreType._UseForTag(pyxb.namespace.ExpandedName(None, u'activityType_0'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=3, element_use=planCalcScoreType._UseForTag(pyxb.namespace.ExpandedName(None, u'activityType_1'))),
-    ])
-    , 3 : pyxb.binding.content.ContentModelState(state=3, is_final=True, transitions=[
-    ])
-})
 
 
 
 matsim_configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'matsim4urbansim'), matsim4urbansimType, scope=matsim_configType))
 
 matsim_configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'config'), configType, scope=matsim_configType))
-matsim_configType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=matsim_configType._UseForTag(pyxb.namespace.ExpandedName(None, u'config'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=3, element_use=matsim_configType._UseForTag(pyxb.namespace.ExpandedName(None, u'matsim4urbansim'))),
-    ])
-    , 3 : pyxb.binding.content.ContentModelState(state=3, is_final=True, transitions=[
-    ])
-})
+matsim_configType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(matsim_configType._UseForTag(pyxb.namespace.ExpandedName(None, u'config')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(matsim_configType._UseForTag(pyxb.namespace.ExpandedName(None, u'matsim4urbansim')), min_occurs=1L, max_occurs=1L)
+    )
+matsim_configType._ContentModel = pyxb.binding.content.ParticleModel(matsim_configType._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
-configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'planCalcScore'), planCalcScoreType, scope=configType))
-
-configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'network'), networkType, scope=configType))
-
-configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'controler'), controlerType, scope=configType))
-configType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=configType._UseForTag(pyxb.namespace.ExpandedName(None, u'network'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=3, element_use=configType._UseForTag(pyxb.namespace.ExpandedName(None, u'controler'))),
-    ])
-    , 3 : pyxb.binding.content.ContentModelState(state=3, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=4, element_use=configType._UseForTag(pyxb.namespace.ExpandedName(None, u'planCalcScore'))),
-    ])
-    , 4 : pyxb.binding.content.ContentModelState(state=4, is_final=True, transitions=[
-    ])
-})
+matsim4urbansimType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'urbansimParameter'), urbansimParameterType, scope=matsim4urbansimType))
+matsim4urbansimType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(matsim4urbansimType._UseForTag(pyxb.namespace.ExpandedName(None, u'urbansimParameter')), min_occurs=1L, max_occurs=1L)
+    )
+matsim4urbansimType._ContentModel = pyxb.binding.content.ParticleModel(matsim4urbansimType._GroupModel, min_occurs=1, max_occurs=1)
 
 
 
@@ -386,27 +346,71 @@ urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.Expa
 
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'samplingRate'), pyxb.binding.datatypes.double, scope=urbansimParameterType))
 
+urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'isTestRun'), pyxb.binding.datatypes.boolean, scope=urbansimParameterType))
+
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'year'), pyxb.binding.datatypes.nonNegativeInteger, scope=urbansimParameterType))
 
 urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'tempDirectory'), pyxb.binding.datatypes.token, scope=urbansimParameterType))
+urbansimParameterType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'samplingRate')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'year')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'tempDirectory')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'isTestRun')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'opusHOME')), min_occurs=1, max_occurs=1)
+    )
+urbansimParameterType._ContentModel = pyxb.binding.content.ParticleModel(urbansimParameterType._GroupModel, min_occurs=1, max_occurs=1)
 
-urbansimParameterType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'isTestRun'), pyxb.binding.datatypes.boolean, scope=urbansimParameterType))
-urbansimParameterType._ContentModel = pyxb.binding.content.ContentModel(state_map = {
-      1 : pyxb.binding.content.ContentModelState(state=1, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=2, element_use=urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'samplingRate'))),
-    ])
-    , 2 : pyxb.binding.content.ContentModelState(state=2, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=3, element_use=urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'year'))),
-    ])
-    , 3 : pyxb.binding.content.ContentModelState(state=3, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=4, element_use=urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'tempDirectory'))),
-    ])
-    , 4 : pyxb.binding.content.ContentModelState(state=4, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=5, element_use=urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'isTestRun'))),
-    ])
-    , 5 : pyxb.binding.content.ContentModelState(state=5, is_final=False, transitions=[
-        pyxb.binding.content.ContentModelTransition(next_state=6, element_use=urbansimParameterType._UseForTag(pyxb.namespace.ExpandedName(None, u'opusHOME'))),
-    ])
-    , 6 : pyxb.binding.content.ContentModelState(state=6, is_final=True, transitions=[
-    ])
-})
+
+
+networkType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputFile'), pyxb.binding.datatypes.token, scope=networkType))
+networkType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(networkType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputFile')), min_occurs=1, max_occurs=1)
+    )
+networkType._ContentModel = pyxb.binding.content.ParticleModel(networkType._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+inputPlansFileType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputFile'), pyxb.binding.datatypes.token, scope=inputPlansFileType))
+inputPlansFileType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(inputPlansFileType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputFile')), min_occurs=1, max_occurs=1)
+    )
+inputPlansFileType._ContentModel = pyxb.binding.content.ParticleModel(inputPlansFileType._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+controlerType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'lastIteration'), pyxb.binding.datatypes.nonNegativeInteger, scope=controlerType))
+
+controlerType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'firstIteration'), pyxb.binding.datatypes.nonNegativeInteger, scope=controlerType))
+controlerType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(controlerType._UseForTag(pyxb.namespace.ExpandedName(None, u'firstIteration')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(controlerType._UseForTag(pyxb.namespace.ExpandedName(None, u'lastIteration')), min_occurs=1, max_occurs=1)
+    )
+controlerType._ContentModel = pyxb.binding.content.ParticleModel(controlerType._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+planCalcScoreType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'activityType_1'), pyxb.binding.datatypes.token, scope=planCalcScoreType))
+
+planCalcScoreType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'activityType_0'), pyxb.binding.datatypes.token, scope=planCalcScoreType))
+planCalcScoreType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(planCalcScoreType._UseForTag(pyxb.namespace.ExpandedName(None, u'activityType_0')), min_occurs=1, max_occurs=1),
+    pyxb.binding.content.ParticleModel(planCalcScoreType._UseForTag(pyxb.namespace.ExpandedName(None, u'activityType_1')), min_occurs=1, max_occurs=1)
+    )
+planCalcScoreType._ContentModel = pyxb.binding.content.ParticleModel(planCalcScoreType._GroupModel, min_occurs=1, max_occurs=1)
+
+
+
+configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'planCalcScore'), planCalcScoreType, scope=configType))
+
+configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'network'), networkType, scope=configType))
+
+configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'inputPlansFile'), inputPlansFileType, scope=configType))
+
+configType._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, u'controler'), controlerType, scope=configType))
+configType._GroupModel = pyxb.binding.content.GroupSequence(
+    pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'network')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'inputPlansFile')), min_occurs=0L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'controler')), min_occurs=1L, max_occurs=1L),
+    pyxb.binding.content.ParticleModel(configType._UseForTag(pyxb.namespace.ExpandedName(None, u'planCalcScore')), min_occurs=1L, max_occurs=1L)
+    )
+configType._ContentModel = pyxb.binding.content.ParticleModel(configType._GroupModel, min_occurs=1, max_occurs=1)

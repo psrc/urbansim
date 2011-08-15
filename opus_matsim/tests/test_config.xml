@@ -44,6 +44,7 @@
       <matsim_config type="dictionary">
         <common type="dictionary">
           <matsim_network_file type="file">data/psrc/network/psrc.xml.gz</matsim_network_file>
+          <input_plans_file type="file"></input_plans_file>
           <first_iteration type="integer">0</first_iteration>
           <last_iteration type="integer">1</last_iteration>
           <activityType_0 type="string">home</activityType_0>

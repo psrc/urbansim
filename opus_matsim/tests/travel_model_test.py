@@ -15,7 +15,7 @@ import os, tempfile
 # files in eugene/tests may serve as examples ...
 
 
-class TestingInstallation(opus_unittest.OpusTestCase):
+class TravelModelTest(opus_unittest.OpusTestCase):
     
     def setUp(self):
         print "entering setUp"

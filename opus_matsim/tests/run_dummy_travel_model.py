@@ -27,6 +27,11 @@ class RunDummyTravelModel(AbstractTravelModel):
         
         print >> sys.stderr, "\nThis should also check if get_cache_data_into_matsim did something reasonable"
         
+        #try: # tnicolai :for debugging
+        #    import pydevd
+        #    pydevd.settrace()
+        #except: pass
+        
         self.setUp( config )
         
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
