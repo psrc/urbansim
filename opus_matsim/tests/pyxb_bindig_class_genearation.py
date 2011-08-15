@@ -44,7 +44,7 @@ class PyXBBindingClassGeneration(opus_unittest.OpusTestCase):
         
         logger.log_status( "Creating a new binding class" )
         # starts creating a new binding class
-        return_code = update_xml_parser.UpdateBindingClass().run( self.xsd_file, self.temp_dir, None, True )
+        return_code = update_xml_parser.UpdateBindingClass().run( self.xsd_file, self.temp_dir, None, False )
         
         self.assertTrue(return_code == 1)
         logger.log_status( "Leaving test run" )

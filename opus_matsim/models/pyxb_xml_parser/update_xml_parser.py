@@ -99,7 +99,7 @@ class UpdateBindingClass(object):
         os.chdir(binding_class_destination)
         
         # command line to generate xml binding classes as explained above
-        if sys.platform == 'Win32':
+        if sys.platform.lower() == 'win32':
             cmd = 'start python %(pyxbgen)s -u %(xsd_location)s -m %(output)s' % {
             'pyxbgen': pyxb_gen,
             'xsd_location': xsd_location,
@@ -116,6 +116,11 @@ class UpdateBindingClass(object):
         # checking if some error occurred
         if cmd_result != 0:
             raise StandardError('Executing command failed! Return code = %i' %cmd_result)
+        
+        # Now wait 1 sec to finish writing the new generated xml parser
+        logger.log_note('Finish writing new generated xml parser ...')
+        time.sleep(1)
+        logger.log_note('...done.')
         
         # At this point executing command line was successful
         # Now a UrbanSim header is added to the generated binding classes

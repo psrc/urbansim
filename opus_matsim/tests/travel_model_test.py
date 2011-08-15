@@ -34,7 +34,7 @@ class TravelModelTest(opus_unittest.OpusTestCase):
 #        if os.path.exists(cache_dir):
 #            rmtree(cache_dir)
         if os.path.exists(self.temp_dir):
-            rmtree(self.temp_dir)
+            rmtree(self.temp_dir, True) # if second argument == True ignores errors (no exception raised)
         print "leaving cleanup_test_run"
         
     def test_run(self):
