@@ -75,9 +75,11 @@ class RealEstateTransitionModel(Model):
         
         independent_variables = list(set([re.sub('_max$', '', re.sub('_min$', '', col)) for col in column_names]))
         dataset_known_attributes = realestate_dataset.get_known_attribute_names()
+        sample_dataset_known_attributes = sample_from_dataset.get_known_attribute_names()
         for variable in independent_variables:
             if variable not in dataset_known_attributes:
                 realestate_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
+            if variable not in sample_dataset_known_attributes:
                 sample_from_dataset.compute_one_variable_with_unknown_package(variable, dataset_pool=dataset_pool)
                 
         dataset_known_attributes = realestate_dataset.get_known_attribute_names() #update after compute
@@ -161,6 +163,8 @@ class RealEstateTransitionModel(Model):
                 if legit_index.size > 0:
                     mean_size = total_spaces_in_sample_dataset[legit_index].mean()
                     num_of_projects_to_sample = int( diff / mean_size )
+                    ##sampled at least 1 project when diff > 0, otherwise it is a endless loop when num_of_projects_to_sample = 0
+                    num_of_projects_to_sample = num_of_projects_to_sample if num_of_projects_to_sample > 0 else 1
                     while total_spaces_in_sample_dataset[this_sampled_index].sum() < diff:
                         lucky_index = sample_replace(legit_index, num_of_projects_to_sample)
                         this_sampled_index = concatenate((this_sampled_index, lucky_index))
@@ -198,7 +202,8 @@ class RealEstateTransitionModel(Model):
             ### to be more cautious, copy the data to be cloned, remove elements, then append the cloned data
             ##realestate_dataset.duplicate_rows(sampled_index)
             result_data.setdefault(year_built, resize(year, sampled_index.size).astype('int32'))
-            for attribute in sample_from_dataset.get_primary_attribute_names():
+            ## also add 'independent_variables' to the new dataset
+            for attribute in set(sample_from_dataset.get_primary_attribute_names() + independent_variables):
                 if reset_attribute_value.has_key(attribute):
                     result_data[attribute] = resize(array(reset_attribute_value[attribute]), sampled_index.size)
                 else:
