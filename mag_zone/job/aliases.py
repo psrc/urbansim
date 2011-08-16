@@ -18,5 +18,6 @@
 aliases = [
     'mpa_id = job.disaggregate(building.disaggregate(zone.mpa_id))',
     'raz_id = job.disaggregate(building.disaggregate(zone.raz_id))',
-    'county_id = job.disaggregate(building.disaggregate(zone.county_id))'
+    'county_id = job.disaggregate(building.disaggregate(zone.county_id))',
+    'is_pub_employment = (job.sector_id == 20)'
            ]
