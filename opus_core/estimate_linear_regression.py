@@ -13,7 +13,7 @@ class estimate_linear_regression(EstimationProcedure):
     """    Class for estimating linear regression.
     """
 
-    def print_results(self, result, constant_position, tags=["estimate", "result"], verbosity_level=2):
+    def print_results(self, result, tags=["estimate", "result"], verbosity_level=2):
         names = result.get('coefficient_names')
         values = result.get('estimators')
         standard_errors = result.get('standard_errors')
@@ -127,7 +127,7 @@ class estimate_linear_regression(EstimationProcedure):
                   "constant_position":constant_position
                   }
 
-        self.print_results(result, constant_position=constant_position, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
+        self.print_results(result, tags=tags, verbosity_level=vl) #resources, tags, vl, nobs, nvar, constant_position, estimates, standard_errors, Rsquared, Rsquared_adj, start, i)
 
         return result
 
