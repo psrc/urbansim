@@ -30,6 +30,11 @@ aliases = [
     "total_rsf_units_col = urbansim_zone.building.is_building_type_rsf * building.residential_units",
     "occupied_rmf_units_col = urbansim_zone.building.is_building_type_rmf * urbansim_zone.building.number_of_households",
     "total_rmf_units_col = urbansim_zone.building.is_building_type_rmf * building.residential_units",      
-
+    "num_of_pub_jobs = building.aggregate(job.sector_id == 20)",
+    "is_building_type_pub = (building.building_type_id == 6)",
+    "weight_for_pub_jobs = mag_zone.building.num_of_pub_jobs + (numpy.logical_and(building.building_type_id == 6, mag_zone.building.num_of_pub_jobs == 0)*(building.non_residential_sqft/50)).astype(int32)",
+    "wah_capacity = building.residential_units * 3",
+    "mpa_population = building.disaggregate(zone.disaggregate(mpa.aggregate(household.persons)))",
+    "mpa_city_jobs = building.disaggregate(mpa.aggregate(mag_zone.building.num_of_pub_jobs))"
            ]
 
