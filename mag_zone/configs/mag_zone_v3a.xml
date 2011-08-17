@@ -26,7 +26,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>

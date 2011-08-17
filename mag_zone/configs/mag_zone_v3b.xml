@@ -26,7 +26,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" parser_action="quote_string" type="string">(mag_zone.control_total.households - mag_zone.control_total.households_lag1) > 0 </argument>            
 	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
@@ -38,7 +38,7 @@
           <run type="dictionary">
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" type="string">10000</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
           </run>
         </structure>
       </model>
@@ -237,7 +237,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_jobs</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_jobs</argument>
             <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
           </run>
         </structure>
@@ -335,7 +335,7 @@
             <argument convert_blank_to_none="True" name="location_id_string" type="string">"building_id"</argument>
             <argument convert_blank_to_none="True" name="submodel_string" type="string">"urbansim.household.income_category"</argument>
             <argument name="capacity_string" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units</argument>
-            <argument name="filter" parser_action="quote_string" type="string">numpy.logical_and(urbansim_zone.building.vacant_residential_units&gt;0,numpy.logical_and(building.disaggregate(building_type.is_residential), numpy.logical_and(numpy.logical_and(building.residential_units,building.sqft_per_unit),building.average_value_per_unit&gt;0)))</argument>
+            <argument name="filter" parser_action="quote_string" type="string">urbansim_zone.building.vacant_residential_units&gt;0</argument>
             <argument convert_blank_to_none="True" name="estimation_weight_string" parser_action="quote_string" type="string"/>
             <argument name="dataset_pool" type="string">dataset_pool</argument>
             <argument name="choices" parser_action="quote_string" type="string">urbansim.lottery_choices</argument>

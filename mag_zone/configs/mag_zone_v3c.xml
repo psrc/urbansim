@@ -226,7 +226,7 @@
           </prepare_for_run>
           <run type="dictionary">
             <argument name="year" type="string">year</argument>
-            <argument name="target_attribute_name" parser_action="quote_string" type="string">number_of_households</argument>
+            <argument name="target_attribute_name" parser_action="quote_string" type="string">total_number_of_households</argument>
             <argument name="sampling_hierarchy" type="string">['mpa_id', 'county_id']</argument>
             <argument name="sampling_threshold" parser_action="quote_string" type="string">(mag_zone.control_total.households - mag_zone.control_total.households_lag1) > 0 </argument>            
 	    <argument name="reset_dataset_attribute_value" type="string">{'building_id':-1}</argument>
