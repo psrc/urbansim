@@ -26,11 +26,11 @@ class MATSimConfigObject(object):
         self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'])
         # input plans file parameter
         self.input_plans_file = ""
-        if common_matsim_part['input_plans_file'] != None:
-            self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['input_plans_file'])
-            logger.log_note('Input plans file found (MATSim warm start enabled).')
-        else:
-            logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
+        try:           
+            if common_matsim_part['input_plans_file'] != None:
+                self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['input_plans_file'])
+                logger.log_note('Input plans file found (MATSim warm start enabled).')
+        except: logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
         # controler parameter
         self.first_iteration = common_matsim_part['first_iteration']
         self.last_iteration = common_matsim_part['last_iteration']
