@@ -1,0 +1,165 @@
+<opus_project>
+  <xml_version>2.0</xml_version>
+  <general>
+    <description type="string">washtenaw parcel project run by sub-area (large_area)</description>
+    <project_name hidden="True" type="string">semcog_subarea</project_name>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <expression_library type="dictionary">
+    </expression_library>
+    <available_datasets type="list">['parcel','building','household_x_building','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
+    <spatial_datasets type="list">['zone','large_area','city','county']</spatial_datasets>
+  </general>
+  <model_manager>
+    <travel_model_configuration type="dictionary">
+      <transcad_binary type="string">C:\\Program Files (x86)\\TransCAD\\tcw.exe</transcad_binary>
+      <project_ini type="string">C:\\Program Files (x86)\\TransCAD\\semcog_e5.ini</project_ini>
+      <travel_model_base_directory type="string">D:\\semcog_e5_35\\</travel_model_base_directory>
+      <ui_file type="string">D:\\semcog_e5_35\\semcog_e5_ui</ui_file> <!-- relative to <directory> -->
+      <urbansim_to_tm_variable_mapping type="dictionary">
+           <DataTable type="string">TAZ Data Table</DataTable>
+           <JoinField type="string">ZoneID</JoinField>
+           <variable_mapping type="dictionary">
+             <variable name="zone.zone_id" type="string">ZoneID</variable>
+             <variable name="urbansim_parcel.zone.population" type="string">Population</variable>
+             <variable name="urbansim_parcel.zone.number_of_households" type="string">Households</variable>
+             <variable name="urbansim_parcel.zone.number_of_jobs" type="string">Total_Emp</variable>
+             <variable name="zone.aggregate(urbansim.job.is_in_employment_sector_group_basic)" type="string">Basic</variable>
+			 <!--
+             <variable name="zone.aggregate(urbansim.job.is_in_employment_sector_group_nonbasic)" type="string">NonBasic</variable>
+			 -->
+             <variable name="urbansim_parcel.zone.number_of_jobs_of_sector_4" type="string">WholeSale</variable>
+             <variable name="urbansim_parcel.zone.number_of_jobs_of_sector_5" type="string">Retail</variable>
+	   </variable_mapping>
+       </urbansim_to_tm_variable_mapping>
+       <tm_to_urbansim_variable_mapping type="dictionary">
+             <row_index_name type="string">ZoneID</row_index_name>
+             <col_index_name type="string">ZoneID</col_index_name>
+             <matrix name="AMHwySkims" type="dictionary">
+                     <variable name="Miles" type="string">highway_distance</variable>
+                     <variable name="Trav_Time" type="string">highway_travel_time</variable>
+             </matrix>
+             <matrix name="AMTransitSkim" type="dictionary">
+                     <variable name="Generalized Cost" type="string">generalized_cost</variable>
+             </matrix>             
+       </tm_to_urbansim_variable_mapping>
+       <macro type="dictionary">
+           <get_cache_data_into_transcad type="string">SEMCOGImportTabFile</get_cache_data_into_transcad>
+	   	   <get_transcad_data_into_cache type="string">SEMCOGExportMatrices</get_transcad_data_into_cache>
+	       <run_semcog_travel_model type="string">SEMCOG Run Loops</run_semcog_travel_model>
+	       <get_file_location type="string">SEMCOGGetFileLocation</get_file_location>
+       </macro>
+      <locations_to_disaggregate type="list">['parcel', 'building']</locations_to_disaggregate>
+      <models type="selectable_list">
+        <selectable name="opus_transcad.models.get_cache_data_into_transcad" type="selectable">True</selectable>
+        <selectable name="opus_transcad.models.run_semcog_travel_model" type="selectable">True</selectable>
+        <selectable name="opus_transcad.models.get_transcad_data_into_cache" type="selectable">True</selectable>
+      </models>
+  </travel_model_configuration>    
+  </model_manager>
+  <scenario_manager>
+    <scenario executable="True" name="washtenaw_baseline_with_travel_model" type="scenario">
+	<!--
+      <parent type="scenario_name">washtenaw_baseline</parent>
+	  -->
+	  <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+	  <base_year type="integer">2008</base_year>
+      <years_to_run config_name="years" type="tuple">
+        <firstyear type="integer">2009</firstyear>
+        <lastyear type="integer">2009</lastyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <selectable type="selectable" name="real_estate_price_model">True</selectable>
+        <selectable type="selectable" name="expected_sale_price_model">False</selectable>
+        <selectable type="selectable" name="development_proposal_choice_model">False</selectable>
+        <selectable type="selectable" name="building_construction_model">False</selectable>
+        <selectable type="selectable" name="household_transition_model">False</selectable>
+        <selectable type="selectable" name="employment_transition_model">False</selectable>
+        <selectable type="selectable" name="household_relocation_model">False</selectable>
+        <selectable type="selectable" name="household_location_choice_model">False</selectable>
+        <selectable type="selectable" name="employment_relocation_model">False</selectable>
+        <selectable type="selectable" name="employment_location_choice_model">False<group_members type="string">_all_</group_members>
+        </selectable>
+        <selectable type="selectable" name="governmental_employment_location_choice_model">False</selectable>
+      </models_to_run>	  
+      <creating_baseyear_cache_configuration type="class">
+        <class_name hidden="FALSE" type="string">CreatingBaseyearCacheConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.creating_baseyear_cache_configuration</class_module>
+        <argument config_name="cache_directory_root" name="scenario_runs_directory" parser_action="prefix_with_opus_data_path" type="directory">semcog_subarea/runs</argument>
+        <argument name="existing_cache_to_copy" parser_action="prefix_with_opus_data_path" type="directory">semcog_subarea/base_year_data</argument>
+        <argument name="cache_from_database" type="boolean">False</argument>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <class_name hidden="FALSE" type="string">DatasetPoolConfiguration</class_name>
+        <class_module hidden="FALSE" type="string">opus_core.configurations.dataset_pool_configuration</class_module>
+        <argument name="package_order" type="list">['washtenaw', 'psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</argument>
+      </dataset_pool_configuration>
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <selectable type="selectable" name="zone">True</selectable>
+          <selectable type="selectable" name="household">True</selectable>
+          <selectable type="selectable" name="building">True</selectable>
+          <selectable type="selectable" name="parcel">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="person">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_project_proposal_component">False<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_project_proposal">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_template">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="development_template_component">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="job">True</selectable>
+          <selectable type="selectable" name="building_type">True<package_name type="string">urbansim_parcel</package_name>
+          </selectable>
+          <selectable type="selectable" name="travel_data">True</selectable>
+          <selectable type="selectable" name="job_building_type">False</selectable>
+      </datasets_to_preload>
+      <travel_model_configuration type="dictionary">
+		  <travel_model_base_directory type="string">D:\\semcog_e5_35</travel_model_base_directory>
+		  <ui_file type="string">D:\\semcog_e5_35\\semcog_e5_ui</ui_file>
+		  <years_to_run key_name="year" type="category_with_special_keys">
+			<run_description type="dictionary">
+			  <year type="integer">2000</year>
+			  <data_dir type="string"></data_dir>  <!-- relative to <directory> -->
+		  <data_exchange_dir type="string">urbansim\\2001</data_exchange_dir>  <!-- relative to <directory> -->
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2002</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2002</data_exchange_dir>
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2005</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2005</data_exchange_dir>
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2009</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2010</data_exchange_dir>
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2015</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2015</data_exchange_dir>
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2020</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2020</data_exchange_dir>
+			</run_description>
+			<run_description type="dictionary">
+			  <year type="integer">2025</year>
+		  <data_dir type="string"></data_dir>
+			  <data_exchange_dir type="string">urbansim\\2025</data_exchange_dir>
+			</run_description>
+		  </years_to_run>		
+      </travel_model_configuration>
+    </scenario>
+  </scenario_manager>
+  <results_manager>
+    <simulation_runs setexpanded="True" type="all_source_data" name="Simulation Runs" followers="Results">
+    </simulation_runs>
+  </results_manager>
+</opus_project>
