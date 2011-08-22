@@ -174,25 +174,28 @@ def sync_available_runs(project, scenario_name = '?'):
 def get_years_range_for_simulation_run(project, run_name=None, run_node=None):
     """ return min and max of years for run by run_name or run_node
     """
-    if run_node is None:
-        if run_name is not None:
-            run_nodes = get_simulation_runs(project)
-            run_node = [run_node for run_node in run_nodes if run_node.get('name') == run_name]
-            #assert len(run_node) == 1  # run_name should be unique among run_nodes
-            if len(run_node) == 0:
-                raise ValueError, "There is no match run node for name %s" % run_name
-            if len(run_node) >= 1:
-                run_node = run_node[0]
-        else:
-            raise ValueError, "run_name and run_node cannot both be None."
 
     years = get_years_for_simulation_run(project=project,
+                                         run_name=run_name,
                                          simulation_run_node=run_node
                                          )
     return min(years), max(years)
 
-def get_years_for_simulation_run(project, simulation_run_node):
+def get_years_for_simulation_run(project, run_name=None, simulation_run_node=None,):
     ''' Get the years run for the given simulation '''
+    
+    if simulation_run_node is None:
+        if run_name is not None:
+            run_nodes = get_simulation_runs(project)
+            simulation_run_node = [run_node for run_node in run_nodes if run_node.get('name') == run_name]
+            #assert len(run_node) == 1  # run_name should be unique among run_nodes
+            if len(simulation_run_node) == 0:
+                raise ValueError, "There is no match run node for name %s" % run_name
+            if len(simulation_run_node) >= 1:
+                simulation_run_node = simulation_run_node[0]
+        else:
+            raise ValueError, "run_name and run_node cannot both be None."
+            
     run_manager = get_run_manager()
     cache_dir = (simulation_run_node.find('cache_directory').text or '').strip()
     scenario_name = (simulation_run_node.find('scenario_name').text or '').strip()

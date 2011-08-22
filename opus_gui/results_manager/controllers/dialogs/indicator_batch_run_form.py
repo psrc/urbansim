@@ -37,16 +37,9 @@ class IndicatorBatchRunForm(QDialog, Ui_runIndicatorBatch):
         self._setup_co__years()
 
     def _setup_co__years(self):
-        start, end = get_years_range_for_run_name(self.project,
-                                                  self.run_name
-                                                  )
-#        runs = get_simulation_runs(self.project)
-#
-#        for run in runs:
-#            if run.get('name') == self.run_name:
-#                years = get_years_for_simulation_run(project = self.project,
-#                                                     simulation_run_node = run)
-#                (start,end) = (min(years), max(years))
+        years = get_years_for_simulation_run(self.project,
+                                             run_name=self.run_name)
+        start,end = min(years), max(years)
 
         for i in range(start, end + 1):
             if i not in years: continue
