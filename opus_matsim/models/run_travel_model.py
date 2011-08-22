@@ -5,7 +5,7 @@
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from travel_model.models.abstract_travel_model import AbstractTravelModel
-import os
+import os, sys
 from opus_matsim.models.pyxb_xml_parser.config_object import MATSimConfigObject
 
 class RunTravelModel(AbstractTravelModel):
@@ -48,7 +48,15 @@ class RunTravelModel(AbstractTravelModel):
         #        'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
         #        'matsim_config_file': self.matsim_config_full,
         #        'test_parameter': self.test_parameter } 
-        cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+        if sys.platform.lower() == 'win32': # Windows can't reserve more 1500m
+            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+                'vmargs': "-Xmx1500m", # set to 8GB on math cluster and 2GB on Notebook
+                'classpath': "jar/matsim4urbansim.jar",
+                'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
+                'matsim_config_file': self.matsim_config_full,
+                'test_parameter': self.test_parameter } 
+        else:       
+            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
                 'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
                 'classpath': "jar/matsim4urbansim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
