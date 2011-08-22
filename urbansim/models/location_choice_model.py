@@ -186,14 +186,14 @@ class LocationChoiceModel(ChoiceModel):
         if self.location_id_string is not None:
             agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
         
-        capacity_for_estimation = None
+        self.capacity = None
         if self.estimate_config.get("compute_capacity_flag", False):
             capacity_string_for_estimation = self.estimate_config.get("capacity_string", None)
-            capacity_for_estimation = self.determine_capacity(capacity_string=capacity_string_for_estimation, 
+            self.capacity = self.determine_capacity(capacity_string=capacity_string_for_estimation, 
                                                               agent_set=agent_set, 
                                                               agents_index=agents_index)
 
-        self.estimate_config.merge({"capacity":capacity_for_estimation})
+        self.estimate_config.merge({"capacity":self.capacity})
         return ChoiceModel.estimate(self,specification, agent_set,
                                     agents_index, procedure, estimate_config=self.estimate_config, 
                                     debuglevel=debuglevel)
@@ -231,6 +231,7 @@ class LocationChoiceModel(ChoiceModel):
                 return
         
         sampling_weights = self.get_sampling_weights(config, agent_set=agent_set, agents_index=agents_index)
+        interaction_dataset = None
         #if filter is specified by submodel in a dict, call sampler submodel by submodel
         if isinstance(self.filter, dict) or config.get("sample_alternatives_by_submodel", False):
             index2 = -1 + zeros((agents_index.size, nchoices), dtype="int32")
@@ -274,6 +275,9 @@ class LocationChoiceModel(ChoiceModel):
                             attributes[name] = zeros(index2.shape, dtype=attr_val.dtype)
                         attributes[name][self.observations_mapping[submodel],:] = attr_val
 
+            if interaction_dataset is None:
+                raise ValueError, "There is no agent for submodels %s. " % (submodels) + \
+                                  "This may be due to mismatch between agent_filter and submodels included in specification."
             if len(submodels)>1:  ## if there are more than 1 submodel, merge the data by submodel and recreate interaction_dataset
                 interaction_dataset = self.sampler_class.create_interaction_dataset(interaction_dataset.dataset1, 
                                                                                     interaction_dataset.dataset2, 
@@ -322,7 +326,7 @@ class LocationChoiceModel(ChoiceModel):
         
         """
         
-        if not filter:
+        if filter is None:
             filter_index = arange(self.choice_set.size())
             
         if isinstance(filter, dict) and filter.has_key(submodel):
@@ -333,7 +337,7 @@ class LocationChoiceModel(ChoiceModel):
             filter_index = where(self.choice_set.compute_variables([submodel_filter], 
                                                                    dataset_pool=self.dataset_pool))[0]
         elif isinstance(filter, ndarray):
-            filter_index = filter
+            filter_index = where(filter)[0]
         
         if hasattr(self, 'filter_index') and self.filter_index is not None:
             filter_index = intersect1d(self.filter_index, filter_index)

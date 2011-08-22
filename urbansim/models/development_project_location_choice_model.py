@@ -8,7 +8,7 @@ from opus_core.variables.variable_name import VariableName
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from urbansim.datasets.development_project_dataset import DevelopmentProjectCreator
 from numpy import zeros, arange, where, ones, logical_and, int32
-from numpy import take, argsort, array, int8, bool8
+from numpy import take, argsort, array, int8, bool8, ndarray
 from opus_core.logger import logger
 
 class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
@@ -51,8 +51,14 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         LocationChoiceModel.run(self, *args, **kargs)
 
     def get_sampling_weights(self, config, agent_set=None, agents_index=None, **kwargs):
-        where_developable = where(self.capacity)[0]
-        weight_array = (ones((agents_index.size, where_developable.size), dtype=int8)).astype(bool8)
+        
+        if isinstance(self.capacity, ndarray):
+            where_developable = where(self.capacity)[0]
+        else:
+            where_developable = arange(self.choice_set.size())
+        weight_array = ones((agents_index.size, where_developable.size), dtype=bool)
+        if config.has_key('estimate') and config['estimate']:
+            return weight_array
         varlist = [self.developable_maximum_unit_full_name]
         if self.developable_minimum_unit_full_name is not None:
             varlist.append(self.developable_minimum_unit_full_name)
