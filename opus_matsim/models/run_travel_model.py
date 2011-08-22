@@ -37,8 +37,13 @@ class RunTravelModel(AbstractTravelModel):
         config_obj = MATSimConfigObject(config, year, self.matsim_config_full)
         config_obj.marschall()
         
-        # change to destination directory opus_matsim
+        # change to directory opus_matsim
         os.chdir(os.path.join(os.environ['OPUS_HOME'], 'opus_matsim'))
+        
+        # reserve memory for java
+        xmx = '-Xmx2000m' # set to 8GB on math cluster and 2GB on Notebook
+        if sys.platform.lower() == 'win32': # Windows can't reserve more 1500m
+            xmx = '-Xmx1500m'
         
         # calling travel model with cmd command
         #cmd = """cd %(opus_home)s/opus_matsim ; java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
@@ -47,17 +52,9 @@ class RunTravelModel(AbstractTravelModel):
         #        'classpath': "jar/matsim4urbansim.jar",
         #        'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
         #        'matsim_config_file': self.matsim_config_full,
-        #        'test_parameter': self.test_parameter } 
-        if sys.platform.lower() == 'win32': # Windows can't reserve more 1500m
-            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
-                'vmargs': "-Xmx1500m", # set to 8GB on math cluster and 2GB on Notebook
-                'classpath': "jar/matsim4urbansim.jar",
-                'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
-                'matsim_config_file': self.matsim_config_full,
-                'test_parameter': self.test_parameter } 
-        else:       
-            cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
-                'vmargs': "-Xmx2000m", # set to 8GB on math cluster and 2GB on Notebook
+        #        'test_parameter': self.test_parameter }         
+        cmd = """java %(vmargs)s -cp %(classpath)s %(javaclass)s %(matsim_config_file)s %(test_parameter)s""" % {
+                'vmargs': xmx, 
                 'classpath': "jar/matsim4urbansim.jar",
                 'javaclass': "playground.run.Matsim4Urbansim", # "playground.tnicolai.urbansim.cupum.MATSim4UrbansimCUPUM",
                 'matsim_config_file': self.matsim_config_full,
