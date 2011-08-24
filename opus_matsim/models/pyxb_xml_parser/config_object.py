@@ -23,12 +23,12 @@ class MATSimConfigObject(object):
         # network parameter
         if common_matsim_part['matsim_network_file'] == None:
             raise StandardError('No network given in the  "travel_model_configuration" of your current configuration file. A network is required in order to run MATSim. ')
-        self.network_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['matsim_network_file'])
+        self.network_file = os.path.join( os.environ['OPUS_HOME'], self.trim( common_matsim_part['matsim_network_file']) )
         # input plans file parameter
         self.input_plans_file = ""
         try:           
             if common_matsim_part['input_plans_file'] != None:
-                self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], common_matsim_part['input_plans_file'])
+                self.input_plans_file = os.path.join( os.environ['OPUS_HOME'], self.trim( common_matsim_part['input_plans_file']) )
                 logger.log_note('Input plans file found (MATSim warm start enabled).')
         except: logger.log_note('No input plans file set in the "travel_model_configuration" of your current configuration file (MATSim warm start disabled).')
         # controler parameter
@@ -49,6 +49,16 @@ class MATSimConfigObject(object):
             if travel_model_configuration['start_year'] == year:
                 self.firstRun = "TRUE"
         except: pass
+        
+    def trim(self, path):
+        """ removes the first backslash if there is one
+        """
+        
+        if(path.startswith('/')):
+            return path[1:]
+        
+        return path
+        
     
     def marschall(self):
         """ create a matsim config with the parameter from the travel model configuration with PyxB
